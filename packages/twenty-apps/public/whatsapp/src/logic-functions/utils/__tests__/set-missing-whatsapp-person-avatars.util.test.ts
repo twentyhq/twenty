@@ -40,10 +40,11 @@ const UPLOAD_URL = 'https://storage.twenty.com/pending-file-id';
 
 const PRIYA_AVATAR = { personId: 'priya-id', pictureUrl: PICTURE_URL };
 
-const setAvatars = (
+const setAvatars = ({
   avatars = [PRIYA_AVATAR],
   deadlineAtMs = Date.now() + 60_000,
-) => setMissingWhatsappPersonAvatars({ avatars, deadlineAtMs });
+}: Partial<Parameters<typeof setMissingWhatsappPersonAvatars>[0]> = {}) =>
+  setMissingWhatsappPersonAvatars({ avatars, deadlineAtMs });
 
 const mockPeople = (
   people: { id: string; avatarFile: { fileId: string }[] | null }[],
@@ -196,7 +197,7 @@ describe('setMissingWhatsappPersonAvatars', () => {
     mockPeople([{ id: 'priya-id', avatarFile: null }]);
     mockPictureResponse();
 
-    await setAvatars([PRIYA_AVATAR, PRIYA_AVATAR]);
+    await setAvatars({ avatars: [PRIYA_AVATAR, PRIYA_AVATAR] });
 
     expect(mocks.mutation).toHaveBeenCalledOnce();
   });
@@ -235,14 +236,14 @@ describe('setMissingWhatsappPersonAvatars', () => {
   });
 
   it('does nothing once the job deadline has passed', async () => {
-    await setAvatars([PRIYA_AVATAR], Date.now() - 1);
+    await setAvatars({ deadlineAtMs: Date.now() - 1 });
 
     expect(mocks.query).not.toHaveBeenCalled();
     expect(mocks.fetch).not.toHaveBeenCalled();
   });
 
   it('queries nothing when there is no picture to set', async () => {
-    await setAvatars([]);
+    await setAvatars({ avatars: [] });
 
     expect(mocks.query).not.toHaveBeenCalled();
   });

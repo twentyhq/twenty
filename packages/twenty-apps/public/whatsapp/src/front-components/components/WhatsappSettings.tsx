@@ -107,17 +107,19 @@ export const WhatsappSettings = () => {
   const handleSettingsChange = async (
     update: Partial<WhatsappSettingsValues>,
   ) => {
-    setState((current) =>
-      current.step === 'ready' && current.view.isConnected
-        ? {
-            step: 'ready',
-            view: {
-              ...current.view,
-              settings: { ...current.view.settings, ...update },
-            },
-          }
-        : current,
-    );
+    setState((current) => {
+      if (current.step !== 'ready' || !current.view.isConnected) {
+        return current;
+      }
+
+      return {
+        step: 'ready',
+        view: {
+          ...current.view,
+          settings: { ...current.view.settings, ...update },
+        },
+      };
+    });
 
     await settingsSaveQueue.enqueue({
       save: () =>

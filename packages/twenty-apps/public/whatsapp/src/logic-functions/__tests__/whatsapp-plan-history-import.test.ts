@@ -52,18 +52,25 @@ const RUNNING_STATE: WhatsappHistoryImportState = {
 
 const PAYLOAD = { connectedAccountId: 'connection-id', runId: 'run-1' };
 
-const buildChatIds = (count: number, offset = 0) =>
-  Array.from({ length: count }, (_, index) => `chat-${offset + index}`);
+const buildChatIds = ({
+  count,
+  offset = 0,
+}: {
+  count: number;
+  offset?: number;
+}) => Array.from({ length: count }, (_, index) => `chat-${offset + index}`);
 
 const mockChatPages = (pageSizes: number[]) => {
   pageSizes.forEach((pageSize, pageIndex) =>
     mocks.listUnipileChats.mockResolvedValueOnce({
-      items: buildChatIds(pageSize, pageIndex * 20).map((id, index) => ({
-        id,
-        last_message_timestamp: new Date(
-          Date.UTC(2026, 0, 1) - (pageIndex * 20 + index) * 60_000,
-        ).toISOString(),
-      })),
+      items: buildChatIds({ count: pageSize, offset: pageIndex * 20 }).map(
+        (id, index) => ({
+          id,
+          last_message_timestamp: new Date(
+            Date.UTC(2026, 0, 1) - (pageIndex * 20 + index) * 60_000,
+          ).toISOString(),
+        }),
+      ),
       nextCursor:
         pageIndex < pageSizes.length - 1
           ? `cursor-${pageIndex + 1}`
@@ -106,8 +113,8 @@ describe('whatsappPlanHistoryImportHandler', () => {
       chunkCount: 3,
     });
 
-    expect(getStoredChatIds(0)).toEqual(buildChatIds(20));
-    expect(getStoredChatIds(2)).toEqual(buildChatIds(5, 40));
+    expect(getStoredChatIds(0)).toEqual(buildChatIds({ count: 20 }));
+    expect(getStoredChatIds(2)).toEqual(buildChatIds({ count: 5, offset: 40 }));
     expect(mocks.kvStore.get(STATE_KEY)).toEqual(RUNNING_STATE);
     expect(mocks.kvStore.get(PLANNING_KEY)).toEqual({
       plannedChunkCount: 3,
@@ -144,7 +151,10 @@ describe('whatsappPlanHistoryImportHandler', () => {
     });
     mocks.kvStore.set('whatsapp-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChats: buildChatIds(25).map((id) => ({ id, name: id })),
+      selectedChats: buildChatIds({ count: 25 }).map((id) => ({
+        id,
+        name: id,
+      })),
     });
 
     await expect(whatsappPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
@@ -152,8 +162,8 @@ describe('whatsappPlanHistoryImportHandler', () => {
       chunkCount: 2,
     });
 
-    expect(getStoredChatIds(0)).toEqual(buildChatIds(20));
-    expect(getStoredChatIds(1)).toEqual(buildChatIds(5, 20));
+    expect(getStoredChatIds(0)).toEqual(buildChatIds({ count: 20 }));
+    expect(getStoredChatIds(1)).toEqual(buildChatIds({ count: 5, offset: 20 }));
     expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
 
