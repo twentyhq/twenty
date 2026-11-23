@@ -280,8 +280,7 @@ export class BillingSubscriptionUpdateService {
     additionalConnectedAccountApplicationId?: string;
   }): Promise<{ isPaymentDeclined: boolean }> {
     if (
-      !this.twentyConfigService.get('IS_BILLING_ENABLED') ||
-      !(await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
+      !(await this.billingApplicationSyncService.isApplicationBillingActive(
         workspaceId,
       ))
     ) {

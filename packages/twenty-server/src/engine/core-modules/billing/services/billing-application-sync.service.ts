@@ -20,17 +20,21 @@ export class BillingApplicationSyncService {
     private readonly billingApplicationProductService: BillingApplicationProductService,
   ) {}
 
+  async isApplicationBillingActive(workspaceId: string): Promise<boolean> {
+    return (
+      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
+      (await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
+        workspaceId,
+      ))
+    );
+  }
+
   async enqueueApplicationsSync({
     workspaceId,
   }: {
     workspaceId: string;
   }): Promise<void> {
-    if (
-      !this.twentyConfigService.get('IS_BILLING_ENABLED') ||
-      !(await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
-        workspaceId,
-      ))
-    ) {
+    if (!(await this.isApplicationBillingActive(workspaceId))) {
       return;
     }
 
