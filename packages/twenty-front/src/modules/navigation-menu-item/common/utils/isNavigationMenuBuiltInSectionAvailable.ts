@@ -19,12 +19,8 @@ export const isNavigationMenuBuiltInSectionAvailable = ({
     return false;
   }
 
-  if (!builtInSection.isAi) {
-    return true;
-  }
-
   return (
-    hasAiPermission &&
+    (!builtInSection.isAiPermissionRequired || hasAiPermission) &&
     (!builtInSection.isAiChatInboxRequired || isAiChatInboxEnabled)
   );
 };

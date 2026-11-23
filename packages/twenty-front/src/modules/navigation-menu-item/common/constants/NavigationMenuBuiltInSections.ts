@@ -14,6 +14,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHeart,
     color: 'red',
     isAi: false,
+    isAiPermissionRequired: false,
     isAiChatInboxRequired: false,
   },
   {
@@ -22,6 +23,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconInbox,
     color: 'blue',
     isAi: true,
+    isAiPermissionRequired: true,
     isAiChatInboxRequired: true,
   },
   {
@@ -30,6 +32,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconMessage,
     color: 'pink',
     isAi: true,
+    isAiPermissionRequired: true,
     isAiChatInboxRequired: false,
   },
   {
@@ -38,6 +41,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHash,
     color: 'green',
     isAi: true,
+    isAiPermissionRequired: true,
     isAiChatInboxRequired: true,
   },
   {
@@ -46,6 +50,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHistory,
     color: 'orange',
     isAi: true,
+    isAiPermissionRequired: true,
     isAiChatInboxRequired: false,
   },
 ] as const;
