@@ -7,6 +7,7 @@ import { resolveRelationTargetFlatFieldMetadata } from 'src/engine/workspace-man
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
+import { RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/constants/relation-target-flat-field-metadata-failure-reason.constant';
 
 export const validateFlatViewSortRelationTarget = ({
   flatViewSort: { relationTargetFieldMetadataUniversalIdentifier },
@@ -35,7 +36,7 @@ export const validateFlatViewSortRelationTarget = ({
   }
 
   switch (relationTarget.failureReason) {
-    case 'UNEXPECTED_RELATION_TYPE':
+    case RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.UNEXPECTED_RELATION_TYPE:
       return [
         {
           code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -43,7 +44,7 @@ export const validateFlatViewSortRelationTarget = ({
           userFriendlyMessage: msg`Only a field linking to one record can be sorted by a field of that record`,
         },
       ];
-    case 'NOT_ON_RELATION_TARGET_OBJECT':
+    case RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.NOT_ON_RELATION_TARGET_OBJECT:
       return [
         {
           code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -51,7 +52,7 @@ export const validateFlatViewSortRelationTarget = ({
           userFriendlyMessage: msg`The field must belong to the related object`,
         },
       ];
-    case 'INACTIVE':
+    case RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.INACTIVE:
       return [
         {
           code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
@@ -59,7 +60,7 @@ export const validateFlatViewSortRelationTarget = ({
           userFriendlyMessage: msg`Records cannot be sorted by a deactivated field`,
         },
       ];
-    case 'IS_A_RELATION':
+    case RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.IS_A_RELATION:
       return [
         {
           code: ViewSortExceptionCode.INVALID_VIEW_SORT_DATA,
