@@ -70,22 +70,6 @@ export const ChatThreadMessage = ({
     <ChatThreadMessageSenderHeader sender={message.sender} />
   );
   const isTouchDevice = useIsTouchDevice();
-
-  if (isFieldValueRestricted(message.text)) {
-    return (
-      <StyledMessageRow isRightAligned={isOutgoing} hasFooter={false}>
-        {senderHeader}
-        <EmailThreadNotShared visibility={MessageChannelVisibility.METADATA} />
-      </StyledMessageRow>
-    );
-  }
-
-  const files = (message.attachments ?? []).flatMap(
-    (attachment) => attachment.file ?? [],
-  );
-  const hasText = isNonEmptyString(message.text);
-  const hasReactions = isNonEmptyArray(reactions);
-  const hasBubble = hasText || !isNonEmptyArray(files);
   const hasMeta =
     !isTimeSharedWithNext && (isOutgoing || isDefined(message.receivedAt));
   const meta = hasMeta ? (
@@ -96,6 +80,27 @@ export const ChatThreadMessage = ({
       {isOutgoing && <ChatMessageReceipt status="sent" />}
     </>
   ) : undefined;
+
+  if (isFieldValueRestricted(message.text)) {
+    return (
+      <StyledMessageRow isRightAligned={isOutgoing} hasFooter={hasMeta}>
+        {senderHeader}
+        <EmailThreadNotShared visibility={MessageChannelVisibility.METADATA} />
+        {hasMeta && (
+          <StyledChatMessageStandaloneMeta isRightAligned={isOutgoing}>
+            {meta}
+          </StyledChatMessageStandaloneMeta>
+        )}
+      </StyledMessageRow>
+    );
+  }
+
+  const files = (message.attachments ?? []).flatMap(
+    (attachment) => attachment.file ?? [],
+  );
+  const hasText = isNonEmptyString(message.text);
+  const hasReactions = isNonEmptyArray(reactions);
+  const hasBubble = hasText || !isNonEmptyArray(files);
 
   return (
     <StyledMessageRow

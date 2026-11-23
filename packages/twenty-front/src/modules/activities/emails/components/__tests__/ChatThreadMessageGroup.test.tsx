@@ -435,4 +435,25 @@ describe('ChatThreadMessageGroup', () => {
       screen.queryByText(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
     ).not.toBeInTheDocument();
   });
+
+  it('shows when a message whose body is masked was received', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          isFirstOfDay: false,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              receivedAt: '2026-11-07T10:07:00.000Z',
+            }),
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+    expect(screen.getByText(/10:07/)).toBeInTheDocument();
+  });
 });
