@@ -477,7 +477,7 @@ describe('Formula fields', () => {
       await findGadgetNames('orderBy: [{ total: DescNullsLast }]'),
     ).toEqual(['Widget', 'Orphan']);
     expect(
-      await findGadgetNames('orderBy: [{ supplierLabel: DescNullsLast }]'),
+      await findGadgetNames('orderBy: [{ isExpensive: DescNullsLast }]'),
     ).toEqual(['Widget', 'Orphan']);
   });
 
