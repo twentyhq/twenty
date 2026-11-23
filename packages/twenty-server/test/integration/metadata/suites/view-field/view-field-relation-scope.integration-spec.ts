@@ -347,6 +347,7 @@ describe('View field filtering, sorting and limiting its related records', () =>
         },
       ],
       limit: 1,
+      aggregateOperation: null,
     });
   });
 
