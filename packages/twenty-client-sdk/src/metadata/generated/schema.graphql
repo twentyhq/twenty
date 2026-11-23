@@ -1854,6 +1854,7 @@ input CreatePageLayoutTabInput {
 }
 
 input CreatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   configuration: JSON!
   objectMetadataId: UUID
   pageLayoutTabId: UUID!
@@ -4164,8 +4165,9 @@ type PageLayoutWidget {
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
   applicationName: String
-  conditionalAvailabilityExpression: String
-  conditionalDisplay: JSON
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use conditionalAvailability instead")
+  conditionalDisplay: JSON @deprecated(reason: "Use conditionalAvailability instead")
   configuration: WidgetConfiguration!
   createdAt: DateTime!
   deletedAt: DateTime
@@ -5676,6 +5678,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
 }
 
 input UpdatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5688,6 +5691,7 @@ input UpdatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetWithIdInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
