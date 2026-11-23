@@ -1895,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Отримайте доступ до свого робочого простору Twenty через MCP"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Доступ до даних вашого робочого простору"
 
@@ -24361,7 +24361,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Прочитайте системні інструкції, щоб зрозуміти, як працює ШІ (~{0} токенів)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Читати ваш профіль"
 
