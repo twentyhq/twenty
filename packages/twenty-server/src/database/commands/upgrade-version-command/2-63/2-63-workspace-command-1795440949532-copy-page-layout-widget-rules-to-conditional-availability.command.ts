@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -7,18 +8,19 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { computePageLayoutWidgetWithCopiedConditionalAvailability } from 'src/database/commands/upgrade-version-command/2-63/utils/compute-page-layout-widget-with-copied-conditional-availability.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// Copies only, nothing is emptied: the runtime keeps reading a legacy value while it exists, so a wrong copy cannot change what a user sees
+// Nothing is emptied: a workspace whose flag is turned off again reads its legacy values as before
 @RegisteredWorkspaceCommand('2.63.0', 1795440949532)
 @Command({
   name: 'upgrade:2-63:copy-page-layout-widget-rules-to-conditional-availability',
   description:
-    'Copy the visibility rule of page layout widgets, from its text and json-logic forms, into its tree form',
+    'Copy the visibility rule of page layout widgets, from its text and json-logic forms, into its tree form, then make the workspace read the tree only',
 })
 export class CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -26,6 +28,7 @@ export class CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand extends P
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(workspaceIteratorService);
   }
@@ -47,38 +50,39 @@ export class CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand extends P
 
     const now = new Date().toISOString();
 
-    const pageLayoutWidgetsToUpdate = Object.values(
+    const computedPageLayoutWidgets = Object.values(
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter(
         (flatPageLayoutWidget) => !isDefined(flatPageLayoutWidget.deletedAt),
       )
-      .flatMap((flatPageLayoutWidget) => {
-        const { pageLayoutWidgetToUpdate, unreadableRuleMessages } =
-          computePageLayoutWidgetWithCopiedConditionalAvailability({
-            flatPageLayoutWidget,
-            workspaceCustomApplicationUniversalIdentifier:
-              workspaceCustomFlatApplication.universalIdentifier,
-            pageLayoutTabUniversalIdentifierById:
-              flatPageLayoutTabMaps.universalIdentifierById,
-            now,
-          });
+      .map((flatPageLayoutWidget) => ({
+        universalIdentifier: flatPageLayoutWidget.universalIdentifier,
+        ...computePageLayoutWidgetWithCopiedConditionalAvailability({
+          flatPageLayoutWidget,
+          workspaceCustomApplicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          pageLayoutTabUniversalIdentifierById:
+            flatPageLayoutTabMaps.universalIdentifierById,
+          now,
+        }),
+      }));
 
-        for (const unreadableRuleMessage of unreadableRuleMessages) {
-          this.logger.warn(
-            `Workspace ${workspaceId}: a rule of page layout widget ${flatPageLayoutWidget.universalIdentifier} could not be read and is left as it is (${unreadableRuleMessage})`,
-          );
-        }
-
-        return isDefined(pageLayoutWidgetToUpdate)
-          ? [pageLayoutWidgetToUpdate]
-          : [];
-      });
-
-    if (!isNonEmptyArray(pageLayoutWidgetsToUpdate)) {
-      return;
+    for (const {
+      universalIdentifier,
+      unreadableRuleMessages,
+    } of computedPageLayoutWidgets) {
+      for (const unreadableRuleMessage of unreadableRuleMessages) {
+        this.logger.warn(
+          `Workspace ${workspaceId}: a rule of page layout widget ${universalIdentifier} could not be read and is left as it is (${unreadableRuleMessage})`,
+        );
+      }
     }
+
+    const pageLayoutWidgetsToUpdate = computedPageLayoutWidgets
+      .map(({ pageLayoutWidgetToUpdate }) => pageLayoutWidgetToUpdate)
+      .filter(isDefined);
 
     this.logger.log(
       `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: copying the rule of ${pageLayoutWidgetsToUpdate.length} page layout widget(s) into a tree`,
@@ -88,9 +92,29 @@ export class CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand extends P
       return;
     }
 
-    await this.updatePageLayoutWidgetsOrThrow({
+    if (isNonEmptyArray(pageLayoutWidgetsToUpdate)) {
+      await this.updatePageLayoutWidgetsOrThrow({
+        workspaceId,
+        pageLayoutWidgetsToUpdate,
+      });
+    }
+
+    const hasUnreadableRule = computedPageLayoutWidgets.some(
+      ({ unreadableRuleMessages }) => isNonEmptyArray(unreadableRuleMessages),
+    );
+
+    if (hasUnreadableRule) {
+      this.logger.warn(
+        `Workspace ${workspaceId}: ${FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED} stays off because a rule could not be read`,
+      );
+
+      return;
+    }
+
+    await this.featureFlagService.upsertWorkspaceFeatureFlag({
       workspaceId,
-      pageLayoutWidgetsToUpdate,
+      featureFlag: FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED,
+      value: true,
     });
   }
 

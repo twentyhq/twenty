@@ -3,10 +3,12 @@ import {
   type ConditionalAvailabilityNode,
 } from 'twenty-shared/conditional-availability';
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795440949532-copy-page-layout-widget-rules-to-conditional-availability.command';
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -80,6 +82,7 @@ const readPlantedWidgetRules = async (): Promise<
 describe('2-63 workspace command - copy page layout widget rules to conditional availability (integration)', () => {
   let command: CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand;
   let workspaceCacheService: WorkspaceCacheService;
+  let featureFlagService: FeatureFlagService;
   let seededRules: Record<string, WidgetRule>;
 
   const writeRules = async (rules: Record<string, WidgetRule>) => {
@@ -106,6 +109,20 @@ describe('2-63 workspace command - copy page layout widget rules to conditional 
     );
   };
 
+  const setWorkspaceReadsTreeOnly = async (value: boolean) => {
+    await featureFlagService.upsertWorkspaceFeatureFlag({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      featureFlag: FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED,
+      value,
+    });
+  };
+
+  const doesWorkspaceReadTreeOnly = () =>
+    featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED,
+      SEED_APPLE_WORKSPACE_ID,
+    );
+
   beforeAll(async () => {
     command =
       getAppProviderByClassName<CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand>(
@@ -114,12 +131,20 @@ describe('2-63 workspace command - copy page layout widget rules to conditional 
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
+    featureFlagService = getAppProviderByClassName<FeatureFlagService>(
+      'FeatureFlagService',
+    );
 
     seededRules = await readPlantedWidgetRules();
   });
 
+  beforeEach(async () => {
+    await setWorkspaceReadsTreeOnly(false);
+  });
+
   afterAll(async () => {
     await writeRules(seededRules);
+    await setWorkspaceReadsTreeOnly(true);
   });
 
   it('changes nothing on a dry run', async () => {
@@ -131,6 +156,7 @@ describe('2-63 workspace command - copy page layout widget rules to conditional 
     });
 
     expect(await readPlantedWidgetRules()).toEqual(PLANTED_RULES);
+    expect(await doesWorkspaceReadTreeOnly()).toBe(false);
   });
 
   it('copies each readable rule into a tree, keeps every legacy value and changes nothing on a second run', async () => {
@@ -156,5 +182,25 @@ describe('2-63 workspace command - copy page layout widget rules to conditional 
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await readPlantedWidgetRules()).toEqual(widgetRules);
+  });
+
+  it('keeps the workspace on its legacy rules while one of them cannot be read', async () => {
+    await writeRules(PLANTED_RULES);
+
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+    expect(await doesWorkspaceReadTreeOnly()).toBe(false);
+  });
+
+  it('makes the workspace read the tree only once every rule is copied', async () => {
+    await writeRules({
+      ...PLANTED_RULES,
+      [UNREADABLE_RULE_WIDGET_UNIVERSAL_IDENTIFIER]:
+        seededRules[UNREADABLE_RULE_WIDGET_UNIVERSAL_IDENTIFIER],
+    });
+
+    await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+    expect(await doesWorkspaceReadTreeOnly()).toBe(true);
   });
 });
