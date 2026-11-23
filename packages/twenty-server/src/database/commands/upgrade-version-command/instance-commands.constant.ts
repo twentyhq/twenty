@@ -330,6 +330,7 @@ import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgr
 import { AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795439034166-add-conditional-availability-to-page-layout-widget';
 import { RelatedRecordPathOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795470470000-related-record-path-overridable-entity';
 import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795474659387-add-source-field-to-field-permission';
+import { AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795475493818-add-source-field-foreign-key-to-field-permission';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -662,4 +663,5 @@ export const INSTANCE_COMMANDS = [
   AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand,
   RelatedRecordPathOverridableEntityFastInstanceCommand,
   AddSourceFieldToFieldPermissionFastInstanceCommand,
+  AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand,
 ];
