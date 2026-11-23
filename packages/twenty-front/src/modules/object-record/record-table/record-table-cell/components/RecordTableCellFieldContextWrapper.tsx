@@ -49,11 +49,7 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
-  // A summary of a field the user cannot read resolves to no alias at all
-  const isScopedRelationRestricted =
-    scopedRelationAlias?.isRestricted ||
-    (isDefined(recordField.relationScope?.aggregateOperation) &&
-      !isDefined(scopedRelationAlias?.summary));
+  const isScopedRelationRestricted = scopedRelationAlias?.isRestricted === true;
 
   if (isDefined(lookupTarget)) {
     return (

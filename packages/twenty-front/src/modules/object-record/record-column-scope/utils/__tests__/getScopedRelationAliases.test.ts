@@ -280,6 +280,36 @@ describe('getScopedRelationAliases', () => {
     });
   });
 
+  it('restricts a summary of a field the user cannot read', () => {
+    const [{ isRestricted, summary }] = getAliases({
+      recordFields: [
+        getPeopleColumn({
+          relationScope: {
+            ...CTO_RELATION_SCOPE,
+            sorts: [],
+            limit: null,
+            aggregateOperation: AggregateOperations.MIN,
+          },
+          relationTargetFieldMetadataId: createdAtField.id,
+        }),
+      ],
+      readableObjectMetadataItems: objectMetadataItems.map(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === personObjectMetadataItem.id
+            ? {
+                ...objectMetadataItem,
+                readableFields: objectMetadataItem.readableFields.filter(
+                  ({ id }) => id !== createdAtField.id,
+                ),
+              }
+            : objectMetadataItem,
+      ),
+    });
+
+    expect(summary).toBeUndefined();
+    expect(isRestricted).toBe(true);
+  });
+
   it('skips the canonical column, columns without a scope and a disabled flag', () => {
     expect(
       getAliases({

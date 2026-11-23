@@ -165,6 +165,7 @@ export const getScopedRelationAliases = ({
           ]),
         ],
         isRestricted:
+          scopedRelationColumn.isRestricted === true ||
           (isDefined(lookupTarget) &&
             !isLookupTargetFieldReadable(lookupTarget)) ||
           !reachedFields.every(

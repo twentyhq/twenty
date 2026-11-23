@@ -22,13 +22,14 @@ export const getScopedRelationColumn = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
   isLookupColumnsEnabled: boolean;
 }):
-  | Pick<
+  | (Pick<
       ScopedRelationAlias,
       | 'relationObjectMetadataItem'
       | 'lookupTarget'
       | 'scopedRelationJunction'
       | 'summary'
-    >
+    > &
+      Partial<Pick<ScopedRelationAlias, 'isRestricted'>>)
   | undefined => {
   if (
     !isLookupColumnsEnabled ||
@@ -54,7 +55,10 @@ export const getScopedRelationColumn = ({
       relationObjectMetadataItem: scopableRelation.relationObjectMetadataItem,
     });
 
-    return isDefined(summary) ? { ...scopableRelation, summary } : undefined;
+    // The server validates the operation, so a missing summary means its field is unreadable
+    return isDefined(summary)
+      ? { ...scopableRelation, summary }
+      : { ...scopableRelation, isRestricted: true };
   }
 
   // A field of the target records is two hops away, and a field of the join records is not what the column lists
