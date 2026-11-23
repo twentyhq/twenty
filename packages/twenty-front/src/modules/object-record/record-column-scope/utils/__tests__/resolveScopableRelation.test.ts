@@ -5,7 +5,7 @@ import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestE
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
-const isScopable = ({
+const resolveFieldRelation = ({
   objectNameSingular,
   fieldName,
 }: {
@@ -23,7 +23,10 @@ const isScopable = ({
 describe('resolveScopableRelation', () => {
   it('scopes a one-to-many relation to plain records', () => {
     expect(
-      isScopable({ objectNameSingular: 'company', fieldName: 'people' }),
+      resolveFieldRelation({
+        objectNameSingular: 'company',
+        fieldName: 'people',
+      }),
     ).toEqual({
       relationObjectMetadataItem: expect.objectContaining({
         nameSingular: 'person',
@@ -34,11 +37,13 @@ describe('resolveScopableRelation', () => {
 
   it('scopes a relation to a join object with one target object, whichever side configures it', () => {
     expect(
-      isScopable({ objectNameSingular: 'person', fieldName: 'taskTargets' })
-        ?.scopedRelationJunction?.targetObjectMetadataItem.nameSingular,
+      resolveFieldRelation({
+        objectNameSingular: 'person',
+        fieldName: 'taskTargets',
+      })?.scopedRelationJunction?.targetObjectMetadataItem.nameSingular,
     ).toBe('task');
     expect(
-      isScopable({
+      resolveFieldRelation({
         objectNameSingular: 'person',
         fieldName: 'previousCompanies',
       })?.scopedRelationJunction,
@@ -47,16 +52,25 @@ describe('resolveScopableRelation', () => {
 
   it('does not scope a relation to a join object with several target objects', () => {
     expect(
-      isScopable({ objectNameSingular: 'task', fieldName: 'taskTargets' }),
+      resolveFieldRelation({
+        objectNameSingular: 'task',
+        fieldName: 'taskTargets',
+      }),
     ).toBeUndefined();
   });
 
   it('does not scope a many-to-one relation or a field that is not a relation', () => {
     expect(
-      isScopable({ objectNameSingular: 'person', fieldName: 'company' }),
+      resolveFieldRelation({
+        objectNameSingular: 'person',
+        fieldName: 'company',
+      }),
     ).toBeUndefined();
     expect(
-      isScopable({ objectNameSingular: 'person', fieldName: 'jobTitle' }),
+      resolveFieldRelation({
+        objectNameSingular: 'person',
+        fieldName: 'jobTitle',
+      }),
     ).toBeUndefined();
   });
 });
