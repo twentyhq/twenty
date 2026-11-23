@@ -27,7 +27,6 @@ import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
 import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
-import { StyledChatMessageFloatingActions } from '@/chat/components/StyledChatMessageFloatingActions';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { AiChatUserMessageCollapsibleContent } from '@/ai-chat/messages/components/AiChatUserMessageCollapsibleContent';
@@ -345,14 +344,7 @@ export const AiChatMessage = ({
             {!hasFloatingActions && messageActions}
           </StyledChatMessageFooter>
         )}
-        {hasFloatingActions && (
-          <StyledChatMessageFloatingActions
-            className="message-actions"
-            isAtStart={isOwnMessage}
-          >
-            {messageActions}
-          </StyledChatMessageFloatingActions>
-        )}
+        {hasFloatingActions && messageActions}
       </StyledMessageRow>
     </>
   );

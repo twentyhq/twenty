@@ -3,13 +3,13 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconCopy } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-type LightCopyIconButtonBaseProps = {
+type LightCopyIconButtonWithoutPaddingProps = {
   copyText: string;
 };
 
-export const LightCopyIconButtonBase = ({
+export const LightCopyIconButtonWithoutPadding = ({
   copyText,
-}: LightCopyIconButtonBaseProps) => {
+}: LightCopyIconButtonWithoutPaddingProps) => {
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 

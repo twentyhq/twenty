@@ -2,14 +2,14 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconArrowBackUp, IconEdit, IconTrash } from 'twenty-ui/icon';
-import { ButtonGroup } from 'twenty-ui/primitives/input';
 
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
 import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { ChatMessageFloatingActions } from '@/chat/components/ChatMessageFloatingActions';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
-import { LightCopyIconButtonBase } from '@/ui/input/components/LightCopyIconButtonBase';
+import { LightCopyIconButtonWithoutPadding } from '@/ui/input/components/LightCopyIconButtonWithoutPadding';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatMessageActionsProps = {
@@ -58,7 +58,7 @@ export const AiChatMessageActions = ({
           <IconArrowBackUp />
         </LightIconButton>
       )}
-      <LightCopyIconButtonBase copyText={messageText} />
+      <LightCopyIconButtonWithoutPadding copyText={messageText} />
       {isDefined(onEdit) && (
         <LightIconButton
           aria-label={t`Edit message`}
@@ -82,9 +82,9 @@ export const AiChatMessageActions = ({
 
   if (isFloating) {
     return (
-      <ButtonGroup aria-label={t`Message actions`} framed attached={false}>
+      <ChatMessageFloatingActions isRightAligned={isRightAligned}>
         {actions}
-      </ButtonGroup>
+      </ChatMessageFloatingActions>
     );
   }
 

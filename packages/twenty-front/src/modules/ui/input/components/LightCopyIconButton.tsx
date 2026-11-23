@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { LightCopyIconButtonBase } from '@/ui/input/components/LightCopyIconButtonBase';
+import { LightCopyIconButtonWithoutPadding } from '@/ui/input/components/LightCopyIconButtonWithoutPadding';
 
 const StyledButtonContainer = styled.div`
   padding: 0 ${themeCssVariables.spacing[1]};
@@ -13,6 +13,6 @@ export type LightCopyIconButtonProps = {
 
 export const LightCopyIconButton = ({ copyText }: LightCopyIconButtonProps) => (
   <StyledButtonContainer>
-    <LightCopyIconButtonBase copyText={copyText} />
+    <LightCopyIconButtonWithoutPadding copyText={copyText} />
   </StyledButtonContainer>
 );
