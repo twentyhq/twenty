@@ -1,24 +1,25 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type ScopedRelationAlias } from '@/object-record/record-column-scope/types/ScopedRelationAlias';
 import { type RecordGqlFieldsRelationWithArguments } from 'twenty-shared/types';
 
-export const getScopedRelationFieldNamesShowingObject = ({
+export const getScopedRelationFieldNamesReachingObject = ({
   scopedRelationAliases,
   objectMetadataItemId,
 }: {
-  scopedRelationAliases: {
-    relationObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'id'>;
+  scopedRelationAliases: (Pick<
+    ScopedRelationAlias,
+    'reachedObjectMetadataItemIds'
+  > & {
     relationWithArguments: Pick<
       RecordGqlFieldsRelationWithArguments,
       'relationFieldName'
     >;
-  }[];
+  })[];
   objectMetadataItemId: string;
 }): string[] => [
   ...new Set(
     scopedRelationAliases
-      .filter(
-        ({ relationObjectMetadataItem }) =>
-          relationObjectMetadataItem.id === objectMetadataItemId,
+      .filter(({ reachedObjectMetadataItemIds }) =>
+        reachedObjectMetadataItemIds.includes(objectMetadataItemId),
       )
       .map(
         ({ relationWithArguments }) => relationWithArguments.relationFieldName,
