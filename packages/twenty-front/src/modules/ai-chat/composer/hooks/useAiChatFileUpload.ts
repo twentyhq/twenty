@@ -1,4 +1,3 @@
-import { AI_CHAT_ATTACHMENT_MAX_SIZE } from '@/ai-chat/composer/constants/AiChatAttachmentMaxSize';
 import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -6,7 +5,10 @@ import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -92,12 +94,14 @@ export const useAiChatFileUpload = () => {
     }
 
     const acceptedFiles = files.filter((file) => {
-      if (file.size <= AI_CHAT_ATTACHMENT_MAX_SIZE) {
+      if (file.size <= CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES) {
         return true;
       }
 
       const fileName = file.name;
-      const maxUploadSize = formatFileSize(AI_CHAT_ATTACHMENT_MAX_SIZE);
+      const maxUploadSize = formatFileSize(
+        CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+      );
 
       enqueueToast({
         status: 'error',
