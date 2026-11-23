@@ -56,9 +56,9 @@ const ASSOCIATION_BACKFILLS = [
   },
 ] as const;
 
-@RegisteredWorkspaceCommand('2.62.0', 1795379764844)
+@RegisteredWorkspaceCommand('2.63.0', 1795432675597)
 @Command({
-  name: 'upgrade:2-62:add-channel-association-account-owner-and-handle',
+  name: 'upgrade:2-63:add-channel-association-account-owner-and-handle',
   description:
     'Add the account owner relation and the channel handle to calendar and message channel associations and backfill them from each channel',
 })

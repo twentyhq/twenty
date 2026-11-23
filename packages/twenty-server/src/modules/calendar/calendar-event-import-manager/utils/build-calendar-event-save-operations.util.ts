@@ -33,7 +33,12 @@ export const buildCalendarEventSaveOperations = ({
   calendarEventIdToLinkByEventExternalId: Map<string, string>;
   otherChannelIdsByCalendarEventId: Map<string, string[]>;
   otherCalendarChannels: CalendarEventSharingChannel[];
-  associationSource: { accountOwnerId?: string | null; handle?: string };
+  associationSource: Partial<
+    Pick<
+      CalendarChannelEventAssociationWorkspaceEntity,
+      'accountOwnerId' | 'handle'
+    >
+  >;
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [

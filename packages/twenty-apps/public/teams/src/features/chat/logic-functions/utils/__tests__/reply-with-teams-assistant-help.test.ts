@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { TEAMS_ASSISTANT_EMPTY_REQUEST_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-empty-request-text';
-import { replyToEmptyTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/reply-to-empty-teams-assistant-request';
+import { TEAMS_ASSISTANT_HELP_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-help-text';
+import { replyWithTeamsAssistantHelp } from 'src/features/chat/logic-functions/utils/reply-with-teams-assistant-help';
 
 const { kvMock, sendActivityMock } = vi.hoisted(() => ({
   kvMock: { get: vi.fn(), set: vi.fn(), delete: vi.fn() },
@@ -28,9 +28,9 @@ const EMPTY_REQUEST = {
 };
 
 const CLAIM_KEY =
-  'teams-empty-request-reply:19:channel@thread.tacv2;messageid=1699999999999:1700000000000';
+  'teams-help-reply:19:channel@thread.tacv2;messageid=1699999999999:1700000000000';
 
-describe('replyToEmptyTeamsAssistantRequest', () => {
+describe('replyWithTeamsAssistantHelp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     kvMock.get.mockResolvedValue(null);
@@ -40,9 +40,9 @@ describe('replyToEmptyTeamsAssistantRequest', () => {
   });
 
   it('should post the hint once in the conversation', async () => {
-    await expect(
-      replyToEmptyTeamsAssistantRequest(EMPTY_REQUEST),
-    ).resolves.toEqual({ ok: true });
+    await expect(replyWithTeamsAssistantHelp(EMPTY_REQUEST)).resolves.toEqual({
+      ok: true,
+    });
 
     expect(kvMock.set).toHaveBeenCalledExactlyOnceWith(CLAIM_KEY, {
       expiresAt: expect.any(Number),
@@ -51,7 +51,7 @@ describe('replyToEmptyTeamsAssistantRequest', () => {
       serviceUrl: EMPTY_REQUEST.teamsServiceUrl,
       conversationId: EMPTY_REQUEST.teamsConversationId,
       accessToken: 'token',
-      activity: { type: 'message', text: TEAMS_ASSISTANT_EMPTY_REQUEST_TEXT },
+      activity: { type: 'message', text: TEAMS_ASSISTANT_HELP_TEXT },
     });
   });
 
@@ -59,8 +59,10 @@ describe('replyToEmptyTeamsAssistantRequest', () => {
     kvMock.get.mockResolvedValue({ expiresAt: Date.now() + 60_000 });
 
     await expect(
-      replyToEmptyTeamsAssistantRequest(EMPTY_REQUEST),
-    ).resolves.toMatchObject({ skipped: 'Empty request was already answered' });
+      replyWithTeamsAssistantHelp(EMPTY_REQUEST),
+    ).resolves.toMatchObject({
+      skipped: 'Help was already sent for this activity',
+    });
 
     expect(sendActivityMock).not.toHaveBeenCalled();
   });
@@ -68,9 +70,9 @@ describe('replyToEmptyTeamsAssistantRequest', () => {
   it('should free the claim when the hint cannot be sent', async () => {
     sendActivityMock.mockRejectedValue(new Error('Bot Connector POST failed'));
 
-    await expect(
-      replyToEmptyTeamsAssistantRequest(EMPTY_REQUEST),
-    ).rejects.toThrow('Bot Connector POST failed');
+    await expect(replyWithTeamsAssistantHelp(EMPTY_REQUEST)).rejects.toThrow(
+      'Bot Connector POST failed',
+    );
 
     expect(kvMock.delete).toHaveBeenCalledExactlyOnceWith(CLAIM_KEY);
   });
