@@ -1,4 +1,5 @@
 import { useTranslate } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { usePersonFieldLabels } from 'src/front-components/hooks/use-person-field-labels';
@@ -72,7 +73,7 @@ export const PersonalizableParameterField = ({
             </option>
           ))}
         </select>
-        {personField === undefined && (
+        {!isDefined(personField) && (
           <input
             style={{ ...controlStyle, flexGrow: 1 }}
             value={value}

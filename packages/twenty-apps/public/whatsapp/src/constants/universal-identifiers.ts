@@ -128,7 +128,7 @@ export const WHATSAPP_AD_REFERRAL_FIELD_UNIVERSAL_IDENTIFIERS = {
   sourceUrl: '37e1d560-86a6-453b-88a8-be93d6f97abe',
   body: '62bc9071-7cf4-4340-ad55-8bec225d04fd',
   mediaType: 'ebe3395f-199d-4902-8ded-f53f18bb0f1f',
-  ctwaClid: 'fc51e99c-3acb-4653-9b6a-4d6bec23f1e0',
+  adClickId: 'fc51e99c-3acb-4653-9b6a-4d6bec23f1e0',
   referredAt: 'ee90165d-4092-48bb-ba54-d9f85560f010',
   person: 'a0ab72c4-f0dd-4536-952c-1819a06a8422',
   opportunity: 'f754f0fe-a754-4f0d-8db5-80c077831c98',
@@ -141,7 +141,7 @@ export const WHATSAPP_AD_REFERRALS_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = {
   person: 'b4495b48-bc85-465b-9edb-fc585d13eb2e',
   referredAt: '99e283a1-7472-4857-a193-91d1c7a0cf4f',
   sourceType: '0e9385d1-b36b-4c7d-836e-308a1d1f75a2',
-  ctwaClid: '02204102-c3ab-4d06-b4e8-8a50486171b6',
+  adClickId: '02204102-c3ab-4d06-b4e8-8a50486171b6',
   opportunity: '2707197d-de09-479b-8ac3-980e07ac37b8',
 } as const;
 export const WHATSAPP_AD_REFERRALS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER = '33cd4138-e610-4919-8db7-bd85ec8bd957';

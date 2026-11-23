@@ -21,17 +21,35 @@ import { type WhatsAppCampaignRecipient } from 'src/logic-functions/types/whatsa
 type RecipientFilter = 'ALL' | 'FAILED' | 'NOT_REPLIED' | 'REPLIED';
 type ResendAudience = 'FAILED' | 'NOT_REPLIED';
 
-const matchesRecipientFilter = ({ status, hasReplied }: WhatsAppCampaignRecipient, filter: RecipientFilter) => {
+const matchesRecipientFilter = ({
+  recipient,
+  filter,
+}: {
+  recipient: WhatsAppCampaignRecipient;
+  filter: RecipientFilter;
+}) => {
   switch (filter) {
     case 'ALL':
       return true;
     case 'FAILED':
-      return status === 'FAILED';
+      return recipient.status === 'FAILED';
     case 'NOT_REPLIED':
-      return !hasReplied;
+      return !recipient.hasReplied;
     case 'REPLIED':
-      return hasReplied;
+      return recipient.hasReplied;
   }
+};
+
+const getRecipientDetailText = ({ statusError, sentAt }: WhatsAppCampaignRecipient) => {
+  if (isNonEmptyString(statusError)) {
+    return statusError;
+  }
+
+  if (isNonEmptyString(sentAt)) {
+    return new Date(sentAt).toLocaleString();
+  }
+
+  return '';
 };
 
 type CampaignRecipientsResponse =
@@ -197,7 +215,7 @@ const CampaignRecipientsList = () => {
     return <span style={secondaryTextStyle}>{t('No message sent yet. Scheduled and queued messages appear here once sent.')}</span>;
   }
 
-  const visibleRecipients = recipients.filter((recipient) => matchesRecipientFilter(recipient, filter));
+  const visibleRecipients = recipients.filter((recipient) => matchesRecipientFilter({ recipient, filter }));
 
   return (
     <div style={listStyle}>
@@ -248,13 +266,7 @@ const CampaignRecipientsList = () => {
               .filter(isNonEmptyString)
               .join(' · ')}
           </span>
-          <span style={secondaryTextStyle}>
-            {isNonEmptyString(recipient.statusError)
-              ? recipient.statusError
-              : isNonEmptyString(recipient.sentAt)
-                ? new Date(recipient.sentAt).toLocaleString()
-                : ''}
-          </span>
+          <span style={secondaryTextStyle}>{getRecipientDetailText(recipient)}</span>
         </div>
       ))}
     </div>

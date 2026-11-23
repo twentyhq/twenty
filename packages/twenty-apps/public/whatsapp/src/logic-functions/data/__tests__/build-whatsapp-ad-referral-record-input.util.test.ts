@@ -26,7 +26,7 @@ describe('buildWhatsAppAdReferralRecordInput', () => {
       sourceUrl: 'https://fb.me/ad',
       body: 'Up to 50% off',
       mediaType: 'image',
-      ctwaClid: 'ARAkLkA8rmlFeiCktEJQ',
+      adClickId: 'ARAkLkA8rmlFeiCktEJQ',
       referredAt: '2026-11-20T10:00:00.000Z',
       personId: 'person-id',
     });

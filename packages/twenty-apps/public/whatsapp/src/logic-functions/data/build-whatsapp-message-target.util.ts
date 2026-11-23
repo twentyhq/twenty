@@ -2,7 +2,6 @@ import { isBusinessScopedUserId } from 'src/logic-functions/data/is-business-sco
 
 const PHONE_NUMBER_PATTERN = /^\d+$/;
 
-// thread external ids are a group ID, a business-scoped user ID or a phone number
 export const buildWhatsAppMessageTarget = (
   threadExternalId: string,
 ): { recipient_type: 'individual' | 'group'; to: string } | { recipient_type: 'individual'; recipient: string } => {

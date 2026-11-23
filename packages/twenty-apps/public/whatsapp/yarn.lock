@@ -493,6 +493,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@twentyhq/whatsapp@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@twentyhq/whatsapp@workspace:."
+  dependencies:
+    "@sniptt/guards": "npm:^0.2.0"
+    "@types/node": "npm:^26.6.0"
+    "@types/react": "npm:^19.0.0"
+    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
+    axios: "npm:^1.20.0"
+    libphonenumber-js: "npm:^1.13.15"
+    oxlint: "npm:^1.53.0"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    twenty-client-sdk: "npm:^2.60.0"
+    twenty-sdk: "npm:^2.60.0"
+    twenty-ui: "npm:^2.60.0"
+    typescript: "npm:^5.9.3"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^5.0.5"
+    zod: "npm:^4.6.5"
+  languageName: unknown
+  linkType: soft
+
 "@types/chai@npm:^5.2.2":
   version: 5.2.3
   resolution: "@types/chai@npm:5.2.3"
@@ -1669,29 +1692,6 @@ __metadata:
   checksum: 10c0/5612d5f3e54760a797052eb4927f0ddc01383550f542ccd33d5238cfd65aeed392a45ad38364970d0a0f4fea32e1f4d231b3d8dac4a3bdd385e5cf802ae097db
   languageName: node
   linkType: hard
-
-"whatsapp@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "whatsapp@workspace:."
-  dependencies:
-    "@sniptt/guards": "npm:^0.2.0"
-    "@types/node": "npm:^26.6.0"
-    "@types/react": "npm:^19.0.0"
-    "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
-    axios: "npm:^1.20.0"
-    libphonenumber-js: "npm:^1.13.15"
-    oxlint: "npm:^1.53.0"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    twenty-client-sdk: "npm:^2.60.0"
-    twenty-sdk: "npm:^2.60.0"
-    twenty-ui: "npm:^2.60.0"
-    typescript: "npm:^5.9.3"
-    vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^5.0.5"
-    zod: "npm:^4.6.5"
-  languageName: unknown
-  linkType: soft
 
 "whatwg-url@npm:^5.0.0":
   version: 5.0.0

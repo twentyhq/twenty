@@ -37,7 +37,12 @@ type WhatsAppTemplateOption = {
 
 type WhatsAppTemplatesResponse = {
   data?: {
-    whatsAppTemplates?: Array<Omit<WhatsAppTemplateOption, 'components'> & { status: string | null; components: unknown }>;
+    whatsAppTemplates?: Array<
+      Omit<WhatsAppTemplateOption, 'components'> & {
+        status: string | null;
+        components: WhatsAppTemplateComponent[] | null;
+      }
+    >;
   };
 };
 
@@ -83,7 +88,7 @@ const fetchApprovedTemplates = async (): Promise<WhatsAppTemplateOption[]> => {
     .filter(({ status }) => status === 'APPROVED')
     .map(({ status: _status, components, ...template }) => ({
       ...template,
-      components: Array.isArray(components) ? components : [],
+      components: components ?? [],
     }));
 };
 
@@ -145,36 +150,59 @@ export const SendWhatsAppTemplateForm = () => {
     !isSending &&
     valueKeys.every((key) => isDefined(personFields[key]) || isNonEmptyString(values[key]?.trim()));
 
-  const getScopedEntries = <TValue,>(scope: string, keys: string[], source: Record<string, TValue>) =>
-    Object.fromEntries(keys.map((key) => [key, source[`${scope}:${key}`]]));
+  const getScopedEntries = <TValue,>({
+    scope,
+    keys,
+    source,
+  }: {
+    scope: string;
+    keys: string[];
+    source: Record<string, TValue>;
+  }) => Object.fromEntries(keys.map((key) => [key, source[`${scope}:${key}`]]));
 
-  const buildScopedParameters = (scope: 'header' | 'body', keys: string[]) =>
+  const buildScopedParameters = ({ scope, keys }: { scope: 'header' | 'body'; keys: string[] }) =>
     buildPersonalizableTemplateParameters({
       keys,
-      values: getScopedEntries(scope, keys, values),
-      personFields: getScopedEntries(scope, keys, personFields),
+      values: getScopedEntries({ scope, keys, source: values }),
+      personFields: getScopedEntries({ scope, keys, source: personFields }),
       parameterFormat: template?.parameterFormat,
     });
 
-  const headerParameters = buildScopedParameters('header', formFields?.headerParameterKeys ?? []);
-  const bodyParameters = buildScopedParameters('body', formFields?.bodyParameterKeys ?? []);
+  const headerParameters = buildScopedParameters({ scope: 'header', keys: formFields?.headerParameterKeys ?? [] });
+  const bodyParameters = buildScopedParameters({ scope: 'body', keys: formFields?.bodyParameterKeys ?? [] });
 
-  // person fields show as [field name] and empty values keep their placeholder
-  const toPreviewParameters = (parameters: typeof bodyParameters, keys: string[]) =>
-    parameters.map(({ name, value, personField }, index) => ({
-      ...(isDefined(name) ? { name } : {}),
-      value: isDefined(personField)
-        ? `[${personFieldLabels[personField]}]`
-        : isNonEmptyString(value)
-          ? value
-          : `{{${keys[index] ?? ''}}}`,
+  const getPreviewValue = ({
+    parameter: { value, personField },
+    placeholderKey,
+  }: {
+    parameter: (typeof bodyParameters)[number];
+    placeholderKey: string | undefined;
+  }) => {
+    if (isDefined(personField)) {
+      return `[${personFieldLabels[personField]}]`;
+    }
+
+    if (isNonEmptyString(value)) {
+      return value;
+    }
+
+    return `{{${placeholderKey ?? ''}}}`;
+  };
+
+  const toPreviewParameters = ({ parameters, keys }: { parameters: typeof bodyParameters; keys: string[] }) =>
+    parameters.map((parameter, index) => ({
+      ...(isDefined(parameter.name) ? { name: parameter.name } : {}),
+      value: getPreviewValue({ parameter, placeholderKey: keys[index] }),
     }));
 
   const preview = isDefined(template)
     ? renderWhatsAppTemplateText({
         components: template.components,
-        headerParameters: toPreviewParameters(headerParameters, formFields?.headerParameterKeys ?? []),
-        bodyParameters: toPreviewParameters(bodyParameters, formFields?.bodyParameterKeys ?? []),
+        headerParameters: toPreviewParameters({
+          parameters: headerParameters,
+          keys: formFields?.headerParameterKeys ?? [],
+        }),
+        bodyParameters: toPreviewParameters({ parameters: bodyParameters, keys: formFields?.bodyParameterKeys ?? [] }),
         parameterFormat: template.parameterFormat,
       })
     : '';
@@ -277,98 +305,108 @@ export const SendWhatsAppTemplateForm = () => {
     }
   };
 
+  const renderContent = () => {
+    if (isLoading) {
+      return <span>{t('Loading templates…')}</span>;
+    }
+
+    if (isNonEmptyString(loadError)) {
+      return <Callout status="error" title={loadError} />;
+    }
+
+    if (templates.length === 0) {
+      return <Callout status="warning" title={t('No approved WhatsApp template yet')} />;
+    }
+
+    return (
+      <div style={columnStyle}>
+        <select
+          style={selectStyle}
+          value={templateId}
+          disabled={isSending}
+          aria-label={t('Template')}
+          onChange={(event) => {
+            setTemplateId(event.target.value);
+            setValues({});
+            setPersonFields({});
+          }}
+        >
+          <option value="">{t('Pick a template')}</option>
+          {templates.map((option) => (
+            <option key={option.id} value={option.id}>
+              {`${option.name} (${option.language})`}
+            </option>
+          ))}
+        </select>
+        {isDefined(formFields) && (
+          <>
+            {formFields.headerParameterKeys.map((key) => (
+              <PersonalizableParameterField
+                key={`header:${key}`}
+                label={t('Header parameter {key}', { key })}
+                value={values[`header:${key}`] ?? ''}
+                personField={personFields[`header:${key}`]}
+                disabled={isSending}
+                onValueChange={(value) => setValue(`header:${key}`, value)}
+                onPersonFieldChange={(personField) => setPersonField(`header:${key}`, personField)}
+              />
+            ))}
+            {isDefined(formFields.headerMediaType) && (
+              <WhatsAppTemplateFormField
+                label={t('Header {mediaType} link', { mediaType: formFields.headerMediaType })}
+                placeholder="https://"
+                value={values.headerMedia ?? ''}
+                disabled={isSending}
+                onChange={(value) => setValue('headerMedia', value)}
+              />
+            )}
+            {formFields.bodyParameterKeys.map((key) => (
+              <PersonalizableParameterField
+                key={`body:${key}`}
+                label={t('Body parameter {key}', { key })}
+                value={values[`body:${key}`] ?? ''}
+                personField={personFields[`body:${key}`]}
+                disabled={isSending}
+                onValueChange={(value) => setValue(`body:${key}`, value)}
+                onPersonFieldChange={(personField) => setPersonField(`body:${key}`, personField)}
+              />
+            ))}
+            {formFields.buttonInputs.map(({ index, subType, label }) => (
+              <WhatsAppTemplateFormField
+                key={`button:${index}`}
+                label={subType === 'url' ? t('{label} link ending', { label }) : t('{label} code', { label })}
+                value={values[`button:${index}`] ?? ''}
+                disabled={isSending}
+                onChange={(value) => setValue(`button:${index}`, value)}
+              />
+            ))}
+            <div style={previewStyle}>{preview}</div>
+            <label style={sendAtLabelStyle}>
+              {t('Send later (optional, up to 30 days ahead)')}
+              <input
+                type="datetime-local"
+                style={selectStyle}
+                value={sendAtLocal}
+                disabled={isSending}
+                onChange={(event) => setSendAtLocal(event.target.value)}
+              />
+            </label>
+            <Button type="button" variant="solid" color="accent" disabled={!canSend} onClick={handleSend}>
+              {isSending ? t('Sending…') : t('Review and send')}
+            </Button>
+          </>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Section.Root>
       <Section.Header
         title={t('Send WhatsApp template')}
         description={t('Sends an approved template to the selected people as a campaign. Values can be the same for everyone or taken from each person.')}
       />
-      {isLoading ? (
-        <span>{t('Loading templates…')}</span>
-      ) : isNonEmptyString(loadError) ? (
-        <Callout status="error" title={loadError} />
-      ) : templates.length === 0 ? (
-        <Callout status="warning" title={t('No approved WhatsApp template yet')} />
-      ) : (
-        <div style={columnStyle}>
-          <select
-            style={selectStyle}
-            value={templateId}
-            disabled={isSending}
-            aria-label={t('Template')}
-            onChange={(event) => {
-              setTemplateId(event.target.value);
-              setValues({});
-              setPersonFields({});
-            }}
-          >
-            <option value="">{t('Pick a template')}</option>
-            {templates.map((option) => (
-              <option key={option.id} value={option.id}>
-                {`${option.name} (${option.language})`}
-              </option>
-            ))}
-          </select>
-          {isDefined(formFields) && (
-            <>
-              {formFields.headerParameterKeys.map((key) => (
-                <PersonalizableParameterField
-                  key={`header:${key}`}
-                  label={t('Header parameter {key}', { key })}
-                  value={values[`header:${key}`] ?? ''}
-                  personField={personFields[`header:${key}`]}
-                  disabled={isSending}
-                  onValueChange={(value) => setValue(`header:${key}`, value)}
-                  onPersonFieldChange={(personField) => setPersonField(`header:${key}`, personField)}
-                />
-              ))}
-              {isDefined(formFields.headerMediaType) && (
-                <WhatsAppTemplateFormField
-                  label={t('Header {mediaType} link', { mediaType: formFields.headerMediaType })}
-                  placeholder="https://"
-                  value={values.headerMedia ?? ''}
-                  disabled={isSending}
-                  onChange={(value) => setValue('headerMedia', value)}
-                />
-              )}
-              {formFields.bodyParameterKeys.map((key) => (
-                <PersonalizableParameterField
-                  key={`body:${key}`}
-                  label={t('Body parameter {key}', { key })}
-                  value={values[`body:${key}`] ?? ''}
-                  personField={personFields[`body:${key}`]}
-                  disabled={isSending}
-                  onValueChange={(value) => setValue(`body:${key}`, value)}
-                  onPersonFieldChange={(personField) => setPersonField(`body:${key}`, personField)}
-                />
-              ))}
-              {formFields.buttonInputs.map(({ index, subType, label }) => (
-                <WhatsAppTemplateFormField
-                  key={`button:${index}`}
-                  label={subType === 'url' ? t('{label} link ending', { label }) : t('{label} code', { label })}
-                  value={values[`button:${index}`] ?? ''}
-                  disabled={isSending}
-                  onChange={(value) => setValue(`button:${index}`, value)}
-                />
-              ))}
-              <div style={previewStyle}>{preview}</div>
-              <label style={sendAtLabelStyle}>
-                {t('Send later (optional, up to 30 days ahead)')}
-                <input
-                  type="datetime-local"
-                  style={selectStyle}
-                  value={sendAtLocal}
-                  disabled={isSending}
-                  onChange={(event) => setSendAtLocal(event.target.value)}
-                />
-              </label>
-              <Button type="button" variant="solid" color="accent" disabled={!canSend} onClick={handleSend}>
-                {isSending ? t('Sending…') : t('Review and send')}
-              </Button>
-            </>
-          )}
-        </div>
-      )}
+      {renderContent()}
     </Section.Root>
   );
 };

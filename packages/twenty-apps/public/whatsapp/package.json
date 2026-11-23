@@ -1,6 +1,7 @@
 {
-  "name": "whatsapp",
+  "name": "@twentyhq/whatsapp",
   "version": "0.1.0",
+  "description": "WhatsApp Business messaging for Twenty: conversations, templates, campaigns and ad referrals.",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -8,7 +9,15 @@
     "yarn": ">=4.0.2",
     "twenty": ">=2.59.0"
   },
-  "keywords": [],
+  "keywords": [
+    "twenty-app"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-apps/public/whatsapp"
+  },
+  "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/whatsapp",
   "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
@@ -19,13 +28,16 @@
     "test:watch": "vitest",
     "test:unit": "vitest run --config vitest.unit.config.ts"
   },
-  "devDependencies": {
+  "dependencies": {
     "@sniptt/guards": "^0.2.0",
+    "axios": "^1.20.0",
+    "libphonenumber-js": "^1.13.15",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
     "@types/node": "^26.6.0",
     "@types/react": "^19.0.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
-    "axios": "^1.20.0",
-    "libphonenumber-js": "^1.13.15",
     "oxlint": "^1.53.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -34,7 +46,6 @@
     "twenty-ui": "^2.60.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^5.0.5",
-    "zod": "^4.6.5"
+    "vitest": "^5.0.5"
   }
 }

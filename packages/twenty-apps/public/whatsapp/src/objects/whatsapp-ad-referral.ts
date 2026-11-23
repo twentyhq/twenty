@@ -71,9 +71,9 @@ export default defineObject({
       isUIEditable: false,
     },
     {
-      universalIdentifier: WHATSAPP_AD_REFERRAL_FIELD_UNIVERSAL_IDENTIFIERS.ctwaClid,
+      universalIdentifier: WHATSAPP_AD_REFERRAL_FIELD_UNIVERSAL_IDENTIFIERS.adClickId,
       type: FieldType.TEXT,
-      name: 'ctwaClid',
+      name: 'adClickId',
       label: 'Click ID',
       description: 'Click-to-WhatsApp click ID, for reporting conversions back to Meta',
       icon: 'IconClick',

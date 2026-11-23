@@ -17,7 +17,7 @@ export const buildWhatsAppAdReferralRecordInput = ({
   sourceUrl: referral.source_url ?? null,
   body: referral.body ?? null,
   mediaType: referral.media_type ?? null,
-  ctwaClid: referral.ctwa_clid ?? null,
+  adClickId: referral.ctwa_clid ?? null,
   referredAt: referredAt.toISOString(),
   personId,
 });

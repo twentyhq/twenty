@@ -21,21 +21,25 @@ export const buildWhatsAppInteractiveContent = ({
   };
 
   if (isDefined(list)) {
-    let rowIndex = 0;
-
     return {
       ...frame,
       type: 'list',
       action: {
         button: list.buttonText,
-        sections: list.sections.map(({ title, rows }) => ({
-          ...(isDefined(title) ? { title } : {}),
-          rows: rows.map(({ id, title: rowTitle, description }) => ({
-            id: id ?? `option-${++rowIndex}`,
-            title: rowTitle,
-            ...(isDefined(description) ? { description } : {}),
-          })),
-        })),
+        sections: list.sections.map(({ title, rows }, sectionIndex) => {
+          const rowOffset = list.sections
+            .slice(0, sectionIndex)
+            .reduce((total, section) => total + section.rows.length, 0);
+
+          return {
+            ...(isDefined(title) ? { title } : {}),
+            rows: rows.map(({ id, title: rowTitle, description }, rowIndex) => ({
+              id: id ?? `option-${rowOffset + rowIndex + 1}`,
+              title: rowTitle,
+              ...(isDefined(description) ? { description } : {}),
+            })),
+          };
+        }),
       },
     };
   }

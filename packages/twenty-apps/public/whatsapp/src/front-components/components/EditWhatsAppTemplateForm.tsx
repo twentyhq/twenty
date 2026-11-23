@@ -23,7 +23,7 @@ type WhatsAppTemplateResponse = {
       name: string;
       category: string | null;
       parameterFormat: string | null;
-      components: unknown;
+      components: WhatsAppTemplateComponent[] | null;
     };
   };
 };
@@ -80,7 +80,7 @@ export const EditWhatsAppTemplateForm = () => {
           return;
         }
 
-        const components: WhatsAppTemplateComponent[] = Array.isArray(record.components) ? record.components : [];
+        const components = record.components ?? [];
         const headerComponent = components.find((component) => component.type.toUpperCase() === 'HEADER');
 
         setTemplate({
@@ -105,6 +105,22 @@ export const EditWhatsAppTemplateForm = () => {
     isNonEmptyString(body.trim()) &&
     (!isContentEditable || exampleKeys.every((key) => isNonEmptyString(examples[key]?.trim())));
 
+  const buildContentChanges = (parameterFormat: string | null) => {
+    if (!isContentEditable) {
+      return {};
+    }
+
+    return {
+      body: body.trim(),
+      ...(isNonEmptyString(header.trim()) ? { header: header.trim() } : {}),
+      ...(isNonEmptyString(footer.trim()) ? { footer: footer.trim() } : {}),
+      bodyExamples: exampleKeys.map((key) => ({
+        ...(parameterFormat === 'NAMED' ? { name: key } : {}),
+        example: examples[key]?.trim() ?? '',
+      })),
+    };
+  };
+
   const handleSave = async () => {
     if (!isDefined(template)) {
       return;
@@ -116,17 +132,7 @@ export const EditWhatsAppTemplateForm = () => {
       const result = await new RestApiClient().post<TemplateRouteResult>(`/s${WHATSAPP_TEMPLATE_ROUTE_PATHS.edit}`, {
         templateId: template.id,
         ...(isNonEmptyString(category) ? { category } : {}),
-        ...(isContentEditable
-          ? {
-              body: body.trim(),
-              ...(isNonEmptyString(header.trim()) ? { header: header.trim() } : {}),
-              ...(isNonEmptyString(footer.trim()) ? { footer: footer.trim() } : {}),
-              bodyExamples: exampleKeys.map((key) => ({
-                ...(template.parameterFormat === 'NAMED' ? { name: key } : {}),
-                example: examples[key]?.trim() ?? '',
-              })),
-            }
-          : {}),
+        ...buildContentChanges(template.parameterFormat),
       });
 
       if (!result.success) {

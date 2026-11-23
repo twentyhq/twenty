@@ -63,7 +63,7 @@ const fetchWorkspaceMembers = async (): Promise<WorkspaceMember[]> => {
 
     const endCursor = response.pageInfo?.endCursor;
     startingAfter =
-      response.pageInfo?.hasNextPage === true && isNonEmptyString(endCursor) ? endCursor : undefined;
+      response.pageInfo?.hasNextPage && isNonEmptyString(endCursor) ? endCursor : undefined;
   } while (isNonEmptyString(startingAfter));
 
   return workspaceMembers;
@@ -182,60 +182,68 @@ export const NotificationRecipientsSettings = () => {
     }
   };
 
+  const renderContent = () => {
+    if (isLoading) {
+      return <span style={rowStyle}>{t('Loading workspace members…')}</span>;
+    }
+
+    if (isNonEmptyString(loadError)) {
+      return <Callout status="error" title={loadError} />;
+    }
+
+    return (
+      <>
+        {!canEdit && (
+          <Callout
+            status="warning"
+            title={t('Read only')}
+            description={t(
+              'Only members who can manage applications can change who receives notifications.',
+            )}
+          />
+        )}
+        <div style={listStyle}>
+          {workspaceMembers.map((workspaceMember) => (
+            <label key={workspaceMember.id} style={rowStyle}>
+              <Checkbox
+                checked={selectedIds.has(workspaceMember.id)}
+                disabled={!canEdit || isSaving}
+                onCheckedChange={() => handleToggle(workspaceMember.id)}
+              />
+              <span>
+                {isNonEmptyString(workspaceMember.name)
+                  ? workspaceMember.name
+                  : workspaceMember.id}
+              </span>
+              {isNonEmptyString(workspaceMember.userEmail) && (
+                <span style={emailStyle}>{workspaceMember.userEmail}</span>
+              )}
+            </label>
+          ))}
+        </div>
+        {canEdit && (
+          <div style={footerStyle}>
+            <Button
+              type="button"
+              size="sm"
+              disabled={isSaving}
+              onClick={handleSave}
+            >
+              {isSaving ? t('Saving…') : t('Save')}
+            </Button>
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <Section.Root>
       <Section.Header
         title={t('Notification recipients')}
         description={t('Workspace members selected here receive WhatsApp alerts in their inbox.')}
       />
-      {isLoading ? (
-        <span style={rowStyle}>{t('Loading workspace members…')}</span>
-      ) : isNonEmptyString(loadError) ? (
-        <Callout status="error" title={loadError} />
-      ) : (
-        <>
-          {!canEdit && (
-            <Callout
-              status="warning"
-              title={t('Read only')}
-              description={t(
-                'Only members who can manage applications can change who receives notifications.',
-              )}
-            />
-          )}
-          <div style={listStyle}>
-            {workspaceMembers.map((workspaceMember) => (
-              <label key={workspaceMember.id} style={rowStyle}>
-                <Checkbox
-                  checked={selectedIds.has(workspaceMember.id)}
-                  disabled={!canEdit || isSaving}
-                  onCheckedChange={() => handleToggle(workspaceMember.id)}
-                />
-                <span>
-                  {isNonEmptyString(workspaceMember.name)
-                    ? workspaceMember.name
-                    : workspaceMember.id}
-                </span>
-                {isNonEmptyString(workspaceMember.userEmail) && (
-                  <span style={emailStyle}>{workspaceMember.userEmail}</span>
-                )}
-              </label>
-            ))}
-          </div>
-          {canEdit && (
-            <div style={footerStyle}>
-              <Button
-                type="button"
-                size="sm"
-                disabled={isSaving}
-                onClick={handleSave}
-              >
-                {isSaving ? t('Saving…') : t('Save')}
-              </Button>
-            </div>
-          )}
-        </>
-      )}
+      {renderContent()}
     </Section.Root>
   );
 };

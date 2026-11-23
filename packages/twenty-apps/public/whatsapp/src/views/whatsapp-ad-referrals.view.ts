@@ -7,7 +7,7 @@ import {
   WHATSAPP_AD_REFERRALS_VIEW_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-const VIEW_FIELD_ORDER = ['headline', 'person', 'opportunity', 'referredAt', 'sourceId', 'sourceType', 'ctwaClid'] as const;
+const VIEW_FIELD_ORDER = ['headline', 'person', 'opportunity', 'referredAt', 'sourceId', 'sourceType', 'adClickId'] as const;
 
 export default defineView({
   universalIdentifier: WHATSAPP_AD_REFERRALS_VIEW_UNIVERSAL_IDENTIFIER,

@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import { isDefined } from 'twenty-sdk/utils';
 
 const templateTextSchema = z.string().min(1);
 
 export const createTemplateParamsSchema = z
   .object({
-    wabaId: z.string().min(1).optional(),
+    whatsAppBusinessAccountId: z.string().min(1).optional(),
     name: z
       .string()
       .min(1)
@@ -22,6 +23,6 @@ export const createTemplateParamsSchema = z
   })
   .refine(
     ({ parameterFormat, bodyExamples }) =>
-      parameterFormat === 'POSITIONAL' || bodyExamples.every(({ name }) => name !== undefined),
+      parameterFormat === 'POSITIONAL' || bodyExamples.every(({ name }) => isDefined(name)),
     { message: 'Every body example needs a name for named parameters', path: ['bodyExamples'] },
   );

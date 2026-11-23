@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-sdk/utils';
 import { type PersonalizableTemplateParameter, type WhatsAppTemplatePersonField } from 'src/logic-functions/types/personalizable-template-parameter.type';
 
 // positional templates take values in placeholder order, named ones take a name with each value
@@ -17,6 +18,6 @@ export const buildPersonalizableTemplateParameters = ({
 
     return {
       ...(parameterFormat === 'NAMED' ? { name: key } : {}),
-      ...(personField !== undefined ? { personField } : { value: values[key]?.trim() ?? '' }),
+      ...(isDefined(personField) ? { personField } : { value: values[key]?.trim() ?? '' }),
     };
   });

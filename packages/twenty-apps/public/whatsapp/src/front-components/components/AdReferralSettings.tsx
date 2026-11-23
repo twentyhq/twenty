@@ -65,26 +65,34 @@ export const AdReferralSettings = () => {
     }
   };
 
+  const renderContent = () => {
+    if (isNonEmptyString(loadError)) {
+      return <Callout status="error" title={loadError} />;
+    }
+
+    if (!isDefined(settings)) {
+      return <span style={rowStyle}>{t('Loading…')}</span>;
+    }
+
+    return (
+      <label style={rowStyle}>
+        <Checkbox
+          checked={settings.isOpportunityCreated}
+          disabled={!settings.canEdit || isSaving}
+          onCheckedChange={(checked) => handleToggle(checked === true)}
+        />
+        <span>{t('Create an opportunity for the person, linked to the ad')}</span>
+      </label>
+    );
+  };
+
   return (
     <Section.Root>
       <Section.Header
         title={t('Click-to-WhatsApp ads')}
         description={t('What happens when someone starts a conversation from one of your ads.')}
       />
-      {isNonEmptyString(loadError) ? (
-        <Callout status="error" title={loadError} />
-      ) : !isDefined(settings) ? (
-        <span style={rowStyle}>{t('Loading…')}</span>
-      ) : (
-        <label style={rowStyle}>
-          <Checkbox
-            checked={settings.isOpportunityCreated}
-            disabled={!settings.canEdit || isSaving}
-            onCheckedChange={(checked) => handleToggle(checked === true)}
-          />
-          <span>{t('Create an opportunity for the person, linked to the ad')}</span>
-        </label>
-      )}
+      {renderContent()}
     </Section.Root>
   );
 };

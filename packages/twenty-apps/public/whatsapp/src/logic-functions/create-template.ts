@@ -12,7 +12,7 @@ import { whatsAppApiRequest } from 'src/logic-functions/data/whatsapp-api-reques
 const CREATE_TEMPLATE_INPUT_SCHEMA: InputJsonSchema = {
   type: 'object',
   properties: {
-    wabaId: {
+    whatsAppBusinessAccountId: {
       type: 'string',
       label: 'WhatsApp Business Account ID',
       description: 'Meta ID of the account that will own the template. Optional when only one account is connected.',
@@ -68,13 +68,14 @@ const handler = async (rawParams: unknown) => {
 
   const params = parsedParams.data;
   const components = buildTemplateDefinitionComponents(params);
-  const wabaId = params.wabaId ?? (await getDefaultWhatsAppBusinessAccountIdOrThrow());
-  const accessToken = await getWhatsAppAccessTokenOrThrow({ whatsAppBusinessAccountId: wabaId });
+  const whatsAppBusinessAccountId =
+    params.whatsAppBusinessAccountId ?? (await getDefaultWhatsAppBusinessAccountIdOrThrow());
+  const accessToken = await getWhatsAppAccessTokenOrThrow({ whatsAppBusinessAccountId });
 
   const response = await whatsAppApiRequest({
     accessToken,
     endpoint: 'POST /{wabaId}/message_templates',
-    pathParams: { wabaId },
+    pathParams: { wabaId: whatsAppBusinessAccountId },
     data: {
       name: params.name,
       category: params.category,
@@ -87,7 +88,7 @@ const handler = async (rawParams: unknown) => {
   await upsertWhatsAppTemplates([
     {
       metaTemplateId: response.id,
-      whatsAppBusinessAccountId: wabaId,
+      whatsAppBusinessAccountId,
       name: params.name,
       language: params.language,
       category: response.category ?? params.category,

@@ -44,13 +44,12 @@ In the Meta App Dashboard, open **WhatsApp > Configuration**:
 
 Connect WhatsApp in Twenty with the system user token. For every WhatsApp Business Account the token can manage, the app subscribes to its webhooks, creates a message channel per phone number and imports its templates. Phone numbers added later get their channel with their first message.
 
-Reconnect after the token changes or loses access to an account, and once after updating the app so existing channels can send replies.
+Reconnect after the token changes or loses access to an account.
 
 ## Limitations
 
 - WhatsApp only delivers free-form replies within 24 hours of the customer's last message, so later replies are refused; send a template instead.
 - A reply with several attachments is sent as one WhatsApp message per part, and only the first carries the delivery status.
-- Conversations that were already split in two before this version stay split; new messages join the existing thread.
 - Media older than two weeks in an imported history is shown as unavailable, because Meta no longer sends it.
 
 ## Development
