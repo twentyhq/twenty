@@ -6,8 +6,7 @@ import { currentRecordFieldsComponentState } from '@/object-record/record-field/
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
-import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
-import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/utils/findRelationTargetObjectMetadataItem';
+import { resolveScopableRelation } from '@/object-record/record-column-scope/utils/resolveScopableRelation';
 import { SidePanelEditColumnFilterDropdownStatesEffect } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnFilterDropdownStatesEffect';
 import { SidePanelEditColumnForm } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnForm';
 import {
@@ -66,21 +65,16 @@ const SidePanelEditColumnPageContent = ({
     return null;
   }
 
-  if (
-    !isDefined(fieldMetadataItem) ||
-    !isPlainOneToManyRelationField(fieldMetadataItem)
-  ) {
+  const scopableRelation = isDefined(fieldMetadataItem)
+    ? resolveScopableRelation({ fieldMetadataItem, objectMetadataItems })
+    : undefined;
+
+  if (!isDefined(fieldMetadataItem) || !isDefined(scopableRelation)) {
     return null;
   }
 
-  const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
-    fieldMetadataItem,
-    objectMetadataItems,
-  });
-
-  if (!isDefined(relationObjectMetadataItem)) {
-    return null;
-  }
+  const { relationObjectMetadataItem, scopedRelationJunction } =
+    scopableRelation;
 
   return (
     <ContextStoreComponentInstanceContext.Provider
@@ -99,6 +93,7 @@ const SidePanelEditColumnPageContent = ({
               recordTableId={recordTableId}
               fieldMetadataItem={fieldMetadataItem}
               relationObjectMetadataItem={relationObjectMetadataItem}
+              scopedRelationJunction={scopedRelationJunction}
               recordFieldId={recordFieldId}
               storedRelationScope={recordField?.relationScope}
               storedRelationTargetFieldMetadataId={

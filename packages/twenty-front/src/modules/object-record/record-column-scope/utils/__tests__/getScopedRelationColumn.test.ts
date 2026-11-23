@@ -11,6 +11,10 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
   fieldName: 'people',
 });
+const personTaskTargetsField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personObjectMetadataItem,
+  fieldName: 'taskTargets',
+});
 const emailsField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'emails',
@@ -67,7 +71,16 @@ describe('getScopedRelationColumn', () => {
       },
     },
     {
-      title: 'a relation that goes through a junction',
+      title: 'a relation to a join object with several target objects',
+      args: {
+        fieldMetadataItem: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: getMockObjectMetadataItemOrThrow('task'),
+          fieldName: 'taskTargets',
+        }),
+      },
+    },
+    {
+      title: 'a relation whose junction is invalid',
       args: {
         fieldMetadataItem: {
           ...companyPeopleField,
@@ -115,5 +128,24 @@ describe('getScopedRelationColumn', () => {
 
     expect(scopedRelationColumn).toBeDefined();
     expect(scopedRelationColumn?.lookupTarget).toBeUndefined();
+  });
+
+  it('resolves the join object of a relation with one target object, without a lookup target', () => {
+    const scopedRelationColumn = getColumn({
+      fieldMetadataItem: personTaskTargetsField,
+      recordField: {
+        ...SCOPED_RECORD_FIELD,
+        relationTargetFieldMetadataId: getMockFieldMetadataItemOrThrow({
+          objectMetadataItem: getMockObjectMetadataItemOrThrow('taskTarget'),
+          fieldName: 'createdAt',
+        }).id,
+      },
+    });
+
+    expect(scopedRelationColumn?.lookupTarget).toBeUndefined();
+    expect(
+      scopedRelationColumn?.scopedRelationJunction?.targetObjectMetadataItem
+        .nameSingular,
+    ).toBe('task');
   });
 });

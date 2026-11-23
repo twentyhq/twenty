@@ -1,11 +1,12 @@
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
 import { RecordTableScopedRelationColumnSelectMenu } from '@/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu';
+import { resolveScopableRelation } from '@/object-record/record-column-scope/utils/resolveScopableRelation';
 import { useCanAddRecordTableLookupColumns } from '@/object-record/record-table/hooks/useCanAddRecordTableLookupColumns';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
-import { isPlainOneToManyRelationField } from '@/object-record/utils/isPlainOneToManyRelationField';
 import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -58,6 +59,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   });
 
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const { openEditColumnInSidePanel } =
     useOpenEditColumnInSidePanel(recordTableId);
 
@@ -75,7 +77,10 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   // A one-to-many relation stays listed once shown, to reach its filtered columns
   const isScopedRelation = (fieldMetadataItem: FieldMetadataItem) =>
-    canAddLookupColumns && isPlainOneToManyRelationField(fieldMetadataItem);
+    canAddLookupColumns &&
+    isDefined(
+      resolveScopableRelation({ fieldMetadataItem, objectMetadataItems }),
+    );
 
   const hasSubPage = (fieldMetadataItem: FieldMetadataItem) =>
     isLookupRelation(fieldMetadataItem) || isScopedRelation(fieldMetadataItem);

@@ -4,7 +4,10 @@ import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filte
 import { getLookupTargetFieldMetadataItems } from '@/object-record/record-column-lookup/utils/getLookupTargetFieldMetadataItems';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
+import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
+import { getRelationScopeFieldMetadataItems } from '@/object-record/record-column-scope/utils/getRelationScopeFieldMetadataItems';
 import { getRelationScopeFromRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeFromRecordFiltersAndSorts';
+import { getRelationScopeToSave } from '@/object-record/record-column-scope/utils/getRelationScopeToSave';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -56,6 +59,7 @@ type SidePanelEditColumnFormProps = {
   recordTableId: string;
   fieldMetadataItem: FieldMetadataItem;
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
+  scopedRelationJunction?: ScopedRelationJunction;
   recordFieldId?: string;
   storedRelationScope?: ViewFieldRelationScope | null;
   storedRelationTargetFieldMetadataId?: string | null;
@@ -65,6 +69,7 @@ export const SidePanelEditColumnForm = ({
   recordTableId,
   fieldMetadataItem,
   relationObjectMetadataItem,
+  scopedRelationJunction,
   recordFieldId,
   storedRelationScope,
   storedRelationTargetFieldMetadataId,
@@ -93,11 +98,16 @@ export const SidePanelEditColumnForm = ({
     currentRecordSortsComponentState,
   );
 
+  const isJunctionRelation = isDefined(scopedRelationJunction);
+
   const [limitInput, setLimitInput] = useState(
     storedRelationScope?.limit?.toString() ?? '',
   );
+  // The target records of a join object are two hops away, too far for a column to show one of their fields
   const [relationTargetFieldMetadataId, setRelationTargetFieldMetadataId] =
-    useState(storedRelationTargetFieldMetadataId ?? null);
+    useState(
+      isJunctionRelation ? null : (storedRelationTargetFieldMetadataId ?? null),
+    );
   const [isSaving, setIsSaving] = useState(false);
 
   const trimmedLimitInput = limitInput.trim();
@@ -127,11 +137,15 @@ export const SidePanelEditColumnForm = ({
 
     setIsSaving(true);
 
-    const relationScope = getRelationScopeFromRecordFiltersAndSorts({
-      recordFilters: store.get(currentRecordFilters),
-      recordFilterGroups: store.get(currentRecordFilterGroups),
-      recordSorts: store.get(currentRecordSorts),
-      limit,
+    const relationScope = getRelationScopeToSave({
+      editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
+        recordFilters: store.get(currentRecordFilters),
+        recordFilterGroups: store.get(currentRecordFilterGroups),
+        recordSorts: store.get(currentRecordSorts),
+        limit,
+      }),
+      storedRelationScope,
+      scopedRelationJunction,
     });
 
     const isSaved = await saveScopedRelationColumn({
@@ -168,39 +182,48 @@ export const SidePanelEditColumnForm = ({
         defaultLabel={columnHeader.label}
       />
       <StyledContent>
-        <FormFieldInputContainer>
-          <Field.Label>{t`Show`}</Field.Label>
-          <Select
-            dropdownId={`edit-column-show-${sidePanelPageId}`}
-            fullWidth
-            value={relationTargetFieldMetadataId}
-            pinnedOption={{
-              Icon: getIcon(relationObjectMetadataItem.icon),
-              label: relationObjectMetadataItem.labelPlural,
-              value: null,
-            }}
-            options={lookupTargetFieldMetadataItems.map(
-              (lookupTargetFieldMetadataItem) => ({
-                Icon: getIcon(lookupTargetFieldMetadataItem.icon),
-                label: lookupTargetFieldMetadataItem.label,
-                value: lookupTargetFieldMetadataItem.id,
-              }),
-            )}
-            onChange={setRelationTargetFieldMetadataId}
-            withSearchInput
-          />
-        </FormFieldInputContainer>
+        {!isJunctionRelation && (
+          <FormFieldInputContainer>
+            <Field.Label>{t`Show`}</Field.Label>
+            <Select
+              dropdownId={`edit-column-show-${sidePanelPageId}`}
+              fullWidth
+              value={relationTargetFieldMetadataId}
+              pinnedOption={{
+                Icon: getIcon(relationObjectMetadataItem.icon),
+                label: relationObjectMetadataItem.labelPlural,
+                value: null,
+              }}
+              options={lookupTargetFieldMetadataItems.map(
+                (lookupTargetFieldMetadataItem) => ({
+                  Icon: getIcon(lookupTargetFieldMetadataItem.icon),
+                  label: lookupTargetFieldMetadataItem.label,
+                  value: lookupTargetFieldMetadataItem.id,
+                }),
+              )}
+              onChange={setRelationTargetFieldMetadataId}
+              withSearchInput
+            />
+          </FormFieldInputContainer>
+        )}
         <FormFieldInputContainer>
           <Field.Label>{t`Filter`}</Field.Label>
           <AdvancedFilterSidePanelContainer
-            objectMetadataItem={relationObjectMetadataItem}
+            objectMetadataItem={
+              scopedRelationJunction?.targetObjectMetadataItem ??
+              relationObjectMetadataItem
+            }
             isWorkflowFindRecords={false}
+            shouldHideRelationFields={isJunctionRelation}
           />
         </FormFieldInputContainer>
         <FormFieldInputContainer>
           <Field.Label>{t`Sort`}</Field.Label>
           <RecordTableSettingsSortsContent
-            fieldMetadataItems={relationObjectMetadataItem.fields}
+            fieldMetadataItems={getRelationScopeFieldMetadataItems({
+              relationObjectMetadataItem,
+              scopedRelationJunction,
+            })}
           />
         </FormFieldInputContainer>
         <TextInput
