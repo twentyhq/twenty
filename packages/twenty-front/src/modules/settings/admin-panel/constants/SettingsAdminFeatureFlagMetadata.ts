@@ -72,6 +72,11 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Channel visibility through rules`,
     description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
   },
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
+    label: msg`Channel visibility on API keys`,
+    description: msg`Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would.`,
+  },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,

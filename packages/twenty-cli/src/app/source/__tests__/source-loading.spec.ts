@@ -216,7 +216,7 @@ export default defineFrontComponent({ component: Component });`,
     });
   });
 
-  it('mocks UI and generated clients and converts conditional availability without evaluating the expression', async () => {
+  it('mocks generated clients and converts conditional availability without evaluating the expression', async () => {
     await writeFile(
       join(appPath, 'command.ts'),
       `
@@ -240,6 +240,33 @@ export default defineFrontComponent({ component: Component });`,
       'arrayLength(selectedRecords) == 1 and not isSelected',
     );
     expect(result.config.component).toBeTypeOf('function');
+  });
+
+  it('loads twenty-ui like any dependency so module-level reads get real values', async () => {
+    await writeFile(
+      join(appPath, 'command.ts'),
+      `
+      import { defineCommandMenuItem } from 'twenty-sdk/define';
+      import { themeCssVariables } from 'twenty-ui/theme';
+      const labelStyle = {
+        color: themeCssVariables.font.color.primary,
+        border: \`1px solid \${themeCssVariables.border.color.medium}\`,
+      };
+      export default defineCommandMenuItem({
+        universalIdentifier: '${SOURCE_TEST_APPLICATION_ID}',
+        component: () => labelStyle,
+      });
+    `,
+    );
+    const result = await extractManifestFromFile({
+      appPath,
+      filePath: join(appPath, 'command.ts'),
+    });
+
+    expect((result.config.component as () => unknown)()).toEqual({
+      color: 'var(--t-font-color-primary)',
+      border: '1px solid var(--t-border-color-medium)',
+    });
   });
 
   it('keeps an unreadable definition occupied and preserves config even when SDK validation fails', async () => {
