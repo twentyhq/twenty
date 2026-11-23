@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
@@ -5,10 +7,15 @@ import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-m
 import { resolveCallRecorderPolicyResult } from 'src/logic-functions/domain/resolve-call-recorder-policy-result.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 
-export const buildCallRecorderPolicyResult = (
-  calendarEvent: CallRecorderPolicyCalendarEventInput,
-  now: Date,
-): CallRecorderPolicyResultForCalendarEvent => {
+export const buildCallRecorderPolicyResult = ({
+  calendarEvent,
+  ownerUserWorkspaceIdByCalendarChannelId,
+  now,
+}: {
+  calendarEvent: CallRecorderPolicyCalendarEventInput;
+  ownerUserWorkspaceIdByCalendarChannelId: Map<string, string>;
+  now: Date;
+}): CallRecorderPolicyResultForCalendarEvent => {
   const realMeetingKey = computeRealMeetingKey({
     calendarEventId: calendarEvent.id,
     conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
@@ -24,6 +31,11 @@ export const buildCallRecorderPolicyResult = (
     input: {
       isCalendarBotSchedulingEnabled: isCalendarBotSchedulingEnabled(),
       callRecorderPreference,
+      ownerUserWorkspaceIds: calendarEvent.calendarChannelIds
+        .map((calendarChannelId) =>
+          ownerUserWorkspaceIdByCalendarChannelId.get(calendarChannelId),
+        )
+        .filter(isString),
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
