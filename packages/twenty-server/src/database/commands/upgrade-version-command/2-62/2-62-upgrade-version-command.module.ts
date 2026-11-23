@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-workspace-command-1795369199914-drop-not-started-workflow-run-status.command';
 import { AddChannelAssociationAccountOwnerAndHandleCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-workspace-command-1795379764844-add-channel-association-account-owner-and-handle.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -13,6 +14,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
+    WorkspaceSchemaManagerModule,
   ],
   providers: [
     DropNotStartedWorkflowRunStatusCommand,

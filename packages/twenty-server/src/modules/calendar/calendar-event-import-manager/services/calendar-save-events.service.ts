@@ -61,7 +61,7 @@ export class CalendarSaveEventsService {
       accountOwnerFieldUniversalIdentifier:
         STANDARD_OBJECTS.calendarChannelEventAssociation.fields.accountOwner
           .universalIdentifier,
-      channelHandle: calendarChannel.handle,
+      channel: calendarChannel,
       flatFieldMetadataMaps,
       flatWorkspaceMemberMaps,
       userWorkspaceId: connectedAccount.userWorkspaceId,

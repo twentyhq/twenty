@@ -1,6 +1,7 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -10,16 +11,44 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 // Each batch commits on its own so a large mailbox never holds every row lock at once
 const BACKFILL_BATCH_SIZE = 5000;
+
+const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+
+const ACCOUNT_OWNER_JOIN_COLUMN_NAME = 'accountOwnerId';
+
+const CHANNEL_ASSOCIATIONS = [
+  {
+    standardObject: STANDARD_OBJECTS.calendarChannelEventAssociation,
+    channelIdColumnName: 'calendarChannelId',
+    coreChannelTableName: 'calendarChannel',
+    channelTypeColumnSql: 'NULL::text',
+  },
+  {
+    standardObject: STANDARD_OBJECTS.messageChannelMessageAssociation,
+    channelIdColumnName: 'messageChannelId',
+    coreChannelTableName: 'messageChannel',
+    channelTypeColumnSql: 'channel."type"',
+  },
+] as const;
+
+type ChannelAssociation = (typeof CHANNEL_ASSOCIATIONS)[number];
+
+type BackfillBatchResult = { lastId: string | null; updatedCount: number };
 
 const FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.calendarChannelEventAssociation.fields.accountOwner
@@ -36,26 +65,6 @@ const FIELD_UNIVERSAL_IDENTIFIERS = [
     .accountOwnerForMessageChannelMessageAssociations.universalIdentifier,
 ];
 
-const ACCOUNT_OWNER_INDEX_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.calendarChannelEventAssociation.indexes.accountOwnerIdIndex
-    .universalIdentifier,
-  STANDARD_OBJECTS.messageChannelMessageAssociation.indexes.accountOwnerIdIndex
-    .universalIdentifier,
-];
-
-const ASSOCIATION_BACKFILLS = [
-  {
-    associationTableName: 'calendarChannelEventAssociation',
-    channelIdColumnName: 'calendarChannelId',
-    coreChannelTableName: 'calendarChannel',
-  },
-  {
-    associationTableName: 'messageChannelMessageAssociation',
-    channelIdColumnName: 'messageChannelId',
-    coreChannelTableName: 'messageChannel',
-  },
-] as const;
-
 @RegisteredWorkspaceCommand('2.62.0', 1795379764844)
 @Command({
   name: 'upgrade:2-62:add-channel-association-account-owner-and-handle',
@@ -68,6 +77,7 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
@@ -77,7 +87,6 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -116,129 +125,277 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
-    const allFlatEntityOperationByMetadataName = {
-      fieldMetadata: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
-            standardFlatEntityMaps:
-              standardAllFlatEntityMaps.flatFieldMetadataMaps,
-            existingFlatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifiers: FIELD_UNIVERSAL_IDENTIFIERS,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      index: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
-            standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
-            existingFlatEntityMaps: flatIndexMaps,
-            universalIdentifiers: ACCOUNT_OWNER_INDEX_UNIVERSAL_IDENTIFIERS,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-    };
-    const fieldCount =
-      allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate
-        .length;
-    const indexCount =
-      allFlatEntityOperationByMetadataName.index.flatEntityToCreate.length;
-    const creationSummary = `${fieldCount} field(s) and ${indexCount} index(es)`;
 
-    if (isDryRun) {
+    const fieldsToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
+        existingFlatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifiers: FIELD_UNIVERSAL_IDENTIFIERS,
+      });
+    const indexesToCreate =
+      getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
+        existingFlatEntityMaps: flatIndexMaps,
+        universalIdentifiers: CHANNEL_ASSOCIATIONS.map(
+          ({ standardObject }) =>
+            standardObject.indexes.accountOwnerIdIndex.universalIdentifier,
+        ),
+      });
+
+    if (fieldsToCreate.length === 0 && indexesToCreate.length === 0) {
+      return;
+    }
+
+    if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would create ${creationSummary} and backfill account owners and handles for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${fieldsToCreate.length} field(s), backfill and index ${indexesToCreate.length} channel association table(s) for workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    if (fieldCount + indexCount > 0) {
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-          {
-            shouldDeferActions: false,
-            allFlatEntityOperationByMetadataName,
-            workspaceId,
-            isSystemBuild: true,
-            applicationUniversalIdentifier:
-              twentyStandardFlatApplication.universalIdentifier,
-          },
-        );
+    const applicationUniversalIdentifier =
+      twentyStandardFlatApplication.universalIdentifier;
 
-      if (result.status === 'fail') {
-        throw new Error(
-          `Failed to create the channel association account owner and handle for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
-        );
-      }
-
-      this.logger.log(
-        `Created ${creationSummary} for workspace ${workspaceId}`,
-      );
-    }
-
-    for (const associationBackfill of ASSOCIATION_BACKFILLS) {
-      await this.backfillAssociationSources({
+    if (fieldsToCreate.length > 0) {
+      await this.runMigration({
         workspaceId,
-        ...associationBackfill,
+        applicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          fieldMetadata: {
+            flatEntityToCreate: fieldsToCreate,
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [],
+          },
+        },
       });
     }
+
+    for (const channelAssociation of CHANNEL_ASSOCIATIONS) {
+      const indexToCreate = indexesToCreate.find(
+        ({ universalIdentifier }) =>
+          universalIdentifier ===
+          channelAssociation.standardObject.indexes.accountOwnerIdIndex
+            .universalIdentifier,
+      );
+
+      if (!isDefined(indexToCreate)) {
+        continue;
+      }
+
+      const flatObjectMetadata =
+        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifier:
+            channelAssociation.standardObject.universalIdentifier,
+        });
+
+      if (!isDefined(flatObjectMetadata)) {
+        continue;
+      }
+
+      const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
+        workspaceId,
+        objectMetadata: flatObjectMetadata,
+      });
+
+      await this.backfillAssociationSources({
+        workspaceId,
+        schemaName,
+        tableName,
+        channelAssociation,
+      });
+
+      await this.createIndexConcurrently({
+        workspaceId,
+        schemaName,
+        tableName,
+        indexToCreate,
+      });
+    }
+
+    await this.runMigration({
+      workspaceId,
+      applicationUniversalIdentifier,
+      allFlatEntityOperationByMetadataName: {
+        index: {
+          flatEntityToCreate: indexesToCreate,
+          flatEntityToDelete: [],
+          flatEntityToUpdate: [],
+        },
+      },
+    });
+
+    this.logger.log(
+      `Created ${fieldsToCreate.length} field(s) and ${indexesToCreate.length} index(es) for workspace ${workspaceId}`,
+    );
   }
 
   private async backfillAssociationSources({
     workspaceId,
-    associationTableName,
-    channelIdColumnName,
-    coreChannelTableName,
+    schemaName,
+    tableName,
+    channelAssociation: {
+      channelIdColumnName,
+      coreChannelTableName,
+      channelTypeColumnSql,
+    },
   }: {
     workspaceId: string;
-    associationTableName: string;
-    channelIdColumnName: string;
-    coreChannelTableName: string;
+    schemaName: string;
+    tableName: string;
+    channelAssociation: ChannelAssociation;
   }): Promise<void> {
-    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-
     // A member who left and rejoined keeps a soft-deleted row beside the live one
     const channelSources = await this.dataSource.query<
-      { channelId: string; handle: string; workspaceMemberId: string | null }[]
+      {
+        channelId: string;
+        handle: string;
+        accountOwnerId: string | null;
+      }[]
     >(
-      `SELECT channel.id AS "channelId", channel.handle AS "handle", member.id AS "workspaceMemberId"
+      `SELECT channel.id AS "channelId", channel.handle AS "handle",
+         CASE WHEN ${channelTypeColumnSql} = $2 THEN NULL ELSE member.id END AS "accountOwnerId"
        FROM core.${escapeIdentifier(coreChannelTableName)} channel
        JOIN core."connectedAccount" account ON account.id = channel."connectedAccountId"
-       JOIN core."userWorkspace" "userWorkspace" ON "userWorkspace".id = account."userWorkspaceId"
-       LEFT JOIN ${schemaName}."workspaceMember" member
+       LEFT JOIN core."userWorkspace" "userWorkspace" ON "userWorkspace".id = account."userWorkspaceId"
+       LEFT JOIN ${escapeIdentifier(schemaName)}."workspaceMember" member
          ON member."userId" = "userWorkspace"."userId" AND member."deletedAt" IS NULL
        WHERE channel."workspaceId" = $1`,
-      [workspaceId],
+      [workspaceId, MessageChannelType.EMAIL_GROUP],
     );
 
-    const associationTable = `${schemaName}.${escapeIdentifier(associationTableName)}`;
+    if (channelSources.length === 0) {
+      return;
+    }
+
+    const associationTable = `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
     const channelIdColumn = escapeIdentifier(channelIdColumnName);
+    let lastId: string | null = NIL_UUID;
     let updatedCount = 0;
 
-    for (const { channelId, handle, workspaceMemberId } of channelSources) {
-      let batchCount: number;
+    // A channel whose owner left has no member to record, so the handle marks the rows already done
+    while (isDefined(lastId)) {
+      const [batchResult]: BackfillBatchResult[] = await this.dataSource.query(
+        `WITH batch AS (
+           SELECT id FROM ${associationTable}
+           WHERE id > $1
+           ORDER BY id
+           LIMIT ${BACKFILL_BATCH_SIZE}
+         ), source AS (
+           SELECT * FROM unnest($2::uuid[], $3::text[], $4::uuid[])
+             AS source("channelId", "handle", "accountOwnerId")
+         ), updated AS (
+           UPDATE ${associationTable} association
+           SET "accountOwnerId" = source."accountOwnerId", "handle" = source."handle"
+           FROM batch, source
+           WHERE association.id = batch.id
+             AND association.${channelIdColumn} = source."channelId"
+             AND association."handle" IS NULL
+           RETURNING 1
+         )
+         SELECT
+           (SELECT id FROM batch ORDER BY id DESC LIMIT 1) AS "lastId",
+           (SELECT count(*) FROM updated)::int AS "updatedCount"`,
+        [
+          lastId,
+          channelSources.map(({ channelId }) => channelId),
+          channelSources.map(({ handle }) => handle),
+          channelSources.map(({ accountOwnerId }) => accountOwnerId),
+        ],
+      );
 
-      // A channel whose owner left has no member to record, so the handle marks the rows already done
-      do {
-        [, batchCount] = await this.dataSource.query<[unknown[], number]>(
-          `UPDATE ${associationTable}
-           SET "accountOwnerId" = $1, "handle" = $2
-           WHERE id IN (
-             SELECT id FROM ${associationTable}
-             WHERE ${channelIdColumn} = $3 AND "handle" IS NULL
-             LIMIT ${BACKFILL_BATCH_SIZE}
-           )`,
-          [workspaceMemberId, handle, channelId],
-        );
-
-        updatedCount += batchCount;
-      } while (batchCount === BACKFILL_BATCH_SIZE);
+      lastId = batchResult.lastId;
+      updatedCount += batchResult.updatedCount;
     }
 
     this.logger.log(
-      `Workspace ${workspaceId}: backfilled the account owner and handle of ${updatedCount} ${associationTableName} row(s)`,
+      `Workspace ${workspaceId}: backfilled the account owner and handle of ${updatedCount} ${tableName} row(s)`,
     );
+  }
+
+  private async createIndexConcurrently({
+    workspaceId,
+    schemaName,
+    tableName,
+    indexToCreate,
+  }: {
+    workspaceId: string;
+    schemaName: string;
+    tableName: string;
+    indexToCreate: FlatIndexMetadata;
+  }): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    let isQueryRunnerConnected = false;
+
+    try {
+      await queryRunner.connect();
+      isQueryRunnerConnected = true;
+
+      const invalidIndexes = await this.dataSource.query<{ name: string }[]>(
+        `SELECT c.relname AS name
+         FROM pg_index i
+         JOIN pg_class c ON c.oid = i.indexrelid
+         JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = $1 AND c.relname = $2 AND NOT i.indisvalid`,
+        [schemaName, indexToCreate.name],
+      );
+
+      for (const { name } of invalidIndexes) {
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: name,
+          concurrently: true,
+        });
+
+        this.logger.warn(
+          `Dropped invalid index ${name} left by an interrupted build in workspace ${workspaceId}, recreating it`,
+        );
+      }
+
+      await this.workspaceSchemaManagerService.indexManager.createIndex({
+        queryRunner,
+        schemaName,
+        tableName,
+        index: {
+          name: indexToCreate.name,
+          columns: [ACCOUNT_OWNER_JOIN_COLUMN_NAME],
+          isUnique: indexToCreate.isUnique,
+          type: indexToCreate.indexType,
+          where: indexToCreate.indexWhereClause ?? undefined,
+        },
+        concurrently: true,
+      });
+    } finally {
+      if (isQueryRunnerConnected) {
+        await queryRunner.release();
+      }
+    }
+  }
+
+  private async runMigration({
+    workspaceId,
+    applicationUniversalIdentifier,
+    allFlatEntityOperationByMetadataName,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
+  }): Promise<void> {
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          shouldDeferActions: false,
+          isSystemBuild: true,
+          applicationUniversalIdentifier,
+          workspaceId,
+          allFlatEntityOperationByMetadataName,
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(result);
+    }
   }
 }

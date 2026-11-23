@@ -84,7 +84,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
       accountOwnerFieldUniversalIdentifier:
         STANDARD_OBJECTS.messageChannelMessageAssociation.fields.accountOwner
           .universalIdentifier,
-      channelHandle: messageChannel.handle,
+      channel: messageChannel,
       flatFieldMetadataMaps,
       flatWorkspaceMemberMaps,
       userWorkspaceId: connectedAccount.userWorkspaceId,

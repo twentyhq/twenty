@@ -1,16 +1,17 @@
+import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 
 export const computeChannelAssociationSource = ({
   accountOwnerFieldUniversalIdentifier,
-  channelHandle,
+  channel,
   flatFieldMetadataMaps,
   flatWorkspaceMemberMaps,
   userWorkspaceId,
 }: {
   accountOwnerFieldUniversalIdentifier: string;
-  channelHandle: string;
+  channel: { handle: string; type?: MessageChannelType };
   flatFieldMetadataMaps: {
     byUniversalIdentifier: Partial<Record<string, unknown>>;
   };
@@ -28,9 +29,13 @@ export const computeChannelAssociationSource = ({
     return {};
   }
 
+  if (channel.type === MessageChannelType.EMAIL_GROUP) {
+    return { accountOwnerId: null, handle: channel.handle };
+  }
+
   return {
     accountOwnerId:
       flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId] ?? null,
-    handle: channelHandle,
+    handle: channel.handle,
   };
 };
