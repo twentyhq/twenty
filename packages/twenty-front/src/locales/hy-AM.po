@@ -16113,7 +16113,7 @@ msgstr "Ընթացքում"
 #. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr ""
+msgstr "Ընթացքի մեջ է. կիրառել հաղորդագրությունների և օրացույցի ալիքների տեսանելիությունը գրանցման մակարդակի թույլտվությունների կանոններով։ Անհրաժեշտ են կապերի անցումներ և կապված գրանցումների ուղիներ։"
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

@@ -16113,7 +16113,7 @@ msgstr "Đang thực hiện"
 #. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr ""
+msgstr "Đang thực hiện: áp dụng khả năng hiển thị kênh tin nhắn và lịch bằng các quy tắc quyền ở cấp bản ghi. Cần các bước nhảy quan hệ và đường dẫn bản ghi liên quan."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
