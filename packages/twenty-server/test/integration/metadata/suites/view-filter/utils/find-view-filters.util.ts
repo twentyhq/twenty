@@ -10,10 +10,12 @@ export const findViewFilters = async ({
   viewId,
   gqlFields,
   expectToFail,
+  token,
 }: {
   viewId?: string;
   gqlFields?: string;
   expectToFail?: boolean;
+  token?: string;
 }): CommonResponseBody<{
   getViewFilters: ViewFilterDTO[];
 }> => {
@@ -22,7 +24,7 @@ export const findViewFilters = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

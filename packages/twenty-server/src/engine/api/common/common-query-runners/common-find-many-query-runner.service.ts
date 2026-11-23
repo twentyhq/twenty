@@ -74,18 +74,18 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
-    let appliedFilters = args.filter ?? ({} as ObjectRecordFilter);
+    const appliedFilters: Partial<ObjectRecordFilter> = args.filter ?? {};
 
-    commonQueryParser.applyFilterToBuilder(
-      aggregateQueryBuilder,
-      flatObjectMetadata.nameSingular,
-      appliedFilters,
-    );
+    commonQueryParser.applyFilterToBuilder({
+      queryBuilder: aggregateQueryBuilder,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: appliedFilters,
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(
-      aggregateQueryBuilder,
-      appliedFilters,
-    );
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder: aggregateQueryBuilder,
+      recordFilter: appliedFilters,
+    });
 
     // Deduplicated leaves let a caller id ordering override the tie-breaker and keep scan order and keyset conditions in sync
     const orderByLeaves = resolveOrderByLeaves({
@@ -102,6 +102,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const isForwardPagination = !isDefined(args.before);
 
+    commonQueryParser.applyFilterToBuilder({
+      queryBuilder,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      recordFilter: appliedFilters,
+    });
+
     const cursor = getCursor(args);
 
     if (cursor) {
@@ -115,29 +121,25 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       });
 
       if (cursorArgFilter.length > 0) {
-        appliedFilters =
-          args.filter && Object.keys(args.filter).length > 0
-            ? {
-                and: [args.filter, { or: cursorArgFilter }],
-              }
-            : { or: cursorArgFilter };
+        commonQueryParser.applyCursorFilterToBuilder({
+          queryBuilder,
+          objectNameSingular: flatObjectMetadata.nameSingular,
+          cursorFilter: { or: cursorArgFilter },
+        });
       }
     }
 
-    commonQueryParser.applyFilterToBuilder(
+    const parsedOrderBy = commonQueryParser.applyOrderToBuilder({
       queryBuilder,
-      flatObjectMetadata.nameSingular,
-      appliedFilters,
-    );
-
-    const parsedOrderBy = commonQueryParser.applyOrderToBuilder(
-      queryBuilder,
-      orderByWithIdCondition,
-      flatObjectMetadata.nameSingular,
+      orderBy: orderByWithIdCondition,
+      objectNameSingular: flatObjectMetadata.nameSingular,
       isForwardPagination,
-    );
+    });
 
-    commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
+    commonQueryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: appliedFilters,
+    });
 
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
       selectedAggregatedFields: args.selectedFieldsResult.aggregates,
@@ -183,12 +185,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryBuilder.limit(limit + 1);
 
     // setFindOptions clears addSelect, so this must come after it
-    commonQueryParser.addRelationOrderColumnsToBuilder(
+    commonQueryParser.addRelationOrderColumnsToBuilder({
       queryBuilder,
       parsedOrderBy,
-      flatObjectMetadata.nameSingular,
+      objectNameSingular: flatObjectMetadata.nameSingular,
       columnsToSelect,
-    );
+    });
 
     // Raw rows carry the ordered join columns, so cursors get relation values whatever the client selected
     const { entities: fetchedObjectRecords, raw: fetchedRawRows } =

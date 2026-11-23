@@ -31,6 +31,7 @@
         "src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util.ts",
         "src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service.ts",
         "src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/http-egress/http-egress-lambda.handler.ts",
+        "src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/sdk-client-generation/sdk-client-generation-lambda.handler.ts",
         "lingui.config.ts",
         "scripts/**/*.ts",
         "**/*.spec.ts",
@@ -60,6 +61,7 @@
     "packages/twenty-front": {
       "entry": [
         "src/index.tsx",
+        "public/service-worker.js",
         "src/**/graphql/**/*.{ts,tsx}",
         "src/modules/geo-map/graphql-query/*.{ts,tsx}",
         "vitest.config.ts",

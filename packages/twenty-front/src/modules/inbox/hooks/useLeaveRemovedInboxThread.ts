@@ -3,14 +3,14 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useProjectAiChatThreadToUrl } from '@/ai-chat/hooks/useProjectAiChatThreadToUrl';
-import { useLoadAiChatThread } from '@/ai-chat/hooks/useLoadAiChatThread';
+import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxSelectedThreadListSourceState } from '@/inbox/states/inboxSelectedThreadListSourceState';
 import { inboxThreadListThreadsFamilySelector } from '@/inbox/states/selectors/inboxThreadListThreadsFamilySelector';
 import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
-import { sortChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortChatThreadsByLastActivityDesc';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { sortAiChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortAiChatThreadsByLastActivityDesc';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 
 export const useLeaveRemovedInboxThread = () => {
   const store = useStore();
@@ -30,7 +30,6 @@ export const useLeaveRemovedInboxThread = () => {
       return;
     }
 
-    // Only the first page is reloaded, so an older chat is looked up first
     if (
       (await loadAiChatThread(currentThreadId)) !== null ||
       getCurrentAiChatPageThreadId(store) !== currentThreadId
@@ -38,10 +37,10 @@ export const useLeaveRemovedInboxThread = () => {
       return;
     }
 
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    store.set(isWorkspaceSetupChatActiveState.atom, false);
 
     const nextThreadId =
-      sortChatThreadsByLastActivityDesc(
+      sortAiChatThreadsByLastActivityDesc(
         store.get(
           inboxThreadListThreadsFamilySelector.selectorFamily(
             store.get(inboxSelectedThreadListSourceState.atom),

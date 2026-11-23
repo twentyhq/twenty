@@ -83,11 +83,11 @@ describe('CommonQueryOrderGroupByParser - object alias in order-by clauses', () 
   const physicalTableName = computeObjectTargetTable(flatObjectMetadata);
 
   const buildParser = () =>
-    new CommonQueryOrderGroupByParser(
+    new CommonQueryOrderGroupByParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
   it('uses the object alias as the table prefix for a custom object', () => {
     // Guards the assumption being tested: a custom object has a `_`-prefixed
@@ -313,11 +313,11 @@ describe('CommonQueryOrderGroupByParser - relation order-by under target primary
   };
 
   const buildParser = () =>
-    new CommonQueryOrderGroupByParser(
-      sourceObjectMetadata,
+    new CommonQueryOrderGroupByParser({
+      flatObjectMetadata: sourceObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
   it('orders by a target scalar field when grouping by the target id', () => {
     const parser = buildParser();

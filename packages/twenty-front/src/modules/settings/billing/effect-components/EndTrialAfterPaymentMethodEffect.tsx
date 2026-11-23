@@ -1,5 +1,5 @@
 import { ASK_AI_THREAD_ID_QUERY_PARAM } from '@/ai-chat/constants/AskAiThreadIdQueryParam';
-import { useOpenAskAiThread } from '@/ai-chat/hooks/useOpenAskAiThread';
+import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { START_SUBSCRIPTION_AFTER_PAYMENT_METHOD_QUERY_PARAM } from '@/settings/billing/constants/StartSubscriptionAfterPaymentMethodQueryParam';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { isEndingSubscriptionTrialPeriodState } from '@/settings/billing/states/isEndingSubscriptionTrialPeriodState';

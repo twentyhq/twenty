@@ -1,4 +1,4 @@
-import { type ChatReferenceIdentity } from '@/ai-chat/message-content/types/ChatReferenceIdentity';
+import { type ChatReferenceIdentity } from 'twenty-shared/ai';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getChatReferenceIdentitySegment = (

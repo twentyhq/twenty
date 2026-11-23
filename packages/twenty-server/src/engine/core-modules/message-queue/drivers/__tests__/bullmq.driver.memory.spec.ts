@@ -596,30 +596,6 @@ describe('BullMQDriver job memory scenarios', () => {
     });
   });
 
-  describe('S12: memory fairness is disabled', () => {
-    it('jobs are added uncapped and uncharged, sizes are still reported with a null availability', async () => {
-      const harness = await createMemoryHarness({
-        isEnabled: false,
-        maxJobSizeBytes: 10_000,
-      });
-
-      const { jobs, availableBytes } = await harness.enqueueBulk([
-        harness.buildApplicationJob({
-          label: 'A1',
-          workspaceId: 'A',
-          payloadBytes: 50_000,
-        }),
-      ]);
-
-      expect(jobs[0].sizeBytes).toBeGreaterThan(50_000);
-      expect(availableBytes).toBeNull();
-      expect(await harness.readTotalChargedBytes()).toBe(0);
-      expect(harness.storedJob(jobs[0].jobId)?.opts.memoryGroupKeys).toBe(
-        undefined,
-      );
-    });
-  });
-
   describe('S13: Redis has no maxmemory', () => {
     it('jobs are admitted uncharged, as there is no capacity to share', async () => {
       const harness = await createMemoryHarness({ maxMemoryBytes: 0 });
@@ -834,12 +810,14 @@ describe('retained job payloads', () => {
     return jobId;
   };
 
+  // The cap refuses oversized jobs at enqueue, so it is lowered once the job is stored.
+  // No maxmemory keeps the job uncharged, so its size is recomputed on completion.
   it('replaces oversized successful job data with its size and hash', async () => {
-    const harness = await createMemoryHarness({
-      isEnabled: false,
-      maxJobSizeBytes: 1_000,
-    });
+    const harness = await createMemoryHarness({ maxMemoryBytes: 0 });
     const jobId = await enqueueOrThrow(harness, 2_000);
+
+    harness.setMaxJobSizeBytes(1_000);
+
     const storedJob = harness.storedJob(jobId);
     const expectedData = {
       memorySizeBytes: computeJobSizeBytes({
@@ -874,11 +852,10 @@ describe('retained job payloads', () => {
   });
 
   it('keeps oversized failed job data for a manual retry', async () => {
-    const harness = await createMemoryHarness({
-      isEnabled: false,
-      maxJobSizeBytes: 1_000,
-    });
+    const harness = await createMemoryHarness({ maxMemoryBytes: 0 });
     const jobId = await enqueueOrThrow(harness, 2_000);
+
+    harness.setMaxJobSizeBytes(1_000);
 
     await harness.processJobOrThrow({
       jobId,

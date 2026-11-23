@@ -41,17 +41,20 @@ export class CommonQuerySelectedFieldsParser {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 
-  constructor(
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-  ) {
+  constructor({
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+  }: {
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  }) {
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
     this.commonQuerySelectedFieldsRelationParser =
-      new CommonQuerySelectedFieldsRelationParser(
+      new CommonQuerySelectedFieldsRelationParser({
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-      );
+      });
     this.aggregateParser = new CommonQuerySelectedFieldsAggregateParser();
   }
 

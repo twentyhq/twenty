@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useNavigateToAiChatPage } from '@/ai-chat/hooks/useNavigateToAiChatPage';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { askAiSidePanelThreadIdComponentState } from '@/side-panel/pages/ask-ai/states/askAiSidePanelThreadIdComponentState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -37,12 +37,7 @@ export const useExpandAskAiSidePanelPage = (): SidePanelExpandTarget => {
           )
         : null;
 
-      const isOnNewChat =
-        askAiSidePanelThreadId === store.get(newAiChatThreadIdState.atom);
-
-      navigateToAiChatPage({
-        threadId: isOnNewChat ? null : askAiSidePanelThreadId,
-      });
+      navigateToAiChatPage({ threadId: askAiSidePanelThreadId });
     },
   };
 };

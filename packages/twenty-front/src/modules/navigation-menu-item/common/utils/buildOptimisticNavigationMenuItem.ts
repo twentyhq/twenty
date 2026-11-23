@@ -25,6 +25,7 @@ export const buildOptimisticNavigationMenuItem = (
   icon: input.icon ?? null,
   color: input.color ?? null,
   applicationId: null,
+  isActive: true,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
 });

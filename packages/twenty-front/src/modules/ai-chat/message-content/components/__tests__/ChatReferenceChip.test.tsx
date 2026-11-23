@@ -1,3 +1,7 @@
+import {
+  type ChatReferenceIdentity,
+  type ChatReferenceMatch,
+} from 'twenty-shared/ai';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
@@ -7,10 +11,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { ChatReferenceChip } from '@/ai-chat/message-content/components/ChatReferenceChip';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content/contexts/ChatReferenceNavigationEnabledContext';
-import { type ChatReferenceIdentity } from '@/ai-chat/message-content/types/ChatReferenceIdentity';
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import {
   FindManySkillsForSuggestionDocument,
@@ -197,10 +199,7 @@ const renderWithReferences = (
         twoFactorAuthenticationMethodSummary: [],
         objectRecordsPermissions: [],
       });
-      store.set(
-        shouldOpenAiChatAfterOnboardingState.atom,
-        isWorkspaceSetupChat,
-      );
+      store.set(isWorkspaceSetupChatActiveState.atom, isWorkspaceSetupChat);
     },
   });
 

@@ -20,6 +20,7 @@ export const createUpdateWorkflowVersionTriggerTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'update_workflow_version_trigger' as const,
+  isDestructive: true,
   description:
     'Update the trigger of a workflow version. This modifies the trigger configuration (e.g., changing trigger type, settings, or conditions).',
   inputSchema: updateWorkflowVersionTriggerSchema,

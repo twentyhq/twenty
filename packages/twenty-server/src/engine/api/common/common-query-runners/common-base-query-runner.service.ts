@@ -147,11 +147,11 @@ export abstract class CommonBaseQueryRunnerService<
 
     await this.validate(args, queryRunnerContext);
 
-    const commonQueryParser = new CommonQueryParser(
+    const commonQueryParser = new CommonQueryParser({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    );
+    });
 
     const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       args.selectedFields,
@@ -431,12 +431,14 @@ export abstract class CommonBaseQueryRunnerService<
     selection,
     kind,
     data,
+    shouldWriteAtLeastOneRecord,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
     selection: CommonSelection;
     kind: MutationKind;
     data?: Partial<ObjectRecord>;
+    shouldWriteAtLeastOneRecord?: boolean;
   }): Promise<CommonQueryRunResult<ObjectRecord[]>> {
     const {
       flatObjectMetadata,
@@ -489,6 +491,7 @@ export abstract class CommonBaseQueryRunnerService<
       kind,
       columnsToReturn,
       data: resolvedData,
+      shouldWriteAtLeastOneRecord,
     });
 
     const relationAggregatedValues = await this.processNestedRelations({

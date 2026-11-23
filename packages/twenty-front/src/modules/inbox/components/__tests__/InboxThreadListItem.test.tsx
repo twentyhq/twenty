@@ -7,11 +7,9 @@ import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { InboxThreadListItem } from '@/inbox/components/InboxThreadListItem';
 import { setInboxSelectedChannelView } from '@/inbox/testing/setInboxSelectedChannelView';
 import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import {
   jotaiStore,
@@ -94,70 +92,11 @@ const renderListItem = ({
 
 describe('InboxThreadListItem', () => {
   beforeAll(() => {
-    // jsdom has no PointerEvent, which the checkbox dispatches on click
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
   });
 
   beforeEach(() => {
     resetJotaiStore();
-  });
-
-  it('shows the last message under the title', () => {
-    renderListItem({ thread: buildThread({}) });
-
-    expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
-    expect(screen.queryByText('Needs input')).not.toBeInTheDocument();
-  });
-
-  it('shows that the chat needs input while a question waits on an answer', () => {
-    renderListItem({
-      thread: buildThread({
-        pendingQuestionMessageId: '0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20',
-      }),
-    });
-
-    expect(screen.getByText('Needs input')).toBeInTheDocument();
-    expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
-  });
-
-  it('does not ask for input on a deleted chat', () => {
-    renderListItem({
-      thread: buildThread({
-        deletedAt: '2026-09-08T00:00:00.000Z',
-        pendingQuestionMessageId: '0b6e3f1a-2c4d-4b8e-9a7f-1d3c5e7a9b20',
-      }),
-    });
-
-    expect(screen.queryByText('Needs input')).not.toBeInTheDocument();
-  });
-
-  it('shows an unsent draft in place of the last message', () => {
-    const thread = buildThread({});
-
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
-      [thread.id]: serializePlainTextAsAdvancedTextEditorDocument(
-        'Quote the **annual** plan',
-      ),
-    });
-
-    renderListItem({ thread });
-
-    expect(screen.getByText('Draft')).toBeInTheDocument();
-    expect(screen.getByText('Quote the **annual** plan')).toBeInTheDocument();
-    expect(
-      screen.queryByText('Which plan should I quote?'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('shows no draft once the composer is cleared', () => {
-    const thread = buildThread({});
-
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, { [thread.id]: '' });
-
-    renderListItem({ thread });
-
-    expect(screen.queryByText('Draft')).not.toBeInTheDocument();
-    expect(screen.getByText('Which plan should I quote?')).toBeInTheDocument();
   });
 
   it('has no checkbox where chats cannot be selected', () => {

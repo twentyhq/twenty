@@ -1,6 +1,7 @@
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
+
 import { type AiChatParticipantMention } from '@/ai-chat/composer/types/AiChatParticipantMention';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
 export const getAiChatInitialRecipients = ({
   recipientWorkspaceMemberIds,

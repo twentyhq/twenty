@@ -38,7 +38,6 @@ export const scrollToAiChatMessage = (messageId: string) => {
     return;
   }
 
-  // smooth scrolling reports no end in every browser, so the flash waits until scroll events stop
   let settleTimeout: ReturnType<typeof setTimeout>;
 
   const highlightOnceScrollSettles = () => {

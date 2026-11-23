@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   type ApplicationBilling,
+  type ApplicationBillingPrice,
   type ApplicationCapability,
 } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
@@ -26,6 +27,7 @@ import { ApplicationState } from 'src/engine/core-modules/application/enums/appl
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { ADD_ACCEPTED_BILLING_PRICES_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-accepted-billing-prices-to-application-upgrade-command-name.constant';
 import { ADD_HEALTH_CHECK_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-health-check-to-application-upgrade-command-name.constant';
 import { ENABLE_USER_HEALTH_CHECK_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/enable-user-health-check-upgrade-command-name.constant';
 import { ADD_REQUESTED_ROLE_ID_TO_APPLICATION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-requested-role-id-to-application-upgrade-command-name.constant';
@@ -131,6 +133,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.38.0_AddBillingToApplicationFastInstanceCommand_1788340843000',
   })
   billing: ApplicationBilling;
+
+  @Column({ type: 'jsonb', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_ACCEPTED_BILLING_PRICES_TO_APPLICATION_UPGRADE_COMMAND_NAME,
+  })
+  acceptedBillingPrices: ApplicationBillingPrice[] | null;
 
   @Column({ type: 'varchar', array: true, nullable: false, default: '{}' })
   @WasIntroducedInUpgrade({

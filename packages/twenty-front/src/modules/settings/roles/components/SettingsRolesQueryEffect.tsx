@@ -1,6 +1,5 @@
 import { settingsPermissionFlagDefinitionsState } from '@/settings/roles/states/settingsPermissionFlagDefinitionsState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { withRowLevelPermissionRuleGrants } from '@/settings/roles/role/utils/withRowLevelPermissionRuleGrants';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -31,7 +30,7 @@ export const SettingsRolesQueryEffect = () => {
     (roles: RoleWithPartialMembers[]) => {
       const roleIds = roles.map((role) => role.id);
       store.set(settingsRoleIdsState.atom, roleIds);
-      roles.map(withRowLevelPermissionRuleGrants).forEach((role) => {
+      roles.forEach((role) => {
         const persistedRole = store.get(
           settingsPersistedRoleFamilyState.atomFamily(role.id),
         );

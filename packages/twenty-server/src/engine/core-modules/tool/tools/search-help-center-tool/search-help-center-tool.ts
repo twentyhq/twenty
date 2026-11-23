@@ -27,6 +27,7 @@ export class SearchHelpCenterTool implements Tool {
   description =
     "Search Twenty's documentation before saying how to do something in Twenty, where it is or whether it exists. Name only the menus, buttons, options and steps its results show.";
   inputSchema = SearchHelpCenterInputZodSchema;
+  isReadOnly = true;
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,

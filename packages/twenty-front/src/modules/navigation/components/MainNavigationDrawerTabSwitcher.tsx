@@ -5,14 +5,15 @@ import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
+import { MainNavigationDrawerTabDropTarget } from '@/navigation/components/MainNavigationDrawerTabDropTarget';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerTabs } from '@/navigation/hooks/useNavigationDrawerTabs';
@@ -71,8 +72,10 @@ export const MainNavigationDrawerTabSwitcher = () => {
     type: NavigationMenuItemType.TAB,
     containerId: null,
   });
+  const tabCountIncludingHome = navigationMenuTabs.length + 1;
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
+  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
+    useNavigationMenuTabIdsWithUnreadChats();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -157,18 +160,25 @@ export const MainNavigationDrawerTabSwitcher = () => {
         }
 
         return [
-          drawerTabButton,
+          <MainNavigationDrawerTabDropTarget key={drawerTab} tabId={null}>
+            {drawerTabButton}
+          </MainNavigationDrawerTabDropTarget>,
           ...navigationMenuTabs.map((tab) => (
-            <MainNavigationDrawerSidebarTab
-              key={tab.id}
-              tab={tab}
-              isActive={activeNavigationMenuTab?.id === tab.id}
-              isExpanded={isExpanded}
-              shouldShowTooltip={shouldShowTooltips}
-            />
+            <MainNavigationDrawerTabDropTarget key={tab.id} tabId={tab.id}>
+              <MainNavigationDrawerSidebarTab
+                tab={tab}
+                isActive={activeNavigationMenuTab?.id === tab.id}
+                isExpanded={isExpanded}
+                shouldShowTooltip={shouldShowTooltips}
+                isUnread={
+                  activeNavigationMenuTab?.id !== tab.id &&
+                  tabIdsWithUnreadChats.has(tab.id)
+                }
+              />
+            </MainNavigationDrawerTabDropTarget>
           )),
           ...(isLayoutCustomizationModeEnabled &&
-          navigationMenuTabs.length < NAVIGATION_MENU_TAB_MAX_COUNT
+          tabCountIncludingHome < NAVIGATION_MENU_TAB_MAX_COUNT
             ? [
                 <MainNavigationDrawerAddTabButton
                   key="add-tab"

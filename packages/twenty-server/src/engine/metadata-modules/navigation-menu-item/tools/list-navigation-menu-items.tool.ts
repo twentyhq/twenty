@@ -37,6 +37,7 @@ const listNavigationMenuItemsInputSchema = z.object({
 
 @DefineTool({
   name: 'list_navigation_menu_items',
+  isReadOnly: true,
   category: ToolCategory.NAVIGATION_MENU_ITEM,
   accessPolicy: NAVIGATION_MENU_ITEM_READ_ACCESS_POLICY,
   description: `List navigation menu items (shared workspace navigation and/or the current user's personal favorites). Returns items sorted by position.`,
@@ -89,6 +90,7 @@ export class ListNavigationMenuItemsTool extends BaseTool<
             agentChatChannelId: item.agentChatChannelId,
             nativePageKey: item.nativePageKey,
             builtInSectionKey: item.builtInSectionKey,
+            isActive: item.isActive,
             workflowId: item.workflowId,
             agentId: item.agentId,
           })),

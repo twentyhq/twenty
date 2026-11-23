@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -158,11 +158,15 @@ export class CallWebhookJobsForMetadataJob {
       });
     }
 
+    if (metadataName === 'agent') {
+      return events.filter(
+        (event) => getWebhookEventRecord(event)?.isPrivate === false,
+      );
+    }
+
     if (metadataName === 'workflow') {
       return events.filter(
-        (event) =>
-          getWebhookEventRecord(event)?.visibility ===
-          WorkflowVisibility.WORKSPACE,
+        (event) => getWebhookEventRecord(event)?.isPrivate === false,
       );
     }
 
@@ -183,7 +187,7 @@ export class CallWebhookJobsForMetadataJob {
           findFlatEntityByIdInFlatEntityMaps({
             flatEntityMaps: flatWorkflowMaps,
             flatEntityId: coreWorkflowId,
-          })?.visibility === WorkflowVisibility.WORKSPACE
+          })?.isPrivate === false
         );
       });
     }

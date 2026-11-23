@@ -9,6 +9,7 @@ import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import { combineSQLConditions } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-conditions.util';
 import { type ResolvedRelatedRecordPath } from 'src/engine/permissions/internal/related-record-path/types/resolved-related-record-path.type';
+import { omitPermissionsUnableToReadField } from 'src/engine/permissions/internal/related-record-path/utils/omit-permissions-unable-to-read-field.util';
 import { resolveRelatedRecordPaths } from 'src/engine/permissions/internal/related-record-path/utils/resolve-related-record-paths.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -16,6 +17,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 export type BuildEntrySQLCondition = (args: {
   flatObjectMetadata: FlatObjectMetadata;
   tableAlias: string;
+  metadataMaps: PermissionsMetadataMaps;
 }) => SQLCondition | boolean;
 
 export const buildRelatedRecordPathJoinSQLCondition = ({
@@ -59,6 +61,11 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     targetTableAlias: string;
     visitedObjectMetadataIds: Set<string>;
   }): SQLCondition | boolean => {
+    const sourceMetadataMaps = omitPermissionsUnableToReadField({
+      metadataMaps,
+      objectMetadataId: resolvedPath.sourceFlatObjectMetadata.id,
+      fieldMetadataId: resolvedPath.hops[0].relationFieldMetadataId,
+    });
     const hopTableAliases = resolvedPath.hops.map(buildNextTableAlias);
     const sourceTableAlias = hopTableAliases[0];
     const sourceSQLCondition = resolvedPath.isInherent
@@ -66,10 +73,12 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
           flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
           tableAlias: sourceTableAlias,
           visitedObjectMetadataIds,
+          entryMetadataMaps: sourceMetadataMaps,
         })
       : buildEntrySQLCondition({
           flatObjectMetadata: resolvedPath.sourceFlatObjectMetadata,
           tableAlias: sourceTableAlias,
+          metadataMaps: sourceMetadataMaps,
         });
 
     if (sourceSQLCondition === false) {
@@ -110,14 +119,17 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     flatObjectMetadata,
     tableAlias,
     visitedObjectMetadataIds,
+    entryMetadataMaps,
   }: {
     flatObjectMetadata: FlatObjectMetadata;
     tableAlias: string;
     visitedObjectMetadataIds: Set<string>;
+    entryMetadataMaps: PermissionsMetadataMaps;
   }): SQLCondition | boolean => {
     const entrySQLCondition = buildEntrySQLCondition({
       flatObjectMetadata,
       tableAlias,
+      metadataMaps: entryMetadataMaps,
     });
 
     if (
@@ -172,5 +184,6 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
     flatObjectMetadata,
     tableAlias,
     visitedObjectMetadataIds: new Set(),
+    entryMetadataMaps: metadataMaps,
   });
 };

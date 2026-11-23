@@ -1,6 +1,9 @@
-import { useEffect } from 'react';
+import { useStore } from 'jotai';
+import { useContext, useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai-chat/constants/AiChatRefetchMessagesEventName';
+import { AiChatInstanceContext } from '@/ai-chat/contexts/AiChatInstanceContext';
+import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { type useAiChatFrontComponentPreview } from '@/ai-chat/tool-calls/hooks/useAiChatFrontComponentPreview';
 
 type AiChatFrontComponentPreviewEffectProps = Pick<
@@ -11,6 +14,9 @@ type AiChatFrontComponentPreviewEffectProps = Pick<
 export const AiChatFrontComponentPreviewEffect = ({
   loadPreview,
 }: AiChatFrontComponentPreviewEffectProps) => {
+  const store = useStore();
+  const threadId = useContext(AiChatInstanceContext)?.threadId;
+
   useEffect(() => {
     let controller: AbortController | undefined;
     let hasPreview = false;
@@ -28,19 +34,19 @@ export const AiChatFrontComponentPreviewEffect = ({
     };
 
     void refreshPreview();
-    window.addEventListener(
-      AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-      refreshPreview,
-    );
+
+    const unsubscribeFromFetchedMessages = isDefined(threadId)
+      ? store.sub(
+          aiChatThreadFetchedMessagesFamilyState.atomFamily({ threadId }),
+          () => void refreshPreview(),
+        )
+      : undefined;
 
     return () => {
       controller?.abort();
-      window.removeEventListener(
-        AI_CHAT_REFETCH_MESSAGES_EVENT_NAME,
-        refreshPreview,
-      );
+      unsubscribeFromFetchedMessages?.();
     };
-  }, [loadPreview]);
+  }, [loadPreview, store, threadId]);
 
   return null;
 };

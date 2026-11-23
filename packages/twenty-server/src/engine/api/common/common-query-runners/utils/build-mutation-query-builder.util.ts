@@ -25,7 +25,11 @@ export const buildMutationQueryBuilder = async ({
 }> => {
   const filteredQueryBuilder = repository.createQueryBuilder(alias);
 
-  commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
+  commonQueryParser.applyFilterToBuilder({
+    queryBuilder: filteredQueryBuilder,
+    objectNameSingular: alias,
+    recordFilter: filter,
+  });
 
   const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
 
