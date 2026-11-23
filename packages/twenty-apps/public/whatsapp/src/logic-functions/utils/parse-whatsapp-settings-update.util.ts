@@ -45,19 +45,16 @@ const parseSelectedChats = (
   const selectedChatById = new Map<string, WhatsappSelectedChat>();
 
   for (const chat of value) {
-    const { id, name } = isObject(chat)
-      ? (chat as { id?: unknown; name?: unknown })
-      : {};
-
-    if (!isNonEmptyString(id)) {
+    if (!isObject(chat) || !('id' in chat) || !isNonEmptyString(chat.id)) {
       return undefined;
     }
 
-    selectedChatById.set(id, {
-      id,
-      name: isString(name)
-        ? name.slice(0, WHATSAPP_SELECTED_CHAT_NAME_MAX_LENGTH)
-        : '',
+    selectedChatById.set(chat.id, {
+      id: chat.id,
+      name:
+        'name' in chat && isString(chat.name)
+          ? chat.name.slice(0, WHATSAPP_SELECTED_CHAT_NAME_MAX_LENGTH)
+          : '',
     });
   }
 

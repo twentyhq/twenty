@@ -17,6 +17,7 @@ import { type WhatsappHistoryConversationLimit } from 'src/types/whatsapp-histor
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
 import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
 import { type WhatsappSelectedChat } from 'src/types/whatsapp-selected-chat.type';
+import { hasWhatsappHistoryToImport } from 'src/utils/has-whatsapp-history-to-import.util';
 
 const StyledStack = styled.div`
   display: flex;
@@ -130,9 +131,11 @@ export const WhatsappImportSection = ({
           />
         </Card.Root>
       )}
-      {((importPolicy === 'SELECTED'
-        ? selectedChats.length > 0
-        : historyConversationLimit > 0) ||
+      {(hasWhatsappHistoryToImport({
+        importPolicy,
+        selectedChats,
+        historyConversationLimit,
+      }) ||
         historyImport?.status === 'IMPORTING') && (
         <WhatsappSyncButton
           historyImport={historyImport}

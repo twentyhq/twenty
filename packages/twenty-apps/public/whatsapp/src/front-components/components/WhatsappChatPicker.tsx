@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
@@ -203,9 +204,9 @@ export const WhatsappChatPicker = ({
                     )
                   }
                 >
-                  {chat.name === ''
-                    ? t('Conversation not listed above')
-                    : chat.name}
+                  {isNonEmptyString(chat.name)
+                    ? chat.name
+                    : t('Conversation not listed above')}
                 </ListItemButton>
               ))}
             </StyledList>

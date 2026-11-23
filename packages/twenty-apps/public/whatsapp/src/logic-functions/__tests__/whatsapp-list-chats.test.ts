@@ -21,9 +21,12 @@ const { whatsappListChatsHandler } =
   await import('src/logic-functions/whatsapp-list-chats');
 
 const listChats = (body: Record<string, unknown> = {}) =>
-  whatsappListChatsHandler({ body } as never, {
-    userWorkspaceId: 'member-user-workspace-id',
-  });
+  whatsappListChatsHandler(
+    { body },
+    {
+      userWorkspaceId: 'member-user-workspace-id',
+    },
+  );
 
 const buildChats = (count: number) =>
   Array.from({ length: count }, (_, index) => ({

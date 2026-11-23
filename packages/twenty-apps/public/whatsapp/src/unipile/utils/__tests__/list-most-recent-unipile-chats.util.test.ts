@@ -9,7 +9,7 @@ vi.mock('src/unipile/utils/list-unipile-chats.util', () => ({
 const { listMostRecentUnipileChats } =
   await import('src/unipile/utils/list-most-recent-unipile-chats.util');
 
-const buildChat = (id: string, day: number) => ({
+const buildChat = ({ id, day }: { id: string; day: number }) => ({
   id,
   last_message_timestamp: `2026-10-${String(day).padStart(2, '0')}T00:00:00.000Z`,
 });
@@ -22,11 +22,17 @@ describe('listMostRecentUnipileChats', () => {
   it('lists a chat once when Unipile returns it on two pages, and asks for the missing ones', async () => {
     mocks.listUnipileChats
       .mockResolvedValueOnce({
-        items: [buildChat('a', 20), buildChat('b', 19)],
+        items: [
+          buildChat({ id: 'a', day: 20 }),
+          buildChat({ id: 'b', day: 19 }),
+        ],
         nextCursor: 'page-2',
       })
       .mockResolvedValueOnce({
-        items: [buildChat('b', 19), buildChat('c', 18)],
+        items: [
+          buildChat({ id: 'b', day: 19 }),
+          buildChat({ id: 'c', day: 18 }),
+        ],
         nextCursor: undefined,
       });
 

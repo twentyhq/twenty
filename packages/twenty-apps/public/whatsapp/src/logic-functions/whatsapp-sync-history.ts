@@ -10,6 +10,7 @@ import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-sett
 import { refreshWhatsappHistoryImportState } from 'src/logic-functions/utils/refresh-whatsapp-history-import-state.util';
 import { startWhatsappHistoryImport } from 'src/logic-functions/utils/start-whatsapp-history-import.util';
 import { type WhatsappSettingsView } from 'src/types/whatsapp-settings-view.type';
+import { hasWhatsappHistoryToImport } from 'src/utils/has-whatsapp-history-to-import.util';
 
 export const whatsappSyncHistoryHandler = async (
   _routePayload: RoutePayload,
@@ -26,11 +27,7 @@ export const whatsappSyncHistoryHandler = async (
   if (historyImport?.status !== 'IMPORTING') {
     const settings = await getWhatsappSettings(connection.id);
 
-    if (
-      settings.importPolicy === 'SELECTED'
-        ? settings.selectedChats.length > 0
-        : settings.historyConversationLimit > 0
-    ) {
+    if (hasWhatsappHistoryToImport(settings)) {
       await startWhatsappHistoryImport({
         connectedAccountId: connection.id,
         settings,

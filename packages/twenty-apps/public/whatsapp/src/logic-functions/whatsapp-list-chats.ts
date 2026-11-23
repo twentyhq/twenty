@@ -22,7 +22,7 @@ const getRequestedChatCount = (limit: unknown): number =>
     : WHATSAPP_CHAT_OPTIONS_PAGE_SIZE;
 
 export const whatsappListChatsHandler = async (
-  routePayload: RoutePayload<Record<string, unknown>>,
+  routePayload: Pick<RoutePayload<Record<string, unknown>>, 'body'>,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<WhatsappChatOptionsPage> => {
   const connection = await findOwnWhatsappConnection(context);
