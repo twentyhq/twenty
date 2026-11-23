@@ -13848,6 +13848,7 @@ msgstr "Швидкий"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Улюблені чати"
 
