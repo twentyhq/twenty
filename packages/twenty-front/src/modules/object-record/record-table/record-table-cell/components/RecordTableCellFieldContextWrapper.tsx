@@ -49,6 +49,8 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
+  const isScopedRelationRestricted = scopedRelationAlias?.isRestricted ?? false;
+
   if (isDefined(lookupTarget)) {
     return (
       <RecordTableCellLookupFieldContext
@@ -82,7 +84,7 @@ export const RecordTableCellFieldContextWrapper = ({
             // A scoped relation only lists part of the related records, which the relation picker cannot edit
             isRecordReadOnly:
               (isRecordReadOnly ?? false) || isDefined(scopedRelationAlias),
-            restrictedFieldNames: scopedRelationAlias?.isRestricted
+            restrictedFieldNames: isScopedRelationRestricted
               ? [...restrictedFieldNames, fieldMetadataItem.name]
               : restrictedFieldNames,
             fieldValueKey: scopedRelationAlias?.responseKey,

@@ -1,4 +1,5 @@
 import { getScopedRelationAliases } from '@/object-record/record-column-scope/utils/getScopedRelationAliases';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import {
   type RecordGqlFieldsRelationWithArguments,
   type ViewFieldRelationScope,
@@ -255,6 +256,58 @@ describe('getScopedRelationAliases', () => {
     expect(ctoAlias.recordFieldId).toBe(PEOPLE_COLUMN_ID);
     expect(allPeopleAlias.recordFieldId).toBe(OTHER_PEOPLE_COLUMN_ID);
     expect(ctoAlias.responseKey).not.toBe(allPeopleAlias.responseKey);
+  });
+
+  it('selects the aggregate of a summary and the id of one related record only', () => {
+    const [{ relationWithArguments, summary }] = getAliases({
+      recordFields: [
+        getPeopleColumn({
+          relationScope: {
+            ...CTO_RELATION_SCOPE,
+            sorts: [],
+            limit: null,
+            aggregateOperation: AggregateOperations.COUNT,
+          },
+        }),
+      ],
+    });
+
+    expect(summary?.aggregateGqlFieldName).toBe('totalCount');
+    expect(relationWithArguments).toMatchObject({
+      first: 1,
+      aggregateGqlFieldNames: ['totalCount'],
+      recordGqlFields: { id: true },
+    });
+  });
+
+  it('restricts a summary of a field the user cannot read', () => {
+    const [{ isRestricted, summary }] = getAliases({
+      recordFields: [
+        getPeopleColumn({
+          relationScope: {
+            ...CTO_RELATION_SCOPE,
+            sorts: [],
+            limit: null,
+            aggregateOperation: AggregateOperations.MIN,
+          },
+          relationTargetFieldMetadataId: createdAtField.id,
+        }),
+      ],
+      readableObjectMetadataItems: objectMetadataItems.map(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === personObjectMetadataItem.id
+            ? {
+                ...objectMetadataItem,
+                readableFields: objectMetadataItem.readableFields.filter(
+                  ({ id }) => id !== createdAtField.id,
+                ),
+              }
+            : objectMetadataItem,
+      ),
+    });
+
+    expect(summary).toBeUndefined();
+    expect(isRestricted).toBe(true);
   });
 
   it('skips the canonical column, columns without a scope and a disabled flag', () => {

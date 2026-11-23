@@ -7,6 +7,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
     viewId
     isVisible
     isCanonical
+    label
     relationTargetFieldMetadataId
     relationScope {
       filters {
@@ -30,6 +31,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
         relationTargetFieldMetadataId
       }
       limit
+      aggregateOperation
     }
     position
     size

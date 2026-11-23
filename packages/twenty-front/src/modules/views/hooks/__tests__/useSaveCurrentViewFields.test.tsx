@@ -209,6 +209,60 @@ describe('useSaveCurrentViewFields', () => {
     ]);
   });
 
+  it('sends a changed label with the update, null to show the default label again', async () => {
+    await saveViewFields([{ ...scopedViewField, label: 'Main contacts' }]);
+
+    expect(performViewFieldApiUpdateMock).toHaveBeenLastCalledWith([
+      {
+        input: {
+          id: scopedViewField.id,
+          update: expect.objectContaining({ label: 'Main contacts' }),
+        },
+      },
+    ]);
+
+    mockGetViewFromState.mockReturnValue({
+      id: VIEW_ID,
+      viewFields: [{ ...scopedViewField, label: 'Main contacts' }],
+    });
+
+    await saveViewFields([{ ...scopedViewField, label: null }]);
+
+    expect(performViewFieldApiUpdateMock).toHaveBeenLastCalledWith([
+      {
+        input: {
+          id: scopedViewField.id,
+          update: expect.objectContaining({ label: null }),
+        },
+      },
+    ]);
+  });
+
+  it('leaves an unchanged label out of the update', async () => {
+    mockGetViewFromState.mockReturnValue({
+      id: VIEW_ID,
+      viewFields: [{ ...scopedViewField, label: 'Main contacts' }],
+    });
+
+    await saveViewFields([
+      { ...scopedViewField, label: 'Main contacts', size: 300 },
+    ]);
+
+    expect(performViewFieldApiUpdateMock).toHaveBeenCalledWith([
+      {
+        input: {
+          id: scopedViewField.id,
+          update: {
+            aggregateOperation: null,
+            isVisible: true,
+            position: 4,
+            size: 300,
+          },
+        },
+      },
+    ]);
+  });
+
   it('leaves an unchanged relation scope out of the update', async () => {
     await saveViewFields([{ ...scopedViewField, size: 300 }]);
 
