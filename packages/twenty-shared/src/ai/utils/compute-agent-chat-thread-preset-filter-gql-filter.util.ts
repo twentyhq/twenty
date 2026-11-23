@@ -1,106 +1,59 @@
-import { type AgentChatThreadPresetFilter } from '@/ai/constants/agent-chat-thread-preset-filter.const';
-import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
+import {
+  AGENT_CHAT_THREAD_PRESET_FILTER,
+  type AgentChatThreadPresetFilter,
+} from '@/ai/constants/agent-chat-thread-preset-filter.const';
+import { computeViewPresetFilterGqlFilter } from '@/ai/utils/compute-view-preset-filter-gql-filter.util';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
-
-const throughParticipants = (
-  participantFilter: RecordGqlOperationFilter,
-): RecordGqlOperationFilter => ({ participants: participantFilter });
+import { ViewPresetFilter } from '@/types/ViewPresetFilter';
 
 type PresetFilterArgs = {
   presetFilter: AgentChatThreadPresetFilter;
   workspaceMemberId: string;
 };
 
-// Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
-const computeMemberInboxStateFilter = ({
+const VIEW_PRESET_FILTER_BY_TAB: Record<
+  AgentChatThreadPresetFilter,
+  ViewPresetFilter
+> = {
+  [AGENT_CHAT_THREAD_PRESET_FILTER.OPEN]: ViewPresetFilter.INBOX_OPEN,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT]: ViewPresetFilter.INBOX_OPEN,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS]: ViewPresetFilter.INBOX_MENTIONS,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ME]: ViewPresetFilter.INBOX_OPEN,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ANYONE]:
+    ViewPresetFilter.INBOX_OPEN,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.UNASSIGNED]: ViewPresetFilter.INBOX_OPEN,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED]: ViewPresetFilter.INBOX_SNOOZED,
+  [AGENT_CHAT_THREAD_PRESET_FILTER.DONE]: ViewPresetFilter.INBOX_DONE,
+};
+
+const computeTabThreadFieldFilter = ({
   presetFilter,
   workspaceMemberId,
 }: PresetFilterArgs): RecordGqlOperationFilter => {
-  const memberParticipant = { workspaceMemberId: { eq: workspaceMemberId } };
-  const subscribedParticipant = {
-    ...memberParticipant,
-    isSubscribed: { eq: true },
-  };
-  const openParticipant: RecordGqlOperationFilter = {
-    ...subscribedParticipant,
-    or: [
-      { archivedAt: { is: 'NULL' } },
-      { archivedAt: { ltField: 'thread.lastActivityAt' } },
-    ],
-  };
-  const filedWithoutActivitySince = (
-    snoozedUntil: 'NULL' | 'NOT_NULL',
-  ): RecordGqlOperationFilter[] => [
-    {
-      lastActivityAt: { is: 'NULL' },
-      ...throughParticipants({
-        ...subscribedParticipant,
-        archivedAt: { is: 'NOT_NULL' },
-        snoozedUntil: { is: snoozedUntil },
-      }),
-    },
-    throughParticipants({
-      ...subscribedParticipant,
-      snoozedUntil: { is: snoozedUntil },
-      archivedAt: { gteField: 'thread.lastActivityAt' },
-    }),
-  ];
-
   switch (presetFilter) {
-    case 'active':
-      return throughParticipants(openParticipant);
-    case 'needsInput':
-      return {
-        pendingQuestionMessageId: { is: 'NOT_NULL' },
-        ...throughParticipants(openParticipant),
-      };
-    case 'mentions':
-      return throughParticipants({
-        ...openParticipant,
-        lastMentionedAt: { is: 'NOT_NULL' },
-        and: [
-          {
-            or: [
-              { mentionsResolvedAt: { is: 'NULL' } },
-              { mentionsResolvedAt: { ltField: 'lastMentionedAt' } },
-            ],
-          },
-        ],
-      });
-    case 'assigned':
-      return {
-        assigneeId: { eq: workspaceMemberId },
-        ...throughParticipants(openParticipant),
-      };
-    case 'assignedToAnyone':
-      return {
-        assigneeId: { is: 'NOT_NULL' },
-        ...throughParticipants(openParticipant),
-      };
-    case 'unassigned':
-      return {
-        assigneeId: { is: 'NULL' },
-        ...throughParticipants(openParticipant),
-      };
-    case 'snoozed':
-      return { or: filedWithoutActivitySince('NOT_NULL') };
-    case 'done':
-      return {
-        or: [
-          throughParticipants({
-            ...memberParticipant,
-            isSubscribed: { eq: false },
-            archivedAt: { is: 'NOT_NULL' },
-          }),
-          ...filedWithoutActivitySince('NULL'),
-        ],
-      };
+    case AGENT_CHAT_THREAD_PRESET_FILTER.NEEDS_INPUT:
+      return { pendingQuestionMessageId: { is: 'NOT_NULL' } };
+    case AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ME:
+      return { assigneeId: { eq: workspaceMemberId } };
+    case AGENT_CHAT_THREAD_PRESET_FILTER.ASSIGNED_TO_ANYONE:
+      return { assigneeId: { is: 'NOT_NULL' } };
+    case AGENT_CHAT_THREAD_PRESET_FILTER.UNASSIGNED:
+      return { assigneeId: { is: 'NULL' } };
+    case AGENT_CHAT_THREAD_PRESET_FILTER.OPEN:
+    case AGENT_CHAT_THREAD_PRESET_FILTER.MENTIONS:
+    case AGENT_CHAT_THREAD_PRESET_FILTER.SNOOZED:
+    case AGENT_CHAT_THREAD_PRESET_FILTER.DONE:
+      return {};
   }
 };
 
-export const computeAgentChatThreadPresetFilterGqlFilter = (
-  args: PresetFilterArgs,
-): RecordGqlOperationFilter => ({
-  conversationType: { neq: AgentChatThreadConversationType.DIRECT_MESSAGE },
-  ...computeMemberInboxStateFilter(args),
+export const computeAgentChatThreadPresetFilterGqlFilter = ({
+  presetFilter,
+  workspaceMemberId,
+}: PresetFilterArgs): RecordGqlOperationFilter => ({
+  ...computeTabThreadFieldFilter({ presetFilter, workspaceMemberId }),
+  ...computeViewPresetFilterGqlFilter({
+    presetFilter: VIEW_PRESET_FILTER_BY_TAB[presetFilter],
+    currentWorkspaceMemberId: workspaceMemberId,
+  }),
 });

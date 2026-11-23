@@ -146,6 +146,7 @@ export {
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
 export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
+export { computeViewPresetFilterGqlFilter } from './utils/compute-view-preset-filter-gql-filter.util';
 export { escapeMarkdownForChatReference } from './utils/escape-markdown-for-chat-reference.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';

@@ -3,12 +3,15 @@ import type { Store } from 'jotai/vanilla/store';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { computeViewPresetGqlOperationFilter } from '@/views/utils/computeViewPresetGqlOperationFilter';
 import { isDefined } from 'twenty-shared/utils';
 
 export const computeContextStoreGraphqlFilterFromStore = ({
@@ -43,6 +46,18 @@ export const computeContextStoreGraphqlFilterFromStore = ({
       ? workspaceMemberTimeZone
       : systemTimeZone;
 
+  const currentViewId = store.get(
+    contextStoreCurrentViewIdComponentState.atomFamily({
+      instanceId: contextStoreInstanceId,
+    }),
+  );
+
+  const currentView = store.get(
+    viewFromViewIdFamilySelector.selectorFamily({
+      viewId: currentViewId ?? '',
+    }),
+  );
+
   return computeContextStoreFilters({
     contextStoreTargetedRecordsRule: store.get(
       contextStoreTargetedRecordsRuleComponentState.atomFamily({
@@ -65,6 +80,10 @@ export const computeContextStoreGraphqlFilterFromStore = ({
       currentWorkspaceMemberId: currentWorkspaceMember?.id,
       timeZone: userTimezone,
     },
+    currentViewPresetGqlOperationFilter: computeViewPresetGqlOperationFilter({
+      view: currentView,
+      currentWorkspaceMemberId: currentWorkspaceMember?.id,
+    }),
     contextStoreAnyFieldFilterValue: store.get(
       contextStoreAnyFieldFilterValueComponentState.atomFamily({
         instanceId: contextStoreInstanceId,

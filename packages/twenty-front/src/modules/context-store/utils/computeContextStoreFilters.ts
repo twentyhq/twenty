@@ -21,6 +21,7 @@ type ComputeContextStoreFiltersProps = {
   fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
+  currentViewPresetGqlOperationFilter: RecordGqlOperationFilter | undefined;
 };
 
 export const computeContextStoreFilters = ({
@@ -31,6 +32,7 @@ export const computeContextStoreFilters = ({
   fieldMetadataItems,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
+  currentViewPresetGqlOperationFilter,
 }: ComputeContextStoreFiltersProps) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
@@ -49,6 +51,7 @@ export const computeContextStoreFilters = ({
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),
+      currentViewPresetGqlOperationFilter,
       contextStoreTargetedRecordsRule.excludedRecordIds.length > 0
         ? {
             not: {

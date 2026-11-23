@@ -14,6 +14,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -91,11 +92,17 @@ export const useFindManyRecordIndexTableParams = (
     objectMetadataItems,
   );
 
-  const combinedFilter = combineFilters([
-    currentFilters,
-    recordGroupFilter,
-    anyFieldFilter,
-  ]);
+  const currentViewPresetGqlOperationFilter =
+    useCurrentViewPresetGqlOperationFilter();
+
+  const combinedFilter = combineFilters(
+    [
+      currentFilters,
+      recordGroupFilter,
+      anyFieldFilter,
+      currentViewPresetGqlOperationFilter,
+    ].filter(isDefined),
+  );
 
   return {
     objectNameSingular,

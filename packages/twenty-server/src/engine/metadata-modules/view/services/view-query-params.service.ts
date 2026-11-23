@@ -7,6 +7,7 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 import {
+  combineFilters,
   convertViewFilterValueToString,
   isDefined,
   type RecordFilter,
@@ -20,6 +21,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { computeViewPresetGqlOperationFilter } from 'src/engine/metadata-modules/view/utils/compute-view-preset-gql-operation-filter.util';
 import { computeViewSortsOrderBy } from 'src/engine/metadata-modules/view/utils/compute-view-sorts-order-by.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
@@ -108,13 +110,16 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const filter = computeRecordGqlOperationFilterFromFlatMaps({
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      recordFilters,
-      recordFilterGroups,
-      filterValueDependencies: { currentWorkspaceMemberId, timeZone },
-    });
+    const filter = combineFilters([
+      computeRecordGqlOperationFilterFromFlatMaps({
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        recordFilters,
+        recordFilterGroups,
+        filterValueDependencies: { currentWorkspaceMemberId, timeZone },
+      }),
+      computeViewPresetGqlOperationFilter({ view, currentWorkspaceMemberId }),
+    ]);
 
     const orderBy = computeViewSortsOrderBy({
       viewSorts: view.viewSorts ?? [],

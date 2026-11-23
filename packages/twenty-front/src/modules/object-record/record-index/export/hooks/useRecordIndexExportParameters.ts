@@ -19,6 +19,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ViewType } from '@/views/types/ViewType';
+import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useRecordIndexExportParameters = ({
@@ -77,6 +78,9 @@ export const useRecordIndexExportParameters = ({
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 0;
 
+  const currentViewPresetGqlOperationFilter =
+    useCurrentViewPresetGqlOperationFilter();
+
   const contextStoreFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
@@ -85,6 +89,7 @@ export const useRecordIndexExportParameters = ({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
+    currentViewPresetGqlOperationFilter,
   });
 
   const queryFilter = isEmptySelection
