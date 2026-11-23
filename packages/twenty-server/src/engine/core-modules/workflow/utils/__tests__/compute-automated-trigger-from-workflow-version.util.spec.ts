@@ -14,7 +14,7 @@ const buildWorkflowVersion = (trigger: WorkflowTrigger | null) => ({
 });
 
 describe('computeAutomatedTriggerFromWorkflowVersion', () => {
-  it('should build a database event trigger carrying both version ids', () => {
+  it('should build a database event trigger from the core version', () => {
     const workflowVersion = buildWorkflowVersion({
       type: WorkflowTriggerType.DATABASE_EVENT,
       name: 'Record created',
@@ -22,39 +22,15 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
 
     expect(
-      computeAutomatedTriggerFromWorkflowVersion({
-        workflowVersion,
-        workspaceWorkflowVersionId: 'workspace-version-1',
-      }),
+      computeAutomatedTriggerFromWorkflowVersion({ workflowVersion }),
     ).toEqual({
       workflowId: 'core-workflow-1',
       legacyWorkflowId: 'workspace-workflow-1',
       applicationId: 'application-1',
       coreWorkflowVersionId: 'core-version-1',
-      workspaceWorkflowVersionId: 'workspace-version-1',
       type: AutomatedTriggerType.DATABASE_EVENT,
       settings: { eventName: 'company.created', outputSchema: {} },
     });
-  });
-
-  it('should build a core-only dispatch when the twin is missing', () => {
-    const workflowVersion = buildWorkflowVersion({
-      type: WorkflowTriggerType.DATABASE_EVENT,
-      name: 'Record created',
-      settings: { eventName: 'company.created', outputSchema: {} },
-    });
-
-    const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
-      workflowVersion,
-      workspaceWorkflowVersionId: null,
-    });
-
-    expect(automatedTrigger).toMatchObject({
-      workflowId: 'core-workflow-1',
-      legacyWorkflowId: 'workspace-workflow-1',
-      coreWorkflowVersionId: 'core-version-1',
-    });
-    expect(automatedTrigger).not.toHaveProperty('workspaceWorkflowVersionId');
   });
 
   it('should return null for manual triggers', () => {
@@ -65,10 +41,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
     });
 
     expect(
-      computeAutomatedTriggerFromWorkflowVersion({
-        workflowVersion,
-        workspaceWorkflowVersionId: 'workspace-version-1',
-      }),
+      computeAutomatedTriggerFromWorkflowVersion({ workflowVersion }),
     ).toBeNull();
   });
 });
