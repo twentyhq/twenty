@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "عضو في مساحة العمل"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "تحتاج علاقة عضو مساحة العمل إلى الحقل المراد قراءته في سجلاتها المرتبطة"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "اختر نوع نشاط مخطط زمني موجودًا لتجاوزه
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "اختر شخصًا واحدًا أو دورًا واحدًا للمشاركة معه."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "اختر الحقل المراد قراءته في السجلات المرتبطة"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "الحقل \"{relationFieldName}\" ليس علاقة"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "الحقل \"{workspaceMemberFieldName}\" ليس حقلًا في كائن عضو مساحة العمل، لذلك لن يُطبّق المسند أبدًا"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "الحقل \"{workspaceMemberRelationFieldName}\" ليس علاقة واحد إلى متعدد لكائن workspaceMember"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11126,6 +11141,11 @@ msgstr "قيمة الشرط غير صالحة لهذا المعامل"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "المسندات التي تصل إلى حقل عبر علاقة غير مفعّلة لمساحة العمل هذه"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "المسندات التي تقرأ العضو الحالي عبر علاقة غير مفعّلة لمساحة العمل هذه"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12351,6 +12371,7 @@ msgid "Rule"
 msgstr "قاعدة"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "القواعد عبر علاقة غير مفعّلة لمساحة العمل هذه"
@@ -15043,6 +15064,11 @@ msgstr "هذا الحقل لا ينتمي إلى كائن عضو مساحة ال
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "لا يحتوي هذا الحقل على عمود قاعدة بيانات لفهرسته."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "هذا الحقل ليس علاقة واحد إلى متعدد لكائن عضو مساحة العمل"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17957,6 +17983,12 @@ msgstr "منصب عضو مساحة العمل"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "حقول صفحة سجل عضو مساحة العمل"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "لم يتم العثور على بيانات وصف حقل علاقة عضو مساحة العمل"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

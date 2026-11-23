@@ -1,8 +1,7 @@
 import { useNavigateToAiChatPage } from '@/ai-chat/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai-chat/hooks/useSelectAiChatThread';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
-import { isInboxPath } from '~/utils/isInboxPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 
 export const useOpenAiChatThread = () => {
   const { selectAiChatThread } = useSelectAiChatThread();
@@ -18,10 +17,9 @@ export const useOpenAiChatThread = () => {
     shouldOpenInFullPage?: boolean;
     resetNavigationStack?: boolean;
   }) => {
-    const isOnAiChatPage =
-      isCurrentPathAiChatPage() || isInboxPath(window.location.pathname);
+    const isOnAiModePage = isAiModePath(window.location.pathname);
 
-    if (!isOnAiChatPage && !shouldOpenInFullPage) {
+    if (!isOnAiModePage && !shouldOpenInFullPage) {
       openAskAiPage({ threadId, resetNavigationStack });
 
       return;
@@ -29,7 +27,7 @@ export const useOpenAiChatThread = () => {
 
     selectAiChatThread(threadId);
 
-    if (!isOnAiChatPage) {
+    if (!isOnAiModePage) {
       navigateToAiChatPage({ threadId });
     }
   };

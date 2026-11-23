@@ -19,7 +19,14 @@ export const isWorkspaceMemberUpdateAffectingAccessGroups = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): boolean =>
   findWorkspaceMemberBoundPredicates(rolesPermissions).some(
-    ({ workspaceMemberFieldMetadataId }) => {
+    ({
+      workspaceMemberFieldMetadataId,
+      workspaceMemberRelationFieldMetadataId,
+    }) => {
+      if (isDefined(workspaceMemberRelationFieldMetadataId)) {
+        return false;
+      }
+
       const name = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: workspaceMemberFieldMetadataId,
         flatEntityMaps: flatFieldMetadataMaps,

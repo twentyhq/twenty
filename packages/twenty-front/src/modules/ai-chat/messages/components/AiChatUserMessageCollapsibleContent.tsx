@@ -54,7 +54,6 @@ export const AiChatUserMessageCollapsibleContent = ({
 
   const isCollapsed = isCollapsible && !isExpanded;
 
-  // Measured in a ref callback, during commit: an effect would paint a tall message at full height for 1 to 2 frames.
   const observeContentHeight = useCallback(
     (contentElement: HTMLDivElement | null) => {
       if (!isDefined(contentElement)) {
@@ -104,7 +103,6 @@ export const AiChatUserMessageCollapsibleContent = ({
 
     flushSync(() => setIsExpanded(false));
 
-    // Scrolls up by the removed height so the toggle and the messages below stay in place.
     scrollWrapperElement.scrollTop -=
       toggleTopBeforeCollapseInPx -
       toggleButtonElement.getBoundingClientRect().top;

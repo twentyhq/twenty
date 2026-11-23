@@ -13,6 +13,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { isSidePanelShrinkingFromFullWidthState } from '@/side-panel/states/isSidePanelShrinkingFromFullWidthState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useOpenAskAiPageInSidePanel = () => {
@@ -30,9 +31,11 @@ export const useOpenAskAiPageInSidePanel = () => {
     ({
       threadId,
       resetNavigationStack,
+      isContinuedFromFullWidth = false,
     }: {
       threadId?: string;
       resetNavigationStack?: boolean;
+      isContinuedFromFullWidth?: boolean;
     } = {}) => {
       if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
         return;
@@ -46,6 +49,11 @@ export const useOpenAskAiPageInSidePanel = () => {
       setAiChatUISessionStartTime(
         (aiChatUISessionStartTime) =>
           aiChatUISessionStartTime ?? Temporal.Now.instant(),
+      );
+
+      store.set(
+        isSidePanelShrinkingFromFullWidthState.atom,
+        isContinuedFromFullWidth,
       );
 
       const pageId = v4();

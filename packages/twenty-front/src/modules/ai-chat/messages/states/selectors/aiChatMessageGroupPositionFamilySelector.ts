@@ -15,7 +15,6 @@ export const aiChatMessageGroupPositionFamilySelector =
         get(aiChatMessageGroupPositionsFamilySelector, threadId).get(
           messageId,
         ) ?? AI_CHAT_UNGROUPED_MESSAGE_POSITION,
-    // The positions map is rebuilt on every message change, streamed tokens included
     areEqual: (previous, next) =>
       previous.isGroupedWithPrevious === next.isGroupedWithPrevious &&
       previous.isGroupedWithNext === next.isGroupedWithNext &&

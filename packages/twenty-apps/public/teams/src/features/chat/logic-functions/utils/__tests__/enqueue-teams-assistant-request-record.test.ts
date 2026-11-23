@@ -42,6 +42,8 @@ const REQUEST_DRAFT = {
   requestText: 'how many open deals does Acme have?',
 };
 
+const { requestText: _requestText, ...STORED_REQUEST_DRAFT } = REQUEST_DRAFT;
+
 describe('enqueueTeamsAssistantRequestRecord', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -61,6 +63,10 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
       teamsConversationId: 'a:personal-conversation',
       teamsActivityId: '1700000000000',
     });
+    expect(createTeamsAssistantRequestMock).toHaveBeenCalledWith({
+      client: expect.anything(),
+      draft: STORED_REQUEST_DRAFT,
+    });
     expect(result).toEqual({
       ok: true,
       request: {
@@ -71,20 +77,23 @@ describe('enqueueTeamsAssistantRequestRecord', () => {
     });
   });
 
-  it('should hand back an unanswered request so a retry can resume it', async () => {
-    const pendingRequest = {
+  it('should hand back an unanswered request with the text of the redelivered activity', async () => {
+    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue({
       id: 'request-1',
       status: TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
-      ...REQUEST_DRAFT,
-    };
-
-    findTeamsAssistantRequestByTeamsActivityMock.mockResolvedValue(
-      pendingRequest,
-    );
+      ...STORED_REQUEST_DRAFT,
+    });
 
     const result = await enqueueTeamsAssistantRequestRecord(REQUEST_DRAFT);
 
-    expect(result).toEqual({ ok: true, request: pendingRequest });
+    expect(result).toEqual({
+      ok: true,
+      request: {
+        id: 'request-1',
+        status: TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
+        ...REQUEST_DRAFT,
+      },
+    });
     expect(createTeamsAssistantRequestMock).not.toHaveBeenCalled();
   });
 

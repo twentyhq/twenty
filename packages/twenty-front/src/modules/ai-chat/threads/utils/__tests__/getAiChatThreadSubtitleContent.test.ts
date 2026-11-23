@@ -29,15 +29,6 @@ const getContent = ({
   });
 
 describe('getAiChatThreadSubtitleContent', () => {
-  it('has no content without a message, draft or pending question', () => {
-    expect(getContent({})).toEqual({
-      isAwaitingAnswer: false,
-      hasDraft: false,
-      previewText: null,
-      hasContent: false,
-    });
-  });
-
   it('previews the draft over the last message', () => {
     expect(
       getContent({

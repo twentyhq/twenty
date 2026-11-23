@@ -71,7 +71,9 @@ describe('access group sync (integration)', () => {
   });
 
   it('should create a group per grant, keep their ids and remove stale ones', async () => {
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
 
     const accessGroups = await readAccessGroups();
 
@@ -82,7 +84,9 @@ describe('access group sync (integration)', () => {
       [await findPersonObjectMetadataId()],
     );
 
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
 
     expect(await readAccessGroups()).toEqual(accessGroups);
   });
@@ -154,12 +158,16 @@ describe('access group sync (integration)', () => {
     try {
       await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
       await upsertRule('Paris');
-      await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+      await accessGroupSyncService.syncAccessGroups({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
 
       const [parisAccessGroup] = await readRuleAccessGroups();
 
       await upsertRule('London');
-      await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+      await accessGroupSyncService.syncAccessGroups({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
 
       const londonAccessGroups = await readRuleAccessGroups();
 
@@ -180,18 +188,21 @@ describe('access group sync (integration)', () => {
   });
 
   it('should resolve the caller to the groups of its role', async () => {
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
 
     const principals = buildRolePermissionsPrincipals({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       roleIds: [await findAdminRoleId()],
     });
     const objectMetadataId = await findPersonObjectMetadataId();
-    const compactIds = await accessGroupReadService.findPrincipalsCompactIds({
-      principals,
-      objectMetadataId,
-      operationType: 'read',
-    });
+    const compactIds =
+      await accessGroupReadService.findPrincipalsAccessGroupCompactIds({
+        principals,
+        objectMetadataId,
+        operationType: 'read',
+      });
     const storedCompactIds = (await readAccessGroups()).map(
       ({ compactId }) => compactId,
     );

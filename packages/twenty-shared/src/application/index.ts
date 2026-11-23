@@ -276,8 +276,8 @@ export type {
   LegacyObjectPermissionManifest,
   LegacyFieldPermissionManifest,
   LegacyRowLevelPermissionPredicateGroupManifest,
-  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
+  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
   FieldRestrictionsManifest,
   RowLevelRecordsPermissionsManifest,
@@ -358,6 +358,8 @@ export { computeDependencyFileChecksum } from './utils/computeDependencyFileChec
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
   RowLevelPermissionRuleLink,
+  FlattenedRowLevelPermissionPredicateGroupManifest,
+  FlattenedRowLevelPermissionPredicateManifest,
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';

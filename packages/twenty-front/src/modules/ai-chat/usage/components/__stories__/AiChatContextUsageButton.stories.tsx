@@ -10,7 +10,7 @@ import { AiChatContextUsageDetails } from '@/ai-chat/usage/components/AiChatCont
 import {
   aiChatThreadUsageFamilyState,
   type AiChatUsageState,
-} from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
+} from '@/ai-chat/usage/states/aiChatThreadUsageFamilyState';
 import { type AiChatUserCreditsUsage } from '@/ai-chat/usage/types/AiChatUserCreditsUsage';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
