@@ -130,6 +130,13 @@ export class ChannelVisibilityRuleSyncService {
               STANDARD_OBJECTS.attachment.universalIdentifier,
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
+              ...(objectUniversalIdentifier ===
+                STANDARD_OBJECTS.messageThread.universalIdentifier && {
+                unreadableFields: [
+                  STANDARD_OBJECTS.messageThread.fields.subject
+                    .universalIdentifier,
+                ],
+              }),
             })),
           ].map((objectRecordsPermissions) => ({
             ...objectRecordsPermissions,
