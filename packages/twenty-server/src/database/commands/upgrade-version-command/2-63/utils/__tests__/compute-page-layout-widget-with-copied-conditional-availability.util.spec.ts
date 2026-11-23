@@ -16,7 +16,7 @@ const MOBILE_JSON_LOGIC_RULE = {
   and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
 };
 const UNREADABLE_JSON_LOGIC_RULE = {
-  in: ['VIP', { var: 'selectedRecords.0.tags' }],
+  '<': [{ var: 'selectedRecords.0.amount' }, 5],
 };
 
 type TestPageLayoutWidget = Parameters<
