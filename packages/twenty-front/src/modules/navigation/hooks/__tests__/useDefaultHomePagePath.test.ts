@@ -328,25 +328,25 @@ describe('useDefaultHomePagePath', () => {
       expect(result.current.defaultHomePagePath).toEqual('/objects/people');
     });
   });
-  it('should prefer an item outside sections over a section item', async () => {
+  it('should interleave Home sections and items by position', async () => {
     enableCustomizableSidebar();
 
     const { result } = renderHooks({
       withCurrentUser: true,
       withExistingView: false,
       navigationMenuItems: [
+        buildObjectNavigationMenuItem('person', 1),
         buildContainerNavigationMenuItem({
           type: NavigationMenuItemType.SECTION,
           id: 'sales-section',
           position: 0,
         }),
         buildObjectNavigationMenuItem('company', 0, 'sales-section'),
-        buildObjectNavigationMenuItem('person', 1),
       ],
     });
 
     await waitFor(() => {
-      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+      expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
     });
   });
   it('should follow the Home section order and skip tabs', async () => {

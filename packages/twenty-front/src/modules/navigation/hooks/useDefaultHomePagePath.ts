@@ -79,32 +79,43 @@ export const useDefaultHomePagePath = () => {
     [views],
   );
 
+  const navigationMenuItemsInDisplayOrder = useMemo(() => {
+    if (!isCustomizableSidebarEnabled) {
+      return legacyNavigationMenuItemsInDisplayOrder;
+    }
+
+    return getHomeNavigationMenuItemsInDisplayOrder({
+      workspaceNavigationMenuItems,
+      workspaceNavigationMenuItemsSorted,
+      workspaceNavigationMenuItemsByFolder,
+      objectMetadataItems,
+      views,
+      objectPermissionsByObjectMetadataId,
+    });
+  }, [
+    isCustomizableSidebarEnabled,
+    legacyNavigationMenuItemsInDisplayOrder,
+    workspaceNavigationMenuItems,
+    workspaceNavigationMenuItemsSorted,
+    workspaceNavigationMenuItemsByFolder,
+    objectMetadataItems,
+    objectPermissionsByObjectMetadataId,
+    views,
+  ]);
+
   const firstNavigationMenuItemLink = useMemo(
     () =>
       getFirstNavigationMenuItemLink({
-        navigationMenuItemsInDisplayOrder: isCustomizableSidebarEnabled
-          ? getHomeNavigationMenuItemsInDisplayOrder({
-              workspaceNavigationMenuItems,
-              workspaceNavigationMenuItemsSorted,
-              workspaceNavigationMenuItemsByFolder,
-              objectMetadataItems,
-              views,
-              objectPermissionsByObjectMetadataId,
-            })
-          : legacyNavigationMenuItemsInDisplayOrder,
+        navigationMenuItemsInDisplayOrder,
         objectMetadataItems,
         views,
         objectPermissionsByObjectMetadataId,
       }),
     [
-      isCustomizableSidebarEnabled,
-      legacyNavigationMenuItemsInDisplayOrder,
-      workspaceNavigationMenuItems,
-      workspaceNavigationMenuItemsSorted,
-      workspaceNavigationMenuItemsByFolder,
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       views,
+      navigationMenuItemsInDisplayOrder,
     ],
   );
 
