@@ -120,4 +120,14 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     fieldNames: ['calendarChannelEventAssociations'],
     isInherent: true,
   },
+  {
+    objectName: 'message',
+    fieldNames: ['messageThread', 'messageThreadTargets'],
+    isInherent: true,
+  },
+  {
+    objectName: 'calendarEvent',
+    fieldNames: ['calendarEventTargets'],
+    isInherent: true,
+  },
 ];

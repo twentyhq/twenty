@@ -12,8 +12,7 @@ permissions:
 jobs:
   pick-runner:
     timeout-minutes: 2
-    # Must not run on the pool it is measuring, or it queues behind the jobs it routes
-    runs-on: ubuntu-latest-2-cores
+    runs-on: ubuntu-latest
     outputs:
       runner: ${{ steps.pick.outputs.runner }}
     steps:
