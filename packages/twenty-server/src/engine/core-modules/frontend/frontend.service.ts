@@ -14,7 +14,6 @@ import { toIframeMediaPermissions } from 'src/engine/core-modules/application/ut
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES } from 'src/engine/core-modules/frontend/constants/document-content-security-policy-directives.constant';
-import { buildDocumentPermissionsPolicy } from 'src/engine/core-modules/frontend/utils/build-document-permissions-policy.util';
 import { buildIframeMediaPermissionsPolicy } from 'src/engine/core-modules/frontend/utils/build-iframe-media-permissions-policy.util';
 import { fitIframeMediaPermissionsToPolicySizeLimit } from 'src/engine/core-modules/frontend/utils/fit-iframe-media-permissions-to-policy-size-limit.util';
 import { getActiveApplicationIframeMediaPermissions } from 'src/engine/core-modules/frontend/utils/get-active-application-iframe-media-permissions.util';
@@ -166,7 +165,7 @@ export class FrontendService {
     response.setHeader('X-Frame-Options', 'SAMEORIGIN');
     response.setHeader(
       'Permissions-Policy',
-      buildDocumentPermissionsPolicy([]),
+      buildIframeMediaPermissionsPolicy([]),
     );
     response.setHeader(
       'Content-Security-Policy',
@@ -204,7 +203,7 @@ export class FrontendService {
 
       response.setHeader(
         'Permissions-Policy',
-        buildDocumentPermissionsPolicy(iframeMediaPermissions),
+        buildIframeMediaPermissionsPolicy(iframeMediaPermissions),
       );
 
       if (allowedOrigins.length > 0) {
