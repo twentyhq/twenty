@@ -19,6 +19,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CreateRelatedRecordPathInput } from 'src/engine/metadata-modules/related-record-path/dtos/create-related-record-path.input';
 import { RelatedRecordPathDTO } from 'src/engine/metadata-modules/related-record-path/dtos/related-record-path.dto';
+import { UpdateRelatedRecordPathInput } from 'src/engine/metadata-modules/related-record-path/dtos/update-related-record-path.input';
 import { RelatedRecordPathGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/related-record-path/filters/related-record-path-graphql-api-exception.filter';
 import { RelatedRecordPathService } from 'src/engine/metadata-modules/related-record-path/related-record-path.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -68,6 +69,17 @@ export class RelatedRecordPathResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RelatedRecordPathDTO> {
     return await this.relatedRecordPathService.create({
+      input,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => RelatedRecordPathDTO)
+  async updateRelatedRecordPath(
+    @Args('input') input: UpdateRelatedRecordPathInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<RelatedRecordPathDTO> {
+    return await this.relatedRecordPathService.update({
       input,
       workspaceId: workspace.id,
     });

@@ -36,7 +36,10 @@ export const aggregateCallRecorderPolicyResultsByMeeting = (
 
     meetingPolicyResult.calendarEventIds.push(calendarEventId);
 
-    if (callRecorderPreference === CallRecorderPreference.ON) {
+    if (
+      callRecorderPreference === CallRecorderPreference.ON ||
+      callRecorderPreference === CallRecorderPreference.AUTO
+    ) {
       meetingPolicyResult.calendarEventIdsWithRecordingOn.push(calendarEventId);
     }
 

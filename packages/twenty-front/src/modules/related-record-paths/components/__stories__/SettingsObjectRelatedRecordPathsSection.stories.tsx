@@ -44,6 +44,7 @@ const RELATED_RECORD_PATHS = [
     secondFieldMetadataId: null,
     thirdFieldMetadataId: null,
     isInherent: true,
+    isActive: true,
   },
   {
     __typename: 'RelatedRecordPath',
@@ -59,6 +60,7 @@ const RELATED_RECORD_PATHS = [
     }),
     thirdFieldMetadataId: null,
     isInherent: false,
+    isActive: true,
   },
 ];
 

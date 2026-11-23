@@ -1,4 +1,4 @@
-import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795446129886-backfill-view-is-private-overrides';
+import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795477704495-backfill-view-is-private-overrides';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
@@ -10,7 +10,7 @@ type ViewOverridesRow = {
   overrides: Record<string, unknown> | null;
 };
 
-describe('2-63 slow instance command 1795446129886 - backfill view isPrivate overrides (integration)', () => {
+describe('2-63 slow instance command 1795477704495 - backfill view isPrivate overrides (integration)', () => {
   const command = new BackfillViewIsPrivateOverridesSlowInstanceCommand();
   let originalRows: ViewOverridesRow[] = [];
 

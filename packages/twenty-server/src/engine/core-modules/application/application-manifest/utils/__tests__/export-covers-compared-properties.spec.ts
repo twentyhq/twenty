@@ -1014,7 +1014,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
     },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {},
   },
 ];

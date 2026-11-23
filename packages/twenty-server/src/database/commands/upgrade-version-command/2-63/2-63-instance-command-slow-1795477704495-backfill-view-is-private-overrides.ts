@@ -3,7 +3,7 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-@RegisteredInstanceCommand('2.63.0', 1795446129886, { type: 'slow' })
+@RegisteredInstanceCommand('2.63.0', 1795477704495, { type: 'slow' })
 export class BackfillViewIsPrivateOverridesSlowInstanceCommand
   implements SlowInstanceCommand
 {
