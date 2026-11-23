@@ -16113,7 +16113,7 @@ msgstr "進行中"
 #. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr ""
+msgstr "進行中：使用記錄層級的權限規則強制執行訊息與行事曆頻道的可見性。需要關聯跳轉和相關記錄路徑。"
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
