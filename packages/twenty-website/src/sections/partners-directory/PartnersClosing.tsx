@@ -17,7 +17,7 @@ export function PartnersClosing({ action }: PartnersClosingProps) {
         msg`Tell us what you need and we'll match you with a certified Twenty partner.`,
       )}
       heading={i18n._(msg`Didn't find the *right partner*?`)}
-      scheme="muted"
+      scheme="light"
     >
       {action}
     </Signoff>

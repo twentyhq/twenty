@@ -29,8 +29,10 @@ import { partnerBaseRegion } from './partner-base-region';
 import { PartnerMark } from './PartnerMark';
 import { RegionMapPoint } from './RegionMapPoint';
 
-// The case-study cards' hover (case-study-catalog/CaseStudyCard).
+// The case-study cards' white card on a muted section, and their hover
+// (case-study-catalog/CaseStudyCard).
 const Card = styled.article`
+  background-color: ${color('white')};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
   display: flex;
