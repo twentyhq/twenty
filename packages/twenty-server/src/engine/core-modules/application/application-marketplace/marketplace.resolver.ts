@@ -5,6 +5,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationBillingPriceService } from 'src/engine/core-modules/application/application-billing-price/application-billing-price.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
@@ -17,7 +18,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
@@ -49,7 +49,7 @@ export class MarketplaceResolver {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly applicationBillingPriceService: ApplicationBillingPriceService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -84,22 +84,11 @@ export class MarketplaceResolver {
       shouldIncludeMcpServerApplications: await this.isMcpServersEnabled(
         workspace.id,
       ),
-      shouldIncludeBillingPrices: await this.isApplicationPriceBillingEnabled(
-        workspace.id,
-      ),
+      shouldIncludeBillingPrices:
+        await this.applicationBillingPriceService.isApplicationPriceBillingEnabled(
+          workspace.id,
+        ),
     });
-  }
-
-  private async isApplicationPriceBillingEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    return (
-      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
-      (await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED,
-        workspaceId,
-      ))
-    );
   }
 
   private isMcpServersEnabled(workspaceId: string): Promise<boolean> {

@@ -4,7 +4,6 @@ import { AppConnectionHeader } from '@/applications/components/AppConnectionHead
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
-import { useFormatApplicationPriceAmount } from '@/settings/applications/hooks/useFormatApplicationPriceAmount';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
 import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/utils/buildApplicationIframeMediaPermissionSummary';
 import {
@@ -18,7 +17,7 @@ import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
 import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
@@ -154,7 +153,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   const { closeDialog } = useDialog();
 
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { formatApplicationPriceAmount } = useFormatApplicationPriceAmount();
 
   const objectLabelsByUniversalIdentifier = useMemo(
     (): Record<string, string> =>
@@ -191,12 +189,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       ...buildApplicationIframeMediaPermissionSummary(
         requestedIframeMediaPermissions,
       ),
-      ...buildApplicationBillingSummary({
-        billsCredits,
-        billingPrices: billingPrices ?? [],
-        appDisplayName,
-        formatPriceAmount: formatApplicationPriceAmount,
-      }),
+      ...buildApplicationBillingSummary(
+        billsCredits || isNonEmptyArray(billingPrices),
+      ),
     ];
     // The summary builders translate through the global i18n
   }, [
@@ -208,8 +203,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     appObjectUniversalIdentifiers,
     billsCredits,
     billingPrices,
-    appDisplayName,
-    formatApplicationPriceAmount,
   ]);
 
   const handleAuthorize = () => {

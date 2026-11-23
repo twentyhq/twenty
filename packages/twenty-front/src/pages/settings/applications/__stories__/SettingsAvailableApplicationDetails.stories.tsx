@@ -147,11 +147,7 @@ export const SubscriptionAppAsksForBillingConsentOnInstall: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await waitFor(() =>
-      expect(
-        body.getByText(
-          'Bill your workspace $7.00 for each LinkedIn connected account each month',
-        ),
-      ).toBeVisible(),
+      expect(body.getByText('Bill your workspace')).toBeVisible(),
     );
   },
 };
