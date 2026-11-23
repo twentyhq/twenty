@@ -1,11 +1,11 @@
 import { type QueryRunner } from 'typeorm';
 
-import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795437642259-add-view-is-private';
+import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795446129885-add-view-is-private';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
-describe('2-63 instance command 1795437642259 - add view isPrivate (integration)', () => {
+describe('2-63 instance command 1795446129885 - add view isPrivate (integration)', () => {
   const addIsPrivateCommand = new AddViewIsPrivateFastInstanceCommand();
   let queryRunner: QueryRunner;
 

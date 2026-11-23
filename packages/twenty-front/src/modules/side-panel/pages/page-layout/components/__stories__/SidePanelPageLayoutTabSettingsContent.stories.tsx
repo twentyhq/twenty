@@ -16,7 +16,6 @@ import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
 import { SidePanelPageLayoutTabSettingsContent } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettingsContent';
-import { EXPRESSION_DEVICE_MOBILE } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceMobile';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -24,6 +23,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -274,8 +274,8 @@ export const SingleWidgetVisibility: Story = {
         pageLayoutDraftComponentState.atomFamily({
           instanceId: PAGE_LAYOUT_ID,
         }),
-      ).tabs[0].widgets[0].conditionalAvailabilityExpression,
-    ).toBe(EXPRESSION_DEVICE_MOBILE);
+      ).tabs[0].widgets[0].conditionalAvailability,
+    ).toEqual(buildDeviceConditionalAvailability('MOBILE'));
     await userEvent.click(trigger);
     expect(await body.findByRole('option', { name: 'Mobile' })).toHaveAttribute(
       'aria-selected',

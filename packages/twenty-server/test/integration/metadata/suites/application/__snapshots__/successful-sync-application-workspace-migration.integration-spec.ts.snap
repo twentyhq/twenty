@@ -121,6 +121,7 @@ exports[`syncApplication should create a TEXT field on the standard Company obje
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1527,6 +1528,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1556,6 +1558,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1586,6 +1589,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1614,6 +1618,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1642,6 +1647,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1670,6 +1676,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1899,6 +1906,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
         "cascadedFromUniversalIdentifier": Any<String>,
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -1934,6 +1942,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -3361,6 +3370,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -3390,6 +3400,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -3420,6 +3431,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -3448,6 +3460,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -3476,6 +3489,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,
@@ -3504,6 +3518,7 @@ This is a test skill.",
       {
         "flatEntity": {
           "applicationUniversalIdentifier": Any<String>,
+          "conditionalAvailability": null,
           "conditionalAvailabilityExpression": null,
           "conditionalDisplay": null,
           "createdAt": Any<String>,

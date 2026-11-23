@@ -327,8 +327,9 @@ import { AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceComm
 import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795368198117-add-workflow-is-private';
 import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429428999-add-view-field-relation-scope';
 import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429429999-add-view-field-label';
-import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795437642259-add-view-is-private';
-import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795443683411-backfill-view-is-private-overrides';
+import { AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795439034166-add-conditional-availability-to-page-layout-widget';
+import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795446129885-add-view-is-private';
+import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795446129886-backfill-view-is-private-overrides';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -658,6 +659,7 @@ export const INSTANCE_COMMANDS = [
   AddWorkflowIsPrivateFastInstanceCommand,
   AddViewFieldRelationScopeFastInstanceCommand,
   AddViewFieldLabelFastInstanceCommand,
+  AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand,
   AddViewIsPrivateFastInstanceCommand,
   BackfillViewIsPrivateOverridesSlowInstanceCommand,
 ];
