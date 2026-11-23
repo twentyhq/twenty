@@ -114,15 +114,17 @@ export const fromUpdateViewFieldInputToFlatViewFieldToUpdateOrThrow = ({
     viewFieldGroupUniversalIdentifier;
   flatViewFieldToUpdate.relationTargetFieldMetadataUniversalIdentifier =
     relationTargetFieldMetadataUniversalIdentifier;
-  flatViewFieldToUpdate.universalRelationScope = isDefined(
-    mergedRecord.relationScope,
-  )
-    ? fromViewFieldRelationScopeToUniversalRelationScope({
+
+  if (isDefined(mergedRecord.relationScope)) {
+    flatViewFieldToUpdate.universalRelationScope =
+      fromViewFieldRelationScopeToUniversalRelationScope({
         relationScope: mergedRecord.relationScope,
         fieldMetadataUniversalIdentifierById:
           flatFieldMetadataMaps.universalIdentifierById,
-      })
-    : null;
+      });
+  } else {
+    flatViewFieldToUpdate.universalRelationScope = null;
+  }
 
   if (isDefined(overrides)) {
     flatViewFieldToUpdate.universalOverrides =
