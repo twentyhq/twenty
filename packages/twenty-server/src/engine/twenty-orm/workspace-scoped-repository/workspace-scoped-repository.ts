@@ -322,7 +322,6 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // TypeORM drops undefined from WHERE, which would emit an unscoped query
   private assertWorkspaceId(workspaceId: string): void {
     if (
       workspaceId === undefined ||
@@ -344,6 +343,12 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     }
 
     if (Array.isArray(where)) {
+      if (where.length === 0) {
+        throw new Error(
+          'WorkspaceScopedRepository: an empty WHERE array would match every workspace.',
+        );
+      }
+
       return where.map((clause) =>
         this.prependWorkspaceId(workspaceId, clause),
       );

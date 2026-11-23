@@ -17,7 +17,7 @@ import {
   type PageLayoutWidgetUniversalConfiguration,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   getDuplicateValues,
   type ManifestField,
@@ -290,6 +290,19 @@ export const manifestValidate = (manifest: Manifest) => {
   if (invalidUniversalIdentifiers.length > 0) {
     errors.push(
       `Invalid universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+    );
+  }
+
+  const hasConnectedAccountPrice = (
+    manifest.application.billing?.prices ?? []
+  ).some(({ per }) => per === 'CONNECTED_ACCOUNT');
+
+  if (
+    hasConnectedAccountPrice &&
+    !isNonEmptyArray(manifest.connectionProviders)
+  ) {
+    errors.push(
+      'A billing price per CONNECTED_ACCOUNT needs a connection provider: without one no account is ever connected and the price is never billed.',
     );
   }
 

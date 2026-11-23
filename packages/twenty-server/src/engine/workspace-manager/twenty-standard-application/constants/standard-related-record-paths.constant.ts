@@ -93,4 +93,31 @@ export const STANDARD_RELATED_RECORD_PATHS: StandardRelatedRecordPath[] = [
     fieldNames: ['taskTargets', 'task'],
     isInherent: false,
   },
+  { objectName: 'message', fieldNames: ['messageThread'], isInherent: true },
+  {
+    objectName: 'message',
+    fieldNames: ['messageParticipants'],
+    isInherent: true,
+  },
+  {
+    objectName: 'message',
+    fieldNames: ['messageChannelMessageAssociations'],
+    isInherent: true,
+  },
+  {
+    objectName: 'message',
+    fieldNames: ['messageChannelMessageAssociations', 'messageFolders'],
+    isInherent: true,
+  },
+  { objectName: 'message', fieldNames: ['attachments'], isInherent: true },
+  {
+    objectName: 'calendarEvent',
+    fieldNames: ['calendarEventParticipants'],
+    isInherent: true,
+  },
+  {
+    objectName: 'calendarEvent',
+    fieldNames: ['calendarChannelEventAssociations'],
+    isInherent: true,
+  },
 ];

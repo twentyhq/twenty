@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { t } from 'twenty-sdk/front-component';
-import { IconFolder } from 'twenty-ui/icon';
+import { type IconComponent } from 'twenty-ui/icon';
 import { THEME_COMMON, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledEmptyState = styled.div`
@@ -14,9 +13,17 @@ const StyledEmptyState = styled.div`
   text-align: center;
 `;
 
-export const GranolaFolderEmptyState = () => (
+type GranolaFolderEmptyStateProps = {
+  Icon: IconComponent;
+  message: string;
+};
+
+export const GranolaFolderEmptyState = ({
+  Icon,
+  message,
+}: GranolaFolderEmptyStateProps) => (
   <StyledEmptyState>
-    <IconFolder size={THEME_COMMON.icon.size.md} />
-    <div>{t('No folders found for this key')}</div>
+    <Icon size={THEME_COMMON.icon.size.md} />
+    <div>{message}</div>
   </StyledEmptyState>
 );

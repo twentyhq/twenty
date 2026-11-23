@@ -18,22 +18,48 @@ describe('findVerifiedOAuthClientForRegistration', () => {
         universalIdentifier:
           TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
         oAuthClientId: '9d57f169-1682-4169-b6f0-cd5f09ace06e',
-      })?.marketplaceAppUniversalIdentifier,
+      })?.universalIdentifier,
     ).toBe(MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.TWENTY_CLI);
+  });
+
+  it('should tie the Claude registration the server creates to the Claude card', () => {
+    expect(
+      findVerifiedOAuthClientForRegistration({
+        ...SERVER_SEEDED_SHAPE,
+        universalIdentifier:
+          MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+        oAuthClientId: '0f7c2a1e-3b4d-4c5e-8f9a-1b2c3d4e5f60',
+      })?.universalIdentifier,
+    ).toBe(MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE);
+  });
+
+  it('should find nothing for a workspace registration that carries the Claude card identifier', () => {
+    expect(
+      findVerifiedOAuthClientForRegistration({
+        ...SERVER_SEEDED_SHAPE,
+        ownerWorkspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+        universalIdentifier:
+          MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE,
+        oAuthClientId: '0f7c2a1e-3b4d-4c5e-8f9a-1b2c3d4e5f60',
+      }),
+    ).toBeUndefined();
   });
 
   it.each([
     'https://claude.ai/oauth/mcp-oauth-client-metadata',
     'https://claude.ai/oauth/claude-code-client-metadata',
-  ])('should tie the %s client to the Claude card', (oAuthClientId) => {
-    expect(
-      findVerifiedOAuthClientForRegistration({
-        ...SERVER_SEEDED_SHAPE,
-        universalIdentifier: '2b1f0d5e-6f0f-4f0e-9a43-0f6b3c1f2a10',
-        oAuthClientId,
-      })?.marketplaceAppUniversalIdentifier,
-    ).toBe(MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE);
-  });
+  ])(
+    'should tie a per-document %s registration to the Claude card',
+    (oAuthClientId) => {
+      expect(
+        findVerifiedOAuthClientForRegistration({
+          ...SERVER_SEEDED_SHAPE,
+          universalIdentifier: '2b1f0d5e-6f0f-4f0e-9a43-0f6b3c1f2a10',
+          oAuthClientId,
+        })?.universalIdentifier,
+      ).toBe(MARKETPLACE_CONNECT_LISTING_UNIVERSAL_IDENTIFIERS.CLAUDE);
+    },
+  );
 
   it('should find nothing for a registration that only carries the CLI identifier', () => {
     expect(

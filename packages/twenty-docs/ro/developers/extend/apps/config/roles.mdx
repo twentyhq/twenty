@@ -87,8 +87,10 @@ este omisă. O regulă poate avea și propriile `unreadableFields` și
 
 Un predicat face referire la un câmp prin `universalIdentifier`, un `operand` și (opțional) un
 câmp workspaceMember a cărui valoare este injectată în momentul interogării — astfel încât poți exprima „relația de proprietar
-a înregistrării **este** membrul curent al spațiului de lucru”. Acest rol poate crea orice companie, dar citește și
-actualizează doar companiile pe care le deține:
+a înregistrării **este** membrul curent al spațiului de lucru”. Cu `relationFieldUniversalIdentifier`, un predicat
+compară în schimb un câmp al înregistrărilor corelate prin acel câmp de relație, de exemplu
+`messageChannelId` al asocierilor de canal ale unui mesaj. Acest rol poate crea orice companie, dar citește
+și actualizează numai companiile pe care le deține:
 
 ```ts src/roles/partner-role.ts
 import {

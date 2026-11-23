@@ -1,15 +1,13 @@
 import { AiChatTestInstance } from '@/ai-chat/testing/AiChatTestInstance';
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { useIsAiChatComposerCentered } from '@/ai-chat/composer/hooks/useIsAiChatComposerCentered';
-import { aiChatMessagesFamilyState } from '@/ai-chat/states/aiChatMessagesFamilyState';
-import { aiChatMessagesLoadingFamilyState } from '@/ai-chat/states/aiChatMessagesLoadingFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { type AiChatSurface } from '@/ai-chat/types/AiChatSurface';
 import {
   jotaiStore,
@@ -48,47 +46,6 @@ describe('useIsAiChatComposerCentered', () => {
     expect(result.current).toBe(true);
   });
 
-  it('centers a new draft even if the previous conversation was still loading', () => {
-    jotaiStore.set(
-      aiChatMessagesLoadingFamilyState.atomFamily({
-        threadId: 'previous-thread',
-      }),
-      true,
-    );
-    const { result } = renderForSurface();
-
-    expect(result.current).toBe(true);
-  });
-
-  it('keeps an existing conversation bottom-aligned before, during and after fetching messages', () => {
-    const { result } = renderForSurface({ threadId: 'existing-thread' });
-
-    expect(result.current).toBe(false);
-    const loadingAtom = aiChatMessagesLoadingFamilyState.atomFamily({
-      threadId: 'existing-thread',
-    });
-
-    act(() => jotaiStore.set(loadingAtom, true));
-    expect(result.current).toBe(false);
-    act(() => jotaiStore.set(loadingAtom, false));
-    expect(result.current).toBe(false);
-  });
-
-  it('keeps the composer centered on the new chat until its first message', () => {
-    const { result } = renderForSurface();
-
-    expect(result.current).toBe(true);
-
-    act(() =>
-      jotaiStore.set(
-        aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
-        [{ id: 'message-1', role: 'user', parts: [] }],
-      ),
-    );
-
-    expect(result.current).toBe(false);
-  });
-
   it('should not center the composer in the side panel', () => {
     const { result } = renderForSurface({
       surface: AI_CHAT_SURFACE.SIDE_PANEL,
@@ -97,19 +54,8 @@ describe('useIsAiChatComposerCentered', () => {
     expect(result.current).toBe(false);
   });
 
-  it('should not center the composer once the thread has messages', () => {
-    jotaiStore.set(
-      aiChatMessagesFamilyState.atomFamily({ threadId: THREAD_ID }),
-      [{ id: 'message-1', role: 'user', parts: [] }],
-    );
-
-    const { result } = renderForSurface();
-
-    expect(result.current).toBe(false);
-  });
-
   it('should not center the composer while the workspace setup preamble owns the intro', () => {
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, true);
     const { result } = renderForSurface();
 
     expect(result.current).toBe(false);

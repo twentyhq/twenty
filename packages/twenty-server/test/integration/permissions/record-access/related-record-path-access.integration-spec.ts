@@ -25,6 +25,7 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { setRecordPrivate } from 'test/integration/metadata/suites/private-record/utils/set-record-private.util';
 import { createRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/create-related-record-path.util';
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
@@ -33,6 +34,7 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -288,6 +290,25 @@ describe('Record access through related record paths', () => {
     isProjectRuleRoleDeleted = true;
   };
 
+  const setProjectTasksReadability = async (
+    canReadFieldValue: false | null,
+  ) => {
+    await upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId: (await findOneRoleByLabel({ label: 'Member' })).id,
+        fieldPermissions: [
+          {
+            objectMetadataId: projectObjectMetadataId,
+            fieldMetadataId: projectTasksFieldMetadataId,
+            canReadFieldValue,
+          },
+        ],
+      },
+    });
+    await waitForAllJobsToFinish();
+  };
+
   const runAndWaitForJobs = async (operation: {
     query: DocumentNode;
     variables: Record<string, unknown>;
@@ -416,7 +437,7 @@ describe('Record access through related record paths', () => {
   it('should store the groups of the source record on the records related to it', async () => {
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
-    ).syncAccessGroups(workspaceId);
+    ).syncAccessGroups({ workspaceId });
 
     for (const objectMetadataId of [
       projectObjectMetadataId,
@@ -430,10 +451,11 @@ describe('Record access through related record paths', () => {
       });
     }
 
-    [{ compactId: projectRuleCompactId }] = await global.testDataSource.query(
-      `SELECT "compactId" FROM ${SCHEMA}."accessGroup" WHERE "roleId" = $1 AND "objectMetadataId" = $2 AND "rowLevelPermissionPredicateGroupId" IS NOT NULL`,
-      [projectRuleRoleId, projectObjectMetadataId],
-    );
+    [projectRuleCompactId] = await findRoleAccessGroupCompactIds({
+      workspaceId,
+      roleId: projectRuleRoleId,
+      objectMetadataId: projectObjectMetadataId,
+    });
 
     expect(await findTaskAccessGroupIds(taskOfProjectId)).toContain(
       projectRuleCompactId,
@@ -657,6 +679,174 @@ describe('Record access through related record paths', () => {
     expect(
       (await updateTaskAsJony(taskWithoutProjectId)).body.errors,
     ).toBeDefined();
+  });
+
+  it('should not follow the path from a relation the reader cannot read', async () => {
+    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+    await setProjectTasksReadability(false);
+
+    try {
+      const memberProjectCompactIds = await findRoleAccessGroupCompactIds({
+        workspaceId,
+        roleId: memberRoleId,
+        objectMetadataId: projectObjectMetadataId,
+      });
+
+      expect(memberProjectCompactIds).not.toEqual([]);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+      expect(await findTaskIdsListedByJony()).toEqual([]);
+      expect(
+        (await findTaskAccessGroupIds(taskOfProjectId)).filter((compactId) =>
+          memberProjectCompactIds.includes(compactId),
+        ),
+      ).toEqual([]);
+    } finally {
+      await setProjectTasksReadability(null);
+    }
+
+    expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+  });
+
+  it('should not follow the path from a relation a rule of the reader cannot read', async () => {
+    const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+    const memberObjectPermissions = await global.testDataSource.query(
+      `SELECT "objectMetadataId", "canReadObjectRecords", "canUpdateObjectRecords",
+        "canSoftDeleteObjectRecords", "canDestroyObjectRecords"
+        FROM core."objectPermission" WHERE "roleId" = $1`,
+      [memberRoleId],
+    );
+    const [{ id: nameFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'name'`,
+      [projectObjectMetadataId],
+    );
+    const ruleId = v4();
+
+    await revokeObjectRecordsPermissions({
+      roleId: memberRoleId,
+      objectMetadataId: projectObjectMetadataId,
+    });
+    await upsertRowLevelPermissionRules({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        objectMetadataId: projectObjectMetadataId,
+        rules: [
+          {
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                id: ruleId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId: nameFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Readable',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+    await waitForAllJobsToFinish();
+
+    try {
+      expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(true);
+
+      await upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: projectObjectMetadataId,
+              fieldMetadataId: projectTasksFieldMetadataId,
+              rowLevelPermissionPredicateGroupId: ruleId,
+              canReadFieldValue: false,
+            },
+          ],
+        },
+      });
+      await waitForAllJobsToFinish();
+
+      expect(await findTaskIdsListedByJony()).toEqual([]);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    } finally {
+      await upsertRowLevelPermissionRules({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId: projectObjectMetadataId,
+          rules: [],
+        },
+      });
+      await upsertObjectPermissions({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectPermissions: memberObjectPermissions,
+        },
+      });
+      await waitForAllJobsToFinish();
+    }
+
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
+  });
+
+  it('should still grant through another path from the same source object when one is unreadable', async () => {
+    const projectReviewTasksField = await createRelationBetweenObjects({
+      objectMetadataId: projectObjectMetadataId,
+      targetObjectMetadataId: taskObjectMetadataId,
+      type: FieldMetadataType.RELATION,
+      relationType: RelationType.ONE_TO_MANY,
+      name: 'reviewTasks',
+      label: 'Review tasks',
+      targetFieldLabel: 'Review project',
+      targetFieldIcon: 'IconBox',
+    });
+    const reviewPathResponse = await createRelatedRecordPath({
+      objectMetadataId: projectObjectMetadataId,
+      firstFieldMetadataId: projectReviewTasksField.id,
+    });
+
+    expect(reviewPathResponse.body.errors).toBeUndefined();
+
+    const reviewTaskId = await createRecord({
+      objectMetadataSingularName: TASK_NAME,
+      data: {
+        name: 'Review task of the project',
+        [`${projectReviewTasksField.relation.targetFieldMetadata.name}Id`]:
+          projectId,
+      },
+    });
+
+    await waitForAllJobsToFinish();
+    await setProjectTasksReadability(false);
+
+    try {
+      expect(await findTaskIdsListedByJony()).toEqual([reviewTaskId]);
+      expect(await canJonyReadTask(reviewTaskId)).toBe(true);
+      expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
+    } finally {
+      await setProjectTasksReadability(null);
+      await deleteRelatedRecordPath(
+        reviewPathResponse.body.data.createRelatedRecordPath.id,
+      );
+      await runAndWaitForJobs(
+        deleteOneOperationFactory({
+          objectMetadataSingularName: TASK_NAME,
+          gqlFields: 'id',
+          recordId: reviewTaskId,
+        }),
+      );
+    }
   });
 
   it('should stop granting once the path is deleted and grant again once it is back', async () => {

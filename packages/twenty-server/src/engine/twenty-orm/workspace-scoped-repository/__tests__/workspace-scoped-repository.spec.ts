@@ -131,6 +131,14 @@ describe('WorkspaceScopedRepository', () => {
       expect(repository.findOne).not.toHaveBeenCalled();
     });
 
+    it('throws on an empty array WHERE instead of dropping the workspace scope', () => {
+      expect(() => scoped.findOne(WORKSPACE_ID, { where: [] })).toThrow(
+        /empty WHERE array/,
+      );
+
+      expect(repository.findOne).not.toHaveBeenCalled();
+    });
+
     it('throws if any clause of an array WHERE includes workspaceId', () => {
       expect(() =>
         scoped.findOne(WORKSPACE_ID, {

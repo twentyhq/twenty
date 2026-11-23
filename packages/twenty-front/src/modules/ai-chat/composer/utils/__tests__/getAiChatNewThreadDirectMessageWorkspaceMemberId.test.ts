@@ -5,7 +5,8 @@ const BOB = { workspaceMemberId: 'bob', label: 'Bob' };
 
 const ONE_PERSON_WITHOUT_ADA = {
   isDirectMessageIdentityEnabled: true,
-  newInboxChatRecipients: {
+  newThreadRecipients: {
+    channelId: null,
     isAssistantParticipant: false,
     recipientWorkspaceMemberIds: ['jane'],
   },
@@ -43,11 +44,12 @@ describe('getAiChatNewThreadDirectMessageWorkspaceMemberId', () => {
 
   it.each([
     ['direct messages are disabled', { isDirectMessageIdentityEnabled: false }],
-    ['the chat is not a new inbox chat', { newInboxChatRecipients: undefined }],
+    ['the chat is not a new inbox chat', { newThreadRecipients: undefined }],
     [
       'Ada is a recipient',
       {
-        newInboxChatRecipients: {
+        newThreadRecipients: {
+          channelId: null,
           isAssistantParticipant: true,
           recipientWorkspaceMemberIds: ['jane'],
         },

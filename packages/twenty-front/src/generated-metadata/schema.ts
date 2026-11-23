@@ -659,6 +659,12 @@ export type ApplicationConnectedAccountDto = {
   visibility: Scalars['String']['output'];
 };
 
+export type ApplicationConnectedMemberCount = {
+  __typename?: 'ApplicationConnectedMemberCount';
+  applicationId: Scalars['UUID']['output'];
+  connectedMemberCount: Scalars['Int']['output'];
+};
+
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
@@ -686,6 +692,7 @@ export type ApplicationContent = {
   frontComponents: Array<ApplicationContentItem>;
   indexes: Array<ApplicationContentItem>;
   logicFunctions: Array<ApplicationContentItem>;
+  mcpServers: Array<ApplicationContentItem>;
   navigationMenuItems: Array<ApplicationContentItem>;
   objects: Array<ApplicationContentItem>;
   pageLayoutTabs: Array<ApplicationContentItem>;
@@ -913,6 +920,7 @@ export type ApplicationRegistration = {
 };
 
 export enum ApplicationRegistrationSourceType {
+  BUNDLED = 'BUNDLED',
   LOCAL = 'LOCAL',
   NPM = 'NPM',
   OAUTH_ONLY = 'OAUTH_ONLY',
@@ -2612,9 +2620,11 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
+  IS_APPLICATION_PRICE_BILLING_ENABLED = 'IS_APPLICATION_PRICE_BILLING_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED = 'IS_CHANNEL_VISIBILITY_RLS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
@@ -2623,7 +2633,6 @@ export enum FeatureFlagKey {
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
-  IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -3351,6 +3360,7 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
+  hasMcpServers: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -5826,6 +5836,7 @@ export type ObjectRecordsPermissions = {
   canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
+  canReadSomeRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
   canUpdateAllRecords: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
@@ -6249,7 +6260,7 @@ export type Query = {
   findUninstallApplicationJobStatus?: Maybe<JobStatus>;
   findUpgradeApplicationJobStatus?: Maybe<JobStatus>;
   findWorkspaceAiStats: WorkspaceAiStats;
-  findWorkspaceFromInviteHash: Workspace;
+  findWorkspaceFromInviteHash: WorkspaceFromInviteHash;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
@@ -6343,6 +6354,7 @@ export type Query = {
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
   workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
+  workspaceApplicationConnectedMemberCounts: Array<ApplicationConnectedMemberCount>;
 };
 
 
@@ -6901,6 +6913,11 @@ export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
 };
 
+
+export type QueryWorkspaceApplicationAuthorizationsArgs = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type RatioAggregateConfig = {
   __typename?: 'RatioAggregateConfig';
   fieldMetadataId: Scalars['UUID']['output'];
@@ -7114,6 +7131,7 @@ export type RowLevelPermissionPredicate = {
   subFieldName?: Maybe<Scalars['String']['output']>;
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7195,6 +7213,7 @@ export type RowLevelPermissionRulePredicateInput = {
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberRelationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -9220,6 +9239,14 @@ export enum WorkspaceDiscoverability {
   MEMBERS_AND_INVITEES = 'MEMBERS_AND_INVITEES',
   PUBLIC = 'PUBLIC'
 }
+
+export type WorkspaceFromInviteHash = {
+  __typename?: 'WorkspaceFromInviteHash';
+  allowImpersonation: Scalars['Boolean']['output'];
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+};
 
 export type WorkspaceInvitation = {
   __typename?: 'WorkspaceInvitation';
