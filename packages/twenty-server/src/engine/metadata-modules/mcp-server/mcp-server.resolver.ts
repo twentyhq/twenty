@@ -3,11 +3,15 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { CreateMcpServerInput } from 'src/engine/metadata-modules/mcp-server/dtos/create-mcp-server.input';
@@ -17,24 +21,33 @@ import { McpServerGraphqlApiExceptionInterceptor } from 'src/engine/metadata-mod
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-    requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
-  }),
-)
+const MCP_SERVER_AUTH_PRINCIPALS: AccessPolicy['authPrincipals'] = {
+  userSession: {
+    standard: true,
+    impersonated: true,
+    playground: true,
+    workspaceAgnostic: false,
+  },
+  apiKey: true,
+  oauthClient: true,
+  application: true,
+};
+
+// Workflow editors pick tools from this catalog, which exposes no secrets.
+const MCP_SERVER_READ_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: MCP_SERVER_AUTH_PRINCIPALS,
+  requiredPermissionFlags: [],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
+};
+
+const MCP_SERVER_WRITE_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: MCP_SERVER_AUTH_PRINCIPALS,
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
+};
+
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   McpServerGraphqlApiExceptionInterceptor,
@@ -45,21 +58,48 @@ export class McpServerResolver {
   constructor(private readonly mcpServerService: McpServerService) {}
 
   @Query(() => [McpServerDTO])
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_READ_ACCESS_POLICY))
   async mcpServers(
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<McpServerDTO[]> {
-    return await this.mcpServerService.findAll(workspace.id);
+    const mcpServers = await this.mcpServerService.findAll(workspace.id);
+
+    return mcpServers.filter((mcpServer) =>
+      this.canCallerReachMcpServer({
+        mcpServer,
+        workspace,
+        callingApplication,
+      }),
+    );
   }
 
   @Query(() => McpServerDTO, { nullable: true })
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_READ_ACCESS_POLICY))
   async mcpServer(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<McpServerDTO | null> {
-    return await this.mcpServerService.findById(id, workspace.id);
+    const mcpServer = await this.mcpServerService.findById(id, workspace.id);
+
+    if (!isDefined(mcpServer)) {
+      return null;
+    }
+
+    return this.canCallerReachMcpServer({
+      mcpServer,
+      workspace,
+      callingApplication,
+    })
+      ? mcpServer
+      : null;
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async createMcpServer(
     @Args('input') input: CreateMcpServerInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -74,6 +114,7 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async updateMcpServer(
     @Args('input') input: UpdateMcpServerInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -88,6 +129,7 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async syncMcpServerTools(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -102,10 +144,28 @@ export class McpServerResolver {
   }
 
   @Mutation(() => McpServerDTO)
+  @UseGuards(AccessPolicyGuard(MCP_SERVER_WRITE_ACCESS_POLICY))
   async deleteMcpServer(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<McpServerDTO> {
     return await this.mcpServerService.delete(id, workspace.id);
+  }
+
+  private canCallerReachMcpServer({
+    mcpServer,
+    workspace,
+    callingApplication,
+  }: {
+    mcpServer: Pick<McpServerDTO, 'applicationId'>;
+    workspace: Pick<WorkspaceEntity, 'workspaceCustomApplicationId'>;
+    callingApplication: FlatApplication | undefined;
+  }): boolean {
+    return canCallerReachApplication({
+      callingApplication,
+      applicationId: mcpServer.applicationId,
+      operation: 'read',
+      workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+    });
   }
 }

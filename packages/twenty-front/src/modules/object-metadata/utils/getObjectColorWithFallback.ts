@@ -18,9 +18,7 @@ const STANDARD_OBJECT_FALLBACK_COLOR: Partial<
   [StandardObjectNameSingular.NoteTarget]: 'turquoise',
   [StandardObjectNameSingular.Opportunity]: 'red',
   [StandardObjectNameSingular.Dashboard]: SYSTEM_OBJECT_COLOR,
-  [StandardObjectNameSingular.Workflow]: SYSTEM_OBJECT_COLOR,
   [StandardObjectNameSingular.WorkflowRun]: SYSTEM_OBJECT_COLOR,
-  [StandardObjectNameSingular.WorkflowVersion]: SYSTEM_OBJECT_COLOR,
 };
 
 const CUSTOM_OBJECT_ICON_COLORS: ThemeColor[] = MAIN_COLOR_NAMES.filter(

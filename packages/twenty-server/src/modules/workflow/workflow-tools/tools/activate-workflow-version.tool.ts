@@ -4,6 +4,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 
 const activateWorkflowVersionSchema = z.object({
   coreWorkflowVersionId: z
@@ -19,26 +20,28 @@ type ActivateWorkflowVersionInput = z.infer<
 export const createActivateWorkflowVersionTool = (
   deps: Pick<WorkflowToolDependencies, 'coreWorkflowLifecycleService'>,
   context: WorkflowToolContext,
-) => ({
-  name: 'activate_workflow_version' as const,
-  description:
-    'Activate a workflow version. This makes the workflow version active and available for execution.',
-  inputSchema: activateWorkflowVersionSchema,
-  execute: async (parameters: ActivateWorkflowVersionInput) => {
-    try {
-      return await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion(
-        {
-          workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        },
-      );
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        message: `Failed to activate workflow version: ${error.message}`,
-      };
-    }
-  },
-});
+) =>
+  ({
+    name: 'activate_workflow_version' as const,
+    isDestructive: true,
+    description:
+      'Activate a workflow version. This makes the workflow version active and available for execution.',
+    inputSchema: activateWorkflowVersionSchema,
+    execute: async (parameters: ActivateWorkflowVersionInput) => {
+      try {
+        return await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion(
+          {
+            workspaceId: context.workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          },
+        );
+      } catch (error) {
+        return {
+          success: false,
+          error: error.message,
+          message: `Failed to activate workflow version: ${error.message}`,
+        };
+      }
+    },
+  }) satisfies WorkflowTool;

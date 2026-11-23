@@ -1,18 +1,20 @@
-import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
+import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
+import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 
 export const buildWorkflowActorMetadata = (
-  executionContext: WorkflowExecutionContext,
+  executionContext: Pick<
+    WorkflowExecutionContext,
+    'isActingOnBehalfOfUser' | 'initiator' | 'workflowId' | 'workflowName'
+  >,
 ): ActorMetadata => {
-  if (executionContext.isActingOnBehalfOfUser) {
-    return executionContext.initiator;
-  }
+  const actor = executionContext.isActingOnBehalfOfUser
+    ? executionContext.initiator
+    : buildWorkflowRunSource(executionContext.workflowName);
 
   return {
-    source: FieldActorSource.WORKFLOW,
-    name: 'Workflow',
-    workspaceMemberId: null,
-    context: {},
+    ...actor,
+    context: { ...actor.context, workflowId: executionContext.workflowId },
   };
 };

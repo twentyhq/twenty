@@ -2,11 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { PendingWakeUpModule } from 'src/engine/core-modules/pending-wake-up/pending-wake-up.module';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { CalendarTriggerEventListFetchCommand } from 'src/modules/calendar/calendar-event-import-manager/commands/calendar-trigger-event-list-fetch.command';
@@ -30,6 +33,7 @@ import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
+import { CalendarRecurringEventWakeUpService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-recurring-event-wake-up.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
@@ -37,6 +41,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
 
 @Module({
   imports: [
+    WorkspaceCacheModule,
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
       WorkspaceEntity,
@@ -51,9 +56,11 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     MicrosoftCalendarDriverModule,
     EmailAliasManagerModule,
     FeatureFlagModule,
+    PendingWakeUpModule,
   ],
   providers: [
     BlocklistRepository,
+    WorkspaceInternalImportService,
     provideWorkspaceScopedRepository(CalendarChannelEntity),
     CalendarEventsImportService,
     CalendarFetchEventsService,
@@ -61,6 +68,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
     CalendarGetCalendarEventsService,
     CalendarImportEventsService,
     CalendarSaveEventsService,
+    CalendarRecurringEventWakeUpService,
     CalendarEventListFetchCronJob,
     CalendarEventListFetchCronCommand,
     CalendarEventListFetchJob,

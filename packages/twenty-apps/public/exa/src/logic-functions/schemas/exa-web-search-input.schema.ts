@@ -17,7 +17,7 @@ export const exaWebSearchInputSchema: InputJsonSchema = {
       type: 'string',
       enum: [...EXA_CATEGORIES],
       description:
-        'Optional content category to focus the search. Use "company" for business/organization info, "people" for person profiles, "news" for recent articles, "research paper" for academic content.',
+        'Optional content category to focus the search. Use "company" for business/organization info, "people" for person profiles, "news" for recent articles, "publication" for articles and papers.',
     },
     numResults: {
       type: 'integer',

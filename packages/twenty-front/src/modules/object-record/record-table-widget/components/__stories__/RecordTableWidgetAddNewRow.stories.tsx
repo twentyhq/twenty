@@ -191,6 +191,10 @@ export const ReadOnlyJunction: Story = {
         mockedUserData.currentUserWorkspace.objectRecordsPermissions.map(
           (permission) => ({
             ...permission,
+            canCreateAllRecords:
+              permission.objectMetadataId === junctionObject.id
+                ? false
+                : permission.canCreateAllRecords,
             canUpdateAllRecords:
               permission.objectMetadataId === junctionObject.id
                 ? false

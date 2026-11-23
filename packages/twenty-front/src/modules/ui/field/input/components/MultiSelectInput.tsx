@@ -18,6 +18,7 @@ type MultiSelectInputProps = {
   onOptionSelected: (value: FieldMultiSelectValue) => void;
   onEnter?: () => void;
   onAddSelectOption?: (optionName: string) => void;
+  isExistingOptionName?: (optionName: string) => boolean;
 };
 
 export const MultiSelectInput = ({
@@ -25,6 +26,7 @@ export const MultiSelectInput = ({
   options,
   onOptionSelected,
   onAddSelectOption,
+  isExistingOptionName,
   onEnter,
 }: MultiSelectInputProps) => {
   const { t } = useLingui();
@@ -95,6 +97,7 @@ export const MultiSelectInput = ({
         searchFilter={searchFilter}
         filteredOptions={filteredOptions}
         onAddSelectOption={onAddSelectOption}
+        isExistingOptionName={isExistingOptionName}
       />
     </>
   );

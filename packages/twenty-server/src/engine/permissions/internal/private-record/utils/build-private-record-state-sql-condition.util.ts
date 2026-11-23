@@ -1,0 +1,16 @@
+/* @license Enterprise */
+
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
+import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+
+export const buildPrivateRecordStateSQLCondition = ({
+  tableAlias,
+  isPrivate,
+}: {
+  tableAlias: string;
+  isPrivate: boolean;
+}): SQLCondition => ({
+  sql: `${escapeIdentifier(tableAlias)}.${escapeIdentifier(IS_PRIVATE_COLUMN_NAME)} = ${isPrivate ? 'TRUE' : 'FALSE'}`,
+  parameters: {},
+});

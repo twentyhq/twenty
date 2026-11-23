@@ -4,8 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 export const CastToTypeORMLogLevelArray = () =>
   Transform(({ value }: { value: string }) => toTypeORMLogLevelArray(value));
 
-// oxlint-disable-next-line typescript/no-explicit-any
-const toTypeORMLogLevelArray = (value: any) => {
+const toTypeORMLogLevelArray = (value: unknown) => {
   if (isNonEmptyString(value)) {
     const rawLogLevels = value.split(',').map((level) => level.trim());
     const validLevels = [

@@ -8,9 +8,10 @@ const FUTURE_STARTS_AT = '2026-01-01T13:00:00.000Z';
 const FUTURE_ENDS_AT = '2026-01-01T14:00:00.000Z';
 const PAST_STARTS_AT = '2026-01-01T09:00:00.000Z';
 const PAST_ENDS_AT = '2026-01-01T10:00:00.000Z';
-// The scheduling horizon is 7 days, so these fall beyond it.
-const BEYOND_HORIZON_STARTS_AT = '2026-01-10T13:00:00.000Z';
-const BEYOND_HORIZON_ENDS_AT = '2026-01-10T14:00:00.000Z';
+const LAST_HOUR_OF_HORIZON_STARTS_AT = '2026-01-02T11:00:00.000Z';
+const LAST_HOUR_OF_HORIZON_ENDS_AT = '2026-01-02T12:00:00.000Z';
+const BEYOND_HORIZON_STARTS_AT = '2026-01-02T13:00:00.000Z';
+const BEYOND_HORIZON_ENDS_AT = '2026-01-02T14:00:00.000Z';
 
 describe('resolveCallRecorderPolicyResult', () => {
   it('does not request a bot when calendar bot scheduling is disabled, even for an ON event', () => {
@@ -18,6 +19,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: false,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -37,6 +39,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -56,6 +59,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -75,6 +79,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -94,7 +99,48 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: undefined,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: true,
+      reason: 'RECORDING_ENABLED',
+    });
+  });
+
+  it('does not request a bot for a meeting that is on no member calendar', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: [],
+          callRecorderPreference: undefined,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'NO_OWNER',
+    });
+  });
+
+  it('requires a bot for a meeting on no member calendar once its preference is ON', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: [],
+          callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -113,6 +159,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.OFF,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -132,6 +179,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: undefined,
           isCanceled: false,
           startsAt: PAST_STARTS_AT,
@@ -151,6 +199,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: undefined,
           isCanceled: true,
           startsAt: FUTURE_STARTS_AT,
@@ -170,6 +219,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: BEYOND_HORIZON_STARTS_AT,
@@ -184,11 +234,32 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
+  it('requires a bot for an event starting in the last hour of the one-day scheduling horizon', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
+          callRecorderPreference: CallRecorderPreference.ON,
+          isCanceled: false,
+          startsAt: LAST_HOUR_OF_HORIZON_STARTS_AT,
+          endsAt: LAST_HOUR_OF_HORIZON_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: true,
+      reason: 'RECORDING_ENABLED',
+    });
+  });
+
   it('requires a bot for a long meeting that starts within the horizon but ends beyond it', () => {
     expect(
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -208,6 +279,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
+          ownerUserWorkspaceIds: ['user-workspace-1'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: '',

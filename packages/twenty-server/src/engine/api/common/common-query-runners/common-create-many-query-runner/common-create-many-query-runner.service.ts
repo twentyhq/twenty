@@ -4,15 +4,10 @@ import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import {
-  Brackets,
-  FindOptionsRelations,
-  In,
-  InsertResult,
-  ObjectLiteral,
-} from 'typeorm';
+import { Brackets, In, InsertResult, ObjectLiteral } from 'typeorm';
 
-import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
+import { ID_ONLY_SELECTED_FIELDS } from 'src/engine/api/common/constants/id-only-selected-fields.constant';
+import { CommonRecordQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-record-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { PartialObjectRecordWithId } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/partial-object-record-with-id.type';
 import { buildWhereConditions } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/build-where-conditions.util';
@@ -25,6 +20,8 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
+import { type CommonRelationsAggregatedValues } from 'src/engine/api/common/types/common-aggregated-values.type';
+import { type CommonQueryRunResult } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
   CommonExtendedInput,
@@ -34,8 +31,8 @@ import {
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
-import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildColumnsToReturn } from 'src/engine/api/common/utils/build-columns-to-return';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -49,7 +46,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
+import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
 import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
@@ -58,7 +56,7 @@ import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nes
 const MAX_NESTED_RELATION_CREATE_DEPTH = 5;
 
 @Injectable()
-export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerService<
+export class CommonCreateManyQueryRunnerService extends CommonRecordQueryRunnerService<
   CreateManyQueryArgs,
   ObjectRecord[]
 > {
@@ -74,11 +72,13 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   async run(
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): Promise<ObjectRecord[]> {
-    const objectSharing = resolveObjectSharing(queryRunnerContext);
+  ): Promise<CommonQueryRunResult<ObjectRecord[]>> {
+    const isPrivateByDefault = isPrivateByDefaultObject(
+      queryRunnerContext.flatObjectMetadata,
+    );
 
-    if (objectSharing.isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
-      await this.recordSharingWriteService.validateShareWithOrThrow({
+    if (isPrivateByDefault || isNonEmptyArray(args.shareWith)) {
+      await this.recordSharingWriteService.assertShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
       });
@@ -88,7 +88,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       !isDefined(queryRunnerContext.transactionScope) &&
       (isDefined(
         resolveCreatedRecordSharingOrThrow({
-          objectSharing,
+          isRecordSharingEnabled: isRecordSharingEnabled(queryRunnerContext),
+          isPrivateByDefault,
           shareWith: args.shareWith,
         }),
       ) ||
@@ -156,8 +157,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       repository:
-        objectSharing.isPrivateByDefault &&
-        isDefined(queryRunnerContext.transactionScope)
+        isPrivateByDefault && isDefined(queryRunnerContext.transactionScope)
           ? queryRunnerContext.transactionScope.getRepositoryWithoutPermissionChecks(
               flatObjectMetadata.nameSingular,
             )
@@ -165,58 +165,15 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       selectedFieldsResult: args.selectedFieldsResult,
     });
 
-    await this.processNestedRelationsIfNeeded({
-      args,
+    const relationAggregatedValues = await this.processNestedRelations({
       records: upsertedRecords,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext,
-      repository,
-      nestedRelationsReadPathOptions: this.getNestedRelationsReadPathOptions(),
-    });
-
-    return upsertedRecords;
-  }
-
-  private async processNestedRelationsIfNeeded({
-    args,
-    records,
-    flatObjectMetadata,
-    flatObjectMetadataMaps,
-    flatFieldMetadataMaps,
-    authContext,
-    repository,
-    nestedRelationsReadPathOptions,
-  }: {
-    args: CommonExtendedInput<CreateManyQueryArgs>;
-    records: ObjectRecord[];
-    flatObjectMetadata: FlatObjectMetadata;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    authContext: WorkspaceAuthContext;
-    repository: WorkspaceRepository<ObjectRecord>;
-    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
-  }): Promise<void> {
-    if (!args.selectedFieldsResult.relations) {
-      return;
-    }
-
-    await this.processNestedRelationsHelper.processNestedRelations({
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem: flatObjectMetadata,
-      parentObjectRecords: records,
-      relations: args.selectedFieldsResult.relations as Record<
-        string,
-        FindOptionsRelations<ObjectLiteral>
-      >,
+      selection: args.selectedFieldsResult,
+      queryRunnerContext,
       limit: QUERY_MAX_RECORDS,
-      authContext,
       repository,
-      selectedFields: args.selectedFieldsResult.select,
-      ...nestedRelationsReadPathOptions,
     });
+
+    return { result: upsertedRecords, relationAggregatedValues };
   }
 
   async computeArgs(
@@ -281,8 +238,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     if (!args.upsert) {
       const selectedColumns = buildColumnsToReturn({
-        select: selectedFieldsResult.select,
-        relations: selectedFieldsResult.relations,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -377,8 +333,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     };
 
     const columnsToReturn = buildColumnsToReturn({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -479,14 +434,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       }),
     );
 
-    const restrictedFields =
-      await this.recordPermissionsService.findRestrictedFields({
+    const unreadableFieldMetadataIds =
+      await this.recordFieldPermissionsReadService.findUnreadableFields({
         principals: permissionsPrincipals,
         objectMetadataId: flatObjectMetadata.id,
       });
 
     const selectOptions = getAllSelectableColumnNames({
-      restrictedFields,
+      unreadableFieldMetadataIds,
       objectMetadata: {
         objectMetadataMapItem: flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -606,9 +561,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   }): Promise<void> {
     const { authContext, flatObjectMetadata, transactionScope } =
       queryRunnerContext;
-    const objectSharing = resolveObjectSharing(queryRunnerContext);
     const createdRecordSharing = resolveCreatedRecordSharingOrThrow({
-      objectSharing,
+      isRecordSharingEnabled: isRecordSharingEnabled(queryRunnerContext),
+      isPrivateByDefault: isPrivateByDefaultObject(flatObjectMetadata),
       shareWith,
     });
 
@@ -626,8 +581,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     await this.recordSharingWriteService.insertRecordSharesForCreatedRecords({
       authContext,
-      flatObjectMetadata,
-      objectSharing,
+      objectMetadataId: flatObjectMetadata.id,
       recordIds: insertResult.generatedMaps.map((record) => record.id),
       createdRecordSharing,
       transactionScope,
@@ -683,7 +637,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
           {
             data: targetRecords,
             shareWith,
-            selectedFields: { id: true },
+            selectedFields: ID_ONLY_SELECTED_FIELDS,
           },
           {
             ...queryRunnerContext,
@@ -718,8 +672,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     const columnsToSelect = buildColumnsToSelect({
-      select: selectedFieldsResult.select,
-      relations: selectedFieldsResult.relations,
+      selection: selectedFieldsResult,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -745,22 +698,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     return upsertedRecords as ObjectRecord[];
-  }
-
-  async processQueryResult(
-    queryResult: ObjectRecord[],
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectRecord[]> {
-    return await this.commonResultGettersService.processRecordArray(
-      queryResult,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      authContext.workspace.id,
-    );
   }
 
   private getRecordWithoutCreatedBy(
@@ -811,7 +748,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     return (
       args.data.length *
       computeMaxFieldCountPerRecord({
-        selectedFieldsResult,
+        selection: selectedFieldsResult,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

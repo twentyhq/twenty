@@ -1,5 +1,6 @@
 import { type ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { buildExecutionContextMock } from 'test/utils/build-execution-context-mock.util';
 
@@ -28,7 +29,10 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const user = { id: 'user-id' };
@@ -46,9 +50,14 @@ const installedApplication = {
   sourceType: ApplicationRegistrationSourceType.NPM,
 };
 const apiKey = { id: 'api-key-id' };
-const impersonationContext = {
+const workspaceImpersonationContext = {
   impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
   impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+  level: 'workspace',
+};
+const serverImpersonationContext = {
+  ...workspaceImpersonationContext,
+  level: 'server',
 };
 
 const REQUEST_BY_PRINCIPAL_VARIANT = {
@@ -57,11 +66,17 @@ const REQUEST_BY_PRINCIPAL_VARIANT = {
     workspace,
     tokenType: JwtTokenTypeEnum.ACCESS,
   },
-  'userSession.impersonated': {
+  'userSession.serverImpersonated': {
     user,
     workspace,
     tokenType: JwtTokenTypeEnum.ACCESS,
-    impersonationContext,
+    impersonationContext: serverImpersonationContext,
+  },
+  'userSession.workspaceImpersonated': {
+    user,
+    workspace,
+    tokenType: JwtTokenTypeEnum.ACCESS,
+    impersonationContext: workspaceImpersonationContext,
   },
   'userSession.playground': {
     user,
@@ -141,7 +156,8 @@ const PRINCIPAL_CASES: {
     authPrincipals: { ...REFUSE_EVERY_PRINCIPAL, userSession: true },
     acceptedPrincipalVariantNames: [
       'userSession.standard',
-      'userSession.impersonated',
+      'userSession.serverImpersonated',
+      'userSession.workspaceImpersonated',
       'userSession.playground',
       'userSession.workspaceAgnostic',
     ],
@@ -181,7 +197,36 @@ const PRINCIPAL_CASES: {
         workspaceAgnostic: false,
       },
     },
-    acceptedPrincipalVariantNames: ['userSession.impersonated'],
+    acceptedPrincipalVariantNames: [
+      'userSession.serverImpersonated',
+      'userSession.workspaceImpersonated',
+    ],
+  },
+  {
+    name: 'userSession server-level impersonation only',
+    authPrincipals: {
+      ...REFUSE_EVERY_PRINCIPAL,
+      userSession: {
+        standard: false,
+        impersonated: { server: true, workspace: false },
+        playground: false,
+        workspaceAgnostic: false,
+      },
+    },
+    acceptedPrincipalVariantNames: ['userSession.serverImpersonated'],
+  },
+  {
+    name: 'userSession workspace-level impersonation only',
+    authPrincipals: {
+      ...REFUSE_EVERY_PRINCIPAL,
+      userSession: {
+        standard: false,
+        impersonated: { server: false, workspace: true },
+        playground: false,
+        workspaceAgnostic: false,
+      },
+    },
+    acceptedPrincipalVariantNames: ['userSession.workspaceImpersonated'],
   },
   {
     name: 'userSession playground only',
@@ -293,7 +338,8 @@ const PRINCIPAL_CASES: {
     },
     acceptedPrincipalVariantNames: [
       'userSession.standard',
-      'userSession.impersonated',
+      'userSession.serverImpersonated',
+      'userSession.workspaceImpersonated',
       'userSession.playground',
       'userSession.workspaceAgnostic',
       'oauthClient.withUser',
@@ -549,7 +595,7 @@ describe('AccessPolicyGuard', () => {
           user,
           workspace,
           tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
-          impersonationContext,
+          impersonationContext: workspaceImpersonationContext,
         },
       },
       {
@@ -606,7 +652,7 @@ describe('AccessPolicyGuard', () => {
           user,
           workspace,
           tokenType: JwtTokenTypeEnum.PLAYGROUND,
-          impersonationContext,
+          impersonationContext: workspaceImpersonationContext,
         },
       },
       {
@@ -622,7 +668,7 @@ describe('AccessPolicyGuard', () => {
         request: {
           user,
           tokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
-          impersonationContext,
+          impersonationContext: workspaceImpersonationContext,
         },
       },
     ])('should refuse $name', async ({ request }) => {
@@ -924,12 +970,12 @@ describe('AccessPolicyGuard', () => {
     let accessPolicyService: AccessPolicyService;
 
     const mockCache = ({
-      defaultRoleId,
+      requestedRoleId,
       canUpdateAllSettings = false,
       isLayoutsFlagAssigned = false,
       canAgentRoleUpdateAllSettings = false,
     }: {
-      defaultRoleId: string | null;
+      requestedRoleId: string | null;
       canUpdateAllSettings?: boolean;
       isLayoutsFlagAssigned?: boolean;
       canAgentRoleUpdateAllSettings?: boolean;
@@ -939,11 +985,14 @@ describe('AccessPolicyGuard', () => {
         flatRoleTargetByAgentIdMaps: {
           'agent-id': { roleId: 'agent-role-id' },
         },
+        flatRoleTargetByApplicationIdMaps: {
+          'application-id': { roleId: 'role-id' },
+        },
         flatApplicationMaps: {
           byId: {
             'application-id': {
               id: 'application-id',
-              defaultRoleId,
+              requestedRoleId,
               deletedAt: null,
             },
           },
@@ -992,10 +1041,19 @@ describe('AccessPolicyGuard', () => {
       const module = await Test.createTestingModule({
         providers: [
           SettingPermissionsService,
-          PrincipalPermissionsService,
+          PrincipalPermissionsReadService,
+          ApplicationGrantRoleLookupService,
           {
             provide: WorkspaceCacheService,
             useValue: mockWorkspaceCacheService,
+          },
+          {
+            provide: CoreEntityCacheService,
+            useValue: { get: jest.fn().mockResolvedValue(activeWorkspace) },
+          },
+          {
+            provide: getRepositoryToken(WorkspaceEntity),
+            useValue: { findOne: jest.fn() },
           },
         ],
       }).compile();
@@ -1027,7 +1085,7 @@ describe('AccessPolicyGuard', () => {
       );
 
     it('should deny with PERMISSION_DENIED when the application has no default role', async () => {
-      mockCache({ defaultRoleId: null });
+      mockCache({ requestedRoleId: null });
 
       await expect(canActivateApplication()).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
@@ -1035,14 +1093,14 @@ describe('AccessPolicyGuard', () => {
     });
 
     it('should allow when the default role of the application grants the setting', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+      mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(canActivateApplication()).resolves.toBe(true);
     });
 
     it('should allow when the setting is assigned to the default role of the application', async () => {
       mockCache({
-        defaultRoleId: 'role-id',
+        requestedRoleId: 'role-id',
         canUpdateAllSettings: false,
         isLayoutsFlagAssigned: true,
       });
@@ -1051,7 +1109,7 @@ describe('AccessPolicyGuard', () => {
     });
 
     it('should deny with PERMISSION_DENIED when the default role of the application lacks the setting', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: false });
+      mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: false });
 
       await expect(canActivateApplication()).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
@@ -1060,7 +1118,7 @@ describe('AccessPolicyGuard', () => {
 
     it('should allow when both the application and the agent roles grant the setting', async () => {
       mockCache({
-        defaultRoleId: 'role-id',
+        requestedRoleId: 'role-id',
         canUpdateAllSettings: true,
         canAgentRoleUpdateAllSettings: true,
       });
@@ -1076,7 +1134,7 @@ describe('AccessPolicyGuard', () => {
     ])(
       'should deny with PERMISSION_DENIED a setting the application grants when $title',
       async ({ agentId }) => {
-        mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+        mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: true });
 
         await expect(canActivateApplication({ agentId })).rejects.toMatchObject(
           {
@@ -1087,7 +1145,7 @@ describe('AccessPolicyGuard', () => {
     );
 
     it('should deny with PERMISSION_DENIED when the application does not exist', async () => {
-      mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
+      mockCache({ requestedRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(
         canActivateApplication({ applicationId: 'unknown-application-id' }),

@@ -5,6 +5,7 @@ import { type ValidationRuleViolation } from '@/validation-rules/types/Validatio
 export type RecordUpdateFormCompletionRequest = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   draftRecord: Partial<ObjectRecord>;
+  previousRecord: Partial<ObjectRecord>;
   fieldMetadataIds: string[];
   violations: ValidationRuleViolation[];
 };

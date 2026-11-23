@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -14,7 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RoleTargetModule,
     PermissionsModule,
   ],
-  providers: [RoleAssignmentService],
-  exports: [RoleAssignmentService],
+  providers: [RoleAssignmentWriteService],
+  exports: [RoleAssignmentWriteService],
 })
 export class RoleAssignmentModule {}

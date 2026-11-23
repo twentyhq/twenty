@@ -46,7 +46,7 @@ const waitForOrThrow = async (isDone: () => boolean) => {
   }
 };
 
-describe('ai.generate runs followed by their application (integration)', () => {
+describe('ai.generate runs followed by their caller (integration)', () => {
   let application: ApplicationWithResources;
   let token: string;
   let otherApplication: ApplicationWithResources;
@@ -239,9 +239,83 @@ describe('ai.generate runs followed by their application (integration)', () => {
     ).toEqual(expect.arrayContaining([runId, 'BAD_USER_INPUT']));
   });
 
-  it('refuses a run id from a member session', async () => {
+  it('streams a run started from a member session to that member, and to no other', async () => {
+    const runId = randomUUID();
+    const streams: Awaited<ReturnType<typeof followAgentRunEventsOrThrow>>[] =
+      [];
+
+    try {
+      const ownStream = await followAgentRunEventsOrThrow({
+        runId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      streams.push(ownStream);
+
+      const otherMemberStream = await followAgentRunEventsOrThrow({
+        runId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      streams.push(otherMemberStream);
+
+      await waitForOrThrow(
+        () =>
+          ownStream.events.length > 0 && otherMemberStream.events.length > 0,
+      );
+      mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
+
+      const response = await makeMetadataApiRequest(
+        generateQueryFactory({ input: INPUT, runId }),
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      ).timeout(GENERATE_TIMEOUT_MS);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.generate).toMatchObject({
+        success: true,
+        text: 'Acme looks like a fit',
+        runId,
+      });
+
+      await waitForOrThrow(() =>
+        ownStream.events.some(isAgentChatTurnEndEvent),
+      );
+
+      // as above, a keepalive after the run ended comes after anything the run published
+      const otherEventCountAtRunEnd = otherMemberStream.events.length;
+
+      await waitForOrThrow(
+        () => otherMemberStream.events.length > otherEventCountAtRunEnd,
+      );
+    } finally {
+      await Promise.all(streams.map((stream) => stream.close()));
+    }
+
+    const [ownStream, otherMemberStream] = streams;
+
+    expect(ownStream.errors).toEqual([]);
+    expect(
+      ownStream.events
+        .flatMap((event) =>
+          event.type === 'stream-chunk' && event.chunk.type === 'text-delta'
+            ? [event.chunk.delta]
+            : [],
+        )
+        .join(''),
+    ).toBe('Acme looks like a fit');
+    expect(ownStream.events.find(isAgentChatTurnEndEvent)).toMatchObject({
+      type: 'run-finished',
+    });
+    expect(otherMemberStream.errors).toEqual([]);
+    expect(
+      otherMemberStream.events.every(({ type }) => type === 'keepalive'),
+    ).toBe(true);
+  });
+
+  it('refuses a run id from an API key, which no member or application owns', async () => {
     const response = await makeMetadataApiRequest(
       generateQueryFactory({ input: INPUT, runId: randomUUID() }),
+      API_KEY_ACCESS_TOKEN,
     );
 
     expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');

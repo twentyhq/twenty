@@ -1,4 +1,5 @@
-import { settingsDraftRoleBaseFamilyState } from '@/settings/roles/states/settingsDraftRoleBaseFamilyState';
+import { mergePersistedRoleIntoDraftRole } from '@/settings/roles/role/utils/mergePersistedRoleIntoDraftRole';
+import { settingsInitialDraftRoleFamilyState } from '@/settings/roles/states/settingsInitialDraftRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useRoutedFlowStateScopeId } from '@/ui/utilities/state/contexts/RoutedFlowStateScopeContext';
@@ -34,34 +35,25 @@ export const SettingsRoleDraftSyncEffect = ({
       roleId,
       routedFlowStateScopeId,
     );
-    const draftRoleBaseAtom = settingsDraftRoleBaseFamilyState.getAtom(
+    const initialDraftRoleAtom = settingsInitialDraftRoleFamilyState.getAtom(
       roleId,
       routedFlowStateScopeId,
     );
     const currentDraftRole = store.get(draftRoleAtom);
-    const draftRoleBase = store.get(draftRoleBaseAtom);
+    const initialDraftRole = store.get(initialDraftRoleAtom);
 
-    const isUninitialized = currentDraftRole.id !== settingsPersistedRole.id;
-    const hasNoUnsavedChanges =
-      isDefined(draftRoleBase) &&
-      isDeeplyEqual(currentDraftRole, draftRoleBase);
-
-    const nextDraftRole =
-      isUninitialized || hasNoUnsavedChanges
-        ? settingsPersistedRole
-        : {
-            ...currentDraftRole,
-            workspaceMembers: settingsPersistedRole.workspaceMembers,
-            agents: settingsPersistedRole.agents,
-            apiKeys: settingsPersistedRole.apiKeys,
-          };
+    const nextDraftRole = mergePersistedRoleIntoDraftRole({
+      draftRole: currentDraftRole,
+      initialDraftRole,
+      persistedRole: settingsPersistedRole,
+    });
 
     if (!isDeeplyEqual(currentDraftRole, nextDraftRole)) {
       store.set(draftRoleAtom, nextDraftRole);
     }
 
-    if (!isDeeplyEqual(draftRoleBase, settingsPersistedRole)) {
-      store.set(draftRoleBaseAtom, settingsPersistedRole);
+    if (!isDeeplyEqual(initialDraftRole, settingsPersistedRole)) {
+      store.set(initialDraftRoleAtom, settingsPersistedRole);
     }
   }, [roleId, routedFlowStateScopeId, settingsPersistedRole, store]);
 

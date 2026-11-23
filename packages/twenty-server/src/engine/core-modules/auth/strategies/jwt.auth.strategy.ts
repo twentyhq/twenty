@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { type SecretOrKeyProvider, Strategy } from 'passport-jwt';
+import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { isApiKeyExpired } from 'src/engine/core-modules/api-key/utils/is-api-key-expired.util';
 import {
@@ -42,6 +43,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationAuthorizationService: ApplicationAuthorizationService,
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -313,6 +315,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     return {
       impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
       impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+      level: authorizationResult.level,
     };
   }
 
@@ -354,6 +357,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new AuthException(
         'Application not found',
         AuthExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (
+      !(await this.applicationAuthorizationService.isAccessTokenAuthorized(
+        payload,
+      ))
+    ) {
+      throw new AuthException(
+        'Application authorization was revoked',
+        AuthExceptionCode.UNAUTHENTICATED,
       );
     }
 

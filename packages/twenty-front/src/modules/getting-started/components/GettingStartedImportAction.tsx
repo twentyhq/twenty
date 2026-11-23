@@ -1,6 +1,7 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
+import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
+import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt';
+import { GettingStartedImportPreview } from '@/getting-started/components/step-preview/GettingStartedImportPreview';
 import { GETTING_STARTED_IMPORT_PROMPT } from '@/getting-started/constants/GettingStartedImportPrompt';
 import { SPREADSHEET_EXPORT_GUIDES } from '@/getting-started/constants/SpreadsheetExportGuides';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
@@ -92,7 +93,7 @@ export const GettingStartedImportAction = () => {
   const { enqueueToast } = useToast();
   const { updateGettingStarted } = useUpdateGettingStarted();
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
-  const canSendAgentChatMessage = useCanSendAgentChatMessage();
+  const canSendAiChatMessage = useCanSendAiChatMessage();
 
   const importFilesWithAi = async (files: File[]) => {
     const chatThreadId = await openAskAiPageWithPreprompt({
@@ -115,7 +116,7 @@ export const GettingStartedImportAction = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: true,
-    disabled: !canSendAgentChatMessage,
+    disabled: !canSendAiChatMessage,
     accept: {
       'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
@@ -133,12 +134,13 @@ export const GettingStartedImportAction = () => {
 
   return (
     <StyledColumn>
+      <GettingStartedImportPreview />
       <StyledDropZone
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...getRootProps({
           role: 'button',
           'aria-label': t`Upload your CRM export`,
-          'aria-disabled': !canSendAgentChatMessage,
+          'aria-disabled': !canSendAiChatMessage,
         })}
         data-drag-active={isDragActive || undefined}
       >

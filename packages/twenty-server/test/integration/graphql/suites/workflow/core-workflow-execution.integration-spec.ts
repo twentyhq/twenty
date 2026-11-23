@@ -27,8 +27,6 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { type WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
-import { WorkspaceCacheRowsBatchLoader } from 'src/engine/workspace-cache/services/workspace-cache-rows-batch-loader';
 import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
@@ -36,7 +34,6 @@ import {
   coreWorkflowGraphqlRequest,
   createCoreWorkflow,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
   linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
@@ -60,7 +57,7 @@ import { type CoreWorkflowVersionWriteService } from 'src/engine/core-modules/wo
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 
-import { type CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { type WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -91,7 +88,6 @@ type Fixture = {
   coreWorkflowId: string;
   coreWorkflowVersionId: string;
   workflowId: string | null;
-  workflowVersionId: string | null;
   trigger: object;
   steps: WorkflowAction[];
 };
@@ -115,7 +111,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     let coreWorkflowId: string = randomUUID();
     let coreWorkflowVersionId: string = randomUUID();
     let workflowId: string | null = null;
-    let workflowVersionId: string | null = null;
     const trigger = {
       name: 'B-Async trigger',
       type: triggerType,
@@ -160,13 +155,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       coreWorkflowId = coreWorkflow.coreWorkflowId;
       coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
 
-      const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
-        coreWorkflowId,
-        withWorkspaceRecords: true,
-      });
-
-      workflowId = legacyIds.workspaceWorkflowId;
-      workflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
+      ({ workspaceWorkflowId: workflowId } =
+        await linkCoreWorkflowToLegacyWorkspaceIds({ coreWorkflowId }));
       await global.testDataSource.query(
         `UPDATE core."workflowVersion" SET triggers = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
         [
@@ -175,25 +165,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           JSON.stringify(steps),
         ],
       );
-      await global.testDataSource.query(
-        `UPDATE "${schema}"."workflowVersion" SET trigger = $2, steps = $3, status = 'ACTIVE' WHERE id = $1`,
-        [workflowVersionId, JSON.stringify(trigger), JSON.stringify(steps)],
-      );
-      await global.testDataSource.query(
-        `UPDATE "${schema}".workflow SET "lastPublishedVersionId" = $2 WHERE id = $1`,
-        [workflowId, workflowVersionId],
-      );
     }
 
     await global.testDataSource.query(
-      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2, "lastPublishedVersionId" = $3 WHERE id = $1`,
-      [coreWorkflowId, coreWorkflowVersionId, workflowVersionId],
+      `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = $2 WHERE id = $1`,
+      [coreWorkflowId, coreWorkflowVersionId],
     );
     const fixture = {
       coreWorkflowId,
       coreWorkflowVersionId,
       workflowId,
-      workflowVersionId,
       trigger,
       steps,
     };
@@ -215,10 +196,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     await global.testDataSource.query(
       `UPDATE core."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
       [fixture.coreWorkflowVersionId],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
-      [fixture.workflowVersionId],
     );
     await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
       workspaceId,
@@ -274,9 +251,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         await deleteCoreWorkflows({
           coreWorkflowIds: [fixture.coreWorkflowId],
         });
-        await deleteLegacyWorkspaceWorkflowRecords({
-          workspaceWorkflowId: fixture.workflowId,
-        });
       }
       await global.testDataSource.query(
         'DELETE FROM core."workflowVersion" WHERE "coreWorkflowId" = $1',
@@ -300,28 +274,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(run).toMatchObject({
       coreWorkflowId: fixture.coreWorkflowId,
       coreWorkflowVersionId: fixture.coreWorkflowVersionId,
-      workflowId: null,
-      workflowVersionId: null,
       state: {
         flow: { steps: fixture.steps },
         stepInfos: { trigger: { result: { marker: 'B-Async payload' } } },
       },
     });
     expect(run.createdByWorkspaceMemberId).toBeTruthy();
-  });
-
-  it('executes the core definition despite divergent workspace content', async () => {
-    const fixture = await createFixture();
-
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowVersion" SET trigger = NULL, steps = NULL WHERE id = $1`,
-      [fixture.workflowVersionId],
-    );
-
-    const run = await waitForRun(await runFixture(fixture), 'COMPLETED');
-
-    expect(run.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
-    expect(run.state.flow.steps).toEqual(fixture.steps);
   });
 
   it.each(Object.values(WorkflowActionType))(
@@ -368,7 +326,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   );
 
   it.each([false, true])(
-    'bills the core-owned spender mapping (mirrorless=%s)',
+    'bills the core workflow as spender (mirrorless=%s)',
     async (mirrorless) => {
       const fixture = await createFixture({ mirrorless });
       const charge = jest.spyOn(global.workflowTestServices.quota, 'charge');
@@ -385,7 +343,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         events: [
           expect.objectContaining({
             spenders: {
-              workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+              workflowId: fixture.coreWorkflowId,
               applicationId: workspace.workspaceCustomApplicationId,
             },
           }),
@@ -394,37 +352,8 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   );
 
-  it.each([
-    'unversioned',
-    'workspace-version',
-    'core-version',
-    'backfilled-paired',
-  ] as const)('accepts the %s legacy queue envelope', async (envelope) => {
+  it('dispatches a queued core version envelope', async () => {
     const fixture = await createFixture();
-
-    if (envelope === 'backfilled-paired') {
-      await global.testDataSource.query(
-        'UPDATE core."workflowVersion" SET "workspaceWorkflowVersionId" = NULL WHERE id = $1',
-        [fixture.coreWorkflowVersionId],
-      );
-      await expect(backfill()).rejects.toThrow(
-        'Missing or conflicting workflow version mapping',
-      );
-      await global.workflowTestServices.versionAliasBackfill.runOnWorkspace({
-        workspaceId,
-        dataSource: global.testDataSource,
-        options: {},
-        index: 0,
-        total: 1,
-      });
-      await global.workflowTestServices.backfill.runOnWorkspace({
-        workspaceId,
-        dataSource: global.testDataSource,
-        options: {},
-        index: 0,
-        total: 1,
-      });
-    }
 
     const queue = global.app.get<MessageQueueService>(
       getQueueToken(MessageQueue.workflowQueue),
@@ -434,14 +363,9 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       'WorkflowTriggerJob',
       {
         workspaceId,
-        workflowId: fixture.workflowId as string,
-        payload: { marker: envelope },
-        ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
-          ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
-          : {}),
-        ...(envelope === 'core-version' || envelope === 'backfilled-paired'
-          ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
-          : {}),
+        workflowId: fixture.workflowId ?? fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+        payload: { marker: 'core-version' },
       },
       {
         workspaceId,
@@ -453,7 +377,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
         [fixture.coreWorkflowId],
       );
-      if (run) {
+      if (isDefined(run)) {
         const completedRun = await waitForRun(run.id, 'COMPLETED');
 
         expect(completedRun.createdByName).toBe('B-Async execution');
@@ -462,7 +386,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       }
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    throw new Error('Legacy queue envelope did not dispatch');
+    throw new Error('Queued core version envelope did not dispatch');
   });
 
   it('rejects a queued version belonging to another workflow or tenant', async () => {
@@ -500,10 +424,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       },
     });
 
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowVersion" SET trigger = NULL, steps = NULL WHERE id = $1`,
-      [fixture.workflowVersionId],
-    );
     const response = await request(`http://localhost:${APP_PORT}`)
       .post(`/webhooks/workflows/${workspaceId}/${fixture.workflowId}`)
       .send({ marker: 'old-url' });
@@ -511,103 +431,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(response.status).toBe(201);
     expect(response.body.success).toBe(true);
     await waitForRun(response.body.workflowRunId, 'COMPLETED');
-  });
-
-  it('backfills a queued legacy run and starts its persisted snapshot after a core edit', async () => {
-    const fixture = await createFixture();
-    const workflowRunId = randomUUID();
-    const state = {
-      flow: { trigger: fixture.trigger, steps: fixture.steps },
-      stepInfos: {
-        trigger: { status: 'NOT_STARTED', result: {} },
-        ...Object.fromEntries(
-          fixture.steps.map((step) => [
-            (step as { id: string }).id,
-            { status: 'NOT_STARTED' },
-          ]),
-        ),
-      },
-    };
-
-    await global.testDataSource.query(
-      `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", status, state, position) VALUES ($1, 'B-Async old queued run', $2, $3, 'ENQUEUED', $4, 0)`,
-      [
-        workflowRunId,
-        fixture.workflowId,
-        fixture.workflowVersionId,
-        JSON.stringify(state),
-      ],
-    );
-    await global.workflowTestServices.backfill.runOnWorkspace({
-      workspaceId,
-      dataSource: global.testDataSource,
-      options: {},
-      index: 0,
-      total: 1,
-    });
-    await global.testDataSource.query(
-      'UPDATE core."workflowVersion" SET triggers = NULL, steps = NULL WHERE id = $1',
-      [fixture.coreWorkflowVersionId],
-    );
-    await (
-      await global.workflowTestServices.runJob()
-    ).handle({ workspaceId, workflowRunId });
-    const run = await waitForRun(workflowRunId, 'COMPLETED');
-
-    expect(run.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
-    expect(run.state.flow).toEqual(state.flow);
-  });
-
-  it('defers the core trigger cache during historical upgrades and rebuilds it after backfill', async () => {
-    const fixture = await createFixture({
-      triggerType: 'CRON',
-      triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
-    });
-    const { workspaceCache, upgradeState, backfill } =
-      global.workflowTestServices;
-    const triggerMapCacheService =
-      getAppProviderByClassName<WorkspaceWorkflowAutomatedTriggerMapCacheService>(
-        'WorkspaceWorkflowAutomatedTriggerMapCacheService',
-      );
-    const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
-      global.workflowTestServices.coreDataSource,
-      workspaceId,
-    );
-    const hiddenColumns = jest
-      .spyOn(upgradeState, 'getHiddenColumnPropertyNames')
-      .mockReturnValue(new Set(['workspaceWorkflowVersionId']));
-
-    await rowsBatchLoader.loadRows([triggerMapCacheService.rowsRequirement]);
-    const duringUpgrade = await triggerMapCacheService.computeForCache({
-      workspaceId,
-      rows: rowsBatchLoader.readRows(triggerMapCacheService.rowsRequirement),
-    });
-
-    expect(duringUpgrade.byWorkflowId).toEqual({});
-    await workspaceCache.invalidateAndRecompute(workspaceId, [
-      'workflowAutomatedTriggerMaps',
-    ]);
-    hiddenColumns.mockRestore();
-    await backfill.runOnWorkspace({
-      workspaceId,
-      dataSource: global.testDataSource,
-      options: {},
-      index: 0,
-      total: 1,
-    });
-    await expectEventually(async () => {
-      const afterUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
-        'workflowAutomatedTriggerMaps',
-      ]);
-
-      expect(
-        afterUpgrade.workflowAutomatedTriggerMaps.byWorkflowId[
-          fixture.coreWorkflowId
-        ],
-      ).toMatchObject({
-        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
-      });
-    });
   });
 
   it('normalizes overlapping old and core cron caches without duplicate runs', async () => {
@@ -701,43 +524,15 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     return getRun(runId);
   };
 
-  const backfill = async (dryRun = false) =>
-    global.workflowTestServices.backfill.runOnWorkspace({
-      workspaceId,
-      dataSource: global.testDataSource,
-      options: { dryRun },
-      index: 0,
-      total: 1,
-    });
-
-  const migratePendingRun = async (fixture: Fixture, runId: string) => {
-    if (fixture.workflowVersionId) {
-      await global.testDataSource.query(
-        `UPDATE "${schema}"."workflowRun" SET "coreWorkflowId" = NULL, "coreWorkflowVersionId" = NULL WHERE id = $1`,
-        [runId],
-      );
-      await backfill();
-      expect((await getRun(runId)).coreWorkflowVersionId).toBe(
-        fixture.coreWorkflowVersionId,
-      );
-    }
-  };
-
   const clearDefinitions = async (fixture: Fixture) => {
     await global.testDataSource.query(
       'UPDATE core."workflowVersion" SET triggers = NULL, steps = NULL WHERE id = $1',
       [fixture.coreWorkflowVersionId],
     );
-    if (fixture.workflowVersionId) {
-      await global.testDataSource.query(
-        `UPDATE "${schema}"."workflowVersion" SET trigger = NULL, steps = NULL WHERE id = $1`,
-        [fixture.workflowVersionId],
-      );
-    }
   };
 
   it.each([false, true])(
-    'resumes a delayed run after backfill and definition changes (mirrorless=%s)',
+    'resumes a delayed run after definition changes (mirrorless=%s)',
     async (mirrorless) => {
       const finalStep = emptyStep();
       const delay: WorkflowAction = {
@@ -755,7 +550,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       const runId = await runFixture(fixture);
       await waitForStep(runId, delay.id, 'PENDING');
-      await migratePendingRun(fixture, runId);
       await clearDefinitions(fixture);
       const run = await waitForRun(runId, 'COMPLETED');
 
@@ -765,7 +559,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   );
 
   it.each([false, true])(
-    'resumes a pending form after backfill and definition changes (mirrorless=%s)',
+    'resumes a pending form after definition changes (mirrorless=%s)',
     async (mirrorless) => {
       const finalStep = emptyStep();
       const form: WorkflowAction = {
@@ -790,7 +584,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
       const runId = await runFixture(fixture);
       await waitForStep(runId, form.id, 'PENDING');
-      await migratePendingRun(fixture, runId);
       await clearDefinitions(fixture);
       const response = await submitFormStep({
         workflowRunId: runId,
@@ -1620,6 +1413,49 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       ]);
     });
 
+    it('takes the answer to a question from a run no member started, whose prompt has no sender', async () => {
+      mockAgent();
+      const finalStep = emptyStep();
+      const agent = agentStep([finalStep.id]);
+      const fixture = await createFixture({ steps: [agent, finalStep] });
+
+      await (
+        await global.workflowTestServices.triggerJob()
+      ).handle({
+        workspaceId,
+        workflowId: fixture.coreWorkflowId,
+        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
+        payload: {},
+      });
+
+      const [{ id: runId }] = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
+      );
+      const run = await waitForPausedAgentStep(runId, agent.id);
+      const threadId: string = run.stepLogs[agent.id].details.threadId;
+      const prompts = await global.testDataSource.query(
+        `SELECT "senderWorkspaceMemberId", "senderApplicationId" FROM "${schema}"."agentMessage" WHERE "threadId" = $1 AND role = 'user'`,
+        [threadId],
+      );
+
+      expect(prompts).toEqual([
+        { senderWorkspaceMemberId: null, senderApplicationId: null },
+      ]);
+
+      const response = await answer({ threadId });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const completedRun = await waitForRun(runId, 'COMPLETED');
+
+      expect(completedRun.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(completedRun.state.stepInfos[finalStep.id].status).toBe('SUCCESS');
+    });
+
     it('goes on with the agent when the recipient writes instead of answering, which skips the question', async () => {
       const runTurn = mockAgent();
       const { runId, agent, threadId } = await startAskingRun();
@@ -2102,55 +1938,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(retried.state.stepInfos[failedStep.id].status).toBe('FAILED');
   });
 
-  it('records hard-throttled runs with their requested id and snapshot', async () => {
-    const fixture = await createFixture({ mirrorless: true });
-    jest
-      .spyOn(
-        global.workflowTestServices.throttling,
-        'throttleOrThrowIfHardLimitReached',
-      )
-      .mockRejectedValue(new Error('Throttle limit reached'));
-    const run = await waitForRun(await runFixture(fixture), 'FAILED');
-
-    expect(run.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
-    expect(run.state.flow.steps).toEqual(fixture.steps);
-    expect(run.state.workflowRunError).toBe('Throttle limit reached');
-  });
-
-  it('leaves automated runs queued under the soft limit and drains them when capacity returns', async () => {
-    const fixture = await createFixture({
-      mirrorless: true,
-      triggerType: 'WEBHOOK',
-      triggerSettings: {
-        httpMethod: 'POST',
-        authentication: null,
-        expectedBody: {},
-      },
-    });
-    const capacity = jest
-      .spyOn(
-        global.workflowTestServices.throttling,
-        'consumeRemainingRunsToEnqueueCount',
-      )
-      .mockResolvedValue(0);
-    const runId = await runFixture(fixture);
-    await waitForRun(runId, 'NOT_STARTED');
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    expect((await getRun(runId)).status).toBe('NOT_STARTED');
-    capacity.mockRestore();
-    await global.app
-      .get<MessageQueueService>(getQueueToken(MessageQueue.workflowQueue))
-      .add(
-        'WorkflowRunEnqueueJob',
-        { workspaceId, isCacheMode: false },
-        {
-          workspaceId,
-          isWorkspaceJob: true,
-        },
-      );
-    await waitForRun(runId, 'COMPLETED');
-  });
-
   it('fails the run when the subscription is inactive', async () => {
     const fixture = await createFixture({ mirrorless: true });
     const subscriptionCheck = jest
@@ -2298,9 +2085,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
   it('rejects a draft edited while activation is being prepared', async () => {
     const fixture = await createFixture();
     await markFixtureVersionAsDraft(fixture);
-    const codeBuild = getAppProviderByClassName<CodeStepBuildService>(
-      'CodeStepBuildService',
-    );
+    const workflowMetadataRead =
+      getAppProviderByClassName<WorkflowMetadataReadService>(
+        'WorkflowMetadataReadService',
+      );
+    const getFlatEntityMaps =
+      workflowMetadataRead.getFlatEntityMaps.bind(workflowMetadataRead);
     let notifyPreparing: () => void = () => {};
     let releasePreparation: () => void = () => {};
     const preparing = new Promise<void>((resolve) => {
@@ -2309,11 +2099,13 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const prepared = new Promise<void>((resolve) => {
       releasePreparation = resolve;
     });
-    const buildSpy = jest
-      .spyOn(codeBuild, 'switchCodeStepLogicFunctionsToPrebuilt')
-      .mockImplementationOnce(async () => {
+    const preparationSpy = jest
+      .spyOn(workflowMetadataRead, 'getFlatEntityMaps')
+      .mockImplementationOnce(async (...args) => {
         notifyPreparing();
         await prepared;
+
+        return getFlatEntityMaps(...args);
       });
     const activation = workflowGraphqlRequest(
       'mutation Activate($id: UUID!) { activateCoreWorkflowVersion(coreWorkflowVersionId: $id) }',
@@ -2333,7 +2125,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(edit.body.errors).toBeUndefined();
     } finally {
       releasePreparation();
-      buildSpy.mockRestore();
+      preparationSpy.mockRestore();
     }
     expect(JSON.stringify((await activation).body.errors)).toContain('changed');
     const [core] = await global.testDataSource.query(
@@ -2494,169 +2286,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
-  it('dry-runs and idempotently backfills every legacy run status', async () => {
-    const fixture = await createFixture();
-    const runIds: string[] = [];
-    try {
-      for (const status of [
-        'NOT_STARTED',
-        'ENQUEUED',
-        'RUNNING',
-        'FAILED',
-        'STOPPING',
-        'STOPPED',
-        'COMPLETED',
-      ]) {
-        const id = randomUUID();
-        runIds.push(id);
-        await global.testDataSource.query(
-          `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", status, position, state) VALUES ($1, 'B-Async migration', $2, $3, $4, 0, '{}')`,
-          [id, fixture.workflowId, fixture.workflowVersionId, status],
-        );
-      }
-      await backfill(true);
-      for (const id of runIds) {
-        expect((await getRun(id)).coreWorkflowVersionId).toBeNull();
-      }
-      await backfill();
-      await backfill();
-      for (const id of runIds) {
-        expect(await getRun(id)).toMatchObject({
-          coreWorkflowId: fixture.coreWorkflowId,
-          coreWorkflowVersionId: fixture.coreWorkflowVersionId,
-        });
-      }
-    } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${schema}"."workflowRun" WHERE id = ANY($1::uuid[])`,
-        [runIds],
-      );
-    }
-  });
-
-  it('rolls back mapping writes when a run has conflicting core ids', async () => {
-    const fixture = await createFixture();
-    const other = await createFixture({ mirrorless: true });
-    const id = randomUUID();
-    try {
-      await global.testDataSource.query(
-        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", status, position, state) VALUES ($1, 'B-Async conflict', $2, $3, $4, 'ENQUEUED', 0, '{}')`,
-        [
-          id,
-          fixture.workflowId,
-          fixture.workflowVersionId,
-          other.coreWorkflowId,
-        ],
-      );
-      await expect(backfill()).rejects.toThrow(
-        'Conflicting workflow run core ids',
-      );
-      const [version] = await global.testDataSource.query(
-        'SELECT "workspaceWorkflowVersionId" FROM core."workflowVersion" WHERE id = $1',
-        [fixture.coreWorkflowVersionId],
-      );
-      expect(version.workspaceWorkflowVersionId).toBe(
-        fixture.workflowVersionId,
-      );
-      expect((await getRun(id)).coreWorkflowVersionId).toBeNull();
-    } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${schema}"."workflowRun" WHERE id = $1`,
-        [id],
-      );
-      await global.testDataSource.query(
-        'UPDATE core."workflowVersion" SET "workspaceWorkflowVersionId" = $2 WHERE id = $1',
-        [fixture.coreWorkflowVersionId, fixture.workflowVersionId],
-      );
-    }
-  });
-
-  it('re-derives run core ids whose core rows no longer exist', async () => {
-    const fixture = await createFixture();
-    const id = randomUUID();
-    try {
-      await global.testDataSource.query(
-        `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, position, state) VALUES ($1, 'B-Async stale', $2, $3, $4, $5, 'COMPLETED', 0, '{}')`,
-        [
-          id,
-          fixture.workflowId,
-          fixture.workflowVersionId,
-          randomUUID(),
-          randomUUID(),
-        ],
-      );
-      await backfill();
-      expect(await getRun(id)).toMatchObject({
-        coreWorkflowId: fixture.coreWorkflowId,
-        coreWorkflowVersionId: fixture.coreWorkflowVersionId,
-      });
-    } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${schema}"."workflowRun" WHERE id = $1`,
-        [id],
-      );
-    }
-  });
-
-  it('creates the missing core version of a live unlinked workspace version', async () => {
-    const fixture = await createFixture();
-    await global.testDataSource.query(
-      'DELETE FROM core."workflowVersion" WHERE id = $1',
-      [fixture.coreWorkflowVersionId],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."workflowVersion" SET "coreWorkflowVersionId" = NULL WHERE id = $1`,
-      [fixture.workflowVersionId],
-    );
-    await global.testDataSource.query(
-      'UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = NULL WHERE id = $1',
-      [fixture.coreWorkflowId],
-    );
-
-    await backfill();
-
-    const [workspaceVersion] = await global.testDataSource.query(
-      `SELECT "coreWorkflowVersionId" FROM "${schema}"."workflowVersion" WHERE id = $1`,
-      [fixture.workflowVersionId],
-    );
-    const [coreVersion] = await global.testDataSource.query(
-      'SELECT "coreWorkflowId", "workspaceWorkflowVersionId", status, triggers, steps FROM core."workflowVersion" WHERE id = $1',
-      [workspaceVersion.coreWorkflowVersionId],
-    );
-    const [coreWorkflow] = await global.testDataSource.query(
-      'SELECT "lastPublishedCoreWorkflowVersionId" FROM core.workflow WHERE id = $1',
-      [fixture.coreWorkflowId],
-    );
-
-    expect(coreVersion).toEqual({
-      coreWorkflowId: fixture.coreWorkflowId,
-      workspaceWorkflowVersionId: fixture.workflowVersionId,
-      status: 'ACTIVE',
-      triggers: [fixture.trigger],
-      steps: fixture.steps,
-    });
-    expect(coreWorkflow.lastPublishedCoreWorkflowVersionId).toBe(
-      workspaceVersion.coreWorkflowVersionId,
-    );
-  });
-
-  it('leaves a pending run without a workspace version untouched', async () => {
-    const id = randomUUID();
-    try {
-      await global.testDataSource.query(
-        `INSERT INTO "${schema}"."workflowRun" (id, name, status, position, state) VALUES ($1, 'B-Async unmapped', 'RUNNING', 0, '{}')`,
-        [id],
-      );
-      await backfill();
-      expect((await getRun(id)).coreWorkflowId).toBeNull();
-    } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${schema}"."workflowRun" WHERE id = $1`,
-        [id],
-      );
-    }
-  });
-
   it.each(['ARCHIVED', 'DRAFT'])(
     'drops queued versions that are %s',
     async (status) => {
@@ -2731,11 +2360,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     }
   });
 
-  it('provisions a fresh workspace with core-only workflows and nullable run relations', async () => {
+  it('provisions a fresh workspace with core-only workflows and no legacy run relations', async () => {
     const services = global.workflowTestServices;
     const freshWorkspaceId = randomUUID();
     const applicationId = randomUUID();
-    const freshSchema = getWorkspaceSchemaName(freshWorkspaceId);
     const users =
       services.coreDataSource.getRepository<UserEntity>('UserEntity');
     const user = await users.findOneByOrFail({ id: USER_DATA_SEED_IDS.JANE });
@@ -2797,20 +2425,11 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
           lastPublishedCoreWorkflowVersionId: coreVersion.id,
         });
       }
-      const [{ workspaceWorkflowCount }] = await global.testDataSource.query(
-        `SELECT (SELECT count(*) FROM "${freshSchema}"."workflow")::int + (SELECT count(*) FROM "${freshSchema}"."workflowVersion")::int AS "workspaceWorkflowCount"`,
-      );
-      expect(workspaceWorkflowCount).toBe(0);
       const relationFields = await global.testDataSource.query(
         `SELECT f.name, f."isNullable" FROM core."fieldMetadata" f JOIN core."objectMetadata" o ON o.id = f."objectMetadataId" WHERE o."workspaceId" = $1 AND o."nameSingular" = 'workflowRun' AND f.name IN ('workflow', 'workflowVersion')`,
         [freshWorkspaceId],
       );
-      expect(relationFields).toHaveLength(2);
-      expect(
-        relationFields.every(
-          (field: { isNullable: boolean }) => field.isNullable,
-        ),
-      ).toBe(true);
+      expect(relationFields).toEqual([]);
     } finally {
       if (await workspaces.existsBy({ id: freshWorkspaceId })) {
         await services.workspace.deleteWorkspace(freshWorkspaceId);

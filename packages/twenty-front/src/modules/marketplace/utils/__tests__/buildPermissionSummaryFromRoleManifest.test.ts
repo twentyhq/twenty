@@ -1,9 +1,9 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import { buildPermissionSummaryFromRoleManifest } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 
-const baseRole: RoleManifest = {
+const baseRole: LegacyCompliantRoleManifest = {
   universalIdentifier: 'test-role',
   label: 'Test Role',
 };
@@ -22,7 +22,7 @@ const objectLabelsByUniversalIdentifier = {
 };
 
 const getLabels = (
-  role: RoleManifest,
+  role: LegacyCompliantRoleManifest,
   options?: Parameters<typeof buildPermissionSummaryFromRoleManifest>[1],
 ) =>
   buildPermissionSummaryFromRoleManifest(role, options).map(
@@ -30,7 +30,7 @@ const getLabels = (
   );
 
 const getDetails = (
-  role: RoleManifest,
+  role: LegacyCompliantRoleManifest,
   options?: Parameters<typeof buildPermissionSummaryFromRoleManifest>[1],
 ) =>
   buildPermissionSummaryFromRoleManifest(role, options).map(

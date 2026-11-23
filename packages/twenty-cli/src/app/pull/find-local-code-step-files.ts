@@ -4,9 +4,9 @@ import { join, posix } from 'node:path';
 import { isDefined } from 'twenty-shared/utils';
 import * as ts from 'typescript';
 
+import { CODE_STEP_FILE_SUFFIX } from '@/app/constants/code-step-file-suffix.constant';
 import { type PullEntity } from '@/app/pull/build-pull-entities';
 import {
-  CODE_STEP_FILE_SUFFIX,
   extractWorkflowCodeStepFiles,
   getWorkflowCodeStepFolderPath,
 } from '@/app/pull/extract-workflow-code-step-files';

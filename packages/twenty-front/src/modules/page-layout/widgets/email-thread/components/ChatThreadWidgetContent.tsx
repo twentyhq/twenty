@@ -3,6 +3,7 @@ import { ChatThreadComposer } from '@/activities/emails/components/ChatThreadCom
 import { ChatThreadDisconnectedBanner } from '@/activities/emails/components/ChatThreadDisconnectedBanner';
 import { ChatThreadMessages } from '@/activities/emails/components/ChatThreadMessages';
 import { useChatThreadCounterparts } from '@/activities/emails/hooks/useChatThreadCounterparts';
+import { useSendPendingChatMessage } from '@/activities/emails/hooks/useSendPendingChatMessage';
 import { useReplyConnectedAccount } from '@/activities/emails/hooks/useReplyConnectedAccount';
 import { useStickToBottomScroll } from '@/activities/emails/hooks/useStickToBottomScroll';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
@@ -19,9 +20,31 @@ import {
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { styled } from '@linaria/react';
+import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { themeCssVariables } from 'twenty-ui/theme';
+import {
+  FeatureFlagKey,
+  MyConnectedAccountsDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+
+const StyledChatThreadBody = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
+`;
+
+const StyledChatThreadScrollContent = styled.div`
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+`;
 
 type ChatThreadWidgetContentProps = {
   messageThreadId: string;
@@ -42,16 +65,19 @@ export const ChatThreadWidgetContent = ({
 }: ChatThreadWidgetContentProps) => {
   const { messageChannel, connectedAccount } =
     useReplyConnectedAccount(messageChannelId);
+  const { sendPendingChatMessage } = useSendPendingChatMessage();
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
+  const apolloClient = useApolloClient();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
   );
+  const isMessageAttachmentEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
+  );
   const counterparts = useChatThreadCounterparts(messages);
   const firstCounterpart = counterparts?.[0];
-  const { scrollContainerRef, handleScroll } = useStickToBottomScroll(
-    messages.length,
-  );
+  const { scrollContainerRef, scrollContentRef } = useStickToBottomScroll();
 
   const connectionProvider = applicationsWithPreferences
     .flatMap(({ connectionProviders }) => connectionProviders)
@@ -80,43 +106,66 @@ export const ChatThreadWidgetContent = ({
 
   return (
     <StyledWidgetContentContainer>
-      <WidgetRelationsHeader />
       {isDisconnected &&
         isDefined(connectionProvider) &&
         isDefined(connectedAccount.applicationId) && (
           <ChatThreadDisconnectedBanner
             applicationId={connectedAccount.applicationId}
             connectionProviderName={connectionProvider.name}
+            connectionProviderType={connectionProvider.type}
             channelName={connectionProvider.displayName}
             connectedAccountId={connectedAccount.id}
             canReconnect={canReconnect}
           />
         )}
-      <StyledWidgetScrollContainer
-        ref={scrollContainerRef}
-        onScroll={handleScroll}
-      >
-        <ChatThreadMessages messages={messages} />
-        <CustomResolverFetchMoreLoader
-          loading={loading}
-          onLastRowVisible={onFetchMoreMessages}
-        />
-      </StyledWidgetScrollContainer>
-      {hasSendPermission && canChannelSend && isDefined(connectionProvider) && (
-        <ChatThreadComposer
-          key={messageThreadId}
-          messageThreadId={messageThreadId}
-          messageChannelId={messageChannel.id}
-          channelName={connectionProvider.displayName}
-          recipientName={
-            isDefined(firstCounterpart)
-              ? getDisplayNameFromParticipant({ participant: firstCounterpart })
-              : null
-          }
-          isDisconnected={isDisconnected}
-          onMessageSent={onMessageSent}
-        />
-      )}
+      <WidgetRelationsHeader />
+      <StyledChatThreadBody>
+        <StyledWidgetScrollContainer ref={scrollContainerRef}>
+          <StyledChatThreadScrollContent ref={scrollContentRef}>
+            <ChatThreadMessages messages={messages} />
+            <CustomResolverFetchMoreLoader
+              loading={loading}
+              onLastRowVisible={onFetchMoreMessages}
+            />
+          </StyledChatThreadScrollContent>
+        </StyledWidgetScrollContainer>
+        {hasSendPermission &&
+          canChannelSend &&
+          isDefined(connectionProvider) && (
+            <ChatThreadComposer
+              key={messageThreadId}
+              channelName={connectionProvider.displayName}
+              recipientName={
+                isDefined(firstCounterpart)
+                  ? getDisplayNameFromParticipant({
+                      participant: firstCounterpart,
+                    })
+                  : null
+              }
+              isDisconnected={isDisconnected}
+              canAttachFiles={isMessageAttachmentEnabled}
+              draftKey={
+                isDefined(currentWorkspaceMember)
+                  ? `${currentWorkspaceMember.id}:${messageThreadId}`
+                  : undefined
+              }
+              onSendMessage={(pendingMessage) =>
+                sendPendingChatMessage({
+                  messageChannelId: messageChannel.id,
+                  messageThreadId,
+                  pendingMessage,
+                }).catch((error) => {
+                  apolloClient
+                    .refetchQueries({ include: [MyConnectedAccountsDocument] })
+                    .catch(() => undefined);
+
+                  throw error;
+                })
+              }
+              onMessageSent={onMessageSent}
+            />
+          )}
+      </StyledChatThreadBody>
     </StyledWidgetContentContainer>
   );
 };

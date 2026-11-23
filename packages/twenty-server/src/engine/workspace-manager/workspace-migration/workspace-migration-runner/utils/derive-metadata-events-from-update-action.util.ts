@@ -121,6 +121,7 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'viewFieldGroup':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
+    case 'rowLevelPermissionRule':
     case 'viewFilterGroup':
     case 'logicFunction':
     case 'viewFilter':

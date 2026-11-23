@@ -66,7 +66,7 @@ describe('buildRemoteMcpServerConfig', () => {
 
 describe('buildClaudeInstallLink', () => {
   it('builds a Claude custom connector link', () => {
-    const link = buildClaudeInstallLink(mcpServerUrl);
+    const link = buildClaudeInstallLink({ mcpServerUrl });
     const params = new URL(link).searchParams;
 
     expect(link.startsWith('https://claude.ai/customize/connectors?')).toBe(
@@ -76,6 +76,21 @@ describe('buildClaudeInstallLink', () => {
     expect(params.get('connectorName')).toBe('Twenty');
     expect(params.get('connectorUrl')).toBe(mcpServerUrl);
   });
+
+  it.each([
+    ['Acme', 'Twenty (Acme)'],
+    ['  Acme  ', 'Twenty (Acme)'],
+    ['   ', 'Twenty'],
+  ])(
+    'names the connector after the workspace "%s"',
+    (workspaceName, connectorName) => {
+      const link = buildClaudeInstallLink({ mcpServerUrl, workspaceName });
+
+      expect(new URL(link).searchParams.get('connectorName')).toBe(
+        connectorName,
+      );
+    },
+  );
 });
 
 describe('buildCursorInstallLink', () => {

@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail when an agent uses a role the application does not own should fail when an agent role is changed to a role owned by another application 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "roleTarget": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY",
+              "message": "Role "Other App Agent Role" must be owned by the application to be assigned to its agents",
+              "userFriendlyMessage": "Role "Other App Agent Role" cannot be assigned to this agent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "roleTarget",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 roleTarget",
+    "summary": {
+      "roleTarget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Role "Other App Agent Role" cannot be assigned to this agent",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when an agent uses a role the application does not own should fail when an agent uses a role owned by another application 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "roleTarget": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY",
+              "message": "Role "Other App Agent Role" must be owned by the application to be assigned to its agents",
+              "userFriendlyMessage": "Role "Other App Agent Role" cannot be assigned to this agent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "roleTarget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 roleTarget",
+    "summary": {
+      "roleTarget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Role "Other App Agent Role" cannot be assigned to this agent",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when an agent uses a role the application does not own should fail when an agent uses a workspace custom role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "roleTarget": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY",
+              "message": "Role "Workspace Agent Role" must be owned by the application to be assigned to its agents",
+              "userFriendlyMessage": "Role "Workspace Agent Role" cannot be assigned to this agent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "roleTarget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 roleTarget",
+    "summary": {
+      "roleTarget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Role "Workspace Agent Role" cannot be assigned to this agent",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when an agent uses a role the application does not own should fail when an agent uses the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "roleTarget": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY",
+              "message": "Role "Admin" cannot be assigned to agents",
+              "userFriendlyMessage": "Role "Admin" cannot be assigned to agents",
+            },
+            {
+              "code": "ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY",
+              "message": "Role "Admin" must be owned by the application to be assigned to its agents",
+              "userFriendlyMessage": "Role "Admin" cannot be assigned to this agent",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "roleTarget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 roleTarget",
+    "summary": {
+      "roleTarget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Role "Admin" cannot be assigned to agents",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

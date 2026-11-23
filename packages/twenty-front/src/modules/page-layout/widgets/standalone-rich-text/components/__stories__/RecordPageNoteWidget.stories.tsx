@@ -398,8 +398,8 @@ export const CancelPendingDashboardEdit: Story = {
   play: CancelPendingEdit.play,
 };
 
-export const AddFromInlinePicker: Story = {
-  args: { surface: 'inline-picker' },
+export const AddFromSidePanel: Story = {
+  args: { surface: 'side-panel' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
@@ -413,11 +413,6 @@ export const AddFromInlinePicker: Story = {
       SidePanelPages.PageLayoutWidgetSettings,
     );
   },
-};
-
-export const AddFromSidePanel: Story = {
-  args: { surface: 'side-panel' },
-  play: AddFromInlinePicker.play,
 };
 
 export const ReplaceFirstFromSidePanel: Story = {
@@ -452,12 +447,10 @@ export const ReplaceTasksFromSidePanel: Story = {
   play: ReplaceFirstFromSidePanel.play,
 };
 
-export const MoreWidgets: Story = {
+export const OpenPickerFromAddWidget: Story = {
   args: { surface: 'inline-picker' },
   play: async ({ canvasElement }) => {
-    await userEvent.click(
-      await within(canvasElement).findByText('More widgets'),
-    );
+    await userEvent.click(await within(canvasElement).findByText('Add widget'));
     await expect(jotaiStore.get(DRAFT_ATOM).tabs[0].widgets).toHaveLength(0);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(true);
     await expect(jotaiStore.get(sidePanelPageInfoSelector.atom).page).toBe(

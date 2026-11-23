@@ -264,6 +264,14 @@ export class ApplicationConnectionsListService {
         authFailedReason: account.authFailedReason,
       };
 
+      if (provider.type === 'api-key') {
+        return {
+          ...connectionFields,
+          providerType: 'api-key',
+          accessToken: await this.decryptAccessToken({ account, workspaceId }),
+        };
+      }
+
       if (provider.type === 'custom') {
         return {
           ...connectionFields,

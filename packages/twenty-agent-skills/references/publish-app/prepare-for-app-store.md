@@ -123,6 +123,7 @@ Use plain product language:
 - Explain setup variables by their exact names.
 - Distinguish server admin setup from workspace member usage.
 - For OAuth connections, mention the provider redirect URI: `<SERVER_URL>/auth/apps/callback`.
+- For API-key connections, say where in the service the member finds the key; no redirect URI is needed.
 - Document permissions in terms of user risk: read, create, update, soft delete, destroy, third-party send.
 
 Avoid:

@@ -56,9 +56,8 @@ export const useCreateSsoIdentityProvider = () => {
           ]);
         },
       });
-    } else {
-      throw new Error(doNotTranslate('Invalid IdpType'));
     }
+    throw new Error(doNotTranslate('Invalid IdpType'));
   };
 
   return {

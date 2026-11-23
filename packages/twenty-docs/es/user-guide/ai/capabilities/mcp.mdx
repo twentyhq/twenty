@@ -101,13 +101,24 @@ Pídele a tu asistente de IA que interactúe con tu CRM:
 
 ## Herramientas disponibles
 
-Una vez conectado, el servidor MCP enumera las herramientas que puede usar tu conexión, con sus esquemas de entrada: `find_many_companies`, `create_one_person`, `list_workflows` y varios cientos más. Tu asistente las llama por su nombre. Las herramientas para objetos o funciones de la aplicación creadas mientras estás conectado aparecen después de volver a conectarte.
+Una vez conectado, el servidor MCP muestra las mismas herramientas en cada espacio de trabajo:
+
+* Las **herramientas de registros** toman el objeto como argumento: `find_records`, `group_records`, `create_records`, `update_record`, `update_records`, `upsert_records`, `delete_records` y `merge_records`. Por ejemplo, `find_records({ objectName: "company", select: ["name"] })`.
+* Las **herramientas de descubrimiento** indican al asistente lo que contiene tu espacio de trabajo: `list_object_metadata_names` para los objetos y `get_field_metadata` para los campos de un objeto.
+* Herramientas de **metadatos** para leer y modificar el modelo de datos, como `get_object_metadata` o `create_field_metadata`.
+* Las **metaherramientas** acceden a todo lo demás, incluidos los workflows, las vistas, los paneles, el correo electrónico y las funciones de tus aplicaciones instaladas: `get_tool_catalog` para explorar una categoría, `learn_tools` para los esquemas de entrada y `execute_tool` para ejecutar una herramienta.
+
+Como la lista no depende de tus objetos, sigue siendo válida para los clientes que la almacenan, como las aplicaciones publicadas en un directorio.
+
+### Modo directo
+
+Conéctate a `/mcp?mode=direct` para mostrar en su lugar una herramienta por objeto y operación, cada una con el esquema de entrada exacto de ese objeto: `find_many_companies`, `create_one_person` y varios cientos más. Las herramientas para los objetos creados mientras estás conectado aparecen después de volver a conectarte.
 
 Esto necesita un cliente que cargue herramientas bajo demanda, como hacen Claude, Claude Code, Codex y OpenCode de forma predeterminada. Un cliente que carga por adelantado todas las definiciones de herramientas, incluido Claude Code con la búsqueda de herramientas desactivada, puede quedarse sin contexto.
 
 ### Modo meta
 
-Para los clientes que cargan todas las herramientas por adelantado, conéctate a `/mcp?mode=meta`. En su lugar, enumera algunas metaherramientas:
+Conéctate a `/mcp?mode=meta` para mostrar solo unas pocas metaherramientas:
 
 1. **`learn_tools`** — obtener el esquema de entrada para herramientas específicas
 2. **`execute_tool`** — ejecutar una herramienta

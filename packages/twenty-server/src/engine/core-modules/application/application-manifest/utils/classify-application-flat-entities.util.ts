@@ -76,7 +76,7 @@ const classifyFlatEntity = ({
         reason: 'runtime configuration',
       };
     case 'role':
-      return 'isEditable' in flatEntity && flatEntity.isEditable === false
+      return 'isEditable' in flatEntity && !flatEntity.isEditable
         ? {
             status: ApplicationExportCoverageStatus.EXCLUDED,
             reason: 'non-editable role',
@@ -84,6 +84,11 @@ const classifyFlatEntity = ({
         : { status: ApplicationExportCoverageStatus.UNSUPPORTED };
     case 'searchFieldMetadata':
       return { status: ApplicationExportCoverageStatus.ENGINE_DERIVED };
+    case 'rowLevelPermissionRule':
+      return {
+        status: ApplicationExportCoverageStatus.UNSUPPORTED,
+        reason: 'row-level permission rule whose predicates are not exported',
+      };
     case 'workflowVersion':
       return {
         status: ApplicationExportCoverageStatus.EXCLUDED,

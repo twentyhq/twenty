@@ -1,5 +1,5 @@
 import { type UsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
-import { findSingleOperationType } from 'src/engine/core-modules/usage-limit/utils/find-single-operation-type.util';
+import { getUsageLimitDefaultOverrideOperationType } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-default-override-operation-type.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 type SuppressibleScope = Omit<UsageLimitScope, 'periodCount'>;
@@ -17,7 +17,9 @@ export const doesUsageLimitRowSuppressDefault = ({
   usageLimitDefault.isOverridable &&
   scope.resourceType === usageLimitDefault.resourceType &&
   scope.operationType ===
-    findSingleOperationType(usageLimitDefault.operationTypes) &&
+    getUsageLimitDefaultOverrideOperationType(
+      usageLimitDefault.operationTypes,
+    ) &&
   scope.spenderType === usageLimitDefault.spenderType &&
   scope.spenderId === usageLimitDefault.spenderId &&
   scope.limitKind === usageLimitDefault.limitKind &&

@@ -1,15 +1,18 @@
+import { buildPermissionTestAuthContext } from 'test/integration/permissions/utils/build-permission-test-auth-context.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
 import {
   type PermissionTestExpectedAnswers,
   type PermissionTestPrincipals,
+  type PermissionTestRoleGrant,
 } from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { v4 } from 'uuid';
 
-import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 
 const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: true,
     canUpdate: true,
     canSoftDelete: true,
@@ -20,7 +23,7 @@ const REACHES_EVERY_OPERATION: PermissionTestExpectedAnswers = {
 };
 
 const REACHES_NOTHING: PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: false,
     canUpdate: false,
     canSoftDelete: false,
@@ -28,6 +31,17 @@ const REACHES_NOTHING: PermissionTestExpectedAnswers = {
   },
   canReadRecords: false,
   canUpdateRecords: false,
+};
+
+const REACHES_READ_AND_UPDATE: PermissionTestExpectedAnswers = {
+  findRecordsActions: {
+    canRead: true,
+    canUpdate: true,
+    canSoftDelete: false,
+    canDelete: false,
+  },
+  canReadRecords: true,
+  canUpdateRecords: true,
 };
 
 const NO_LIMITING_PRINCIPAL: PermissionTestPrincipals['limitingPrincipal'] = {
@@ -96,9 +110,9 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with row level narrows the main role',
+          it: 'with row level only blocks the main role',
           limitingPrincipal: { type: 'agent', role: 'rowLevel' },
-          record: 'outsideCategoryFilter',
+          record: 'insideEveryFilter',
           expected: REACHES_NOTHING,
         },
         {
@@ -111,24 +125,57 @@ describePermissionTestWorkspace({
     });
 
     describeRecordAccess({
-      name: 'two row level filters',
+      name: 'a row level limiting principal beside a row level main role',
       mainPrincipal: { type: 'workspaceMember', role: 'rowLevel' },
       limitingPrincipal: { type: 'agent', role: 'rowLevel' },
       applicationPrincipal: CUSTOM_APPLICATION,
       cases: [
         {
-          it: 'reach a record matching both',
+          it: 'blocks a record matching both filters',
           record: 'insideEveryFilter',
-          expected: REACHES_EVERY_OPERATION,
-        },
-        {
-          it: 'drop a record outside the main filter',
-          record: 'outsideStatusFilter',
           expected: REACHES_NOTHING,
         },
         {
-          it: 'drop a record outside the limiting filter',
+          it: 'blocks a record outside the limiting filter',
           record: 'outsideCategoryFilter',
+          expected: REACHES_NOTHING,
+        },
+      ],
+    });
+
+    describeRecordAccess({
+      name: 'a record shared with a member whose role has no access',
+      mainPrincipal: { type: 'workspaceMember', role: 'none' },
+      limitingPrincipal: NO_LIMITING_PRINCIPAL,
+      applicationPrincipal: CUSTOM_APPLICATION,
+      cases: [
+        {
+          it: 'is reached at the shared level',
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_READ_AND_UPDATE,
+        },
+        {
+          it: 'is reached through a limiting principal with all records',
+          limitingPrincipal: { type: 'agent', role: 'allRecords' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_READ_AND_UPDATE,
+        },
+        {
+          it: 'is blocked by a limiting principal with no access',
+          limitingPrincipal: { type: 'agent', role: 'none' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_NOTHING,
+        },
+        {
+          it: 'is blocked by a limiting principal with row level only',
+          limitingPrincipal: { type: 'agent', role: 'rowLevel' },
+          record: 'sharedWithMemberWithoutAccess',
+          expected: REACHES_NOTHING,
+        },
+        {
+          it: 'is blocked by an application principal with no access',
+          applicationPrincipal: { type: 'application', role: 'none' },
+          record: 'sharedWithMemberWithoutAccess',
           expected: REACHES_NOTHING,
         },
       ],
@@ -152,10 +199,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'with row level narrows the main role',
+          it: 'with all records and a row level rule does not apply its filter',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
-          expected: REACHES_NOTHING,
+          expected: REACHES_EVERY_OPERATION,
         },
       ],
     });
@@ -210,10 +257,10 @@ describePermissionTestWorkspace({
           expected: REACHES_NOTHING,
         },
         {
-          it: 'are held to the filter of the application principal',
+          it: 'are not held to the filter of the application principal',
           applicationPrincipal: { type: 'application', role: 'rowLevel' },
           record: 'outsideRegionFilter',
-          expected: REACHES_NOTHING,
+          expected: REACHES_EVERY_OPERATION,
         },
       ],
     });
@@ -258,9 +305,9 @@ describePermissionTestWorkspace({
           findWorkspace();
         const recordsQuestion = {
           principals:
-            await getAppProviderByClassName<PrincipalPermissionsService>(
-              'PrincipalPermissionsService',
-            ).buildPermissionsPrincipals({
+            await getAppProviderByClassName<PrincipalPermissionsReadService>(
+              'PrincipalPermissionsReadService',
+            ).resolvePermissionsPrincipals({
               authContext: {
                 type: 'webhook',
                 workspace: { id: workspaceId },
@@ -270,16 +317,22 @@ describePermissionTestWorkspace({
           objectMetadataId,
           recordIds: [recordIds.insideEveryFilter],
         };
-        const recordPermissionsService =
-          getAppProviderByClassName<RecordPermissionsService>(
-            'RecordPermissionsService',
+        const recordPermissionsReadService =
+          getAppProviderByClassName<RecordPermissionsReadService>(
+            'RecordPermissionsReadService',
           );
 
         expect(
-          await recordPermissionsService.canReadRecords(recordsQuestion),
+          await recordPermissionsReadService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'read',
+          }),
         ).toBe(true);
         expect(
-          await recordPermissionsService.canUpdateRecords(recordsQuestion),
+          await recordPermissionsReadService.canAccessRecords({
+            ...recordsQuestion,
+            operationType: 'update',
+          }),
         ).toBe(true);
       });
     });
@@ -289,15 +342,162 @@ describePermissionTestWorkspace({
         const { workspaceId, roleIds, objectMetadataId } = findWorkspace();
 
         const roleIdsUnableToRead =
-          await getAppProviderByClassName<RecordPermissionsService>(
-            'RecordPermissionsService',
-          ).findRoleIdsUnableToReadObject({
+          await getAppProviderByClassName<RecordPermissionsReadService>(
+            'RecordPermissionsReadService',
+          ).filterRoleIdsWithoutReadAccess({
             workspaceId,
             roleIds: [roleIds.none, roleIds.rowLevel, roleIds.allRecords],
             objectMetadataId,
           });
 
         expect([...roleIdsUnableToRead]).toEqual([roleIds.none]);
+      });
+    });
+
+    describe('a write that sets a relation', () => {
+      const RELATION_TARGET_NOT_READABLE =
+        'Relation target record is not readable by your current role';
+
+      const buildNoteTargetWriteQuestion = async (
+        role: PermissionTestRoleGrant,
+      ) => {
+        const workspace = findWorkspace();
+        const [{ noteTargetObjectMetadataId, joinColumnName }]: {
+          noteTargetObjectMetadataId: string;
+          joinColumnName: string;
+        }[] = await global.testDataSource.query(
+          `SELECT "field"."objectMetadataId" AS "noteTargetObjectMetadataId", COALESCE("field"."settings"->>'joinColumnName', "field"."name" || 'Id') AS "joinColumnName"
+             FROM core."fieldMetadata" "field"
+             JOIN core."objectMetadata" "object" ON "object"."id" = "field"."objectMetadataId"
+             WHERE "object"."workspaceId" = $1 AND "object"."nameSingular" = 'noteTarget' AND "field"."relationTargetObjectMetadataId" = $2`,
+          [workspace.workspaceId, workspace.objectMetadataId],
+        );
+
+        return {
+          recordPermissionsReadService:
+            getAppProviderByClassName<RecordPermissionsReadService>(
+              'RecordPermissionsReadService',
+            ),
+          principals:
+            await getAppProviderByClassName<PrincipalPermissionsReadService>(
+              'PrincipalPermissionsReadService',
+            ).resolvePermissionsPrincipalsOrThrow({
+              authContext: await buildPermissionTestAuthContext({
+                principals: {
+                  mainPrincipal: { type: 'workspaceMember', role },
+                  limitingPrincipal: NO_LIMITING_PRINCIPAL,
+                  applicationPrincipal: CUSTOM_APPLICATION,
+                },
+                workspace,
+              }),
+            }),
+          objectMetadataId: noteTargetObjectMetadataId,
+          joinColumnName,
+          recordIds: workspace.recordIds,
+          transactionScope: {
+            workspaceId: workspace.workspaceId,
+            executeRawQuery: (sql: string, parameters?: unknown[]) =>
+              global.testDataSource.query(sql, parameters),
+          },
+        };
+      };
+
+      const assertNoteTargetCreated = async ({
+        role,
+        targetRecord,
+      }: {
+        role: PermissionTestRoleGrant;
+        targetRecord: 'insideEveryFilter' | 'outsideStatusFilter';
+      }) => {
+        const {
+          recordPermissionsReadService,
+          joinColumnName,
+          recordIds,
+          ...question
+        } = await buildNoteTargetWriteQuestion(role);
+
+        return recordPermissionsReadService.assertCreatedRecordsMatchRowLevelPermissionsOrThrow(
+          {
+            ...question,
+            records: [{ id: v4(), [joinColumnName]: recordIds[targetRecord] }],
+          },
+        );
+      };
+
+      const assertNoteTargetUpdated = async ({
+        targetRecordBefore,
+        targetRecordAfter,
+      }: {
+        targetRecordBefore: 'insideEveryFilter' | 'outsideStatusFilter';
+        targetRecordAfter: 'insideEveryFilter' | 'outsideStatusFilter';
+      }) => {
+        const {
+          recordPermissionsReadService,
+          joinColumnName,
+          recordIds,
+          ...question
+        } = await buildNoteTargetWriteQuestion('rowLevel');
+
+        return recordPermissionsReadService.assertUpdatesKeepRecordAccessOrThrow(
+          {
+            ...question,
+            updates: [
+              {
+                rawRecordBefore: {
+                  id: v4(),
+                  [joinColumnName]: recordIds[targetRecordBefore],
+                },
+                setColumns: { [joinColumnName]: recordIds[targetRecordAfter] },
+              },
+            ],
+            formatRecords: (rawRecords) => rawRecords,
+          },
+        );
+      };
+
+      it('lets a row level role target a record it can read', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'rowLevel',
+            targetRecord: 'insideEveryFilter',
+          }),
+        ).resolves.toBeUndefined();
+      });
+
+      it('refuses a row level role targeting a record it cannot read', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'rowLevel',
+            targetRecord: 'outsideStatusFilter',
+          }),
+        ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
+      });
+
+      it('lets a role with all records target any record', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'allRecords',
+            targetRecord: 'outsideStatusFilter',
+          }),
+        ).resolves.toBeUndefined();
+      });
+
+      it('refuses an update that retargets a record the role cannot read', async () => {
+        await expect(
+          assertNoteTargetUpdated({
+            targetRecordBefore: 'insideEveryFilter',
+            targetRecordAfter: 'outsideStatusFilter',
+          }),
+        ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
+      });
+
+      it('keeps an update that leaves an unreadable target unchanged', async () => {
+        await expect(
+          assertNoteTargetUpdated({
+            targetRecordBefore: 'outsideStatusFilter',
+            targetRecordAfter: 'outsideStatusFilter',
+          }),
+        ).resolves.toBeUndefined();
       });
     });
   },

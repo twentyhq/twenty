@@ -138,7 +138,9 @@ export const useRecordBoardColumnDndKit = (): {
   };
 
   const handlePendingReorderConfirmClick = () => {
-    if (!isDefined(pendingReorder)) return;
+    if (!isDefined(pendingReorder)) {
+      return;
+    }
 
     setRecordIndexRecordGroupSort(RecordGroupSort.Manual);
     reorderRecordGroups(pendingReorder);

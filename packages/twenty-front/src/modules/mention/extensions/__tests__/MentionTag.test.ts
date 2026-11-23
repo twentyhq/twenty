@@ -1,3 +1,4 @@
+import { parseChatReferences } from 'twenty-shared/ai';
 import { Editor } from '@tiptap/core';
 import { Document } from '@tiptap/extension-document';
 import { Paragraph } from '@tiptap/extension-paragraph';
@@ -6,8 +7,7 @@ import { Text } from '@tiptap/extension-text';
 import { MentionTag } from '@/mention/extensions/MentionTag';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
-import { isAgentChatAssistantMentionedInSerializedDocument } from '@/ai/utils/isAgentChatAssistantMentionedInSerializedDocument';
-import { parseChatReferences } from '@/ai/utils/parseChatReferences';
+import { isAiChatAssistantMentionedInSerializedDocument } from '@/ai-chat/composer/utils/isAiChatAssistantMentionedInSerializedDocument';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 jest.mock('@/mention/components/MentionChip', () => ({
@@ -94,7 +94,7 @@ describe('MentionTag', () => {
       ]);
       expect(messageText.endsWith(', @Ada wrote this.')).toBe(true);
       expect(
-        isAgentChatAssistantMentionedInSerializedDocument(savedDocument),
+        isAiChatAssistantMentionedInSerializedDocument(savedDocument),
       ).toBe(true);
     });
 

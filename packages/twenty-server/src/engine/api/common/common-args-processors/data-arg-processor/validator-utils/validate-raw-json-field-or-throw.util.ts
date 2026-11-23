@@ -12,7 +12,9 @@ export const validateRawJsonFieldOrThrow = (
   value: unknown,
   fieldName: string,
 ): object | string | null => {
-  if (isNull(value)) return null;
+  if (isNull(value)) {
+    return null;
+  }
 
   if (typeof value === 'string') {
     try {

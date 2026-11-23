@@ -65,7 +65,9 @@ describe('application workflow definitions', () => {
   it('creates one active core version without workspace projections', () => {
     const { workflow, version } = convert(options);
     expect(workflow.lastPublishedCoreWorkflowVersionId).toBe(version.id);
-    expect(version.coreWorkflowId).toBe(workflow.id);
+    expect(version.coreWorkflowUniversalIdentifier).toBe(
+      workflow.universalIdentifier,
+    );
     expect(workflow.workspaceWorkflowId).toBeNull();
     expect(workflow.isSystem).toBe(false);
     expect(workflow.flatUniversalCommandMenuItem).toBeUndefined();
@@ -93,11 +95,13 @@ describe('application workflow definitions', () => {
       ...before.workflow,
       workspaceId: APPLICATION_ID,
       applicationId: APPLICATION_ID,
+      navigationMenuItemIds: [],
     };
     const existingVersion: FlatWorkflowVersion = {
       ...before.version,
       workspaceId: APPLICATION_ID,
       applicationId: APPLICATION_ID,
+      coreWorkflowId: before.workflow.id,
     };
     const changed = structuredClone(manifest);
     const changedStep = changed.version.steps[0];

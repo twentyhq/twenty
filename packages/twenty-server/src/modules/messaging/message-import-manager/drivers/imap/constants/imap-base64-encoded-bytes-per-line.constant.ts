@@ -1,0 +1,1 @@
+export const IMAP_BASE64_ENCODED_BYTES_PER_LINE = 78;

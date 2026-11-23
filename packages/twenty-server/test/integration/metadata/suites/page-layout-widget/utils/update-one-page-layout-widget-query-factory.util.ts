@@ -50,6 +50,7 @@ export const updateOnePageLayoutWidgetQueryFactory = ({
       conditionalDisplay: input.conditionalDisplay,
       conditionalAvailabilityExpression:
         input.conditionalAvailabilityExpression,
+      conditionalAvailability: input.conditionalAvailability,
       isActive: input.isActive,
     },
   },

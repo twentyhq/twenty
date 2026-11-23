@@ -11,7 +11,9 @@ import {
   type QueueJobScope,
   type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { MESSAGE_QUEUE_WORKER_CONFIG } from 'src/engine/core-modules/message-queue/message-queue-worker-config.constant';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
 
 export type ScenarioJobData = { label: string; workspaceId?: string };
 
@@ -234,7 +236,12 @@ jest.mock('bullmq', () => ({
 
       return storedJobs;
     },
-    getRanges: async () => mockBullMQ.jobs.map((job) => job.id),
+    getRanges: async (states: string[]) =>
+      mockBullMQ.jobs
+        .filter((job) =>
+          states.includes(job.isPromoted ? 'waiting' : 'delayed'),
+        )
+        .map((job) => job.id),
     upsertJobScheduler: async (
       _schedulerId: string,
       _repeat: unknown,
@@ -315,7 +322,7 @@ type ScenarioJobScope = {
 type EnqueueInput = { label: string } & ScenarioJobScope &
   Pick<
     QueueJobSettings,
-    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff'
+    'priority' | 'delay' | 'id' | 'retryLimit' | 'backoff' | 'groupKey'
   >;
 
 const buildScenarioJobScope = ({
@@ -333,8 +340,14 @@ const buildScenarioJobScope = ({
   return { workspaceId, applicationUniversalIdentifier };
 };
 
-export const createFairnessHarness = async () => {
+export const createFairnessHarness = async ({
+  groupLimiter,
+}: {
+  groupLimiter?: MessageQueueLimiter;
+} = {}) => {
   const redis: Redis = new RedisMock();
+
+  MESSAGE_QUEUE_WORKER_CONFIG[QUEUE].workerOptions.groupLimiter = groupLimiter;
 
   await redis.flushall();
   mockBullMQ.reset({ redis, client: createRedisClientDouble(redis) });
@@ -444,21 +457,32 @@ export const createFairnessHarness = async () => {
       labels,
       workspaceId,
       applicationUniversalIdentifier,
+      groupKey,
+      delay,
+      jobIds,
     }: {
       labels: string[];
+      jobIds?: string[];
       workspaceId: string;
       applicationUniversalIdentifier?: string;
+      groupKey?: string;
+      delay?: number;
     }) => {
       await driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
-        labels.map((label) => ({
+        labels.map((label, index) => ({
           data: { label, workspaceId },
+          jobId: jobIds?.[index],
+          groupKey,
           ...buildScenarioJobScope({
             workspaceId,
             applicationUniversalIdentifier,
           }),
         })),
+        isDefined(delay) || isDefined(jobIds)
+          ? { delay, doNotCheckDuplicatesBasedOnPrefix: isDefined(jobIds) }
+          : undefined,
       );
     },
     scheduleCron: async ({
@@ -516,6 +540,22 @@ export const createFairnessHarness = async () => {
     }) => {
       await redis.hset(`${QUEUE_KEY_PREFIX}fair:weights`, groupKey, weight);
     },
+    reserveLimiterSlot: async ({
+      slotKey,
+      delayMs,
+    }: {
+      slotKey: string;
+      delayMs: number;
+    }) => {
+      const [seconds, microseconds] = await redis.time();
+
+      await redis.set(
+        `${QUEUE_KEY_PREFIX}fair:slot:${slotKey}`,
+        Number(seconds) * 1_000 +
+          Math.floor(Number(microseconds) / 1_000) +
+          delayMs,
+      );
+    },
     setVirtualTime: async ({ value }: { value: number }) => {
       await redis.set(VIRTUAL_TIME_KEY, value);
     },
@@ -530,6 +570,8 @@ export const createFairnessHarness = async () => {
     },
     readPriority: ({ label }: { label: string }) =>
       mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
+    readDelay: ({ label }: { label: string }) =>
+      mockBullMQ.jobs.find((job) => job.data.label === label)?.options.delay,
     breakRedis: () => {
       const runCommand = jest
         .fn()

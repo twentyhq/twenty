@@ -239,25 +239,11 @@ export const WIDGET_PROPS = {
     type: WidgetType.FIELD_RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
-  workflow: {
-    title: i18nLabel(
-      msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),
-    ),
-    type: WidgetType.WORKFLOW,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
   messageCampaign: {
     title: i18nLabel(
       msg({ message: `Email`, context: 'pageLayoutWidget.title' }),
     ),
     type: WidgetType.MESSAGE_CAMPAIGN_BODY,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
-  workflowVersion: {
-    title: i18nLabel(
-      msg({ message: `Flow`, context: 'pageLayoutWidget.title' }),
-    ),
-    type: WidgetType.WORKFLOW_VERSION,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflowRun: {

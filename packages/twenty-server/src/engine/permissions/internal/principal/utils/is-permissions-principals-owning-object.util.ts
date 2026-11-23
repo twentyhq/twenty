@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
-import { getPermissionsPrincipalsActingApplicationId } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application-id.util';
+import { getPermissionsPrincipalsActingApplication } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-acting-application.util';
 
 export const isPermissionsPrincipalsOwningObject = ({
   principals,
@@ -16,12 +16,12 @@ export const isPermissionsPrincipalsOwningObject = ({
   >;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'applicationId'>;
 }): boolean => {
-  const actingApplicationId = getPermissionsPrincipalsActingApplicationId({
+  const actingApplication = getPermissionsPrincipalsActingApplication({
     principals,
   });
 
   return (
-    isDefined(actingApplicationId) &&
-    actingApplicationId === flatObjectMetadata.applicationId
+    isDefined(actingApplication) &&
+    actingApplication.applicationId === flatObjectMetadata.applicationId
   );
 };

@@ -1,6 +1,13 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import {
+  mkdir,
+  mkdtemp,
+  readFile,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { stop } from 'esbuild';
@@ -73,11 +80,48 @@ describe('CLI app source loading', () => {
     },
   );
 
+  it('keeps code-step files in the inventory without evaluating their definitions', async () => {
+    const markerPath = join(appPath, 'code-step-executed');
+    const codeStepPath = 'workflow.code.ts';
+    await writeFile(join(appPath, 'app.ts'), sourceApplication());
+    await writeFile(
+      join(appPath, codeStepPath),
+      sourceApplication(`import { writeFileSync } from 'node:fs';
+writeFileSync(${JSON.stringify(markerPath)}, 'executed');`),
+    );
+    expect(await readApplicationIdentity({ appPath, signal })).toMatchObject({
+      application: { universalIdentifier: SOURCE_TEST_APPLICATION_ID },
+    });
+    const files = await scanProjectSourceFiles({ appPath, signal });
+    expect(files.find((file) => file.relativePath === codeStepPath)).toEqual({
+      relativePath: codeStepPath,
+      entityKey: null,
+      targetFunctionName: null,
+      universalIdentifier: null,
+      isReadable: true,
+    });
+    await expect(readFile(markerPath)).rejects.toMatchObject({
+      code: 'ENOENT',
+    });
+  });
+
+  it('recognizes a component definition after JSX in a TSX file', () => {
+    expect(
+      extractDefineEntity({
+        fileContent: `const Component = () => <div>Hello</div>;
+export default defineFrontComponent({ component: Component });`,
+        filePath: 'component.tsx',
+      }),
+    ).toBe('defineFrontComponent');
+  });
+
   it('retains the supported default define-call syntax', () => {
     expect(
-      extractDefineEntity(
-        '// export default defineObject({});\nexport default defineApplication({});',
-      ),
+      extractDefineEntity({
+        fileContent:
+          '// export default defineObject({});\nexport default defineApplication({});',
+        filePath: 'application.ts',
+      }),
     ).toBe('defineApplication');
     for (const source of [
       'export default sdk.defineApplication({});',
@@ -87,8 +131,31 @@ describe('CLI app source loading', () => {
       'export default renamedDefine({});',
       'function helper() { return defineApplication({}); }',
     ]) {
-      expect(extractDefineEntity(source)).toBeUndefined();
+      expect(
+        extractDefineEntity({
+          fileContent: source,
+          filePath: 'application.ts',
+        }),
+      ).toBeUndefined();
     }
+  });
+
+  it('finds an application identity following JSX in a TSX file', async () => {
+    await symlink(
+      resolve('../../node_modules/react'),
+      join(appPath, 'node_modules/react'),
+      'dir',
+    );
+    await writeFile(
+      join(appPath, 'app.tsx'),
+      sourceApplication('const Preview = () => <div>Preview</div>;'),
+    );
+    expect(await readApplicationIdentity({ appPath, signal })).toMatchObject({
+      application: {
+        universalIdentifier: SOURCE_TEST_APPLICATION_ID,
+        displayName: 'Source app',
+      },
+    });
   });
 
   it('distinguishes missing, duplicate, and invalid application identities', async () => {
@@ -149,7 +216,7 @@ describe('CLI app source loading', () => {
     });
   });
 
-  it('mocks UI and generated clients and converts conditional availability without evaluating the expression', async () => {
+  it('mocks generated clients and converts conditional availability without evaluating the expression', async () => {
     await writeFile(
       join(appPath, 'command.ts'),
       `
@@ -173,6 +240,33 @@ describe('CLI app source loading', () => {
       'arrayLength(selectedRecords) == 1 and not isSelected',
     );
     expect(result.config.component).toBeTypeOf('function');
+  });
+
+  it('loads twenty-ui like any dependency so module-level reads get real values', async () => {
+    await writeFile(
+      join(appPath, 'command.ts'),
+      `
+      import { defineCommandMenuItem } from 'twenty-sdk/define';
+      import { themeCssVariables } from 'twenty-ui/theme';
+      const labelStyle = {
+        color: themeCssVariables.font.color.primary,
+        border: \`1px solid \${themeCssVariables.border.color.medium}\`,
+      };
+      export default defineCommandMenuItem({
+        universalIdentifier: '${SOURCE_TEST_APPLICATION_ID}',
+        component: () => labelStyle,
+      });
+    `,
+    );
+    const result = await extractManifestFromFile({
+      appPath,
+      filePath: join(appPath, 'command.ts'),
+    });
+
+    expect((result.config.component as () => unknown)()).toEqual({
+      color: 'var(--t-font-color-primary)',
+      border: '1px solid var(--t-border-color-medium)',
+    });
   });
 
   it('keeps an unreadable definition occupied and preserves config even when SDK validation fails', async () => {

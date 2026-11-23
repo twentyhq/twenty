@@ -23,6 +23,10 @@ import {
   buildLinearApplicationPreferences,
   resetLinearApplicationPreferencesMocks,
 } from '~/pages/settings/accounts/__stories__/mockedLinearApplicationPreferences';
+import {
+  USER_HEALTH_CHECK_GRAPHQL_HANDLER,
+  resetUserHealthCheckMocks,
+} from '~/pages/settings/accounts/__stories__/mockedUserHealthCheck';
 
 export const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
   '20202020-1a2b-4c3d-8e4f-000000000051';
@@ -275,6 +279,7 @@ export const APPLICATION_PREFERENCES_GRAPHQL_HANDLERS = [
       data: { updateMyUserApplicationVariable: true },
     });
   }),
+  USER_HEALTH_CHECK_GRAPHQL_HANDLER,
   GENERATE_TRANSIENT_TOKEN_GRAPHQL_HANDLER,
   graphql.query('FindOneFrontComponent', ({ variables }) => {
     findOneFrontComponent(variables.id);
@@ -345,6 +350,7 @@ export const seedApplicationPreferencesStory = async () => {
   savedValueByKey.clear();
   savedValueByKey.set('PERSONAL_API_KEY', SAVED_PERSONAL_API_KEY);
   resetLinearApplicationPreferencesMocks();
+  resetUserHealthCheckMocks();
   updateMyUserApplicationVariable.mockClear();
   findOneFrontComponent.mockClear();
   findApplicationsGatedQuery.mockClear();

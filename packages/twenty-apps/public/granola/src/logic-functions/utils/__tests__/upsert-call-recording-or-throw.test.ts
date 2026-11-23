@@ -42,6 +42,36 @@ describe('upsertCallRecordingOrThrow', () => {
     });
   });
 
+  it('skips an update when eligibility is revoked during a create conflict', async () => {
+    const coreApiClient = buildCoreApiClient();
+    const canWriteCallRecording = vi
+      .fn<() => Promise<boolean>>()
+      .mockResolvedValueOnce(true)
+      .mockResolvedValueOnce(false);
+
+    vi.mocked(coreApiClient.query)
+      .mockResolvedValueOnce(EMPTY_RECORDINGS)
+      .mockResolvedValueOnce(EMPTY_RECORDINGS)
+      .mockResolvedValueOnce(EXISTING_RECORDINGS);
+    vi.mocked(coreApiClient.mutation).mockRejectedValueOnce(
+      new Error('Duplicate recording'),
+    );
+
+    await expect(
+      upsertCallRecordingOrThrow({
+        coreApiClient,
+        callRecordingId: CALL_RECORDING_ID,
+        fields: { title: 'Customer call' },
+        canWriteCallRecording,
+      }),
+    ).resolves.toEqual({
+      callRecordingId: CALL_RECORDING_ID,
+      created: false,
+      skipped: true,
+    });
+    expect(coreApiClient.mutation).toHaveBeenCalledOnce();
+  });
+
   it('propagates a failed create when no record exists', async () => {
     const coreApiClient = buildCoreApiClient();
     const error = new Error('Create failed');

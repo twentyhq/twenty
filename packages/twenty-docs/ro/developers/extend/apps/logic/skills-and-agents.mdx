@@ -66,11 +66,52 @@ Puncte cheie:
 * `prompt` conține promptul de sistem — acesta este textul de instrucțiuni care definește comportamentul agentului.
 * `description` (opțional) oferă context despre ce face agentul.
 * `icon` (opțional) setează pictograma afișată în UI.
+* `avatarColor` (opțional) setează culoarea avatarului agentului: `blue`, `sky`, `turquoise`, `green`, `yellow`, `orange`, `red`, `pink`, `purple` sau `gray`. Omite-l pentru a obține o culoare aleasă din ID-ul agentului.
+* `avatarShape` (opțional) setează forma avatarului agentului: `circle`, `cookie`, `cloud`, `clover`, `flower`, `burst`, `pill`, `arch`, `gem` sau `hexagon`. Valoarea implicită este `circle`.
 * `modelId` (opțional) suprascrie modelul AI implicit utilizat de agent.
 * `responseFormat` (opțional) stabilește formatul implicit al ieșirii agentului. Valoarea implicită este `{ type: 'text' }` pentru text liber. Folosește `{ type: 'json', schema }` pentru a impune ieșire JSON structurată. Un apel `runAgent()` sau un pas AI dintr-un flux de lucru poate solicita un format diferit, care are prioritate.
 * `roleUniversalIdentifier` (opțional) leagă agentul de un rol definit de aplicația ta. Acel rol nu trebuie să acorde mai multe permisiuni decât rolul aplicației, altfel compilarea eșuează; consultați [Roluri de agent](/ro/developers/extend/apps/config/roles#agent-roles).
 * `modelConfiguration` (opțional) activează instrumentele native ale modelului, așa cum face pagina de setări a agentului: `{ webSearch: { enabled: true }, twitterSearch: { enabled: true } }`. Fiecare instrument funcționează numai pe modelele care îl acceptă. Omiteți-l pentru a le menține dezactivate.
+* `triggers` (opțional) rulează agentul automat, conform unui program sau când se modifică înregistrările. Consultați [Declanșatoare ale agentului](#agent-triggers).
 * `isSystem` (opțional, are implicit valoarea `false`) ascunde agentul din listele de agenți, la fel ca agenții pe care Twenty îi creează pentru pașii de IA din fluxurile de lucru. Schimbă doar ceea ce este afișat: agenții unei aplicații pot fi modificați numai prin intermediul aplicației, indiferent de valoarea acestei opțiuni.
+
+#### Declanșatoare ale agentului
+
+Fiecare declanșator pornește o execuție care apare printre execuțiile agentului, împreună cu înregistrarea care l-a declanșat:
+
+```ts src/agents/deal-watcher.ts
+import {
+  defineAgent,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+const OPPORTUNITY = STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity;
+
+export default defineAgent({
+  ...,
+  triggers: [
+    {
+      universalIdentifier: 'c1f0a7b2-5d3e-4f6a-8b9c-0d1e2f3a4b5c',
+      type: 'EVENT',
+      settings: {
+        on: 'recordEvent',
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        action: 'updated',
+        watchedFieldUniversalIdentifiers: [OPPORTUNITY.fields.stage.universalIdentifier],
+        condition: "stage == 'CUSTOMER' and previous.stage != 'CUSTOMER'",
+      },
+      instructions: 'Draft the onboarding plan for this new customer.',
+    },
+    {
+      universalIdentifier: 'd2e1b8c3-6e4f-4a7b-9c0d-1e2f3a4b5c6d',
+      type: 'CRON',
+      settings: { pattern: '0 9 * * 1' },
+    },
+  ],
+});
+```
+
+Un declanșator `EVENT` are aceleași setări ca [`eventTriggerSettings` al unei funcții logice](/ro/developers/extend/apps/logic/logic-functions#database-event-trigger-payload), cu excepția faptului că necesită un obiect și o acțiune. Declanșatorul `DATABASE_EVENT` anterior, cu un `eventName`, este acceptat în continuare. `instructions` (opțional) sunt adăugate la promptul agentului pentru execuțiile pe care le pornește declanșatorul.
 
 În mod implicit, un agent returnează text liber. Pentru a obține o ieșire structurată, setează `responseFormat` la `{ type: 'json' }` și furnizează `schema`:
 
@@ -131,8 +172,8 @@ export default defineMcpServer({
 Puncte cheie:
 * `name` este în snake_case (litere mici, cifre și caractere de subliniere, începe cu o literă, maximum 32 de caractere) și este unic în spațiul de lucru. Acesta este prefixul numelor instrumentelor serverului.
 * `url` trebuie să fie un URL HTTP sau HTTPS.
-* `connectionProvider` (opțional) face referire la un [furnizor de conexiune](/ro/developers/extend/apps/logic/connections) declarat de aceeași aplicație. Apelurile trimit tokenul de acces al conexiunii respective ca token Bearer. Omiteți-l pentru un server public.
-* URL-ul nu se poate modifica într-o versiune ulterioară cât timp este asociat un furnizor de conexiune, astfel încât tokenurile să nu fie trimise niciodată către o altă gazdă.
+* `connectionProvider` (opțional) face referire la un [furnizor de conexiune](/ro/developers/extend/apps/logic/connections) declarat de aceeași aplicație. Apelurile trimit tokenul de acces al conexiunii respective ca token Bearer. Omiteți-l pentru un server public. Un server care își publică propriile setări OAuth utilizează un furnizor `oauth-discovery` al cărui `resourceUrl` este URL-ul serverului (Twenty 2.59.0 sau o versiune ulterioară).
+* URL-ul nu se poate modifica într-o versiune ulterioară cât timp același furnizor de conexiune rămâne asociat. Modificarea URL-ului înseamnă asocierea unui alt furnizor în același timp, astfel încât tokenurile să nu fie trimise niciodată către o altă gazdă.
 * Spațiile de lucru pot dezactiva serverul; o versiune ulterioară a aplicației păstrează această opțiune.
 * Necesită `"engines": { "twenty": ">=2.53.0" }`.
 
@@ -192,7 +233,11 @@ export default defineApplicationRole({
 ```
 
 <Warning>
-  **Evită buclele:** dacă apelezi `runAgent()` dintr-un declanșator de tip eveniment de bază de date `*.updated`, iar agentul actualizează aceeași înregistrare, restrânge declanșatorul cu `updatedFields` la un câmp pe care agentul nu îl scrie niciodată (de exemplu, URL-ul sursă) sau verifică dacă vreun câmp țintă este încă gol înainte de a apela `runAgent()`.
+  **Evită buclele:** dacă apelezi `runAgent()` dintr-un declanșator de eveniment de bază de date `*.updated`
+  și agentul actualizează aceeași înregistrare, restrânge declanșatorul cu
+  `watchedFieldUniversalIdentifiers` la un câmp pe care agentul nu îl scrie niciodată (de exemplu,
+  URL-ul sursă) sau cu o `condition` care este adevărată doar cât timp un câmp țintă
+  este încă gol, cum ar fi `isEmpty(summary)`.
 </Warning>
 
 ### Trimiterea fișierelor cu un mesaj
@@ -430,8 +475,9 @@ urmează clienții implici: acționează ca persoana care a declanșat rularea, 
 aplicația ta atunci când nimeni nu a făcut. Nu depășește niciodată rolul aplicației tale, iar
 o aplicație fără un rol implicit nu o poate apela.
 
-Fără `scope`, apelul citeşte şi nu scrie nici o înregistrare. Pentru a o lăsa să folosească baza de date
-pasează un `scope`, scris ca permisiunile unui rol:
+Fără `scope`, apelul citeşte şi nu scrie nici o înregistrare. Pentru a-i permite să utilizeze
+baza de date, transmite un `scope`. Folosește propriile sale proprietăți (`canReadAllObjectRecords`,
+`objectPermissions`, `fieldPermissions`), nu blocul `recordsPermissions` al unui rol:
 
 ```ts
 const { object } = await ai.generate({

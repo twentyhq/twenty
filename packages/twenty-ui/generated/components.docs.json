@@ -8307,6 +8307,13 @@
             "required": true,
             "defaultValue": null,
             "description": "The value of the Tab."
+          },
+          {
+            "name": "variant",
+            "type": "\"filled\" | \"plain\"",
+            "required": false,
+            "defaultValue": "plain",
+            "description": "`filled` keeps a background behind the selected tab instead of relying on an indicator."
           }
         ]
       },

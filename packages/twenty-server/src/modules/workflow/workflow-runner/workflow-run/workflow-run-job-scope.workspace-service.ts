@@ -15,25 +15,6 @@ export class WorkflowRunJobScopeWorkspaceService {
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
-  async resolveForApplication({
-    workspaceId,
-    applicationId,
-  }: {
-    workspaceId: string;
-    applicationId: string | null | undefined;
-  }): Promise<QueueJobScope> {
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-    return buildApplicationQueueJobScope({
-      workspaceId,
-      applicationId,
-      flatApplicationMaps,
-    });
-  }
-
   async getCoreWorkflowJobScopeResolver(
     workspaceId: string,
   ): Promise<(coreWorkflowId: string | null) => QueueJobScope> {
@@ -43,17 +24,20 @@ export class WorkflowRunJobScopeWorkspaceService {
         'flatApplicationMaps',
       ]);
 
-    return (coreWorkflowId) =>
-      buildApplicationQueueJobScope({
+    return (coreWorkflowId) => {
+      const flatWorkflow = isDefined(coreWorkflowId)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: coreWorkflowId,
+            flatEntityMaps: flatWorkflowMaps,
+          })
+        : undefined;
+
+      return buildApplicationQueueJobScope({
         workspaceId,
-        applicationId: isDefined(coreWorkflowId)
-          ? findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: coreWorkflowId,
-              flatEntityMaps: flatWorkflowMaps,
-            })?.applicationId
-          : undefined,
+        applicationId: flatWorkflow?.applicationId,
         flatApplicationMaps,
       });
+    };
   }
 
   async resolveForCoreWorkflow({

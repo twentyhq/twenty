@@ -2,6 +2,7 @@ import { type SharedDependenciesExportNames } from '@/front-component-build/shar
 
 export type SharedDependenciesBuildManifest = {
   checksum: string;
+  typeReferencesChecksum?: string;
   packageJsonChecksum: string;
   yarnLockChecksum: string | null;
   exports: Record<string, SharedDependenciesExportNames>;

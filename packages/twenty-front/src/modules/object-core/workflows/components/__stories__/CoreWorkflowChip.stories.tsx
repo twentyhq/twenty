@@ -4,7 +4,7 @@ import { expect, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { CoreWorkflowChip } from '@/object-core/workflows/components/CoreWorkflowChip';
-import { CoreWorkflowStatus, WorkflowVisibility } from '~/generated/graphql';
+import { CoreWorkflowStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const CORE_WORKFLOW_ID = '20202020-0000-4000-8000-000000000002';
@@ -30,7 +30,7 @@ const meta: Meta<typeof CoreWorkflowChip> = {
                 lastPublishedCoreWorkflowVersionId: null,
                 applicationId: null,
                 workspaceWorkflowId: null,
-                visibility: WorkflowVisibility.WORKSPACE,
+                isPrivate: false,
                 canChangeVisibility: true,
                 createdAt: '2026-10-01T10:00:00.000Z',
                 updatedAt: '2026-10-01T10:00:00.000Z',

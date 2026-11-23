@@ -203,7 +203,7 @@ export class ObjectMetadataOrderByWithGroupByGqlInputTypeGenerator {
       fieldMetadata,
     ]);
 
-    let result: GraphQLInputFieldConfigMap = {};
+    const result: GraphQLInputFieldConfigMap = {};
 
     for (const [aggregationKey, aggregationDetails] of Object.entries(
       aggregations,

@@ -39,7 +39,7 @@ export const LinkCalendarEventsDropdown = ({
         otherActivities:
           data.searchTimelineCalendarEvents.otherTimelineCalendarEvents,
       })}
-      timelineQuery={getTimelineCalendarEventsFromObjectRecord}
+      timelineQueries={[getTimelineCalendarEventsFromObjectRecord]}
       getOption={(calendarEvent) => ({
         label: getTimelineCalendarEventLabel(calendarEvent),
         description: formatToHumanReadableDate(calendarEvent.startsAt),

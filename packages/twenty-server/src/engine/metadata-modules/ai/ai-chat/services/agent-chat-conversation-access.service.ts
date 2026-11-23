@@ -5,7 +5,7 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
-import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
+import { resolveOwnAgentRunStreamChannelIdOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-own-agent-run-stream-channel-id-or-throw.util';
 import { type AgentChatConversationInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-conversation.input';
 import { type AgentChatEventInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.input';
 import { type AgentChatChannel } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel.type';
@@ -63,20 +63,17 @@ export class AgentChatConversationAccessService {
       };
     }
 
-    if (
-      !isDefined(reader.callerApplication) ||
-      Object.values(conversation).some(isDefined)
-    ) {
+    if (Object.values(conversation).some(isDefined)) {
       throw new AiException(
-        'Pass runId alone, with an application access token',
+        'Pass runId alone, without a thread',
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
     }
 
     return {
       kind: 'run',
-      channelId: buildAgentRunStreamChannelId({
-        applicationId: reader.callerApplication.id,
+      channelId: resolveOwnAgentRunStreamChannelIdOrThrow({
+        callerApplication: reader.callerApplication,
         callerWorkspaceMemberId: reader.workspaceMemberId ?? null,
         runId,
       }),

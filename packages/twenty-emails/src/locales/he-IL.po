@@ -39,6 +39,11 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): אנא אמת דומיין זה כדי לאפשר למשתמשים עם כתובות דוא\"ל <1>@{domain}</1> להצטרף למרחב שלך בלי צורך בהזמנה."
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
+msgstr "נעשה שימוש בקוד גיבוי כדי להיכנס אל {workspaceDisplayName}. קודי גיבוי שנותרו: {remainingBackupCodeCount}."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "תזכורת לפני שתקופת הניסיון שלך מסתיימת"
@@ -62,6 +67,11 @@ msgstr "הוסף אמצעי תשלום"
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
 msgstr "לאחר מכן, מרחב העבודה וכל הנתונים שבו יימחקו לצמיתות — ולא נוכל לשחזר אותם."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "Backup code used"
+msgstr "נעשה שימוש בקוד גיבוי"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -138,6 +148,17 @@ msgid "Hi {userName},"
 msgstr "היי {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "אם לא את/ה ביצעת זאת, החלף/י את הסיסמה שלך וצור/צרי קודי גיבוי חדשים תחת הגדרות, פרופיל, אימות דו-שלבי."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "If this was not you, change your password and generate new backup codes."
+msgstr "אם לא את/ה ביצעת זאת, החלף/י את הסיסמה שלך וצור/צרי קודי גיבוי חדשים."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
 msgstr "אם לא אתה ביצעת פעולה זו, צור קשר עם מנהל סביבת העבודה שלך והחלף את הסיסמה שלך."
@@ -204,6 +225,16 @@ msgid "Manage subscription"
 msgstr "נהל מנוי"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes generated"
+msgstr "נוצרו קודי גיבוי חדשים"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
+msgstr "נוצרו קודי גיבוי חדשים עבור החשבון שלך ב-{workspaceDisplayName}. קודי הגיבוי הקודמים שלך אינם פועלים עוד."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "אם תרצה להמשיך, אין צורך לבצע שום פעולה. אם אינך מעוניין לחדש, תוכל לבטל בכל זמן לפני כן."
@@ -254,6 +285,7 @@ msgid "Set"
 msgstr "\"הגדר\""
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
 msgstr "הגדירו מחדש אימות דו-שלבי תחת הגדרות, פרופיל."
@@ -277,6 +309,11 @@ msgstr "הודעת דוא\"ל מבחן"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
 msgstr "תודה שנרשמת לחשבון ב-Twenty! לפני שנתחיל, אנחנו רק צריכים לוודא שזה אתה. לחץ מטה כדי לאמת את כתובת המייל שלך."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
+msgstr "המאמת עבור החשבון שלך ב-{workspaceDisplayName} הוסר מההגדרות. קודי הגיבוי שלך עבור סביבת עבודה זו אינם פועלים עוד."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -317,6 +354,11 @@ msgstr "Twenty.com, תאגיד לתועלת הציבור"
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
 msgstr "קוד שחזור עבור אימות דו-שלבי הונפק"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "Two-factor authentication removed"
+msgstr "אימות דו-שלבי הוסר"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -379,6 +421,11 @@ msgstr "מה זה Twenty?"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
 msgstr "לוגו של סביבת העבודה"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "באפשרותך ליצור קודי גיבוי חדשים תחת הגדרות, פרופיל, אימות דו-שלבי."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

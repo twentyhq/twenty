@@ -22,6 +22,9 @@ export const agentConversationHistoryQueryFactory = (
       ) {
         threadId
         turnId
+        agentId
+        senderApplicationId
+        isBuiltInAssistant
         role
         parts {
           type

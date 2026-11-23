@@ -17,10 +17,15 @@ import {
   WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
+import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
+import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
+import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-export const DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS = 300; // 5 minutes
+export const DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS = 300;
 
 export enum LogicFunctionRuntime {
   NODE18 = 'nodejs18.x',
@@ -95,6 +100,17 @@ export class LogicFunctionEntity
 
   @Column({ nullable: true, type: 'jsonb' })
   workflowActionTriggerSettings: JsonbProperty<WorkflowActionTriggerSettings> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME,
+  })
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME,
+  })
+  // Unused since 2.60. Servers still on 2.59 select it during an upgrade, so the drop waits for 2.61.
+  @Column({ nullable: true, type: 'jsonb' })
+  jobConfig: WasRemovedInUpgrade<JsonbProperty<MessageQueueJobConfig> | null>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

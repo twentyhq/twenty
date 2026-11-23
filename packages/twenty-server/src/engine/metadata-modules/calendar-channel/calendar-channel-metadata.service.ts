@@ -7,16 +7,21 @@ import {
   CalendarChannelSyncStage,
   CalendarChannelVisibility,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   CalendarChannelException,
   CalendarChannelExceptionCode,
 } from 'src/engine/metadata-modules/calendar-channel/calendar-channel.exception';
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { CALENDAR_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/calendar-channel/constants/calendar-channel-deleted.constant';
 import { CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
+import { type PublicCalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/public-calendar-channel.dto';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type CalendarChannelDeletedEvent } from 'src/engine/metadata-modules/calendar-channel/types/calendar-channel-deleted.type';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { type ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
+import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
@@ -26,10 +31,79 @@ export class CalendarChannelMetadataService {
     private readonly repository: Repository<CalendarChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {}
 
   async findAll(workspaceId: string): Promise<CalendarChannelDTO[]> {
     return this.repository.find({ where: { workspaceId } });
+  }
+
+  async findAllPublic(
+    workspaceId: string,
+  ): Promise<PublicCalendarChannelDTO[]> {
+    const calendarChannels = await this.repository.find({
+      where: { workspaceId },
+      select: {
+        id: true,
+        handle: true,
+        visibility: true,
+        connectedAccountId: true,
+      },
+    });
+
+    const connectedAccounts =
+      await this.connectedAccountMetadataService.findByIds({
+        ids: [
+          ...new Set(
+            calendarChannels.map(
+              ({ connectedAccountId }) => connectedAccountId,
+            ),
+          ),
+        ],
+        workspaceId,
+      });
+
+    const connectedAccountById = new Map(
+      connectedAccounts.map((connectedAccount) => [
+        connectedAccount.id,
+        connectedAccount,
+      ]),
+    );
+
+    return calendarChannels.map(
+      ({ id, handle, visibility, connectedAccountId }) => ({
+        id,
+        handle,
+        visibility,
+        connectedAccountId,
+        connectedAccount: buildPublicConnectedAccount(
+          connectedAccountById.get(connectedAccountId) ?? null,
+        ),
+      }),
+    );
+  }
+
+  async findPublicConnectedAccountForCaller({
+    connectedAccountId,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    connectedAccountId: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ConnectedAccountPublicDTO | null> {
+    if (!isDefined(userWorkspaceId)) {
+      return null;
+    }
+
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findByIdAndUserWorkspaceId({
+        id: connectedAccountId,
+        userWorkspaceId,
+        workspaceId,
+      });
+
+    return buildPublicConnectedAccount(connectedAccount);
   }
 
   async findByUserWorkspaceId({
@@ -153,8 +227,13 @@ export class CalendarChannelMetadataService {
     },
   ): Promise<CalendarChannelDTO> {
     const entity = this.repository.create(data);
+    const savedEntity = await this.repository.save(entity);
 
-    return this.repository.save(entity);
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      data.workspaceId,
+    );
+
+    return savedEntity;
   }
 
   async update({
@@ -171,6 +250,12 @@ export class CalendarChannelMetadataService {
       data as Record<string, unknown>,
     );
 
+    if ('visibility' in data) {
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
+    }
+
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
@@ -186,6 +271,10 @@ export class CalendarChannelMetadataService {
     });
 
     await this.repository.delete({ id, workspaceId });
+
+    await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      workspaceId,
+    );
 
     this.workspaceEventEmitter.emitCustomBatchEvent<CalendarChannelDeletedEvent>(
       CALENDAR_CHANNEL_DELETED_EVENT,

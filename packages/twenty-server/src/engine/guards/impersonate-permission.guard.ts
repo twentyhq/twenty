@@ -49,7 +49,9 @@ export class ImpersonatePermissionGuard implements CanActivate {
         permissionFlag: PermissionFlagType.IMPERSONATE,
       });
 
-    if (hasPermission === true) return true;
+    if (hasPermission === true) {
+      return true;
+    }
 
     throw new PermissionsException(
       PermissionsExceptionMessage.PERMISSION_DENIED,

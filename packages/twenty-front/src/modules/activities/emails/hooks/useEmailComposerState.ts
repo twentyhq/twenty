@@ -1,14 +1,29 @@
-import { useCallback, useMemo, useState } from 'react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { type SetStateAction, useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
+import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { emailComposerDraftFamilyState } from '@/activities/emails/states/emailComposerDraftFamilyState';
+import { type AppReplyTarget } from '@/activities/emails/types/AppReplyTarget';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components/feedback';
+import { v4 } from 'uuid';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
+import { type EmailRecipientsByFieldId } from '@/activities/emails/recipients/types/EmailRecipientsByFieldId';
 import { isValidEmailRecipientAddress } from '@/activities/emails/recipients/utils/isValidEmailRecipientAddress';
 import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parseEmailRecipients';
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
+import { type EmailComposerDraft } from '@/activities/emails/types/EmailComposerDraft';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
 
 type UseEmailComposerStateArgs = {
@@ -18,6 +33,8 @@ type UseEmailComposerStateArgs = {
   defaultSubject?: string;
   defaultInReplyTo?: string;
   contextRecord?: EmailComposerContextRecord | null;
+  appReplyTarget?: AppReplyTarget | null;
+  draftKey?: string;
   onSent?: (messageThreadId: string | null) => void;
 };
 
@@ -33,44 +50,98 @@ export const useEmailComposerState = ({
   defaultSubject = '',
   defaultInReplyTo,
   contextRecord,
+  appReplyTarget,
+  draftKey,
   onSent,
 }: UseEmailComposerStateArgs) => {
-  const initialTo = draftPrefill?.to ?? defaultTo;
-  const initialCc = draftPrefill?.cc ?? '';
-  const initialBcc = draftPrefill?.bcc ?? '';
-  const initialSubject = draftPrefill?.subject ?? defaultSubject;
-  const initialBody = draftPrefill?.body ?? '';
-
-  const [sender, setSender] = useState<ConnectedAccountSender>({
-    connectedAccountId: initialConnectedAccountId,
+  const [initialDraft] = useState<EmailComposerDraft>(() => ({
+    recipientsByFieldId: {
+      to: parseEmailRecipients(draftPrefill?.to ?? defaultTo),
+      cc: parseEmailRecipients(draftPrefill?.cc ?? ''),
+      bcc: parseEmailRecipients(draftPrefill?.bcc ?? ''),
+    },
+    subject: draftPrefill?.subject ?? defaultSubject,
+    body:
+      draftPrefill?.body ?? serializePlainTextAsAdvancedTextEditorDocument(''),
+    files: [],
+    pickedSender: null,
+    pendingAppSend: null,
+  }));
+  const [storedDraft, setStoredDraft] = useComposerDraft({
+    draftFamilyState: emailComposerDraftFamilyState,
+    draftKey,
+    defaultDraft: null,
   });
-  const [previousConnectedAccountId, setPreviousConnectedAccountId] = useState(
-    initialConnectedAccountId,
+  const {
+    recipientsByFieldId,
+    subject,
+    body,
+    files: attachedFiles,
+    pickedSender,
+    pendingAppSend,
+  } = storedDraft ?? initialDraft;
+  const { to, cc, bcc } = recipientsByFieldId;
+
+  const updateDraft = (
+    getChanges: (draft: EmailComposerDraft) => Partial<EmailComposerDraft>,
+  ) =>
+    setStoredDraft((previousDraft) => {
+      const draft = previousDraft ?? initialDraft;
+
+      return { ...draft, ...getChanges(draft) };
+    });
+
+  const setRecipientsByFieldId = (
+    update: SetStateAction<EmailRecipientsByFieldId>,
+  ) =>
+    updateDraft((draft) => ({
+      recipientsByFieldId:
+        typeof update === 'function'
+          ? update(draft.recipientsByFieldId)
+          : update,
+    }));
+
+  const setSubject = (nextSubject: string) =>
+    updateDraft(() => ({ subject: nextSubject }));
+
+  const setBody = (nextBody: string) => updateDraft(() => ({ body: nextBody }));
+
+  const setFiles = (update: SetStateAction<EmailAttachment[]>) =>
+    updateDraft((draft) => ({
+      files: typeof update === 'function' ? update(draft.files) : update,
+    }));
+
+  const setSender = (sender: ConnectedAccountSender) =>
+    updateDraft(() => ({
+      pickedSender: {
+        defaultConnectedAccountId: initialConnectedAccountId,
+        sender,
+      },
+    }));
+
+  const { connectedAccountId, fromHandle } =
+    pickedSender?.defaultConnectedAccountId === initialConnectedAccountId
+      ? pickedSender.sender
+      : { connectedAccountId: initialConnectedAccountId };
+
+  const isSendingThroughAppSender =
+    isDefined(appReplyTarget) &&
+    appReplyTarget.connectedAccountId === connectedAccountId;
+
+  const isMessageAttachmentEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
   );
 
-  if (previousConnectedAccountId !== initialConnectedAccountId) {
-    setPreviousConnectedAccountId(initialConnectedAccountId);
-    setSender({ connectedAccountId: initialConnectedAccountId });
-  }
+  const canAttachFiles =
+    !isSendingThroughAppSender || isMessageAttachmentEnabled;
 
-  const { connectedAccountId, fromHandle } = sender;
-  const [to, setTo] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialTo),
-  );
-  const [cc, setCc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialCc),
-  );
-  const [bcc, setBcc] = useState<EmailRecipient[]>(() =>
-    parseEmailRecipients(initialBcc),
-  );
-  const [subject, setSubject] = useState(initialSubject);
-  const [body, setBody] = useState(initialBody);
-  const [showCcBcc, setShowCcBcc] = useState(
-    initialCc.length > 0 || initialBcc.length > 0,
-  );
-  const [files, setFiles] = useState<EmailAttachment[]>([]);
+  const files = canAttachFiles ? attachedFiles : [];
 
-  const { sendEmail, loading } = useSendEmail();
+  const { sendEmail, loading: isSendingEmail } = useSendEmail();
+  const { sendAppChannelMessage } = useSendAppChannelMessage();
+  const [isSendingThroughApp, setIsSendingThroughApp] = useState(false);
+  const { enqueueToast } = useToast();
+  const loading = isSendingEmail || isSendingThroughApp;
 
   const recipientCount = to.length + cc.length + bcc.length;
 
@@ -99,6 +170,55 @@ export const useEmailComposerState = ({
     const serializedCc = serializeEmailRecipients(cc);
     const serializedBcc = serializeEmailRecipients(bcc);
 
+    if (isSendingThroughAppSender) {
+      setIsSendingThroughApp(true);
+
+      const email = {
+        to: serializeEmailRecipients(to),
+        cc: serializedCc || undefined,
+        bcc: serializedBcc || undefined,
+        subject,
+        body,
+        inReplyTo: defaultInReplyTo || undefined,
+      };
+      const emailKey = JSON.stringify({ email, files });
+
+      // a retry of the same email reuses its key so the server does not deliver it twice
+      const idempotencyKey =
+        pendingAppSend?.emailKey === emailKey
+          ? pendingAppSend.idempotencyKey
+          : v4();
+
+      setStoredDraft((previousDraft) => ({
+        ...(previousDraft ?? initialDraft),
+        pendingAppSend: { emailKey, idempotencyKey },
+      }));
+
+      try {
+        const sentMessage = await sendAppChannelMessage({
+          messageChannelId: appReplyTarget.messageChannelId,
+          messageThreadId: appReplyTarget.messageThreadId,
+          idempotencyKey,
+          email,
+          attachments: files,
+        });
+
+        setStoredDraft(null);
+        onSent?.(sentMessage?.messageThreadId ?? null);
+      } catch (error) {
+        enqueueToast({
+          status: 'error',
+          children: CombinedGraphQLErrors.is(error)
+            ? getErrorMessageFromApolloError(error)
+            : t`Failed to send email`,
+        });
+      } finally {
+        setIsSendingThroughApp(false);
+      }
+
+      return;
+    }
+
     const { success, messageThreadId } = await sendEmail({
       connectedAccountId,
       fromHandle,
@@ -114,6 +234,7 @@ export const useEmailComposerState = ({
     });
 
     if (success) {
+      setStoredDraft(null);
       onSent?.(messageThreadId);
     }
   }, [
@@ -129,7 +250,14 @@ export const useEmailComposerState = ({
     draftPrefill?.messageId,
     files,
     contextRecord,
+    appReplyTarget,
+    isSendingThroughAppSender,
+    pendingAppSend,
     sendEmail,
+    sendAppChannelMessage,
+    enqueueToast,
+    setStoredDraft,
+    initialDraft,
     onSent,
   ]);
 
@@ -137,25 +265,19 @@ export const useEmailComposerState = ({
     connectedAccountId,
     fromHandle,
     setSender,
-    to,
-    setTo,
-    cc,
-    setCc,
-    bcc,
-    setBcc,
+    recipientsByFieldId,
+    setRecipientsByFieldId,
     subject,
     setSubject,
     body,
     setBody,
-    showCcBcc,
-    setShowCcBcc,
     files,
     setFiles,
+    canAttachFiles,
+    discardDraft: () => setStoredDraft(null),
     handleSend,
     loading,
     canSend,
-    initialSubject,
-    initialBody,
     recipientCount,
     exceedsRecipientLimit,
     maxRecipients: MAX_EMAIL_RECIPIENTS,

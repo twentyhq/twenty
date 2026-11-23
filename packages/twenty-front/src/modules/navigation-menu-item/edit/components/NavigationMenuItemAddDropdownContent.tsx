@@ -3,9 +3,14 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import { useNavigationMenuItemAddOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions';
 import { type NavigationMenuItemAddStep } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddStep';
+import { navigationMenuItemsWithHiddenSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsWithHiddenSelector';
+import { getHiddenWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/getHiddenWorkspaceNavigationMenuItems';
+import { getNavigationMenuItemTabId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemTabId';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { Fragment, useState } from 'react';
@@ -30,12 +35,15 @@ const STEP_BY_PAGE: Partial<Record<string, Step>> = {
   record: 'record',
   page: 'page',
   nativePage: 'nativePage',
+  automation: 'automation',
 };
 
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
-  folderId?: string;
+  // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
+  shouldShowHiddenItems?: boolean;
+  parentId?: string;
   position?: number;
   onClose: () => void;
 };
@@ -43,7 +51,8 @@ type NavigationMenuItemAddDropdownContentProps = {
 export const NavigationMenuItemAddDropdownContent = ({
   dropdownId,
   section,
-  folderId,
+  shouldShowHiddenItems = false,
+  parentId,
   position,
   onClose,
 }: NavigationMenuItemAddDropdownContentProps) => {
@@ -65,8 +74,31 @@ export const NavigationMenuItemAddDropdownContent = ({
   const insertionIndex =
     position ??
     currentItems.filter(
-      (item) => (item.folderId ?? null) === (folderId ?? null),
+      (item) => (item.parentId ?? null) === (parentId ?? null),
     ).length;
+
+  const targetTabId = getNavigationMenuItemTabId({
+    parentId,
+    items: currentItems,
+  });
+  const currentTabItems = currentItems.filter(
+    (item) =>
+      getNavigationMenuItemTabId({
+        parentId: item.parentId,
+        items: currentItems,
+      }) === targetTabId,
+  );
+  const navigationMenuItemsWithHidden = useAtomStateValue(
+    navigationMenuItemsWithHiddenSelector,
+  );
+  const hiddenNavigationMenuItemsInTab =
+    section === 'workspace'
+      ? getHiddenWorkspaceNavigationMenuItems({
+          navigationMenuItems: navigationMenuItemsWithHidden,
+          excludedIds: new Set(currentTabItems.map(({ id }) => id)),
+          tabId: targetTabId,
+        })
+      : [];
 
   const navigate = (next: Step) => {
     goToPage(next);
@@ -75,7 +107,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
   const addItem = (input: NewNavigationMenuItemInput) => {
     const itemId = createItem(input, {
-      targetFolderId: folderId ?? null,
+      targetFolderId: parentId ?? null,
       targetIndex: position,
     });
     onClose();
@@ -86,6 +118,8 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
   const {
     getItems,
+    automationItemGroups,
+    automationLoading,
     standalonePagesLoading,
     standalonePagesError,
     recordSearchLoading,
@@ -94,8 +128,9 @@ export const NavigationMenuItemAddDropdownContent = ({
     step,
     search,
     objectId,
-    folderId,
-    currentItems,
+    parentId,
+    currentItems: currentTabItems,
+    hiddenItems: hiddenNavigationMenuItemsInTab,
     isSearchingAllItems,
     addItem,
     navigateToStep: navigate,
@@ -107,12 +142,13 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const titles: Record<Step, string> = {
-    main: t`Add menu item`,
+    main: t`Add item`,
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
     page: t`Page`,
     nativePage: t`Native page`,
+    automation: t`Automations`,
   };
 
   const normalizedSearch = normalizeSearchText(search.trim());
@@ -120,14 +156,19 @@ export const NavigationMenuItemAddDropdownContent = ({
     (item.searchableValues ?? [item.label]).some((value) =>
       normalizeSearchText(value).includes(normalizedSearch),
     );
-  const groups = isSearchingAllItems
-    ? [
+  const getGroups = () => {
+    if (isSearchingAllItems) {
+      return [
         { label: t`Objects`, items: getItems('object').filter(matchesSearch) },
         { label: t`Views`, items: getItems('view').filter(matchesSearch) },
         { label: t`Pages`, items: getItems('page').filter(matchesSearch) },
         {
           label: t`Native pages`,
           items: getItems('nativePage').filter(matchesSearch),
+        },
+        {
+          label: t`Automations`,
+          items: getItems('automation').filter(matchesSearch),
         },
         {
           label: t`Records`,
@@ -141,15 +182,27 @@ export const NavigationMenuItemAddDropdownContent = ({
               matchesSearch(item),
           ),
         },
-      ]
-    : [
-        {
-          label: '',
-          items: getItems().filter(
-            (item) => step === 'record' || matchesSearch(item),
-          ),
-        },
       ];
+    }
+
+    if (step === 'automation') {
+      return automationItemGroups.map((group) => ({
+        label: group.label,
+        items: group.items.filter(matchesSearch),
+      }));
+    }
+
+    return [
+      {
+        label: '',
+        items: getItems().filter(
+          (item) => step === 'record' || matchesSearch(item),
+        ),
+      },
+    ];
+  };
+
+  const groups = getGroups();
   const items = groups.flatMap((group) => group.items);
   const getEmptyMessage = () => {
     if (step === 'page' && isDefined(standalonePagesError)) {
@@ -167,17 +220,23 @@ export const NavigationMenuItemAddDropdownContent = ({
       return t`Loading...`;
     }
 
+    if ((step === 'automation' || isSearchingAllItems) && automationLoading) {
+      return t`Loading...`;
+    }
+
     return t`No results found`;
   };
 
   const emptyMessage = getEmptyMessage();
+  const isItemTypeList =
+    step === 'main' && !isSearchingAllItems && !shouldShowHiddenItems;
 
   return (
     <>
       <NavigationMenuItemInsertionPreviewEffect
         dropdownId={dropdownId}
         section={section}
-        folderId={folderId ?? null}
+        parentId={parentId ?? null}
         index={insertionIndex}
       />
       <Dropdown.Page id={page} type="picker">
@@ -204,7 +263,7 @@ export const NavigationMenuItemAddDropdownContent = ({
           placeholder={step === 'record' ? t`Search records...` : t`Search...`}
         />
         <Dropdown.Separator />
-        <Dropdown.Section scrollable>
+        <Dropdown.Section scrollable={!isItemTypeList}>
           {groups
             .filter((group) => isNonEmptyArray(group.items))
             .map((group, index) => (
@@ -226,6 +285,12 @@ export const NavigationMenuItemAddDropdownContent = ({
                 </Dropdown.Section>
               </Fragment>
             ))}
+          {shouldShowHiddenItems && step === 'main' && !isSearchingAllItems && (
+            <NavigationMenuAddSectionHiddenItems
+              containerId={targetTabId}
+              dropdownId={dropdownId}
+            />
+          )}
           {!isNonEmptyArray(items) && (
             <Dropdown.Empty>{emptyMessage}</Dropdown.Empty>
           )}

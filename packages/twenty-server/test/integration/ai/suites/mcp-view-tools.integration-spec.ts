@@ -622,6 +622,103 @@ describe('MCP view tools (integration)', () => {
     ).toMatchObject({ id: unlistedView.id, deleted: true });
   });
 
+  it('should only list the fields, filters and sorts of an unlisted view to its creator', async () => {
+    const unlistedView = await runViewTool<ViewSummary>({
+      toolName: 'create_view',
+      toolArguments: {
+        name: `${VIEW_NAME_PREFIX} private children`,
+        objectNameSingular: 'company',
+        fieldNames: ['name', 'domainName'],
+        visibility: 'UNLISTED',
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    jestExpectToBeDefined(unlistedView);
+
+    const listChildIds = async (token: string) => {
+      const [fields, filters, sorts] = await Promise.all([
+        runViewTool<{ viewFields: ViewFieldSummary[] }>({
+          toolName: 'get_view_fields',
+          toolArguments: { viewId: unlistedView.id },
+          token,
+        }),
+        runViewTool<{ viewFilters: { id: string }[] }>({
+          toolName: 'get_view_filters',
+          toolArguments: { viewId: unlistedView.id },
+          token,
+        }),
+        runViewTool<{ viewSorts: { id: string }[] }>({
+          toolName: 'get_view_sorts',
+          toolArguments: { viewId: unlistedView.id },
+          token,
+        }),
+      ]);
+
+      return {
+        viewFieldIds: fields?.viewFields.map(({ id }) => id),
+        viewFilterIds: filters?.viewFilters.map(({ id }) => id),
+        viewSortIds: sorts?.viewSorts.map(({ id }) => id),
+      };
+    };
+
+    const creatorViewFields = (
+      await runViewTool<{ viewFields: ViewFieldSummary[] }>({
+        toolName: 'get_view_fields',
+        toolArguments: { viewId: unlistedView.id },
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      })
+    )?.viewFields;
+
+    jestExpectToBeDefined(creatorViewFields);
+
+    const nameViewField = creatorViewFields.find(
+      ({ fieldName }) => fieldName === 'name',
+    );
+
+    jestExpectToBeDefined(nameViewField);
+
+    const filter = await runViewTool<{ id: string }>({
+      toolName: 'create_view_filter',
+      toolArguments: {
+        viewId: unlistedView.id,
+        fieldMetadataId: nameViewField.fieldMetadataId,
+        operand: 'CONTAINS',
+        value: 'acme',
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+    const sort = await runViewTool<{ id: string }>({
+      toolName: 'create_view_sort',
+      toolArguments: {
+        viewId: unlistedView.id,
+        fieldMetadataId: nameViewField.fieldMetadataId,
+      },
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    jestExpectToBeDefined(filter);
+    jestExpectToBeDefined(sort);
+
+    expect(await listChildIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual({
+      viewFieldIds: creatorViewFields.map(({ id }) => id),
+      viewFilterIds: [filter.id],
+      viewSortIds: [sort.id],
+    });
+
+    for (const token of [
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      API_KEY_ACCESS_TOKEN,
+    ]) {
+      expect(await listChildIds(token)).toEqual({
+        viewFieldIds: [],
+        viewFilterIds: [],
+        viewSortIds: [],
+      });
+    }
+  });
+
   // The seeded guest role cannot access tools, so it lacks VIEWS
   describe('for a guest without VIEWS', () => {
     const findWorkspaceViewId = async () => {

@@ -99,9 +99,12 @@ export const SettingsAccountsRowDropdownMenu = ({
                 startIcon={<IconPlayerPlay />}
                 render={
                   <Link
-                    to={getSettingsPath(SettingsPath.AccountsConfiguration, {
-                      connectedAccountId: account.id,
-                    })}
+                    to={getSettingsPath(
+                      SettingsPath.AppPreferencesAccountConfiguration,
+                      {
+                        connectedAccountId: account.id,
+                      },
+                    )}
                   />
                 }
               >{t`Complete setup`}</Dropdown.ActionItem>
@@ -112,7 +115,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 render={
                   <Link
                     to={getSettingsPath(
-                      SettingsPath.EditImapSmtpCaldavConnection,
+                      SettingsPath.AppPreferencesEditImapSmtpCaldavConnection,
                       {
                         connectedAccountId: account.id,
                       },
@@ -124,13 +127,27 @@ export const SettingsAccountsRowDropdownMenu = ({
             <Dropdown.ActionItem
               startIcon={<IconMail />}
               render={
-                <Link to={getSettingsPath(SettingsPath.AccountsEmails)} />
+                <Link
+                  to={getSettingsPath(
+                    SettingsPath.AppPreferencesAccountDetail,
+                    { connectedAccountId: account.id },
+                    undefined,
+                    'emails',
+                  )}
+                />
               }
             >{t`Emails settings`}</Dropdown.ActionItem>
             <Dropdown.ActionItem
               startIcon={<IconCalendarEvent />}
               render={
-                <Link to={getSettingsPath(SettingsPath.AccountsCalendars)} />
+                <Link
+                  to={getSettingsPath(
+                    SettingsPath.AppPreferencesAccountDetail,
+                    { connectedAccountId: account.id },
+                    undefined,
+                    'calendar',
+                  )}
+                />
               }
             >{t`Calendar settings`}</Dropdown.ActionItem>
             {isEligibleForProviderReconnect && (

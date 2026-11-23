@@ -35,10 +35,13 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadataOptionMaps } from 'src/engine/metadata-modules/flat-field-metadata-option/types/flat-field-metadata-option-maps.type';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -47,8 +50,9 @@ export class DatabaseToolProvider implements ToolProvider {
   readonly category = ToolCategory.DATABASE_CRUD;
 
   constructor(
-    private readonly principalPermissionsService: PrincipalPermissionsService,
-    private readonly recordPermissionsService: RecordPermissionsService,
+    private readonly principalPermissionsReadService: PrincipalPermissionsReadService,
+    private readonly recordPermissionsReadService: RecordPermissionsReadService,
+    private readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly i18nService: I18nService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
@@ -77,18 +81,28 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+          ],
         },
       );
 
     const principals = isDefined(context.authContext)
-      ? await this.principalPermissionsService.buildPermissionsPrincipals({
-          authContext: context.authContext,
-        })
+      ? await this.principalPermissionsReadService.resolvePermissionsPrincipals(
+          {
+            authContext: context.authContext,
+          },
+        )
       : undefined;
     if (!isDefined(principals)) {
       return descriptors;
@@ -122,6 +136,7 @@ export class DatabaseToolProvider implements ToolProvider {
       ? await this.buildFieldsResolver({
           context,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
           i18nInstance,
         })
       : () => [];
@@ -142,33 +157,33 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const canCreateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsReadService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'insert',
+          operationType: 'create',
         }));
       const canReadRecords =
         isExplicitlyGranted('canReadObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsReadService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'select',
+          operationType: 'read',
         }));
       const canUpdateRecords =
         isExplicitlyGranted('canUpdateObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsReadService.canAccessSomeRecords({
           ...objectQuestion,
           operationType: 'update',
         }));
       const canSoftDeleteRecords =
         isExplicitlyGranted('canSoftDeleteObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsReadService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'soft-delete',
+          operationType: 'softDelete',
         }));
       const canDestroyRecords =
         isExplicitlyGranted('canDestroyObjectRecords') &&
-        (await this.recordPermissionsService.hasAccessToSomeRecords({
+        (await this.recordPermissionsReadService.canAccessSomeRecords({
           ...objectQuestion,
-          operationType: 'delete',
+          operationType: 'destroy',
         }));
 
       if (
@@ -197,10 +212,10 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const [unreadableFieldMetadataIds, nonUpdatableFieldMetadataIds] =
         await Promise.all([
-          this.recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
+          this.recordFieldPermissionsReadService.findUnreadableFields(
             objectQuestion,
           ),
-          this.recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
+          this.recordFieldPermissionsReadService.findUneditableFields(
             objectQuestion,
           ),
         ]);
@@ -527,10 +542,12 @@ export class DatabaseToolProvider implements ToolProvider {
   private async buildFieldsResolver({
     context,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     i18nInstance,
   }: {
     context: ToolProviderContext;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
     i18nInstance: I18n;
   }): Promise<(flatObject: FlatObjectMetadata) => FlatFieldMetadata[]> {
     const { workspaceCustomApplicationUniversalIdentifier } =
@@ -547,6 +564,10 @@ export class DatabaseToolProvider implements ToolProvider {
         .sort((fieldA, fieldB) => fieldA.name.localeCompare(fieldB.name))
         .map((flatFieldMetadata) => ({
           ...flatFieldMetadata,
+          options: resolveFlatFieldMetadataOptions({
+            flatFieldMetadata,
+            flatFieldMetadataOptionMaps,
+          }),
           description: resolveEffectiveFieldDescription({
             flatFieldMetadata,
             locale: context.locale,

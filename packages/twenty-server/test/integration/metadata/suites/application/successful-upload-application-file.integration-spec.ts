@@ -78,6 +78,38 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
+    title: 'when uploading an imported JavaScript source',
+    context: {
+      input: {
+        fileFolder: 'Source',
+        filePath: 'src/helpers/format.js',
+        filename: 'format.js',
+        contentType: 'application/javascript',
+        fileContent: 'export const format = (value) => String(value);',
+      },
+      expected: {
+        fileFolderValue: FileFolder.Source,
+        persistedMimeType: 'text/javascript',
+      },
+    },
+  },
+  {
+    title: 'when uploading an imported stylesheet source',
+    context: {
+      input: {
+        fileFolder: 'Source',
+        filePath: 'src/styles/chart.css',
+        filename: 'chart.css',
+        contentType: 'text/css',
+        fileContent: '.chart { color: red; }',
+      },
+      expected: {
+        fileFolderValue: FileFolder.Source,
+        persistedMimeType: 'text/css',
+      },
+    },
+  },
+  {
     title: 'when uploading a public asset',
     context: {
       input: {

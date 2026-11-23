@@ -3,8 +3,8 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
+import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -48,9 +48,7 @@ export class ApplicationAuthorizationResolver {
         { userId: user.id, workspaceId: workspace.id },
       );
 
-    return authorizations.map((authorization) =>
-      this.toApplicationAuthorizationDTO(authorization),
-    );
+    return authorizations.map(toApplicationAuthorizationDTO);
   }
 
   @Mutation(() => Boolean)
@@ -67,22 +65,5 @@ export class ApplicationAuthorizationResolver {
         workspaceId: workspace.id,
       },
     );
-  }
-
-  private toApplicationAuthorizationDTO(
-    authorization: ApplicationAuthorizationEntity,
-  ): ApplicationAuthorizationDTO {
-    return {
-      id: authorization.id,
-      applicationId: authorization.applicationId,
-      workspaceId: authorization.workspaceId,
-      applicationName: authorization.application.name,
-      applicationUniversalIdentifier:
-        authorization.application.universalIdentifier,
-      scopes: authorization.scopes,
-      lastAuthorizedAt: authorization.lastAuthorizedAt,
-      lastUsedAt: authorization.lastUsedAt,
-      createdAt: authorization.createdAt,
-    };
   }
 }

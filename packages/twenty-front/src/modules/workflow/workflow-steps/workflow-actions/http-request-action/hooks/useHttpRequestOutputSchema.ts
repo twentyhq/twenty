@@ -50,7 +50,7 @@ export const useHttpRequestOutputSchema = ({
   const [error, setError] = useState<string | undefined>();
 
   const handleOutputSchemaChange = (value: string | null) => {
-    if (readonly === true) {
+    if (readonly) {
       return;
     }
 

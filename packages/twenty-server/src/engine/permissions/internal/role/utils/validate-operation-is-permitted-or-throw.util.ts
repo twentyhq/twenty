@@ -1,9 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import isEmpty from 'lodash.isempty';
-import {
-  type ObjectRecordsOperationType,
-  type RestrictedFieldsPermissions,
-} from 'twenty-shared/types';
+import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -69,24 +65,24 @@ export const validateOperationIsPermittedOrThrow = ({
   const permissionsForEntity =
     recordsPermissions.objects[objectMetadataIdForEntity];
 
-  const restrictedFields = permissionsForEntity?.restrictedFields ?? {};
+  const unreadableFields = permissionsForEntity?.unreadableFields ?? [];
+  const uneditableFields = permissionsForEntity?.uneditableFields ?? [];
 
   switch (operationType) {
-    case 'select':
-    case 'delete':
-    case 'restore':
-    case 'soft-delete':
+    case 'read':
+    case 'destroy':
+    case 'softDelete':
       validateReadFieldPermissionOrThrow({
-        restrictedFields,
+        unreadableFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
         flatFieldMetadataMaps,
       });
       break;
-    case 'insert':
+    case 'create':
       validateReadFieldPermissionOrThrow({
-        restrictedFields,
+        unreadableFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
@@ -95,9 +91,10 @@ export const validateOperationIsPermittedOrThrow = ({
 
       if (updatedColumns.length > 0) {
         const rlsFieldMetadataIds = new Set(
-          (
-            permissionsForEntity?.rowLevelRecordsPermissions?.predicates ?? []
-          ).map((predicate) => predicate.fieldMetadataId),
+          (permissionsForEntity?.rowLevelRecordsPermissions ?? []).flatMap(
+            ({ predicates }) =>
+              predicates.map((predicate) => predicate.fieldMetadataId),
+          ),
         );
 
         const updatedColumnsWithoutRlsFields = updatedColumns.filter(
@@ -107,7 +104,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
         if (updatedColumnsWithoutRlsFields.length > 0) {
           validateUpdateFieldPermissionOrThrow({
-            restrictedFields,
+            uneditableFields,
             updatedColumns: updatedColumnsWithoutRlsFields,
             columnNameToFieldMetadataIdMap,
             entityName,
@@ -118,7 +115,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'update':
       validateReadFieldPermissionOrThrow({
-        restrictedFields,
+        unreadableFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
@@ -127,7 +124,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
       if (updatedColumns.length > 0) {
         validateUpdateFieldPermissionOrThrow({
-          restrictedFields,
+          uneditableFields,
           updatedColumns,
           columnNameToFieldMetadataIdMap,
           entityName,
@@ -166,23 +163,19 @@ const buildFieldPermissionDeniedMessage = ({
 };
 
 const validateReadFieldPermissionOrThrow = ({
-  restrictedFields,
+  unreadableFields,
   selectedColumns,
   columnNameToFieldMetadataIdMap,
   entityName,
   flatFieldMetadataMaps,
 }: {
-  restrictedFields: RestrictedFieldsPermissions;
+  unreadableFields: string[];
   selectedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
-  const noReadRestrictions =
-    isEmpty(restrictedFields) ||
-    Object.values(restrictedFields).every((field) => field.canRead !== false);
-
-  if (noReadRestrictions) {
+  if (unreadableFields.length === 0) {
     return;
   }
 
@@ -195,7 +188,7 @@ const validateReadFieldPermissionOrThrow = ({
       );
     }
 
-    if (restrictedFields[fieldMetadataId]?.canRead === false) {
+    if (unreadableFields.includes(fieldMetadataId)) {
       throw new PermissionsException(
         buildFieldPermissionDeniedMessage({
           action: 'read',
@@ -211,19 +204,19 @@ const validateReadFieldPermissionOrThrow = ({
 };
 
 const validateUpdateFieldPermissionOrThrow = ({
-  restrictedFields,
+  uneditableFields,
   updatedColumns,
   columnNameToFieldMetadataIdMap,
   entityName,
   flatFieldMetadataMaps,
 }: {
-  restrictedFields: RestrictedFieldsPermissions;
+  uneditableFields: string[];
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }) => {
-  if (isEmpty(restrictedFields)) {
+  if (uneditableFields.length === 0) {
     return;
   }
 
@@ -236,7 +229,7 @@ const validateUpdateFieldPermissionOrThrow = ({
       );
     }
 
-    if (restrictedFields[fieldMetadataId]?.canUpdate === false) {
+    if (uneditableFields.includes(fieldMetadataId)) {
       throw new PermissionsException(
         buildFieldPermissionDeniedMessage({
           action: 'write',

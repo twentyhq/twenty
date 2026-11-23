@@ -35,7 +35,7 @@ const apiKeyAuthContext = {
 const applicationAuthContext = {
   type: 'application',
   workspace: { id: 'workspace-1' },
-  application: { id: APPLICATION_ID, defaultRoleId: APPLICATION_ROLE_ID },
+  application: { id: APPLICATION_ID },
 } as WorkspaceAuthContext;
 
 const systemAuthContext = {
@@ -246,6 +246,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: applicationAuthContext,
           apiKeyRoleMap,
+          applicationRoleId: APPLICATION_ROLE_ID,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
@@ -281,6 +282,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           objectMetadataId: OBJECT_METADATA_ID,
           authContext: applicationAuthContext,
           apiKeyRoleMap,
+          applicationRoleId: APPLICATION_ROLE_ID,
           shareWith: [
             {
               roleId: APPLICATION_ROLE_ID,
@@ -303,15 +305,12 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
       ]);
     });
 
-    it('should write no creator row for an application without a default role', () => {
+    it('should write no creator row for an application without a role', () => {
       expect(
         buildRecordShareInputsForCreatedRecords({
           recordIds: ['record-1'],
           objectMetadataId: OBJECT_METADATA_ID,
-          authContext: {
-            ...applicationAuthContext,
-            application: { id: APPLICATION_ID, defaultRoleId: null },
-          } as WorkspaceAuthContext,
+          authContext: applicationAuthContext,
           apiKeyRoleMap,
           shareWith: [
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },

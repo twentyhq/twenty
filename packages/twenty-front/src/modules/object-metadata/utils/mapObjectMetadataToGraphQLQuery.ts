@@ -9,9 +9,10 @@ import {
   type RecordGqlFields,
   RelationType,
 } from 'twenty-shared/types';
+import { type ReadableRelationWithArguments } from '@/object-record/graphql/types/ReadableRelationWithArguments';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -27,6 +28,7 @@ type MapObjectMetadataToGraphQLQueryArgs = {
   computeReferences?: boolean;
   isRootLevel?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
+  readableRelationsWithArguments?: ReadableRelationWithArguments[];
 };
 
 export const mapObjectMetadataToGraphQLQuery = ({
@@ -36,6 +38,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
   computeReferences = false,
   isRootLevel = true,
   objectPermissionsByObjectMetadataId,
+  readableRelationsWithArguments = [],
 }: MapObjectMetadataToGraphQLQueryArgs): string => {
   if (
     !isRootLevel &&
@@ -47,9 +50,9 @@ export const mapObjectMetadataToGraphQLQuery = ({
       objectMetadataItem.id,
     );
     if (
-      !canReachSomeRecords({
+      !canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions: objectPermission,
-        operationType: 'select',
+        operationType: 'read',
       })
     ) {
       return '';
@@ -155,6 +158,25 @@ export const mapObjectMetadataToGraphQLQuery = ({
         objectPermissionsByObjectMetadataId,
       });
     })
+    .concat(
+      readableRelationsWithArguments.map(
+        ({
+          fieldMetadataItem,
+          recordGqlFields,
+          selectionHead,
+          connectionGqlFieldNames,
+        }) =>
+          mapFieldMetadataToGraphQLQuery({
+            objectMetadataItems,
+            gqlField: selectionHead,
+            fieldMetadata: fieldMetadataItem,
+            relationRecordGqlFields: recordGqlFields,
+            relationConnectionGqlFieldNames: connectionGqlFieldNames,
+            computeReferences,
+            objectPermissionsByObjectMetadataId,
+          }),
+      ),
+    )
     .filter((field) => field !== '')
     .join('\n');
 

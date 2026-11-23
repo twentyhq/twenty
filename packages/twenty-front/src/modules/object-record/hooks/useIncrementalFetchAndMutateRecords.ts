@@ -120,7 +120,7 @@ export const useIncrementalFetchAndMutateRecords = <T>({
         lastCursor = fetchMoreResult?.pageInfo.endCursor ?? null;
       }
     } catch (error) {
-      if ((error as any).name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         return;
       }
 

@@ -78,7 +78,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
               customDomain: workspace.customDomain,
               isCustomDomainEnabled: workspace.isCustomDomainEnabled ?? false,
             },
-            pathname: '/settings/accounts',
+            pathname: '/settings/app-preferences',
           });
 
         context.switchToHttp().getResponse().redirect(redirectErrorUrl);

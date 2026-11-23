@@ -118,6 +118,31 @@ export const buildAccessGroupStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  objectMetadataId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'objectMetadataId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(
+        msg({ message: `Object metadata ID`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Object whose records can belong to the group`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconBuildingSkyscraper',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   roleId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

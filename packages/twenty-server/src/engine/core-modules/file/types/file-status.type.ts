@@ -3,6 +3,7 @@ export const FILE_STATUS = {
   // (direct upload initiated, waiting for the client to upload and confirm).
   PENDING: 'PENDING',
   UPLOADED: 'UPLOADED',
+  REMOTE: 'REMOTE',
 } as const;
 
 export type FileStatus = (typeof FILE_STATUS)[keyof typeof FILE_STATUS];

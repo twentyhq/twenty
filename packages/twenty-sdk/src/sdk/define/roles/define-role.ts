@@ -1,8 +1,12 @@
+import { getDeclaredLegacyRoleRecordsPermissionsKeys } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { getDeprecatedRecordsPermissionsWarnings } from '@/sdk/define/roles/get-deprecated-records-permissions-warnings';
+import { getShadowedRowLevelPermissionRuleWarnings } from '@/sdk/define/roles/get-shadowed-row-level-permission-rule-warnings';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
+import { validateRecordsPermissions } from '@/sdk/define/roles/validate-records-permissions';
 
 const keepEachPermissionFlagOnce = <
   TConfig extends Pick<RoleConfig, 'permissionFlagUniversalIdentifiers'>,
@@ -128,8 +132,30 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
+  // Same rule as the server sync: predicates may still sit next to recordsPermissions, grants may not
+  const conflictingDeprecatedKeys = isDefined(config.recordsPermissions)
+    ? getDeclaredLegacyRoleRecordsPermissionsKeys({ role: config }).filter(
+        (deprecatedKey) =>
+          deprecatedKey !== 'rowLevelPermissionPredicates' &&
+          deprecatedKey !== 'rowLevelPermissionPredicateGroups',
+      )
+    : [];
+
+  if (conflictingDeprecatedKeys.length > 0) {
+    errors.push(
+      `Role declares recordsPermissions together with the deprecated properties ${conflictingDeprecatedKeys.join(', ')}. Move them into recordsPermissions.`,
+    );
+  }
+
   return createValidationResult({
     config: keepEachPermissionFlagOnce(config),
-    errors,
+    errors: [...errors, ...validateRecordsPermissions(config)],
+    warnings: [
+      ...getDeprecatedRecordsPermissionsWarnings({
+        label: config.label,
+        role: config,
+      }),
+      ...getShadowedRowLevelPermissionRuleWarnings(config),
+    ],
   });
 };

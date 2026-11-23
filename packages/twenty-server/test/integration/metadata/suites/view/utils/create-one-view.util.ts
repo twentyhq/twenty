@@ -13,6 +13,7 @@ export const createOneView = async ({
   input,
   gqlFields,
   expectToFail,
+  token,
 }: PerformMetadataQueryParams<CreateViewInput>): CommonResponseBody<{
   createView: ViewEntity;
 }> => {
@@ -21,7 +22,7 @@ export const createOneView = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataApiRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation, token);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

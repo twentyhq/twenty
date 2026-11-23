@@ -204,7 +204,9 @@ export interface IDataloaders {
     Required<
       Pick<
         RoleDTO,
-        'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
+        | 'rowLevelPermissionPredicates'
+        | 'rowLevelPermissionPredicateGroups'
+        | 'rowLevelPermissionRules'
       >
     >
   >;

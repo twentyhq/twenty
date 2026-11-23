@@ -9,6 +9,7 @@ import {
   type ActionToolId,
 } from 'src/engine/core-modules/tool-provider/constants/action-tool-label.constant';
 import { EMAIL_TOOL_APPROVALS } from 'src/engine/core-modules/tool-provider/constants/email-tool-approvals.constant';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -30,6 +31,7 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { CompleteFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/complete-file-upload-tool';
 import { CreateFileUploadTool } from 'src/engine/core-modules/tool/tools/file-upload-tool/create-file-upload-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
+import { ReadFileTool } from 'src/engine/core-modules/tool/tools/read-file-tool/read-file-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
 import { SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
@@ -59,6 +61,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly searchOutputTool: SearchOutputTool,
     private readonly saveCampaignTool: SaveCampaignTool,
     private readonly shareRecordTool: ShareRecordTool,
+    private readonly readFileTool: ReadFileTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly settingPermissionsService: SettingPermissionsService,
     private readonly i18nService: I18nService,
@@ -77,6 +80,7 @@ export class ActionToolProvider implements ToolProvider {
       ['search_output', this.searchOutputTool],
       ['save_campaign', this.saveCampaignTool],
       ['share_record', this.shareRecordTool],
+      ['read_file', this.readFileTool],
     ]);
   }
 
@@ -121,7 +125,7 @@ export class ActionToolProvider implements ToolProvider {
           this.sendEmailTool,
           includeSchemas,
           context.locale,
-          EMAIL_TOOL_APPROVALS.send_email,
+          { approval: EMAIL_TOOL_APPROVALS.send_email },
         ),
       );
       descriptors.push(
@@ -130,7 +134,7 @@ export class ActionToolProvider implements ToolProvider {
           this.draftEmailTool,
           includeSchemas,
           context.locale,
-          EMAIL_TOOL_APPROVALS.draft_email,
+          { approval: EMAIL_TOOL_APPROVALS.draft_email },
         ),
       );
       descriptors.push(
@@ -187,6 +191,15 @@ export class ActionToolProvider implements ToolProvider {
 
     descriptors.push(
       this.buildDescriptor(
+        'read_file',
+        this.readFileTool,
+        includeSchemas,
+        context.locale,
+      ),
+    );
+
+    descriptors.push(
+      this.buildDescriptor(
         'search_help_center',
         this.searchHelpCenterTool,
         includeSchemas,
@@ -216,6 +229,7 @@ export class ActionToolProvider implements ToolProvider {
         this.saveCampaignTool,
         includeSchemas,
         context.locale,
+        { isDestructive: true },
       ),
     );
 
@@ -226,6 +240,7 @@ export class ActionToolProvider implements ToolProvider {
           this.shareRecordTool,
           includeSchemas,
           context.locale,
+          { isDestructive: true },
         ),
       );
     }
@@ -266,10 +281,16 @@ export class ActionToolProvider implements ToolProvider {
 
     return tool.execute(args, {
       workspaceId: context.workspaceId,
+      actorMetadata: context.actorMetadata,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
+      workspaceMemberId:
+        isDefined(context.authContext) && isUserAuthContext(context.authContext)
+          ? context.authContext.workspaceMemberId
+          : undefined,
       agentId: context.agentId,
       threadId: context.threadId,
+      outboundRequestSource: 'ai-http-tool',
       authContext: context.authContext,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });
@@ -280,7 +301,10 @@ export class ActionToolProvider implements ToolProvider {
     tool: Tool,
     includeSchemas: boolean,
     locale?: ToolProviderContext['locale'],
-    approval?: ToolApproval,
+    {
+      approval,
+      isDestructive,
+    }: { approval?: ToolApproval; isDestructive?: boolean } = {},
   ): ToolIndexEntry | ToolDescriptor {
     const labels: ActionToolLabel | undefined =
       ACTION_TOOL_LABELS[toolId as ActionToolId];
@@ -298,6 +322,8 @@ export class ActionToolProvider implements ToolProvider {
       }),
       executionRef: { kind: 'static', toolId },
       ...(isDefined(approval) && { approval }),
+      ...(tool.isReadOnly && { isReadOnly: true }),
+      ...(isDestructive && { isDestructive }),
     };
   }
 }

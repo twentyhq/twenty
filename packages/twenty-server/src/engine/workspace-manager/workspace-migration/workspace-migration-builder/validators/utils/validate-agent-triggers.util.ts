@@ -34,7 +34,7 @@ const isValidCronPattern = (pattern: string): boolean => {
 const validateDatabaseEventTriggerSettings = (
   settings: Record<string, unknown>,
 ): AgentTriggerValidationError[] => {
-  const { eventName, updatedFields, batchMode } = settings;
+  const { eventName, updatedFields, condition, batchMode } = settings;
 
   if (
     !isString(eventName) ||
@@ -59,13 +59,24 @@ const validateDatabaseEventTriggerSettings = (
           t`Watched fields of a database event trigger must be field names`,
         ),
       );
-    } else if (!eventName.endsWith('.updated')) {
+    } else if (
+      !eventName.endsWith('.updated') &&
+      !eventName.endsWith('.upserted')
+    ) {
       errors.push(
         buildInvalidTriggerError(
-          t`Watched fields only apply to "updated" database event triggers`,
+          t`Watched fields only apply to "updated" and "upserted" database event triggers`,
         ),
       );
     }
+  }
+
+  if (isDefined(condition) && !isString(condition)) {
+    errors.push(
+      buildInvalidTriggerError(
+        t`The condition of a database event trigger must be text`,
+      ),
+    );
   }
 
   if (isDefined(batchMode) && !isBoolean(batchMode)) {

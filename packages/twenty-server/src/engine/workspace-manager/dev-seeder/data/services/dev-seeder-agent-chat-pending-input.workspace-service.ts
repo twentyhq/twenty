@@ -11,7 +11,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
@@ -98,13 +98,13 @@ const AIRBNB_FOLLOW_UP_EMAIL: SeededEmail = {
   to: 'partnerships@airbnb.com',
   cc: 'tim@apple.dev',
   subject: 'Next steps after our demo',
-  body: '<p>Hi Airbnb team,</p><p>Thanks for your time on Tuesday. As promised, here is a summary of what we covered: shared inboxes for your host support team, and workflows that route requests by region.</p><p>Would next Thursday work for a technical deep dive with your IT team?</p><p>Best,<br>Jony</p>',
+  html: '<p>Hi Airbnb team,</p><p>Thanks for your time on Tuesday. As promised, here is a summary of what we covered: shared inboxes for your host support team, and workflows that route requests by region.</p><p>Would next Thursday work for a technical deep dive with your IT team?</p><p>Best,<br>Jony</p>',
 };
 
 const STRIPE_QUOTE_EMAIL: SeededEmail = {
   to: 'procurement@stripe.com',
   subject: 'Your renewal quote for 2027',
-  body: '<p>Hi Stripe team,</p><p>Please find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.</p><p>Let me know if anything needs to change before you sign.</p><p>Best,<br>Tim</p>',
+  html: '<p>Hi Stripe team,</p><p>Please find your renewal quote for 2027 below: 120 seats on the Organization plan, with the 10% multi-year discount we discussed.</p><p>Let me know if anything needs to change before you sign.</p><p>Best,<br>Tim</p>',
 };
 
 // the snapshot holds the seeded values, so approving the update runs instead of reporting a conflict
@@ -190,13 +190,13 @@ const FIGMA_CALL_FIELDS: RequestFormField[] = [
 const LINEAR_WELCOME_EMAIL: SeededEmail = {
   to: 'ops@linear.app',
   subject: 'Welcome to Twenty, Linear',
-  body: '<p>Hi Linear team,</p><p>Welcome aboard! Phil will run your onboarding: expect a kickoff invite from him this week, with SSO and your data import on the agenda.</p><p>Best,<br>Tim</p>',
+  html: '<p>Hi Linear team,</p><p>Welcome aboard! Phil will run your onboarding: expect a kickoff invite from him this week, with SSO and your data import on the agenda.</p><p>Best,<br>Tim</p>',
 };
 
 const FIGMA_WELCOME_EMAIL: SeededEmail = {
   to: 'it@figma.com',
   subject: 'Welcome to Twenty, Figma',
-  body: '<p>Hi Figma team,</p><p>Welcome aboard! Your workspace is ready, and we will start with the pipeline import you asked about on our last call.</p><p>Best,<br>Tim</p>',
+  html: '<p>Hi Figma team,</p><p>Welcome aboard! Your workspace is ready, and we will start with the pipeline import you asked about on our last call.</p><p>Best,<br>Tim</p>',
 };
 
 type ConversationToSeed = {
@@ -354,7 +354,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly conversationWriterService: AgentConversationWriterService,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -544,7 +544,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       return;
     }
 
-    await this.recordSharingWriteService.insertRecordShares({
+    await this.recordShareSystemWriteService.insertRecordShares({
       workspaceId,
       recordShares: CONVERSATIONS_TO_SEED.flatMap(({ threadId, sharedWith }) =>
         isDefined(sharedWith)

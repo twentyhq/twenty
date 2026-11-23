@@ -19,11 +19,15 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   capitalize,
   isDefined,
 } from 'twenty-shared/utils';
-import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
+import {
+  type ObjectRecordFilterInput,
+  type SearchRecord,
+  type SearchResultEdge,
+} from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
@@ -103,12 +107,12 @@ export const useMultipleRecordPickerPerformSearch = () => {
       );
 
       const isReadable = (objectMetadataItem: EnrichedObjectMetadataItem) =>
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: getObjectPermissionsForObject(
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,
           ),
-          operationType: 'select',
+          operationType: 'read',
         });
 
       const filteredSearchableObjectMetadataItems =
@@ -418,7 +422,7 @@ const performSearchQueries = async ({
     filter,
     includedObjectMetadataItems,
   }: {
-    filter: any;
+    filter?: ObjectRecordFilterInput;
     includedObjectMetadataItems: EnrichedObjectMetadataItem[];
   }) => {
     if (includedObjectMetadataItems.length === 0) {

@@ -1,0 +1,4 @@
+export const APPLICATION_BILLING_PRICE_UNITS = [
+  'WORKSPACE_MEMBER',
+  'CONNECTED_ACCOUNT',
+] as const;

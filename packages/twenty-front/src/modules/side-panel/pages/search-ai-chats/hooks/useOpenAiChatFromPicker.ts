@@ -3,8 +3,8 @@ import { useStore } from 'jotai';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
+import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { aiChatPickerOpenErrorComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpenErrorComponentState';
@@ -20,7 +20,7 @@ import { logError } from '~/utils/logError';
 export const useOpenAiChatFromPicker = () => {
   const store = useStore();
   const { pathname } = useLocation();
-  const { loadAgentChatThread } = useRefreshAgentChatThreads();
+  const { loadAiChatThread } = useLoadAiChatThread();
   const { handleThreadClick } = useAiChatThreadClick();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const setAiChatPickerOpeningThreadId = useSetAtomComponentState(
@@ -49,7 +49,7 @@ export const useOpenAiChatFromPicker = () => {
     setAiChatPickerOpenError(null);
 
     try {
-      const thread = await loadAgentChatThread(threadId);
+      const thread = await loadAiChatThread(threadId);
 
       if (!isPickerStillOpen()) {
         return;

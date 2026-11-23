@@ -42,8 +42,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     >;
     typeOptions: CreateInputTypeOptions;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
@@ -86,8 +87,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     typeOptions: { settings?: FlatFieldMetadata['settings'] };
     context: SchemaGenerationContext;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
@@ -131,8 +133,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     isForGroupBy?: boolean;
     context: SchemaGenerationContext;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 
@@ -169,8 +172,9 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     >,
     context: SchemaGenerationContext,
   ): GraphQLInputFieldConfigMap {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
       return {};
+    }
 
     return this.getTargetRelationInputField({
       fieldMetadata,

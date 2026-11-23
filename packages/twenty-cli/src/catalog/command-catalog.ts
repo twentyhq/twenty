@@ -1,3 +1,4 @@
+import { DATA_EXPORT_COMMAND_DEFINITION } from '@/commands/data/export/data-export.command-definition';
 import { LOCAL_START_COMMAND_DEFINITION } from '@/commands/local/start/local-start.command-definition';
 import { LOCAL_STOP_COMMAND_DEFINITION } from '@/commands/local/stop/local-stop.command-definition';
 import { LOCAL_STATUS_COMMAND_DEFINITION } from '@/commands/local/status/local-status.command-definition';
@@ -76,6 +77,7 @@ export const COMMAND_CATALOG: CommandDefinition[] = [
   API_REST_COMMAND_DEFINITION,
   COMMANDS_COMMAND_DEFINITION,
   DATA_LIST_COMMAND_DEFINITION,
+  DATA_EXPORT_COMMAND_DEFINITION,
   DATA_GET_COMMAND_DEFINITION,
   DOCTOR_COMMAND_DEFINITION,
   METADATA_OBJECT_LIST_COMMAND_DEFINITION,

@@ -11,7 +11,7 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
-import { RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
+import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -20,7 +20,7 @@ import { findAgentDatabaseEventTriggersMatchingEvent } from 'src/engine/metadata
 import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-agent-trigger/utils/is-database-event-caused-by-agent.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import { DatabaseEventTriggerConditionService } from 'src/engine/workspace-event-emitter/services/database-event-trigger-condition.service';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallAgentDatabaseEventTriggersJob {
@@ -30,8 +30,9 @@ export class CallAgentDatabaseEventTriggersJob {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordEventPermissionsService: RecordEventPermissionsService,
+    private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly agentTriggerThrottlerService: AgentTriggerThrottlerService,
+    private readonly databaseEventTriggerConditionService: DatabaseEventTriggerConditionService,
   ) {}
 
   @Process(CallAgentDatabaseEventTriggersJob.name)
@@ -72,7 +73,7 @@ export class CallAgentDatabaseEventTriggersJob {
         agentId: flatAgent.id,
       };
       const readableEvents =
-        await this.recordEventPermissionsService.filterReadableEvents({
+        await this.recordEventPermissionsReadService.filterReadableEvents({
           authContext: agentAuthContext,
           eventBatch: workspaceEventBatch,
           // Masking can drop the actor fields, so the agent's own writes are skipped first
@@ -86,11 +87,24 @@ export class CallAgentDatabaseEventTriggersJob {
           ),
         });
 
-      const eventsToRunOn = filterEventsByUpdatedFields({
-        events: readableEvents,
-        eventName,
-        watchedFields: trigger.settings.updatedFields,
-      });
+      const { events: eventsToRunOn, conditionErrorMessage } =
+        await this.databaseEventTriggerConditionService.filterMatchingEvents({
+          workspaceId,
+          objectMetadata,
+          events: readableEvents,
+          eventName,
+          watchedFields: trigger.settings.updatedFields,
+          condition: trigger.settings.condition,
+          conditionBindings: trigger.settings.conditionBindings,
+          application,
+          agentId: flatAgent.id,
+        });
+
+      if (isDefined(conditionErrorMessage)) {
+        this.logger.warn(
+          `Condition of trigger ${trigger.id} on agent ${flatAgent.id} in workspace ${workspaceId} failed to evaluate: ${conditionErrorMessage}`,
+        );
+      }
 
       if (eventsToRunOn.length === 0) {
         continue;

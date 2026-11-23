@@ -148,11 +148,7 @@ export class AiGenerateTextController {
       if (result) {
         void this.aiBillingService.calculateAndBillUsage({
           modelId: registeredModel.modelId,
-          billingInput: {
-            usage: result.usage,
-            cacheCreationTokens:
-              result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
-          },
+          billingInput: { usage: result.usage },
           workspaceId: workspace.id,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           spenders: usageSpenders,

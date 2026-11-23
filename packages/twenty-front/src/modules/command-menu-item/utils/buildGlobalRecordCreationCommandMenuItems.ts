@@ -2,7 +2,10 @@ import { type CommandMenuItemDefinition } from '@/command-menu-item/types/Comman
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { canReachSomeRecords, capitalize } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  capitalize,
+} from 'twenty-shared/utils';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
@@ -35,9 +38,9 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
       );
 
       return (
-        canReachSomeRecords({
+        canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: permissions,
-          operationType: 'select',
+          operationType: 'read',
         }) &&
         canCreateRecordsForObjectMetadataItem({
           objectMetadataItem,

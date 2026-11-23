@@ -8,7 +8,7 @@ export const convertAggregateOperationToExtendedAggregateOperation = (
   aggregateOperation: AggregateOperations,
   fieldType?: FieldMetadataType,
 ): ExtendedAggregateOperations => {
-  if (isFieldMetadataDateKind(fieldType) === true) {
+  if (isFieldMetadataDateKind(fieldType)) {
     if (aggregateOperation === AggregateOperations.MIN) {
       return DateAggregateOperations.EARLIEST;
     }

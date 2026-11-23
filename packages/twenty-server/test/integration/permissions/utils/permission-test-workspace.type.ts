@@ -19,11 +19,19 @@ export type PermissionTestRecordName =
   | 'insideEveryFilter'
   | 'outsideStatusFilter'
   | 'outsideCategoryFilter'
-  | 'outsideRegionFilter';
+  | 'outsideRegionFilter'
+  | 'sharedWithMemberWithoutAccess'
+  | 'lowVisibilityTier'
+  | 'mediumVisibilityTier'
+  | 'fullVisibilityTier';
 
 export type PermissionTestWorkspace = {
   workspaceId: string;
+  workspaceOrigin: string;
+  inviteHash: string;
+  adminAccessToken: string;
   objectMetadataId: string;
+  visibilityTierFieldMetadataId: string;
   objectNameSingular: string;
   roleIds: Record<PermissionTestRoleGrant, string>;
   workspaceMemberIds: Record<PermissionTestRoleGrant, string>;
@@ -39,7 +47,7 @@ export type PermissionTestWorkspace = {
 };
 
 export type PermissionTestExpectedAnswers = {
-  findRecordsPermissions: {
+  findRecordsActions: {
     canRead: boolean;
     canUpdate: boolean;
     canSoftDelete: boolean;

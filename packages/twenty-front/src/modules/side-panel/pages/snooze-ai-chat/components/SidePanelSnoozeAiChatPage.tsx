@@ -4,18 +4,18 @@ import { useId, useState } from 'react';
 import { IconCalendar, IconClock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { useFormatAiChatThreadDate } from '@/ai-chat/threads/hooks/useFormatAiChatThreadDate';
 import {
-  type AgentChatThreadSnoozeOption,
-  getAgentChatThreadSnoozeOptions,
-} from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+  type AiChatThreadSnoozeOption,
+  getAiChatThreadSnoozeOptions,
+} from '@/ai-chat/threads/utils/getAiChatThreadSnoozeOptions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSnoozeAiChatThreads } from '@/side-panel/pages/snooze-ai-chat/hooks/useSnoozeAiChatThreads';
 import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
-import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
+import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/states/snoozeAiChatThreadIdsComponentState';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -36,7 +36,7 @@ export const SidePanelSnoozeAiChatPage = () => {
     snoozeAiChatThreadIdsComponentState,
   );
   const { snoozeAiChatThreads } = useSnoozeAiChatThreads();
-  const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
+  const { formatAiChatThreadDateTime } = useFormatAiChatThreadDate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openDropdown } = useOpenDropdown();
   const { userTimezone } = useUserTimezone();
@@ -47,14 +47,14 @@ export const SidePanelSnoozeAiChatPage = () => {
     return null;
   }
 
-  const snoozeOptions = getAgentChatThreadSnoozeOptions({
+  const snoozeOptions = getAiChatThreadSnoozeOptions({
     now: optionsComputedAt,
     timeZone: userTimezone,
   });
 
   // An option can pass while the page stays open, so the list is refreshed
   // instead of snoozing into the past
-  const handleSnooze = (option: AgentChatThreadSnoozeOption) => {
+  const handleSnooze = (option: AiChatThreadSnoozeOption) => {
     const now = new Date();
 
     if (option.date <= now) {
@@ -86,7 +86,7 @@ export const SidePanelSnoozeAiChatPage = () => {
             id={option.key}
             Icon={IconClock}
             label={t(option.label)}
-            description={formatAgentChatThreadDateTime(option.date)}
+            description={formatAiChatThreadDateTime(option.date)}
             contextualTextPosition="right"
             onClick={() => handleSnooze(option)}
           />

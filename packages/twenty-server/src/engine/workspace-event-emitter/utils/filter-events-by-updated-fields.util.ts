@@ -15,7 +15,7 @@ export const filterEventsByUpdatedFields = <TEvent extends ObjectRecordEvent>({
 }): TEvent[] => {
   const { action } = parseEventNameOrThrow(eventName);
 
-  if (action !== 'updated') {
+  if (action !== 'updated' && action !== 'upserted') {
     return events;
   }
 

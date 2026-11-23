@@ -63,6 +63,7 @@ const existingFlatView: FlatView = {
   calendarEndFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   shouldHideEmptyGroups: false,
+  shouldDisplayGroupsAsTabs: false,
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,
@@ -114,6 +115,7 @@ const createViewWithGroupLoadLimit = (groupLoadLimit?: number) =>
     },
     flatApplication,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps,
   });
 
@@ -123,6 +125,7 @@ const updateViewWithGroupLoadLimit = (groupLoadLimit: number) =>
     flatViewMaps,
     flatViewGroupMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     callerApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:
       APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -185,6 +188,7 @@ describe('view groupLoadLimit allowlist enforcement', () => {
           }),
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           callerApplicationUniversalIdentifier:
             APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceCustomApplicationUniversalIdentifier:
@@ -207,6 +211,7 @@ describe('view groupLoadLimit allowlist enforcement', () => {
           }),
           flatViewGroupMaps,
           flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
           callerApplicationUniversalIdentifier:
             APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceCustomApplicationUniversalIdentifier:

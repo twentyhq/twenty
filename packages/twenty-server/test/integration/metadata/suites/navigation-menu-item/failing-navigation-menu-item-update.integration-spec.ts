@@ -122,12 +122,12 @@ describe('NavigationMenuItem update should fail', () => {
         },
       },
       {
-        title: 'when updating with invalid folderId (not a UUID)',
+        title: 'when updating with invalid parentId (not a UUID)',
         context: {
           input: (testSetup) => ({
             id: testSetup.testNavigationMenuItemId,
             update: {
-              folderId: 'not-a-valid-uuid',
+              parentId: 'not-a-valid-uuid',
             },
           }),
         },

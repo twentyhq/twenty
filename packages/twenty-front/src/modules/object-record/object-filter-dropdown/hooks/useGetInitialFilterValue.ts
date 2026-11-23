@@ -5,11 +5,13 @@ import { useGetDateTimeFilterDisplayValue } from '@/object-record/object-filter-
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { useGetRelativeDateFilterWithUserTimezone } from '@/object-record/record-filter/hooks/useGetRelativeDateFilterWithUserTimezone';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
-import { type FilterableAndTSVectorFieldType } from 'twenty-shared/types';
+import {
+  RecordFilterOperand,
+  type FilterableAndTSVectorFieldType,
+} from 'twenty-shared/types';
 
 const activeDatePickerOperands = [
   RecordFilterOperand.IS_BEFORE,

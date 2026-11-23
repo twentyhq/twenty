@@ -4,11 +4,9 @@ import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItem
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useRecordTableWidgetViewFieldItems } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewFieldItems';
-import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import {
   getRecordTableWidgetLayoutViewType,
   isRecordTableWidgetContentEditingSupported,
@@ -19,13 +17,13 @@ import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelSubPageHistory } from '@/side-panel/hooks/useSidePanelSubPageHistory';
 import { FieldWidgetFieldDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent';
 import { FieldWidgetLayoutDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent';
+import { RecordTableSettingsFilterAndSortRows } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows';
 import { WidgetViewLayoutSettingsRows } from '@/side-panel/pages/page-layout/components/record-table-settings/WidgetViewLayoutSettingsRows';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
-import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
+import { useRecordTableWidgetInEditModeView } from '@/side-panel/pages/page-layout/hooks/useRecordTableWidgetInEditModeView';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
-import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layout/utils/getWidgetViewLayoutSettingsItemIds';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
@@ -59,14 +57,17 @@ const StyledSidePanelContainer = styled.div`
 export const SidePanelRecordPageFieldSettings = () => {
   const { t } = useLingui();
   const { openDropdown } = useOpenDropdown();
-  const { pageLayoutId } = usePageLayoutSidePanelTarget();
+  const {
+    pageLayoutId,
+    widgetInEditMode,
+    viewId: currentViewId,
+    view: embeddedWidgetView,
+  } = useRecordTableWidgetInEditModeView();
 
   const { placementSelectableItemIds, widgetSettingsPlacement } =
     useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
 
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
-
-  const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
 
   const fieldConfiguration = widgetInEditMode?.configuration as
     | FieldConfiguration
@@ -78,9 +79,6 @@ export const SidePanelRecordPageFieldSettings = () => {
   const currentDisplayMode = isDefined(fieldConfiguration)
     ? getFieldWidgetEffectiveDisplayMode(fieldConfiguration)
     : undefined;
-  const currentViewId = isDefined(widgetInEditMode)
-    ? getWidgetConfigurationViewId(widgetInEditMode.configuration)
-    : null;
 
   const { fieldMetadataItem: currentFieldMetadataItem } =
     useFieldMetadataItemById(currentFieldMetadataId ?? '');
@@ -118,12 +116,6 @@ export const SidePanelRecordPageFieldSettings = () => {
       },
     });
   };
-
-  const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
-    viewId: currentViewId ?? '',
-    widgetId: widgetInEditMode?.id ?? '',
-    pageLayoutId,
-  });
 
   if (!isDefined(widgetInEditMode)) {
     return null;
@@ -193,6 +185,7 @@ export const SidePanelRecordPageFieldSettings = () => {
         })
       : []),
     ...(isTableDisplayMode ? ['fields'] : []),
+    ...(showViewLayoutRows ? ['record-table-filter', 'record-table-sort'] : []),
     ...(isTableDisplayMode && isWidgetContentEditingSupported
       ? ['field-allow-editing']
       : []),
@@ -280,6 +273,9 @@ export const SidePanelRecordPageFieldSettings = () => {
                   contextualTextPosition="right"
                 />
               </SelectableListItem>
+            )}
+            {showViewLayoutRows && (
+              <RecordTableSettingsFilterAndSortRows view={embeddedWidgetView} />
             )}
             {isTableDisplayMode && isWidgetContentEditingSupported && (
               <SelectableListItem itemId="field-allow-editing">

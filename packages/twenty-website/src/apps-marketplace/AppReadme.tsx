@@ -34,6 +34,10 @@ const Prose = styled.div`
     margin-top: ${spacing(6)};
   }
 
+  & blockquote > * + * {
+    margin-top: ${spacing(2)};
+  }
+
   & h2 {
     ${typeRampDeclarations('headingXs')}
     color: ${semanticColor.ink};

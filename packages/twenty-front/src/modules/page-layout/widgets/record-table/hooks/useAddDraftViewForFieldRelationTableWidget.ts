@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const useAddDraftViewForFieldRelationTableWidget = (
-  pageLayoutId: string,
+  pageLayoutId?: string,
 ) => {
   const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
     recordTableWidgetViewDraftComponentState,

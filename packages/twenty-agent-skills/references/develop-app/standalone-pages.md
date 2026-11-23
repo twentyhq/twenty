@@ -225,7 +225,7 @@ This section only calls out the fields that matter for standalone pages. Use `la
 - Use `type: NavigationMenuItemType.PAGE_LAYOUT`.
 - Set `pageLayoutUniversalIdentifier` to the standalone page layout universal identifier.
 - Set a clear `name`, `icon`, `color`, and `position`.
-- Use `folderUniversalIdentifier` only when the page belongs under an existing app folder.
+- Use `parentUniversalIdentifier` only when the page belongs under an existing app folder.
 
 Public assets and non-secret application variables make standalone pages richer without hardcoding environment data:
 

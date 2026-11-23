@@ -6,7 +6,7 @@ describe('getFieldPermissions', () => {
   it('should allow reading and updating a field without restriction', () => {
     expect(
       getFieldPermissions({
-        objectPermissions: { restrictedFields: {} },
+        objectPermissions: { unreadableFields: [], uneditableFields: [] },
         fieldMetadataId: FIELD_METADATA_ID,
       }),
     ).toEqual({ canReadField: true, canUpdateField: true });
@@ -16,9 +16,8 @@ describe('getFieldPermissions', () => {
     expect(
       getFieldPermissions({
         objectPermissions: {
-          restrictedFields: {
-            [FIELD_METADATA_ID]: { canRead: null, canUpdate: false },
-          },
+          unreadableFields: [],
+          uneditableFields: [FIELD_METADATA_ID],
         },
         fieldMetadataId: FIELD_METADATA_ID,
       }),
@@ -29,9 +28,8 @@ describe('getFieldPermissions', () => {
     expect(
       getFieldPermissions({
         objectPermissions: {
-          restrictedFields: {
-            [FIELD_METADATA_ID]: { canRead: false, canUpdate: false },
-          },
+          unreadableFields: [FIELD_METADATA_ID],
+          uneditableFields: [FIELD_METADATA_ID],
         },
         fieldMetadataId: FIELD_METADATA_ID,
       }),

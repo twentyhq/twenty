@@ -1,11 +1,26 @@
+import { type MockLink } from '@apollo/client/testing';
+import { isNonEmptyString } from '@sniptt/guards';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
+import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
+import {
+  type SendAppChannelMessageMutation,
+  type SendAppChannelMessageMutationVariables,
+} from '~/generated-metadata/graphql';
 
 const mockEnqueueToast = jest.fn();
+let mockIsMessageAttachmentEnabled = false;
+
+const EMPTY_BODY = serializePlainTextAsAdvancedTextEditorDocument('');
+
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsMessageAttachmentEnabled,
+}));
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
@@ -13,12 +28,17 @@ jest.mock('twenty-ui/components/feedback', () => ({
 }));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: () => ({ refetchQueries: jest.fn() }),
+  useApolloCoreClient: () => ({
+    refetchQueries: jest.fn().mockResolvedValue(undefined),
+  }),
 }));
 
 const createSendEmailMock = (input: {
   connectedAccountId: string;
   fromHandle?: string;
+  subject?: string;
+  body?: string;
+  inReplyTo?: string;
   targetRecord?: { objectNameSingular: string; recordId: string };
 }) => ({
   request: {
@@ -29,7 +49,7 @@ const createSendEmailMock = (input: {
         cc: undefined,
         bcc: undefined,
         subject: 'Hello',
-        body: '',
+        body: EMPTY_BODY,
         inReplyTo: undefined,
         draftMessageId: undefined,
         files: undefined,
@@ -74,9 +94,89 @@ const renderComposerState = ({
     },
   );
 
+const APP_REPLY_EMAIL_INPUT = {
+  to: 'ada@lovelace.com',
+  cc: undefined,
+  bcc: undefined,
+  subject: 'Re: Hello',
+  body: EMPTY_BODY,
+  inReplyTo: '<inbound-1@app>',
+};
+
+type SendAppChannelMessageMockedResponse = MockLink.MockedResponse<
+  SendAppChannelMessageMutation,
+  SendAppChannelMessageMutationVariables
+>;
+
+const buildSendAppChannelMessageRequest = (
+  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean,
+): SendAppChannelMessageMockedResponse['request'] => ({
+  query: SEND_APP_CHANNEL_MESSAGE,
+  variables: ({ input }) =>
+    input.messageChannelId === 'channel-1' &&
+    input.messageThreadId === 'message-thread-1' &&
+    JSON.stringify(input.email) === JSON.stringify(APP_REPLY_EMAIL_INPUT) &&
+    isExpectedIdempotencyKey(input.idempotencyKey),
+});
+
+const createSendAppChannelMessageMock = (
+  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean,
+): SendAppChannelMessageMockedResponse => ({
+  request: buildSendAppChannelMessageRequest(isExpectedIdempotencyKey),
+  result: {
+    data: {
+      sendAppChannelMessage: {
+        __typename: 'SendAppChannelMessageOutput',
+        messageId: 'message-1',
+        messageThreadId: 'message-thread-1',
+      },
+    },
+  },
+});
+
+const createFailingSendAppChannelMessageMock = (
+  isExpectedIdempotencyKey: (idempotencyKey: string) => boolean,
+): SendAppChannelMessageMockedResponse => ({
+  request: buildSendAppChannelMessageRequest(isExpectedIdempotencyKey),
+  error: new Error('Network error'),
+});
+
+const renderAppComposerState = ({
+  mocks,
+  onSent,
+  draftKey,
+}: {
+  mocks: MockLink.MockedResponse[];
+  onSent: (messageThreadId: string | null) => void;
+  draftKey?: string;
+}) =>
+  renderHook(
+    () =>
+      useEmailComposerState({
+        connectedAccountId: 'account-1',
+        defaultTo: 'ada@lovelace.com',
+        defaultSubject: 'Re: Hello',
+        defaultInReplyTo: '<inbound-1@app>',
+        appReplyTarget: {
+          connectedAccountId: 'account-1',
+          handle: 'jane@outlook.com',
+          messageChannelId: 'channel-1',
+          messageThreadId: 'message-thread-1',
+        },
+        draftKey,
+        onSent,
+      }),
+    {
+      wrapper: ({ children }: { children: ReactNode }) => (
+        <MockedProvider mocks={mocks}>{children}</MockedProvider>
+      ),
+    },
+  );
+
 describe('useEmailComposerState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsMessageAttachmentEnabled = false;
   });
 
   it('sends from the connected account when no alias was picked', async () => {
@@ -153,6 +253,326 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
+  });
+
+  it('sends the reply through the app when the account belongs to an app', async () => {
+    const onSent = jest.fn();
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        createSendAppChannelMessageMock((idempotencyKey) =>
+          isNonEmptyString(idempotencyKey),
+        ),
+      ],
+      onSent,
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
+    expect(mockEnqueueToast).not.toHaveBeenCalled();
+  });
+
+  it('retries a failed app reply with the same idempotency key', async () => {
+    const onSent = jest.fn();
+    const sentIdempotencyKeys: string[] = [];
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        createFailingSendAppChannelMessageMock((idempotencyKey) => {
+          sentIdempotencyKeys.push(idempotencyKey);
+
+          return true;
+        }),
+        createSendAppChannelMessageMock(
+          (idempotencyKey) => idempotencyKey === sentIdempotencyKeys[0],
+        ),
+      ],
+      onSent,
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries a failed app reply with the same idempotency key after a remount', async () => {
+    const sentIdempotencyKeys: string[] = [];
+
+    const failedComposer = renderAppComposerState({
+      mocks: [
+        createFailingSendAppChannelMessageMock((idempotencyKey) => {
+          sentIdempotencyKeys.push(idempotencyKey);
+
+          return true;
+        }),
+      ],
+      onSent: jest.fn(),
+      draftKey: 'app-reply-retry-thread',
+    });
+
+    await act(async () => {
+      await failedComposer.result.current.handleSend();
+    });
+
+    failedComposer.unmount();
+
+    const onSent = jest.fn();
+    const remountedComposer = renderAppComposerState({
+      mocks: [
+        createSendAppChannelMessageMock(
+          (idempotencyKey) => idempotencyKey === sentIdempotencyKeys[0],
+        ),
+      ],
+      onSent,
+      draftKey: 'app-reply-retry-thread',
+    });
+
+    await act(async () => {
+      await remountedComposer.result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the server message when an app reply is refused', async () => {
+    const onSent = jest.fn();
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        {
+          request: buildSendAppChannelMessageRequest(() => true),
+          result: {
+            errors: [
+              {
+                message: 'Invalid email recipients',
+                extensions: {
+                  userFriendlyMessage: 'Invalid email addresses: ada@lovelace',
+                },
+              },
+            ],
+          },
+        },
+      ],
+      onSent,
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      status: 'error',
+      children: 'Invalid email addresses: ada@lovelace',
+    });
+  });
+
+  it('sends with the picked account instead of the app when the sender changes', async () => {
+    const onSent = jest.fn();
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        createSendEmailMock({
+          connectedAccountId: 'account-2',
+          fromHandle: undefined,
+          subject: 'Re: Hello',
+          inReplyTo: '<inbound-1@app>',
+        }),
+      ],
+      onSent,
+    });
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-2' });
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+    expect(onSent).toHaveBeenCalledTimes(1);
+  });
+
+  it('hides attachments while the app is the sender, including uploads that finish after switching', () => {
+    const { result } = renderAppComposerState({ mocks: [], onSent: jest.fn() });
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-2' });
+    });
+
+    const setFilesFromPendingUpload = result.current.setFiles;
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-1' });
+    });
+
+    act(() => {
+      setFilesFromPendingUpload([{ id: 'file-1', name: 'deck.pdf' }]);
+    });
+
+    expect(result.current.files).toEqual([]);
+
+    act(() => {
+      result.current.setSender({ connectedAccountId: 'account-2' });
+    });
+
+    expect(result.current.files).toEqual([{ id: 'file-1', name: 'deck.pdf' }]);
+  });
+
+  it('sends attachments through the app when message attachments are enabled', async () => {
+    mockIsMessageAttachmentEnabled = true;
+
+    const onSent = jest.fn();
+    const attachments = [{ id: 'file-1', name: 'deck.pdf' }];
+
+    const { result } = renderAppComposerState({
+      mocks: [
+        {
+          ...createSendAppChannelMessageMock(() => true),
+          request: {
+            query: SEND_APP_CHANNEL_MESSAGE,
+            variables: ({ input }) =>
+              JSON.stringify(input.email) ===
+                JSON.stringify(APP_REPLY_EMAIL_INPUT) &&
+              JSON.stringify(input.attachments) === JSON.stringify(attachments),
+          },
+        } satisfies SendAppChannelMessageMockedResponse,
+      ],
+      onSent,
+    });
+
+    expect(result.current.canAttachFiles).toBe(true);
+
+    act(() => {
+      result.current.setFiles(attachments);
+    });
+
+    await act(async () => {
+      await result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+  });
+
+  it('keeps an unsent reply through a remount until it is sent', async () => {
+    const renderReplyComposerState = (onSent: () => void) =>
+      renderHook(
+        () =>
+          useEmailComposerState({
+            connectedAccountId: 'account-1',
+            defaultTo: 'ada@lovelace.com',
+            defaultSubject: 'Hello',
+            draftKey: 'message-thread-1',
+            onSent,
+          }),
+        {
+          wrapper: ({ children }: { children: ReactNode }) => (
+            <MockedProvider
+              mocks={[
+                createSendEmailMock({
+                  connectedAccountId: 'account-2',
+                  fromHandle: 'sales@twenty.com',
+                  subject: 'Re: Hello',
+                  body: 'Long reply',
+                }),
+              ]}
+            >
+              {children}
+            </MockedProvider>
+          ),
+        },
+      );
+
+    const firstComposer = renderReplyComposerState(jest.fn());
+
+    act(() => {
+      firstComposer.result.current.setSubject('Re: Hello');
+      firstComposer.result.current.setBody('Long reply');
+      firstComposer.result.current.setSender({
+        connectedAccountId: 'account-2',
+        fromHandle: 'sales@twenty.com',
+      });
+    });
+
+    firstComposer.unmount();
+
+    const onSent = jest.fn();
+    const remountedComposer = renderReplyComposerState(onSent);
+
+    expect(remountedComposer.result.current.subject).toBe('Re: Hello');
+    expect(remountedComposer.result.current.body).toBe('Long reply');
+    expect(remountedComposer.result.current.connectedAccountId).toBe(
+      'account-2',
+    );
+    expect(remountedComposer.result.current.fromHandle).toBe(
+      'sales@twenty.com',
+    );
+
+    await act(async () => {
+      await remountedComposer.result.current.handleSend();
+    });
+
+    expect(onSent).toHaveBeenCalledWith('message-thread-1');
+
+    remountedComposer.unmount();
+
+    const composerAfterSend = renderReplyComposerState(jest.fn());
+
+    expect(composerAfterSend.result.current.subject).toBe('Hello');
+    expect(composerAfterSend.result.current.body).toBe(EMPTY_BODY);
+    expect(composerAfterSend.result.current.connectedAccountId).toBe(
+      'account-1',
+    );
+  });
+
+  it('forgets a discarded reply after a remount', () => {
+    const renderReplyComposerState = () =>
+      renderHook(
+        () =>
+          useEmailComposerState({
+            connectedAccountId: 'account-1',
+            defaultSubject: 'Hello',
+            draftKey: 'message-thread-2',
+          }),
+        {
+          wrapper: ({ children }: { children: ReactNode }) => (
+            <MockedProvider mocks={[]}>{children}</MockedProvider>
+          ),
+        },
+      );
+
+    const firstComposer = renderReplyComposerState();
+
+    act(() => {
+      firstComposer.result.current.setBody('Never mind');
+    });
+
+    act(() => {
+      firstComposer.result.current.discardDraft();
+    });
+
+    firstComposer.unmount();
+
+    const remountedComposer = renderReplyComposerState();
+
+    expect(remountedComposer.result.current.subject).toBe('Hello');
+    expect(remountedComposer.result.current.body).toBe(EMPTY_BODY);
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

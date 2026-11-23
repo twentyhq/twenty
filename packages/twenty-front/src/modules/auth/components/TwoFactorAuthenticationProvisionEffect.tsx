@@ -55,8 +55,9 @@ export const TwoFactorAuthenticationSetupEffect = () => {
             },
           });
 
-        if (!initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri)
+        if (!initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri) {
           return;
+        }
 
         setQrCode(
           initiateOTPProvisioningResult.data?.initiateOTPProvisioning.uri,

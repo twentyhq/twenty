@@ -32,11 +32,13 @@ import {
 type BuildMcpSetupCategoriesParams = {
   isHttpsInstallLinkEnabled: boolean;
   mcpServerUrl: string;
+  workspaceName?: string | null;
 };
 
 export const buildMcpSetupCategories = ({
   isHttpsInstallLinkEnabled,
   mcpServerUrl,
+  workspaceName,
 }: BuildMcpSetupCategoriesParams): McpSetupCategory[] => [
   {
     title: t`Quick install`,
@@ -58,7 +60,7 @@ export const buildMcpSetupCategories = ({
         ctaLabel: t`Install`,
         disabledTooltip: t`Claude install links require an HTTPS MCP URL.`,
         href: isHttpsInstallLinkEnabled
-          ? buildClaudeInstallLink(mcpServerUrl)
+          ? buildClaudeInstallLink({ mcpServerUrl, workspaceName })
           : undefined,
         isDisabled: !isHttpsInstallLinkEnabled,
         logo: <McpClientLogo src={ClaudeLogo} />,

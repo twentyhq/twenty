@@ -9,6 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-can-create-permissions-upgrade-command-name.constant';
+import { ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-60/add-is-system-side-effect-to-role-and-role-target-upgrade-command-name.constant';
 import { ADD_APPLICATION_ROLE_TARGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-56/add-application-role-target-upgrade-command-name.constant';
 import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -18,6 +20,7 @@ import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permi
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { RowLevelPermissionRuleEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-rule.entity';
 import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
@@ -44,6 +47,12 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
 
   @Column({ nullable: false, default: false })
   canReadAllObjectRecords: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_CAN_CREATE_PERMISSIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false })
+  canCreateAllObjectRecords: boolean;
 
   @Column({ nullable: false, default: false })
   canUpdateAllObjectRecords: boolean;
@@ -83,6 +92,13 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   })
   @Column({ nullable: false, default: false })
   canBeAssignedToApplications: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false })
+  isSystemSideEffect: boolean;
 
   @OneToMany(
     () => RoleTargetEntity,
@@ -131,4 +147,11 @@ export class RoleEntity extends SyncableEntity implements Required<RoleEntity> {
   rowLevelPermissionPredicateGroups: Relation<
     RowLevelPermissionPredicateGroupEntity[]
   >;
+
+  @OneToMany(
+    () => RowLevelPermissionRuleEntity,
+    (rowLevelPermissionRule: RowLevelPermissionRuleEntity) =>
+      rowLevelPermissionRule.role,
+  )
+  rowLevelPermissionRules: Relation<RowLevelPermissionRuleEntity[]>;
 }

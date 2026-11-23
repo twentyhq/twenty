@@ -219,6 +219,29 @@ describe('WorkspaceSelectQueryBuilder selection', () => {
     expect(executedStatements[0].values).toEqual(['Ada']);
   });
 
+  it('should lock only the main table rows, after the limit, when locked for update', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .leftJoin('person.company', 'company')
+      .take(1)
+      .forUpdate();
+
+    expect(queryBuilder.getQuery()).toMatch(
+      /LIMIT :\w+ FOR UPDATE OF "person"$/,
+    );
+    expect(queryBuilder.clone().getQuery()).toContain('FOR UPDATE OF "person"');
+  });
+
+  it('should not lock rows by default', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+
+    expect(queryBuilder.getQuery()).not.toContain('FOR UPDATE');
+  });
+
   it('should map take and skip to LIMIT and OFFSET parameters', () => {
     const { queryBuilder } = buildQueryBuilder();
 

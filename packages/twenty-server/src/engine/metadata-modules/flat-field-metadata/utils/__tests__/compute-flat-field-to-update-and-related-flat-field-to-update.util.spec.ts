@@ -65,6 +65,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
         fromFlatFieldMetadata: sourceFlatFieldMetadata,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         isSystemBuild: false,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       });
@@ -100,6 +101,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
         fromFlatFieldMetadata: sourceFlatFieldMetadata,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         isSystemBuild: false,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       });
@@ -130,6 +132,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
         fromFlatFieldMetadata: sourceFlatFieldMetadata,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         isSystemBuild: true,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       });
@@ -160,6 +163,7 @@ describe('computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate', () => {
         fromFlatFieldMetadata: sourceFlatFieldMetadata,
         flatObjectMetadata,
         flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
         isSystemBuild: false,
         workspaceCustomApplicationUniversalIdentifier: CUSTOM,
       });

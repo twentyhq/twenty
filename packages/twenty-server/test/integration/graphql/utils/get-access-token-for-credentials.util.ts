@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
+import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
@@ -7,16 +7,16 @@ const SERVER_URL = `http://localhost:${APP_PORT}`;
 type GetAccessTokenForCredentialsArgs = {
   email: string;
   password?: string;
+  workspaceSubdomain?: string;
 };
 
-// Logs a seeded Apple user in with email/password and returns a usable
-// access token, minting it dynamically rather than relying on a pre-baked
-// entry in test-tokens.json.
+// Mints a token by logging a seeded user in, instead of a pre-baked test-tokens.json entry
 export const getAccessTokenForCredentials = async ({
   email,
   password = 'tim@apple.dev',
+  workspaceSubdomain = 'apple',
 }: GetAccessTokenForCredentialsArgs): Promise<string> => {
-  const origin = buildAppleWorkspaceOrigin();
+  const origin = buildWorkspaceOriginForSubdomain(workspaceSubdomain);
 
   const loginResponse = await request(SERVER_URL)
     .post('/metadata')

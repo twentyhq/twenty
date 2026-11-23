@@ -1,6 +1,6 @@
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import {
   type ApiKeyWithObjectRecordGrants,
   createApiKeyWithObjectRecordGrants,
@@ -50,17 +50,20 @@ export const createApiKeyWithFieldPermission = async ({
   });
 
   if (isFieldInRowLevelPredicate) {
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       input: {
         roleId: apiKey.roleId,
         objectMetadataId,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+            predicates: [
+              {
+                fieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
       expectToFail: false,
     });

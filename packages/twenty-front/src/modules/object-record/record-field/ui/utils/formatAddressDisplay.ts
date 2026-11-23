@@ -10,7 +10,9 @@ export const formatAddressDisplay = (
   fieldValue: FieldAddressValue | undefined,
   subFields: AllowedAddressSubField[] | null | undefined,
 ) => {
-  if (!isDefined(fieldValue)) return '';
+  if (!isDefined(fieldValue)) {
+    return '';
+  }
   const fieldsToUse =
     subFields && subFields.length > 0
       ? subFields

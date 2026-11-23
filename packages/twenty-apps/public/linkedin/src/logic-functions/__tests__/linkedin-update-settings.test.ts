@@ -84,6 +84,7 @@ describe('linkedinUpdateSettingsHandler', () => {
           historyConversationLimit: 20,
           contactAutoCreationPolicy: 'NONE',
           isNameMatchingEnabled: true,
+          areChatsMarkedAsRead: false,
           visibility: 'METADATA',
         },
       }),
@@ -110,6 +111,19 @@ describe('linkedinUpdateSettingsHandler', () => {
       );
     },
   );
+
+  it('saves whether chats opened in Twenty are marked as read on LinkedIn', async () => {
+    const view = await updateSettings({ areChatsMarkedAsRead: true });
+
+    expect(view).toEqual(
+      expect.objectContaining({
+        settings: expect.objectContaining({ areChatsMarkedAsRead: true }),
+      }),
+    );
+    expect(mocks.kvStore.get('linkedin-settings:connection-id')).toEqual(
+      expect.objectContaining({ areChatsMarkedAsRead: true }),
+    );
+  });
 
   it('applies the visibility to the message channel instead of the kv settings', async () => {
     await updateSettings({ visibility: 'SHARE_EVERYTHING' });

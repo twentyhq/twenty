@@ -15,7 +15,9 @@ export const usePlans = (options?: UsePlansOptions) => {
   const isPlansLoaded = isDefined(data?.listPlans);
 
   const listPlans = () => {
-    if (!data) throw new Error(doNotTranslate('plans is undefined'));
+    if (!data) {
+      throw new Error(doNotTranslate('plans is undefined'));
+    }
     return data.listPlans;
   };
 

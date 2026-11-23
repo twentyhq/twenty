@@ -38,9 +38,8 @@ export const getStepFilterOperands = ({
     case 'CURRENCY': {
       if (subFieldName === 'currencyCode') {
         return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.currencyCode;
-      } else {
-        return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
       }
+      return COMPOSITE_FIELD_FILTER_OPERANDS_MAP.CURRENCY.amountMicros;
     }
     case 'NUMBER':
     case 'number':

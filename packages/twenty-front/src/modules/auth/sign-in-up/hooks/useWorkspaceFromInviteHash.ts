@@ -40,7 +40,9 @@ export const useWorkspaceFromInviteHash = () => {
 
   // TODO: Rework this useEffect - Charles will refactor as part of auth rework
   useEffect(() => {
-    if (!workspaceFromInviteHash || hasRedirected) return;
+    if (!workspaceFromInviteHash || hasRedirected) {
+      return;
+    }
 
     const inviteWorkspace = workspaceFromInviteHash.findWorkspaceFromInviteHash;
 

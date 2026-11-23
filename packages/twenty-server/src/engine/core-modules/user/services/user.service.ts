@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { VERIFICATION_EMAIL_SENDING_THROTTLE } from 'src/engine/core-modules/email-verification/constants/verification-email-sending-throttle.constant';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -27,6 +28,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserWorkspaceSuccessorTransferService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor-transfer.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
   UpdateWorkspaceMemberEmailJob,
@@ -43,13 +45,11 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
-import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -60,13 +60,12 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
-    private readonly recordSharingWriteService: RecordSharingWriteService,
+    private readonly userWorkspaceSuccessorTransferService: UserWorkspaceSuccessorTransferService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly emailVerificationService: EmailVerificationService,
     private readonly workspaceService: WorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly roleAssignmentService: RoleAssignmentService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
@@ -266,6 +265,10 @@ export class UserService {
 
     userValidator.assertIsDefinedOrThrow(user);
 
+    await this.workspaceService.assertNotRemovingLastServerAdminOrThrow([
+      userId,
+    ]);
+
     for (const userWorkspace of user.userWorkspaces) {
       await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
         userWorkspace,
@@ -309,12 +312,20 @@ export class UserService {
       throw new Error('User workspace not found.');
     }
 
+    const isLastUserWorkspace = user.userWorkspaces.length === 1;
+
+    if (isLastUserWorkspace) {
+      await this.workspaceService.assertNotRemovingLastServerAdminOrThrow([
+        userId,
+      ]);
+    }
+
     await this.removeUserFromWorkspaceAndPotentiallyDeleteWorkspace(
       userWorkspace,
       actingUserWorkspaceId,
     );
 
-    if (user.userWorkspaces.length === 1) {
+    if (isLastUserWorkspace) {
       await this.userRepository.softDelete(userId);
       await this.coreEntityCacheService.invalidate('user', userId);
     }
@@ -350,7 +361,7 @@ export class UserService {
 
     if (workspaceMembers.length > 1) {
       try {
-        await this.roleAssignmentService.validateUserWorkspaceIsNotUniqueAdminOrThrow(
+        await this.roleAssignmentWriteService.assertUserWorkspaceIsNotUniqueAdminOrThrow(
           {
             workspaceId,
             userWorkspaceId: userWorkspace.id,
@@ -380,14 +391,7 @@ export class UserService {
 
     assert(workspaceMember, 'WorkspaceMember not found');
 
-    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToSuccessor(
-      {
-        removedUserWorkspace: userWorkspace,
-        actingUserWorkspaceId,
-      },
-    );
-
-    await this.recordSharingWriteService.transferRecordSharesToSuccessor({
+    await this.userWorkspaceSuccessorTransferService.transferToSuccessor({
       removedUserWorkspace: userWorkspace,
       removedWorkspaceMemberId: workspaceMember.id,
       actingUserWorkspaceId,
@@ -584,9 +588,29 @@ export class UserService {
         workspace,
       );
 
-    await this.emailVerificationService.deleteExistingTokensAfterCooldownOrThrow(
-      { userId: user.id },
+    await this.emailVerificationService.assertVerificationEmailCooldownElapsedOrThrow(
+      {
+        userId: user.id,
+      },
     );
+
+    await this.emailVerificationService.throttleVerificationEmailSendingOrThrow(
+      {
+        key: user.id,
+        limit: VERIFICATION_EMAIL_SENDING_THROTTLE.emailUpdatesByUserLimit,
+      },
+    );
+
+    await this.emailVerificationService.throttleVerificationEmailSendingOrThrow(
+      {
+        key: normalizedEmail,
+        limit: VERIFICATION_EMAIL_SENDING_THROTTLE.byRecipientLimit,
+      },
+    );
+
+    await this.emailVerificationService.deleteExistingVerificationTokens({
+      userId: user.id,
+    });
 
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,

@@ -1,7 +1,9 @@
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useFilterableFieldMetadataItemsInRecordIndexContext } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItemsInRecordIndexContext';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { findNonAdvancedRecordFilterForColumn } from '@/object-record/record-table/record-table-header/utils/findNonAdvancedRecordFilterForColumn';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { getEditableChipDropdownId } from '@/views/editable-chip/utils/getEditableChipDropdownId';
@@ -17,8 +19,10 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { createEmptyRecordFilterFromFieldMetadataItem } =
-    useCreateEmptyRecordFilterFromFieldMetadataItem();
+  const {
+    createEmptyRecordFilterFromFieldMetadataItem,
+    createEmptyRelationTargetRecordFilter,
+  } = useCreateEmptyRecordFilterFromFieldMetadataItem();
 
   const { upsertRecordFilter } = useUpsertRecordFilter();
 
@@ -27,7 +31,13 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
   const { setEditableFilterChipDropdownStates } =
     useSetEditableFilterChipDropdownStates();
 
-  const openRecordFilterChipFromTableHeader = (fieldMetadataItemId: string) => {
+  const openRecordFilterChipFromTableHeader = ({
+    fieldMetadataItemId,
+    relationTargetFieldMetadataItem,
+  }: {
+    fieldMetadataItemId: string;
+    relationTargetFieldMetadataItem?: FieldMetadataItem;
+  }) => {
     const correspondingFieldMetadataItem = filterableFieldMetadataItems.find(
       (fieldMetadataItemToFind) =>
         fieldMetadataItemToFind.id === fieldMetadataItemId,
@@ -41,11 +51,12 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       );
     }
 
-    const existingNonAdvancedRecordFilter = currentRecordFilters.find(
-      (recordFilter) =>
-        recordFilter.fieldMetadataId === fieldMetadataItemId &&
-        !isDefined(recordFilter.recordFilterGroupId),
-    );
+    const existingNonAdvancedRecordFilter =
+      findNonAdvancedRecordFilterForColumn({
+        recordFilters: currentRecordFilters,
+        fieldMetadataItemId,
+        relationTargetFieldMetadataId: relationTargetFieldMetadataItem?.id,
+      });
 
     if (isDefined(existingNonAdvancedRecordFilter)) {
       setEditableFilterChipDropdownStates(existingNonAdvancedRecordFilter);
@@ -57,9 +68,20 @@ export const useOpenRecordFilterChipFromTableHeader = () => {
       return;
     }
 
-    const { newRecordFilter } = createEmptyRecordFilterFromFieldMetadataItem(
-      correspondingFieldMetadataItem,
-    );
+    const createEmptyColumnRecordFilter = () => {
+      if (isDefined(relationTargetFieldMetadataItem)) {
+        return createEmptyRelationTargetRecordFilter({
+          sourceFieldMetadataItem: correspondingFieldMetadataItem,
+          relationTargetFieldMetadataItem,
+        });
+      }
+
+      return createEmptyRecordFilterFromFieldMetadataItem(
+        correspondingFieldMetadataItem,
+      );
+    };
+
+    const { newRecordFilter } = createEmptyColumnRecordFilter();
 
     upsertRecordFilter(newRecordFilter);
 

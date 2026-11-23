@@ -36,7 +36,9 @@ export const sanitizeChartRecordFilters = ({
   const validRecordFiltersWithDroppedOrphanedGroups = validRecordFilters.filter(
     (f) => {
       const groupId = f.recordFilterGroupId;
-      if (!isDefined(groupId)) return true;
+      if (!isDefined(groupId)) {
+        return true;
+      }
       return remainingGroups.some((g) => g.id === groupId);
     },
   );

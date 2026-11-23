@@ -2,7 +2,7 @@ import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailin
 import { type MessageCampaignStatus } from 'twenty-shared/types';
 
 export type PreparedCampaignSend = {
-  roleId: string;
+  roleIds: string[];
   emailingDomainId: string;
   messageChannelId: string;
   sendableRecipients: CampaignAudienceResolution['sendableRecipients'];

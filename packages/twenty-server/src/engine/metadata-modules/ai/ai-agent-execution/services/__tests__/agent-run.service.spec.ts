@@ -17,7 +17,7 @@ const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
 const APPLICATION = {
   id: APPLICATION_ID,
   name: 'Research app',
-  defaultRoleId: null,
+  requestedRoleId: null,
 };
 
 const JSON_RESPONSE_FORMAT: AgentResponseFormat = {

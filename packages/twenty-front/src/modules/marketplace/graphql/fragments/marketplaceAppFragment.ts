@@ -8,7 +8,9 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     author
     category
     logoUrl
+    connectUrl
     sourcePackage
     isListed
+    hasMcpServers
   }
 `;

@@ -18,4 +18,10 @@ export class PublicApplicationRegistrationDTO {
 
   @Field(() => [String])
   oAuthScopes: string[];
+
+  @Field(() => Boolean)
+  isVerified: boolean;
+
+  @Field(() => Boolean)
+  isClaimingVerifiedClientName: boolean;
 }

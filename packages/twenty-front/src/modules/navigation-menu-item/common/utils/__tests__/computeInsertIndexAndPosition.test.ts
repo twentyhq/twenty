@@ -10,8 +10,8 @@ describe('computeInsertIndexAndPosition', () => {
     });
 
     const draft: NavigationMenuItem[] = [
-      { id: '1', folderId: null, position: 10 } as NavigationMenuItem,
-      { id: '2', folderId: null, position: 20 } as NavigationMenuItem,
+      { id: '1', parentId: null, position: 10 } as NavigationMenuItem,
+      { id: '2', parentId: null, position: 20 } as NavigationMenuItem,
     ];
     const between = computeInsertIndexAndPosition(draft, null, 1);
     expect(between.flatIndex).toBe(1);
@@ -20,9 +20,9 @@ describe('computeInsertIndexAndPosition', () => {
 
   it('should only consider items in the target folder', () => {
     const draft: NavigationMenuItem[] = [
-      { id: '1', folderId: 'folder-a', position: 10 } as NavigationMenuItem,
-      { id: '2', folderId: 'folder-b', position: 20 } as NavigationMenuItem,
-      { id: '3', folderId: 'folder-b', position: 30 } as NavigationMenuItem,
+      { id: '1', parentId: 'folder-a', position: 10 } as NavigationMenuItem,
+      { id: '2', parentId: 'folder-b', position: 20 } as NavigationMenuItem,
+      { id: '3', parentId: 'folder-b', position: 30 } as NavigationMenuItem,
     ];
     const result = computeInsertIndexAndPosition(draft, 'folder-b', 1);
     expect(result.flatIndex).toBe(2);
@@ -33,13 +33,13 @@ describe('computeInsertIndexAndPosition', () => {
     const personalItems: NavigationMenuItem[] = [
       {
         id: '1',
-        folderId: null,
+        parentId: null,
         position: 10,
         userWorkspaceId: 'ws-1',
       } as NavigationMenuItem,
       {
         id: '2',
-        folderId: null,
+        parentId: null,
         position: 20,
         userWorkspaceId: 'ws-1',
       } as NavigationMenuItem,

@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { differenceInDays } from 'date-fns';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -34,7 +34,7 @@ import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billi
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
-import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
+import { computeBillingPeriodUpdate } from 'src/engine/core-modules/billing/utils/compute-billing-period-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -318,10 +318,10 @@ export class BillingSubscriptionService {
         },
       );
 
-    await this.syncSubscriptionToDatabase(
-      billingSubscription.workspaceId,
-      updatedSubscription.id,
-    );
+    await this.syncSubscriptionToDatabase({
+      workspaceId: billingSubscription.workspaceId,
+      stripeSubscriptionId: updatedSubscription.id,
+    });
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),
@@ -329,10 +329,15 @@ export class BillingSubscriptionService {
     };
   }
 
-  async syncSubscriptionToDatabase(
-    workspaceId: string,
-    stripeSubscriptionId: string,
-  ) {
+  async syncSubscriptionToDatabase({
+    workspaceId,
+    stripeSubscriptionId,
+    renewalDate,
+  }: {
+    workspaceId: string;
+    stripeSubscriptionId: string;
+    renewalDate?: Date;
+  }) {
     const subscription =
       await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
         stripeSubscriptionId,
@@ -378,9 +383,10 @@ export class BillingSubscriptionService {
       workspaceId,
       {
         ...incomingSubscription,
-        ...resolveBillingPeriodBoundaryUpdate({
+        ...computeBillingPeriodUpdate({
           incomingPeriodStart: incomingSubscription.currentPeriodStart,
           storedSubscription,
+          renewalDate,
         }),
       },
       {
@@ -412,30 +418,16 @@ export class BillingSubscriptionService {
         workspaceId,
       );
 
-    // V2 subscriptions have no quantityless metered item; skip the stale-item cleanup in that case
-    const meterBillingSubscriptionItem = billingSubscriptionItems.find(
-      (item) => !isDefined(item.quantity),
-    );
-
-    if (isDefined(meterBillingSubscriptionItem)) {
-      const existingBillingSubscriptionItem =
-        await this.billingSubscriptionItemRepository.findOne({
-          where: {
-            billingSubscriptionId: currentBillingSubscription.id,
-            stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-          },
-        });
-
-      if (
-        existingBillingSubscriptionItem?.stripeSubscriptionItemId !==
-        meterBillingSubscriptionItem.stripeSubscriptionItemId
-      ) {
-        await this.billingSubscriptionItemRepository.delete({
-          billingSubscriptionId: currentBillingSubscription.id,
-          stripeProductId: meterBillingSubscriptionItem.stripeProductId,
-        });
-      }
-    }
+    await this.billingSubscriptionItemRepository.delete({
+      billingSubscriptionId: currentBillingSubscription.id,
+      stripeSubscriptionItemId: Not(
+        In(
+          billingSubscriptionItems.map(
+            ({ stripeSubscriptionItemId }) => stripeSubscriptionItemId,
+          ),
+        ),
+      ),
+    });
 
     await this.billingSubscriptionItemRepository.upsert(
       billingSubscriptionItems,

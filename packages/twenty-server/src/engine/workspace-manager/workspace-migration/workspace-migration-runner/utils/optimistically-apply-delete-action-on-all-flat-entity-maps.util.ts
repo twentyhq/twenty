@@ -26,6 +26,7 @@ export const optimisticallyApplyDeleteActionOnAllFlatEntityMaps = ({
     case 'viewSort':
     case 'rowLevelPermissionPredicate':
     case 'rowLevelPermissionPredicateGroup':
+    case 'rowLevelPermissionRule':
     case 'viewFilterGroup':
     case 'index':
     case 'logicFunction':

@@ -13,7 +13,6 @@ describe('isStepNode', () => {
         icon: 'IconPlus',
         stepId: 'trigger',
         hasNextStepIds: false,
-        position: { x: 0, y: 0 },
       },
     };
 
@@ -32,7 +31,6 @@ describe('isStepNode', () => {
         name: 'Create Company',
         stepId: 'action-1',
         hasNextStepIds: false,
-        position: { x: 0, y: 0 },
       },
     };
 
@@ -47,7 +45,6 @@ describe('isStepNode', () => {
       position: { x: 0, y: 0 },
       data: {
         nodeType: 'empty-trigger',
-        position: { x: 0, y: 0 },
       },
     };
 
@@ -68,7 +65,6 @@ describe('isStepNode', () => {
         icon: 'IconClick',
         stepId: 'trigger-with-extra',
         hasNextStepIds: false,
-        position: { x: 0, y: 0 },
       },
     };
 

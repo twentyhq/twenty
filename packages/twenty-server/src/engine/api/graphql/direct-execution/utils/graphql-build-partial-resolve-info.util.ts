@@ -4,10 +4,19 @@ import {
   type GraphQLResolveInfo,
 } from 'graphql';
 
-export const graphQLBuildPartialResolveInfo = (
-  field: FieldNode,
-  fragmentMap: Map<string, FragmentDefinitionNode>,
-): Pick<GraphQLResolveInfo, 'fieldNodes' | 'fragments'> => ({
+export const graphQLBuildPartialResolveInfo = ({
+  field,
+  fragmentMap,
+  variableValues,
+}: {
+  field: FieldNode;
+  fragmentMap: Map<string, FragmentDefinitionNode>;
+  variableValues: GraphQLResolveInfo['variableValues'];
+}): Pick<
+  GraphQLResolveInfo,
+  'fieldNodes' | 'fragments' | 'variableValues'
+> => ({
   fieldNodes: [field],
   fragments: Object.fromEntries(fragmentMap),
+  variableValues,
 });

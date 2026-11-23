@@ -39,6 +39,11 @@ msgid "{senderName} (<0>{senderEmail}</0>): Please validate this domain to allow
 msgstr "{senderName} (<0>{senderEmail}</0>): Kérjük, érvényesítse ezt a domaint annak érdekében, hogy az <1>@{domain}</1> e-mail címmel rendelkező felhasználók meghívó nélkül csatlakozhassanak a munkaterületéhez."
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "A backup code was used to sign in to {workspaceDisplayName}. Backup codes left: {remainingBackupCodeCount}."
+msgstr "Tartalékkódot használtak a {workspaceDisplayName} munkaterületre való bejelentkezéshez. Hátralévő tartalékkódok: {remainingBackupCodeCount}."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "Előzetes figyelmeztetés a próbaidőszak lejárta előtt"
@@ -62,6 +67,11 @@ msgstr "Fizetési mód hozzáadása"
 #: src/emails/warn-suspended-workspace.email.tsx
 msgid "After that, the workspace and all of its data will be permanently deleted — and we won't be able to bring it back."
 msgstr "Ezt követően a munkaterület és minden adata véglegesen törlődik — és nem fogjuk tudni visszaállítani."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "Backup code used"
+msgstr "Tartalékkód használva"
 
 #. js-lingui-explicit-id
 #: src/emails/send-email-verification-link.email.tsx
@@ -138,6 +148,17 @@ msgid "Hi {userName},"
 msgstr "Szia {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "If this was not you, change your password and generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "Ha nem Ön volt az, változtassa meg jelszavát, és hozzon létre új tartalékkódokat a Beállítások, Profil, Kétfaktoros hitelesítés menüpontban."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "If this was not you, change your password and generate new backup codes."
+msgstr "Ha nem Ön volt az, változtassa meg jelszavát, és hozzon létre új tartalékkódokat."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "If this was not you, contact your workspace administrator and change your password."
 msgstr "Ha nem Ön volt az, lépjen kapcsolatba a munkaterület rendszergazdájával, és módosítsa jelszavát."
@@ -204,6 +225,16 @@ msgid "Manage subscription"
 msgstr "Előfizetés kezelése"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes generated"
+msgstr "Új tartalékkódok létrehozva"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-codes-regenerated.email.tsx
+msgid "New backup codes were generated for your account in {workspaceDisplayName}. Your previous backup codes no longer work."
+msgstr "Új tartalékkódokat hoztak létre az Ön {workspaceDisplayName} munkaterületen lévő fiókjához. A korábbi tartalékkódjai már nem működnek."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx
 msgid "No action is needed if you'd like to continue. If you'd rather not renew, you can cancel anytime before then."
 msgstr "Ha folytatni szeretnéd, nincs szükség semmilyen lépésre. Ha inkább nem szeretnéd megújítani, addig bármikor lemondhatod."
@@ -254,6 +285,7 @@ msgid "Set"
 msgstr "Beállítás"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
 #: src/emails/two-factor-authentication-reset.email.tsx
 msgid "Set up two-factor authentication again under Settings, Profile."
 msgstr "Állítsa be újra a kétfaktoros hitelesítést a Beállítások, Profil menüpontban."
@@ -277,6 +309,11 @@ msgstr "Teszt e-mail"
 #: src/emails/send-email-verification-link.email.tsx
 msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
 msgstr "Köszönjük, hogy regisztrált a Twenty szolgáltatására! Mielőtt elkezdenénk, csak meg kell erősítenünk, hogy ez Ön. Kattintson az alábbi hivatkozásra email címének megerősítéséhez."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "The authenticator for your account in {workspaceDisplayName} was removed from Settings. Your backup codes for this workspace no longer work."
+msgstr "A {workspaceDisplayName} munkaterületen lévő fiókjához tartozó hitelesítő alkalmazást eltávolították a Beállításokból. Az ehhez a munkaterülethez tartozó tartalékkódjai már nem működnek."
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
@@ -317,6 +354,11 @@ msgstr "Twenty.com, Közhasznú Vállalat"
 #: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
 msgid "Two-factor authentication recovery code issued"
 msgstr "Kétfaktoros hitelesítés helyreállítási kód kiadva"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-removed.email.tsx
+msgid "Two-factor authentication removed"
+msgstr "Kétfaktoros hitelesítés eltávolítva"
 
 #. js-lingui-explicit-id
 #: src/emails/two-factor-authentication-reset.email.tsx
@@ -379,6 +421,11 @@ msgstr "Mi az a Twenty?"
 #: src/emails/validate-approved-access-domain.email.tsx
 msgid "Workspace logo"
 msgstr "Munkaterület logó"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-backup-code-used.email.tsx
+msgid "You can generate new backup codes under Settings, Profile, Two-factor authentication."
+msgstr "Új tartalékkódokat hozhat létre a Beállítások, Profil, Kétfaktoros hitelesítés menüpontban."
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

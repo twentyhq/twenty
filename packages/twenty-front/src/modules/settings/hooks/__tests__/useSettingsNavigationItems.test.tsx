@@ -6,14 +6,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   type Billing,
-  FeatureFlagKey,
   OnboardingStatus,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import {
   jotaiStore,
@@ -24,9 +22,8 @@ import { I18nProvider } from '@lingui/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ToastProvider } from 'twenty-ui/components/feedback';
-import { IconApps, IconAt } from 'twenty-ui/icon';
+import { IconApps } from 'twenty-ui/icon';
 import { messages } from '~/locales/generated/en';
-import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 i18n.load({
   [SOURCE_LOCALE]: messages,
@@ -80,18 +77,14 @@ const setPermissionFlags = (permissionFlags: PermissionFlagType[]) => {
   });
 };
 
-const getAccountsOrAppPreferencesItem = () => {
+const getAppPreferencesItem = () => {
   const { result } = renderHook(() => useSettingsNavigationItems(), {
     wrapper: Wrapper,
   });
 
   return result.current
     .find((section) => section.label === 'User')
-    ?.items.find(
-      (item) =>
-        item.path === SettingsPath.Accounts ||
-        item.path === SettingsPath.AppPreferences,
-    );
+    ?.items.find((item) => item.path === SettingsPath.AppPreferences);
 };
 
 describe('useSettingsNavigationItems', () => {
@@ -205,40 +198,19 @@ describe('useSettingsNavigationItems', () => {
     ).toBeGreaterThan(0);
     expect(
       userSection?.items
-        .filter((item) => item.path !== SettingsPath.Accounts)
+        .filter((item) => item.path !== SettingsPath.AppPreferences)
         .every((item) => !item.isHidden),
     ).toBe(true);
   });
 
-  it('should show Accounts with Emails and Calendars when app preferences are off', () => {
+  it('should show Apps preferences without sub-items', () => {
     setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
 
-    const accountsItem = getAccountsOrAppPreferencesItem();
+    const appPreferencesItem = getAppPreferencesItem();
 
-    expect(accountsItem?.label).toBe('Accounts');
-    expect(accountsItem?.path).toBe(SettingsPath.Accounts);
-    expect(accountsItem?.Icon).toBe(IconAt);
-    expect(accountsItem?.subItems?.map((subItem) => subItem.path)).toEqual([
-      SettingsPath.AccountsEmails,
-      SettingsPath.AccountsCalendars,
-    ]);
-  });
-
-  it('should show Apps preferences without sub-items when app preferences are on', () => {
-    setPermissionFlags([PermissionFlagType.CONNECTED_ACCOUNTS]);
-    jotaiStore.set(currentWorkspaceState.atom, {
-      ...mockCurrentWorkspace,
-      featureFlags: [
-        { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
-      ],
-    });
-
-    const accountsItem = getAccountsOrAppPreferencesItem();
-
-    expect(accountsItem?.label).toBe('Apps preferences');
-    expect(accountsItem?.path).toBe(SettingsPath.AppPreferences);
-    expect(accountsItem?.Icon).toBe(IconApps);
-    expect(accountsItem?.isHidden).toBe(false);
-    expect(accountsItem?.subItems).toBeUndefined();
+    expect(appPreferencesItem?.label).toBe('Apps preferences');
+    expect(appPreferencesItem?.Icon).toBe(IconApps);
+    expect(appPreferencesItem?.isHidden).toBe(false);
+    expect(appPreferencesItem?.subItems).toBeUndefined();
   });
 });

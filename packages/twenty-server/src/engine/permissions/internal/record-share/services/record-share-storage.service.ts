@@ -4,16 +4,14 @@ import { Injectable } from '@nestjs/common';
 
 import { RecordShareRowCause } from 'twenty-shared/types';
 
-import { RecordShareWriteOrmService } from 'src/engine/permissions/internal/record-permission-orm/services/record-share-write-orm.service';
-import { type RecordShareCriteria } from 'src/engine/permissions/internal/record-permission-orm/types/record-share-criteria.type';
+import { RecordShareRepository } from 'src/engine/permissions/internal/record-permission-repository/repositories/record-share.repository';
+import { type RecordShareCriteria } from 'src/engine/permissions/internal/record-permission-repository/types/record-share-criteria.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type RecordPermissionTransactionScope } from 'src/engine/permissions/types/record-permission-transaction-scope.type';
 
 @Injectable()
 export class RecordShareStorageService {
-  constructor(
-    private readonly recordShareWriteOrmService: RecordShareWriteOrmService,
-  ) {}
+  constructor(private readonly recordShareRepository: RecordShareRepository) {}
 
   // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
   async setManualShare({
@@ -27,7 +25,7 @@ export class RecordShareStorageService {
     enabled: boolean;
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
-    await this.recordShareWriteOrmService.deleteRecordShares({
+    await this.recordShareRepository.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria: {
@@ -40,7 +38,7 @@ export class RecordShareStorageService {
     });
 
     if (enabled) {
-      await this.recordShareWriteOrmService.insertRecordShares({
+      await this.recordShareRepository.insertRecordShares({
         workspaceId,
         transactionScope,
         recordShares: [{ ...share, rowCause: RecordShareRowCause.MANUAL }],
@@ -58,7 +56,7 @@ export class RecordShareStorageService {
     recordShares: RecordShareInput[];
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.insertRecordShares({
+    return this.recordShareRepository.insertRecordShares({
       workspaceId,
       recordShares,
       shouldIgnoreConflicts: true,
@@ -81,7 +79,7 @@ export class RecordShareStorageService {
       return;
     }
 
-    await this.recordShareWriteOrmService.deleteRecordShares({
+    await this.recordShareRepository.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria: { objectMetadataId, recordIds },
@@ -97,7 +95,7 @@ export class RecordShareStorageService {
     criteria: RecordShareCriteria;
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.deleteRecordShares({
+    return this.recordShareRepository.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria,
@@ -113,7 +111,7 @@ export class RecordShareStorageService {
     sourceId: string;
     transactionScope?: RecordPermissionTransactionScope;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.deleteRecordShares({
+    return this.recordShareRepository.deleteRecordShares({
       workspaceId,
       transactionScope,
       criteria: { sourceId },
@@ -131,7 +129,7 @@ export class RecordShareStorageService {
     fromWorkspaceMemberId: string;
     toWorkspaceMemberId: string | undefined;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.transferMemberRecordShares({
+    return this.recordShareRepository.transferMemberRecordShares({
       workspaceId,
       objectMetadataIds,
       fromWorkspaceMemberId,
@@ -150,7 +148,7 @@ export class RecordShareStorageService {
     parameters: Record<string, unknown>;
     granteeWorkspaceMemberId: string;
   }): Promise<void> {
-    return this.recordShareWriteOrmService.insertOwnerRecordSharesFromSelect({
+    return this.recordShareRepository.insertOwnerRecordSharesFromSelect({
       workspaceId,
       recordSelect,
       parameters,

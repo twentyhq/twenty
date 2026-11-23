@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { IconLock } from 'twenty-ui/icon';
+import { type IconComponent, IconLock } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const PRIVACY_NOTE_ICON_SIZE = 12;
@@ -19,13 +19,15 @@ const StyledNoteText = styled.span`
 
 type OnboardingImportPrivacyNoteProps = {
   text: string;
+  Icon?: IconComponent;
 };
 
 export const OnboardingImportPrivacyNote = ({
   text,
+  Icon = IconLock,
 }: OnboardingImportPrivacyNoteProps) => (
   <StyledNote>
-    <IconLock
+    <Icon
       size={PRIVACY_NOTE_ICON_SIZE}
       color={themeCssVariables.font.color.tertiary}
     />

@@ -25,7 +25,9 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   },
   objectMetadata: {},
   view: {},
-  viewField: {},
+  viewField: {
+    fieldMetadata: true,
+  },
   viewFieldGroup: {},
   viewFilter: {},
   viewGroup: {},
@@ -47,6 +49,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   },
   rowLevelPermissionPredicate: {},
   rowLevelPermissionPredicateGroup: {},
+  rowLevelPermissionRule: {},
   viewFilterGroup: {},
   viewSort: {},
   frontComponent: {

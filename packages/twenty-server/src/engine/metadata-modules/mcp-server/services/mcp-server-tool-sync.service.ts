@@ -19,6 +19,7 @@ type McpServerToSync = Pick<
 > & {
   userWorkspaceId?: string;
   shouldDiscardToolsOnFailure?: boolean;
+  timeoutMs?: number;
 };
 
 @Injectable()
@@ -73,7 +74,10 @@ export class McpServerToolSyncService {
   private async fetchSanitizedTools(
     mcpServer: McpServerToSync,
   ): Promise<McpServerTool[]> {
-    const remoteTools = await this.mcpServerClientService.listTools(mcpServer);
+    const remoteTools = await this.mcpServerClientService.listTools({
+      target: mcpServer,
+      timeoutMs: mcpServer.timeoutMs,
+    });
     const sanitizedTools = remoteTools.map(sanitizeMcpServerTool);
     const droppedToolNames = remoteTools
       .filter((_remoteTool, index) => !isDefined(sanitizedTools[index]))

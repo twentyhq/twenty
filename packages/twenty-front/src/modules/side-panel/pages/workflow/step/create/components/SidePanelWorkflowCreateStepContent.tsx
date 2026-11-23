@@ -74,7 +74,6 @@ export const SidePanelWorkflowCreateStepContent = () => {
       newStepType: selection.type,
       parentStepId,
       nextStepId,
-      position,
       connectionOptions,
       defaultSettings: selection.defaultSettings,
     });

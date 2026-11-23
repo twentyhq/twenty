@@ -1,9 +1,10 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 
 type TestApplication = Pick<
   FlatApplication,
-  'id' | 'name' | 'deletedAt' | 'defaultRoleId'
+  'id' | 'name' | 'deletedAt' | 'requestedRoleId' | 'sourceType'
 >;
 
 const INSTALLED_APPLICATION_ID = 'installed-app-id';
@@ -11,7 +12,8 @@ const INSTALLED_APPLICATION_ID = 'installed-app-id';
 const INSTALLED_APPLICATION: TestApplication = {
   id: INSTALLED_APPLICATION_ID,
   name: 'Installed app',
-  defaultRoleId: 'installed-app-role-id',
+  requestedRoleId: 'installed-app-role-id',
+  sourceType: ApplicationRegistrationSourceType.NPM,
   deletedAt: null,
 };
 
@@ -19,6 +21,11 @@ const resolve = (application: TestApplication | null) =>
   resolveWorkflowRunApplicationOrThrow({
     applicationId: INSTALLED_APPLICATION_ID,
     applicationsById: application ? { [application.id]: application } : {},
+    workspaceId: 'workspace-id',
+    workspaceCustomApplicationId: 'workspace-custom-application-id',
+    flatRoleTargetByApplicationIdMaps: {
+      [INSTALLED_APPLICATION_ID]: { roleId: 'installed-app-grant-role-id' },
+    },
   });
 
 describe('resolveWorkflowRunApplicationOrThrow', () => {
@@ -36,7 +43,7 @@ describe('resolveWorkflowRunApplicationOrThrow', () => {
 
   it('refuses a run whose application has no role rather than widening it', () => {
     expect(() =>
-      resolve({ ...INSTALLED_APPLICATION, defaultRoleId: null }),
+      resolve({ ...INSTALLED_APPLICATION, requestedRoleId: null }),
     ).toThrow('has no role');
   });
 });

@@ -1,6 +1,7 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { UPDATE_CALENDAR_CHANNEL } from '@/settings/accounts/graphql/mutations/updateCalendarChannel';
 import { useMutation } from '@apollo/client/react';
+import { SettingsAccountsChannelSyncSection } from '@/settings/accounts/components/SettingsAccountsChannelSyncSection';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { styled } from '@linaria/react';
@@ -52,8 +53,19 @@ export const SettingsAccountsCalendarChannelDetails = ({
     updateChannel({ excludePrivateEvents: value });
   };
 
+  const handleIsSyncEnabledToggle = (value: boolean) => {
+    updateChannel({ isSyncEnabled: value });
+  };
+
   return (
     <StyledDetailsContainer>
+      <SettingsAccountsChannelSyncSection
+        sectionDescription={t`Pause or resume importing events from this account`}
+        switchTitle={t`Sync calendar`}
+        switchDescription={t`Import new events from this account`}
+        isSyncEnabled={calendarChannel.isSyncEnabled}
+        onIsSyncEnabledChange={handleIsSyncEnabledToggle}
+      />
       <Section.Root>
         <Section.Header
           title={t`Event visibility`}

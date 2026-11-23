@@ -13,16 +13,24 @@ const isAuthEnabledOrThrow = (
     AuthExceptionCode.OAUTH_ACCESS_DENIED,
   ),
 ) => {
-  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
+  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled) {
     return true;
+  }
   if (
     provider === AuthProviderEnum.Microsoft &&
     workspace.isMicrosoftAuthEnabled
-  )
+  ) {
     return true;
-  if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
+  }
+  if (
+    provider === AuthProviderEnum.Password &&
+    workspace.isPasswordAuthEnabled
+  ) {
     return true;
-  if (provider === AuthProviderEnum.SSO) return true;
+  }
+  if (provider === AuthProviderEnum.SSO) {
+    return true;
+  }
 
   throw exceptionToThrowCustom;
 };
@@ -31,15 +39,21 @@ const isAuthEnabled = (
   provider: AuthProviderEnum,
   workspace: WorkspaceEntity,
 ) => {
-  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled)
+  if (provider === AuthProviderEnum.Google && workspace.isGoogleAuthEnabled) {
     return true;
+  }
   if (
     provider === AuthProviderEnum.Microsoft &&
     workspace.isMicrosoftAuthEnabled
-  )
+  ) {
     return true;
-  if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
+  }
+  if (
+    provider === AuthProviderEnum.Password &&
+    workspace.isPasswordAuthEnabled
+  ) {
     return true;
+  }
 
   return false;
 };

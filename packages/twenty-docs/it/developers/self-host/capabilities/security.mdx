@@ -296,6 +296,26 @@ Se usi connettori cloud:
     ```
 * Aggiorna rapidamente quando le note di rilascio menzionano correzioni MCP o OAuth.
 
+## Funzioni logiche
+
+Le funzioni di logica chiamano l'API di Twenty tramite `SERVER_URL`, quindi un'istanza privata le blocca come qualsiasi altro chiamante esterno alla tua rete. Imposta `SERVER_INTERNAL_URL` su un indirizzo privato del server affinché aggirino il proxy. Con Docker Compose, utilizza il nome del servizio del server e impostalo su entrambi i servizi `server` e `worker`:
+
+```yaml
+services:
+  server:
+    environment:
+      SERVER_INTERNAL_URL: http://server:3000
+  worker:
+    environment:
+      SERVER_INTERNAL_URL: http://server:3000
+```
+
+Su Kubernetes, utilizza il nome DNS del cluster del Service del server. Mantienilo privato: tutto ciò che può raggiungerlo aggira il proxy.
+
+Questo funziona solo con il driver locale per le funzioni di logica. Lascialo non impostato con il driver Lambda: le funzioni Lambda vengono eseguite fuori dalla tua rete, quindi non possono raggiungere un indirizzo privato e le loro chiamate avrebbero esito negativo.
+
+Alcuni URL utilizzati dalle funzioni puntano ancora a `SERVER_URL` e rimangono bloccati: gli URL per il caricamento di file quando gli URL S3 prefirmati sono disattivati, gli URL per il download di file e `getPublicAssetUrl`.
+
 ## Verifica la configurazione
 
 Esegui test da entrambi i lati della rete dopo ogni modifica:

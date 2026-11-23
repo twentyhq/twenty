@@ -22,6 +22,7 @@ import {
   ALL_OAUTH_SCOPES,
   type OAuthScope,
 } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES } from 'src/engine/core-modules/application/application-oauth/constants/public-oauth-client-registration-values.constant';
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -144,13 +145,10 @@ export class OAuthRegistrationController {
     const registration = this.applicationRegistrationRepository.create({
       universalIdentifier: v4(),
       name: body.client_name,
+      ...PUBLIC_OAUTH_CLIENT_REGISTRATION_VALUES,
       oAuthClientId: clientId,
-      oAuthClientSecretHash: null,
       oAuthRedirectUris: body.redirect_uris,
       oAuthScopes: requestedScopes as OAuthScope[],
-      createdByUserId: null,
-      ownerWorkspaceId: null,
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       logo: body.logo_uri ?? null,
     });
 

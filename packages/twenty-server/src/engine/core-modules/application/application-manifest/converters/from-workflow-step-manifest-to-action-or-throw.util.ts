@@ -1,5 +1,4 @@
 import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
-import { computeWorkflowManifestOrderBy } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-order-by.util';
 import { buildWorkflowManifestReferenceResolvers } from 'src/engine/core-modules/application/application-manifest/utils/build-workflow-manifest-reference-resolvers.util';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
@@ -15,11 +14,9 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 
 export const fromWorkflowStepManifestToActionOrThrow = ({
   step,
-  index,
   references,
 }: {
   step: WorkflowStepManifest;
-  index: number;
   references: WorkflowManifestReferences;
 }): WorkflowAction => {
   const {
@@ -103,18 +100,6 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
                 ...orderBy,
                 ...(isDefined(orderBy.recordSorts)
                   ? {
-                      gqlOperationOrderBy: orderBy.recordSorts.flatMap(
-                        (reference) =>
-                          computeWorkflowManifestOrderBy({
-                            field: field(
-                              reference.fieldMetadataUniversalIdentifier,
-                              objectUniversalIdentifier,
-                            ),
-                            direction: reference.direction,
-                            subFieldName: reference.subFieldName,
-                            references,
-                          }),
-                      ),
                       recordSorts: orderBy.recordSorts.map((reference) =>
                         fieldReference(reference, objectUniversalIdentifier),
                       ),
@@ -236,9 +221,7 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
     type: step.type,
     valid: true,
     nextStepIds: step.nextStepIds,
-    ...(step.position === null
-      ? {}
-      : { position: step.position ?? { x: 0, y: (index + 1) * 180 } }),
+    ...(isDefined(step.position) ? { position: step.position } : {}),
     settings: {
       input: structuredClone(input),
       outputSchema: structuredClone(

@@ -8,10 +8,9 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 
 const MAX_JOB_SIZE_BYTES = 100;
 
-const buildLimiter = (isEnabled: boolean) => {
+const buildLimiter = () => {
   const metricsService = { incrementCounterForEvent: jest.fn() };
   const configValues: Record<string, unknown> = {
-    IS_REDIS_MEMORY_FAIRNESS_ENABLED: isEnabled,
     JOB_QUEUE_MAX_JOB_SIZE_BYTES: MAX_JOB_SIZE_BYTES,
   };
   const limiter = new JobSizeLimiter(
@@ -29,26 +28,15 @@ const JOBS = [
 ];
 
 describe('JobSizeLimiter', () => {
-  it('ignores sizes when disabled', () => {
-    const { limiter, metricsService } = buildLimiter(false);
-
-    expect(() =>
-      limiter.checkJobSizesOrThrow({
-        queueName: MessageQueue.workspaceQueue,
-        jobs: JOBS,
-      }),
-    ).not.toThrow();
-    expect(metricsService.incrementCounterForEvent).not.toHaveBeenCalled();
-  });
-
   it('refuses the batch on the first oversized job and counts it once', () => {
-    const { limiter, metricsService } = buildLimiter(true);
+    const { limiter, metricsService } = buildLimiter();
 
     let thrownError: unknown;
 
     try {
       limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
+        jobName: 'job',
         jobs: JOBS,
       });
     } catch (error) {
@@ -64,17 +52,22 @@ describe('JobSizeLimiter', () => {
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledTimes(1);
     expect(metricsService.incrementCounterForEvent).toHaveBeenCalledWith({
       key: MetricsKeys.JobMemoryLimitRefused,
-      attributes: { queue: MessageQueue.workspaceQueue, reason: 'size' },
+      attributes: {
+        queue: MessageQueue.workspaceQueue,
+        job_name: 'job',
+        reason: 'size',
+      },
       shouldStoreInCache: false,
     });
   });
 
   it('admits jobs at the limit', () => {
-    const { limiter } = buildLimiter(true);
+    const { limiter } = buildLimiter();
 
     expect(() =>
       limiter.checkJobSizesOrThrow({
         queueName: MessageQueue.workspaceQueue,
+        jobName: 'job',
         jobs: [{ index: 0, groupKey: 'system', sizeBytes: MAX_JOB_SIZE_BYTES }],
       }),
     ).not.toThrow();

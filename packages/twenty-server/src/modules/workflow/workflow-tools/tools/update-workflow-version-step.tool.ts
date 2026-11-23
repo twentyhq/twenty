@@ -6,6 +6,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 
 const updateWorkflowVersionStepSchema = z.object({
   coreWorkflowVersionId: z
@@ -20,28 +21,30 @@ const updateWorkflowVersionStepSchema = z.object({
 export const createUpdateWorkflowVersionStepTool = (
   deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
   context: WorkflowToolContext,
-) => ({
-  name: 'update_workflow_version_step' as const,
-  description:
-    'Update an existing step in a workflow version. This modifies the step configuration. For a CODE step, write its TypeScript source in settings.input.code: it must export `main` as an async arrow function, `export const main = async (params: { ... }) => { ... }`, whose params receive settings.input.logicFunctionInput. Call validate_workflow once after your edits are done, not after every change.',
-  inputSchema: updateWorkflowVersionStepSchema,
-  execute: async (parameters: {
-    coreWorkflowVersionId: string;
-    step: WorkflowAction;
-  }) => {
-    try {
-      return await deps.coreWorkflowVersionMutationService.updateStep({
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        step: parameters.step,
-      });
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        message: `Failed to update workflow version step: ${error.message}`,
-      };
-    }
-  },
-});
+) =>
+  ({
+    name: 'update_workflow_version_step' as const,
+    isDestructive: true,
+    description:
+      'Update an existing step in a workflow version. This modifies the step configuration. For a CODE step, write its TypeScript source in settings.input.code: it must export `main` as an async arrow function, `export const main = async (params: { ... }) => { ... }`, whose params receive settings.input.logicFunctionInput. Call validate_workflow once after your edits are done, not after every change.',
+    inputSchema: updateWorkflowVersionStepSchema,
+    execute: async (parameters: {
+      coreWorkflowVersionId: string;
+      step: WorkflowAction;
+    }) => {
+      try {
+        return await deps.coreWorkflowVersionMutationService.updateStep({
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          step: parameters.step,
+        });
+      } catch (error) {
+        return {
+          success: false,
+          error: error.message,
+          message: `Failed to update workflow version step: ${error.message}`,
+        };
+      }
+    },
+  }) satisfies WorkflowTool;

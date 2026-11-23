@@ -22,7 +22,7 @@ export const GET_CORE_WORKFLOWS = gql`
           statuses
           workspaceWorkflowId
           isSystem
-          visibility
+          isPrivate
           canChangeVisibility
           updatedAt
         }
@@ -33,6 +33,16 @@ export const GET_CORE_WORKFLOWS = gql`
         hasNextPage
       }
       totalCount
+      runSummaries {
+        coreWorkflowId
+        runCountLast14Days
+        isRunCountLowerBound
+        recentRuns {
+          id
+          status
+          createdAt
+        }
+      }
     }
   }
 `;

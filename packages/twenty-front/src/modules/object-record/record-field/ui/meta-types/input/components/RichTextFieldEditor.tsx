@@ -142,7 +142,9 @@ export const RichTextFieldEditor = ({
       persistDebounceMs: 300,
       resetKey: recordId,
       onPersist: ({ tiptap }) => {
-        if (isRecordFieldReadOnly === true) return;
+        if (isRecordFieldReadOnly === true) {
+          return;
+        }
 
         if (onPersistBody) {
           onPersistBody(tiptap);

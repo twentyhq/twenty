@@ -14,6 +14,7 @@ export const fromFlatViewFieldToViewFieldManifest = ({
   position: flatViewField.position,
   isVisible: flatViewField.isVisible,
   size: flatViewField.size,
+  ...(flatViewField.isCanonical ? {} : { isCanonical: false }),
   ...(isDefined(flatViewField.aggregateOperation)
     ? { aggregateOperation: flatViewField.aggregateOperation }
     : {}),
@@ -23,4 +24,14 @@ export const fromFlatViewFieldToViewFieldManifest = ({
           flatViewField.viewFieldGroupUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatViewField.relationTargetFieldMetadataUniversalIdentifier)
+    ? {
+        relationTargetFieldMetadataUniversalIdentifier:
+          flatViewField.relationTargetFieldMetadataUniversalIdentifier,
+      }
+    : {}),
+  ...(isDefined(flatViewField.universalRelationScope)
+    ? { relationScope: flatViewField.universalRelationScope }
+    : {}),
+  ...(isDefined(flatViewField.label) ? { label: flatViewField.label } : {}),
 });

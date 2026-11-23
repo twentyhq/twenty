@@ -1,7 +1,10 @@
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 
 export type CoreAgentRunListItem<
-  TRun extends Pick<CoreAgentRun, 'threadId' | 'threadTitle'> = CoreAgentRun,
+  TRun extends Pick<
+    CoreAgentRun,
+    'threadId' | 'threadTitle' | 'canReadThread'
+  > = CoreAgentRun,
 > =
   | { type: 'run'; run: TRun }
   | {

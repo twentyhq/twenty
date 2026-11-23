@@ -19,6 +19,7 @@ const getViewFiltersInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_filters',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FILTER_ACCESS_POLICY,
   description:
@@ -35,12 +36,13 @@ export class GetViewFiltersTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewFiltersInputSchema>): Promise<ToolOutput> {
-    const filters = await this.viewFilterService.findByViewId(
+    const filters = await this.viewFilterService.findByViewId({
       workspaceId,
-      input.viewId,
-    );
+      viewId: input.viewId,
+      userWorkspaceId,
+    });
 
     return {
       success: true,

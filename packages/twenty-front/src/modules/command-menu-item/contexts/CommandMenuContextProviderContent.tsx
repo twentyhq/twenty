@@ -10,6 +10,7 @@ import { doesCommandMenuItemMatchCoreObjectName } from '@/command-menu-item/util
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolveCommandMenuItemPinning';
+import { doesCommandMenuItemMatchObjectContext } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectContext';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
 import { getCommandMenuContextApiForContainerType } from '@/command-menu-item/utils/getCommandMenuContextApiForContainerType';
@@ -22,12 +23,12 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
 import {
   ContextStorePageType,
   StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
@@ -103,7 +104,7 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
-    const isAiChatInboxHeader =
+    const isInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
         StandardObjectNameSingular.AgentChatThread &&
@@ -123,16 +124,14 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         (item) =>
           item.engineComponentKey !==
-          EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
-      )
-      .filter(
-        (item) =>
-          item.engineComponentKey !==
             EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT ||
           isLayoutCustomizationAllowedOnCurrentPage,
       )
       .filter(
         doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
+      )
+      .filter(
+        doesCommandMenuItemMatchObjectContext(currentObjectMetadataItemId),
       )
       .filter(
         doesCommandMenuItemMatchCoreObjectName(
@@ -154,7 +153,7 @@ export const CommandMenuContextProviderContent = ({
             ...item,
             isPinned:
               item.isPinned ||
-              (isAiChatInboxHeader &&
+              (isInboxHeader &&
                 item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
           },
           commandMenuContextApiForAvailability,

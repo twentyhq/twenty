@@ -50,12 +50,12 @@ export const useHandleImpersonate = () => {
           return;
         }
 
-        return redirectToWorkspaceDomain(
-          getWorkspaceUrl(workspace.workspaceUrls),
-          AppPath.Verify,
-          { loginToken: loginToken.token },
-          '_blank',
-        );
+        return redirectToWorkspaceDomain({
+          baseUrl: getWorkspaceUrl(workspace.workspaceUrls),
+          pathname: AppPath.Verify,
+          searchParams: { loginToken: loginToken.token },
+          target: '_blank',
+        });
       },
       onError: (error) => {
         enqueueToast({

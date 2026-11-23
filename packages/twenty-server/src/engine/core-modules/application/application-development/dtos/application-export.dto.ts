@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type Manifest } from 'twenty-shared/application';
-import { type AllMetadataName } from 'twenty-shared/metadata';
+import { type ApplicationExportCoverageName } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -22,7 +22,7 @@ export class ApplicationExportApplicationDTO {
 @ObjectType('ApplicationExportCoverageEntry')
 export class ApplicationExportCoverageEntryDTO {
   @Field(() => String)
-  metadataName: AllMetadataName;
+  metadataName: ApplicationExportCoverageName;
 
   @Field(() => String)
   universalIdentifier: string;
@@ -42,8 +42,14 @@ export class ApplicationExportFileDTO {
   @Field(() => String)
   path: string;
 
-  @Field(() => String)
+  @Field(() => String, {
+    description:
+      'Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text.',
+  })
   content: string;
+
+  @Field(() => String, { nullable: true })
+  encoding?: 'base64';
 }
 
 @ObjectType('ApplicationExport')

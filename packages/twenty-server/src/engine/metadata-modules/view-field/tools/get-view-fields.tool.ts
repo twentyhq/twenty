@@ -21,6 +21,7 @@ const getViewFieldsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_fields',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:
@@ -40,10 +41,14 @@ export class GetViewFieldsTool extends BaseTool<
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewFieldsInputSchema>): Promise<ToolOutput> {
     const [viewFields, { flatFieldMetadataMaps }] = await Promise.all([
-      this.viewFieldService.findByViewId(workspaceId, input.viewId),
+      this.viewFieldService.findByViewId({
+        workspaceId,
+        viewId: input.viewId,
+        userWorkspaceId,
+      }),
       this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
         workspaceId,
         flatMapsKeys: ['flatFieldMetadataMaps'],
@@ -63,6 +68,10 @@ export class GetViewFieldsTool extends BaseTool<
       size: viewField.size,
       position: viewField.position,
       aggregateOperation: viewField.aggregateOperation,
+      isCanonical: viewField.isCanonical,
+      relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
+      relationScope: viewField.relationScope,
+      label: viewField.label,
     }));
 
     return {

@@ -24,7 +24,7 @@ type NavigationMenuItemRow = {
   id: string;
   universalIdentifier: string;
   type: string;
-  folderId: string | null;
+  parentId: string | null;
   targetObjectNameSingular: string | null;
   name: string | null;
   position: number;
@@ -32,7 +32,7 @@ type NavigationMenuItemRow = {
 
 const readNavigationMenuItems = async (): Promise<NavigationMenuItemRow[]> =>
   global.testDataSource.query(
-    `SELECT n."id", n."universalIdentifier", n."type", n."folderId", n."name",
+    `SELECT n."id", n."universalIdentifier", n."type", n."parentId", n."name",
             n."position", o."nameSingular" AS "targetObjectNameSingular"
      FROM core."navigationMenuItem" n
      LEFT JOIN core."objectMetadata" o ON o."id" = n."targetObjectMetadataId"
@@ -113,25 +113,25 @@ describe('2-54 workspace command - add campaigns navigation folder (integration)
     expect(folder).toMatchObject({
       type: 'FOLDER',
       name: 'Campaigns',
-      folderId: null,
+      parentId: null,
     });
     expect(
       campaignsNavigationMenuItems
         .filter(({ type }) => type === 'OBJECT')
-        .map(({ folderId, targetObjectNameSingular, position }) => ({
-          folderId,
+        .map(({ parentId, targetObjectNameSingular, position }) => ({
+          parentId,
           targetObjectNameSingular,
           position,
         })),
     ).toEqual(
       expect.arrayContaining([
         {
-          folderId: folder?.id,
+          parentId: folder?.id,
           targetObjectNameSingular: 'messageCampaign',
           position: 0,
         },
         {
-          folderId: folder?.id,
+          parentId: folder?.id,
           targetObjectNameSingular: 'messageList',
           position: 1,
         },
@@ -160,7 +160,7 @@ describe('2-54 workspace command - add campaigns navigation folder (integration)
           universalIdentifier === LISTS_UNIVERSAL_IDENTIFIER,
       ),
     ).toMatchObject({
-      folderId: folderBefore?.id,
+      parentId: folderBefore?.id,
       targetObjectNameSingular: 'messageList',
       position: 1,
     });

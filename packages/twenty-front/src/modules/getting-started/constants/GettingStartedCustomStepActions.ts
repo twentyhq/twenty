@@ -1,6 +1,7 @@
 import { type ComponentType } from 'react';
 
 import { GettingStartedAppsAction } from '@/getting-started/components/GettingStartedAppsAction';
+import { GettingStartedBookCallAction } from '@/getting-started/components/GettingStartedBookCallAction';
 import { GettingStartedImportAction } from '@/getting-started/components/GettingStartedImportAction';
 import { GettingStartedInviteAction } from '@/getting-started/components/GettingStartedInviteAction';
 import { GettingStartedMailboxAction } from '@/getting-started/components/GettingStartedMailboxAction';
@@ -13,4 +14,5 @@ export const GETTING_STARTED_CUSTOM_STEP_ACTIONS: Partial<
   [GettingStartedStepActionKey.IMPORT_DATA]: GettingStartedImportAction,
   [GettingStartedStepActionKey.INSTALL_APP]: GettingStartedAppsAction,
   [GettingStartedStepActionKey.INVITE_TEAM]: GettingStartedInviteAction,
+  [GettingStartedStepActionKey.BOOK_CALL]: GettingStartedBookCallAction,
 };

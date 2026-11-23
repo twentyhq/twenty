@@ -29,6 +29,8 @@ export const transformAgentEntityToFlatAgent = ({
     name: agentEntity.name,
     label: agentEntity.label,
     icon: agentEntity.icon,
+    avatarColor: agentEntity.avatarColor,
+    avatarShape: agentEntity.avatarShape,
     description: agentEntity.description,
     prompt: agentEntity.prompt,
     modelId: agentEntity.modelId,
@@ -40,7 +42,13 @@ export const transformAgentEntityToFlatAgent = ({
     modelConfiguration: agentEntity.modelConfiguration,
     triggers: agentEntity.triggers,
     isActive: agentEntity.isActive,
+    isPrivate: agentEntity.isPrivate,
+    createdByUserWorkspaceId: agentEntity.createdByUserWorkspaceId,
     overrides: agentEntity.overrides,
     applicationUniversalIdentifier,
+    navigationMenuItemIds: agentEntity.navigationMenuItems.map(({ id }) => id),
+    navigationMenuItemUniversalIdentifiers: agentEntity.navigationMenuItems.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
   };
 };

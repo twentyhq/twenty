@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ImpersonationLevel } from 'src/engine/core-modules/impersonation/types/impersonation-level.type';
+import { isServerAdminAccessAllowedFromWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-access-allowed-from-workspace.util';
 import { userCanServerImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-server-impersonate-target.util';
 import { userCanWorkspaceImpersonateTarget } from 'src/engine/core-modules/impersonation/utils/user-can-workspace-impersonate-target.util';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -10,8 +12,6 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { twoFactorAuthenticationMethodsValidator } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.validation';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-
-export type ImpersonationLevel = 'server' | 'workspace';
 
 export type ImpersonationDenialReason =
   | 'SERVER_LEVEL_NOT_ALLOWED'
@@ -57,7 +57,13 @@ export class ImpersonationAuthorizationService {
     if (level === 'server') {
       const hasServerLevelImpersonatePermission =
         impersonatorUserWorkspace.user.canImpersonate === true &&
-        targetUserWorkspace.workspace.allowImpersonation === true;
+        targetUserWorkspace.workspace.allowImpersonation === true &&
+        isServerAdminAccessAllowedFromWorkspace({
+          workspaceId: impersonatorUserWorkspace.workspace.id,
+          serverAdminWorkspaceId: this.twentyConfigService.get(
+            'SERVER_ADMIN_WORKSPACE_ID',
+          ),
+        });
 
       if (!hasServerLevelImpersonatePermission) {
         return { allowed: false, level, reason: 'SERVER_LEVEL_NOT_ALLOWED' };

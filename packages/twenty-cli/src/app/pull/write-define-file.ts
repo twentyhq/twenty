@@ -80,9 +80,51 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
+const ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH = 5;
+
+const buildRowLevelRecordsPermissionsPath = (predicateGroupDepth: number) => [
+  'recordsPermissions',
+  'objects',
+  '[]',
+  'rowLevelRecordsPermissions',
+  '[]',
+  ...Array.from({ length: predicateGroupDepth }, () => [
+    'predicateGroups',
+    '[]',
+  ]).flat(),
+];
+
+const buildRowLevelRecordsPermissionsEnumBindings = (): EnumBinding[] => [
+  ...Array.from(
+    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH + 1 },
+    (_, predicateGroupDepth) => ({
+      path: [
+        ...buildRowLevelRecordsPermissionsPath(predicateGroupDepth),
+        'predicates',
+        '[]',
+        'operand',
+      ],
+      symbol: 'RowLevelPermissionPredicateOperand',
+      members: RowLevelPermissionPredicateOperand,
+    }),
+  ),
+  ...Array.from(
+    { length: ROW_LEVEL_RECORDS_PERMISSIONS_PREDICATE_GROUP_BOUND_DEPTH },
+    (_, index) => ({
+      path: [
+        ...buildRowLevelRecordsPermissionsPath(index + 1),
+        'logicalOperator',
+      ],
+      symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
+      members: RowLevelPermissionPredicateGroupLogicalOperator,
+    }),
+  ),
+];
+
 export const buildRoleEnumBindings = (
   systemPermissionFlag: Record<string, string>,
 ): EnumBinding[] => [
+  ...buildRowLevelRecordsPermissionsEnumBindings(),
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
@@ -108,8 +150,30 @@ const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
   members: AggregateOperations,
 });
 
+const buildViewFieldRelationScopeEnumBindings = (
+  prefix: string[],
+): EnumBinding[] => [
+  {
+    path: [...prefix, 'filters', '[]', 'operand'],
+    symbol: 'ViewFilterOperand',
+    members: ViewFilterOperand,
+  },
+  {
+    path: [...prefix, 'filterGroups', '[]', 'logicalOperator'],
+    symbol: 'ViewFilterGroupLogicalOperator',
+    members: ViewFilterGroupLogicalOperator,
+  },
+  {
+    path: [...prefix, 'sorts', '[]', 'direction'],
+    symbol: 'ViewSortDirection',
+    members: ViewSortDirection,
+  },
+  buildAggregateOperationBinding([...prefix, 'aggregateOperation']),
+];
+
 export const VIEW_FIELD_ENUM_BINDINGS: EnumBinding[] = [
   buildAggregateOperationBinding(['aggregateOperation']),
+  ...buildViewFieldRelationScopeEnumBindings(['relationScope']),
 ];
 
 export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
@@ -127,6 +191,7 @@ export const VIEW_ENUM_BINDINGS: EnumBinding[] = [
     members: ViewCalendarLayout,
   },
   buildAggregateOperationBinding(['fields', '[]', 'aggregateOperation']),
+  ...buildViewFieldRelationScopeEnumBindings(['fields', '[]', 'relationScope']),
   {
     path: ['filters', '[]', 'operand'],
     symbol: 'ViewFilterOperand',

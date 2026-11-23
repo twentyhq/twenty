@@ -8,22 +8,21 @@ import {
   type WidgetType,
 } from 'twenty-shared/types';
 import {
-  widgetPositionSchema,
+  widgetGridPositionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
-} from 'src/modules/dashboard/tools/schemas/widget.schema';
+} from 'src/engine/metadata-modules/page-layout/tools/schemas/widget.schema';
 import {
-  type DashboardToolContextWithPermissions,
-  type DashboardToolDependencies,
-} from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
-import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
-import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
-import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
+  type PageLayoutToolContextWithPermissions,
+  type PageLayoutToolDependencies,
+} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { type WidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout/tools/types/widget-configuration-input.type';
+import { resolveWidgetFieldNamesToIds } from 'src/engine/metadata-modules/page-layout/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
 const widgetSchema = z.object({
   title: z.string().describe('Widget title displayed in the header'),
   type: widgetTypeSchema.describe('Widget type'),
-  position: widgetPositionSchema.describe('Position in 12-column grid'),
+  position: widgetGridPositionSchema.describe('Position in 12-column grid'),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -54,35 +53,32 @@ const createCompleteDashboardSchema = z.object({
 });
 
 type CreateCompleteDashboardToolDeps = {
+  pageLayoutToolService: PageLayoutToolDependencies['pageLayoutToolService'];
   pageLayoutService: Pick<
-    DashboardToolDependencies['pageLayoutService'],
+    PageLayoutToolDependencies['pageLayoutService'],
     'create' | 'destroy'
   >;
   pageLayoutTabService: Pick<
-    DashboardToolDependencies['pageLayoutTabService'],
+    PageLayoutToolDependencies['pageLayoutTabService'],
     'create'
   >;
   pageLayoutWidgetService: Pick<
-    DashboardToolDependencies['pageLayoutWidgetService'],
+    PageLayoutToolDependencies['pageLayoutWidgetService'],
     'create'
   >;
-  flatEntityMapsCacheService: Pick<
-    DashboardToolDependencies['flatEntityMapsCacheService'],
-    'getOrRecomputeManyOrAllFlatEntityMaps'
-  >;
   workspaceOrmManager: Pick<
-    DashboardToolDependencies['workspaceOrmManager'],
+    PageLayoutToolDependencies['workspaceOrmManager'],
     'executeInWorkspaceContext' | 'getRepository'
   >;
   recordPositionService: Pick<
-    DashboardToolDependencies['recordPositionService'],
+    PageLayoutToolDependencies['recordPositionService'],
     'buildRecordPosition'
   >;
 };
 
 export const createCreateCompleteDashboardTool = (
   deps: CreateCompleteDashboardToolDeps,
-  context: DashboardToolContextWithPermissions,
+  context: PageLayoutToolContextWithPermissions,
 ) => ({
   name: 'create_complete_dashboard' as const,
   description: `Create a dashboard with layout, tab, and widgets.
@@ -154,7 +150,9 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
       const widgets = parameters.widgets ?? [];
       const identifierMaps =
         widgets.length > 0
-          ? await computeDashboardIdentifierMaps(deps, context)
+          ? await deps.pageLayoutToolService.computePageLayoutIdentifierMaps(
+              context,
+            )
           : null;
       const pageLayout = await deps.pageLayoutService.create({
         createPageLayoutInput: {
@@ -178,6 +176,15 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
       for (const widget of widgets) {
         try {
+          await deps.pageLayoutToolService.assertFrontComponentWidgetAvailableOnPageLayoutOrThrow(
+            {
+              configuration: widget.configuration,
+              pageLayoutTabId: pageLayoutTab.id,
+              position: widget.position,
+              context,
+            },
+          );
+
           const widgetWithMetadataIds = identifierMaps
             ? resolveWidgetFieldNamesToIds(widget, identifierMaps)
             : widget;
@@ -258,7 +265,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
 
 type CreateDashboardRecordParams = {
   deps: CreateCompleteDashboardToolDeps;
-  context: DashboardToolContextWithPermissions;
+  context: PageLayoutToolContextWithPermissions;
   title: string;
   pageLayoutId: string;
 };

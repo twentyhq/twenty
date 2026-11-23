@@ -20,6 +20,7 @@ const LINKEDIN_APPLICATION = {
   universalIdentifier: '6f1a2b3c-4d5e-4f60-8a7b-9c0d1e2f3a4b',
   logoUrl: null,
   createdAt: '2026-09-01T00:00:00.000Z',
+  runHealthCheckOnUserPreferences: false,
 };
 
 const thread: TimelineThread = {
@@ -46,6 +47,7 @@ const thread: TimelineThread = {
     type: MessageChannelType.EMAIL,
     provider: 'google',
     applicationId: null,
+    conversationStyle: 'email',
   },
 };
 
@@ -130,6 +132,7 @@ export const LinkedInConversation: Story = {
         type: MessageChannelType.APP,
         provider: 'app',
         applicationId: LINKEDIN_APPLICATION.id,
+        conversationStyle: 'chat',
       },
     },
   },

@@ -5,11 +5,11 @@ import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-e
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
 import { buildStandardFlatAgentChatChannelMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-chat-channel/build-standard-flat-agent-chat-channel-maps.util';
-import { buildStandardFlatAgentMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/build-standard-flat-agent-metadata-maps.util';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util';
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
 import { WORKSPACE_CREATION_ONLY_WIDGET_TYPES } from 'src/engine/workspace-manager/twenty-standard-application/constants/workspace-creation-only-widget-types.constant';
 import { getStandardPageLayoutMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-page-layout-metadata-related-entity-ids.util';
+import { buildStandardFlatFieldMetadataOptionMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata-option/build-standard-flat-field-metadata-option-maps.util';
 import { buildStandardFlatIndexMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util';
 import { buildStandardFlatCommandMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/command-menu-item/build-standard-flat-command-menu-item-maps.util';
 import { buildStandardFlatNavigationMenuItemMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/navigation-menu-item/build-standard-flat-navigation-menu-item-maps.util';
@@ -72,6 +72,13 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
   });
 
+  const flatFieldMetadataOptionMaps = buildStandardFlatFieldMetadataOptionMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps: { flatFieldMetadataMaps },
+  });
+
   const flatIndexMaps = buildStandardFlatIndexMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
@@ -131,6 +138,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatViewMaps,
       flatViewFilterGroupMaps,
     },
@@ -144,6 +152,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     dependencyFlatEntityMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
       flatViewMaps,
       flatViewFieldGroupMaps,
     },
@@ -167,15 +176,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
   });
 
-  const flatAgentMaps = buildStandardFlatAgentMetadataMaps({
-    now,
-    workspaceId,
-    twentyStandardApplicationId,
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps: {
-      flatRoleMaps,
-    },
-  });
+  const flatAgentMaps = createEmptyFlatEntityMaps();
 
   const flatSkillMaps = buildStandardFlatSkillMetadataMaps({
     now,
@@ -297,6 +298,7 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatIndexMaps,
     flatSearchFieldMetadataMaps,
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps,
     flatObjectMetadataMaps,
     flatNavigationMenuItemMaps,
     flatPermissionFlagMaps,

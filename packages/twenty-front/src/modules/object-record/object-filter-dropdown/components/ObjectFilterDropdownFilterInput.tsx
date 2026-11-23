@@ -13,7 +13,7 @@ import { ObjectFilterDropdownInnerSelectOperandDropdown } from '@/object-record/
 import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextInput';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/filterValueFieldMetadataItemUsedInDropdownComponentSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -28,8 +28,8 @@ export const ObjectFilterDropdownFilterInput = ({
   filterDropdownId,
   recordFilterId,
 }: ObjectFilterDropdownFilterInputProps) => {
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
+  const filterValueFieldMetadataItem = useAtomComponentSelectorValue(
+    filterValueFieldMetadataItemUsedInDropdownComponentSelector,
   );
 
   const selectedOperandInDropdown = useAtomComponentStateValue(
@@ -51,12 +51,12 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IS_RELATIVE,
     ].includes(selectedOperandInDropdown);
 
-  if (!isDefined(fieldMetadataItemUsedInDropdown)) {
+  if (!isDefined(filterValueFieldMetadataItem)) {
     return null;
   }
 
   const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItemUsedInDropdown.type,
+    filterValueFieldMetadataItem.type,
   );
 
   const isOnlyOperand = !isOperandWithFilterValue;
@@ -92,50 +92,45 @@ export const ObjectFilterDropdownFilterInput = ({
         <ObjectFilterDropdownDateTimeInput />
       </>
     );
-  } else {
-    return (
-      <>
-        <ObjectFilterDropdownInnerSelectOperandDropdown />
-        <DropdownMenuSeparator />
-        {TEXT_FILTER_TYPES.includes(filterType) && (
-          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
-        )}
-        {NUMBER_FILTER_TYPES.includes(filterType) && (
-          <ObjectFilterDropdownNumberInput
-            filterDropdownId={filterDropdownId}
-          />
-        )}
-        {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
-        {filterType === 'RELATION' && (
-          <>
-            <ObjectFilterDropdownSearchInput />
-            <DropdownMenuSeparator />
-            <ObjectFilterDropdownRecordSelect
-              recordFilterId={recordFilterId}
-              dropdownId={filterDropdownId}
-            />
-          </>
-        )}
-        {filterType === 'ACTOR' && (
-          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
-        )}
-        {filterType === 'ADDRESS' && (
-          <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
-        )}
-        {filterType === 'CURRENCY' && (
-          <ObjectFilterDropdownNumberInput
-            filterDropdownId={filterDropdownId}
-          />
-        )}
-        {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
-          <>
-            <ObjectFilterDropdownSearchInput />
-            <DropdownMenuSeparator />
-            <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
-          </>
-        )}
-        {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
-      </>
-    );
   }
+  return (
+    <>
+      <ObjectFilterDropdownInnerSelectOperandDropdown />
+      <DropdownMenuSeparator />
+      {TEXT_FILTER_TYPES.includes(filterType) && (
+        <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+      )}
+      {NUMBER_FILTER_TYPES.includes(filterType) && (
+        <ObjectFilterDropdownNumberInput filterDropdownId={filterDropdownId} />
+      )}
+      {filterType === 'RATING' && <ObjectFilterDropdownRatingInput />}
+      {filterType === 'RELATION' && (
+        <>
+          <ObjectFilterDropdownSearchInput />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownRecordSelect
+            recordFilterId={recordFilterId}
+            dropdownId={filterDropdownId}
+          />
+        </>
+      )}
+      {filterType === 'ACTOR' && (
+        <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+      )}
+      {filterType === 'ADDRESS' && (
+        <ObjectFilterDropdownTextInput filterDropdownId={filterDropdownId} />
+      )}
+      {filterType === 'CURRENCY' && (
+        <ObjectFilterDropdownNumberInput filterDropdownId={filterDropdownId} />
+      )}
+      {['SELECT', 'MULTI_SELECT'].includes(filterType) && (
+        <>
+          <ObjectFilterDropdownSearchInput />
+          <DropdownMenuSeparator />
+          <ObjectFilterDropdownOptionSelect focusId={filterDropdownId} />
+        </>
+      )}
+      {filterType === 'BOOLEAN' && <ObjectFilterDropdownBooleanSelect />}
+    </>
+  );
 };

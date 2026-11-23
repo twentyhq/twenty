@@ -58,12 +58,14 @@ export class AgentTurnRecorderService {
     turnId,
     modelId,
     createdBy,
+    isBuiltInAssistant = false,
     streamClaim,
   }: {
     workspaceId: string;
     turnId: string;
     modelId?: string;
     createdBy?: ActorMetadata;
+    isBuiltInAssistant?: boolean;
     streamClaim?: AgentTurnStreamClaim;
   }): Promise<boolean> {
     return this.turnRepository.query(
@@ -80,10 +82,11 @@ export class AgentTurnRecorderService {
            "modelId" = COALESCE($2, "modelId"),
            "createdByWorkspaceMemberId" = CASE WHEN ${isDefaultCreator} THEN $5::uuid ELSE "createdByWorkspaceMemberId" END,
            "createdByName" = CASE WHEN ${isDefaultCreator} THEN $6 ELSE "createdByName" END,
-           "createdByContext" = CASE WHEN ${isDefaultCreator} THEN $7::jsonb ELSE "createdByContext" END,
+           "createdByContext" = COALESCE(CASE WHEN ${isDefaultCreator} THEN $7::jsonb ELSE "createdByContext" END, '{}'::jsonb)
+             || CASE WHEN $8::boolean THEN '{"isBuiltInAssistant":true}'::jsonb ELSE '{}'::jsonb END,
            "createdBySource" = CASE WHEN ${isDefaultCreator} THEN $4 ELSE "createdBySource" END,
            "updatedAt" = now()
-         WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 8 })}
+         WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 9 })}
          RETURNING id`,
           [
             turnId,
@@ -93,6 +96,7 @@ export class AgentTurnRecorderService {
             createdBy?.workspaceMemberId ?? null,
             createdBy?.name ?? null,
             JSON.stringify(createdBy?.context ?? {}),
+            isBuiltInAssistant,
             ...buildStreamClaimParameters(streamClaim),
           ],
         );

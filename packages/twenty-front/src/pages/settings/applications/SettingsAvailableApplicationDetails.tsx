@@ -11,12 +11,15 @@ import { SettingsApplicationInstallPermissionValidationModal } from '@/marketpla
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { useMarketplaceApplicationContentLink } from '@/settings/applications/hooks/useMarketplaceApplicationContentLink';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
+import { SettingsMarketplaceAppConnectButton } from '@/settings/applications/components/SettingsMarketplaceAppConnectButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -90,6 +93,10 @@ export const SettingsAvailableApplicationDetails = () => {
   });
 
   const application = applicationData?.findOneApplication;
+
+  const contentLink = useMarketplaceApplicationContentLink(
+    isUuidFormat(availableApplicationId) ? availableApplicationId : undefined,
+  );
 
   const detail = detailData?.findMarketplaceAppDetail;
 
@@ -210,7 +217,30 @@ export const SettingsAvailableApplicationDetails = () => {
           issueReportUrl: detail.issueReportUrl ?? undefined,
           sourcePackageUrl,
         }}
+        contentLink={contentLink}
         onShare={() => copyMarketplaceAppLink(detail.universalIdentifier)}
+      />
+    );
+  };
+
+  const renderActionButton = () => {
+    if (!isDefined(detail)) {
+      return undefined;
+    }
+
+    if (isNonEmptyString(detail.connectUrl)) {
+      return (
+        <SettingsMarketplaceAppConnectButton connectUrl={detail.connectUrl} />
+      );
+    }
+
+    return (
+      <SettingsApplicationActionButton
+        installedApplicationId={application?.id}
+        canInstallMarketplaceApps={canInstallMarketplaceApps}
+        onInstall={requestInstall}
+        isInstalling={isInstalling}
+        installProgress={installProgress}
       />
     );
   };
@@ -243,17 +273,7 @@ export const SettingsAvailableApplicationDetails = () => {
             />
           ) : undefined
         }
-        actionButton={
-          isDefined(detail) ? (
-            <SettingsApplicationActionButton
-              installedApplicationId={application?.id}
-              canInstallMarketplaceApps={canInstallMarketplaceApps}
-              onInstall={requestInstall}
-              isInstalling={isInstalling}
-              installProgress={installProgress}
-            />
-          ) : undefined
-        }
+        actionButton={renderActionButton()}
       >
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (

@@ -9,7 +9,7 @@ const htmlDocument = (html: string) => ({
 });
 
 describe('resolveEmailBody', () => {
-  it('should resolve only authored placeholders in structured documents', async () => {
+  it('should resolve only authored placeholders in structured documents', () => {
     const body = JSON.stringify({
       type: 'doc',
       content: [
@@ -26,21 +26,24 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    const resolvedBody = await resolveEmailBody(body, {
-      trigger: {
-        name: 'Ada',
-        message: '{{trigger.secret}}',
-        secret: 'must remain private',
+    const resolvedBody = resolveEmailBody({
+      body: body,
+      context: {
+        trigger: {
+          name: 'Ada',
+          message: '{{trigger.secret}}',
+          secret: 'must remain private',
+        },
       },
     });
 
-    expect(JSON.parse(resolvedBody).content[0].content).toEqual([
+    expect(resolvedBody.content?.[0]?.content).toEqual([
       { type: 'text', text: 'Hello Ada: ' },
       { type: 'text', text: '{{trigger.secret}}' },
     ]);
   });
 
-  it('should preserve line breaks in resolved variable tags', async () => {
+  it('should preserve line breaks in resolved variable tags', () => {
     const body = JSON.stringify({
       type: 'doc',
       content: [
@@ -56,11 +59,14 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    const resolvedBody = await resolveEmailBody(body, {
-      trigger: { message: 'first\n\nthird' },
+    const resolvedBody = resolveEmailBody({
+      body: body,
+      context: {
+        trigger: { message: 'first\n\nthird' },
+      },
     });
 
-    expect(JSON.parse(resolvedBody).content[0].content).toEqual([
+    expect(resolvedBody.content?.[0]?.content).toEqual([
       { type: 'text', text: 'first' },
       { type: 'hardBreak' },
       { type: 'hardBreak' },
@@ -68,7 +74,7 @@ describe('resolveEmailBody', () => {
     ]);
   });
 
-  it('should keep resolved HTML values escaped and inert', async () => {
+  it('should keep resolved HTML values escaped and inert', () => {
     const body = JSON.stringify({
       type: 'doc',
       content: [
@@ -79,35 +85,19 @@ describe('resolveEmailBody', () => {
       ],
     });
 
-    const resolvedBody = await resolveEmailBody(body, {
-      trigger: { message: '<b>{{trigger.secret}}</b>', secret: 'hidden' },
+    const resolvedBody = resolveEmailBody({
+      body: body,
+      context: {
+        trigger: { message: '<b>{{trigger.secret}}</b>', secret: 'hidden' },
+      },
     });
 
-    expect(JSON.parse(resolvedBody).content[0].attrs.html).toBe(
+    expect(resolvedBody.content?.[0]?.attrs?.html).toBe(
       '<p>&lt;b&gt;{{trigger.secret}}&lt;/b&gt;</p>',
     );
   });
 
-  it('should inject raw values into a legacy HTML body kept as an HTML document', async () => {
-    const resolvedBody = await resolveEmailBody(
-      '<p>Hello {{trigger.name}}</p>',
-      { trigger: { name: '<b>Ada</b>' } },
-    );
-
-    expect(JSON.parse(resolvedBody)).toEqual(
-      htmlDocument('<p>Hello <b>Ada</b></p>'),
-    );
-  });
-
-  it('should send the value of a single-variable body as HTML', async () => {
-    const resolvedBody = await resolveEmailBody('{{code.body}}', {
-      code: { body: '<h1>Report</h1>' },
-    });
-
-    expect(JSON.parse(resolvedBody)).toEqual(htmlDocument('<h1>Report</h1>'));
-  });
-
-  it('should render the email document held by a single-variable body', async () => {
+  it('should render the email document held by a whole-body variable', () => {
     const storedDocument = {
       type: 'doc',
       content: [
@@ -118,33 +108,50 @@ describe('resolveEmailBody', () => {
       ],
     };
 
-    const resolvedBody = await resolveEmailBody('{{record.body}}', {
-      record: { body: JSON.stringify(storedDocument) },
+    const resolvedBody = resolveEmailBody({
+      body: JSON.stringify(htmlDocument('{{record.body}}')),
+      context: { record: { body: JSON.stringify(storedDocument) } },
     });
 
-    expect(JSON.parse(resolvedBody)).toEqual(storedDocument);
+    expect(resolvedBody).toEqual(storedDocument);
   });
 
-  it('should reject a single-variable body holding an invalid email document', async () => {
-    await expect(
-      resolveEmailBody('{{record.body}}', {
-        record: {
-          body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
+  it('should send the HTML held by a whole-body variable as written', () => {
+    const resolvedBody = resolveEmailBody({
+      body: JSON.stringify(htmlDocument('{{code.body}}')),
+      context: { code: { body: '<h1>Report</h1>' } },
+    });
+
+    expect(resolvedBody).toEqual(htmlDocument('<h1>Report</h1>'));
+  });
+
+  it('should reject a whole-body variable holding an invalid email document', () => {
+    expect(() =>
+      resolveEmailBody({
+        body: JSON.stringify(htmlDocument('{{record.body}}')),
+        context: {
+          record: {
+            body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
+          },
         },
       }),
-    ).rejects.toThrow('Invalid workflow email document');
+    ).toThrow('Invalid email document');
   });
 
-  it('should insert values raw into stored plain text and keep its line breaks', async () => {
-    const resolvedBody = await resolveEmailBody(
-      'Hi {{trigger.name}} & co\nBye',
-      {
-        trigger: { name: '<b>Ada</b>' },
-      },
-    );
-
-    expect(JSON.parse(resolvedBody)).toEqual(
-      htmlDocument('Hi <b>Ada</b> &amp; co<br>Bye'),
-    );
-  });
+  it.each([
+    '',
+    '<p>Hello {{trigger.name}}</p>',
+    'Hi {{trigger.name}}',
+    '{{code.body}}',
+  ])(
+    'should reject a body that is not a serialized email document: %s',
+    (body) => {
+      expect(() =>
+        resolveEmailBody({
+          body: body,
+          context: { trigger: { name: 'Ada' }, code: {} },
+        }),
+      ).toThrow('Invalid email document');
+    },
+  );
 });

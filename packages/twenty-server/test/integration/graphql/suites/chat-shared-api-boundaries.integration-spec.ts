@@ -19,7 +19,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { type AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
@@ -428,7 +428,7 @@ describe('Shared conversation API boundaries', () => {
     });
   });
 
-  it('does not let ownership bypass a revoked update permission', async () => {
+  it('lets the owner keep writing in their thread after their role loses the update permission', async () => {
     const threadId = context.registerThread();
 
     await setRecordSharingEnabled(false);
@@ -450,13 +450,7 @@ describe('Shared conversation API boundaries', () => {
           });
 
           expect(readable.body.errors).toBeUndefined();
-          expect(sent.body.errors).toBeDefined();
-          expect(
-            await context.chatService.hasMessages({
-              threadId,
-              workspaceId: context.workspaceId,
-            }),
-          ).toBe(false);
+          expect(sent.body.errors).toBeUndefined();
         },
       });
     } finally {

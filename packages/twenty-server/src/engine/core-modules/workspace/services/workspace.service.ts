@@ -118,7 +118,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
@@ -172,6 +172,7 @@ export class WorkspaceService {
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     aiDataPolicy: PermissionFlagType.SECURITY,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
+    isInternalImportEnabled: PermissionFlagType.WORKSPACE,
     isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
     isCampaignOpenTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
@@ -220,7 +221,7 @@ export class WorkspaceService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly eventLogRetentionService: EventLogRetentionService,
-    private readonly roleAssignmentService: RoleAssignmentService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
   ) {}
 
   // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
@@ -535,7 +536,7 @@ export class WorkspaceService {
       isDefined(payload.defaultRoleId) &&
       workspace.defaultRoleId !== payload.defaultRoleId
     ) {
-      await this.roleAssignmentService.validateRoleAssignableToUsersOrThrow({
+      await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
         roleId: payload.defaultRoleId,
         workspaceId: workspace.id,
       });
@@ -629,12 +630,20 @@ export class WorkspaceService {
       });
     }
 
+    const isInternalImportEnabled =
+      payload.isInternalImportEnabled ??
+      payload.isInternalMessagesImportEnabled;
+
     let updatedWorkspace: WorkspaceEntity;
 
     try {
       await this.workspaceRepository.update(workspace.id, {
         ...payload,
         ...(isDefined(aiChatAssistantProfile) && { aiChatAssistantProfile }),
+        ...(isDefined(isInternalImportEnabled) && {
+          isInternalImportEnabled,
+          isInternalMessagesImportEnabled: isInternalImportEnabled,
+        }),
         ...(isDefined(payload.aiDataPolicy) && {
           aiDataPolicy: buildAiDataPolicy({
             aiDataPolicyInput: payload.aiDataPolicy,
@@ -1258,6 +1267,60 @@ export class WorkspaceService {
     }
 
     return totalDeleted;
+  }
+
+  async assertNotRemovingLastServerAdminOrThrow(removedUserIds: string[]) {
+    const isRemovingServerAdmin = await this.userRepository.exists({
+      where: { id: In(removedUserIds), canAccessFullAdminPanel: true },
+    });
+
+    if (!isRemovingServerAdmin) {
+      return;
+    }
+
+    const hasRemainingServerAdmin = await this.userRepository.exists({
+      where: { id: Not(In(removedUserIds)), canAccessFullAdminPanel: true },
+    });
+
+    if (hasRemainingServerAdmin) {
+      return;
+    }
+
+    const hasRemainingUser = await this.userRepository.exists({
+      where: { id: Not(In(removedUserIds)) },
+    });
+
+    if (!hasRemainingUser) {
+      return;
+    }
+
+    throw new PermissionsException(
+      PermissionsExceptionMessage.CANNOT_DELETE_LAST_SERVER_ADMIN,
+      PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN,
+    );
+  }
+
+  async assertWorkspaceDeletionKeepsServerAdminOrThrow(workspaceId: string) {
+    const members = await this.userWorkspaceRepository.find({
+      select: { userId: true },
+      where: { workspaceId },
+      withDeleted: true,
+    });
+
+    const memberIds = members.map(({ userId }) => userId);
+
+    const membersInOtherWorkspaces = await this.userWorkspaceRepository.find({
+      select: { userId: true },
+      where: { userId: In(memberIds), workspaceId: Not(workspaceId) },
+    });
+
+    const keptUserIds = new Set(
+      membersInOtherWorkspaces.map(({ userId }) => userId),
+    );
+
+    await this.assertNotRemovingLastServerAdminOrThrow(
+      memberIds.filter((userId) => !keptUserIds.has(userId)),
+    );
   }
 
   async handleRemoveWorkspaceMember(

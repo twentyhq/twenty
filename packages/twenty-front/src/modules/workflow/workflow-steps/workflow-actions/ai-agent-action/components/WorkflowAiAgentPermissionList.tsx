@@ -1,5 +1,5 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
@@ -58,7 +58,7 @@ export const WorkflowAiAgentPermissionList = ({
       }
 
       CRUD_PERMISSIONS.forEach((crud) => {
-        if (objectPermission[crud.key] === true) {
+        if (objectPermission[crud.key]) {
           permissions.push({
             objectMetadataId: objectPermission.objectMetadataId,
             objectLabel,

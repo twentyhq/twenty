@@ -12,7 +12,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 type UseLazyFindManyRecordsWithOffsetParams = Pick<
   UseFindManyRecordsParams<ObjectRecord>,
@@ -34,10 +34,11 @@ export const useLazyFindManyRecordsWithOffset = ({
 
   const apolloCoreClient = useApolloCoreClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-  });
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -47,9 +48,9 @@ export const useLazyFindManyRecordsWithOffset = ({
     objectMetadataItem.id,
   );
 
-  const hasReadPermission = canReachSomeRecords({
+  const hasReadPermission = canAccessThroughAllRecordsOrRlsPermission({
     objectRecordsPermissions: objectPermissions,
-    operationType: 'select',
+    operationType: 'read',
   });
 
   const findManyRecordsLazyWithOffset = useCallback(
@@ -70,6 +71,7 @@ export const useLazyFindManyRecordsWithOffset = ({
             ...params,
             limit,
             offset,
+            ...relationsWithArgumentsVariables,
           },
         });
 
@@ -100,6 +102,7 @@ export const useLazyFindManyRecordsWithOffset = ({
       apolloCoreClient,
       findManyRecordsQuery,
       params,
+      relationsWithArgumentsVariables,
       objectMetadataItem.namePlural,
       handleFindManyRecordsError,
     ],

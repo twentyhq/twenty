@@ -10,6 +10,7 @@ import {
   IconFolder,
   IconLink,
   IconPerspective,
+  IconSettingsAutomation,
   IconTable,
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -29,6 +30,7 @@ import { NATIVE_PAGE_NAVIGATION_MENU_ITEM_CONFIGS } from '@/navigation-menu-item
 import { hasNativePagePermission } from '@/navigation-menu-item/display/native-page/utils/hasNativePagePermission';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
 import { type NewNavigationMenuItemInput } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuItemAutomationOptions } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions';
 import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
@@ -48,8 +50,9 @@ type UseNavigationMenuItemAddOptionsParams = {
   step: NavigationMenuItemAddStep;
   search: string;
   objectId: string | null;
-  folderId?: string;
+  parentId?: string;
   currentItems: NavigationMenuItem[];
+  hiddenItems: NavigationMenuItem[];
   isSearchingAllItems: boolean;
   addItem: (input: NewNavigationMenuItemInput) => void;
   navigateToStep: (step: NavigationMenuItemAddStep) => void;
@@ -60,8 +63,9 @@ export const useNavigationMenuItemAddOptions = ({
   step,
   search,
   objectId,
-  folderId,
+  parentId,
   currentItems,
+  hiddenItems,
   isSearchingAllItems,
   addItem,
   navigateToStep,
@@ -69,6 +73,9 @@ export const useNavigationMenuItemAddOptions = ({
 }: UseNavigationMenuItemAddOptionsParams) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const isParentFolder =
+    currentItems.find((item) => item.id === parentId)?.type ===
+    NavigationMenuItemType.FOLDER;
   const { getIcon } = useIcons();
 
   const {
@@ -89,7 +96,10 @@ export const useNavigationMenuItemAddOptions = ({
     objectMetadataIdsWithIndexView,
     objectMetadataIdsAlreadyAdded,
     viewIdsAlreadyAdded,
-  } = useNavigationMenuObjectMetadataForSection(currentItems);
+  } = useNavigationMenuObjectMetadataForSection([
+    ...currentItems,
+    ...hiddenItems,
+  ]);
   const {
     navigationMenuItemSearchRecords,
     recordSearchLoading,
@@ -114,6 +124,13 @@ export const useNavigationMenuItemAddOptions = ({
         .map((view) => view.objectMetadataId),
     ),
   });
+  const { hasAutomationAccess, automationItemGroups, automationLoading } =
+    useNavigationMenuItemAutomationOptions({
+      search,
+      skip: step !== 'automation' && !isSearchingAllItems,
+      currentItems,
+      addItem,
+    });
 
   const getItems = (
     targetStep: NavigationMenuItemAddStep = step,
@@ -143,14 +160,29 @@ export const useNavigationMenuItemAddOptions = ({
           onClick: () => navigateToStep('record'),
           hasSubMenu: true,
         },
+        ...(hasAutomationAccess
+          ? [
+              {
+                id: 'automation',
+                label: t`Automations`,
+                icon: (
+                  <TintedIconTile
+                    icon={<IconSettingsAutomation size={theme.icon.size.md} />}
+                  />
+                ),
+                onClick: () => navigateToStep('automation'),
+                hasSubMenu: true,
+              },
+            ]
+          : []),
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: isDefined(folderId)
+          contextualText: isParentFolder
             ? t`Cannot nest folders into folders`
             : undefined,
-          Icon: isDefined(folderId) ? IconFolder : undefined,
-          icon: isDefined(folderId) ? undefined : (
+          Icon: isParentFolder ? IconFolder : undefined,
+          icon: isParentFolder ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
@@ -163,7 +195,7 @@ export const useNavigationMenuItemAddOptions = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             });
           },
-          isDisabled: isDefined(folderId),
+          isDisabled: isParentFolder,
         },
         {
           id: 'link',
@@ -374,6 +406,9 @@ export const useNavigationMenuItemAddOptions = ({
             firstPage.label.localeCompare(secondPage.label),
         );
     }
+    if (targetStep === 'automation') {
+      return automationItemGroups.flatMap((group) => group.items);
+    }
     if (targetStep === 'record') {
       return navigationMenuItemSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
@@ -417,6 +452,8 @@ export const useNavigationMenuItemAddOptions = ({
 
   return {
     getItems,
+    automationItemGroups,
+    automationLoading,
     standalonePagesLoading,
     standalonePagesError,
     recordSearchLoading,

@@ -145,7 +145,9 @@ export const SettingsObjectFieldItemTableRow = ({
     });
   };
 
-  if (!isFieldTypeSupported) return null;
+  if (!isFieldTypeSupported) {
+    return null;
+  }
 
   const isRelatedObjectLinkable = isDefined(
     relationObjectMetadataItem?.namePlural,
@@ -262,7 +264,7 @@ export const SettingsObjectFieldItemTableRow = ({
         ) : mode === 'view' ? (
           <SettingsObjectFieldInactiveActionDropdown
             isCustomField={getIsMetadataItemCustom(fieldMetadataItem)}
-            isSystemField={fieldMetadataItem.isSystem === true}
+            isSystemField={fieldMetadataItem.isSystem ?? false}
             readonly={readonly}
             fieldMetadataItemId={fieldMetadataItem.id}
             onEdit={navigateToFieldEdit}

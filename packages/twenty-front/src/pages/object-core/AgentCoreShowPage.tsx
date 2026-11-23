@@ -1,31 +1,40 @@
 import { useQuery } from '@apollo/client/react';
+import { useLingui } from '@lingui/react/macro';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
-import { useIcons } from 'twenty-ui/icon/provider';
-import { useTheme } from 'twenty-ui/theme';
 
-import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { FindOneAgentDocument } from '~/generated-metadata/graphql';
-import { CoreAgentDetailSkeletonLoader } from '@/object-core/agents/components/CoreAgentDetailSkeletonLoader';
 import { CoreAgentFormContent } from '@/object-core/agents/components/CoreAgentFormContent';
+import { useCoreAgentRunInsights } from '@/object-core/agents/hooks/useCoreAgentRunInsights';
+import { useListenToCoreAgentEvents } from '@/object-core/agents/hooks/useListenToCoreAgentEvents';
+import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 import { useNavigateToNotFoundOnLoadFailure } from '~/pages/settings/ai/hooks/useNavigateToNotFoundOnLoadFailure';
-import { useLingui } from '@lingui/react/macro';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { logError } from '~/utils/logError';
 
 export const AgentCoreShowPage = () => {
   const { t } = useLingui();
   const { agentId = '' } = useParams<{ agentId: string }>();
-  const theme = useTheme();
-  const { getIcon } = useIcons();
 
-  const { data, loading, error } = useQuery(FindOneAgentDocument, {
+  const { data, loading, error, refetch } = useQuery(FindOneAgentDocument, {
     variables: { id: agentId },
   });
 
+  const refetchCoreAgent = useCallback(() => {
+    void refetch().catch(logError);
+  }, [refetch]);
+
+  useListenToCoreAgentEvents({
+    coreAgentId: agentId,
+    refetch: refetchCoreAgent,
+  });
+
+  const runInsights = useCoreAgentRunInsights(agentId);
+
   const agent = data?.findOneAgent;
-  const hasFailedToLoad = !loading && !isDefined(agent);
+  const hasFailedToLoad =
+    !loading && (!isDefined(agent) || isGraphqlErrorOfType(error, 'NOT_FOUND'));
 
   useNavigateToNotFoundOnLoadFailure({
     hasFailedToLoad,
@@ -37,25 +46,18 @@ export const AgentCoreShowPage = () => {
     return null;
   }
 
-  if (!isDefined(agent)) {
-    const AgentIcon = getIcon('IconLego');
-
-    return (
-      <SettingsPageLayout
-        title={t`Agent`}
-        icon={
-          <AgentIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        }
-        links={getCoreAgentBreadcrumbLinks()}
-      >
-        <SettingsPageContainer>
-          <Section.Root>
-            <CoreAgentDetailSkeletonLoader />
-          </Section.Root>
-        </SettingsPageContainer>
-      </SettingsPageLayout>
-    );
+  if (!isDefined(agent) || !isDefined(runInsights.hasRuns)) {
+    return <PageContentSkeletonLoader />;
   }
 
-  return <CoreAgentFormContent key={agent.id} agent={agent} />;
+  return (
+    <CoreAgentFormContent
+      key={agent.id}
+      agent={agent}
+      runInsights={runInsights.insights}
+      hasRuns={runInsights.hasRuns}
+      isLoadingRunInsights={runInsights.loading}
+      hasRunInsightsError={isDefined(runInsights.error)}
+    />
+  );
 };

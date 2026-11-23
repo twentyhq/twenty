@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   listConnections: vi.fn(),
   listMessageChannels: vi.fn(),
   ingestMessages: vi.fn(),
+  uploadMessageAttachment: vi.fn(),
   reportConnectionAuthFailure: vi.fn(),
   kvGet: vi.fn(),
   kvSet: vi.fn(),
@@ -25,6 +26,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
   listConnections: mocks.listConnections,
   listMessageChannels: mocks.listMessageChannels,
   ingestMessages: mocks.ingestMessages,
+  uploadMessageAttachment: mocks.uploadMessageAttachment,
   reportConnectionAuthFailure: mocks.reportConnectionAuthFailure,
   kv: { get: mocks.kvGet, set: mocks.kvSet },
 }));
@@ -90,6 +92,7 @@ describe('linkedinHandleWebhookEventHandler', () => {
       { id: 'channel-id', handle: CHANNEL_HANDLE },
     ]);
     mocks.kvGet.mockResolvedValue(null);
+    mocks.ingestMessages.mockResolvedValue([]);
     mocks.query.mockResolvedValue({ people: { edges: [] } });
     mocks.getUnipileChat.mockResolvedValue({
       id: 'chat-1',
@@ -135,11 +138,22 @@ describe('linkedinHandleWebhookEventHandler', () => {
     });
   });
 
-  it('imports the image of a received message', async () => {
+  it('stores the image of a received message as a message attachment', async () => {
     mocks.downloadUnipileMessageAttachment.mockResolvedValue(
       Buffer.from('png'),
     );
-    const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+    mocks.ingestMessages.mockResolvedValue([
+      {
+        externalId: 'message-1',
+        messageId: 'message-id',
+        messageThreadId: 'thread-id',
+        hasAttachments: false,
+      },
+    ]);
+    mocks.uploadMessageAttachment.mockResolvedValue({
+      fileId: 'file-id',
+      label: 'linkedin-image.png',
+    });
 
     await expect(
       linkedinHandleWebhookEventHandler(
@@ -165,8 +179,18 @@ describe('linkedinHandleWebhookEventHandler', () => {
       maxSizeBytes: 25 * 1024 * 1024,
       deadlineAtMs: expect.any(Number),
     });
-
-    consoleLog.mockRestore();
+    expect(mocks.uploadMessageAttachment).toHaveBeenCalledExactlyOnceWith({
+      filename: 'linkedin-image.png',
+      content: new Uint8Array(Buffer.from('png')),
+      signal: expect.any(AbortSignal),
+    });
+    expect(mocks.ingestMessages).toHaveBeenCalledTimes(2);
+    expect(mocks.ingestMessages.mock.calls[1][0].messages).toEqual([
+      expect.objectContaining({
+        externalId: 'message-1',
+        attachments: [{ fileId: 'file-id', label: 'linkedin-image.png' }],
+      }),
+    ]);
   });
 
   it('imports a group message from a stranger when another member is a contact', async () => {

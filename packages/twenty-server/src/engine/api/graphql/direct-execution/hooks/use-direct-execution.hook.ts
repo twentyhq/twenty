@@ -31,10 +31,10 @@ export type DirectExecutionPluginConfig = {
 
 export function useDirectExecution(
   config: DirectExecutionPluginConfig,
-): Plugin {
+): Plugin<Record<string, unknown>, { req: Request }> {
   return {
     onRequest: async ({ endResponse, serverContext }) => {
-      const req = (serverContext as unknown as { req: Request }).req;
+      const req = serverContext.req;
 
       if (!isDefined(req.workspace)) {
         if (

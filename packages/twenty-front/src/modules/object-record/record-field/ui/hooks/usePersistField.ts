@@ -25,6 +25,7 @@ import { isFieldRawJson } from '@/object-record/record-field/ui/types/guards/isF
 import { isFieldRawJsonValue } from '@/object-record/record-field/ui/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/ui/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/ui/types/guards/isFieldSelectValue';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -56,8 +57,10 @@ import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFiel
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { useToast } from 'twenty-ui/components/feedback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const usePersistField = ({
@@ -78,6 +81,7 @@ export const usePersistField = ({
 
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const { enqueueToast } = useToast();
 
   const persistField = useCallback(
     async ({
@@ -297,11 +301,15 @@ export const usePersistField = ({
           fieldName,
         });
 
+        const recordBeforeUpdate =
+          store.get(recordStoreFamilyState.atomFamily(recordId)) ?? undefined;
+
         store.set(recordFieldSelector, valueToPersist);
 
         const completedUpdateInput = await completeRecordUpdate({
           recordId,
           updateInput: { [fieldName]: valueToPersist },
+          recordBeforeUpdate,
         });
 
         if (!isDefined(completedUpdateInput)) {
@@ -313,6 +321,11 @@ export const usePersistField = ({
           objectNameSingular: objectMetadataItem.nameSingular,
           idToUpdate: recordId,
           updateOneRecordInput: completedUpdateInput,
+        }).catch((error: Error) => {
+          if (isDeeplyEqual(store.get(recordFieldSelector), valueToPersist)) {
+            store.set(recordFieldSelector, currentValue);
+          }
+          enqueueToast(getToastOptionsFromError({ error }));
         });
       } else {
         throw new Error(
@@ -333,6 +346,7 @@ export const usePersistField = ({
       updateOneRecord,
       upsertRecordsInStore,
       completeRecordUpdate,
+      enqueueToast,
     ],
   );
 

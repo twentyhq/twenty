@@ -198,6 +198,7 @@ export class StreamAgentChatJob {
       createdBy: buildActorMetadataFromAuthContext(
         authorizedConversation.authContext,
       ),
+      isBuiltInAssistant: true,
       streamClaim: claim,
     });
 
@@ -221,6 +222,8 @@ export class StreamAgentChatJob {
       workspaceId: data.workspaceId,
       claim,
       turnId,
+      agentId: null,
+      isBuiltInAssistant: true,
       abortSignal,
       startTurn: async (writer) => {
         const turn = await this.chatExecutionService.streamChat({

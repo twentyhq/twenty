@@ -1,0 +1,321 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type ComponentProps, useRef } from 'react';
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import {
+  IconHash,
+  IconLink,
+  IconListSearch,
+  IconPencil,
+  IconPlus,
+  IconUsers,
+} from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
+import { InboxThreadChannelPicker } from '@/inbox/components/InboxThreadChannelPicker';
+import { AiChatThreadDetailsFollowing } from '@/inbox/components/AiChatThreadDetailsFollowing';
+import { InboxThreadDetailsStatus } from '@/inbox/components/InboxThreadDetailsStatus';
+import { AiChatThreadLabelsField } from '@/ai-chat/threads/components/AiChatThreadLabelsField';
+import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai-chat/threads/constants/AiChatThreadDetailsLabelWidthInPx';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
+import { useAiChatThreadRecordTargets } from '@/ai-chat/threads/hooks/useAiChatThreadRecordTargets';
+import { useAiChatTargetNavigation } from '@/ai-chat/threads/hooks/useAiChatTargetNavigation';
+import { useIsAiChatArtifactSurface } from '@/ai-chat/hooks/useIsAiChatArtifactSurface';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
+import { useOpenAssignAiChatInSidePanel } from '@/side-panel/hooks/useOpenAssignAiChatInSidePanel';
+import { RecordChip } from '@/object-record/components/RecordChip';
+import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
+
+const StyledEmptyValue = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledChannel = styled.span`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledDetails = styled.dl`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  margin: 0;
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
+type InboxThreadDetailsDropdownProps = {
+  threadId: string;
+  labels?: ComponentProps<typeof AiChatThreadLabelsField>;
+};
+
+export const InboxThreadDetailsDropdown = ({
+  threadId,
+  labels,
+}: InboxThreadDetailsDropdownProps) => {
+  const { t } = useLingui();
+  const theme = useTheme();
+  const dropdownId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `ai-chat-thread-details-${threadId}`,
+  );
+  const thread = useAtomFamilySelectorValue(
+    aiChatThreadRecordFamilySelector,
+    threadId,
+  );
+  const permissions = useAtomFamilySelectorValue(
+    aiChatThreadPermissionsFamilySelector,
+    threadId,
+  );
+  const canChangeAssignee =
+    (permissions?.canUpdate ?? false) && !isDefined(thread?.deletedAt);
+  const { openAssignAiChatInSidePanel } = useOpenAssignAiChatInSidePanel();
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const assignee = currentWorkspaceMembers.find(
+    (workspaceMember) => workspaceMember.id === thread?.assigneeId,
+  );
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    thread?.channelId,
+  );
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const { closeDropdown } = useCloseDropdown();
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
+  const { openRecordTarget } = useAiChatTargetNavigation();
+  const dropdownContentRef = useRef<HTMLDivElement>(null);
+  const detailsTriggerRef = useRef<HTMLButtonElement>(null);
+  const recordPickerContentRef = useRef<HTMLDivElement>(null);
+  const recordPickerDropdownId = `${dropdownId}-record-picker`;
+  const {
+    isAvailable: areRecordTargetsAvailable,
+    targetRecords,
+    canEditRecordTargets,
+    openRecordPicker,
+    handleRecordPickerChange,
+  } = useAiChatThreadRecordTargets({
+    threadId,
+    recordPickerInstanceId: recordPickerDropdownId,
+  });
+  const { openDropdown } = useOpenDropdown();
+  const hasTargetRecords = isNonEmptyArray(targetRecords);
+  const editRecordTargetsLabel = hasTargetRecords
+    ? t`Edit linked records`
+    : t`Link to a record`;
+  const EditRecordTargetsIcon = hasTargetRecords ? IconPencil : IconPlus;
+
+  const editRecordTargets = () => {
+    closeDropdown(dropdownId);
+    openRecordPicker();
+    openDropdown({
+      dropdownComponentInstanceIdFromProps: recordPickerDropdownId,
+    });
+  };
+
+  if (
+    !isAiChatInboxEnabled ||
+    thread?.conversationType === AgentChatThreadConversationType.DIRECT_MESSAGE
+  ) {
+    return null;
+  }
+
+  return (
+    <>
+      <DropdownRoot dropdownId={dropdownId} type="panel">
+        <Dropdown.Trigger
+          render={
+            <LightIconButton
+              ref={detailsTriggerRef}
+              aria-label={t`Chat details`}
+              title={t`Chat details`}
+              emphasis="subtle"
+            >
+              <IconListSearch />
+            </LightIconButton>
+          }
+        />
+        <DropdownContent
+          ref={dropdownContentRef}
+          initialFocus={() => dropdownContentRef.current}
+          align="start"
+          width={GenericDropdownContentWidth.ExtraExtraLarge}
+          aria-label={t`Chat details`}
+        >
+          <StyledDetails>
+            <InboxThreadDetailsStatus
+              threadId={threadId}
+              dropdownId={dropdownId}
+            />
+            {areRecordTargetsAvailable && (
+              <DetailsRow
+                labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+                startIcon={<IconLink size={themeCssVariables.icon.size.md} />}
+                label={t`Linked to`}
+                action={
+                  canEditRecordTargets && (
+                    <LightIconButton
+                      aria-label={editRecordTargetsLabel}
+                      title={editRecordTargetsLabel}
+                      emphasis="subtle"
+                      onClick={editRecordTargets}
+                    >
+                      <EditRecordTargetsIcon />
+                    </LightIconButton>
+                  )
+                }
+              >
+                {hasTargetRecords ? (
+                  targetRecords.map(({ record, objectNameSingular }) => (
+                    <RecordChip
+                      key={`${objectNameSingular}-${record.id}`}
+                      objectNameSingular={objectNameSingular}
+                      record={record}
+                      onClick={
+                        isAiChatArtifactSurface
+                          ? () => {
+                              closeDropdown(dropdownId);
+                              openRecordTarget({
+                                recordId: record.id,
+                                objectNameSingular,
+                              });
+                            }
+                          : undefined
+                      }
+                    />
+                  ))
+                ) : (
+                  <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+                )}
+              </DetailsRow>
+            )}
+            <DetailsRow
+              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              startIcon={<IconHash size={themeCssVariables.icon.size.md} />}
+              label={t`Channel`}
+              action={
+                isDefined(thread) && (
+                  <InboxThreadChannelPicker
+                    thread={thread}
+                    dropdownId={`${dropdownId}-channel-picker`}
+                  />
+                )
+              }
+            >
+              {isDefined(aiChatChannel) ? (
+                <StyledChannel>
+                  <AiChatChannelIcon
+                    channel={aiChatChannel}
+                    size={theme.icon.size.sm}
+                  />
+                  {aiChatChannel.name}
+                </StyledChannel>
+              ) : (
+                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+              )}
+            </DetailsRow>
+            <DetailsRow
+              labelWidth={AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX}
+              startIcon={<IconUsers size={themeCssVariables.icon.size.md} />}
+              label={t`Assignee`}
+              action={
+                canChangeAssignee && (
+                  <LightIconButton
+                    aria-label={t`Change assignee`}
+                    title={t`Change assignee`}
+                    emphasis="subtle"
+                    onClick={() => {
+                      closeDropdown(dropdownId);
+                      openAssignAiChatInSidePanel([threadId]);
+                    }}
+                  >
+                    <IconPencil />
+                  </LightIconButton>
+                )
+              }
+            >
+              {isDefined(assignee) ? (
+                <RecordChip
+                  objectNameSingular={
+                    StandardObjectNameSingular.WorkspaceMember
+                  }
+                  record={{ ...assignee, __typename: 'WorkspaceMember' }}
+                />
+              ) : (
+                <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+              )}
+            </DetailsRow>
+            {isDefined(labels) && (
+              <AiChatThreadLabelsField
+                labels={labels.labels}
+                selectedLabelIds={labels.selectedLabelIds}
+                isSaving={labels.isSaving}
+                onLabelsChange={labels.onLabelsChange}
+              />
+            )}
+            <AiChatThreadDetailsFollowing threadId={threadId} />
+          </StyledDetails>
+        </DropdownContent>
+      </DropdownRoot>
+      {canEditRecordTargets && (
+        <DropdownRoot
+          dropdownId={recordPickerDropdownId}
+          type="picker"
+          multiple
+        >
+          <DropdownContent
+            ref={recordPickerContentRef}
+            anchor={detailsTriggerRef}
+            finalFocus={(interaction) => {
+              const detailsTrigger = detailsTriggerRef.current;
+
+              if (interaction !== 'keyboard' || !isDefined(detailsTrigger)) {
+                return false;
+              }
+
+              const ownerDocument = detailsTrigger.ownerDocument;
+              const activeElement = ownerDocument.activeElement;
+              const isFocusStillInsidePicker =
+                activeElement === ownerDocument.body ||
+                (recordPickerContentRef.current?.contains(activeElement) ??
+                  false);
+
+              return isFocusStillInsidePicker ? detailsTrigger : false;
+            }}
+            side="bottom"
+            align="start"
+            aria-label={editRecordTargetsLabel}
+          >
+            <MultipleRecordPicker
+              componentInstanceId={recordPickerDropdownId}
+              onChange={handleRecordPickerChange}
+              layoutDirection="search-bar-on-top"
+            />
+          </DropdownContent>
+        </DropdownRoot>
+      )}
+    </>
+  );
+};

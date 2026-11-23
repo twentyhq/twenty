@@ -8,7 +8,9 @@ import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuote
 export const multiSelectFieldDefaultValueSchema = (
   options?: FieldMetadataItemOption[],
 ) => {
-  if (!options?.length) return z.array(simpleQuotesStringSchema).nullable();
+  if (!options?.length) {
+    return z.array(simpleQuotesStringSchema).nullable();
+  }
 
   const optionValues = options.map(({ value }) => value);
 

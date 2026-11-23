@@ -21,15 +21,17 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { addFieldMetadataOptionDeletionsToOperationRecord } from 'src/engine/core-modules/application/application-manifest/utils/add-field-metadata-option-deletions-to-operation-record.util';
+import { findForeignFieldMetadataOptionsCollidingWithApplicationOptionsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/find-foreign-field-metadata-options-colliding-with-application-options-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { type ApplicationManifestSyncResult } from 'src/engine/core-modules/application/application-manifest/types/application-manifest-sync-result.type';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -39,7 +41,7 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -76,7 +78,14 @@ export class ApplicationManifestMigrationService {
       application: manifest.application,
       objects: [],
       fields: [],
-      logicFunctions: [preInstallLogicFunctionManifest],
+      // The app's objects don't exist yet: the full sync that follows adds the event triggers
+      logicFunctions: [
+        {
+          ...preInstallLogicFunctionManifest,
+          eventTriggerSettings: undefined,
+          databaseEventTriggerSettings: undefined,
+        },
+      ],
       frontComponents: [],
       permissionFlags: [],
       roles: [],
@@ -126,6 +135,7 @@ export class ApplicationManifestMigrationService {
         manifest: preInstallOnlyManifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         now,
       });
 
@@ -184,10 +194,7 @@ export class ApplicationManifestMigrationService {
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
     shouldDeferActions?: boolean;
-  }): Promise<{
-    workspaceMigration: WorkspaceMigration;
-    hasSchemaMetadataChanged: boolean;
-  }> {
+  }): Promise<ApplicationManifestSyncResult> {
     const now = new Date().toISOString();
 
     const recomputeStart = performance.now();
@@ -213,6 +220,7 @@ export class ApplicationManifestMigrationService {
         manifest,
         ownerFlatApplication,
         fromAllFlatEntityMaps,
+        existingAllFlatEntityMaps,
         now,
       });
 
@@ -226,13 +234,10 @@ export class ApplicationManifestMigrationService {
 
     const hasWorkflows = (manifest.workflows ?? []).length > 0;
 
-    const workspaceCustomFlatApplication = hasWorkflows
-      ? (
-          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-            { workspaceId },
-          )
-        ).workspaceCustomFlatApplication
-      : undefined;
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
 
     const idByUniversalIdentifierByMetadataName = hasWorkflows
       ? preallocateWorkflowReferenceIds({
@@ -269,7 +274,7 @@ export class ApplicationManifestMigrationService {
       now,
     });
 
-    const allFlatEntityOperationRecordByMetadataName =
+    const fromToFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
         toAllUniversalFlatEntityMaps,
@@ -281,6 +286,27 @@ export class ApplicationManifestMigrationService {
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
         },
+      });
+
+    const allFlatEntityOperationRecordByMetadataName =
+      addFieldMetadataOptionDeletionsToOperationRecord({
+        allFlatEntityOperationRecordByMetadataName:
+          fromToFlatEntityOperationRecordByMetadataName,
+        flatFieldMetadataOptionsToDelete:
+          findForeignFieldMetadataOptionsCollidingWithApplicationOptionsOrThrow(
+            {
+              existingFlatFieldMetadataOptionMaps:
+                existingAllFlatEntityMaps.flatFieldMetadataOptionMaps,
+              toFlatFieldMetadataOptionMaps:
+                toAllUniversalFlatEntityMaps.flatFieldMetadataOptionMaps,
+              toFlatFieldMetadataMaps:
+                toAllUniversalFlatEntityMaps.flatFieldMetadataMaps,
+              applicationUniversalIdentifier:
+                ownerFlatApplication.universalIdentifier,
+              workspaceCustomApplicationUniversalIdentifier:
+                workspaceCustomFlatApplication.universalIdentifier,
+            },
+          ),
       });
 
     const connectionProviderIdsToDelete = Object.values(
@@ -346,7 +372,7 @@ export class ApplicationManifestMigrationService {
         inferDeletionFromMissingEntities,
       });
 
-      await this.workflowVersionCoreSyncService.publishCronTriggerCacheEntries(
+      await this.coreWorkflowTriggerService.publishCronTriggerCacheEntries(
         buildApplicationWorkflowCronTriggerCacheEntries({
           workspaceId,
           workflows: applicationWorkflows,
@@ -357,6 +383,8 @@ export class ApplicationManifestMigrationService {
     return {
       workspaceMigration: validateAndBuildResult.workspaceMigration,
       hasSchemaMetadataChanged: validateAndBuildResult.hasSchemaMetadataChanged,
+      cascadeDeletionParentByUniversalIdentifier:
+        validateAndBuildResult.cascadeDeletionParentByUniversalIdentifier,
     };
   }
 
@@ -401,7 +429,7 @@ export class ApplicationManifestMigrationService {
       'flatLogicFunctionMaps',
     ]);
 
-    let defaultRoleId: string | null = null;
+    let requestedRoleId: string | null = null;
 
     for (const role of manifest.roles) {
       const flatRoleId = resolveApplicationReferenceIdOrThrow({
@@ -415,7 +443,7 @@ export class ApplicationManifestMigrationService {
         role.universalIdentifier ===
         manifest.application.defaultRoleUniversalIdentifier
       ) {
-        defaultRoleId = flatRoleId;
+        requestedRoleId = flatRoleId;
       }
     }
 
@@ -482,7 +510,9 @@ export class ApplicationManifestMigrationService {
                 ?.runOnUserPreferences ?? false,
           }
         : {}),
-      ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
+      ...(isDefined(requestedRoleId)
+        ? { requestedRoleId, defaultRoleId: requestedRoleId }
+        : {}),
     });
   }
 }

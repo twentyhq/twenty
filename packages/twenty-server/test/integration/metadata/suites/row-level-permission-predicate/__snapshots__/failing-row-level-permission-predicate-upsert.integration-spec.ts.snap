@@ -97,33 +97,6 @@ exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId 
 }
 `;
 
-exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group does not exist 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Could not find objectMetadata for given objectMetadataId",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`Row Level Permission Predicate upsert should fail when objectMetadataId in predicate group is not a valid UUID 1`] = `
-{
-  "extensions": {
-    "code": "GRAPHQL_VALIDATION_FAILED",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
-    "value": "invalid-uuid",
-  },
-  "message": "Invalid UUID: 'invalid-uuid'",
-  "name": "ValidationError",
-}
-`;
-
 exports[`Row Level Permission Predicate upsert should fail when objectMetadataId is not a valid UUID 1`] = `
 {
   "extensions": {
@@ -136,18 +109,6 @@ exports[`Row Level Permission Predicate upsert should fail when objectMetadataId
   },
   "message": "Invalid UUID: 'invalid-uuid'",
   "name": "ValidationError",
-}
-`;
-
-exports[`Row Level Permission Predicate upsert should fail when parentRowLevelPermissionPredicateGroupId in group does not exist 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "Could not find rowLevelPermissionPredicateGroup for given parentRowLevelPermissionPredicateGroupId",
-  "name": "NotFoundError",
 }
 `;
 
@@ -201,18 +162,6 @@ exports[`Row Level Permission Predicate upsert should fail when roleId is not a 
 }
 `;
 
-exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissionPredicateGroupId in predicate does not exist 1`] = `
-{
-  "extensions": {
-    "code": "BAD_USER_INPUT",
-    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
-    "userFriendlyMessage": "Invalid row level permission predicate data.",
-  },
-  "message": "Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.",
-  "name": "UserInputError",
-}
-`;
-
 exports[`Row Level Permission Predicate upsert should fail when the operand is not supported for the field type 1`] = `
 {
   "extensions": {
@@ -242,6 +191,41 @@ exports[`Row Level Permission Predicate upsert should fail when the operand is n
       "totalErrors": 1,
     },
     "userFriendlyMessage": "This operand is not supported for this field",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the predicate compares a field to a workspace member field of another type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Field "name" cannot be compared to workspace member field "calendarStartDay", their types are not compatible",
+              "userFriendlyMessage": "This field cannot be compared to this workspace member field",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This field cannot be compared to this workspace member field",
   },
   "message": "Validation errors occurred while upserting row level permission predicates",
   "name": "GraphQLError",
@@ -303,6 +287,30 @@ exports[`Row Level Permission Predicate upsert should fail when the relation hop
     "userFriendlyMessage": "Invalid row level permission predicate data.",
   },
   "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the workspace member field is not a field of the object the workspace member relation reaches 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the workspace member relation is not a relation of the workspace member 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "workspaceMemberFieldMetadataId is not a field of the workspaceMember object, or of the object its relation reaches. The rule would silently never apply.",
   "name": "UserInputError",
 }
 `;

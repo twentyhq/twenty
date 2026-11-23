@@ -1,13 +1,12 @@
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { useAgentChatThreadDisplayLabel } from '@/ai/hooks/useAgentChatThreadDisplayLabel';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
+import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
+import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { useAskAiSidePanelThreadId } from '@/side-panel/hooks/useAskAiSidePanelThreadId';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 
@@ -20,13 +19,13 @@ const StyledContainer = styled.div`
 
 export const SidePanelAskAiInfo = () => {
   const { t } = useLingui();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
+  const askAiSidePanelThreadId = useAskAiSidePanelThreadId();
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const thread = useAtomFamilySelectorValue(
-    agentChatThreadRecordFamilySelector,
-    currentAiChatThread ?? '',
+    aiChatThreadRecordFamilySelector,
+    askAiSidePanelThreadId,
   );
-  const displayLabel = useAgentChatThreadDisplayLabel({
+  const displayLabel = useAiChatThreadDisplayLabel({
     thread,
     fallbackLabel: t`Ask AI`,
   });
@@ -34,8 +33,8 @@ export const SidePanelAskAiInfo = () => {
   return (
     <StyledContainer>
       <HeaderIdentifier title={displayLabel} />
-      {isDefined(currentAiChatThread) && !isOnNewAiChatSlot && (
-        <AiChatThreadDetailsDropdown threadId={currentAiChatThread} />
+      {askAiSidePanelThreadId !== newAiChatThreadId && (
+        <InboxThreadDetailsDropdown threadId={askAiSidePanelThreadId} />
       )}
     </StyledContainer>
   );

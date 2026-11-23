@@ -7,14 +7,14 @@ import { IconCheck, IconUserOff } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useAssignAgentChatThreads } from '@/ai/hooks/useAssignAgentChatThreads';
-import { agentChatThreadsSharedAssigneeIdFamilySelector } from '@/ai/states/selectors/agentChatThreadsSharedAssigneeIdFamilySelector';
+import { useAssignAiChatThreads } from '@/ai-chat/threads/hooks/useAssignAiChatThreads';
+import { aiChatThreadsAssigneeSummaryFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadsAssigneeSummaryFamilySelector';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
 import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -41,10 +41,10 @@ export const SidePanelAssignAiChatPage = () => {
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { sharedAssigneeId, hasAssignee } = useAtomFamilySelectorValue(
-    agentChatThreadsSharedAssigneeIdFamilySelector,
+    aiChatThreadsAssigneeSummaryFamilySelector,
     { threadIds: assignAiChatThreadIds },
   );
-  const { assignAgentChatThreads } = useAssignAgentChatThreads();
+  const { assignAiChatThreads } = useAssignAiChatThreads();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const [search, setSearch] = useState('');
 
@@ -62,7 +62,7 @@ export const SidePanelAssignAiChatPage = () => {
 
   const handleAssign = (assigneeWorkspaceMemberId: string | null) => {
     void closeSidePanelMenu();
-    void assignAgentChatThreads({
+    void assignAiChatThreads({
       threadIds: assignAiChatThreadIds,
       assigneeWorkspaceMemberId,
     });

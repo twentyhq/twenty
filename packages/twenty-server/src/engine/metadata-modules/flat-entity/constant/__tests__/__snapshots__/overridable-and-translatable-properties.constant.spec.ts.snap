@@ -5,6 +5,8 @@ exports[`registry-derived override property maps derives the overridable propert
   "agent": [
     "label",
     "icon",
+    "avatarColor",
+    "avatarShape",
     "description",
     "prompt",
     "modelId",
@@ -48,7 +50,9 @@ exports[`registry-derived override property maps derives the overridable propert
   "logicFunction": [],
   "mcpServer": [],
   "messagingProvider": [],
-  "navigationMenuItem": [],
+  "navigationMenuItem": [
+    "isActive",
+  ],
   "objectMetadata": [
     "openRecordIn",
     "color",
@@ -73,6 +77,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "pageLayoutTabId",
     "conditionalDisplay",
     "conditionalAvailabilityExpression",
+    "conditionalAvailability",
     "isActive",
   ],
   "permissionFlag": [],
@@ -82,6 +87,7 @@ exports[`registry-derived override property maps derives the overridable propert
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
+  "rowLevelPermissionRule": [],
   "searchFieldMetadata": [],
   "settingsMenuItem": [],
   "skill": [
@@ -113,6 +119,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "visibility",
     "mainGroupByFieldMetadataId",
     "shouldHideEmptyGroups",
+    "shouldDisplayGroupsAsTabs",
     "kanbanColumnWidth",
     "groupLoadLimit",
     "isActive",
@@ -123,6 +130,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "position",
     "aggregateOperation",
     "viewFieldGroupId",
+    "label",
     "isActive",
   ],
   "viewFieldGroup": [

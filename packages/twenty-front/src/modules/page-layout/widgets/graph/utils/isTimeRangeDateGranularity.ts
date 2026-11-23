@@ -4,7 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 export const isTimeRangeDateGranularity = (
   granularity?: ObjectRecordGroupByDateGranularity | null,
 ): boolean => {
-  if (!isDefined(granularity)) return false;
+  if (!isDefined(granularity)) {
+    return false;
+  }
   return [
     ObjectRecordGroupByDateGranularity.WEEK,
     ObjectRecordGroupByDateGranularity.MONTH,

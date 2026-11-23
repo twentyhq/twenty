@@ -2,11 +2,9 @@ import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import {
-  currentWorkspaceState,
-  type CurrentWorkspace,
-} from '@/auth/states/currentWorkspaceState';
+import { aiChatUISessionStartTimeState } from '@/ai-chat/states/aiChatUISessionStartTimeState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -33,7 +31,7 @@ describe('useOpenAskAiPageInSidePanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jotaiStore.set(isSidePanelOpenedState.atom, false);
-    jotaiStore.set(agentChatUISessionStartTimeState.atom, null);
+    jotaiStore.set(aiChatUISessionStartTimeState.atom, null);
     jotaiStore.set(currentWorkspaceState.atom, null);
     window.history.pushState({}, '', '/objects/companies');
   });
@@ -108,8 +106,9 @@ describe('useOpenAskAiPageInSidePanel', () => {
 
   it('should not open the AskAI page for a suspended workspace', () => {
     jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
       activationStatus: WorkspaceActivationStatus.SUSPENDED,
-    } as CurrentWorkspace);
+    });
 
     const { result } = renderHook(() => useOpenAskAiPageInSidePanel(), {
       wrapper: Wrapper,
@@ -120,6 +119,6 @@ describe('useOpenAskAiPageInSidePanel', () => {
     });
 
     expect(navigateSidePanelMenuMock).not.toHaveBeenCalled();
-    expect(jotaiStore.get(agentChatUISessionStartTimeState.atom)).toBeNull();
+    expect(jotaiStore.get(aiChatUISessionStartTimeState.atom)).toBeNull();
   });
 });

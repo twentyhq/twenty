@@ -1,6 +1,9 @@
 /* @license Enterprise */
 
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
@@ -21,20 +24,18 @@ export const buildRecordReadRestrictions = ({
     }
 
     if (
-      !canReachSomeRecords({
+      !canAccessThroughAllRecordsOrRlsPermission({
         objectRecordsPermissions,
-        operationType: 'select',
+        operationType: 'read',
       })
     ) {
       unreadableObjectMetadataIds.add(objectMetadataId);
     }
 
-    for (const [fieldMetadataId, fieldPermissions] of Object.entries(
-      objectRecordsPermissions.restrictedFields,
-    )) {
-      if (fieldPermissions.canRead === false) {
-        unreadableFieldMetadataIds.add(fieldMetadataId);
-      }
+    // Cached role permissions keep their old shape until the upgrade recomputes them
+    for (const fieldMetadataId of objectRecordsPermissions.unreadableFields ??
+      []) {
+      unreadableFieldMetadataIds.add(fieldMetadataId);
     }
   }
 

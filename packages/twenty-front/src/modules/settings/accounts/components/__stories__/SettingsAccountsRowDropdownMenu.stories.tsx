@@ -31,7 +31,7 @@ const meta: Meta<typeof SettingsAccountsRowDropdownMenu> = {
     (Story) => (
       <MemoryRouter
         basename="/workspace"
-        initialEntries={['/workspace/settings/accounts']}
+        initialEntries={['/workspace/settings/app-preferences']}
       >
         <CurrentLocation />
         <TableRow onClick={onRowClick}>
@@ -63,20 +63,20 @@ export const KeyboardNavigation: Story = {
     for (const { label, destination } of [
       {
         label: 'Complete setup',
-        destination: 'configuration/connected-account',
+        destination: 'connected-account/configuration',
       },
       {
         label: 'Connection settings',
-        destination: 'edit-imap-smtp-caldav-connection/connected-account',
+        destination: 'connected-account/edit-imap-smtp-caldav-connection',
       },
-      { label: 'Emails settings', destination: 'emails' },
-      { label: 'Calendar settings', destination: 'calendars' },
+      { label: 'Emails settings', destination: 'connected-account#emails' },
+      { label: 'Calendar settings', destination: 'connected-account#calendar' },
     ]) {
       const item = canvas.getByRole('menuitem', { name: label });
       await expect(item.tagName).toBe('A');
       await expect(item).toHaveAttribute(
         'href',
-        `/workspace/settings/accounts/${destination}`,
+        `/workspace/settings/app-preferences/accounts/${destination}`,
       );
     }
 
@@ -84,7 +84,9 @@ export const KeyboardNavigation: Story = {
 
     await expect(
       canvas.getByRole('status', { name: 'Current location' }),
-    ).toHaveTextContent('/settings/accounts/configuration/connected-account');
+    ).toHaveTextContent(
+      '/settings/app-preferences/accounts/connected-account/configuration',
+    );
     await expect(onRowClick).not.toHaveBeenCalled();
     await waitFor(() =>
       expect(canvas.queryByRole('menu')).not.toBeInTheDocument(),
@@ -197,7 +199,7 @@ export const ReconnectArchivedAccount: Story = {
 
       await waitFor(() =>
         expect(openWindow).toHaveBeenCalledWith(
-          `${REACT_APP_SERVER_BASE_URL}/auth/google-apis?transientToken=reconnect-token&redirectLocation=%2Fsettings%2Faccounts&loginHint=${mockedDropdownConnectedAccount.handle}`,
+          `${REACT_APP_SERVER_BASE_URL}/auth/google-apis?transientToken=reconnect-token&redirectLocation=%2Fsettings%2Fapp-preferences&loginHint=${mockedDropdownConnectedAccount.handle}`,
           '_self',
         ),
       );

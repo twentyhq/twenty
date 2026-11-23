@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   getFieldUniversalIdentifier,
+  type ApplicationBillingPrice,
   type ApplicationManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
@@ -300,6 +301,82 @@ describe('manifestValidate', () => {
       );
     });
 
+    it('should fail when two billing prices share a universalIdentifier', () => {
+      const billingPrice: ApplicationBillingPrice = {
+        universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+        label: 'Platform',
+        type: 'RECURRING',
+        billingPeriod: 'MONTHLY',
+        amountCents: 2000,
+      };
+
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [billingPrice, { ...billingPrice, label: 'Per member' }],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        'Duplicate universal identifiers: 3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+      );
+    });
+
+    it('should fail when a price per connected account has no connection provider', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [
+              {
+                universalIdentifier: '3f0c9a52-6b1e-4d7a-9c35-8e2f1a4b7d60',
+                label: 'Per connected account',
+                type: 'RECURRING',
+                billingPeriod: 'MONTHLY',
+                amountCents: 1000,
+                per: 'CONNECTED_ACCOUNT',
+              },
+            ],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'A billing price per CONNECTED_ACCOUNT needs a connection provider',
+      );
+    });
+
+    it('should fail when a billing price universalIdentifier is not a valid UUID', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        application: {
+          ...validApplication,
+          billing: {
+            prices: [
+              {
+                universalIdentifier: 'not-a-uuid',
+                label: 'Platform',
+                type: 'RECURRING',
+                billingPeriod: 'MONTHLY',
+                amountCents: 2000,
+              },
+            ],
+          },
+        },
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors.join(' ')).toContain(
+        'Invalid universal identifiers',
+      );
+    });
+
     it('should fail when extension field ID conflicts with object field ID', () => {
       const sharedId = '550e8400-e29b-41d4-a716-446655440001';
 
@@ -384,9 +461,11 @@ describe('manifestValidate', () => {
       },
     );
 
-    it('should not flag a messaging provider referencing its connection provider and send logic function as duplicates', () => {
+    it('should not flag a messaging provider referencing its connection provider and logic functions as duplicates', () => {
       const connectionProviderId = '550e8400-e29b-41d4-a716-446655440045';
       const sendMessageLogicFunctionId = '550e8400-e29b-41d4-a716-446655440046';
+      const markThreadAsReadLogicFunctionId =
+        '550e8400-e29b-41d4-a716-446655440051';
 
       const result = manifestValidate({
         ...validManifest,
@@ -396,6 +475,14 @@ describe('manifestValidate', () => {
             name: 'send-message',
             sourceHandlerPath: 'src/logic-functions/send-message.ts',
             builtHandlerPath: 'dist/send-message.js',
+            builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
+            handlerName: 'handler',
+          },
+          {
+            universalIdentifier: markThreadAsReadLogicFunctionId,
+            name: 'mark-thread-as-read',
+            sourceHandlerPath: 'src/logic-functions/mark-thread-as-read.ts',
+            builtHandlerPath: 'dist/mark-thread-as-read.js',
             builtHandlerChecksum: '00000000-0000-4000-8000-000000000000',
             handlerName: 'handler',
           },
@@ -424,6 +511,9 @@ describe('manifestValidate', () => {
             connectionProvider: { universalIdentifier: connectionProviderId },
             sendMessageLogicFunction: {
               universalIdentifier: sendMessageLogicFunctionId,
+            },
+            markThreadAsReadLogicFunction: {
+              universalIdentifier: markThreadAsReadLogicFunctionId,
             },
           },
         ],

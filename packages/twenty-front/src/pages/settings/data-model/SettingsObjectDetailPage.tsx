@@ -81,14 +81,16 @@ export const SettingsObjectDetailPage = () => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (objectNamePlural === updatedObjectNamePlural)
+    if (objectNamePlural === updatedObjectNamePlural) {
       setUpdatedObjectNamePlural('');
+    }
     if (
       workspaceSurface.type === 'main' &&
       !isDeleting &&
       !isDefined(objectMetadataItem)
-    )
+    ) {
       navigateApp(AppPath.NotFound);
+    }
   }, [
     objectMetadataItem,
     navigateApp,

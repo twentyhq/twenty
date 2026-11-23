@@ -7,5 +7,6 @@ export type ViewSort = {
   updatedAt?: string;
   direction: ViewSortDirection;
   subFieldName?: string | null;
+  relationTargetFieldMetadataId?: string | null;
   viewId?: string;
 };

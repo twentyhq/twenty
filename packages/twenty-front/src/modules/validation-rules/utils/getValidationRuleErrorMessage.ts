@@ -22,6 +22,10 @@ export const getValidationRuleErrorMessage = ({
   const token = errorParams?.token;
 
   switch (errorCode) {
+    case 'INVALID_DATE_UNIT':
+      return t`Invalid date unit. Use MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER or YEAR.`;
+    case 'INVALID_DATE_PART':
+      return t`Invalid date part. Use YEAR, QUARTER, MONTH, WEEK, DAY, DAY_OF_WEEK, HOUR or MINUTE.`;
     case 'EMPTY_EXPRESSION':
       return t`Expression is empty`;
     case 'EXPRESSION_TOO_LONG':
@@ -44,6 +48,8 @@ export const getValidationRuleErrorMessage = ({
       return t`Unknown field "${fieldName}" on "${relationFieldName}"`;
     case 'RELATION_TOO_DEEP':
       return t`"${path}" goes more than one relation deep`;
+    case 'PREVIOUS_VALUE_OF_RELATION':
+      return t`"${path}" reads a relation, but previous values only cover this record's own fields`;
     case 'NON_BOOLEAN_RESULT':
       return t`Expression did not return true or false`;
     case 'INCOMPLETE_EXPRESSION':

@@ -3,13 +3,16 @@ import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/gro
 const buildRun = ({
   id,
   threadId,
+  canReadThread = true,
 }: {
   id: string;
   threadId: string | null;
+  canReadThread?: boolean;
 }) => ({
   id,
   threadId,
   threadTitle: `Conversation ${threadId}`,
+  canReadThread,
 });
 
 describe('groupCoreAgentRunsByConversation', () => {
@@ -45,6 +48,18 @@ describe('groupCoreAgentRunsByConversation', () => {
     const runs = [
       buildRun({ id: 'run-2', threadId: null }),
       buildRun({ id: 'run-1', threadId: null }),
+    ];
+
+    expect(groupCoreAgentRunsByConversation(runs)).toEqual([
+      { type: 'run', run: runs[0] },
+      { type: 'run', run: runs[1] },
+    ]);
+  });
+
+  it('lists the runs of a conversation the reader cannot open as plain rows', () => {
+    const runs = [
+      buildRun({ id: 'run-2', threadId: 'thread-a', canReadThread: false }),
+      buildRun({ id: 'run-1', threadId: 'thread-a', canReadThread: false }),
     ];
 
     expect(groupCoreAgentRunsByConversation(runs)).toEqual([

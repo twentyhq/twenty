@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager } from 'typeorm';
 
@@ -78,6 +79,19 @@ const buildMentionResolutionQuery = ({
    SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    WHERE "threadId" = $1 AND "workspaceMemberId" = $2
      AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
+   RETURNING *`;
+
+// For archiving on a member's behalf: an UPDATE that skips a member who does
+// not follow the chat, where ARCHIVE would subscribe them
+const buildArchiveIfFollowingQuery: BuildParticipantWriteQuery = ({
+  participantTable,
+}) =>
+  `UPDATE ${participantTable} AS participant
+   SET "archivedAt" = clock_timestamp(),
+     "snoozedUntil" = NULL,
+     "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
+     "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
+   WHERE "threadId" = $1 AND "workspaceMemberId" = $2 AND "isSubscribed"
    RETURNING *`;
 
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
@@ -182,12 +196,16 @@ export class AgentChatThreadParticipantService {
     writeThread,
     workspaceId,
     workspaceMemberId,
+    isArchivedOnlyIfFollowing = false,
   }: Omit<AgentChatThreadAccessArgs, 'threadId'> & {
     threadIds: string[];
     action: AgentChatInboxAction;
     snoozedUntil: Date | null;
     writeThread?: AgentChatThreadWriteStep;
+    isArchivedOnlyIfFollowing?: boolean;
   }): Promise<AgentChatThreadParticipantDTO[]> {
+    const isArchiveIfFollowing =
+      isArchivedOnlyIfFollowing && action === AgentChatInboxAction.ARCHIVE;
     const isSnooze = action === AgentChatInboxAction.SNOOZE;
     const snoozeEnd = isSnooze ? snoozedUntil : null;
 
@@ -234,8 +252,14 @@ export class AgentChatThreadParticipantService {
     };
 
     return this.write(
-      { ...memberArgs, threadIds: uniqueThreadIds, isEveryRowRequired: true },
-      INBOX_ACTION_QUERIES[action],
+      {
+        ...memberArgs,
+        threadIds: uniqueThreadIds,
+        isEveryRowRequired: !isArchiveIfFollowing,
+      },
+      isArchiveIfFollowing
+        ? buildArchiveIfFollowingQuery
+        : INBOX_ACTION_QUERIES[action],
       isSnooze ? [snoozeEnd] : [],
       action === AgentChatInboxAction.UNSUBSCRIBE
         ? assertIsNotAssignee
@@ -532,6 +556,7 @@ export class AgentChatThreadParticipantService {
             '"thread"."pendingQuestionMessageId"',
             'pendingQuestionMessageId',
           )
+          .addSelect('"thread"."conversationType"', 'conversationType')
           .applyRowLevelPermissions();
 
         return repository.executeRaw<
@@ -541,17 +566,21 @@ export class AgentChatThreadParticipantService {
           >
         >(
           `WITH open_thread AS (
-             SELECT thread."assigneeId", thread."pendingQuestionMessageId", ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE} AS "hasUnresolvedMention",
+             SELECT thread."assigneeId", thread."pendingQuestionMessageId", thread."conversationType", ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE} AS "hasUnresolvedMention",
                thread."lastActivityAt" IS NOT NULL
                  AND (participant."lastReadAt" IS NULL OR thread."lastActivityAt" > participant."lastReadAt") AS "isUnread"
              FROM (${readableThreads.getQuery()}) thread
              JOIN ${getAgentChatThreadParticipantTable(workspaceId)} participant
                ON participant."threadId" = thread.id AND participant."workspaceMemberId" = :summaryWorkspaceMemberId
              WHERE ${IS_IN_INBOX}
+           ),
+           triage_thread AS (
+             SELECT * FROM open_thread
+             WHERE "conversationType" <> '${AgentChatThreadConversationType.DIRECT_MESSAGE}'
            )
            SELECT
              COUNT(*)::int AS "openThreadCount",
-             COUNT(*) FILTER (WHERE "isUnread")::int AS "unreadOpenThreadCount",
+             (SELECT COUNT(*) FROM open_thread WHERE "isUnread")::int AS "unreadOpenThreadCount",
              COUNT("pendingQuestionMessageId")::int AS "needsInputThreadCount",
              COUNT(*) FILTER (WHERE "hasUnresolvedMention")::int AS "mentionThreadCount",
              COUNT(*) FILTER (WHERE "assigneeId" = :summaryWorkspaceMemberId)::int AS "assignedToMeThreadCount",
@@ -560,7 +589,7 @@ export class AgentChatThreadParticipantService {
              COALESCE(BOOL_OR("isUnread"), false) AS "hasUnreadOpenThread",
              COALESCE(BOOL_OR("isUnread" AND "hasUnresolvedMention"), false) AS "hasUnreadMentionThread",
              COALESCE(BOOL_OR("isUnread" AND "assigneeId" = :summaryWorkspaceMemberId), false) AS "hasUnreadAssignedThread"
-           FROM open_thread`,
+           FROM triage_thread`,
           {
             ...readableThreads.getParameters(),
             summaryWorkspaceMemberId: workspaceMemberId,

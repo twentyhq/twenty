@@ -1,4 +1,7 @@
+import { type ExpressionSyntaxErrorCode } from './ExpressionSyntaxErrorCode';
+
 export type ValidationRuleErrorCode =
+  | ExpressionSyntaxErrorCode
   | 'EMPTY_EXPRESSION'
   | 'EXPRESSION_TOO_LONG'
   | 'BRACKET_ACCESS'
@@ -10,7 +13,7 @@ export type ValidationRuleErrorCode =
   | 'NOT_A_TO_ONE_RELATION'
   | 'UNKNOWN_RELATION_TARGET_FIELD'
   | 'RELATION_TOO_DEEP'
+  | 'PREVIOUS_VALUE_OF_RELATION'
   | 'NON_BOOLEAN_RESULT'
-  | 'INCOMPLETE_EXPRESSION'
-  | 'UNCLOSED_TEXT'
-  | 'INVALID_SYNTAX';
+  | 'INVALID_DATE_UNIT'
+  | 'INVALID_DATE_PART';

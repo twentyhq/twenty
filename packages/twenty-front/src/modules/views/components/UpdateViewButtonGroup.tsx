@@ -80,7 +80,9 @@ export const UpdateViewButtonGroup = () => {
   };
 
   const handleUpdateViewClick = async () => {
-    if (!canPersistChanges) return;
+    if (!canPersistChanges) {
+      return;
+    }
     await saveCurrentViewFilterAndSorts();
   };
 

@@ -1,4 +1,3 @@
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
 import { LEGEND_HIGHLIGHT_DIMMED_OPACITY } from '@/page-layout/widgets/graph/constants/LegendHighlightDimmedOpacity';
 import { LEGEND_ITEM_ESTIMATED_WIDTH } from '@/page-layout/widgets/graph/constants/LegendItemEstimatedWidth';
@@ -28,6 +27,7 @@ export type GraphWidgetLegendItem = {
 type GraphWidgetLegendProps = {
   items: GraphWidgetLegendItem[];
   show?: boolean;
+  isInteractive?: boolean;
 };
 
 type AnimationDirection = 'forward' | 'backward';
@@ -135,6 +135,7 @@ const legendEnterExitVariants = {
 export const GraphWidgetLegend = ({
   items,
   show = true,
+  isInteractive = true,
 }: GraphWidgetLegendProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -147,10 +148,6 @@ export const GraphWidgetLegend = ({
 
   const [animationDirection, setAnimationDirection] =
     useState<AnimationDirection>('forward');
-
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-
-  const isInteractive = !isPageLayoutInEditMode;
 
   const setGraphWidgetHighlightedLegendId = useSetAtomComponentState(
     graphWidgetHighlightedLegendIdComponentState,
@@ -166,7 +163,7 @@ export const GraphWidgetLegend = ({
     isInteractive,
   });
 
-  if (isPageLayoutInEditMode && graphWidgetHiddenLegendIds.length > 0) {
+  if (!isInteractive && graphWidgetHiddenLegendIds.length > 0) {
     setGraphWidgetHiddenLegendIds([]);
   }
 

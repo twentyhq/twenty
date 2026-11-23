@@ -14,9 +14,12 @@ import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WebhookSubscriptionModule } from 'src/modules/connected-account/webhook-subscription-manager/webhook-subscription.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
+import { UserWorkspaceSuccessorModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 
 @Module({
   imports: [
+    ChannelVisibilityModule,
     ApplicationLookupModule,
     ApplicationRegistrationLookupModule,
     TypeOrmModule.forFeature([
@@ -28,6 +31,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectionProviderModule,
     WebhookSubscriptionModule,
     PermissionsModule,
+    UserWorkspaceSuccessorModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [

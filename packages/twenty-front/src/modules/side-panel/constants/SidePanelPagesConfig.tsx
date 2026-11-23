@@ -1,6 +1,10 @@
 import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
+import { SidePanelCoreAgentDataAccessPage } from '@/object-core/agents/components/SidePanelCoreAgentDataAccessPage';
 import { SidePanelCoreAgentFiltersPage } from '@/object-core/agents/components/SidePanelCoreAgentFiltersPage';
+import { SidePanelCoreAgentToolsPage } from '@/object-core/agents/components/SidePanelCoreAgentToolsPage';
+import { SidePanelCoreAgentTriggerPage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerPage';
+import { SidePanelCoreAgentTriggerTypePage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerTypePage';
 import { SidePanelCoreWorkflowFiltersPage } from '@/object-core/workflows/components/SidePanelCoreWorkflowFiltersPage';
 import { SidePanelCoreWorkflowVersionPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionPage';
 import { SidePanelCoreWorkflowVersionsPage } from '@/object-core/workflows/versions/components/SidePanelCoreWorkflowVersionsPage';
@@ -13,6 +17,7 @@ import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePan
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
 import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage';
+import { SidePanelEditColumnPage } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnPage';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
 import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage';
 import { SidePanelRecordUpdateFormPage } from '@/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage';
@@ -119,9 +124,14 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.RoutedPage, <SidePanelRoutedPage />],
   [SidePanelPages.WorkflowCoreFilters, <SidePanelCoreWorkflowFiltersPage />],
   [SidePanelPages.AgentCoreFilters, <SidePanelCoreAgentFiltersPage />],
+  [SidePanelPages.AgentCoreTriggerType, <SidePanelCoreAgentTriggerTypePage />],
+  [SidePanelPages.AgentCoreTrigger, <SidePanelCoreAgentTriggerPage />],
+  [SidePanelPages.AgentCoreDataAccess, <SidePanelCoreAgentDataAccessPage />],
+  [SidePanelPages.AgentCoreTools, <SidePanelCoreAgentToolsPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],
   [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeAiChatPage />],
   [SidePanelPages.AssignAiChat, <SidePanelAssignAiChatPage />],
+  [SidePanelPages.EditColumn, <SidePanelEditColumnPage />],
 ]);

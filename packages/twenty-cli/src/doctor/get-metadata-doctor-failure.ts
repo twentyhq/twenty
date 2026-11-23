@@ -29,6 +29,15 @@ const FAILURE_MESSAGES: Partial<
       'The metadata endpoint redirected the request. No redirect was followed.',
     hint: 'Configure the final Twenty API URL, including the correct protocol and base path.',
   },
+  PROXY_AUTH_REQUIRED: {
+    message:
+      'An authenticating proxy in front of the server redirected the request to its sign-in page.',
+    hint: 'Configure proxy headers for this connection. See "Authenticating proxies" in the CLI docs.',
+  },
+  PROXY_HEADERS_FAILED: {
+    message: 'The proxy header command failed, so no request was sent.',
+    hint: 'Run the command yourself to check it prints "Name: value" lines.',
+  },
   TIMEOUT: {
     message:
       'The metadata endpoint did not respond before the request timed out.',

@@ -4,7 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 // TODO: see why RELATION is considered as a non composite type in settings, because it prevents this function
 // to be a typeguard
 export const isNonCompositeField = (type: FieldType) => {
-  const fieldIsSimpleValue = [
+  const simpleValueTypes: FieldType[] = [
     FieldMetadataType.UUID,
     FieldMetadataType.TEXT,
     FieldMetadataType.DATE_TIME,
@@ -18,7 +18,7 @@ export const isNonCompositeField = (type: FieldType) => {
     FieldMetadataType.POSITION,
     FieldMetadataType.RAW_JSON,
     FieldMetadataType.ARRAY,
-  ].includes(type as any);
+  ];
 
-  return fieldIsSimpleValue;
+  return simpleValueTypes.includes(type);
 };

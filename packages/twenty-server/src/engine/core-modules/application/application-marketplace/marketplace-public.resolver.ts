@@ -33,10 +33,9 @@ export class MarketplacePublicResolver {
   async findPublicMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {
-    const detail =
-      await this.marketplaceQueryService.findMarketplaceAppDetail(
-        universalIdentifier,
-      );
+    const detail = await this.marketplaceQueryService.findMarketplaceAppDetail({
+      universalIdentifier,
+    });
 
     if (!detail.isListed) {
       throw new ApplicationRegistrationException(

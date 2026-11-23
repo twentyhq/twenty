@@ -31,4 +31,6 @@ export enum MessageQueue {
   triggerQueue = 'trigger-queue',
   aiQueue = 'ai-queue',
   aiStreamQueue = 'ai-stream-queue',
+  accessGroupQueue = 'access-group-queue',
+  webPushQueue = 'web-push-queue',
 }

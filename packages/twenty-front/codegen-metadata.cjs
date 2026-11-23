@@ -9,8 +9,9 @@ module.exports = {
     './src/modules/users/graphql/**/*.{ts,tsx}',
     './src/modules/views/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/**/*.{ts,tsx}',
+    './src/modules/ai-chat/**/graphql/**/*.{ts,tsx}',
     // answerToolCall is served by the core (/graphql) schema via @CoreResolver.
-    '!./src/modules/ai/graphql/mutations/answerToolCall.ts',
+    '!./src/modules/ai-chat/tool-calls/graphql/mutations/answerToolCall.ts',
     './src/modules/object-record/record-sharing/graphql/**/*.{ts,tsx}',
     './src/modules/applications/graphql/**/*.{ts,tsx}',
 
@@ -24,6 +25,7 @@ module.exports = {
     // not the metadata schema, so they must not be validated against /metadata.
     '!./src/modules/settings/legal/**/graphql/**/*.{ts,tsx}',
     './src/modules/logic-functions/graphql/**/*.{ts,tsx}',
+    './src/modules/mcp-servers/graphql/**/*.{ts,tsx}',
 
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
@@ -48,6 +50,7 @@ module.exports = {
     './src/modules/record-export/graphql/**/*.{ts,tsx}',
     './src/modules/metadata-store/graphql/**/*.{ts,tsx}',
     './src/modules/sse-db-event/graphql/**/*.{ts,tsx}',
+    './src/modules/tab-presence/graphql/**/*.{ts,tsx}',
     './src/modules/geo-map/graphql-query/*.{ts,tsx}',
 
     './src/pages/**/graphql/**/*.{ts,tsx}',

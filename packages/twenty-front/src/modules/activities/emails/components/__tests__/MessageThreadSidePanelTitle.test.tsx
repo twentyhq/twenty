@@ -36,7 +36,13 @@ const mockChannel = ({
     messageThreadChannel:
       type === null
         ? null
-        : { type, provider: 'whatsapp', applicationId: null },
+        : {
+            type,
+            provider: 'whatsapp',
+            applicationId: null,
+            conversationStyle:
+              type === MessageChannelType.APP ? 'chat' : 'email',
+          },
     messageThreadChannelLoading,
   });
 

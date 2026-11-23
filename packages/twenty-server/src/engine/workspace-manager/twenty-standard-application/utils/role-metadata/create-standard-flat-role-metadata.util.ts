@@ -19,6 +19,7 @@ export const STANDARD_FLAT_ROLE_METADATA_BUILDERS_BY_ROLE_NAME = {
         canAccessAllTools: true,
         canAccessAllAgentChatChannels: true,
         canReadAllObjectRecords: true,
+        canCreateAllObjectRecords: true,
         canUpdateAllObjectRecords: true,
         canSoftDeleteAllObjectRecords: true,
         canDestroyAllObjectRecords: true,

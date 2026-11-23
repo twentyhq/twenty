@@ -2,6 +2,9 @@ import { type CommandMenuItemDefinition } from '@/command-menu-item/types/Comman
 import { isDefined } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
+const isCreationCommand = (item: CommandMenuItemDefinition) =>
+  item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD;
+
 export const mergeGlobalRecordCreationCommandMenuItems = ({
   commandMenuItems,
   globalRecordCreationCommandMenuItems,
@@ -28,9 +31,7 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     );
 
   const isPinnedContextualCreationCommand = (item: CommandMenuItemDefinition) =>
-    hasCurrentObjectCreationCommand &&
-    item.engineComponentKey === EngineComponentKey.CREATE_NEW_RECORD &&
-    item.isPinned;
+    hasCurrentObjectCreationCommand && isCreationCommand(item) && item.isPinned;
 
   const hasPinnedContextualCreationCommand = sortedCommandMenuItems.some(
     isPinnedContextualCreationCommand,
@@ -40,7 +41,8 @@ export const mergeGlobalRecordCreationCommandMenuItems = ({
     ...sortedCommandMenuItems.filter(
       (item) =>
         isPinnedContextualCreationCommand(item) ||
-        (item.engineComponentKey !== EngineComponentKey.CREATE_NEW_RECORD &&
+        isDefined(item.availabilityCoreObjectName) ||
+        (!isCreationCommand(item) &&
           item.engineComponentKey !== EngineComponentKey.NAVIGATION),
     ),
     ...globalRecordCreationCommandMenuItems.filter(

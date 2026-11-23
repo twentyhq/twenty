@@ -122,7 +122,9 @@ export const SettingsWorkspaceMember = () => {
   );
 
   const handleDeleteMember = async () => {
-    if (!member?.id) return;
+    if (!member?.id) {
+      return;
+    }
     try {
       await deleteUserFromWorkspace({
         variables: { workspaceMemberIdToDelete: member.id },

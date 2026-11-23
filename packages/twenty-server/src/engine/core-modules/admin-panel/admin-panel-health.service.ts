@@ -22,6 +22,15 @@ import { type WorkerQueueHealth } from 'src/engine/core-modules/admin-panel/type
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 
+type SyncDetails = { status: string };
+
+type ServiceDetails = {
+  details?: {
+    messageSync?: SyncDetails;
+    calendarSync?: SyncDetails;
+  };
+};
+
 @Injectable()
 export class AdminPanelHealthService {
   private readonly logger = new Logger(AdminPanelHealthService.name);
@@ -43,15 +52,16 @@ export class AdminPanelHealthService {
     [HealthIndicatorId.app]: this.appHealth,
   };
 
-  private transformStatus(status: HealthIndicatorStatus) {
+  private transformStatus(status: HealthIndicatorStatus | string) {
     return status === 'up'
       ? AdminPanelHealthServiceStatus.OPERATIONAL
       : AdminPanelHealthServiceStatus.OUTAGE;
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  private transformServiceDetails(details: any) {
-    if (!details) return details;
+  private transformServiceDetails(details: ServiceDetails) {
+    if (!details) {
+      return details;
+    }
 
     if (details.details) {
       if (details.details.messageSync) {
@@ -128,10 +138,12 @@ export class AdminPanelHealthService {
     const indicatorStatus = this.getServiceStatus(result[0], indicatorId);
 
     if (indicatorId === HealthIndicatorId.worker) {
+      const workerQueues: WorkerQueueHealth[] =
+        'queues' in indicatorStatus ? (indicatorStatus.queues ?? []) : [];
+
       return {
         ...indicatorStatus,
-        // @ts-expect-error legacy noImplicitAny
-        queues: (indicatorStatus?.queues ?? []).map((queue) => ({
+        queues: workerQueues.map((queue) => ({
           id: `${indicatorId}-${queue.queueName}`,
           queueName: queue.queueName,
           status:

@@ -12,7 +12,9 @@ import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/Sett
 import { useLingui } from '@lingui/react/macro';
 
 const formatFilterValue = (value: unknown): string => {
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string') {
+    return value;
+  }
   if (typeof value === 'number' || typeof value === 'boolean') {
     return String(value);
   }

@@ -4,25 +4,22 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   EMAIL_DOCUMENT_SCHEMA_VERSION,
   type EmailDocument,
+  EMPTY_EMAIL_DOCUMENT,
   parseCanonicalEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 
 import { type ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-workspace-command-1791811310066-convert-workflow-email-bodies-to-email-documents.command';
+import { type BackfillEmptyWorkflowEmailBodiesCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-workspace-command-1794734527065-backfill-empty-workflow-email-bodies.command';
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { type SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
-import {
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
-} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import {
   runWorkflowActionStep,
   type WorkflowActionStepRun,
@@ -64,21 +61,15 @@ const findPersistedMessageText = async (subject: string) => {
   return message?.text;
 };
 
-const WORKSPACE_SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-
 const EMAIL_STEP_BODY_PATH = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL" || @.type == "DRAFT_EMAIL").settings.input.body') #>> '{}'`;
 
 const readStoredBodies = async (coreWorkflowVersionId: string) => {
-  const [workspaceRow] = await global.testDataSource.query(
-    `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
-    [coreWorkflowVersionId],
-  );
   const [coreRow] = await global.testDataSource.query(
     `SELECT ${EMAIL_STEP_BODY_PATH} AS body FROM core."workflowVersion" WHERE "id" = $1`,
     [coreWorkflowVersionId],
   );
 
-  return { workspaceBody: workspaceRow.body, coreBody: coreRow.body };
+  return { coreBody: coreRow.body };
 };
 
 const storeBodyAsBeforeTheUpgrade = async (
@@ -102,25 +93,29 @@ describe('Outbound email body formats (integration)', () => {
   let greenmail: GreenmailServer;
   let connectedAccountId: string;
 
-  const runSendEmailWorkflow = async ({
-    body,
-    payload = {},
-    stepType = 'SEND_EMAIL',
-    beforeRun,
-  }: {
+  type EmailBodyWorkflowArgs = {
     body: EmailDocument | string;
     payload?: Record<string, unknown>;
     stepType?: 'SEND_EMAIL' | 'DRAFT_EMAIL';
     beforeRun?: (coreWorkflowVersionId: string) => Promise<void>;
-  }): Promise<ComposedBody & { run: WorkflowActionStepRun }> => {
-    const run = await runWorkflowActionStep({
+  };
+
+  const runEmailBodyWorkflow = ({
+    body,
+    payload = {},
+    stepType = 'SEND_EMAIL',
+    beforeRun,
+  }: EmailBodyWorkflowArgs): Promise<WorkflowActionStepRun> =>
+    runWorkflowActionStep({
       name: `Email body format ${randomUUID()}`,
       stepType,
       input: {
         connectedAccountId,
         recipients: { to: HANDLE, cc: '', bcc: '' },
         subject: `Email body format ${randomUUID()}`,
-        body: typeof body === 'string' ? '' : JSON.stringify(body),
+        body: JSON.stringify(
+          typeof body === 'string' ? EMPTY_EMAIL_DOCUMENT : body,
+        ),
       },
       payload,
       beforeRun: async (coreWorkflowVersionId) => {
@@ -131,6 +126,11 @@ describe('Outbound email body formats (integration)', () => {
         await beforeRun?.(coreWorkflowVersionId);
       },
     });
+
+  const runSendEmailWorkflow = async (
+    args: EmailBodyWorkflowArgs,
+  ): Promise<ComposedBody & { run: WorkflowActionStepRun }> => {
+    const run = await runEmailBodyWorkflow(args);
 
     expect(run).toMatchObject({ status: 'COMPLETED', stepStatus: 'SUCCESS' });
 
@@ -274,41 +274,25 @@ describe('Outbound email body formats (integration)', () => {
     }, 300000);
   });
 
-  describe('workflow email body stored as a string before the upgrade', () => {
-    it('keeps the line breaks of a plain-text body and inserts its variable values as before', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: 'Hi {{trigger.name}},\n\nSee you soon\nJane',
-        payload: { name: '<b>Ada</b>' },
-      });
+  describe('workflow email body held by a whole-body variable', () => {
+    const wholeBodyVariable = (variable: string): EmailDocument => ({
+      type: 'doc',
+      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+      content: [{ type: 'htmlDocument', attrs: { html: variable } }],
+    });
 
-      expect(sanitizedHtmlBody).toBe(
-        'Hi <b>Ada</b>,<br><br>See you soon<br>Jane',
-      );
-      expect(plainTextBody).toBe('Hi Ada,\n\nSee you soon\nJane');
-    }, 300000);
-
-    it('injects variable values raw into a legacy HTML body and sends it without the email shell', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: '<p>Hello {{trigger.name}}</p><script>alert(1)</script>',
-        payload: { name: '<b>Ada</b>' },
-      });
-
-      expect(sanitizedHtmlBody).toBe('<p>Hello <b>Ada</b></p>');
-      expect(plainTextBody).toBe('Hello Ada');
-    }, 300000);
-
-    it('sends the HTML held by a body that is a single variable verbatim', async () => {
+    it('sends the HTML it holds verbatim', async () => {
       const { sanitizedHtmlBody } = await runSendEmailWorkflow({
-        body: '{{trigger.html}}',
+        body: wholeBodyVariable('{{trigger.html}}'),
         payload: { html: '<h1>Weekly report</h1><p>All good</p>' },
       });
 
       expect(sanitizedHtmlBody).toBe('<h1>Weekly report</h1><p>All good</p>');
     }, 300000);
 
-    it('renders the email document held by a body that is a single variable', async () => {
+    it('renders the email document it holds', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: '{{trigger.document}}',
+        body: wholeBodyVariable('{{trigger.document}}'),
         payload: {
           document: JSON.stringify(paragraphDocument('From a record')),
         },
@@ -319,11 +303,26 @@ describe('Outbound email body formats (integration)', () => {
     }, 300000);
   });
 
+  describe('workflow email body stored as a string', () => {
+    it('fails the step instead of guessing the format', async () => {
+      const run = await runEmailBodyWorkflow({
+        body: '<p>Hello {{trigger.name}}</p>',
+        payload: { name: 'Ada' },
+      });
+
+      expect(run).toMatchObject({
+        stepStatus: 'FAILED',
+        stepError: expect.stringContaining('Invalid email document'),
+      });
+    }, 300000);
+  });
+
   describe('send_email tool', () => {
     it('keeps the paragraphs of a plain-text body and persists them', async () => {
-      const { plainTextBody, subject } = await executeSendEmailTool(
-        'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
-      );
+      const { plainTextBody, subject } = await executeSendEmailTool({
+        type: 'text',
+        text: 'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
+      });
 
       expect(plainTextBody).toBe(
         'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
@@ -331,10 +330,11 @@ describe('Outbound email body formats (integration)', () => {
       expect(await findPersistedMessageText(subject)).toBe(plainTextBody);
     }, 300000);
 
-    it('sends an HTML string verbatim', async () => {
-      const { sanitizedHtmlBody } = await executeSendEmailTool(
-        '<p>Hello <strong>Ada</strong></p>',
-      );
+    it('sends an HTML body as written', async () => {
+      const { sanitizedHtmlBody } = await executeSendEmailTool({
+        type: 'html',
+        html: '<p>Hello <strong>Ada</strong></p>',
+      });
 
       expect(sanitizedHtmlBody).toBe('<p>Hello <strong>Ada</strong></p>');
     }, 300000);
@@ -360,7 +360,7 @@ describe('Outbound email body formats (integration)', () => {
 
       expect(output).toMatchObject({
         success: false,
-        error: expect.stringContaining('Invalid outbound email document'),
+        error: expect.stringContaining('Invalid email document'),
       });
       expect(await findPersistedMessageText(subject)).toBeUndefined();
     }, 300000);
@@ -381,49 +381,73 @@ describe('Outbound email body formats (integration)', () => {
       expect(await findPersistedMessageText(subject)).toBe('From the composer');
     }, 300000);
 
+    it('accepts a document saved without a schema version', async () => {
+      const subject = `Mutation unversioned ${randomUUID()}`;
+
+      const result = await sendEmail({
+        connectedAccountId,
+        to: HANDLE,
+        subject,
+        body: JSON.stringify({
+          type: 'doc',
+          content: [
+            { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
+          ],
+        }),
+      });
+
+      expect(result.success).toBe(true);
+      expect(await findPersistedMessageText(subject)).toBe('Hi');
+    }, 300000);
+
     it('sends a composer email the user never typed into', async () => {
       const result = await sendEmail({
         connectedAccountId,
         to: HANDLE,
         subject: `Mutation empty ${randomUUID()}`,
-        body: '',
+        body: JSON.stringify({
+          type: 'doc',
+          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+          content: [{ type: 'paragraph', content: [] }],
+        }),
       });
 
       expect(result.success).toBe(true);
     }, 300000);
+
+    it('rejects a body that is not a serialized email document', async () => {
+      const subject = `Mutation string ${randomUUID()}`;
+
+      const result = await sendEmail({
+        connectedAccountId,
+        to: HANDLE,
+        subject,
+        body: '<p>Hello</p>',
+      });
+
+      expect(result.success).toBe(false);
+      expect(await findPersistedMessageText(subject)).toBeUndefined();
+    }, 300000);
   });
 
   describe('upgrade command', () => {
-    const legacyWorkspaceWorkflowIds: string[] = [];
-
-    const linkLegacyWorkspaceCopy = async (coreWorkflowVersionId: string) => {
-      const [{ coreWorkflowId }] = await global.testDataSource.query(
-        `SELECT "coreWorkflowId" FROM core."workflowVersion" WHERE id = $1`,
-        [coreWorkflowVersionId],
-      );
-      const { workspaceWorkflowId } =
-        await linkCoreWorkflowToLegacyWorkspaceIds({
-          coreWorkflowId,
-          withWorkspaceRecords: true,
-        });
-
-      legacyWorkspaceWorkflowIds.push(workspaceWorkflowId);
-    };
-
-    afterAll(async () => {
-      for (const workspaceWorkflowId of legacyWorkspaceWorkflowIds) {
-        await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-      }
-    });
-
-    const runUpgradeCommand = (dryRun: boolean) =>
+    const runUpgradeCommand = ({
+      dryRun,
+      commandClassName = 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
+    }: {
+      dryRun: boolean;
+      commandClassName?:
+        | 'ConvertWorkflowEmailBodiesToEmailDocumentsCommand'
+        | 'BackfillEmptyWorkflowEmailBodiesCommand';
+    }) =>
       getAppProviderByClassName<WorkspaceOrmManager>(
         'WorkspaceOrmManager',
       ).executeInWorkspaceContext(
         () =>
-          getAppProviderByClassName<ConvertWorkflowEmailBodiesToEmailDocumentsCommand>(
-            'ConvertWorkflowEmailBodiesToEmailDocumentsCommand',
-          ).runOnWorkspace({
+          getAppProviderByClassName<
+            | ConvertWorkflowEmailBodiesToEmailDocumentsCommand
+            | BackfillEmptyWorkflowEmailBodiesCommand
+          >(commandClassName).runOnWorkspace({
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             options: { dryRun },
             index: 0,
@@ -435,132 +459,111 @@ describe('Outbound email body formats (integration)', () => {
 
     const convertStoredBodyBeforeRun =
       (legacyBody: string) => async (coreWorkflowVersionId: string) => {
-        await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
-
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
-          workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
-        await runUpgradeCommand(true);
+        await runUpgradeCommand({ dryRun: true });
 
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
-          workspaceBody: legacyBody,
           coreBody: legacyBody,
         });
 
-        await runUpgradeCommand(false);
+        await runUpgradeCommand({ dryRun: false });
 
         const convertedBodies = await readStoredBodies(coreWorkflowVersionId);
 
-        expect(convertedBodies.coreBody).toBe(convertedBodies.workspaceBody);
         expect(
           parseCanonicalEmailDocument(
-            parseJson<unknown>(convertedBodies.workspaceBody),
+            parseJson<unknown>(convertedBodies.coreBody),
           ).success,
         ).toBe(true);
 
-        await runUpgradeCommand(false);
+        await runUpgradeCommand({ dryRun: false });
 
         expect(await readStoredBodies(coreWorkflowVersionId)).toEqual(
           convertedBodies,
         );
       };
 
-    it('converts the core and workspace copies each from its own steps', async () => {
-      const readEmailStepNames = async (coreWorkflowVersionId: string) => {
-        const selectEmailStepName = `jsonb_path_query_first(steps, '$[*] ? (@.type == "SEND_EMAIL").name') #>> '{}'`;
-        const [workspaceRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM "${WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $1`,
-          [coreWorkflowVersionId],
-        );
-        const [coreRow] = await global.testDataSource.query(
-          `SELECT ${selectEmailStepName} AS name FROM core."workflowVersion" WHERE "id" = $1`,
-          [coreWorkflowVersionId],
-        );
-
-        return { workspaceName: workspaceRow.name, coreName: coreRow.name };
-      };
-
-      await runSendEmailWorkflow({
-        body: '<p>Hello</p>',
-        beforeRun: async (coreWorkflowVersionId) => {
-          await linkLegacyWorkspaceCopy(coreWorkflowVersionId);
-          await global.testDataSource.query(
-            `UPDATE core."workflowVersion"
-             SET steps = jsonb_set(steps, '{0,name}', '"Renamed in core only"')
-             WHERE "id" = $1`,
-            [coreWorkflowVersionId],
-          );
-          const namesBeforeUpgrade = await readEmailStepNames(
-            coreWorkflowVersionId,
-          );
-
-          await runUpgradeCommand(false);
-
-          expect(await readEmailStepNames(coreWorkflowVersionId)).toEqual(
-            namesBeforeUpgrade,
-          );
-          expect(namesBeforeUpgrade.coreName).toBe('Renamed in core only');
-
-          const { workspaceBody, coreBody } = await readStoredBodies(
-            coreWorkflowVersionId,
-          );
-
-          for (const body of [workspaceBody, coreBody]) {
-            expect(
-              parseCanonicalEmailDocument(parseJson<unknown>(body)).success,
-            ).toBe(true);
-          }
-        },
-      });
-    }, 300000);
-
     it.each([
       {
         kind: 'plain text with variables',
         body: 'Hi {{trigger.name}},\n\nSee you soon',
-        payload: { name: 'Tom & <Jerry>' },
+        payload: { name: 'Ada' },
+        expectedHtml: /Hi Ada,<br\s*\/?><br\s*\/?>See you soon/,
       },
       {
         kind: 'HTML with raw variable values',
         body: '<p>Hello {{trigger.name}}</p>',
         payload: { name: '<b>Ada</b>' },
+        expectedHtml: '<p>Hello <b>Ada</b></p>',
       },
       {
         kind: 'a single variable holding HTML',
         body: '{{trigger.html}}',
         payload: { html: '<h1>Report</h1><p>All good</p>' },
-      },
-      {
-        kind: 'a versionless document',
-        body: JSON.stringify({
-          type: 'doc',
-          content: [
-            { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
-          ],
-        }),
-        payload: {},
+        expectedHtml: '<h1>Report</h1><p>All good</p>',
       },
     ])(
-      'sends the same email from a stored body made of $kind before and after the upgrade',
-      async ({ body, payload }) => {
-        const beforeUpgrade = await runSendEmailWorkflow({
-          body,
-          payload,
-        });
-        const afterUpgrade = await runSendEmailWorkflow({
+      'sends a stored body made of $kind once the upgrade converts it',
+      async ({ body, payload, expectedHtml }) => {
+        const { sanitizedHtmlBody } = await runSendEmailWorkflow({
           body,
           payload,
           beforeRun: convertStoredBodyBeforeRun(body),
         });
 
-        expect(afterUpgrade.sanitizedHtmlBody).toBe(
-          beforeUpgrade.sanitizedHtmlBody,
-        );
-        expect(afterUpgrade.plainTextBody).toBe(beforeUpgrade.plainTextBody);
+        expect(sanitizedHtmlBody).toMatch(expectedHtml);
       },
-      600000,
+      300000,
     );
+
+    it('sends a blank stored body once the backfill stores an empty document', async () => {
+      const serializedEmptyDocument = JSON.stringify(EMPTY_EMAIL_DOCUMENT);
+
+      await runSendEmailWorkflow({
+        body: ' ',
+        beforeRun: async (coreWorkflowVersionId) => {
+          await runUpgradeCommand({
+            dryRun: true,
+            commandClassName: 'BackfillEmptyWorkflowEmailBodiesCommand',
+          });
+
+          expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
+            coreBody: ' ',
+          });
+
+          await runUpgradeCommand({
+            dryRun: false,
+            commandClassName: 'BackfillEmptyWorkflowEmailBodiesCommand',
+          });
+
+          expect(await readStoredBodies(coreWorkflowVersionId)).toEqual({
+            coreBody: serializedEmptyDocument,
+          });
+        },
+      });
+    }, 300000);
+
+    it('sends the same email from a versionless document before and after the upgrade', async () => {
+      const body = JSON.stringify({
+        type: 'doc',
+        content: [
+          { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
+        ],
+      });
+
+      const beforeUpgrade = await runSendEmailWorkflow({ body });
+      const afterUpgrade = await runSendEmailWorkflow({
+        body,
+        beforeRun: convertStoredBodyBeforeRun(body),
+      });
+
+      expect(afterUpgrade.sanitizedHtmlBody).toBe(
+        beforeUpgrade.sanitizedHtmlBody,
+      );
+      expect(afterUpgrade.plainTextBody).toBe(beforeUpgrade.plainTextBody);
+    }, 600000);
   });
 });

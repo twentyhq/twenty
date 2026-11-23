@@ -5,6 +5,7 @@ export enum ApplicationRegistrationSourceType {
   TARBALL = 'tarball',
   LOCAL = 'local',
   OAUTH_ONLY = 'oauth-only',
+  BUNDLED = 'bundled',
 }
 
 registerEnumType(ApplicationRegistrationSourceType, {

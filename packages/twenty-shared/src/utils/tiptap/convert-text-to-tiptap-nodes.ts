@@ -10,7 +10,7 @@ export const convertTextToTipTapNodes = (
   text: string,
   marks: TipTapMark[],
 ): TipTapNode[] =>
-  text.split('\n').flatMap((line, lineIndex) => {
+  text.split(/\r\n?|\n/).flatMap((line, lineIndex) => {
     const lineNodes: TipTapNode[] =
       lineIndex > 0 ? [{ type: TIPTAP_NODE_TYPES.HARD_BREAK }] : [];
 

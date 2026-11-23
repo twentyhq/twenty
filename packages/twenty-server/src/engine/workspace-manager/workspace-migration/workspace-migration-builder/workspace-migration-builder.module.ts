@@ -22,6 +22,7 @@ import { WorkspaceMigrationRolePermissionFlagActionsBuilderService } from 'src/e
 import { WorkspaceMigrationRoleTargetActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role-target/workspace-migration-role-target-actions-builder.service';
 import { WorkspaceMigrationRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/role/workspace-migration-role-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate-group/workspace-migration-row-level-permission-predicate-group-actions-builder.service';
+import { WorkspaceMigrationRowLevelPermissionRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-rule/workspace-migration-row-level-permission-rule-actions-builder.service';
 import { WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/row-level-permission-predicate/workspace-migration-row-level-permission-predicate-actions-builder.service';
 import { WorkspaceMigrationSkillActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/skill/workspace-migration-skill-actions-builder.service';
 import { WorkspaceMigrationViewFieldGroupActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-field-group/workspace-migration-view-field-group-actions-builder.service';
@@ -78,6 +79,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationPageLayoutTabActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+    WorkspaceMigrationRowLevelPermissionRuleActionsBuilderService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
     WorkspaceMigrationMcpServerActionsBuilderService,
@@ -122,6 +124,7 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationPageLayoutTabActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateActionsBuilderService,
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
+    WorkspaceMigrationRowLevelPermissionRuleActionsBuilderService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
     WorkspaceMigrationMcpServerActionsBuilderService,

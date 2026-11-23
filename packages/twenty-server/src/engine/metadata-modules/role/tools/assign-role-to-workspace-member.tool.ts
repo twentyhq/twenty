@@ -5,7 +5,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { ROLE_ASSIGNMENT_ACCESS_POLICY } from 'src/engine/metadata-modules/role/constants/role-assignment-access-policy.constant';
 
 const assignRoleToWorkspaceMemberInputSchema = z.object({
@@ -17,6 +17,7 @@ const assignRoleToWorkspaceMemberInputSchema = z.object({
 
 @DefineTool({
   name: 'assign_role_to_workspace_member',
+  isDestructive: true,
   category: ToolCategory.ROLE,
   accessPolicy: ROLE_ASSIGNMENT_ACCESS_POLICY,
   description: `Assign a role to a workspace member, replacing their current role.
@@ -28,7 +29,9 @@ export class AssignRoleToWorkspaceMemberTool extends BaseTool<
 > {
   readonly inputSchema = assignRoleToWorkspaceMemberInputSchema;
 
-  constructor(private readonly roleAssignmentService: RoleAssignmentService) {
+  constructor(
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
+  ) {
     super();
   }
 
@@ -39,7 +42,7 @@ export class AssignRoleToWorkspaceMemberTool extends BaseTool<
     typeof assignRoleToWorkspaceMemberInputSchema
   >): Promise<ToolOutput> {
     const { workspaceMember } =
-      await this.roleAssignmentService.assignRoleToWorkspaceMember({
+      await this.roleAssignmentWriteService.assignRoleToWorkspaceMember({
         workspaceId,
         workspaceMemberId: input.workspaceMemberId,
         roleId: input.roleId,

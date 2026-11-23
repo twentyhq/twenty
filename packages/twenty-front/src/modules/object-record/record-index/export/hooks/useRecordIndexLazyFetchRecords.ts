@@ -1,3 +1,4 @@
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -122,7 +123,9 @@ export const useRecordIndexLazyFetchRecords = ({
     ColumnDefinition<FieldMetadata>,
     'label' | 'type' | 'metadata'
   >[] = [
+    // Extra columns would export as duplicates of their canonical column
     ...visibleRecordFields
+      .filter(isCanonicalRecordField)
       .map((field: RecordField) => {
         const fieldMetadataItem = objectMetadataItem.fields.find(
           (fieldMetadataItem) =>

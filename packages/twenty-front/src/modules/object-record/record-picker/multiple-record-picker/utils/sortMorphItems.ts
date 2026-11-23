@@ -11,8 +11,12 @@ export const sortMorphItems = (
   });
 
   return morphItems.sort((a, b) => {
-    if (a.isSelected && !b.isSelected) return -1;
-    if (!a.isSelected && b.isSelected) return 1;
+    if (a.isSelected && !b.isSelected) {
+      return -1;
+    }
+    if (!a.isSelected && b.isSelected) {
+      return 1;
+    }
 
     const aRank = indexByRecordId.get(a.recordId);
     const bRank = indexByRecordId.get(b.recordId);

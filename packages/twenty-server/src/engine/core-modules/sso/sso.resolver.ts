@@ -22,7 +22,6 @@ import {
 import { SetupSsoDTO } from 'src/engine/core-modules/sso/dtos/setup-sso.dto';
 import { SsoGraphqlApiExceptionFilter } from 'src/engine/core-modules/sso/filters/sso-graphql-api-exception.filter';
 import { SsoService } from 'src/engine/core-modules/sso/services/sso.service';
-import { type SsoException } from 'src/engine/core-modules/sso/sso.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
@@ -60,7 +59,7 @@ export class SsoResolver {
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOidcSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<SetupSsoDTO | SsoException> {
+  ): Promise<SetupSsoDTO> {
     return this.ssoService.createOidcIdentityProvider(
       setupSsoInput,
       workspaceId,
@@ -78,7 +77,7 @@ export class SsoResolver {
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSamlSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<SetupSsoDTO | SsoException> {
+  ): Promise<SetupSsoDTO> {
     return this.ssoService.createSamlIdentityProvider(
       setupSsoInput,
       workspaceId,

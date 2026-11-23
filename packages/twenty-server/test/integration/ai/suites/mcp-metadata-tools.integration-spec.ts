@@ -3,7 +3,7 @@ import { getMcpToolCatalog } from 'test/integration/graphql/suites/application-r
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
+import { waitForDeferredWorkspaceOperationsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-operations-or-throw.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 
@@ -68,7 +68,7 @@ const callMetadataTool = async ({
   toolArguments: Record<string, unknown>;
   token?: string;
 }) => {
-  await waitForDeferredWorkspaceMigrationActionsOrThrow();
+  await waitForDeferredWorkspaceOperationsOrThrow();
 
   return callMcpTool({
     toolName: 'execute_tool',

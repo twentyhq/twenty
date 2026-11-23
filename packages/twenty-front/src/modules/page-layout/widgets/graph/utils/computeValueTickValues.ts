@@ -12,12 +12,15 @@ const computeNiceStepInterval = (roughStepInterval: number): number => {
   );
   const normalizedStepValue = roughStepInterval / stepMagnitude;
 
-  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.LARGE)
+  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.LARGE) {
     return NICE_STEP_MULTIPLIERS.LARGE * stepMagnitude;
-  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.MEDIUM)
+  }
+  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.MEDIUM) {
     return NICE_STEP_MULTIPLIERS.MEDIUM * stepMagnitude;
-  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.SMALL)
+  }
+  if (normalizedStepValue >= NICE_STEP_NORMALIZED_VALUE_THRESHOLDS.SMALL) {
     return NICE_STEP_MULTIPLIERS.SMALL * stepMagnitude;
+  }
   return NICE_STEP_MULTIPLIERS.DEFAULT * stepMagnitude;
 };
 

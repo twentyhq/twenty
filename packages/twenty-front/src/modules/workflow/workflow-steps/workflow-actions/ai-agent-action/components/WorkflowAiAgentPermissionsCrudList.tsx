@@ -1,5 +1,5 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
 import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
@@ -27,7 +27,7 @@ export const WorkflowAiAgentPermissionsCrudList = ({
   return (
     <SidePanelGroup heading={t`CRUD`}>
       {permissions.map((permission) => {
-        const isEnabled = Boolean(objectPermissions?.[permission.key]);
+        const isEnabled = objectPermissions?.[permission.key] ?? false;
 
         return (
           <WorkflowAiAgentPermissionsPermissionRow

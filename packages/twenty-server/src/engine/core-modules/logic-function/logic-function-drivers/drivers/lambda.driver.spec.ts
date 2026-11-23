@@ -1,3 +1,5 @@
+import { PageLayoutType } from 'twenty-shared/types';
+import { FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-builder-max-payload-bytes.constant';
 import {
   Lambda,
   type State,
@@ -9,13 +11,50 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { LambdaDriver } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda.driver';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 
 jest.mock(
   'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util',
   () => ({ getFrontComponentBuilderName: async () => 'workspace-builder' }),
 );
 
+jest.mock(
+  'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-handler-bundle.util',
+  () => ({ buildHttpEgressHandlerBundle: async () => 'exports.handler = 1;' }),
+);
+
 jest.useRealTimers();
+
+const HTTP_EGRESS_REQUEST = {
+  input: { url: 'https://api.example.com/items', method: 'GET' as const },
+  limits: { timeoutMs: 30_000, maxPayloadSizeBytes: 10 * 1024 * 1024 },
+  context: {
+    workspaceId: 'workspace-id',
+    source: 'workflow-http-test' as const,
+    userId: 'user-id',
+  },
+};
+
+const HTTP_EGRESS_RESPONSE = {
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  body: { ok: true },
+  outcomeDetails: { outcome: 'success', status: 200, durationMs: 12 },
+};
+
+// What the client's rate-limit middleware turns a TooManyRequestsException into.
+const buildRateLimitedError = () =>
+  new LogicFunctionException(
+    'Lambda rate limited InvokeCommand',
+    LogicFunctionExceptionCode.LOGIC_FUNCTION_RATE_LIMITED,
+  );
+
+const buildInvokePayload = (body: string) =>
+  Object.assign(Buffer.from(body), { transformToString: () => body });
 
 const REQUEST = {
   targetRuntime: 'browser' as const,
@@ -37,6 +76,8 @@ describe('LambdaDriver', () => {
   let functionNames: unknown[];
   let driver: LambdaDriver;
   let client: Lambda;
+  let egressInvokeOutput: { Payload?: unknown; FunctionError?: string };
+  let egressInvokeErrors: Error[];
 
   beforeEach(() => {
     state = 'Inactive';
@@ -44,6 +85,10 @@ describe('LambdaDriver', () => {
     commands = [];
     payloads = [];
     functionNames = [];
+    egressInvokeOutput = {
+      Payload: buildInvokePayload(JSON.stringify(HTTP_EGRESS_RESPONSE)),
+    };
+    egressInvokeErrors = [];
     client = new Lambda({ region: 'eu-west-1' });
     let isLocked = false;
     const cacheStorageService = jest.createMockFromModule<
@@ -90,6 +135,19 @@ describe('LambdaDriver', () => {
             const payload = JSON.parse(String(input.Payload));
             payloads.push(payload);
             functionNames.push(input.FunctionName);
+
+            if (isDefined(payload.context)) {
+              const egressInvokeError = egressInvokeErrors.shift();
+
+              if (isDefined(egressInvokeError)) {
+                throw egressInvokeError;
+              }
+
+              return {
+                response: {},
+                output: { ...egressInvokeOutput, $metadata: {} },
+              };
+            }
             const response = JSON.stringify(
               payload.sourceCode
                 ? { builtCode: 'export const handler = () => 1;' }
@@ -177,6 +235,24 @@ describe('LambdaDriver', () => {
     },
   );
 
+  it('rejects oversized browser requests before provisioning or invoking Lambda', async () => {
+    await expect(
+      driver.transpile({
+        targetRuntime: 'browser',
+        workspaceId: 'workspace',
+        typeReferences: 'x'.repeat(FRONT_COMPONENT_BUILDER_MAX_PAYLOAD_BYTES),
+        manifest: { checksum: 'a'.repeat(64), exports: {} },
+        input: {
+          componentId: 'component',
+          name: 'Component',
+          pageLayoutType: PageLayoutType.DASHBOARD,
+          source: 'export const Component = () => <div />;',
+        },
+      }),
+    ).rejects.toThrow('request exceeds the 6 MiB limit');
+    expect(commands).toEqual([]);
+  });
+
   it('reactivates an idle builder before sending the build exactly once', async () => {
     await expect(driver.buildDependencies(REQUEST)).resolves.toEqual(RESULT);
 
@@ -232,5 +308,102 @@ describe('LambdaDriver', () => {
     await expect(driver.buildDependencies(REQUEST)).rejects.toThrow();
     expect(commands).not.toContain('UpdateFunctionConfigurationCommand');
     expect(payloads).toHaveLength(0);
+  });
+  describe('executeHttpRequest', () => {
+    beforeEach(() => {
+      state = 'Active';
+    });
+
+    it('runs the request in the egress Lambda', async () => {
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toEqual(HTTP_EGRESS_RESPONSE);
+      expect(String(functionNames[0])).toMatch(/^twenty-http-egress/);
+      expect(payloads[0]).toEqual({
+        ...HTTP_EGRESS_REQUEST,
+        limits: { timeoutMs: 30_000, maxPayloadSizeBytes: 4 * 1024 * 1024 },
+      });
+    });
+
+    it('reports an unavailable egress without retrying the invoke', async () => {
+      egressInvokeErrors = [new Error('Service unavailable')];
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        errorMessage:
+          'Outbound HTTP requests are temporarily unavailable. Try again later.',
+        outcomeDetails: {
+          outcome: 'other-error',
+          errorCode: 'EGRESS_UNAVAILABLE',
+        },
+      });
+      expect(
+        commands.filter((command) => command === 'InvokeCommand'),
+      ).toHaveLength(1);
+    });
+
+    it('retries an invoke that Lambda rate limited, since it never ran', async () => {
+      egressInvokeErrors = [buildRateLimitedError()];
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toEqual(HTTP_EGRESS_RESPONSE);
+      expect(
+        commands.filter((command) => command === 'InvokeCommand'),
+      ).toHaveLength(2);
+    });
+
+    it('reports unavailable once rate-limited retries run out', async () => {
+      egressInvokeErrors = [
+        buildRateLimitedError(),
+        buildRateLimitedError(),
+        buildRateLimitedError(),
+      ];
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        outcomeDetails: { errorCode: 'EGRESS_UNAVAILABLE' },
+      });
+      expect(
+        commands.filter((command) => command === 'InvokeCommand'),
+      ).toHaveLength(3);
+    });
+
+    it('reports a stalled invoke as unavailable rather than a request timeout', async () => {
+      egressInvokeErrors = [
+        Object.assign(new Error('The operation was aborted due to timeout'), {
+          name: 'TimeoutError',
+        }),
+      ];
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        errorMessage:
+          'Outbound HTTP requests are temporarily unavailable. Try again later.',
+        outcomeDetails: { errorCode: 'EGRESS_UNAVAILABLE' },
+      });
+    });
+
+    it('reports a Lambda timeout as a request timeout', async () => {
+      egressInvokeOutput = {
+        FunctionError: 'Unhandled',
+        Payload: buildInvokePayload(
+          JSON.stringify({
+            errorType: 'Sandbox.Timedout',
+            errorMessage: 'Task timed out after 35.00 seconds',
+          }),
+        ),
+      };
+
+      const output = await driver.executeHttpRequest(HTTP_EGRESS_REQUEST);
+
+      expect(output).toMatchObject({
+        errorMessage: 'Request timed out after 30s',
+        outcomeDetails: { outcome: 'timeout' },
+      });
+    });
   });
 });

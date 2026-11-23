@@ -1,6 +1,10 @@
 import {
   getRoleTargetUniversalIdentifier,
+  getRecordsPermissionsFromRoleManifest,
+  getRowLevelPermissionPredicatesFromRoleManifest,
   type Manifest,
+  type RoleManifest,
+  normalizeLegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,6 +25,14 @@ type ManifestEntityRegistryEntry = {
 };
 
 const NO_MANIFEST_CANDIDATES: ManifestEntityCandidate[] = [];
+
+const getNormalizedRoles = (manifest: Manifest): RoleManifest[] =>
+  (manifest.roles ?? []).map((role) =>
+    normalizeLegacyCompliantRoleManifest({
+      role,
+      applicationUniversalIdentifier: manifest.application.universalIdentifier,
+    }),
+  );
 
 const toCandidates = <T extends { universalIdentifier?: string }>(
   entities: T[] | undefined,
@@ -228,29 +240,42 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   objectPermission: {
     entityKind: 'object permission',
     getCandidates: (manifest) =>
-      (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.objectPermissions, () => undefined),
+      getNormalizedRoles(manifest).flatMap((role) =>
+        toCandidates(
+          getRecordsPermissionsFromRoleManifest({ role }).objectPermissions,
+          () => undefined,
+        ),
       ),
   },
   fieldPermission: {
     entityKind: 'field permission',
     getCandidates: (manifest) =>
-      (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.fieldPermissions, () => undefined),
+      getNormalizedRoles(manifest).flatMap((role) =>
+        toCandidates(
+          getRecordsPermissionsFromRoleManifest({ role }).fieldPermissions,
+          () => undefined,
+        ),
       ),
   },
   rowLevelPermissionPredicate: {
     entityKind: 'row-level permission predicate',
     getCandidates: (manifest) =>
-      (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionPredicates, () => undefined),
+      getNormalizedRoles(manifest).flatMap((role) =>
+        toCandidates(
+          getRowLevelPermissionPredicatesFromRoleManifest({ role }).predicates,
+          () => undefined,
+        ),
       ),
   },
   rowLevelPermissionPredicateGroup: {
     entityKind: 'row-level permission predicate group',
     getCandidates: (manifest) =>
-      (manifest.roles ?? []).flatMap((role) =>
-        toCandidates(role.rowLevelPermissionPredicateGroups, () => undefined),
+      getNormalizedRoles(manifest).flatMap((role) =>
+        toCandidates(
+          getRowLevelPermissionPredicatesFromRoleManifest({ role })
+            .predicateGroups,
+          () => undefined,
+        ),
       ),
   },
   roleTarget: {
@@ -295,6 +320,17 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   workflowVersion: {
     entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  rowLevelPermissionRule: {
+    entityKind: 'row-level permission rule',
+    getCandidates: (manifest) =>
+      getNormalizedRoles(manifest).flatMap((role) =>
+        toCandidates(
+          getRecordsPermissionsFromRoleManifest({ role })
+            .rowLevelPermissionRules,
+          () => undefined,
+        ),
+      ),
   },
   fieldMetadataOption: {
     entityKind: 'field option',

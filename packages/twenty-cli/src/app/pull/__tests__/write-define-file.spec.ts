@@ -261,6 +261,39 @@ describe('writeDefineFile', () => {
     );
   });
 
+  it('should write the enums of a view field relation scope as their members', () => {
+    const { content: file } = writeDefineFile({
+      definer: 'defineViewField',
+      config: {
+        universalIdentifier: 'view-field-uid',
+        viewUniversalIdentifier: 'view-uid',
+        fieldMetadataUniversalIdentifier: 'field-uid',
+        position: 0,
+        relationScope: {
+          filters: [
+            {
+              id: 'filter-id',
+              fieldMetadataUniversalIdentifier: 'stage-uid',
+              operand: 'IS',
+              value: ['OPEN'],
+              filterGroupId: 'group-id',
+            },
+          ],
+          filterGroups: [{ id: 'group-id', logicalOperator: 'AND' }],
+          sorts: [],
+          aggregateOperation: 'SUM',
+        },
+      },
+      enumBindings: VIEW_FIELD_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain('operand: ViewFilterOperand.IS,');
+    expect(file).toContain(
+      'logicalOperator: ViewFilterGroupLogicalOperator.AND,',
+    );
+    expect(file).toContain('aggregateOperation: AggregateOperations.SUM,');
+  });
+
   it('should write every bound page layout property as its enum symbol and import each symbol on its own line', () => {
     const { content: file } = writeDefineFile({
       definer: 'definePageLayout',
@@ -523,6 +556,62 @@ describe('writeDefineFile', () => {
     );
     expect(file).toContain('SystemPermissionFlag.WORKSPACE');
     expect(file).toContain("'application-permission-flag-uid'");
+  });
+
+  it('should write the predicates and predicate groups nested in row-level records permissions as enum members', () => {
+    const { content: file } = writeDefineFile({
+      definer: 'defineRole',
+      config: {
+        universalIdentifier: 'role-uid',
+        label: 'Auditor',
+        recordsPermissions: {
+          objects: [
+            {
+              objectUniversalIdentifier: 'object-uid',
+              canUpdateAllRecords: true,
+              rowLevelRecordsPermissions: [
+                {
+                  universalIdentifier: 'rule-uid',
+                  canReadRecords: true,
+                  predicates: [
+                    {
+                      universalIdentifier: 'predicate-uid',
+                      fieldUniversalIdentifier: 'field-uid',
+                      operand: 'CONTAINS',
+                      value: 'Rex',
+                    },
+                  ],
+                  predicateGroups: [
+                    {
+                      universalIdentifier: 'predicate-group-uid',
+                      logicalOperator: 'OR',
+                      predicates: [
+                        {
+                          universalIdentifier: 'predicate-in-group-uid',
+                          fieldUniversalIdentifier: 'field-uid',
+                          operand: 'IS_EMPTY',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      enumBindings: ROLE_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain(
+      'logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,',
+    );
+    expect(file).toContain(
+      'operand: RowLevelPermissionPredicateOperand.CONTAINS,',
+    );
+    expect(file).toContain(
+      'operand: RowLevelPermissionPredicateOperand.IS_EMPTY,',
+    );
   });
 
   it('should write a permission flag with its permission type as a literal', () => {

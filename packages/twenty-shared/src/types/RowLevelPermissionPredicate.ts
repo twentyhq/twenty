@@ -6,6 +6,7 @@ import { type RowLevelPermissionPredicateValue } from '@/types/RowLevelPermissio
 export type RowLevelPermissionPredicate = {
   id: string;
   fieldMetadataId: string;
+  relationFieldMetadataId?: string | null;
   objectMetadataId: string;
   operand: RowLevelPermissionPredicateOperand;
   value: RowLevelPermissionPredicateValue;
@@ -13,5 +14,6 @@ export type RowLevelPermissionPredicate = {
   rowLevelPermissionPredicateGroupId: string | null;
   workspaceMemberFieldMetadataId: string | null;
   workspaceMemberSubFieldName: string | null;
+  workspaceMemberRelationFieldMetadataId?: string | null;
   roleId: string;
 };

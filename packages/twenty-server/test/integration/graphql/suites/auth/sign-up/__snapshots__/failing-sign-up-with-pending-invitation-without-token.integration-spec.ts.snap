@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Joining a workspace with the address of a pending invitation and no invitation token should fail when logging in to the workspace with an account that has not verified its email 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "EMAIL_NOT_VERIFIED",
+    "userFriendlyMessage": "Email is not verified.",
+  },
+  "message": "Email is not verified",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Joining a workspace with the address of a pending invitation and no invitation token should fail when signing up in the workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "User does not have access to this workspace",
+  },
+  "message": "User does not have access to this workspace",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Joining a workspace with the address of a pending invitation and no invitation token should fail when signing up in the workspace with an account that has not verified its email 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "User does not have access to this workspace",
+  "name": "ForbiddenError",
+}
+`;

@@ -4,23 +4,31 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { ChatThreadsCardContent } from '@/page-layout/widgets/chat-threads/components/ChatThreadsCardContent';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const NETWORK_ERROR = new Error('Failed to fetch');
 
-const openRecordInSidePanel = jest.fn();
+const handleThreadClick = jest.fn();
+type UseAiChatThreadClickOptions = { resetNavigationStack?: boolean };
 
-jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
-  useOpenRecordInSidePanel: () => ({ openRecordInSidePanel }),
+const useAiChatThreadClick = jest.fn(
+  (_options: UseAiChatThreadClickOptions) => ({
+    handleThreadClick,
+  }),
+);
+
+jest.mock('@/ai-chat/threads/hooks/useAiChatThreadClick', () => ({
+  useAiChatThreadClick: (options: UseAiChatThreadClickOptions) =>
+    useAiChatThreadClick(options),
 }));
 
-jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
-  AiChatThreadActionsDropdown: () => null,
+jest.mock('@/inbox/components/InboxThreadActionsDropdown', () => ({
+  InboxThreadActionsDropdown: () => null,
 }));
 
-const THREAD: AgentChatThreadRecord = {
+const THREAD: AiChatThreadRecord = {
   __typename: 'AgentChatThread',
   id: '20202020-0000-4000-8000-0000000000aa',
   title: 'Pricing questions',
@@ -39,7 +47,7 @@ const renderContent = ({
   loading?: boolean;
   error?: unknown;
   onRetry?: () => void;
-  threads?: AgentChatThreadRecord[];
+  threads?: AiChatThreadRecord[];
 }) =>
   render(
     <I18nProvider i18n={i18n}>
@@ -68,10 +76,13 @@ describe('ChatThreadsCardContent', () => {
 
     await userEvent.click(screen.getByText('Pricing questions'));
 
-    expect(openRecordInSidePanel).toHaveBeenCalledWith({
-      recordId: THREAD.id,
-      objectNameSingular: 'agentChatThread',
+    expect(useAiChatThreadClick).toHaveBeenCalledWith({
+      resetNavigationStack: false,
     });
+    expect(handleThreadClick).toHaveBeenCalledWith(
+      expect.objectContaining({ id: THREAD.id }),
+      expect.anything(),
+    );
   });
 
   it('does not claim the record has no conversations while loading', () => {

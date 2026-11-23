@@ -37,7 +37,9 @@ export const useSettingsAiModelsActions = () => {
   const updateAiModelSettings = async (
     changes: WorkspaceAiModelSettingsChanges,
   ) => {
-    if (!currentWorkspace?.id) return;
+    if (!currentWorkspace?.id) {
+      return;
+    }
 
     const previousWorkspace = currentWorkspace;
 

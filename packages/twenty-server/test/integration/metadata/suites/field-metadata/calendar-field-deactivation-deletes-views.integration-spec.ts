@@ -14,6 +14,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+
 const VIEW_WITH_CALENDAR_FIELDS = `
   id
   name
@@ -38,21 +40,19 @@ describe('calendar-field-deactivation-deletes-views', () => {
   let testSetup: TestSetup;
 
   const verifyViewExists = async (viewId: string, shouldExist: boolean) => {
-    const {
-      data: { getView },
-    } = await findOneView({
+    const { data, errors } = await findOneView({
       viewId,
       gqlFields: VIEW_WITH_CALENDAR_FIELDS,
-      expectToFail: false,
+      expectToFail: !shouldExist,
     });
 
     if (shouldExist) {
-      expect(isDefined(getView)).toBe(true);
+      expect(isDefined(data.getView)).toBe(true);
     } else {
-      expect(getView).toBeNull();
+      expect(errors[0].extensions.code).toBe(ErrorCode.NOT_FOUND);
     }
 
-    return getView;
+    return data?.getView;
   };
 
   const deactivateFieldAndVerify = async (fieldId: string) => {

@@ -10,6 +10,7 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -76,6 +77,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     TwentyStandardApplicationModule,
     SdkClientModule,
     SecretEncryptionModule,
+    UserWorkspaceModule,
     UpgradeModule,
     WorkflowRunModule,
     WorkflowAgentConversationModule,

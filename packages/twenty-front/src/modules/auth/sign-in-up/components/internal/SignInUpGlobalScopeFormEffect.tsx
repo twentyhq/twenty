@@ -23,8 +23,12 @@ export const SignInUpGlobalScopeFormEffect = () => {
       );
     };
 
-    if (signInUpStep !== SignInUpStep.Init) return;
-    if (!isLogged) return;
+    if (signInUpStep !== SignInUpStep.Init) {
+      return;
+    }
+    if (!isLogged) {
+      return;
+    }
 
     void resumeOnCentralDomain();
   }, [

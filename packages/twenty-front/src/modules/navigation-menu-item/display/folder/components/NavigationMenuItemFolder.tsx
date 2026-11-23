@@ -10,7 +10,7 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { NavigationMenuItemFolderLayout } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderLayout';
-import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
+import { NavigationMenuItemFolderSubItemDispatcher } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItemDispatcher';
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -154,7 +154,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
       isGroup={isGroup}
     >
       {navigationMenuItems.map((navigationMenuItem, index) => (
-        <NavigationMenuItemFolderSubItem
+        <NavigationMenuItemFolderSubItemDispatcher
           key={navigationMenuItem.id}
           navigationMenuItem={navigationMenuItem}
           index={index}

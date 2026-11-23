@@ -11,7 +11,9 @@ export const NodeDimensionEffect = ({
   onDimensionChange,
 }: NodeDimensionEffectProps) => {
   useEffect(() => {
-    if (!elementRef.current) return;
+    if (!elementRef.current) {
+      return;
+    }
 
     const resizeObserver = new ResizeObserver((entries) => {
       const entry = entries[0];

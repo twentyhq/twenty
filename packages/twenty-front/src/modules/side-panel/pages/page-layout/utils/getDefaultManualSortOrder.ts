@@ -6,7 +6,9 @@ type FieldOption = {
 export const getDefaultManualSortOrder = (
   options: FieldOption[] | null | undefined,
 ): string[] => {
-  if (!options) return [];
+  if (!options) {
+    return [];
+  }
 
   const sortedByPosition = options.toSorted(
     (a, b) => (a.position ?? 0) - (b.position ?? 0),

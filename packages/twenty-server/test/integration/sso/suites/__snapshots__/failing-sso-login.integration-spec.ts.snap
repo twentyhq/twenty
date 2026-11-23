@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SSO login should fail OIDC when the login page asks for an unknown identity provider 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "IDENTITY_PROVIDER_NOT_FOUND",
+    "userFriendlyMessage": "Identity provider not found.",
+  },
+  "message": "Identity Provider not found",
+  "name": "NotFoundError",
+}
+`;

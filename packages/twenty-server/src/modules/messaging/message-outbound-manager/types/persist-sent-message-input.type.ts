@@ -1,3 +1,5 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
@@ -13,4 +15,5 @@ export type PersistSentMessageInput = {
   parentThreadExternalId?: string;
   workspaceId: string;
   attachments?: SendMessageInput['attachments'];
+  createdBy?: ActorMetadata;
 };

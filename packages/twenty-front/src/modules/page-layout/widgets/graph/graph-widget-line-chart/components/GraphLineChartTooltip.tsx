@@ -40,7 +40,9 @@ export const GraphLineChartTooltip = ({
 
   const handleTooltipClick: (() => void) | undefined = isDefined(onSliceClick)
     ? () => {
-        if (!isDefined(graphWidgetLineTooltip)) return;
+        if (!isDefined(graphWidgetLineTooltip)) {
+          return;
+        }
 
         const highlightedPoint = graphWidgetLineTooltip.slice.points.find(
           (point) =>
@@ -48,7 +50,9 @@ export const GraphLineChartTooltip = ({
             graphWidgetLineTooltip.highlightedSeriesId,
         );
 
-        if (!isDefined(highlightedPoint)) return;
+        if (!isDefined(highlightedPoint)) {
+          return;
+        }
 
         onSliceClick(highlightedPoint);
       }

@@ -44,7 +44,9 @@ export const useOpenPlayground = () => {
       ) {
         const { data } = await generatePlaygroundToken();
         const mintedToken = data?.generatePlaygroundToken;
-        if (!isDefined(mintedToken)) return;
+        if (!isDefined(mintedToken)) {
+          return;
+        }
         setPlaygroundApiKey(mintedToken);
       }
 

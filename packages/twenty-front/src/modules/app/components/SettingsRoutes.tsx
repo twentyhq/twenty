@@ -16,6 +16,7 @@ import {
 } from '@/app/routing/types/WorkspaceRouteObject';
 import { SETTINGS_AI_TABS } from '@/settings/ai/constants/SettingsAiTabs';
 import { SettingsLegacyAccountsRedirect } from '@/settings/app-preferences/components/SettingsLegacyAccountsRedirect';
+import { APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH } from '@/settings/app-preferences/constants/AppPreferencesPathByLegacyAccountsPath';
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
@@ -310,6 +311,14 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationConnectWithApiKey = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationConnectWithApiKey').then(
+    (module) => ({
+      default: module.SettingsApplicationConnectWithApiKey,
+    }),
+  ),
+);
+
 const SettingsApplicationConnectionDetail = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationConnectionDetail').then(
     (module) => ({
@@ -382,6 +391,30 @@ const SettingsAvailableApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
     (module) => ({
       default: module.SettingsAvailableApplicationDetails,
+    }),
+  ),
+);
+
+const SettingsApplicationContent = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationContent').then(
+    (module) => ({
+      default: module.SettingsApplicationContent,
+    }),
+  ),
+);
+
+const SettingsAvailableApplicationResources = lazy(() =>
+  import('~/pages/settings/applications/SettingsAvailableApplicationResources').then(
+    (module) => ({
+      default: module.SettingsAvailableApplicationResources,
+    }),
+  ),
+);
+
+const SettingsApplicationContentTypeDetail = lazy(() =>
+  import('~/pages/settings/applications/SettingsApplicationContentTypeDetail').then(
+    (module) => ({
+      default: module.SettingsApplicationContentTypeDetail,
     }),
   ),
 );
@@ -470,20 +503,6 @@ const SettingsAppPreferencesApp = lazy(() =>
   ),
 );
 
-const SettingsAccountsEmails = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
-    default: module.SettingsAccountsEmails,
-  })),
-);
-
-const SettingsAccountsCalendars = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
-    (module) => ({
-      default: module.SettingsAccountsCalendars,
-    }),
-  ),
-);
-
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
@@ -554,6 +573,18 @@ const SettingsDevelopersWebhookDetail = lazy(() =>
       default: module.SettingsDevelopersWebhookDetail,
     }),
   ),
+);
+
+const SettingsAiMcpServerNew = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerNew').then((module) => ({
+    default: module.SettingsAiMcpServerNew,
+  })),
+);
+
+const SettingsAiMcpServerDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiMcpServerDetail').then((module) => ({
+    default: module.SettingsAiMcpServerDetail,
+  })),
 );
 
 const SettingsObjectNewFieldSelect = lazy(() =>
@@ -756,20 +787,10 @@ const SettingsRoleEdit = lazy(() =>
   })),
 );
 
-const SettingsRoleObjectLevel = lazy(() =>
-  import('~/pages/settings/members/roles/SettingsRoleObjectLevel').then(
-    (module) => ({
-      default: module.SettingsRoleObjectLevel,
-    }),
-  ),
-);
-
-const SettingsRoleAddObjectLevel = lazy(() =>
-  import('~/pages/settings/members/roles/SettingsRoleAddObjectLevel').then(
-    (module) => ({
-      default: module.SettingsRoleAddObjectLevel,
-    }),
-  ),
+const SettingsRoleRule = lazy(() =>
+  import('~/pages/settings/members/roles/SettingsRoleRule').then((module) => ({
+    default: module.SettingsRoleRule,
+  })),
 );
 
 type CreateSettingsRouteObjectsArgs = {
@@ -809,6 +830,11 @@ const createSettingsRouteElements = ({
       element={<SettingsTwoFactorAuthenticationMethod />}
     />
     <Route path={SettingsPath.Experience} element={<SettingsExperience />} />
+    {/* Reached from both the Applications and Accounts settings; the mutation checks the caller per provider scope */}
+    <Route
+      path={SettingsPath.ApplicationConnectWithApiKey}
+      element={<SettingsApplicationConnectWithApiKey />}
+    />
     <Route
       element={
         <SettingsProtectedRouteWrapper
@@ -816,60 +842,15 @@ const createSettingsRouteElements = ({
         />
       }
     >
-      <Route element={<SettingsLegacyAccountsRedirect />}>
-        <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
-        <Route
-          path={SettingsPath.AccountsEmails}
-          element={<SettingsAccountsEmails />}
-        />
-        <Route
-          path={SettingsPath.AccountsCalendars}
-          element={<SettingsAccountsCalendars />}
-        />
-        <Route
-          path={SettingsPath.NewAccount}
-          element={<SettingsNewAccount />}
-        />
-        <Route
-          path={SettingsPath.AccountsConfiguration}
-          element={<SettingsAccountsConfiguration />}
-        />
-        <Route
-          path={SettingsPath.NewImapSmtpCaldavConnection}
-          element={<SettingsNewImapSmtpCaldavConnection />}
-        />
-        <Route
-          path={SettingsPath.EditImapSmtpCaldavConnection}
-          element={<SettingsEditImapSmtpCaldavConnection />}
-        />
-        <Route
-          path={SettingsPath.AccountDetail}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-        <Route
-          path={SettingsPath.BuiltInAccountApp}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-        <Route
-          path={SettingsPath.ApplicationPreferences}
-          element={
-            <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />
-          }
-        />
-      </Route>
-    </Route>
-    <Route
-      element={
-        <SettingsProtectedRouteWrapper
-          settingsPermission={PermissionFlagType.CONNECTED_ACCOUNTS}
-          requiredFeatureFlag={FeatureFlagKey.IS_APP_PREFERENCES_ENABLED}
-        />
-      }
-    >
+      {Object.keys(APP_PREFERENCES_PATH_BY_LEGACY_ACCOUNTS_PATH).map(
+        (legacyAccountsPath) => (
+          <Route
+            key={legacyAccountsPath}
+            path={legacyAccountsPath}
+            element={<SettingsLegacyAccountsRedirect />}
+          />
+        ),
+      )}
       <Route
         path={SettingsPath.AppPreferences}
         element={<SettingsAccounts />}
@@ -1137,13 +1118,8 @@ const createSettingsRouteElements = ({
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route
-        path={SettingsPath.RoleObjectLevel}
-        element={<SettingsRoleObjectLevel />}
-        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
-      />
-      <Route
-        path={SettingsPath.RoleAddObjectLevel}
-        element={<SettingsRoleAddObjectLevel />}
+        path={SettingsPath.RoleRule}
+        element={<SettingsRoleRule />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
     </Route>
@@ -1203,6 +1179,31 @@ const createSettingsRouteElements = ({
         element={<SettingsDevelopersWebhookDetail />}
       />
     </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.AI_SETTINGS}
+          requiredFeatureFlag={FeatureFlagKey.IS_MCP_SERVERS_ENABLED}
+        />
+      }
+    >
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.API_KEYS_AND_WEBHOOKS}
+          />
+        }
+      >
+        <Route
+          path={SettingsPath.AiNewMcpServer}
+          element={<SettingsAiMcpServerNew />}
+        />
+        <Route
+          path={SettingsPath.AiMcpServerDetail}
+          element={<SettingsAiMcpServerDetail />}
+        />
+      </Route>
+    </Route>
 
     <Route
       element={
@@ -1226,6 +1227,26 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.AvailableApplicationDetail}
         element={<SettingsAvailableApplicationDetails />}
+      />
+      <Route
+        path={SettingsPath.ApplicationContent}
+        element={<SettingsApplicationContent />}
+      />
+      <Route
+        path={SettingsPath.ApplicationContentTypeDetail}
+        element={<SettingsApplicationContentTypeDetail />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationResources}
+        element={<SettingsAvailableApplicationResources />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationContent}
+        element={<SettingsApplicationContent />}
+      />
+      <Route
+        path={SettingsPath.AvailableApplicationContentTypeDetail}
+        element={<SettingsApplicationContentTypeDetail />}
       />
       <Route
         path={SettingsPath.ApplicationLogicFunctionDetail}

@@ -4,6 +4,8 @@ export const FLAT_AGENT_EDITABLE_PROPERTIES = [
   'name',
   'label',
   'icon',
+  'avatarColor',
+  'avatarShape',
   'description',
   'prompt',
   'modelId',

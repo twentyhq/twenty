@@ -35,7 +35,7 @@ export const useComposeEmailForTargetRecord = (
 
   const openComposer = () => {
     if (!isDefined(connectedAccountId)) {
-      navigateSettings(SettingsPath.NewAccount);
+      navigateSettings(SettingsPath.AppPreferencesNewAccount);
 
       return;
     }

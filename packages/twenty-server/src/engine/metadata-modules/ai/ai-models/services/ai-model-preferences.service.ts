@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type AiModelTier } from 'twenty-shared/ai';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AI_MODELS_DEFAULT_CONFIG_KEY_BY_TIER } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-default-config-key-by-tier.const';
+import { AI_MODELS_DEFAULT_CONFIG_KEY_BY_TIER } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-models-default-config-key-by-tier.constant';
 
 @Injectable()
 export class AiModelPreferencesService {

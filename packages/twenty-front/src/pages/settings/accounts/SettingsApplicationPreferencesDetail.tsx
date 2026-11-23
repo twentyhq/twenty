@@ -5,8 +5,12 @@ import {
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsAppPreferencesGeneralTab } from '@/settings/app-preferences/components/SettingsAppPreferencesGeneralTab';
+import { MY_APPLICATION_HEALTH_CHECK_RUNNER } from '@/settings/app-preferences/constants/MyApplicationHealthCheckRunner';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
+import { SettingsApplicationHealthCheckBanner } from '@/settings/applications/components/SettingsApplicationHealthCheckBanner';
+import { SettingsApplicationHealthCheckEffect } from '@/settings/applications/components/SettingsApplicationHealthCheckEffect';
+import { useSaveApplicationVariablesAndRecheckHealth } from '@/settings/applications/hooks/useSaveApplicationVariablesAndRecheckHealth';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { getSettingsMenuItemLegacyTabIdRedirect } from '@/settings/applications/utils/getSettingsMenuItemLegacyTabIdRedirect';
 import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
@@ -36,6 +40,7 @@ import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/c
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationDetailPageLayout } from '@/settings/applications/components/SettingsApplicationDetailPageLayout';
 import { SettingsApplicationStoppedBanner } from '@/settings/applications/components/SettingsApplicationStoppedBanner';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 
 type SettingsApplicationPreferencesDetailProps = {
   applicationWithPreferences: ApplicationWithPreferences;
@@ -83,6 +88,15 @@ export const SettingsApplicationPreferencesDetail = ({
       }),
     refetchApplicationVariables: refetchApplicationsWithPreferences,
   });
+
+  const hasMissingRequiredVariables = isNonEmptyArray(missingRequiredVariables);
+
+  const { saveApplicationVariablesAndRecheckHealth } =
+    useSaveApplicationVariablesAndRecheckHealth({
+      applicationId: application.id,
+      runner: MY_APPLICATION_HEALTH_CHECK_RUNNER,
+      saveApplicationVariables,
+    });
 
   const hasVariablesTab = hasApplicationVariablesTab({
     settingsMenuItems,
@@ -135,7 +149,7 @@ export const SettingsApplicationPreferencesDetail = ({
 
   const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
     settingsMenuItems,
-    hashTabId: hash.replace('#', ''),
+    hashTabId: parseTabRouteHash(hash).tabId,
   });
 
   if (isDefined(legacyTabIdRedirect)) {
@@ -169,7 +183,7 @@ export const SettingsApplicationPreferencesDetail = ({
             variant="solid"
             color="accent"
             size="sm"
-            onClick={saveApplicationVariables}
+            onClick={saveApplicationVariablesAndRecheckHealth}
             disabled={
               !hasUnsavedApplicationVariables || isSavingApplicationVariables
             }
@@ -193,6 +207,31 @@ export const SettingsApplicationPreferencesDetail = ({
             }
           />
         )}
+      {!hasMissingRequiredVariables && (
+        <>
+          <SettingsApplicationHealthCheckEffect
+            key={application.id}
+            applicationId={application.id}
+            runner={MY_APPLICATION_HEALTH_CHECK_RUNNER}
+          />
+          <SettingsApplicationHealthCheckBanner
+            applicationId={application.id}
+            healthCheckFamilyState={
+              MY_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
+            }
+            fallbackLocation={
+              activeTabId === SETTINGS_GENERAL_TAB_ID
+                ? undefined
+                : getSettingsPath(
+                    SettingsPath.AppPreferencesApp,
+                    { applicationId: application.id },
+                    undefined,
+                    SETTINGS_GENERAL_TAB_ID,
+                  )
+            }
+          />
+        </>
+      )}
       <SettingsApplicationStoppedBanner
         applicationUniversalIdentifier={application.universalIdentifier}
       />

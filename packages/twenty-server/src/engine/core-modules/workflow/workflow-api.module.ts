@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
+import { CoreWorkflowConnectionResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-connection.resolver';
 import { CoreWorkflowRunResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-run.resolver';
 import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
@@ -22,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
 import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
+import { McpToolActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool-action.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
@@ -43,6 +45,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowVersionValidationModule,
     CoreWorkflowServicesModule,
     CodeActionModule,
+    McpToolActionModule,
     WorkspaceCacheModule,
   ],
   controllers: [WorkflowTriggerController],
@@ -51,6 +54,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkflowBuilderResolver,
     WorkflowVersionStepResolver,
     CoreWorkflowResolver,
+    CoreWorkflowConnectionResolver,
     CoreWorkflowVersionMutationResolver,
     CoreWorkflowRunResolver,
   ],

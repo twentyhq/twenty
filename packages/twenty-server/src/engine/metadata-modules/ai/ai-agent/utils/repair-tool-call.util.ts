@@ -5,8 +5,6 @@ import {
   type LanguageModelUsage,
   NoSuchToolError,
   Output,
-  type StepResult,
-  type ToolSet,
   generateText,
 } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -15,7 +13,6 @@ import { type z } from 'zod';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 
 const logger = new Logger('repairToolCall');
@@ -68,7 +65,6 @@ export const repairToolCall = async ({
   }
 
   let usage: LanguageModelUsage | undefined;
-  let steps: StepResult<ToolSet>[] | undefined;
 
   try {
     const result = await generateText({
@@ -98,7 +94,6 @@ export const repairToolCall = async ({
     });
 
     usage = result.usage;
-    steps = result.steps;
 
     const repairedInput = result.output;
 
@@ -116,14 +111,10 @@ export const repairToolCall = async ({
     return null;
   } finally {
     if (isDefined(usage)) {
-      const cacheCreationTokens = steps
-        ? extractCacheCreationTokensFromSteps(steps)
-        : 0;
-
       void billingContext.aiBillingService
         .calculateAndBillUsage({
           modelId: billingContext.modelId,
-          billingInput: { usage, cacheCreationTokens },
+          billingInput: { usage },
           workspaceId: billingContext.workspaceId,
           operationType: billingContext.operationType,
           spenders: billingContext.spenders,

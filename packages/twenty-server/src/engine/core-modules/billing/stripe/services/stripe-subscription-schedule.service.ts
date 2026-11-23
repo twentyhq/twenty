@@ -64,10 +64,30 @@ export class StripeSubscriptionScheduleService {
     };
   }
 
-  async getSubscriptionWithSchedule(stripeSubscriptionId: string) {
-    return (await this.stripe.subscriptions.retrieve(stripeSubscriptionId, {
-      expand: ['schedule'],
-    })) as SubscriptionWithSchedule;
+  async getSubscriptionWithSchedule(
+    stripeSubscriptionId: string,
+  ): Promise<SubscriptionWithSchedule> {
+    const subscription = (await this.stripe.subscriptions.retrieve(
+      stripeSubscriptionId,
+      { expand: ['schedule'] },
+    )) as SubscriptionWithSchedule;
+
+    if (!subscription.items.has_more) {
+      return subscription;
+    }
+
+    const subscriptionItems = await this.stripe.subscriptionItems
+      .list({ subscription: stripeSubscriptionId, limit: 100 })
+      .autoPagingToArray({ limit: 1000 });
+
+    return {
+      ...subscription,
+      items: {
+        ...subscription.items,
+        data: subscriptionItems,
+        has_more: false,
+      },
+    };
   }
 
   async listCustomerNotEndedSubscriptionsWithSchedule(
@@ -92,7 +112,9 @@ export class StripeSubscriptionScheduleService {
     scheduleId: string,
     params: Stripe.SubscriptionScheduleUpdateParams,
   ) {
-    if (!this.stripe) throw new Error('Billing is disabled');
+    if (!this.stripe) {
+      throw new Error('Billing is disabled');
+    }
 
     return await this.stripe.subscriptionSchedules.update(scheduleId, {
       ...params,
@@ -101,7 +123,9 @@ export class StripeSubscriptionScheduleService {
   }
 
   async createSubscriptionSchedule(stripeSubscriptionId: string) {
-    if (!this.stripe) throw new Error('Billing is disabled');
+    if (!this.stripe) {
+      throw new Error('Billing is disabled');
+    }
 
     const schedule = await this.stripe.subscriptionSchedules.create({
       from_subscription: stripeSubscriptionId,
@@ -144,7 +168,9 @@ export class StripeSubscriptionScheduleService {
   }
 
   releaseSubscriptionSchedule(scheduleId: string) {
-    if (!this.stripe) throw new Error('Billing is disabled');
+    if (!this.stripe) {
+      throw new Error('Billing is disabled');
+    }
 
     return this.stripe.subscriptionSchedules.release(scheduleId);
   }

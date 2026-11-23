@@ -20,6 +20,7 @@ import { HttpRequestActionModule } from 'src/modules/workflow/workflow-executor/
 import { IfElseActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/if-else-action.module';
 import { IteratorActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/iterator-action.module';
 import { LogicFunctionActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/logic-function-action.module';
+import { McpToolActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mcp-tool/mcp-tool-action.module';
 import { MailSenderActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/mail-sender-action.module';
 import { SendChatMessageActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message-action.module';
 import { WaitForEventActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/wait-for-event/wait-for-event-action.module';
@@ -34,6 +35,7 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
     WorkflowRunModule,
     CodeActionModule,
     LogicFunctionActionModule,
+    McpToolActionModule,
     DelayActionModule,
     WaitForEventActionModule,
     RecordCRUDActionModule,

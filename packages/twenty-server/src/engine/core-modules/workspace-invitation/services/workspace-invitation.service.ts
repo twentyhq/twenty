@@ -23,12 +23,14 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-invitation/constants/invitation-app-token-types';
+import { INVITATION_SENDING_BY_SENDER_THROTTLE } from 'src/engine/core-modules/workspace-invitation/constants/invitation-sending-by-sender-throttle.constant';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
@@ -37,14 +39,18 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
 import { type SendInvitationsDTO } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.dto';
+import { buildInvitationSendingThrottleKey } from 'src/engine/core-modules/workspace-invitation/utils/build-invitation-sending-throttle-key.util';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
+import { isSameWorkDomainInvitation } from 'src/engine/core-modules/workspace-invitation/utils/is-same-work-domain-invitation.util';
 import {
   WorkspaceInvitationException,
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
+import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleAssignmentService } from 'src/engine/permissions/role-assignment/role-assignment.service';
+import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -55,7 +61,7 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly roleAssignmentService: RoleAssignmentService,
+    private readonly roleAssignmentWriteService: RoleAssignmentWriteService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
@@ -64,6 +70,7 @@ export class WorkspaceInvitationService {
     private readonly throttlerService: ThrottlerService,
     private readonly fileUrlService: FileUrlService,
     private readonly gettingStartedService: GettingStartedService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async validatePersonalInvitation({
@@ -308,7 +315,7 @@ export class WorkspaceInvitationService {
     }
 
     if (isDefined(roleId)) {
-      await this.roleAssignmentService.validateRoleAssignableToUsersOrThrow({
+      await this.roleAssignmentWriteService.assertRoleAssignableToUsersOrThrow({
         roleId,
         workspaceId: workspace.id,
       });
@@ -322,7 +329,7 @@ export class WorkspaceInvitationService {
           workspaceId: workspace.id,
         })));
 
-    await this.throttleInvitationSending(workspace.id, emails);
+    await this.throttleInvitationSending(workspace.id, emails, sender);
 
     if (isDefined(appTokenIdToInvalidate)) {
       await this.appTokenRepository.delete(appTokenIdToInvalidate);
@@ -347,6 +354,9 @@ export class WorkspaceInvitationService {
         return { appToken, email: appToken.context.email };
       }),
     );
+
+    const senderName = truncateFullName(sender.name);
+    const workspaceName = truncateWorkspaceDisplayName(workspace.displayName);
 
     for (const invitation of invitationResults) {
       if (invitation.status === 'fulfilled') {
@@ -379,13 +389,13 @@ export class WorkspaceInvitationService {
         const emailData = {
           link: link.toString(),
           workspace: {
-            name: workspace.displayName,
+            name: workspaceName,
             logo,
           },
           sender: {
             email: sender.userEmail,
-            firstName: sender.name.firstName,
-            lastName: sender.name.lastName,
+            firstName: senderName.firstName,
+            lastName: senderName.lastName,
           },
           serverUrl: this.twentyConfigService.get('SERVER_URL'),
           locale: sender.locale,
@@ -402,7 +412,7 @@ export class WorkspaceInvitationService {
         const subject = i18n._(joinTeamMsg);
 
         await this.emailService.send({
-          from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: `${senderName.firstName} ${senderName.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
           subject,
           text,
@@ -499,12 +509,13 @@ export class WorkspaceInvitationService {
   private async throttleInvitationSending(
     workspaceId: string,
     emails: string[],
+    sender: WorkspaceMemberWorkspaceEntity,
   ) {
     try {
       await Promise.all(
         emails.map(async (email) => {
           await this.throttlerService.tokenBucketThrottleOrThrow(
-            `invitation-resending-workspace:throttler:${email}`,
+            buildInvitationSendingThrottleKey(email),
             1,
             this.twentyConfigService.get(
               'INVITATION_SENDING_BY_EMAIL_THROTTLE_LIMIT',
@@ -516,8 +527,10 @@ export class WorkspaceInvitationService {
         }),
       );
 
+      await this.throttleInvitationSendingBySender(emails, sender);
+
       await this.throttlerService.tokenBucketThrottleOrThrow(
-        `invitation-resending-workspace:throttler:${workspaceId}`,
+        buildInvitationSendingThrottleKey(workspaceId),
         emails.length,
         this.twentyConfigService.get(
           'INVITATION_SENDING_BY_WORKSPACE_THROTTLE_LIMIT',
@@ -535,5 +548,40 @@ export class WorkspaceInvitationService {
         },
       );
     }
+  }
+
+  private async throttleInvitationSendingBySender(
+    emails: string[],
+    sender: WorkspaceMemberWorkspaceEntity,
+  ) {
+    const isSelfHostedEnterprise =
+      this.enterprisePlanService.isValid() &&
+      !this.twentyConfigService.isBillingEnabled();
+
+    if (isSelfHostedEnterprise) {
+      return;
+    }
+
+    const senderEmail = sender.userEmail;
+
+    const sameWorkDomainEmailsCount = isDefined(senderEmail)
+      ? emails.filter((inviteeEmail) =>
+          isSameWorkDomainInvitation({ senderEmail, inviteeEmail }),
+        ).length
+      : 0;
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildInvitationSendingThrottleKey(`${sender.userId}:same-work-domain`),
+      sameWorkDomainEmailsCount,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.sameWorkDomainLimit,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.ttlInMs,
+    );
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildInvitationSendingThrottleKey(sender.userId),
+      emails.length - sameWorkDomainEmailsCount,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.limit,
+      INVITATION_SENDING_BY_SENDER_THROTTLE.ttlInMs,
+    );
   }
 }

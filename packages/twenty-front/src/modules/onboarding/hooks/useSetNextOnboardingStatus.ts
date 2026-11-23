@@ -6,7 +6,8 @@ import { billingState } from '@/client-config/states/billingState';
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { onboardingNavigationDirectionState } from '@/onboarding/states/onboardingNavigationDirectionState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { hasOpenedWorkspaceSetupChatSidePanelState } from '@/onboarding/states/hasOpenedWorkspaceSetupChatSidePanelState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { getHasJustCompletedOnboarding } from '@/onboarding/utils/getHasJustCompletedOnboarding';
 import { getIsBookCallRequired } from '@/onboarding/utils/getIsBookCallRequired';
 import { getNextOnboardingStatus } from '@/onboarding/utils/getNextOnboardingStatus';
@@ -68,9 +69,10 @@ export const useSetNextOnboardingStatus = () => {
         })
       ) {
         store.set(
-          shouldOpenAiChatAfterOnboardingState.atom,
+          isWorkspaceSetupChatActiveState.atom,
           isOnboardingAiChatEnabled && currentUser?.isWorkspaceCreator === true,
         );
+        store.set(hasOpenedWorkspaceSetupChatSidePanelState.atom, false);
       }
     },
     [

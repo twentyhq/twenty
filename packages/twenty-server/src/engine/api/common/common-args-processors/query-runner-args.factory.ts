@@ -14,8 +14,7 @@ export class QueryRunnerArgsFactory {
 
   async overrideValueByFieldMetadata(
     key: string,
-    // oxlint-disable-next-line typescript/no-explicit-any
-    value: any,
+    value: string,
     fieldIdByName: Record<string, string>,
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,

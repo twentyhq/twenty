@@ -4,7 +4,7 @@ Structured web search powered by [Exa](https://exa.ai), available to Twenty's AI
 
 ## What it does
 
-This app adds a single AI tool, `exa_web_search`, to your workspace. Twenty AI agents can invoke it to run a search through Exa and receive structured, entity-aware results. It is designed to surface high-quality matches for companies, people, research papers, news, and similar entities rather than generic page links.
+This app adds a single AI tool, `exa_web_search`, to your workspace. Twenty AI agents can invoke it to run a search through Exa and receive structured, entity-aware results. It is designed to surface high-quality matches for companies, people, publications, news, and similar entities rather than generic page links.
 
 The tool reads no workspace data. It only uses the search query the agent provides and your configured Exa API key, calling Exa's external API to return results.
 
@@ -13,7 +13,7 @@ The tool reads no workspace data. It only uses the search query the agent provid
 The tool accepts the following inputs:
 
 - **query** (required) — the search query to send to Exa.
-- **category** (optional) — narrows results to a specific type. Supported values: `company`, `research paper`, `news`, `pdf`, `personal site`, `financial report`, `people`. When omitted, Exa searches across all types.
+- **category** (optional) — narrows results to a specific type. Supported values: `company`, `publication`, `news`, `personal site`, `financial report`, `people`. When omitted, Exa searches across all types.
 - **numResults** (optional) — how many results to return, between `1` and `30`. Defaults to `10`.
 
 Agents choose these values automatically based on what they are trying to find, so no manual configuration is needed once the app is set up.

@@ -1,4 +1,3 @@
-import request from 'supertest';
 import {
   activateCoreWorkflowVersion,
   coreWorkflowGraphqlRequest,
@@ -6,97 +5,11 @@ import {
   createCoreWorkflowVersionStep,
   deactivateCoreWorkflowVersion,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { findCommandMenuItems } from 'test/integration/metadata/suites/command-menu-item/utils/find-command-menu-items.util';
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
-
-const client = request(`http://localhost:${APP_PORT}`);
-
-describe('workflowResolver', () => {
-  let coreWorkflowId: string;
-  let workspaceWorkflowId: string;
-  let workspaceWorkflowVersionId: string;
-
-  beforeAll(async () => {
-    const createdWorkflow = await createCoreWorkflow({
-      name: 'Records API write rejection',
-    });
-
-    coreWorkflowId = createdWorkflow.coreWorkflowId;
-
-    const legacyIds = await linkCoreWorkflowToLegacyWorkspaceIds({
-      coreWorkflowId,
-      withWorkspaceRecords: true,
-    });
-
-    workspaceWorkflowId = legacyIds.workspaceWorkflowId;
-    workspaceWorkflowVersionId = legacyIds.workspaceWorkflowVersionIds[0];
-  });
-
-  afterAll(async () => {
-    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowId });
-  });
-
-  it.each([
-    {
-      operation: 'createWorkflow',
-      buildQuery: () =>
-        'mutation { createWorkflow(data: { name: "Records API Workflow" }) { id } }',
-    },
-    {
-      operation: 'createWorkflows',
-      buildQuery: () =>
-        'mutation { createWorkflows(data: [{ name: "Records API Workflow" }]) { id } }',
-    },
-    {
-      operation: 'updateWorkflow',
-      buildQuery: () =>
-        `mutation { updateWorkflow(id: "${workspaceWorkflowId}", data: { name: "Renamed" }) { id } }`,
-    },
-    {
-      operation: 'deleteWorkflow',
-      buildQuery: () =>
-        `mutation { deleteWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'destroyWorkflow',
-      buildQuery: () =>
-        `mutation { destroyWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'restoreWorkflow',
-      buildQuery: () =>
-        `mutation { restoreWorkflow(id: "${workspaceWorkflowId}") { id } }`,
-    },
-    {
-      operation: 'updateWorkflowVersion',
-      buildQuery: () =>
-        `mutation { updateWorkflowVersion(id: "${workspaceWorkflowVersionId}", data: { name: "Renamed" }) { id } }`,
-    },
-    {
-      operation: 'deleteWorkflowVersion',
-      buildQuery: () =>
-        `mutation { deleteWorkflowVersion(id: "${workspaceWorkflowVersionId}") { id } }`,
-    },
-    {
-      operation: 'destroyWorkflowVersion',
-      buildQuery: () =>
-        `mutation { destroyWorkflowVersion(id: "${workspaceWorkflowVersionId}") { id } }`,
-    },
-  ])('rejects $operation through the records API', async ({ buildQuery }) => {
-    const response = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({ query: buildQuery() });
-
-    expect(response.body.errors?.[0]?.message).toBe('Method not allowed.');
-  });
-});
 
 const COMMAND_MENU_ITEM_GQL_FIELDS = `
   id

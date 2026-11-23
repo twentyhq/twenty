@@ -17,7 +17,9 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { isRedirectUriListedInClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-redirect-uri-listed-in-client-id-metadata-document.util';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
+import { toOAuthClientAuthorizationSettings } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/utils/to-oauth-client-authorization-settings.util';
 import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 import {
   AuthException,
@@ -53,6 +55,8 @@ import {
 } from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
+import { isOAuthResourceServedByOrigins } from 'src/engine/core-modules/application/application-oauth/utils/is-oauth-resource-served-by-origins.util';
+import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -63,6 +67,7 @@ import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/eve
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ImpersonationLevel } from 'src/engine/core-modules/impersonation/types/impersonation-level.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
@@ -105,7 +110,7 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSsoConnectedAccountService: CreateSsoConnectedAccountService,
     private readonly userSessionService: UserSessionService,
@@ -454,12 +459,14 @@ export class AuthService {
     impersonatedUserWorkspaceId,
     _impersonatorUserId,
     impersonatedUserId,
+    impersonationLevel,
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
     impersonatedUserWorkspaceId: string;
     _impersonatorUserId: string;
     impersonatedUserId: string;
+    impersonationLevel: ImpersonationLevel;
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
@@ -469,7 +476,7 @@ export class AuthService {
     });
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationLevel,
       action: 'attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -496,7 +503,7 @@ export class AuthService {
     );
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationLevel,
       action: 'issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -543,23 +550,33 @@ export class AuthService {
     user,
     workspace,
     requestBaseUrl,
+    requestIp,
   }: {
     authorizeAppInput: AuthorizeAppInput;
     user: AuthContextUser;
     workspace: WorkspaceEntity;
     requestBaseUrl: string;
+    requestIp: string | undefined;
   }): Promise<AuthorizeAppDTO> {
     const { clientId, codeChallenge } = authorizeAppInput;
 
-    const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+    await this.oAuthClientRegistrationResolverService.throttleClientIdMetadataDocumentFetchOrThrow(
+      { clientId, requestIp },
+    );
 
-    if (!applicationRegistration) {
+    const resolvedClient =
+      await this.oAuthClientRegistrationResolverService.resolveClient(clientId);
+
+    if (!isDefined(resolvedClient)) {
       throw new AuthException(
         `Client not found for '${clientId}'`,
         AuthExceptionCode.CLIENT_NOT_FOUND,
       );
     }
+
+    const applicationRegistration =
+      toOAuthClientAuthorizationSettings(resolvedClient);
+    const { clientIdMetadataDocument } = resolvedClient;
 
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
@@ -584,11 +601,16 @@ export class AuthService {
       applicationRegistration.oAuthRedirectUris.length > 0;
 
     if (hasRegisteredRedirectUris) {
-      if (
-        !applicationRegistration.oAuthRedirectUris.includes(
-          authorizeAppInput.redirectUrl,
-        )
-      ) {
+      const isRedirectUrlRegistered = isDefined(clientIdMetadataDocument)
+        ? isRedirectUriListedInClientIdMetadataDocument({
+            clientIdMetadataDocument,
+            redirectUri: authorizeAppInput.redirectUrl,
+          })
+        : applicationRegistration.oAuthRedirectUris.includes(
+            authorizeAppInput.redirectUrl,
+          );
+
+      if (!isRedirectUrlRegistered) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -606,11 +628,7 @@ export class AuthService {
         );
       }
 
-      const isLoopback =
-        redirectUrl.hostname === 'localhost' ||
-        redirectUrl.hostname === '127.0.0.1';
-
-      if (!isLoopback) {
+      if (!isLoopbackHostname(redirectUrl.hostname)) {
         throw new AuthException(
           `redirectUrl mismatch for '${clientId}'`,
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -649,6 +667,27 @@ export class AuthService {
       );
     }
 
+    const { resource } = authorizeAppInput;
+
+    if (
+      isDefined(resource) &&
+      !isOAuthResourceServedByOrigins({
+        resource,
+        origins: this.getServedOrigins({ workspace, requestBaseUrl }),
+      })
+    ) {
+      throw new AuthException(
+        `Unknown resource '${resource}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (resolvedClient.kind === 'clientIdMetadataDocument') {
+      await this.oAuthClientRegistrationResolverService.registerClientIdMetadataDocumentClient(
+        resolvedClient,
+      );
+    }
+
     const authorizationCode = crypto.randomBytes(42).toString('hex');
     const hashedAuthorizationCode = crypto
       .createHash('sha256')
@@ -662,6 +701,7 @@ export class AuthService {
       clientId: applicationRegistration.oAuthClientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
+      ...(isDefined(resource) ? { resource } : {}),
     };
 
     const token = this.appTokenRepository.create({
@@ -695,6 +735,25 @@ export class AuthService {
     }
 
     return { redirectUrl: redirectUriValidation.parsed.toString() };
+  }
+
+  private getServedOrigins({
+    workspace,
+    requestBaseUrl,
+  }: {
+    workspace: WorkspaceDomainConfig;
+    requestBaseUrl: string;
+  }): string[] {
+    const { customUrl, subdomainUrl } =
+      this.workspaceDomainsService.getWorkspaceUrls(workspace);
+
+    return [
+      requestBaseUrl,
+      this.twentyConfigService.get('SERVER_URL'),
+      this.domainServerConfigService.getBaseUrl().toString(),
+      subdomainUrl,
+      customUrl,
+    ].filter(isDefined);
   }
 
   async updatePassword(

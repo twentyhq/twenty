@@ -4,7 +4,10 @@ import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-fiel
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 type ObjectPermissionsByObjectMetadataId = Record<
@@ -53,9 +56,9 @@ export const isJunctionRelationForbidden = ({
   );
 
   if (
-    !canReachSomeRecords({
+    !canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: junctionPermissions,
-      operationType: 'select',
+      operationType: 'read',
     })
   ) {
     return true;
@@ -70,12 +73,12 @@ export const isJunctionRelationForbidden = ({
   }
 
   return !targetObjectMetadataIds.some((targetId) =>
-    canReachSomeRecords({
+    canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
         targetId,
       ),
-      operationType: 'select',
+      operationType: 'read',
     }),
   );
 };

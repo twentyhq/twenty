@@ -58,7 +58,7 @@ import {
   type PreInstallLogicFunctionApplicationManifest,
   type UninstallLogicFunctionApplicationManifest,
   type HealthCheckLogicFunctionApplicationManifest,
-  type RoleManifest,
+  type LegacyCompliantRoleManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -113,7 +113,7 @@ export const buildManifest = async (
   const indexes: IndexManifest[] = [];
   const validationRules: ValidationRuleManifest[] = [];
   const permissionFlags: PermissionFlagManifest[] = [];
-  const roles: RoleManifest[] = [];
+  const roles: LegacyCompliantRoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
   const workflows: WorkflowManifest[] = [];
@@ -178,7 +178,10 @@ export const buildManifest = async (
       ...validateConditionalAvailabilityUsage(fileContent, relativePath),
     );
 
-    const targetFunctionName = extractDefineEntity(fileContent);
+    const targetFunctionName = extractDefineEntity({
+      fileContent: fileContent,
+      filePath: filePath,
+    });
 
     if (!targetFunctionName) {
       continue;

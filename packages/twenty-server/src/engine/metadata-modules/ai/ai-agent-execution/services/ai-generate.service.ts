@@ -9,23 +9,25 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { type GenerateInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/generate.input';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
-import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-input-or-throw.util';
 import { readGeneratedOutputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output-or-throw.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
+import { resolveOwnAgentRunStreamChannelIdOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-own-agent-run-stream-channel-id-or-throw.util';
+import { AgentRunStopService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-run-stop.service';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { isUniqueViolationError } from 'src/engine/workspace-query-executor/utils/is-unique-violation-error.util';
 import {
   AiException,
   AiExceptionCode,
@@ -42,6 +44,8 @@ export class AiGenerateService {
   constructor(
     private readonly agentRunCallerContextService: AgentRunCallerContextService,
     private readonly agentRunnerService: AgentRunnerService,
+    private readonly agentRunStopService: AgentRunStopService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
@@ -75,7 +79,12 @@ export class AiGenerateService {
     // guard refuses other roleless applications first; an OAuth-only one acting with its member's role gets here
     if (
       isDefined(callerApplication) &&
-      !isDefined(callerApplication.defaultRoleId)
+      !isDefined(
+        await this.applicationGrantRoleLookupService.findGrantRoleId({
+          workspaceId: workspace.id,
+          flatApplication: callerApplication,
+        }),
+      )
     ) {
       throw new AiException(
         'ai.generate needs a default role on the application; declare one with defineApplicationRole()',
@@ -106,8 +115,8 @@ export class AiGenerateService {
         callerApplication,
       });
 
-    const { runId, outcome, usage } = await this.agentRunnerService
-      .runInRequest({
+    const runInRequest = (abortSignal?: AbortSignal) =>
+      this.agentRunnerService.runInRequest({
         workspaceId: workspace.id,
         executionContext,
         spec: {
@@ -135,14 +144,25 @@ export class AiGenerateService {
           senderApplicationId: callerApplication?.id ?? null,
         },
         streamChannelId,
-      })
-      .catch((error: unknown) => {
-        if (isDefined(requestedRunId) && isUniqueViolationError(error)) {
-          throw buildRunAlreadyExistsException(requestedRunId);
-        }
-
-        throw error;
+        abortSignal,
       });
+
+    // only a followed run has an id its caller knows before it ends, so only it can be stopped
+    const { runId, outcome, usage } = await (
+      isDefined(streamChannelId)
+        ? this.agentRunStopService.runStoppable({
+            workspaceId: workspace.id,
+            streamChannelId,
+            work: runInRequest,
+          })
+        : runInRequest()
+    ).catch((error: unknown) => {
+      if (isDefined(requestedRunId) && isUniqueViolationError(error)) {
+        throw buildRunAlreadyExistsException(requestedRunId);
+      }
+
+      throw error;
+    });
 
     const output = readGeneratedOutputOrThrow({
       outcome,
@@ -157,6 +177,28 @@ export class AiGenerateService {
     };
   }
 
+  // answers the same whether or not the run exists or still runs, so it tells nothing about other callers' runs
+  async stop({
+    workspace,
+    callerApplication,
+    requestWorkspaceMemberId,
+    runId,
+  }: {
+    workspace: Pick<FlatWorkspace, 'id'>;
+    callerApplication: Pick<FlatApplication, 'id'> | undefined;
+    requestWorkspaceMemberId: string | null;
+    runId: string;
+  }): Promise<void> {
+    await this.agentRunStopService.requestStop({
+      workspaceId: workspace.id,
+      streamChannelId: resolveOwnAgentRunStreamChannelIdOrThrow({
+        callerApplication,
+        callerWorkspaceMemberId: requestWorkspaceMemberId,
+        runId,
+      }),
+    });
+  }
+
   private async resolveStreamChannelIdOrThrow({
     workspaceId,
     callerApplication,
@@ -168,12 +210,11 @@ export class AiGenerateService {
     callerWorkspaceMemberId: string | null;
     runId: string;
   }): Promise<string> {
-    if (!isDefined(callerApplication)) {
-      throw new AiException(
-        'runId needs an application access token',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
+    const streamChannelId = resolveOwnAgentRunStreamChannelIdOrThrow({
+      callerApplication,
+      callerWorkspaceMemberId,
+      runId,
+    });
 
     // a concurrent call that passes this check still fails on the turn's primary key
     const existingTurn = await this.turnRepository.findOne(workspaceId, {
@@ -185,10 +226,6 @@ export class AiGenerateService {
       throw buildRunAlreadyExistsException(runId);
     }
 
-    return buildAgentRunStreamChannelId({
-      applicationId: callerApplication.id,
-      callerWorkspaceMemberId,
-      runId,
-    });
+    return streamChannelId;
   }
 }

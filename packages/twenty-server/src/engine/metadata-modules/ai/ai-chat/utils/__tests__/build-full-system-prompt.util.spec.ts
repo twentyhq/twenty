@@ -174,9 +174,9 @@ describe('buildFullSystemPrompt', () => {
       '## Attaching this conversation to records',
     );
     expect(buildPromptWithAttachment(false)).not.toContain(
-      'attach_conversation_to_record',
+      'attach_conversation_to_records',
     );
-    expect(buildPrompt(false)).not.toContain('attach_conversation_to_record');
+    expect(buildPrompt(false)).not.toContain('attach_conversation_to_records');
   });
 
   it('should end by scoping actions to the current participant', () => {

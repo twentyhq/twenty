@@ -8,7 +8,9 @@ export function buildTwoFactorAuthenticationMethodSummary(
     | Pick<TwoFactorAuthenticationMethodEntity, 'id' | 'status' | 'strategy'>[]
     | undefined,
 ): TwoFactorAuthenticationMethodSummaryDTO[] | undefined {
-  if (!isDefined(methods)) return undefined;
+  if (!isDefined(methods)) {
+    return undefined;
+  }
 
   return methods.map((method) => ({
     twoFactorAuthenticationMethodId: method.id,

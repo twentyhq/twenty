@@ -1,16 +1,12 @@
 import { GettingStartedConnectedAccountsTable } from '@/getting-started/components/GettingStartedConnectedAccountsTable';
-import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
-import { isDefined } from 'twenty-shared/utils';
+import { useGettingStartedMailboxAccounts } from '@/getting-started/hooks/useGettingStartedMailboxAccounts';
 
 export const GettingStartedMailboxDoneAction = () => {
-  const { accounts } = useMyConnectedAccounts();
-  const activeAccounts = accounts.filter(
-    (account) => !isDefined(account.archivedAt),
-  );
+  const { accounts } = useGettingStartedMailboxAccounts();
 
-  if (activeAccounts.length === 0) {
+  if (accounts.length === 0) {
     return null;
   }
 
-  return <GettingStartedConnectedAccountsTable accounts={activeAccounts} />;
+  return <GettingStartedConnectedAccountsTable accounts={accounts} />;
 };

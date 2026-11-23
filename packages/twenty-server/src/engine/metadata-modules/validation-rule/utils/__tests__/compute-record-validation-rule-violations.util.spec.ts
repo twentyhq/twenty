@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { computeRecordValidationRuleViolations } from 'src/engine/metadata-modules/validation-rule/utils/compute-record-validation-rule-violations.util';
 
@@ -128,5 +129,52 @@ describe('computeRecordValidationRuleViolations', () => {
         },
       ],
     });
+  });
+});
+
+describe('computeRecordValidationRuleViolations with previous values', () => {
+  const NO_SKIPPED_STAGE_RULE = {
+    id: 'rule-no-skipped-stage',
+    expression:
+      'stage == previous.stage or isEmpty(previous.stage) or (previous.stage == "NEW" and stage == "MEETING") or (previous.stage == "MEETING" and stage == "WON")',
+    message: 'Move one stage at a time',
+    errorFieldMetadataId: 'stage-field-metadata-id',
+  };
+
+  const computeTransition = ({
+    previousStage,
+    stage,
+  }: {
+    previousStage?: string;
+    stage: string;
+  }) =>
+    computeRecordValidationRuleViolations({
+      records: [{ id: 'deal', stage }],
+      validationRules: [NO_SKIPPED_STAGE_RULE],
+      fields: FIELDS,
+      now: '2026-09-23T10:00:00.000Z',
+      inputIndexByRecordId: new Map(),
+      previousRecordById: new Map(
+        isDefined(previousStage)
+          ? [['deal', { id: 'deal', stage: previousStage }]]
+          : [],
+      ),
+      maxViolations: 100,
+    }).violations.map((violation) => violation.ruleId);
+
+  it('should reject a record that skips a stage since its stored version', () => {
+    expect(computeTransition({ previousStage: 'NEW', stage: 'WON' })).toEqual([
+      'rule-no-skipped-stage',
+    ]);
+  });
+
+  it('should accept a record that moves to the next stage', () => {
+    expect(
+      computeTransition({ previousStage: 'NEW', stage: 'MEETING' }),
+    ).toEqual([]);
+  });
+
+  it('should read every previous value as empty for a created record', () => {
+    expect(computeTransition({ stage: 'WON' })).toEqual([]);
   });
 });

@@ -10,7 +10,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
-import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -27,6 +27,27 @@ const READ_DIRECT_MESSAGE = gql`
       parts {
         textContent
       }
+    }
+  }
+`;
+
+const READ_DIRECT_MESSAGE_REACTIONS = gql`
+  query ReadDirectMessageReactions($threadId: UUID!) {
+    chatMessages(threadId: $threadId) {
+      id
+      reactions {
+        emoji
+        workspaceMemberIds
+      }
+    }
+  }
+`;
+
+const ADD_REACTION = gql`
+  mutation AddReaction($messageId: UUID!, $emoji: String!) {
+    addAgentChatMessageReaction(messageId: $messageId, emoji: $emoji) {
+      emoji
+      workspaceMemberIds
     }
   }
 `;
@@ -208,6 +229,7 @@ describe('Private text direct messages', () => {
       workspaceId: context.workspaceId,
       threadId: threadId.toUpperCase(),
       turnId,
+      agentId: null,
       id: randomUUID().toUpperCase(),
     };
 
@@ -266,17 +288,17 @@ describe('Private text direct messages', () => {
       status: AgentTurnStatus.COMPLETED,
     });
     const recordsBefore = await readContentRecords(threadId);
-    const recordSharingWriteService =
-      getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+    const recordShareSystemWriteService =
+      getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       );
     const sharingFailure = new Error('Part sharing failed');
     const insertRecordShares =
-      recordSharingWriteService.insertRecordShares.bind(
-        recordSharingWriteService,
+      recordShareSystemWriteService.insertRecordShares.bind(
+        recordShareSystemWriteService,
       );
     const insertShares = jest
-      .spyOn(recordSharingWriteService, 'insertRecordShares')
+      .spyOn(recordShareSystemWriteService, 'insertRecordShares')
       .mockImplementationOnce(insertRecordShares)
       .mockRejectedValueOnce(sharingFailure);
     const messageId = randomUUID();
@@ -329,6 +351,57 @@ describe('Private text direct messages', () => {
       ErrorCode.NOT_FOUND,
     );
     expect(response.body.data?.chatMessages).toBeFalsy();
+  });
+
+  it('lets the pair react to its messages but not an outside administrator', async () => {
+    const threadId = await openDirectMessage({
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+    const sent = await sendChatParticipationMessage({
+      threadId,
+      text: 'React to this',
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(sent.body.errors).toBeUndefined();
+
+    const history = await makeMetadataApiRequest(
+      { query: READ_DIRECT_MESSAGE_REACTIONS, variables: { threadId } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    const [{ id: messageId }] = history.body.data.chatMessages;
+
+    const added = await makeMetadataApiRequest(
+      { query: ADD_REACTION, variables: { messageId, emoji: '👍' } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(added.body.errors).toBeUndefined();
+    expect(added.body.data.addAgentChatMessageReaction).toEqual([
+      {
+        emoji: '👍',
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      },
+    ]);
+
+    const refused = await makeMetadataApiRequest({
+      query: ADD_REACTION,
+      variables: { messageId, emoji: '👀' },
+    });
+
+    expect(refused.body.errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.NOT_FOUND,
+    );
+
+    const reread = await makeMetadataApiRequest(
+      { query: READ_DIRECT_MESSAGE_REACTIONS, variables: { threadId } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(reread.body.data.chatMessages[0].reactions).toEqual(
+      added.body.data.addAgentChatMessageReaction,
+    );
   });
 
   it('rejects unsupported file payloads before creating a message', async () => {

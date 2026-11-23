@@ -126,7 +126,7 @@ describe('generate mutation (integration)', () => {
       usage: SCRIPTED_MODEL_USAGE,
     };
 
-    mockScriptedAiModel((callIndex) =>
+    mockScriptedAiModel(({ callIndex }) =>
       callIndex === 0 ? callMissingTool : failWith('Invalid request'),
     );
 
@@ -159,7 +159,7 @@ describe('generate mutation for an application without a default role (integrati
     });
 
     await globalThis.testDataSource.query(
-      'UPDATE core."application" SET "defaultRoleId" = NULL WHERE id = $1',
+      'UPDATE core."application" SET "defaultRoleId" = NULL, "requestedRoleId" = NULL WHERE id = $1',
       [application.id],
     );
     await getAppProviderByClassName<WorkspaceCacheService>(

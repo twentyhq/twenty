@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import {
@@ -62,5 +63,6 @@ export const formatSentMessage = ({
     attachmentFiles,
     participants,
     isDraft: false,
+    ...(isDefined(input.createdBy) ? { createdBy: input.createdBy } : {}),
   };
 };

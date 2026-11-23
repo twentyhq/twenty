@@ -6,4 +6,7 @@ import { type FieldType } from '@/settings/data-model/types/FieldType';
 
 export const isCompositeFieldType = (
   type: FieldType,
-): type is CompositeFieldType => COMPOSITE_FIELD_TYPES.includes(type as any);
+): type is CompositeFieldType =>
+  COMPOSITE_FIELD_TYPES.some(
+    (compositeFieldType) => compositeFieldType === type,
+  );

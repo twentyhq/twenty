@@ -1,6 +1,6 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Equal, In, type FindOperator } from 'typeorm';
+import { Equal, In, IsNull, type FindOperator } from 'typeorm';
 
 import {
   type ConflictingFieldGroup,
@@ -9,7 +9,10 @@ import {
 } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
 import { getValueFromPath } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/utils/get-value-from-path.util';
 
-type WhereCondition = Record<string, FindOperator<ConflictingFieldValue>>;
+type WhereCondition = Record<
+  string,
+  FindOperator<ConflictingFieldValue | null>
+>;
 
 const buildCompositeConditionKey = (
   conditionEntries: [string, ConflictingFieldValue][],
@@ -68,6 +71,10 @@ export const buildWhereConditions = (
 
   for (const conflictingFieldGroup of conflictingFieldGroups) {
     const { conflictingProperties } = conflictingFieldGroup;
+    const liveRecordsCondition: WhereCondition =
+      conflictingFieldGroup.isIgnoringDeletedRecords
+        ? { deletedAt: IsNull() }
+        : {};
 
     if (conflictingProperties.length === 1) {
       const condition = buildSingleColumnCondition(
@@ -76,7 +83,7 @@ export const buildWhereConditions = (
       );
 
       if (isDefined(condition)) {
-        whereConditions.push(condition);
+        whereConditions.push({ ...condition, ...liveRecordsCondition });
       }
 
       continue;
@@ -107,7 +114,7 @@ export const buildWhereConditions = (
 
             return accumulator;
           },
-          {},
+          { ...liveRecordsCondition },
         ),
       );
     }

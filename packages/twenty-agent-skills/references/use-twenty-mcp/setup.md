@@ -125,7 +125,7 @@ If the client cannot do OAuth, configure bearer headers in the user's private MC
 
 After setup, verify the server is available with the client's own inspection command (`codex mcp get <server-name>`, `claude mcp list`, or the equivalent), or by listing available tools in a fresh session.
 
-When connected, the server lists every tool by name, such as `find_many_companies`. Clients that load every tool definition up front should use `/mcp?mode=meta` instead, which lists meta-tools such as `learn_tools`, `execute_tool` and `get_tool_catalog`:
+When connected, the server lists the same tools in every workspace: record tools that take the object as an argument, such as `find_records`, the metadata tools, and meta-tools for everything else. `/mcp?mode=direct` lists one tool per object instead, such as `find_many_companies`. `/mcp?mode=meta` lists only meta-tools such as `learn_tools`, `execute_tool` and `get_tool_catalog`:
 
 ```text
 learn_tools -> execute_tool

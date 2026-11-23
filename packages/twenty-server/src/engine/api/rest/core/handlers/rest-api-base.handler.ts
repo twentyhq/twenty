@@ -227,8 +227,8 @@ export abstract class RestApiBaseHandler {
       flatObjectMetadataMaps,
     );
 
-    let objectId = idByNamePlural[parsedObject];
-    let flatObjectMetadataItem = objectId
+    const objectId = idByNamePlural[parsedObject];
+    const flatObjectMetadataItem = objectId
       ? findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: objectId,
           flatEntityMaps: flatObjectMetadataMaps,

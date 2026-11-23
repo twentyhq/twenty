@@ -2,9 +2,7 @@ import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
-export const getConfigurationTypeFromGraphType = (
-  graphType: GraphType,
-): WidgetConfigurationType => {
+export const getConfigurationTypeFromGraphType = (graphType: GraphType) => {
   switch (graphType) {
     case GraphType.VERTICAL_BAR:
     case GraphType.HORIZONTAL_BAR:
@@ -16,6 +14,6 @@ export const getConfigurationTypeFromGraphType = (
     case GraphType.AGGREGATE:
       return WidgetConfigurationType.AGGREGATE_CHART;
     default:
-      assertUnreachable(graphType);
+      return assertUnreachable(graphType);
   }
 };

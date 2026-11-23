@@ -12,6 +12,8 @@ import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
+import { CoreWorkflowRunInsightsService } from 'src/engine/core-modules/workflow/services/core-workflow-run-insights.service';
+import { CoreWorkflowRunSummaryService } from 'src/engine/core-modules/workflow/services/core-workflow-run-summary.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/services/core-workflow-version-run.service';
@@ -26,7 +28,6 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
-import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 
@@ -38,7 +39,6 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     TypeORMModule,
     AutomatedTriggerModule,
     CacheLockModule,
-    CodeStepBuildModule,
     CommandMenuItemModule,
     RecordPositionModule,
     WorkflowBuilderModule,
@@ -56,6 +56,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowLifecycleWorkspaceService,
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
+    CoreWorkflowRunSummaryService,
+    CoreWorkflowRunInsightsService,
     CoreWorkflowVersionListService,
     CoreWorkflowVersionMutationWorkspaceService,
     CoreWorkflowVersionRunService,
@@ -67,6 +69,8 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     CoreWorkflowLifecycleWorkspaceService,
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
+    CoreWorkflowRunSummaryService,
+    CoreWorkflowRunInsightsService,
     CoreWorkflowVersionListService,
     CoreWorkflowVersionMutationWorkspaceService,
     CoreWorkflowVersionRunService,

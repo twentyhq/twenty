@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-
 import { type CookieOptions, type Request, type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,21 +8,10 @@ import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/c
 import { USER_SESSION_IMPERSONATOR_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-cookie-name.constant';
 import { USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-secure-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
+import { isSecureCookieDeployment } from 'src/engine/core-modules/user-session/utils/is-secure-cookie-deployment.util';
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
 import { resolveSessionCookieAccess } from 'src/engine/core-modules/user-session/utils/resolve-session-cookie-access.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-const isHttpsUrl = (url: string | undefined): boolean => {
-  if (!isNonEmptyString(url)) {
-    return false;
-  }
-
-  try {
-    return new URL(url).protocol === 'https:';
-  } catch {
-    return false;
-  }
-};
 
 // Keep every session-cookie read and write in this service: it is the only place resolveSessionCookieAccess is enforced.
 @Injectable()
@@ -31,11 +19,10 @@ export class UserSessionCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   private isSecureDeployment(): boolean {
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-    const sameSite = this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE');
-
-    // SameSite=None is rejected by browsers without Secure, so it forces it.
-    return isHttpsUrl(serverUrl) || sameSite === 'none';
+    return isSecureCookieDeployment({
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      sameSite: this.twentyConfigService.get('AUTH_COOKIE_SAME_SITE'),
+    });
   }
 
   private isSessionCookieAccessAllowed(request: Request | undefined): boolean {

@@ -13,6 +13,7 @@ const currentPrices = {
   baseProductPriceId: 'price_base_year',
   seats: 3,
   resourceCreditPriceId: 'price_credit_year',
+  applicationItems: [],
 };
 
 describe('computeImmediateSubscriptionUpdate', () => {
@@ -52,14 +53,33 @@ describe('computeImmediateSubscriptionUpdate', () => {
     ).toBe(subscriptionUpdate);
   });
 
-  it('returns a seats update when only the seat count changes', () => {
+  it('returns a quantities update when only the seat count changes', () => {
     expect(
       computeImmediateSubscriptionUpdate({
         subscriptionUpdate,
         currentPrices,
         toUpdatePrices: { ...currentPrices, seats: 4 },
       }),
-    ).toEqual({ type: SubscriptionUpdateType.SEATS, newSeats: 4 });
+    ).toEqual({ type: SubscriptionUpdateType.QUANTITIES, newSeats: 4 });
+  });
+
+  it('returns a quantities update when only the application items change', () => {
+    expect(
+      computeImmediateSubscriptionUpdate({
+        subscriptionUpdate,
+        currentPrices,
+        toUpdatePrices: {
+          ...currentPrices,
+          applicationItems: [
+            {
+              stripeProductId: 'prod_application',
+              stripePriceId: 'price_application_year',
+              quantity: 1,
+            },
+          ],
+        },
+      }),
+    ).toEqual({ type: SubscriptionUpdateType.QUANTITIES, newSeats: 3 });
   });
 
   it('returns the requested update when a price and the seat count both change', () => {

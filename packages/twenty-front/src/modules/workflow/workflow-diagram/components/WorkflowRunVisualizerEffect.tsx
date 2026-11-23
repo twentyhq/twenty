@@ -89,9 +89,7 @@ export const WorkflowRunVisualizerEffect = ({
       return;
     }
 
-    setWorkflowVisualizerWorkflowId(
-      workflowRun.coreWorkflowId ?? workflowRun.workflowId ?? undefined,
-    );
+    setWorkflowVisualizerWorkflowId(workflowRun.coreWorkflowId ?? undefined);
   }, [setWorkflowVisualizerWorkflowId, workflowRun]);
 
   useEffect(() => {

@@ -34,7 +34,7 @@ export const LinkActivitiesDropdown = <
   trigger,
   searchQuery,
   getSearchResults,
-  timelineQuery,
+  timelineQueries,
   getOption,
   labels,
 }: LinkActivitiesDropdownProps<TActivity, TSearchData>) => {
@@ -65,7 +65,7 @@ export const LinkActivitiesDropdown = <
           activityLinkConfig={activityLinkConfig}
           searchQuery={searchQuery}
           getSearchResults={getSearchResults}
-          timelineQuery={timelineQuery}
+          timelineQueries={timelineQueries}
           getOption={getOption}
           labels={labels}
         />

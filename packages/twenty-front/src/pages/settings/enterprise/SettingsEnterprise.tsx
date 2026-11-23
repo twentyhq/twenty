@@ -266,7 +266,9 @@ export const SettingsEnterprise = ({
     : t`Renews on`;
 
   const handleActivate = useCallback(async () => {
-    if (!enterpriseKey.trim()) return;
+    if (!enterpriseKey.trim()) {
+      return;
+    }
 
     setIsActivating(true);
 
@@ -341,7 +343,7 @@ export const SettingsEnterprise = ({
 
       const portalUrl = data?.enterprisePortalSession;
 
-      if (portalUrl !== null && portalUrl !== undefined) {
+      if (isDefined(portalUrl)) {
         openUrlInNewTab(portalUrl);
       } else {
         enqueueToast({

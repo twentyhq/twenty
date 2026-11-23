@@ -12,6 +12,7 @@ export const WorkspaceSchemaManagerExceptionCode = appendCommonExceptionCode({
   ENUM_OPERATION_FAILED: 'ENUM_OPERATION_FAILED',
   CONCURRENT_INDEX_CREATION_IN_TRANSACTION:
     'CONCURRENT_INDEX_CREATION_IN_TRANSACTION',
+  TABLE_REBUILD_NOT_SUPPORTED: 'TABLE_REBUILD_NOT_SUPPORTED',
 } as const);
 
 const getWorkspaceSchemaManagerExceptionUserFriendlyMessage = (
@@ -21,6 +22,7 @@ const getWorkspaceSchemaManagerExceptionUserFriendlyMessage = (
     case WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_CREATION_IN_TRANSACTION:
       return msg`Could not create the index because it must run outside a database transaction.`;
     case WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED:
+    case WorkspaceSchemaManagerExceptionCode.TABLE_REBUILD_NOT_SUPPORTED:
     case WorkspaceSchemaManagerExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:

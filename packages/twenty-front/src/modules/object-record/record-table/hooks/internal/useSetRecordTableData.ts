@@ -1,13 +1,17 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
+import { activeRecordGroupTabIdComponentSelector } from '@/object-record/record-group/states/selectors/activeRecordGroupTabIdComponentSelector';
+import { isRecordGroupTabsDisplayedComponentSelector } from '@/object-record/record-group/states/selectors/isRecordGroupTabsDisplayedComponentSelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import {
   NO_RECORD_GROUP_FAMILY_KEY,
   recordIndexAllRecordIdsComponentSelector,
 } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useGetLookupRelationRecordKeys } from '@/object-record/record-column-scope/hooks/useGetLookupRelationRecordKeys';
+import { getRecordsWithLookupRelatedRecords } from '@/object-record/record-column-lookup/utils/getRecordsWithLookupRelatedRecords';
 import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/useFocusedRecordTableRow';
 import { useUnfocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useUnfocusRecordTableCell';
 import { hasUserSelectedAllRecordsComponentState } from '@/object-record/record-selection/states/hasUserSelectedAllRecordsComponentState';
@@ -48,6 +52,16 @@ export const useSetRecordTableData = ({
     recordTableId,
   );
 
+  const isRecordGroupTabsDisplayed = useAtomComponentSelectorCallbackState(
+    isRecordGroupTabsDisplayedComponentSelector,
+    recordTableId,
+  );
+
+  const activeRecordGroupTabId = useAtomComponentSelectorCallbackState(
+    activeRecordGroupTabIdComponentSelector,
+    recordTableId,
+  );
+
   const setRecordTableHoverPosition = useSetAtomComponentState(
     recordTableHoverPositionComponentState,
     recordTableId,
@@ -56,6 +70,9 @@ export const useSetRecordTableData = ({
   const { unfocusRecordTableCell } = useUnfocusRecordTableCell(recordTableId);
   const { unfocusRecordTableRow } = useFocusedRecordTableRow(recordTableId);
   const store = useStore();
+  const { upsertRecordsInStore } = useUpsertRecordsInStore();
+  const getLookupRelationRecordKeys =
+    useGetLookupRelationRecordKeys(recordTableId);
 
   return useCallback(
     <T extends ObjectRecord>({
@@ -65,20 +82,12 @@ export const useSetRecordTableData = ({
       records: T[];
       currentRecordGroupId?: string;
     }) => {
-      for (const record of records) {
-        const currentRecord = store.get(
-          recordStoreFamilyState.atomFamily(record.id),
-        );
-
-        if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
-          const newRecord = {
-            ...(currentRecord ?? {}),
-            ...record,
-          } as T;
-
-          store.set(recordStoreFamilyState.atomFamily(record.id), newRecord);
-        }
-      }
+      upsertRecordsInStore({
+        partialRecords: getRecordsWithLookupRelatedRecords({
+          records: records,
+          lookupRelationRecordKeys: getLookupRelationRecordKeys(),
+        }),
+      });
 
       const currentRowIds = currentRecordGroupId
         ? store.get(
@@ -86,7 +95,13 @@ export const useSetRecordTableData = ({
           )
         : store.get(recordIndexAllRecordIdsSelector);
 
-      const isAllRowsSelected = store.get(hasUserSelectedAllRecords);
+      const isRecordGroupHiddenByTabs =
+        store.get(isRecordGroupTabsDisplayed) &&
+        isDefined(currentRecordGroupId) &&
+        currentRecordGroupId !== store.get(activeRecordGroupTabId);
+
+      const isAllRowsSelected =
+        store.get(hasUserSelectedAllRecords) && !isRecordGroupHiddenByTabs;
 
       const recordIds = records.map((record) => record.id);
 
@@ -118,11 +133,15 @@ export const useSetRecordTableData = ({
       recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRecords,
+      isRecordGroupTabsDisplayed,
+      activeRecordGroupTabId,
       unfocusRecordTableCell,
       unfocusRecordTableRow,
       setRecordTableHoverPosition,
       isRowSelectedFamilyState,
       store,
+      upsertRecordsInStore,
+      getLookupRelationRecordKeys,
     ],
   );
 };

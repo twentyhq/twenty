@@ -32,7 +32,9 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
     field: 'object' | 'action';
     fieldValue: string | null;
   }) => {
-    if (!isDefined(value)) return;
+    if (!isDefined(value)) {
+      return;
+    }
     const nextObject = field === 'object' ? (fieldValue ?? '') : object;
     const nextAction = field === 'action' ? (fieldValue ?? action) : action;
     onChange({ ...value, eventName: `${nextObject}.${nextAction}` });

@@ -3,6 +3,7 @@ import { getPageLayoutTabListInitialActiveTabId } from '@/page-layout/utils/getP
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
@@ -47,7 +48,7 @@ export const PageLayoutTabListEffect = ({
   });
 
   const shouldSyncWithUrl = !isInEditMode && workspaceSurface.ownsRouteLocation;
-  const routeTabId = hash.replace('#', '');
+  const { tabId: routeTabId } = parseTabRouteHash(hash);
   const nextActiveTabId =
     shouldSyncWithUrl && tabs.some((tab) => tab.id === routeTabId)
       ? routeTabId

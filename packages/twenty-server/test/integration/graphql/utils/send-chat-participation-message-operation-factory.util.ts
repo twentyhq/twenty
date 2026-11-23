@@ -15,6 +15,7 @@ export const sendChatParticipationMessageOperationFactory = ({
   isAssistantMentioned = false,
   mentionedWorkspaceMemberIds = [],
   recipientWorkspaceMemberIds = [],
+  channelId,
   attachments,
 }: {
   threadId: string;
@@ -26,6 +27,7 @@ export const sendChatParticipationMessageOperationFactory = ({
   isAssistantMentioned?: boolean | null;
   mentionedWorkspaceMemberIds?: string[];
   recipientWorkspaceMemberIds?: string[];
+  channelId?: string | null;
   attachments?: AiChatFileAttachment[];
 }) => ({
   query: gql`
@@ -39,6 +41,7 @@ export const sendChatParticipationMessageOperationFactory = ({
       $isAssistantMentioned: Boolean
       $mentionedWorkspaceMemberIds: [UUID!]
       $recipientWorkspaceMemberIds: [UUID!]
+      $channelId: UUID
       $attachments: [FileAttachmentInput!]
     ) {
       sendChatMessage(
@@ -51,6 +54,7 @@ export const sendChatParticipationMessageOperationFactory = ({
         isAssistantMentioned: $isAssistantMentioned
         mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
         recipientWorkspaceMemberIds: $recipientWorkspaceMemberIds
+        channelId: $channelId
         fileAttachments: $attachments
       ) {
         messageId
@@ -71,6 +75,7 @@ export const sendChatParticipationMessageOperationFactory = ({
     isAssistantMentioned,
     mentionedWorkspaceMemberIds,
     recipientWorkspaceMemberIds,
+    channelId,
     attachments,
   },
 });

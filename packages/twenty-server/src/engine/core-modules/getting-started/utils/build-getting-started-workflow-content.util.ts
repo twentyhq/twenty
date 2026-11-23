@@ -65,8 +65,8 @@ export const buildGettingStartedWorkflowContent = ({
       }),
       name: i18nLabel(triggerTitle),
     },
-    steps: version.steps.map((step, index) =>
-      fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
+    steps: version.steps.map((step) =>
+      fromWorkflowStepManifestToActionOrThrow({ step, references }),
     ),
   };
 };

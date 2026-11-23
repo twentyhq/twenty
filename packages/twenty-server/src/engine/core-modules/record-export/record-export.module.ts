@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -22,6 +23,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UserSessionModule,
     CoreCommonApiModule,
     CoreEntityCacheModule,
+    ApplicationGrantRoleLookupModule,
     JwtModule,
     UserWorkspaceModule,
     PermissionsModule,

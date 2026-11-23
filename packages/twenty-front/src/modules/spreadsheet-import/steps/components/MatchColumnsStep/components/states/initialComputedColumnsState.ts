@@ -28,9 +28,8 @@ export const initialComputedColumnsSelector = createAtomWritableFamilySelector<
           }),
         );
         return initialState as SpreadsheetColumns;
-      } else {
-        return currentState;
       }
+      return currentState;
     },
   set:
     () =>

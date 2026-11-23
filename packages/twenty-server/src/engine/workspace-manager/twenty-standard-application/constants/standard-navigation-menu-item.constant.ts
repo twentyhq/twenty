@@ -1,10 +1,23 @@
 import { msg } from '@lingui/core/macro';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const STANDARD_NAVIGATION_MENU_ITEMS = {
+  workspaceSection: {
+    universalIdentifier:
+      STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.workspaceSection
+        .universalIdentifier,
+    type: NavigationMenuItemType.SECTION,
+    name: i18nLabel(
+      msg({ message: `Workspace`, context: 'navigationMenuItem.name' }),
+    ),
+    position: 0,
+  },
   allCompanies: {
     universalIdentifier: '20202020-b001-4b01-8b01-c0aba11c0001',
     type: NavigationMenuItemType.OBJECT,
@@ -97,15 +110,6 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 1,
   },
-  workflowsFolderAllWorkflowVersions: {
-    universalIdentifier: '20202020-b00a-4b0a-8b0a-c0aba11c000a',
-    type: NavigationMenuItemType.OBJECT,
-    viewUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.views.allWorkflowVersions
-        .universalIdentifier,
-    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
-    position: 2,
-  },
 } as const;
 
 export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
@@ -123,5 +127,4 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allDashboards: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',
-  workflowsFolderAllWorkflowVersions: 'gray',
 };

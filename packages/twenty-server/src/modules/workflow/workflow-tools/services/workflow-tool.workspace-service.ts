@@ -12,7 +12,6 @@ import { CoreWorkflowVersionRunService } from 'src/engine/core-modules/workflow/
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
@@ -26,15 +25,12 @@ import { createDeactivateWorkflowVersionTool } from 'src/modules/workflow/workfl
 import { createDeleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow.tool';
 import { createDeleteWorkflowVersionEdgeTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-edge.tool';
 import { createDeleteWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/delete-workflow-version-step.tool';
-import { createGetLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/get-logic-function-source.tool';
 import { createGetWorkflowCurrentVersionTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-current-version.tool';
 import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/tools/get-workflow-run.tool';
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
 import { createListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
 import { createListWorkflowsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflows.tool';
 import { createRunWorkflowVersionTool } from 'src/modules/workflow/workflow-tools/tools/run-workflow-version.tool';
-import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
-import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
 import { createUpdateWorkflowVersionTriggerTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-trigger.tool';
 import { createValidateWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/validate-workflow.tool';
@@ -57,7 +53,6 @@ export class WorkflowToolWorkspaceService {
     coreWorkflowVersionRunService: CoreWorkflowVersionRunService,
     workflowSchemaService: WorkflowSchemaWorkspaceService,
     workspaceOrmManager: WorkspaceOrmManager,
-    logicFunctionFromSourceService: LogicFunctionFromSourceService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     agentService: AgentService,
     workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
@@ -72,7 +67,6 @@ export class WorkflowToolWorkspaceService {
       coreWorkflowVersionRunService,
       workflowSchemaService,
       workspaceOrmManager,
-      logicFunctionFromSourceService,
       flatEntityMapsCacheService,
       agentService,
       workflowAiAgentStepAgentService,
@@ -103,7 +97,6 @@ export class WorkflowToolWorkspaceService {
       createCreateWorkflowVersionEdgeTool(this.deps, context),
       createDeleteWorkflowVersionEdgeTool(this.deps, context),
       createCreateDraftFromWorkflowVersionTool(this.deps, context),
-      createUpdateWorkflowVersionPositionsTool(this.deps, context),
       createActivateWorkflowVersionTool(this.deps, context),
       createDeactivateWorkflowVersionTool(this.deps, context),
       createComputeStepOutputSchemaTool(this.deps, context),
@@ -113,8 +106,6 @@ export class WorkflowToolWorkspaceService {
       createRunWorkflowVersionTool(this.deps, context),
       createGetWorkflowRunTool(this.deps, context),
       createListWorkflowRunsTool(this.deps, context),
-      createGetLogicFunctionSourceTool(this.deps, context),
-      createUpdateLogicFunctionSourceTool(this.deps, context),
       createListLogicFunctionToolsTool(this.deps, context),
       createValidateWorkflowTool(this.deps, context),
     ];

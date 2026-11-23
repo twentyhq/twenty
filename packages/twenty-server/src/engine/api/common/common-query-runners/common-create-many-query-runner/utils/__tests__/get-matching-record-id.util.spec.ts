@@ -207,4 +207,64 @@ describe('getMatchingRecordId', () => {
       );
     }
   });
+
+  it('ignores deleted records for a unique field that does not cover them', () => {
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
+      {
+        baseFields: ['uniqueText'],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+        isIgnoringDeletedRecords: true,
+      },
+    ];
+    const deletedRecord = {
+      id: 'deletedRecordId',
+      uniqueText: 'alpha',
+      deletedAt: '2026-01-01T00:00:00.000Z',
+    };
+
+    expect(
+      getMatchingRecordId({ uniqueText: 'alpha' }, conflictingFieldGroups, [
+        deletedRecord,
+      ]),
+    ).toBeUndefined();
+    expect(
+      getMatchingRecordId({ uniqueText: 'alpha' }, conflictingFieldGroups, [
+        deletedRecord,
+        { id: 'liveRecordId', uniqueText: 'alpha' },
+      ]),
+    ).toBe('liveRecordId');
+  });
+
+  it('throws when the id targets a deleted record and a unique field matches a live one', () => {
+    const conflictingFieldGroups: ConflictingFieldGroup[] = [
+      {
+        baseFields: ['id'],
+        conflictingProperties: [{ fullPath: 'id', column: 'id' }],
+      },
+      {
+        baseFields: ['uniqueText'],
+        conflictingProperties: [
+          { fullPath: 'uniqueText', column: 'uniqueText' },
+        ],
+        isIgnoringDeletedRecords: true,
+      },
+    ];
+
+    expect(() =>
+      getMatchingRecordId(
+        { id: 'deletedRecordId', uniqueText: 'alpha' },
+        conflictingFieldGroups,
+        [
+          { id: 'liveRecordId', uniqueText: 'alpha' },
+          {
+            id: 'deletedRecordId',
+            uniqueText: 'alpha',
+            deletedAt: '2026-01-01T00:00:00.000Z',
+          },
+        ],
+      ),
+    ).toThrow();
+  });
 });

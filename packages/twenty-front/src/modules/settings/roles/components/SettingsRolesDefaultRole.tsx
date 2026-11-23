@@ -7,10 +7,8 @@ import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPart
 import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
 import { IconUserPin } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
-import { Card } from 'twenty-ui/primitives/surfaces';
 import { useMutation } from '@apollo/client/react';
 import {
   type UpdateWorkspaceMutation,
@@ -20,10 +18,12 @@ import { useLingui } from '@lingui/react/macro';
 
 type SettingsRoleDefaultRoleProps = {
   roles: RoleWithPartialMembers[];
+  divider?: boolean;
 };
 
 export const SettingsRoleDefaultRole = ({
   roles,
+  divider,
 }: SettingsRoleDefaultRoleProps) => {
   const { t } = useLingui();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
@@ -74,29 +74,20 @@ export const SettingsRoleDefaultRole = ({
   }
 
   return (
-    <Section.Root>
-      <Section.Header
-        title={t`Default Role`}
-        description={t`Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted`}
+    <SettingsOptionCardContentSelect
+      Icon={IconUserPin}
+      title={t`Default Role`}
+      description={t`For members who join without a role or lose theirs`}
+      divider={divider}
+    >
+      <Select<string>
+        selectSizeVariant="small"
+        withSearchInput
+        dropdownId="default-role-select"
+        options={options}
+        value={defaultRole?.id ?? ''}
+        onChange={(value) => updateDefaultRole(value, currentWorkspace)}
       />
-      <Card.Root>
-        <SettingsOptionCardContentSelect
-          Icon={IconUserPin}
-          title={t`Default Role`}
-          description={t`Set a default for this workspace`}
-        >
-          <Select
-            selectSizeVariant="small"
-            withSearchInput
-            dropdownId="default-role-select"
-            options={options}
-            value={defaultRole?.id ?? ''}
-            onChange={(value) =>
-              updateDefaultRole(value as string, currentWorkspace)
-            }
-          />
-        </SettingsOptionCardContentSelect>
-      </Card.Root>
-    </Section.Root>
+    </SettingsOptionCardContentSelect>
   );
 };

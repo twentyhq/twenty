@@ -42,6 +42,7 @@ Report: {
   "viewSort": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [],
+  "rowLevelPermissionRule": [],
   "viewFilterGroup": [],
   "index": [],
   "logicFunction": [],

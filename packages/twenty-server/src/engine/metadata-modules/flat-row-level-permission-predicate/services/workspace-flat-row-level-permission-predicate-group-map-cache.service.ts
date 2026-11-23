@@ -20,6 +20,7 @@ const FLAT_ROW_LEVEL_PERMISSION_PREDICATE_GROUP_ROWS_REQUIREMENT = {
   application: ['id', 'universalIdentifier'],
   objectMetadata: ['id', 'universalIdentifier'],
   role: ['id', 'universalIdentifier'],
+  rowLevelPermissionRule: ['id', 'universalIdentifier'],
   rowLevelPermissionPredicate: {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['rowLevelPermissionPredicateGroupId'],
@@ -44,6 +45,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
       application: applications,
       objectMetadata: objectMetadatas,
       role: roles,
+      rowLevelPermissionRule: rowLevelPermissionRules,
       rowLevelPermissionPredicate: rowLevelPermissionPredicates,
     } = rows;
 
@@ -53,6 +55,8 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
       createIdToUniversalIdentifierMap(objectMetadatas);
     const roleIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(roles);
+    const rowLevelPermissionRuleIdToUniversalIdentifierMap =
+      createIdToUniversalIdentifierMap(rowLevelPermissionRules);
     const rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(rowLevelPermissionPredicateGroups.rows);
 
@@ -77,6 +81,7 @@ export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extend
             applicationIdToUniversalIdentifierMap,
             objectMetadataIdToUniversalIdentifierMap,
             roleIdToUniversalIdentifierMap,
+            rowLevelPermissionRuleIdToUniversalIdentifierMap,
             rowLevelPermissionPredicateGroupIdToUniversalIdentifierMap,
           },
         );

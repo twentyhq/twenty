@@ -158,11 +158,10 @@ export const SettingsSecuritySettings = () => {
   const minEventLogRetentionInDays = EVENT_LOG_RETENTION.minInDays;
   const maxEventLogRetentionInDays = EVENT_LOG_RETENTION.maxInDays;
   const proPlanEventLogRetentionInHours = EVENT_LOG_RETENTION.proPlanInHours;
-  const hasSsoEntitlement =
-    currentWorkspace?.billingEntitlements?.some(
-      (entitlement) =>
-        entitlement.key === BillingEntitlementKey.SSO && entitlement.value,
-    ) === true;
+  const hasSsoEntitlement = currentWorkspace?.billingEntitlements?.some(
+    (entitlement) =>
+      entitlement.key === BillingEntitlementKey.SSO && entitlement.value,
+  );
 
   return (
     <>
@@ -196,40 +195,6 @@ export const SettingsSecuritySettings = () => {
             <SettingsSecurityAuthProvidersOptionsList />
           </StyledContainer>
         </Section.Root>
-        <Section.Root>
-          <StyledContainer>
-            <Section.Header
-              title={t`Editable Profile Fields`}
-              description={t`Choose which profile fields users with the Edit Profile permission can modify`}
-            />
-            <SettingsSecurityEditableProfileFields />
-          </StyledContainer>
-        </Section.Root>
-        <SettingsRoleDefaultRole roles={roles} />
-        <SettingsSecurityIframeOrigins />
-        <SettingsSecurityIframeMediaPermissions />
-        {shouldShowBypassSection && (
-          <Section.Root>
-            <StyledContainer>
-              <Section.Header
-                title={t`SSO Bypass`}
-                description={t`Configure fallback login methods for users with SSO bypass permissions`}
-              />
-              <SettingsSecurityAuthBypassOptionsList />
-            </StyledContainer>
-          </Section.Root>
-        )}
-        {isMultiWorkspaceEnabled && !isAiDataPolicyEnabled && (
-          <Section.Root>
-            <Section.Header
-              title={t`Support`}
-              description={t`Manage support access settings`}
-            />
-            <Card.Root>
-              <ImpersonationSwitch />
-            </Card.Root>
-          </Section.Root>
-        )}
         <Section.Root>
           <Section.Header
             title={t`Audit Logs`}
@@ -268,12 +233,38 @@ export const SettingsSecuritySettings = () => {
             />
           )}
         </Section.Root>
+        <SettingsSecurityIframeOrigins />
+        <SettingsSecurityIframeMediaPermissions />
+        {shouldShowBypassSection && (
+          <Section.Root>
+            <StyledContainer>
+              <Section.Header
+                title={t`SSO Bypass`}
+                description={t`Configure fallback login methods for users with SSO bypass permissions`}
+              />
+              <SettingsSecurityAuthBypassOptionsList />
+            </StyledContainer>
+          </Section.Root>
+        )}
+        {isMultiWorkspaceEnabled && !isAiDataPolicyEnabled && (
+          <Section.Root>
+            <Section.Header
+              title={t`Support`}
+              description={t`Manage support access settings`}
+            />
+            <Card.Root>
+              <ImpersonationSwitch />
+            </Card.Root>
+          </Section.Root>
+        )}
         <Section.Root>
           <Section.Header
             title={t`Other`}
             description={t`Other security settings`}
           />
           <Card.Root>
+            <SettingsRoleDefaultRole roles={roles} divider />
+            <SettingsSecurityEditableProfileFields divider />
             <SettingsOptionCardContentCounter
               Icon={IconTrash}
               title={t`Erasure of soft-deleted records`}

@@ -1,7 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
+import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
 import {
   color,
   FONT_WEIGHT,
@@ -22,8 +24,13 @@ import {
 } from '@/ui';
 
 import { AFFILIATE_AUDIENCES } from './affiliate-audiences.data';
+import { AUDIENCE_MODEL_SETTINGS } from './audience-model-settings';
+
+const AUDIENCE_MODEL_SIZE_PX = 160;
 
 const HeadingMeasure = styled.div`
+  scroll-margin-top: ${spacing(32)};
+
   ${mediaUp('md')} {
     max-width: 640px;
   }
@@ -47,19 +54,35 @@ const AudienceCard = styled.div`
   background-color: ${color('white')};
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
-  padding: ${spacing(5)} ${spacing(6)};
+  padding: ${spacing(6)};
+
+  ${mediaUp('sm')} {
+    padding: ${spacing(8)};
+  }
 
   & > * + * {
     margin-top: ${spacing(2)};
   }
+
+  & > * + h3 {
+    margin-top: ${spacing(4)};
+  }
 `;
 
-const AudienceMarker = styled.span`
-  background-color: ${color('blue')};
-  border-radius: 1px;
-  display: block;
-  height: 7px;
-  width: 14px;
+const AudienceVisual = styled.div`
+  --audience-model-size: ${spacing(30)};
+  height: var(--audience-model-size);
+  width: var(--audience-model-size);
+
+  ${mediaUp('sm')} {
+    --audience-model-size: ${AUDIENCE_MODEL_SIZE_PX}px;
+  }
+
+  img {
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
 `;
 
 const AudienceTitle = styled.h3`
@@ -75,20 +98,35 @@ export function AffiliateAudiences() {
   const i18n = getServerI18n();
 
   return (
-    <SectionShell rhythm="section" scheme="light">
+    <SectionShell rhythm="section" scheme="muted">
       <SectionStack>
         <SectionIntro>
           <Eyebrow>{i18n._(msg`Who it's for`)}</Eyebrow>
-          <HeadingMeasure>
+          <HeadingMeasure id="audiences">
             <Heading as="h2" size="lg" weight="light">
-              {i18n._(msg`People teams trust *to pick their tools*`)}
+              {i18n._(msg`People that teams trust *to pick their tools*`)}
             </Heading>
           </HeadingMeasure>
         </SectionIntro>
         <AudienceGrid>
           {AFFILIATE_AUDIENCES.map((audience) => (
             <AudienceCard key={audience.title.id}>
-              <AudienceMarker aria-hidden />
+              <AudienceVisual aria-hidden data-illustration={audience.model}>
+                <HalftoneModel
+                  modelUrl={`/models/${audience.model}.glb`}
+                  poster={
+                    <NextImage
+                      alt=""
+                      height={AUDIENCE_MODEL_SIZE_PX}
+                      src={`/images/partners/audiences/${audience.model}.webp`}
+                      unoptimized
+                      width={AUDIENCE_MODEL_SIZE_PX}
+                    />
+                  }
+                  reducedMotionMode="poster"
+                  settings={AUDIENCE_MODEL_SETTINGS}
+                />
+              </AudienceVisual>
               <AudienceTitle>{i18n._(audience.title)}</AudienceTitle>
               <Body muted size="sm">
                 {i18n._(audience.body)}

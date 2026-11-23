@@ -65,4 +65,8 @@ export const RESERVED_METADATA_NAME_KEYWORDS = [
   'disconnect',
   'search',
   'searches',
+  'workflow',
+  'workflows',
+  'workflowVersion',
+  'workflowVersions',
 ];

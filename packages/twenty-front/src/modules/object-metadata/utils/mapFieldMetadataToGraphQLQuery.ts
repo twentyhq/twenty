@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/types';
 import { isNonCompositeField } from '@/object-record/object-filter-dropdown/utils/isNonCompositeField';
 import {
-  canReachSomeRecords,
+  canAccessThroughAllRecordsOrRlsPermission,
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
@@ -26,6 +26,7 @@ type MapFieldMetadataToGraphQLQueryArgs = {
     'name' | 'type' | 'relation' | 'morphRelations' | 'settings'
   >;
   relationRecordGqlFields?: RecordGqlFields;
+  relationConnectionGqlFieldNames?: string[];
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<string, ObjectRecordsPermissions>;
 };
@@ -35,6 +36,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   gqlField,
   fieldMetadata,
   relationRecordGqlFields,
+  relationConnectionGqlFieldNames = [],
   computeReferences = false,
   objectPermissionsByObjectMetadataId,
 }: MapFieldMetadataToGraphQLQueryArgs): string => {
@@ -90,9 +92,9 @@ export const mapFieldMetadataToGraphQLQuery = ({
         );
 
         if (
-          !canReachSomeRecords({
+          !canAccessThroughAllRecordsOrRlsPermission({
             objectRecordsPermissions: objectPermission,
-            operationType: 'select',
+            operationType: 'read',
           })
         ) {
           continue;
@@ -176,9 +178,9 @@ ${mapObjectMetadataToGraphQLQuery({
       );
 
       if (
-        !canReachSomeRecords({
+        !canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: objectPermission,
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         return '';
@@ -235,18 +237,22 @@ ${mapObjectMetadataToGraphQLQuery({
       );
 
       if (
-        !canReachSomeRecords({
+        !canAccessThroughAllRecordsOrRlsPermission({
           objectRecordsPermissions: objectPermission,
-          operationType: 'select',
+          operationType: 'read',
         })
       ) {
         return '';
       }
     }
 
+    const connectionFieldsSelection = relationConnectionGqlFieldNames
+      .map((connectionGqlFieldName) => `${connectionGqlFieldName}\n  `)
+      .join('');
+
     return doNotTranslate(`${gqlField}
 {
-  edges {
+  ${connectionFieldsSelection}edges {
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,

@@ -200,6 +200,14 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   viewSortUniversalIdentifiers: [],
   searchFieldMetadataIds: [],
   searchFieldMetadataUniversalIdentifiers: [],
+  fieldMetadataOptionIds: [],
+  rowLevelPermissionPredicateIds: [],
+  relationRowLevelPermissionPredicateIds: [],
+  workspaceMemberRowLevelPermissionPredicateIds: [],
+  fieldMetadataOptionUniversalIdentifiers: [],
+  rowLevelPermissionPredicateUniversalIdentifiers: [],
+  relationRowLevelPermissionPredicateUniversalIdentifiers: [],
+  workspaceMemberRowLevelPermissionPredicateUniversalIdentifiers: [],
   universalSettings: null,
 });
 

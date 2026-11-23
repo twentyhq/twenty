@@ -12,7 +12,7 @@ export type ToolProviderContext = {
   approvedToolName?: string;
   authContext?: WorkspaceAuthContext;
   application?: FlatApplication;
-  actorContext?: ActorMetadata;
+  actorMetadata?: ActorMetadata;
   userId?: string;
   userWorkspaceId?: string;
   agentId?: string;

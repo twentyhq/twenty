@@ -33,7 +33,9 @@ export const useSortsFromQueryParams = () => {
     isDefined(sortQueryParams) && Object.entries(sortQueryParams).length > 0;
 
   const getSortsFromQueryParams = useCallback((): RecordSort[] => {
-    if (!hasSortsQueryParams) return [];
+    if (!hasSortsQueryParams) {
+      return [];
+    }
 
     return Object.entries(sortQueryParams)
       .map(([fieldName, direction]) => {
@@ -41,7 +43,9 @@ export const useSortsFromQueryParams = () => {
           (field) => field.name === fieldName,
         );
 
-        if (!fieldMetadataItem) return null;
+        if (!fieldMetadataItem) {
+          return null;
+        }
 
         return {
           id: `tmp-sort-${fieldName}`,

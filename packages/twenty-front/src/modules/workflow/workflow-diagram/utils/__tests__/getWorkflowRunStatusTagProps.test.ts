@@ -2,19 +2,6 @@ import { type WorkflowRunStatus } from '@/workflow/types/Workflow';
 import { getWorkflowRunStatusTagProps } from '@/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps';
 
 describe('getWorkflowRunStatusTagProps', () => {
-  it('should return gray color and "Not started" text for NOT_STARTED status', () => {
-    const result = getWorkflowRunStatusTagProps({
-      workflowRunStatus: 'NOT_STARTED',
-    });
-
-    expect(result).toMatchInlineSnapshot(`
-{
-  "color": "gray",
-  "text": "Not started",
-}
-`);
-  });
-
   it('should return yellow color and "Running" text for RUNNING status', () => {
     const result = getWorkflowRunStatusTagProps({
       workflowRunStatus: 'RUNNING',

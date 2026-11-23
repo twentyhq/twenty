@@ -3,7 +3,9 @@ import { FilePreviewDialog } from '@/ui/field/display/components/FilePreviewDial
 import { GlobalFilePreviewOpenEffect } from '@/ui/field/display/components/GlobalFilePreviewOpenEffect';
 import { GLOBAL_FILE_PREVIEW_MODAL_ID } from '@/ui/field/display/constants/GlobalFilePreviewModalId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { filePreviewGalleryFilesState } from '@/ui/field/display/states/filePreviewGalleryFilesState';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
+import { getFilePreviewGalleryNavigation } from '@/ui/field/display/utils/getFilePreviewGalleryNavigation';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { styled } from '@linaria/react';
@@ -26,6 +28,9 @@ const StyledLoadingText = styled.div`
 export const GlobalFilePreviewModal = () => {
   const { t } = useLingui();
   const [filePreview, setFilePreview] = useAtomState(filePreviewState);
+  const [filePreviewGalleryFiles, setFilePreviewGalleryFiles] = useAtomState(
+    filePreviewGalleryFilesState,
+  );
   const { closeDialog } = useDialog();
   const hasDownloadPermission = useHasPermissionFlag(
     PermissionFlagType.DOWNLOAD_FILE,
@@ -34,6 +39,7 @@ export const GlobalFilePreviewModal = () => {
   const handleClose = () => {
     closeDialog(GLOBAL_FILE_PREVIEW_MODAL_ID);
     setFilePreview(null);
+    setFilePreviewGalleryFiles([]);
   };
 
   const handleDownload = () => {
@@ -47,6 +53,12 @@ export const GlobalFilePreviewModal = () => {
     return null;
   }
 
+  const galleryNavigation = getFilePreviewGalleryNavigation({
+    galleryFiles: filePreviewGalleryFiles,
+    fileId: filePreview.fileId,
+    onSelectFile: setFilePreview,
+  });
+
   return (
     <>
       <GlobalFilePreviewOpenEffect />
@@ -58,6 +70,9 @@ export const GlobalFilePreviewModal = () => {
         documentUrl={filePreview.url ?? ''}
         documentExtension={filePreview.extension ?? ''}
         onClose={handleClose}
+        positionLabel={galleryNavigation?.positionLabel}
+        onPrevious={galleryNavigation?.onPrevious}
+        onNext={galleryNavigation?.onNext}
         onDownload={hasDownloadPermission ? handleDownload : undefined}
         downloadLabel={t`Download file`}
         loadingFallback={

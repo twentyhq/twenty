@@ -126,7 +126,9 @@ export const SpreadsheetImportTable = <TData, TRowKey extends Key = Key>({
   const { rtl } = useSpreadsheetImportInternal();
   const themeClassName = colorScheme === 'dark' ? 'rdg-dark' : 'rdg-light';
 
-  if (!rows.length || !columns.length) return null;
+  if (!rows.length || !columns.length) {
+    return null;
+  }
 
   return (
     <StyledDataGridContainer headerRowHeight={headerRowHeight ?? undefined}>

@@ -1,5 +1,6 @@
 import { LinkEmailThreadsDropdown } from '@/activities/emails/components/LinkEmailThreadsDropdown';
 import { WidgetActionMessageCompose } from '@/page-layout/widgets/messages/components/WidgetActionMessageCompose';
+import { WidgetActionMessagesFilter } from '@/page-layout/widgets/messages/components/WidgetActionMessagesFilter';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useLingui } from '@lingui/react/macro';
 import { IconLink } from 'twenty-ui/icon';
@@ -18,6 +19,7 @@ export const WidgetActionMessages = () => {
           />
         }
       />
+      <WidgetActionMessagesFilter />
       <WidgetActionMessageCompose />
     </>
   );

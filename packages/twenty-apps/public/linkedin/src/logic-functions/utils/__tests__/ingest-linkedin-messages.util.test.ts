@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
   importLinkedinMessageAttachments: vi.fn(),
   resolveCounterpart: vi.fn(),
   hasPersonNamedLikeLinkedinUser: vi.fn(),
+  setMissingLinkedinPersonAvatars: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -40,6 +41,13 @@ vi.mock(
   'src/logic-functions/utils/import-linkedin-message-attachments.util',
   () => ({
     importLinkedinMessageAttachments: mocks.importLinkedinMessageAttachments,
+  }),
+);
+
+vi.mock(
+  'src/logic-functions/utils/set-missing-linkedin-person-avatars.util',
+  () => ({
+    setMissingLinkedinPersonAvatars: mocks.setMissingLinkedinPersonAvatars,
   }),
 );
 
@@ -143,6 +151,15 @@ describe('ingestLinkedinMessages', () => {
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue(undefined);
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
     mocks.importLinkedinMessageAttachments.mockResolvedValue(0);
+    mocks.ingestMessages.mockImplementation(
+      async ({ messages }: { messages: { externalId: string }[] }) =>
+        messages.map(({ externalId }) => ({
+          externalId,
+          messageId: `id-${externalId}`,
+          messageThreadId: 'thread-id',
+          hasAttachments: false,
+        })),
+    );
     mocks.resolveCounterpart.mockImplementation(
       async ({ user }: { user: UnipileUser }) => user,
     );
@@ -261,6 +278,33 @@ describe('ingestLinkedinMessages', () => {
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
   });
 
+  it('sets the profile picture of matched and created people after ingesting messages', async () => {
+    const priyaWithPicture = {
+      ...PRIYA,
+      public_picture_url: 'https://media.licdn.com/priya.jpg',
+    };
+
+    await ingest({
+      chat: { ...ONE_TO_ONE_CHAT, user: priyaWithPicture },
+      counterparts: [priyaWithPicture],
+    });
+
+    expect(
+      mocks.setMissingLinkedinPersonAvatars,
+    ).toHaveBeenCalledExactlyOnceWith({
+      avatars: [
+        {
+          personId: 'created-id',
+          pictureUrl: 'https://media.licdn.com/priya.jpg',
+        },
+      ],
+      deadlineAtMs: DEADLINE_AT_MS,
+    });
+    expect(mocks.ingestMessages.mock.invocationCallOrder[0]).toBeLessThan(
+      mocks.setMissingLinkedinPersonAvatars.mock.invocationCallOrder[0],
+    );
+  });
+
   it('names the conversation after the other person', async () => {
     await ingest();
 
@@ -343,15 +387,32 @@ describe('ingestLinkedinMessages', () => {
     expect(mocks.importLinkedinMessageAttachments).not.toHaveBeenCalled();
   });
 
-  it('imports the attachments of the ingested messages', async () => {
+  it('re-ingests a message with its uploaded attachments', async () => {
     const message = {
       ...buildMessage(true),
       attachments: [
         { id: 'attachment-1', type: 'img' as const, mimetype: 'image/png' },
       ],
     };
+    const attachments = [{ fileId: 'file-1', label: 'linkedin-image.png' }];
 
-    mocks.importLinkedinMessageAttachments.mockResolvedValue(1);
+    mocks.importLinkedinMessageAttachments.mockImplementation(
+      async ({
+        onMessageAttachments,
+      }: {
+        onMessageAttachments: (messageAttachments: {
+          messageExternalId: string;
+          attachments: { fileId: string; label: string }[];
+        }) => Promise<void>;
+      }) => {
+        await onMessageAttachments({
+          messageExternalId: message.id,
+          attachments,
+        });
+
+        return 1;
+      },
+    );
 
     await expect(ingest({ messages: [message] })).resolves.toMatchObject({
       ingestedMessageCount: 1,
@@ -363,7 +424,38 @@ describe('ingestLinkedinMessages', () => {
       unipileAccountId: 'acc_1',
       messages: [message],
       deadlineAtMs: DEADLINE_AT_MS,
-      onAttachmentFile: expect.any(Function),
+      onMessageAttachments: expect.any(Function),
     });
+    expect(mocks.ingestMessages).toHaveBeenCalledTimes(2);
+    expect(
+      mocks.ingestMessages.mock.calls[0][0].messages[0],
+    ).not.toHaveProperty('attachments');
+    expect(mocks.ingestMessages.mock.calls[1][0]).toEqual({
+      messageChannelId: 'channel-id',
+      messages: [
+        {
+          ...mocks.ingestMessages.mock.calls[0][0].messages[0],
+          attachments,
+        },
+      ],
+    });
+  });
+
+  it('does not download the attachments of a message that already has some', async () => {
+    mocks.ingestMessages.mockImplementation(
+      async ({ messages }: { messages: { externalId: string }[] }) =>
+        messages.map(({ externalId }) => ({
+          externalId,
+          messageId: `id-${externalId}`,
+          messageThreadId: 'thread-id',
+          hasAttachments: true,
+        })),
+    );
+
+    await ingest();
+
+    expect(mocks.importLinkedinMessageAttachments).toHaveBeenCalledWith(
+      expect.objectContaining({ messages: [] }),
+    );
   });
 });

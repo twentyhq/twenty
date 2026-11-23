@@ -29,10 +29,13 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
+import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
@@ -112,36 +115,43 @@ export type ObjectMetadataLoaderPayload = {
 export type ViewFieldGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFieldsByViewFieldGroupIdLoaderPayload = {
   workspaceId: string;
   viewFieldGroupId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFieldsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFiltersByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewSortsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type ViewFilterGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
+  userWorkspaceId: string | undefined;
 };
 
 export type WorkspaceMembersByRoleIdLoaderPayload = {
@@ -551,11 +561,19 @@ export class DataloaderService {
           (dataLoaderParam) => dataLoaderParam.objectMetadata.id,
         );
 
-        const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+        const {
+          flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
+          flatObjectMetadataMaps,
+        } =
           await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
             {
               workspaceId,
-              flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+              flatMapsKeys: [
+                'flatFieldMetadataMaps',
+                'flatFieldMetadataOptionMaps',
+                'flatObjectMetadataMaps',
+              ],
             },
           );
 
@@ -601,7 +619,15 @@ export class DataloaderService {
                 (flatFieldMetadata) =>
                   !isMorphRelationTargetFlatFieldMetadata(flatFieldMetadata),
               )
-              .map(fromFlatFieldMetadataToFieldMetadataDto);
+              .map((flatFieldMetadata) =>
+                fromFlatFieldMetadataToFieldMetadataDto({
+                  ...flatFieldMetadata,
+                  options: resolveFlatFieldMetadataOptions({
+                    flatFieldMetadata,
+                    flatFieldMetadataOptionMaps,
+                  }),
+                }),
+              );
           },
         );
 
@@ -700,10 +726,11 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
+        const flatView = findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
         if (!isDefined(flatView)) {
@@ -735,11 +762,15 @@ export class DataloaderService {
     >(async (dataLoaderParams: ViewFieldsByViewFieldGroupIdLoaderPayload[]) => {
       const workspaceId = dataLoaderParams[0].workspaceId;
 
-      const { flatViewFieldGroupMaps, flatViewFieldMaps } =
+      const { flatViewMaps, flatViewFieldGroupMaps, flatViewFieldMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatViewFieldGroupMaps', 'flatViewFieldMaps'],
+            flatMapsKeys: [
+              'flatViewMaps',
+              'flatViewFieldGroupMaps',
+              'flatViewFieldMaps',
+            ],
           },
         );
 
@@ -782,13 +813,23 @@ export class DataloaderService {
           .push(fromFlatViewFieldToViewFieldDto(flatViewField));
       }
 
-      return dataLoaderParams.map(({ viewFieldGroupId }) => {
+      return dataLoaderParams.map(({ viewFieldGroupId, userWorkspaceId }) => {
         const flatViewFieldGroup = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewFieldGroupId,
           flatEntityMaps: flatViewFieldGroupMaps,
         });
 
         if (!isDefined(flatViewFieldGroup)) {
+          return [];
+        }
+
+        const flatView = findFlatViewAvailableToUser({
+          viewId: flatViewFieldGroup.viewId,
+          flatViewMaps,
+          userWorkspaceId,
+        });
+
+        if (!isDefined(flatView)) {
           return [];
         }
 
@@ -812,10 +853,11 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
+        const flatView = findFlatViewAvailableToUser({
+          viewId: viewId,
+          flatViewMaps,
+          userWorkspaceId,
         });
 
         if (!isDefined(flatView)) {
@@ -855,23 +897,15 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
-        });
-
-        if (!isDefined(flatView)) {
-          return [];
-        }
-
-        return findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewFilterIds,
-          flatEntityMaps: flatViewFilterMaps,
-        })
-          .filter((flatViewFilter) => flatViewFilter.deletedAt === null)
-          .map(fromFlatViewFilterToViewFilterDto);
-      });
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewFilterMaps,
+          flatViewChildIdsKey: 'viewFilterIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewFilterToViewFilterDto),
+      );
     });
   }
 
@@ -890,23 +924,15 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
-        });
-
-        if (!isDefined(flatView)) {
-          return [];
-        }
-
-        return findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewSortIds,
-          flatEntityMaps: flatViewSortMaps,
-        })
-          .filter((flatViewSort) => flatViewSort.deletedAt === null)
-          .map(fromFlatViewSortToViewSortDto);
-      });
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewSortMaps,
+          flatViewChildIdsKey: 'viewSortIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewSortToViewSortDto),
+      );
     });
   }
 
@@ -925,23 +951,15 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
-        });
-
-        if (!isDefined(flatView)) {
-          return [];
-        }
-
-        return findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewGroupIds,
-          flatEntityMaps: flatViewGroupMaps,
-        })
-          .filter((flatViewGroup) => flatViewGroup.deletedAt === null)
-          .map(fromFlatViewGroupToViewGroupDto);
-      });
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewGroupMaps,
+          flatViewChildIdsKey: 'viewGroupIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewGroupToViewGroupDto),
+      );
     });
   }
 
@@ -960,25 +978,15 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: viewId,
-          flatEntityMaps: flatViewMaps,
-        });
-
-        if (!isDefined(flatView)) {
-          return [];
-        }
-
-        return findManyFlatEntityByIdInFlatEntityMaps({
-          flatEntityIds: flatView.viewFilterGroupIds,
-          flatEntityMaps: flatViewFilterGroupMaps,
-        })
-          .filter(
-            (flatViewFilterGroup) => flatViewFilterGroup.deletedAt === null,
-          )
-          .map(fromFlatViewFilterGroupToViewFilterGroupDto);
-      });
+      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
+        findManyFlatViewChildrenAvailableToUser({
+          flatViewMaps,
+          flatViewChildMaps: flatViewFilterGroupMaps,
+          flatViewChildIdsKey: 'viewFilterGroupIds',
+          viewId,
+          userWorkspaceId,
+        }).map(fromFlatViewFilterGroupToViewFilterGroupDto),
+      );
     });
   }
 
@@ -1115,6 +1123,7 @@ export class DataloaderService {
           flatEntityIds: flatRole.roleTargetIds,
           flatEntityMaps: flatRoleTargetMaps,
         })
+          .filter((flatRoleTarget) => !flatRoleTarget.isSystemSideEffect)
           .map((flatRoleTarget) => flatRoleTarget.userWorkspaceId)
           .filter(isDefined);
       });
@@ -1245,7 +1254,9 @@ export class DataloaderService {
       Required<
         Pick<
           RoleDTO,
-          'rowLevelPermissionPredicates' | 'rowLevelPermissionPredicateGroups'
+          | 'rowLevelPermissionPredicates'
+          | 'rowLevelPermissionPredicateGroups'
+          | 'rowLevelPermissionRules'
         >
       >
     >(async (dataLoaderParams: RowLevelPermissionsByRoleIdLoaderPayload[]) => {
@@ -1260,6 +1271,7 @@ export class DataloaderService {
         return dataLoaderParams.map(() => ({
           rowLevelPermissionPredicates: [],
           rowLevelPermissionPredicateGroups: [],
+          rowLevelPermissionRules: [],
         }));
       }
 
@@ -1267,6 +1279,7 @@ export class DataloaderService {
         flatRoleMaps,
         flatRowLevelPermissionPredicateMaps,
         flatRowLevelPermissionPredicateGroupMaps,
+        flatRowLevelPermissionRuleMaps,
       } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
@@ -1275,6 +1288,7 @@ export class DataloaderService {
               'flatRoleMaps',
               'flatRowLevelPermissionPredicateMaps',
               'flatRowLevelPermissionPredicateGroupMaps',
+              'flatRowLevelPermissionRuleMaps',
             ],
           },
         );
@@ -1289,6 +1303,7 @@ export class DataloaderService {
           return {
             rowLevelPermissionPredicates: [],
             rowLevelPermissionPredicateGroups: [],
+            rowLevelPermissionRules: [],
           };
         }
 
@@ -1323,6 +1338,28 @@ export class DataloaderService {
                     0),
               )
               .map(fromFlatRowLevelPermissionPredicateGroupToDto),
+          rowLevelPermissionRules: findManyFlatEntityByIdInFlatEntityMaps({
+            flatEntityIds: flatRole.rowLevelPermissionRuleIds,
+            flatEntityMaps: flatRowLevelPermissionRuleMaps,
+          }).map(
+            ({
+              id,
+              objectMetadataId,
+              canCreateRecords,
+              canReadRecords,
+              canUpdateRecords,
+              canSoftDeleteRecords,
+              canDestroyRecords,
+            }) => ({
+              id,
+              objectMetadataId,
+              canCreateRecords,
+              canReadRecords,
+              canUpdateRecords,
+              canSoftDeleteRecords,
+              canDestroyRecords,
+            }),
+          ),
         };
       });
     });

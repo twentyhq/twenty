@@ -14,9 +14,8 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { doesRoleRequireCustomRolesEntitlement } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/does-role-require-custom-roles-entitlement.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
-import { validateRoleIsEntitled } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util';
+import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 import { validateRoleLabelUniqueness } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util';
 import { validateRoleReadWritePermissionsConsistency } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-read-write-permissions-consistency.util';
 import { validateRoleRequiredPropertiesAreDefined } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-required-properties-are-defined.util';
@@ -28,7 +27,6 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
-    additionalCacheDataMaps: { billingEntitlements },
     buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.role
@@ -53,6 +51,13 @@ export class FlatRoleValidatorService {
     );
 
     validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: flatEntityToValidate,
+        buildOptions,
+      }),
+    );
+
+    validationResult.errors.push(
       ...validateRoleLabelUniqueness({
         label: flatEntityToValidate.label,
         existingFlatRoles: existingRoles,
@@ -62,14 +67,6 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...validateRoleReadWritePermissionsConsistency({
         flatRole: flatEntityToValidate,
-      }),
-    );
-
-    validationResult.errors.push(
-      ...validateRoleIsEntitled({
-        flatRole: flatEntityToValidate,
-        billingEntitlements,
-        buildOptions,
       }),
     );
 
@@ -116,6 +113,13 @@ export class FlatRoleValidatorService {
       }),
     );
 
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: existingRole,
+        buildOptions,
+      }),
+    );
+
     if (
       !buildOptions.isSystemBuild &&
       existingRole.universalIdentifier === MEMBER_ROLE_UNIVERSAL_IDENTIFIER
@@ -136,7 +140,6 @@ export class FlatRoleValidatorService {
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatRoleMaps: optimisticFlatRoleMaps,
     },
-    additionalCacheDataMaps: { billingEntitlements },
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.role
@@ -167,6 +170,13 @@ export class FlatRoleValidatorService {
     validationResult.errors.push(
       ...getRoleNotEditableErrors({
         flatRole: fromFlatRole,
+        buildOptions,
+      }),
+    );
+
+    validationResult.errors.push(
+      ...validateRoleBelongsToCallerApplication({
+        referencedRole: fromFlatRole,
         buildOptions,
       }),
     );
@@ -202,16 +212,6 @@ export class FlatRoleValidatorService {
         flatRole: toFlatRole,
       }),
     );
-
-    if (!doesRoleRequireCustomRolesEntitlement(fromFlatRole)) {
-      validationResult.errors.push(
-        ...validateRoleIsEntitled({
-          flatRole: toFlatRole,
-          billingEntitlements,
-          buildOptions,
-        }),
-      );
-    }
 
     return validationResult;
   }

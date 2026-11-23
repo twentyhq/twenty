@@ -7,6 +7,7 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
+export { setToolCallArguments } from './functions/setToolCallArguments';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
 export { uploadFile } from './functions/uploadFile';
@@ -49,6 +50,7 @@ export type {
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
+  SetToolCallArgumentsFunction,
   StorageClearFunction,
   StorageDeleteFunction,
   StorageSetFunction,
@@ -80,9 +82,11 @@ export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-recor
 export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
 export { attachRecordToInboxThread } from '@/sdk/inbox/attach-record-to-inbox-thread';
 export { detachRecordFromInboxThread } from '@/sdk/inbox/detach-record-from-inbox-thread';
+export { archiveInboxThread } from '@/sdk/inbox/archive-inbox-thread';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';
 export type { InboxThreadRecordInput } from 'twenty-shared/application';
+export type { ArchiveInboxThreadInput } from 'twenty-shared/application';
 
 export { AppPath, SidePanelPages } from 'twenty-shared/types';
 export type {

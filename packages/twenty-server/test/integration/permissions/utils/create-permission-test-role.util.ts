@@ -1,4 +1,5 @@
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
@@ -38,18 +39,31 @@ export const createPermissionTestRole = async ({
   const roleId: string = data.createOneRole.id;
 
   if (grant === 'rowLevel') {
-    await upsertRowLevelPermissionPredicates({
+    await revokeObjectRecordsPermissions({
+      roleId,
+      objectMetadataId,
+      token: accessToken,
+    });
+    await upsertRowLevelPermissionRules({
       input: {
         roleId,
         objectMetadataId,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId: rowLevelFilter.fieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.IS,
-            value: rowLevelFilter.value,
+            canCreateRecords: true,
+            canReadRecords: true,
+            canUpdateRecords: true,
+            canSoftDeleteRecords: true,
+            canDestroyRecords: true,
+            predicates: [
+              {
+                fieldMetadataId: rowLevelFilter.fieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                value: rowLevelFilter.value,
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
       expectToFail: false,
       token: accessToken,

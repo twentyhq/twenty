@@ -1,28 +1,20 @@
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
-import { doNotTranslate } from 'twenty-shared/i18n';
 
 import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/NavigationMenuItemDropResult';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
-import { NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG } from '@/navigation-menu-item/common/constants/NavigationMenuItemSectionDroppableConfig';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
-import { computeDndReorderPosition } from '@/navigation-menu-item/common/utils/computeDndReorderPosition';
-import { extractFolderIdFromDroppableId } from '@/navigation-menu-item/common/utils/extractFolderIdFromDroppableId';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
+import { computeNavigationMenuItemDropPlacement } from '@/navigation-menu-item/common/utils/computeNavigationMenuItemDropPlacement';
+import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-
-const matchesFolderId = (
-  item: { folderId?: string | null },
-  folderId: string | null,
-): boolean => (item.folderId ?? null) === folderId;
 
 export const useHandleNavigationMenuItemDragAndDrop = (
   section: NavigationMenuItemSection,
@@ -40,16 +32,13 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   );
 
   const isDraftMode = section === 'workspace';
-  const config = NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG[section];
   const allItems = isDraftMode
     ? workspaceNavigationMenuItems
     : navigationMenuItems;
 
-  const getSortedItems = (): Array<{
-    id: string;
-    position: number;
-    folderId?: string | null;
-  }> =>
+  const getSortedItems = (): Array<
+    Pick<NavigationMenuItem, 'id' | 'position' | 'parentId' | 'type'>
+  > =>
     isDraftMode
       ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
           (a, b) => a.position - b.position,
@@ -62,15 +51,19 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     newFolderId?: string | null,
   ) => {
     const folderUpdate =
-      newFolderId !== undefined ? { folderId: newFolderId } : {};
+      newFolderId !== undefined ? { parentId: newFolderId } : {};
 
     if (isDraftMode) {
       const draft = store.get(navigationMenuItemsDraftState.atom);
-      if (!draft) return;
+      if (!draft) {
+        return;
+      }
 
       setNavigationMenuItemsDraft(
         draft.map((item): NavigationMenuItem => {
-          if (item.id !== draggableId) return item;
+          if (item.id !== draggableId) {
+            return item;
+          }
           return { ...item, position: newPosition, ...folderUpdate };
         }),
       );
@@ -82,20 +75,6 @@ export const useHandleNavigationMenuItemDragAndDrop = (
         },
       ]);
     }
-  };
-
-  const computeAndApplyReorder = async (
-    draggableId: string,
-    list: Array<{ id: string; position: number }>,
-    destinationIndex: number,
-    newFolderId?: string | null,
-  ) => {
-    const newPosition = computeDndReorderPosition({
-      sortedList: list,
-      draggableId,
-      destinationIndex,
-    });
-    await applyReorder(draggableId, newPosition, newFolderId);
   };
 
   const isDropAllowed = (
@@ -122,7 +101,9 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   ) => {
     const { destination, source, draggableId } = result;
 
-    if (!destination) return;
+    if (!destination) {
+      return;
+    }
 
     if (
       destination.droppableId === source.droppableId &&
@@ -131,77 +112,57 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       return;
     }
 
-    if (!isDropAllowed(source.droppableId, destination.droppableId)) return;
+    if (!isDropAllowed(source.droppableId, destination.droppableId)) {
+      return;
+    }
 
     const draggedItem = allItems.find((item) => item.id === draggableId);
-    if (!draggedItem) return;
-
-    const destinationFolderId = extractFolderIdFromDroppableId(
-      destination.droppableId,
-      section,
-    );
-    const sourceFolderId = extractFolderIdFromDroppableId(
-      source.droppableId,
-      section,
-    );
-
-    if (
-      isDraftMode &&
-      isNavigationMenuItemFolder(draggedItem) &&
-      isDefined(destinationFolderId)
-    ) {
+    if (!draggedItem) {
       return;
     }
 
-    if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
-      if (destinationFolderId === null) {
-        throw new Error(doNotTranslate('Invalid folder header ID'));
-      }
+    const getNavigationMenuItemById = (id: string) =>
+      allItems.find((item) => item.id === id);
+    const destinationTarget = resolveNavigationMenuItemDroppableId({
+      droppableId: destination.droppableId,
+      navigationMenuItemSection: section,
+      getNavigationMenuItemById,
+    });
+    if (!isDefined(destinationTarget)) {
+      return;
+    }
 
-      const folderList = getSortedItems().filter((item) =>
-        matchesFolderId(item, destinationFolderId),
-      );
+    const sourceParentId =
+      resolveNavigationMenuItemDroppableId({
+        droppableId: source.droppableId,
+        navigationMenuItemSection: section,
+        getNavigationMenuItemById,
+      })?.parentId ?? null;
 
-      await computeAndApplyReorder(
-        draggableId,
-        folderList,
-        folderList.length,
-        destinationFolderId,
-      );
+    const placement = computeNavigationMenuItemDropPlacement({
+      draggedItem,
+      sourceParentId,
+      destinationTarget,
+      destinationIndex: destination.index,
+      insertBeforeItemId: result.insertBeforeItemId,
+      sortedItems: getSortedItems(),
+    });
+
+    if (!isDefined(placement)) {
+      return;
+    }
+
+    await applyReorder(draggableId, placement.position, placement.parentId);
+
+    const { folderIdToOpen } = placement;
+
+    if (isDefined(folderIdToOpen)) {
       setOpenNavigationMenuItemFolderIds((current) =>
-        current.includes(destinationFolderId)
+        current.includes(folderIdToOpen)
           ? current
-          : [...current, destinationFolderId],
+          : [...current, folderIdToOpen],
       );
-      return;
     }
-
-    const isSameFolder = sourceFolderId === destinationFolderId;
-
-    const destinationList = getSortedItems().filter((item) =>
-      matchesFolderId(item, destinationFolderId),
-    );
-
-    if (
-      isSameFolder &&
-      !destinationList.some((item) => item.id === draggableId)
-    ) {
-      return;
-    }
-
-    const insertBeforeIndex =
-      result.insertBeforeItemId != null
-        ? destinationList.findIndex(
-            (item) => item.id === result.insertBeforeItemId,
-          )
-        : -1;
-
-    await computeAndApplyReorder(
-      draggableId,
-      destinationList,
-      insertBeforeIndex >= 0 ? insertBeforeIndex : destination.index,
-      isSameFolder ? undefined : (destinationFolderId ?? null),
-    );
   };
 
   return { handleNavigationMenuItemDragAndDrop };

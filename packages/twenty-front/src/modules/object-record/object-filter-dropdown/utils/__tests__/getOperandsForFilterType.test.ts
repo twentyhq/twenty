@@ -1,8 +1,10 @@
-import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
-import { type FilterableFieldType } from 'twenty-shared/types';
+import {
+  RecordFilterOperand,
+  type FilterableFieldType,
+} from 'twenty-shared/types';
 
 describe('getOperandsForFilterType', () => {
   const emptyOperands = [

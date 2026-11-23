@@ -35,10 +35,12 @@ jest.mock('@/object-record/hooks/useBuildRecordInputFromRLSPredicates', () => ({
 jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
   useObjectPermissionsForObject: () => ({
     canReadAllRecords: true,
+    canCreateAllRecords: true,
     canUpdateAllRecords: true,
     canSoftDeleteAllRecords: true,
     canDestroyAllRecords: true,
-    restrictedFields: {},
+    unreadableFields: [],
+    uneditableFields: [],
   }),
 }));
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({

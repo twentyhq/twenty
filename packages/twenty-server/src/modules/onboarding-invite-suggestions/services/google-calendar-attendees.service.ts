@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { google } from 'googleapis';
 
+import { isGoogleCalendarResourceAttendee } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/is-google-calendar-resource-attendee.util';
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { ONBOARDING_INVITE_SUGGESTIONS_LOOKAHEAD_DAYS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-lookahead-days.constant';
 import { ONBOARDING_INVITE_SUGGESTIONS_LOOKBACK_DAYS } from 'src/modules/onboarding-invite-suggestions/constants/onboarding-invite-suggestions-lookback-days.constant';
@@ -59,7 +60,7 @@ export class GoogleCalendarAttendeesService {
 
       for (const attendee of event.attendees ?? []) {
         const attendeeEmail = attendee.email?.toLowerCase();
-        const isRoomOrResource = attendee.resource === true;
+        const isRoomOrResource = isGoogleCalendarResourceAttendee(attendee);
 
         if (
           !attendeeEmail ||

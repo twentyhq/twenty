@@ -24,13 +24,10 @@ import { runInRollbackSafeTransaction } from 'src/engine/workspace-query-executo
 
 // Workspace DATE fields are date-only: keep Postgres's raw 'YYYY-MM-DD' instead of a JS Date, like the v1 datasource
 const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
-  getTypeParser: ((oid: number, format?: unknown) =>
+  getTypeParser: (oid: number, format?: 'text' | 'binary') =>
     oid === types.builtins.DATE
       ? (value: string) => value
-      : types.getTypeParser(
-          oid,
-          format as never,
-        )) as typeof types.getTypeParser,
+      : types.getTypeParser(oid, format),
 };
 
 @Injectable()

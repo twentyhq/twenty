@@ -11,6 +11,9 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type ThemeColor } from 'twenty-ui/theme';
 
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateISOStringToDate } from '@/localization/utils/formatDateISOStringToDate';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceUsageLimitModal } from '@/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
@@ -25,6 +28,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useUsageLimitFormatter } from '@/settings/billing/hooks/useUsageLimitFormatter';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkspaceUsageLimitsQuery } from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceUsageLimitsSectionProps = {
@@ -33,7 +37,7 @@ type SettingsAdminWorkspaceUsageLimitsSectionProps = {
 
 const EDIT_LIMIT_DIALOG_ID = 'settings-admin-usage-limit-edit';
 
-const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 100px 36px';
+const USAGE_LIMITS_GRID_AUTO_COLUMNS = '1fr 120px 120px 110px 110px 100px 36px';
 
 const getStatus = (
   row: AdminUsageLimitRow,
@@ -47,6 +51,8 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
 }: SettingsAdminWorkspaceUsageLimitsSectionProps) => {
   const { t } = useLingui();
   const { formatLimitValue } = useUsageLimitFormatter();
+  const { timeZone, dateFormat } = useDateTimeFormat();
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
 
@@ -88,7 +94,7 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
     <Section.Root>
       <SettingsTableListSection<AdminUsageLimitRow>
         title={t`Limits`}
-        description={t`What caps this workspace. Instance defaults come from config variables and only an operator can replace one.`}
+        description={t`What caps this workspace. Defaults come from config variables and the workspace plan, and only an operator can replace one.`}
         items={rows}
         columns={[
           {
@@ -113,17 +119,35 @@ export const SettingsAdminWorkspaceUsageLimitsSection = ({
             label: t`Limit`,
             Cell: ({ item }) => (
               <>
-                {formatLimitValue({
-                  value: item.limitValue,
-                  unit: item.unit,
-                  operationType: item.operationType,
-                })}
+                {isDefined(item.limitValue)
+                  ? formatLimitValue({
+                      value: item.limitValue,
+                      unit: item.unit,
+                      operationType: item.operationType,
+                    })
+                  : t`None`}
               </>
             ),
           },
           {
             label: t`Per`,
             Cell: ({ item }) => <>{getAdminUsageLimitPeriodLabel(item)}</>,
+          },
+          {
+            label: t`Ends`,
+            Cell: ({ item }) => (
+              <>
+                {item.isOverridden &&
+                  (isDefined(item.endsAt)
+                    ? formatDateISOStringToDate({
+                        date: item.endsAt,
+                        timeZone,
+                        dateFormat,
+                        localeCatalog,
+                      })
+                    : t`Never`)}
+              </>
+            ),
           },
           {
             label: t`Source`,

@@ -29,7 +29,7 @@ const StyledLoadingContainer = styled.div`
 export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink();
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
 
   const {
@@ -81,7 +81,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             isLoading={loading}
-            onCancel={() => navigate(SettingsPath.Accounts)}
+            onCancel={() => navigate(SettingsPath.AppPreferences)}
             onSave={handleSubmit((data) => handleSave(data))}
           />
         }

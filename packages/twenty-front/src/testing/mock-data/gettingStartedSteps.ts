@@ -21,7 +21,6 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       promptLabel: null,
       prompt: null,
       doneChatThreadId: null,
-      doneWorkflowId: null,
     },
     {
       __typename: 'GettingStartedStepDefinition',
@@ -37,7 +36,6 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       promptLabel: null,
       prompt: null,
       doneChatThreadId: null,
-      doneWorkflowId: null,
     },
     {
       __typename: 'GettingStartedStepDefinition',
@@ -52,7 +50,6 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       promptLabel: null,
       prompt: null,
       doneChatThreadId: null,
-      doneWorkflowId: null,
     },
     {
       __typename: 'GettingStartedStepDefinition',
@@ -67,7 +64,6 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       promptLabel: null,
       prompt: null,
       doneChatThreadId: null,
-      doneWorkflowId: null,
     },
     {
       __typename: 'GettingStartedStepDefinition',
@@ -83,7 +79,6 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       promptLabel: null,
       prompt: null,
       doneChatThreadId: null,
-      doneWorkflowId: null,
     },
     {
       __typename: 'GettingStartedStepDefinition',
@@ -100,7 +95,6 @@ export const mockGettingStartedStepDefinitions: GettingStartedProgressQuery['get
       prompt:
         'Every Monday, draft a follow-up email for each deal closing in the next 30 days.',
       doneChatThreadId: null,
-      doneWorkflowId: null,
     },
   ];
 

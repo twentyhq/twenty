@@ -47,7 +47,7 @@ export class DeleteWorkflowActionHandlerService extends WorkspaceMigrationRunner
     return;
   }
 
-  protected override getDeferredAction({
+  protected override getDeferredOperation({
     flatAction,
   }: WorkspaceMigrationActionRunnerContext<FlatDeleteWorkflowAction>) {
     return {

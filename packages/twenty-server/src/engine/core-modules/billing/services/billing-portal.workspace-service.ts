@@ -22,13 +22,18 @@ import { MAX_TRIAL_WORKSPACES_PER_USER } from 'src/engine/core-modules/billing/c
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
+import { type TargetApplicationProduct } from 'src/engine/core-modules/billing/types/target-application-product.type';
+import { buildApplicationItemsForInterval } from 'src/engine/core-modules/billing/utils/build-application-items-for-interval.util';
 import { buildBillingTrialLimitLockKey } from 'src/engine/core-modules/billing/utils/build-billing-trial-limit-lock-key.util';
+import { computeBilledSeats } from 'src/engine/core-modules/billing/utils/compute-billed-seats.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -48,6 +53,8 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingSeatService: BillingSeatService,
+    private readonly billingApplicationProductService: BillingApplicationProductService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
@@ -204,10 +211,10 @@ export class BillingPortalWorkspaceService {
         idempotencyKey: `${customer?.billingSubscriptions.length ?? 0}`,
       });
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      workspace.id,
-      stripeSubscription.id,
-    );
+    await this.billingSubscriptionService.syncSubscriptionToDatabase({
+      workspaceId: workspace.id,
+      stripeSubscriptionId: stripeSubscription.id,
+    });
 
     return successUrl;
   }
@@ -253,10 +260,10 @@ export class BillingPortalWorkspaceService {
         },
       );
 
-    await this.billingSubscriptionService.syncSubscriptionToDatabase(
-      workspace.id,
-      stripeSubscription.id,
-    );
+    await this.billingSubscriptionService.syncSubscriptionToDatabase({
+      workspaceId: workspace.id,
+      stripeSubscriptionId: stripeSubscription.id,
+    });
 
     const paymentIntent =
       this.extractSubscriptionClientSecret(stripeSubscription);
@@ -423,8 +430,12 @@ export class BillingPortalWorkspaceService {
     }
     const successUrl = frontBaseUrl.toString();
 
-    const quantity = await this.userWorkspaceRepository.countBy({
-      workspaceId: workspace.id,
+    const quantity = computeBilledSeats({
+      memberCount: await this.userWorkspaceRepository.countBy({
+        workspaceId: workspace.id,
+      }),
+      seatArrangements:
+        await this.billingSeatService.findActiveSeatArrangements(workspace.id),
     });
 
     const customer = await this.billingCustomerRepository.findOne(
@@ -438,7 +449,10 @@ export class BillingPortalWorkspaceService {
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
       quantity,
       billingPricesPerPlan,
-      workspaceId: workspace.id,
+      targetApplicationProducts:
+        await this.billingApplicationProductService.findTargetApplicationProducts(
+          { workspaceId: workspace.id },
+        ),
     });
 
     return {
@@ -564,10 +578,11 @@ export class BillingPortalWorkspaceService {
   private getStripeSubscriptionLineItems({
     quantity,
     billingPricesPerPlan,
+    targetApplicationProducts,
   }: {
     quantity: number;
     billingPricesPerPlan: BillingGetPricesPerPlanResult;
-    workspaceId: string;
+    targetApplicationProducts: TargetApplicationProduct[];
   }): Stripe.Checkout.SessionCreateParams.LineItem[] {
     const defaultBaseProductPrice = findSellableBaseProductPriceOrThrow(
       billingPricesPerPlan.baseProductPrices,
@@ -585,6 +600,13 @@ export class BillingPortalWorkspaceService {
         price: defaultResourceCreditPrice.stripePriceId,
         quantity: 1,
       },
+      ...buildApplicationItemsForInterval({
+        targetApplicationProducts,
+        interval: defaultBaseProductPrice.interval,
+      }).map(({ stripePriceId, quantity }) => ({
+        price: stripePriceId,
+        quantity,
+      })),
     ];
   }
 }

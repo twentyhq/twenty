@@ -4,20 +4,25 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 export const deleteConnectedAccount = async ({
   id,
   expectToFail,
+  token,
 }: {
   id: string;
   expectToFail: boolean;
+  token?: string;
 }) => {
-  const response = await makeMetadataApiRequest({
-    query: gql`
-      mutation DeleteConnectedAccount($id: UUID!) {
-        deleteConnectedAccount(id: $id) {
-          id
+  const response = await makeMetadataApiRequest(
+    {
+      query: gql`
+        mutation DeleteConnectedAccount($id: UUID!) {
+          deleteConnectedAccount(id: $id) {
+            id
+          }
         }
-      }
-    `,
-    variables: { id },
-  });
+      `,
+      variables: { id },
+    },
+    token,
+  );
 
   if (expectToFail) {
     expect(response.body.data?.deleteConnectedAccount).toBeNull();

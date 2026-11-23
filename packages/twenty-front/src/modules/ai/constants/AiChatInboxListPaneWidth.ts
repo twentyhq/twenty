@@ -1,1 +1,0 @@
-export const AI_CHAT_INBOX_LIST_PANE_WIDTH = 400;

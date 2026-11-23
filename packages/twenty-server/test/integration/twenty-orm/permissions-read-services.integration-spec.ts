@@ -16,8 +16,9 @@ import { deleteApiKeysWithObjectRecordGrants } from 'test/integration/permission
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PrincipalPermissionsService } from 'src/engine/permissions/principal-permissions.service';
-import { type RecordPermissionsService } from 'src/engine/permissions/record-permissions.service';
+import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
+import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
+import { type RecordFieldPermissionsReadService } from 'src/engine/permissions/record-field-permissions-read.service';
 import { type RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { type SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
@@ -29,8 +30,9 @@ describe('permissions read services', () => {
   const recordId = randomUUID();
   let adminAuthContext: PermissionsAuthContext;
   let personFlatObjectMetadata: FlatObjectMetadata;
-  let principalPermissionsService: PrincipalPermissionsService;
-  let recordPermissionsService: RecordPermissionsService;
+  let principalPermissionsReadService: PrincipalPermissionsReadService;
+  let recordPermissionsReadService: RecordPermissionsReadService;
+  let recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
   let rolePermissionsService: RolePermissionsService;
   const missingRoleAuthContext: PermissionsAuthContext = {
     type: 'apiKey',
@@ -65,13 +67,17 @@ describe('permissions read services', () => {
     }
 
     personFlatObjectMetadata = person;
-    principalPermissionsService =
-      getAppProviderByClassName<PrincipalPermissionsService>(
-        'PrincipalPermissionsService',
+    principalPermissionsReadService =
+      getAppProviderByClassName<PrincipalPermissionsReadService>(
+        'PrincipalPermissionsReadService',
       );
-    recordPermissionsService =
-      getAppProviderByClassName<RecordPermissionsService>(
-        'RecordPermissionsService',
+    recordPermissionsReadService =
+      getAppProviderByClassName<RecordPermissionsReadService>(
+        'RecordPermissionsReadService',
+      );
+    recordFieldPermissionsReadService =
+      getAppProviderByClassName<RecordFieldPermissionsReadService>(
+        'RecordFieldPermissionsReadService',
       );
     rolePermissionsService = getAppProviderByClassName<RolePermissionsService>(
       'RolePermissionsService',
@@ -98,27 +104,30 @@ describe('permissions read services', () => {
   }: {
     authContext: PermissionsAuthContext;
   }): Promise<boolean> =>
-    recordPermissionsService.hasAccessToSomeRecords({
-      operationType: 'select',
-      principals: await principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
+    recordPermissionsReadService.canAccessSomeRecords({
+      operationType: 'read',
+      principals:
+        await principalPermissionsReadService.resolvePermissionsPrincipals({
+          authContext,
+        }),
       objectMetadataId: personFlatObjectMetadata.id,
     });
 
   const askRecordsQuestion = async ({
-    question = 'canReadRecords',
+    operationType = 'read',
     authContext,
     recordIds,
   }: {
-    question?: 'canReadRecords' | 'canUpdateRecords';
+    operationType?: 'read' | 'update';
     authContext: PermissionsAuthContext;
     recordIds: string[];
   }): Promise<boolean> =>
-    recordPermissionsService[question]({
-      principals: await principalPermissionsService.buildPermissionsPrincipals({
-        authContext,
-      }),
+    recordPermissionsReadService.canAccessRecords({
+      operationType,
+      principals:
+        await principalPermissionsReadService.resolvePermissionsPrincipals({
+          authContext,
+        }),
       objectMetadataId: personFlatObjectMetadata.id,
       recordIds,
     });
@@ -171,7 +180,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('canReadRecords and canUpdateRecords', () => {
+  describe('canAccessRecords', () => {
     it('grants a role reading and updating an existing record it grants', async () => {
       expect(
         await askRecordsQuestion({
@@ -183,7 +192,7 @@ describe('permissions read services', () => {
         await askRecordsQuestion({
           authContext: adminAuthContext,
           recordIds: [recordId],
-          question: 'canUpdateRecords',
+          operationType: 'update',
         }),
       ).toBe(true);
     });
@@ -207,7 +216,7 @@ describe('permissions read services', () => {
     });
   });
 
-  describe('hasAccessToSomeRecords', () => {
+  describe('canAccessSomeRecords', () => {
     it('follows the role when it permits the operation', async () => {
       expect(
         await askCanReadSomeRecords({
@@ -228,11 +237,6 @@ describe('permissions read services', () => {
   describe('role questions', () => {
     it('finds the roles of a principal', async () => {
       expect(
-        await rolePermissionsService.hasAnyRole({
-          authContext: adminAuthContext,
-        }),
-      ).toBe(true);
-      expect(
         await rolePermissionsService.findRoleIds({
           authContext: adminAuthContext,
         }),
@@ -241,10 +245,10 @@ describe('permissions read services', () => {
 
     it('finds no role for an API key without one', async () => {
       expect(
-        await rolePermissionsService.hasAnyRole({
+        await rolePermissionsService.findRoleIds({
           authContext: missingRoleAuthContext,
         }),
-      ).toBe(false);
+      ).toEqual([]);
     });
   });
 
@@ -295,7 +299,7 @@ describe('permissions read services', () => {
       apiKey: Pick<ApiKeyWithObjectRecordGrants, 'apiKeyId'>,
     ) => {
       const principals =
-        await principalPermissionsService.buildPermissionsPrincipals({
+        await principalPermissionsReadService.resolvePermissionsPrincipals({
           authContext: {
             type: 'apiKey',
             workspace: { id: SEED_APPLE_WORKSPACE_ID },
@@ -319,17 +323,17 @@ describe('permissions read services', () => {
         apiKey: { id: apiKey.apiKeyId },
       });
 
-      for (const question of ['canReadRecords', 'canUpdateRecords'] as const) {
+      for (const operationType of ['read', 'update'] as const) {
         expect(
           await askRecordsQuestion({
-            question,
+            operationType,
             authContext: buildApiKeyAuthContext(readRestricted),
             recordIds: [recordId],
           }),
         ).toBe(true);
         expect(
           await askRecordsQuestion({
-            question,
+            operationType,
             authContext: buildApiKeyAuthContext(idReadRestricted),
             recordIds: [recordId],
           }),
@@ -340,7 +344,7 @@ describe('permissions read services', () => {
     it('hides a field the role cannot read from reads and updates', async () => {
       const principals = await buildApiKeyPrincipals(readRestricted);
       const unreadableFieldMetadataIds =
-        await recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow({
+        await recordFieldPermissionsReadService.findUnreadableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         });
@@ -348,7 +352,7 @@ describe('permissions read services', () => {
       expect(unreadableFieldMetadataIds).toContain(introFieldMetadataId);
       expect(unreadableFieldMetadataIds).not.toContain(jobTitleFieldMetadataId);
       expect(
-        await recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow({
+        await recordFieldPermissionsReadService.findUneditableFields({
           principals,
           objectMetadataId: personFlatObjectMetadata.id,
         }),
@@ -362,7 +366,7 @@ describe('permissions read services', () => {
         objectMetadataId: personFlatObjectMetadata.id,
       };
       const nonUpdatableFieldMetadataIds =
-        await recordPermissionsService.findNonUpdatableFieldMetadataIdsOrThrow(
+        await recordFieldPermissionsReadService.findUneditableFields(
           objectQuestion,
         );
 
@@ -371,7 +375,7 @@ describe('permissions read services', () => {
         jobTitleFieldMetadataId,
       );
       expect(
-        await recordPermissionsService.findUnreadableFieldMetadataIdsOrThrow(
+        await recordFieldPermissionsReadService.findUnreadableFields(
           objectQuestion,
         ),
       ).not.toContain(introFieldMetadataId);

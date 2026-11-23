@@ -1,6 +1,7 @@
 import {
   type DocumentNode,
   type ErrorLike,
+  NetworkStatus,
   type OperationVariables,
   type TypedDocumentNode,
 } from '@apollo/client';
@@ -9,6 +10,8 @@ import { useState } from 'react';
 
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+
+const FIRST_PAGE = { pageNumber: 1, hasNextPage: true };
 
 type CustomResolverQueryResult<
   T extends {
@@ -28,6 +31,7 @@ export const useCustomResolver = <
   objectName,
   activityTargetableObject,
   pageSize,
+  variables,
 }: {
   query:
     | DocumentNode
@@ -36,6 +40,7 @@ export const useCustomResolver = <
   objectName: string;
   activityTargetableObject: ActivityTargetableObject;
   pageSize: number;
+  variables?: OperationVariables;
 }): {
   error: ErrorLike | undefined;
   data: CustomResolverQueryResult<T> | undefined;
@@ -46,11 +51,6 @@ export const useCustomResolver = <
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const [page, setPage] = useState({
-    pageNumber: 1,
-    hasNextPage: true,
-  });
-
   const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   const queryVariables = {
@@ -58,9 +58,10 @@ export const useCustomResolver = <
     recordId: activityTargetableObject.id,
     page: 1,
     pageSize,
+    ...variables,
   };
 
-  const { data, loading, fetchMore, refetch, error } = useQuery<
+  const { data, loading, networkStatus, fetchMore, refetch, error } = useQuery<
     CustomResolverQueryResult<T>
   >(query, {
     client: apolloCoreClient,
@@ -69,46 +70,49 @@ export const useCustomResolver = <
 
   const firstQueryLoading = loading && !data;
 
+  const [lastLoadedPage, setLastLoadedPage] = useState(FIRST_PAGE);
+
+  const isLoadingFirstPage =
+    networkStatus === NetworkStatus.loading ||
+    networkStatus === NetworkStatus.setVariables ||
+    networkStatus === NetworkStatus.refetch;
+
+  if (
+    isLoadingFirstPage &&
+    (lastLoadedPage.pageNumber !== 1 || !lastLoadedPage.hasNextPage)
+  ) {
+    setLastLoadedPage(FIRST_PAGE);
+  }
+
   const fetchMoreRecords = async () => {
-    if (page.hasNextPage && !isFetchingMore && !firstQueryLoading) {
+    if (lastLoadedPage.hasNextPage && !isFetchingMore && !loading) {
       setIsFetchingMore(true);
+
+      const nextPageNumber = lastLoadedPage.pageNumber + 1;
 
       await fetchMore({
         variables: {
           ...queryVariables,
-          page: page.pageNumber + 1,
+          page: nextPageNumber,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult?.[queryName]?.[objectName]?.length) {
-            setPage((page) => ({
-              ...page,
-              hasNextPage: false,
-            }));
+          const fetchedRecords =
+            fetchMoreResult?.[queryName]?.[objectName] ?? [];
+          const previousRecords = prev?.[queryName]?.[objectName] ?? [];
 
-            return {
-              [queryName]: {
-                ...prev?.[queryName],
-                [objectName]: [...(prev?.[queryName]?.[objectName] ?? [])],
-              },
-            };
-          }
+          setLastLoadedPage({
+            pageNumber: nextPageNumber,
+            hasNextPage: fetchedRecords.length > 0,
+          });
 
           return {
             [queryName]: {
               ...prev?.[queryName],
-              [objectName]: [
-                ...(prev?.[queryName]?.[objectName] ?? []),
-                ...(fetchMoreResult?.[queryName]?.[objectName] ?? []),
-              ],
+              [objectName]: [...previousRecords, ...fetchedRecords],
             },
           };
         },
       });
-
-      setPage((page) => ({
-        ...page,
-        pageNumber: page.pageNumber + 1,
-      }));
 
       setIsFetchingMore(false);
     }

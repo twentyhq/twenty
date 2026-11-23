@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { type AiRunPermissionScope } from 'src/engine/permissions/principal/types/ai-run-permission-scope.type';
+import { type RuntimeLimitingRole } from 'src/engine/permissions/principal/types/runtime-limiting-role.type';
 import {
   type PermissionsAgentPrincipal,
   type PermissionsApiKeyPrincipal,
@@ -13,19 +13,23 @@ import {
 
 type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
-export type PermissionsMainPrincipalWithRole =
-  | WithRoleId<PermissionsWorkspaceMemberPrincipal>
-  | WithRoleId<PermissionsApiKeyPrincipal>
-  | WithRoleId<PermissionsAgentPrincipal>
-  | WithRoleId<PermissionsWebhookPrincipal>
-  | WithRoleId<PermissionsApplicationIdPrincipal>
-  | PermissionsRolePrincipal;
+type WithRoleIds<TPrincipal> = TPrincipal & { roleIds: string[] };
+
+export type PermissionsMainPrincipalWithRole = WithRoleIds<
+  | PermissionsWorkspaceMemberPrincipal
+  | PermissionsApiKeyPrincipal
+  | PermissionsAgentPrincipal
+  | PermissionsWebhookPrincipal
+  | PermissionsApplicationIdPrincipal
+  | PermissionsRolePrincipal
+>;
 
 export type PermissionsLimitingPrincipalWithRole =
   WithRoleId<PermissionsAgentPrincipal>;
 
+// an OAuth-only application without a role of its own has no roleId and adds no limit
 export type PermissionsApplicationPrincipalWithRole =
-  | WithRoleId<PermissionsApplicationIdPrincipal>
+  | (PermissionsApplicationIdPrincipal & { roleId?: string })
   | PermissionsCustomApplicationPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {
@@ -34,5 +38,5 @@ export type PermissionsPrincipalsWithRolesContext = {
   limitingPrincipal?: PermissionsLimitingPrincipalWithRole;
   applicationPrincipal: PermissionsApplicationPrincipalWithRole;
   // narrows what the roles allow, and leaves no reach beyond them
-  aiRunScope?: AiRunPermissionScope;
+  runtimeLimitingRole?: RuntimeLimitingRole;
 };

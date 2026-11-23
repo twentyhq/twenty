@@ -7,6 +7,10 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import {
+  type AiChatAssistantAvatarColor,
+  type AiChatAssistantAvatarShape,
+} from 'twenty-shared/ai';
 import { type AgentTrigger } from 'twenty-shared/application';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -34,6 +38,14 @@ export class AgentDTO {
   icon?: string;
 
   @IsString()
+  @Field(() => String, { nullable: true })
+  avatarColor?: AiChatAssistantAvatarColor;
+
+  @IsString()
+  @Field(() => String, { nullable: true })
+  avatarShape?: AiChatAssistantAvatarShape;
+
+  @IsString()
   @Field({ nullable: true })
   description?: string;
 
@@ -58,6 +70,13 @@ export class AgentDTO {
   @IsBoolean()
   @Field()
   isActive: boolean;
+
+  @IsBoolean()
+  @Field()
+  isPrivate: boolean;
+
+  @HideField()
+  createdByUserWorkspaceId: string | null;
 
   @HideField()
   workspaceId: string;

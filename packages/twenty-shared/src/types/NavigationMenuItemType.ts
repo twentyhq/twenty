@@ -7,4 +7,8 @@ export enum NavigationMenuItemType {
   PAGE_LAYOUT = 'PAGE_LAYOUT',
   AGENT_CHAT_CHANNEL = 'AGENT_CHAT_CHANNEL',
   NATIVE_PAGE = 'NATIVE_PAGE',
+  WORKFLOW = 'WORKFLOW',
+  AGENT = 'AGENT',
+  TAB = 'TAB',
+  SECTION = 'SECTION',
 }

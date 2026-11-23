@@ -17,6 +17,7 @@ const getViewSortsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_sorts',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_SORT_ACCESS_POLICY,
   description:
@@ -31,12 +32,13 @@ export class GetViewSortsTool extends BaseTool<typeof getViewSortsInputSchema> {
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof getViewSortsInputSchema>): Promise<ToolOutput> {
-    const sorts = await this.viewSortService.findByViewId(
+    const sorts = await this.viewSortService.findByViewId({
       workspaceId,
-      input.viewId,
-    );
+      viewId: input.viewId,
+      userWorkspaceId,
+    });
 
     return {
       success: true,

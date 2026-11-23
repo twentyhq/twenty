@@ -8,7 +8,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
-import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
+import { temporaryExcludePermissionStorageObject } from 'src/engine/permissions/utils/temporary-exclude-permission-storage-object.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -18,7 +18,7 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 const isRestrictableObject = (
   flatObjectMetadata: Pick<FlatObjectMetadata, 'isSystem' | 'universalIdentifier'>,
 ): boolean =>
-  !flatObjectMetadata.isSystem && !isPermissionStorageObject(flatObjectMetadata);
+  !flatObjectMetadata.isSystem && !temporaryExcludePermissionStorageObject(flatObjectMetadata);
 
 @RegisteredWorkspaceCommand('2.55.0', 1793457458179)
 @Command({

@@ -5,7 +5,6 @@ export const CURRENCY_CODE_LABELS: Record<CurrencyCode, { label: string }> = {
   AFN: { label: 'Afghan afghani' },
   ALL: { label: 'Albanian lek' },
   AMD: { label: 'Armenian dram' },
-  ANG: { label: 'Netherlands Antillean guilder' },
   AOA: { label: 'Angolan kwanza' },
   ARS: { label: 'Argentine peso' },
   AUD: { label: 'Australian dollar' },

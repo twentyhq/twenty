@@ -1,21 +1,7 @@
+import { type AgentMessageRow } from '@/ai/types/AgentMessageRow';
 import { type ExtendedUIMessage } from '@/ai/types/ExtendedUIMessage';
-import {
-  type AgentMessagePartRow,
-  mapAgentMessagePartToUIMessagePart,
-} from '@/ai/utils/map-agent-message-part-to-ui-message-part.util';
+import { mapAgentMessagePartToUIMessagePart } from '@/ai/utils/map-agent-message-part-to-ui-message-part.util';
 import { isDefined } from '@/utils/validation/isDefined';
-
-export type AgentMessageRow = {
-  id: string;
-  threadId: string;
-  role: string;
-  status: string;
-  createdAt: string;
-  processedAt?: string | null;
-  senderWorkspaceMemberId?: string | null;
-  turnId?: string | null;
-  parts: AgentMessagePartRow[];
-};
 
 export const mapAgentMessagesToUIMessages = (
   messages: AgentMessageRow[],
@@ -31,6 +17,9 @@ export const mapAgentMessagesToUIMessages = (
     metadata: {
       createdAt: message.createdAt,
       senderWorkspaceMemberId: message.senderWorkspaceMemberId,
+      senderApplicationId: message.senderApplicationId,
+      agentId: message.agentId,
+      isBuiltInAssistant: message.isBuiltInAssistant,
       turnId: message.turnId,
       ...(message.role === 'assistant'
         ? {

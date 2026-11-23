@@ -1,6 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { canReachSomeRecords } from 'twenty-shared/utils';
+import { canAccessThroughAllRecordsOrRlsPermission } from 'twenty-shared/utils';
 
 export const useCanUpdateObjectRecords = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -12,7 +12,7 @@ export const useCanUpdateObjectRecords = (objectNameSingular: string) => {
   );
 
   return {
-    canUpdateSomeRecords: canReachSomeRecords({
+    canUpdateSomeRecords: canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: objectPermissions,
       operationType: 'update',
     }),

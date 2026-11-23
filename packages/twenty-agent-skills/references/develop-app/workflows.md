@@ -8,7 +8,7 @@ See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. Install creates it active; installing a new app version updates it in place. Users can't edit an installed workflow — they duplicate it.
 
-Workflows created at runtime through the workspace API are a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+Workflows created at runtime go through the core workflow API (`createCoreWorkflow`, `coreWorkflows`, `coreWorkflowVersions`, …). There is no `Workflow` record in the workspace schema. `createCoreWorkflow` creates the workflow together with its draft first version.
 
 ## defineWorkflow
 
@@ -33,7 +33,7 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
   - Generate step: no agent. It carries its own `instructions`, `modelId`, `modelConfiguration` and `scope` and runs once, with no conversation, no human input and no waiting.
   - Agent step: runs one of the app's agents, named with `agentUniversalIdentifier`. Only this kind takes `humanInputInstructions` and `conversation`; a Generate step with either fails validation.
 - Both kinds take the step's `prompt`, `responseFormat` and `workspaceMemberId` (the member the agent's conversation is with).
-- `scope` is what the step's AI may reach on top of the permissions of whoever runs the workflow: a role's permissions (`canReadAllObjectRecords`, `objectPermissions`, `fieldPermissions`, `permissionFlagUniversalIdentifiers`, ...) without its identity or row-level predicates. It resolves like a role whose all-records flags default to off: object actions and permission flags it doesn't grant are denied, system objects stay readable unless it grants more, and unlisted fields follow their object. A Generate step without a `scope` gets no data tools; an Agent step runs with its agent's role.
+- `scope` is what the step's AI may reach on top of the permissions of whoever runs the workflow: the grants `canReadAllObjectRecords`, `objectPermissions`, `fieldPermissions`, `permissionFlagUniversalIdentifiers`, ... with no identity and no row-level rules. A scope keeps these names; a role declares the same access in `recordsPermissions` instead. It resolves like a role whose all-records flags default to off: object actions and permission flags it doesn't grant are denied, system objects stay readable unless it grants more, and unlisted fields follow their object. A Generate step without a `scope` gets no data tools; an Agent step runs with its agent's role.
 - A step can only name an agent the app exports. `twenty app pull` reports as unsupported a workflow on any other agent, or with a stored step that has human input instructions or a conversation but no agent.
 
 ## Email and Calendar Steps
@@ -46,6 +46,7 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 
 - `SEND_CHAT_MESSAGE` posts `title` and `text` to the inbox of `workspaceMemberId`, optionally with a `toolCall` the member approves before the run goes on, and an optional `conversation`.
 - Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
+- Member mentions in `text`, such as those in a note body passed as `{{trigger.properties.after.bodyV2.markdown}}`, notify those members, as in `sendInboxMessage` (see `logic.md`).
 
 ## Manual Record Trigger
 
@@ -53,19 +54,19 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - The selected record is the trigger payload — no wrapping `record` field.
 - Reference fields with `{{trigger.<field>}}`. Do not use `{{trigger.record.<field>}}`.
 
-## Lifecycle Through the Workspace API
+## Lifecycle Through the Core Workflow API
 
 Only for workflows created at runtime, e.g. from a post-install hook, instead of `defineWorkflow`. Always: create → configure draft → activate. Never publish a draft directly.
 
-1. Find or create the `Workflow` by stable name or slug. `createWorkflow` produces the draft `v1`.
-2. Set the trigger on the draft via `updateWorkflowVersion`.
-3. Add steps via the workflow-step mutations. `createWorkflowVersionStep` returns a `stepsDiff`, not the step — read the diff for the new step id, then call `updateWorkflowVersionStep` with the full payload.
-4. Activate via `activateWorkflowVersion`.
+1. Find the workflow by stable name with `coreWorkflows`, or create it with `createCoreWorkflow`, which produces the draft version.
+2. Set the trigger on the draft with `updateCoreWorkflowVersionTrigger`.
+3. Add steps with `createCoreWorkflowVersionStep`. It returns a `stepsDiff`, not the step: read the diff for the new step id, then call `updateCoreWorkflowVersionStep` with the full payload.
+4. Activate with `activateCoreWorkflowVersion`.
 
 Forbidden:
 
-- Do not write `Workflow.statuses` — it is computed from the active version's status.
-- Do not create `WorkflowVersion` rows directly.
+- Do not set a workflow's status. It follows its versions.
+- Do not create versions directly. Start a new draft from an existing version with `createDraftFromCoreWorkflowVersion`.
 
 ## Idempotency
 

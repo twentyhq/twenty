@@ -43,7 +43,7 @@ import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-c
 import { type AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type RecordSharingPermissionsService } from 'src/engine/permissions/record-sharing-permissions.service';
-import { type RecordSharingWriteService } from 'src/engine/permissions/record-share/services/record-sharing-write.service';
+import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -51,8 +51,8 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { type RecordEventPermissionsService } from 'src/engine/permissions/record-event-permissions.service';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
+import { type RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
@@ -229,8 +229,8 @@ describe('Conversation sharing through the authenticated API', () => {
         'RecordSharingPermissionsService',
       );
     const sharingWriteService =
-      getAppProviderByClassName<RecordSharingWriteService>(
-        'RecordSharingWriteService',
+      getAppProviderByClassName<RecordShareSystemWriteService>(
+        'RecordShareSystemWriteService',
       );
     const rollbackError = new Error('Roll back the scoped sharing regression');
 
@@ -262,13 +262,13 @@ describe('Conversation sharing through the authenticated API', () => {
           };
 
           expect(
-            await sharingPermissionsService.findRecordSharing({
+            await sharingPermissionsService.findRecordSharingPanel({
               ...target,
               authContext: ownerAuthContext,
             }),
           ).toMatchObject({ isPrivate: true, canManageSharing: true });
           expect(
-            await sharingPermissionsService.findRecordSharing({
+            await sharingPermissionsService.findRecordSharingPanel({
               ...target,
               authContext: writerAuthContext,
             }),
@@ -296,7 +296,8 @@ describe('Conversation sharing through the authenticated API', () => {
           'userWorkspaceRoleMap',
           'flatObjectMetadataMaps',
         ]);
-      const roleId = userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY];
+      const roleId =
+        userWorkspaceRoleMap[USER_WORKSPACE_DATA_SEED_IDS.JONY]?.[0];
       if (!isDefined(roleId)) {
         throw new Error('Seeded recipient role is missing');
       }
@@ -414,7 +415,7 @@ describe('Conversation sharing through the authenticated API', () => {
           await destroyThreadRecord(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
         ];
         for (const viewerWrite of viewerWrites) {
-          expect(viewerWrite.body.errors[0].extensions.code).toBe('NOT_FOUND');
+          expect(viewerWrite.body.errors[0].extensions.code).toBe('FORBIDDEN');
         }
         expect(await readStoredThreadState(threadId)).toEqual(
           storedBeforeViewerWrites,
@@ -465,7 +466,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const threadAudience: ThreadAudience =
         audience === 'member'
           ? { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY }
-          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId] };
+          : { roleId: userWorkspaceRoleMap[sender.userWorkspaceId]?.[0] };
       const threadId = randomUUID();
       const target = {
         objectMetadataId:
@@ -518,7 +519,7 @@ describe('Conversation sharing through the authenticated API', () => {
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(editorSoftDelete.body.errors[0].extensions.code).toBe(
-          'NOT_FOUND',
+          'FORBIDDEN',
         );
         expect((await readStoredThreadState(threadId))?.deletedAt).toBeNull();
         const stop = await makeMetadataApiRequest(
@@ -1088,10 +1089,10 @@ describe('Conversations through the record API', () => {
       throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
     }
 
-    const readableRecordIds =
-      await getAppProviderByClassName<RecordEventPermissionsService>(
-        'RecordEventPermissionsService',
-      ).filterReadableEventRecordIds({
+    const readableEvents =
+      await getAppProviderByClassName<RecordEventPermissionsReadService>(
+        'RecordEventPermissionsReadService',
+      ).filterReadableEvents({
         authContext: await resolveWorkspaceMemberAuthContext({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           workspaceMemberId,
@@ -1099,7 +1100,7 @@ describe('Conversations through the record API', () => {
         eventBatch: batch,
       });
 
-    return readableRecordIds.has(threadId);
+    return readableEvents.some(({ recordId }) => recordId === threadId);
   };
 
   it.each([false, true])(

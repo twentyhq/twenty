@@ -82,7 +82,9 @@ export const generateWorkspaceSchemaDdl = (
   const statements: string[] = [];
 
   for (const objectMetadata of objectMetadatas) {
-    if (!objectMetadata.isActive) continue;
+    if (!objectMetadata.isActive) {
+      continue;
+    }
 
     const tableName = computeTableName(
       objectMetadata.nameSingular,
@@ -137,7 +139,9 @@ export const generateWorkspaceSchemaDdl = (
       }),
     );
 
-    if (columnDefinitions.length === 0) continue;
+    if (columnDefinitions.length === 0) {
+      continue;
+    }
 
     const columnsSql = columnDefinitions
       .map(

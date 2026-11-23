@@ -24,7 +24,9 @@ export const getPieChartFormattedValue = ({
   const item = enrichedData.find(
     (enrichedDataItem) => enrichedDataItem.key === datum.data.key,
   );
-  if (!isDefined(item)) return null;
+  if (!isDefined(item)) {
+    return null;
+  }
 
   return displayType === 'percentage'
     ? formatGraphValue(item.percentage / 100, formatOptions)

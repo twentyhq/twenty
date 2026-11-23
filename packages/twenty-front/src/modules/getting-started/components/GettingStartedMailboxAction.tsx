@@ -1,14 +1,13 @@
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { GettingStartedConnectedAccountsTable } from '@/getting-started/components/GettingStartedConnectedAccountsTable';
+import { useGettingStartedMailboxAccounts } from '@/getting-started/hooks/useGettingStartedMailboxAccounts';
 import { OnboardingImportPreview } from '@/onboarding/components/import-contacts/OnboardingImportPreview';
-import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -32,10 +31,7 @@ const StyledProviderButtons = styled.div`
 export const GettingStartedMailboxAction = () => {
   const { t } = useLingui();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { accounts, hasLoaded } = useMyConnectedAccounts();
-  const activeAccounts = accounts.filter(
-    (account) => !isDefined(account.archivedAt),
-  );
+  const { accounts, hasLoaded } = useGettingStartedMailboxAccounts();
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
   );
@@ -55,8 +51,8 @@ export const GettingStartedMailboxAction = () => {
     return null;
   }
 
-  if (activeAccounts.length > 0) {
-    return <GettingStartedConnectedAccountsTable accounts={activeAccounts} />;
+  if (accounts.length > 0) {
+    return <GettingStartedConnectedAccountsTable accounts={accounts} />;
   }
 
   return (

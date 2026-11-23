@@ -24,17 +24,14 @@ import {
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { getCoreWorkflowVersionEditLockKey } from 'src/engine/core-modules/workflow/utils/get-core-workflow-version-edit-lock-key.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
-import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
@@ -74,10 +71,9 @@ export class CoreWorkflowLifecycleWorkspaceService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
-    private readonly codeStepBuildService: CodeStepBuildService,
     private readonly commandMenuItemService: CommandMenuItemService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -155,44 +151,25 @@ export class CoreWorkflowLifecycleWorkspaceService {
       },
     );
 
-    const isLastPublishedVersion =
-      coreWorkflow.lastPublishedCoreWorkflowVersionId ===
-        coreWorkflowVersion.id ||
-      (isDefined(coreWorkflowVersion.workspaceWorkflowVersionId) &&
-        coreWorkflow.lastPublishedVersionId ===
-          coreWorkflowVersion.workspaceWorkflowVersionId);
-
-    assertVersionCanBeActivated(
-      {
+    assertVersionCanBeActivated({
+      workflowVersion: {
         id: coreWorkflowVersion.id,
-        status: this.toWorkspaceVersionStatus(coreWorkflowVersion.status),
+        status: coreWorkflowVersion.status,
         trigger,
         steps,
       },
-      {
-        lastPublishedVersionId: isLastPublishedVersion
-          ? coreWorkflowVersion.id
-          : null,
-      },
-    );
+      isLastPublishedVersion:
+        coreWorkflow.lastPublishedCoreWorkflowVersionId ===
+        coreWorkflowVersion.id,
+    });
 
     const { objectIdByNameSingular, flatFieldMetadataMaps } =
-      await this.workflowCommonWorkspaceService.getFlatEntityMaps(workspaceId);
+      await this.workflowMetadataReadService.getFlatEntityMaps(workspaceId);
 
     assertPickRecordLoadBalanceConfigIsValid({
       steps: steps ?? [],
       objectIdByNameSingular,
       flatFieldMetadataMaps,
-    });
-
-    await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
-      workspaceId,
-      steps: steps ?? [],
-    });
-
-    await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
-      workspaceId,
-      steps: steps ?? [],
     });
 
     await this.withCoreWorkflowLifecycleLock({
@@ -286,8 +263,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
           coreWorkflowUpdate: {
             coreWorkflowId: coreWorkflow.id,
             lastPublishedCoreWorkflowVersionId: coreWorkflowVersion.id,
-            lastPublishedVersionId:
-              coreWorkflowVersion.workspaceWorkflowVersionId ?? null,
           },
         });
 
@@ -312,7 +287,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
           resolved,
         });
 
-        await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
           workspaceId,
         );
       },
@@ -369,7 +344,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
 
         await this.deleteCommandMenuItem({ workspaceId, resolved });
 
-        await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
+        await this.coreWorkflowTriggerService.invalidateAutomatedTriggerMaps(
           workspaceId,
         );
       },
@@ -468,7 +443,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     coreWorkflowUpdate?: {
       coreWorkflowId: string;
       lastPublishedCoreWorkflowVersionId: string | null;
-      lastPublishedVersionId: string | null;
     };
   }): Promise<void> {
     const { flatWorkflowVersionMaps, flatWorkflowMaps } =
@@ -498,7 +472,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
             }),
             lastPublishedCoreWorkflowVersionId:
               coreWorkflowUpdate.lastPublishedCoreWorkflowVersionId,
-            lastPublishedVersionId: coreWorkflowUpdate.lastPublishedVersionId,
           },
         ]
       : [];
@@ -579,11 +552,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         ? { legacyWorkflowId: coreWorkflow.workspaceWorkflowId }
         : {}),
       pattern: computeCronPatternFromSchedule(trigger),
-      ...buildCoreDispatchIds({
-        coreWorkflowVersionId: coreWorkflowVersion.id,
-        workspaceWorkflowVersionId:
-          coreWorkflowVersion.workspaceWorkflowVersionId,
-      }),
+      coreWorkflowVersionId: coreWorkflowVersion.id,
     };
 
     await publishCronTriggerCacheEntry({
@@ -606,32 +575,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     });
   }
 
-  private async findExistingCommandMenuItem({
-    workspaceId,
-    resolved,
-  }: {
-    workspaceId: string;
-    resolved: ResolvedCoreVersion;
-  }) {
-    const commandMenuItem =
-      await this.commandMenuItemService.findByCoreWorkflowVersionId(
-        resolved.coreWorkflowVersion.id,
-        workspaceId,
-      );
-
-    if (
-      isDefined(commandMenuItem) ||
-      !isDefined(resolved.coreWorkflowVersion.workspaceWorkflowVersionId)
-    ) {
-      return commandMenuItem;
-    }
-
-    return this.commandMenuItemService.findByWorkflowVersionId(
-      resolved.coreWorkflowVersion.workspaceWorkflowVersionId,
-      workspaceId,
-    );
-  }
-
   private async createOrUpdateCommandMenuItem({
     workspaceId,
     resolved,
@@ -652,10 +595,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
       name: resolved.coreWorkflow.name,
     });
 
-    const existingCommandMenuItem = await this.findExistingCommandMenuItem({
-      workspaceId,
-      resolved,
-    });
+    const existingCommandMenuItem =
+      await this.commandMenuItemService.findByCoreWorkflowVersionId(
+        resolved.coreWorkflowVersion.id,
+        workspaceId,
+      );
 
     if (isDefined(existingCommandMenuItem)) {
       await this.commandMenuItemService.update(
@@ -681,12 +625,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     } else {
       await this.commandMenuItemService.create(
         {
-          ...(isDefined(resolved.coreWorkflowVersion.workspaceWorkflowVersionId)
-            ? {
-                workflowVersionId:
-                  resolved.coreWorkflowVersion.workspaceWorkflowVersionId,
-              }
-            : {}),
           coreWorkflowVersionId: resolved.coreWorkflowVersion.id,
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
@@ -714,10 +652,11 @@ export class CoreWorkflowLifecycleWorkspaceService {
       return;
     }
 
-    const existingCommandMenuItem = await this.findExistingCommandMenuItem({
-      workspaceId,
-      resolved,
-    });
+    const existingCommandMenuItem =
+      await this.commandMenuItemService.findByCoreWorkflowVersionId(
+        resolved.coreWorkflowVersion.id,
+        workspaceId,
+      );
 
     if (isDefined(existingCommandMenuItem)) {
       await this.commandMenuItemService.delete(
@@ -752,7 +691,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
           availabilityType = CommandMenuItemAvailabilityType.RECORD_SELECTION;
 
           const { objectIdByNameSingular } =
-            await this.workflowCommonWorkspaceService.getFlatEntityMaps(
+            await this.workflowMetadataReadService.getFlatEntityMaps(
               workspaceId,
             );
 
@@ -773,11 +712,5 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
 
     return { availabilityType, availabilityObjectMetadataId };
-  }
-
-  private toWorkspaceVersionStatus(
-    status: CoreWorkflowVersionStatus,
-  ): WorkflowVersionStatus {
-    return WorkflowVersionStatus[status];
   }
 }

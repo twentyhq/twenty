@@ -14,6 +14,11 @@ exports[`Role deletion should fail when deleting a non-editable system role (Adm
                 "message": "Role is not editable",
                 "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
               },
+              {
+                "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+                "message": "Cannot target a role owned by another application",
+                "userFriendlyMessage": "Cannot target a role owned by another application.",
+              },
             ],
             "flatEntityMinimalInformation": {
               "label": "Admin",

@@ -67,7 +67,7 @@ Cu o întârziere aleatorie într-o fereastră de o oră, aceleași execuții su
                           N × calls spread over 60 minutes  →  OK
 ```
 
-* **Grupați în loturi declanșatorii evenimentelor din baza de date.** O scriere în masă, precum o sincronizare a cutiei poștale, emite câte un eveniment pentru fiecare înregistrare, mii în câteva secunde, iar o execuție pentru fiecare eveniment înseamnă câte o solicitare pentru fiecare înregistrare. Setați `batchMode: true`, declarați `updatedFields` și reduceți lotul la înregistrări distincte înainte de a apela API-ul. Consultați [Gruparea în loturi a evenimentelor din baza de date](/ro/developers/extend/apps/logic/logic-functions#batching-database-events).
+* **Grupați în loturi declanșatorii evenimentelor din baza de date.** O scriere în masă, precum o sincronizare a cutiei poștale, emite câte un eveniment pentru fiecare înregistrare, mii în câteva secunde, iar o execuție pentru fiecare eveniment înseamnă câte o solicitare pentru fiecare înregistrare. Setează `batchMode: true`, declară `watchedFieldUniversalIdentifiers` și redu lotul la înregistrări distincte înainte de a apela API-ul. Consultați [Gruparea în loturi a evenimentelor din baza de date](/ro/developers/extend/apps/logic/logic-functions#batching-database-events).
 
 * **Efectuați o solicitare per lot, nu per înregistrare.** Limita contorizează solicitările, nu înregistrările: un `createMany` cu `upsert: true` care conține 200 de înregistrări reprezintă o solicitare, iar 200 de actualizări individuale reprezintă 200. Citiți cu filtre `in` și scrieți cu `createMany` sau `updateMany`.
 

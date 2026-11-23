@@ -30,7 +30,9 @@ const setup = async ({
     const sql = args[0] as string;
 
     if (isDelete(sql)) {
-      if (deleteFails) throw new Error('boom');
+      if (deleteFails) {
+        throw new Error('boom');
+      }
 
       return [];
     }

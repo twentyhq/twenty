@@ -146,4 +146,33 @@ describe('fromRoleConfigToRoleManifest', () => {
     expect(manifest.rowLevelPermissionPredicates).toEqual([]);
     expect(manifest.rowLevelPermissionPredicateGroups).toEqual([]);
   });
+
+  it('derives the universalIdentifier of the objects of recordsPermissions and writes no legacy property', () => {
+    const manifest = convert({
+      ...baseConfig,
+      recordsPermissions: {
+        canReadAllRecords: false,
+        objects: [
+          {
+            objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+            canReadAllRecords: true,
+          },
+        ],
+      },
+    });
+
+    expect(manifest.recordsPermissions?.objects).toEqual([
+      {
+        objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        canReadAllRecords: true,
+        universalIdentifier: getObjectPermissionUniversalIdentifier({
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      },
+    ]);
+    expect(manifest.objectPermissions).toBeUndefined();
+    expect(manifest.rowLevelPermissionPredicates).toBeUndefined();
+  });
 });

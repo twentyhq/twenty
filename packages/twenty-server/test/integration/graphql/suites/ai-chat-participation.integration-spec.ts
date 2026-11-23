@@ -12,7 +12,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
@@ -530,10 +530,13 @@ describe('Chat participation through the authenticated API', () => {
 
   it('allows revised initial choices after a failed send leaves an empty thread', async () => {
     const threadId = context.registerThread();
+    const generalChannelId = await context.findGeneralChannelIdOrThrow();
     const failed = await sendChatParticipationMessage({
       threadId,
+      channelId: generalChannelId,
       modelId: 'missing-provider/missing-model',
       isAssistantParticipant: true,
+      isAssistantMentioned: true,
     });
 
     expect(failed.body.errors).toBeDefined();
@@ -543,17 +546,40 @@ describe('Chat participation through the authenticated API', () => {
         threadId,
       }),
     ).toBe(false);
+    expect((await context.readThread(threadId)).channelId).toBe(
+      generalChannelId,
+    );
 
     const retried = await sendChatParticipationMessage({
       threadId,
+      channelId: null,
       isAssistantParticipant: false,
       recipientWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
     });
 
     expect(retried.body.errors).toBeUndefined();
-    expect(retried.body.data.sendChatMessage.streamId).toBeNull();
-    expect((await context.readThread(threadId)).isAssistantParticipant).toBe(
-      false,
+    expect(retried.body.data.sendChatMessage).toMatchObject({
+      streamId: null,
+      recipientParticipantWorkspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ],
+    });
+    expect(await context.readThread(threadId)).toMatchObject({
+      isAssistantParticipant: false,
+      channelId: null,
+    });
+  });
+
+  it('keeps a channel chat in its channel when its first message omits the channel', async () => {
+    const threadId = await context.createChannelThread();
+    const response = await sendChatParticipationMessage({
+      threadId,
+      shouldAssistantReply: false,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect((await context.readThread(threadId)).channelId).toBe(
+      await context.findGeneralChannelIdOrThrow(),
     );
   });
 

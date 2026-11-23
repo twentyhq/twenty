@@ -5,7 +5,10 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission } from '@/object-record/read-only/utils/isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { canReachSomeRecords, isDefined } from 'twenty-shared/utils';
+import {
+  canAccessThroughAllRecordsOrRlsPermission,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
@@ -32,7 +35,7 @@ export const isRecordFieldReadOnly = ({
   );
 
   if (
-    !canReachSomeRecords({
+    !canAccessThroughAllRecordsOrRlsPermission({
       objectRecordsPermissions: objectPermissions,
       operationType: 'update',
     }) ||

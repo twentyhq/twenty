@@ -1,14 +1,16 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
-import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
+import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/useEnabledBuiltInAccountApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isOAuthOnlyApplication } from '@/settings/applications/utils/isOAuthOnlyApplication';
+import { getApplicationsWithConnectedMembersDescription } from '@/settings/applications/utils/getApplicationsWithConnectedMembersDescription';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { WorkspaceApplicationConnectedMemberCountsDocument } from '~/generated-metadata/graphql';
 
 const StyledToolbar = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -17,9 +19,13 @@ const StyledToolbar = styled.div`
 export const SettingsApplicationsInstalledAppsSection = () => {
   const { t } = useLingui();
   const installedApplications = useInstalledApplications();
-  const installedBuiltInAccountApps = useInstalledBuiltInAccountApps();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
+  const { data: connectedMemberCountsData } = useQuery(
+    WorkspaceApplicationConnectedMemberCountsDocument,
+    {
+      fetchPolicy: 'cache-and-network',
+      skip: !installedApplications.some(isOAuthOnlyApplication),
+    },
   );
   const {
     statusesById,
@@ -28,7 +34,6 @@ export const SettingsApplicationsInstalledAppsSection = () => {
     refetch: refetchStatuses,
   } = useWorkspaceApplicationStatusesById({
     applications: installedApplications,
-    shouldSkip: !isAppPreferencesEnabled,
   });
 
   if (installedApplications.length === 0) {
@@ -50,10 +55,18 @@ export const SettingsApplicationsInstalledAppsSection = () => {
           </StyledToolbar>
         ) : undefined
       }
-      applications={installedApplications}
-      builtInAccountApps={installedBuiltInAccountApps}
+      applications={
+        isDefined(connectedMemberCountsData)
+          ? getApplicationsWithConnectedMembersDescription({
+              applications: installedApplications,
+              connectedMemberCounts:
+                connectedMemberCountsData.workspaceApplicationConnectedMemberCounts,
+            })
+          : installedApplications
+      }
+      builtInAccountApps={enabledBuiltInAccountApps}
       linkTarget="applicationDetail"
-      middleColumn={isAppPreferencesEnabled ? 'typeOrStatus' : 'type'}
+      middleColumn="typeOrStatus"
       statusesById={statusesById}
       isLoadingStatuses={isLoadingStatuses}
     />

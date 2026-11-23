@@ -23,6 +23,7 @@ import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linke
 import { getLinkedinImportHistoryJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { setLinkedinAccountOwnerAvatar } from 'src/logic-functions/utils/set-linkedin-account-owner-avatar.util';
 import {
   getLinkedinHistoryImportChunkChats,
   getLinkedinHistoryImportProgress,
@@ -278,6 +279,14 @@ export const linkedinImportHistoryHandler = async (
       throw new Error(
         `LinkedIn connection ${connectedAccountId} has no Unipile account or message channel`,
       );
+    }
+
+    if (chunkIndex === 0 && !isDefined(payload.resumeIndex)) {
+      await setLinkedinAccountOwnerAvatar({
+        unipileAccountId,
+        channelHandle: channel.handle,
+        deadlineAtMs: attachmentDeadlineAtMs,
+      });
     }
 
     const settings = await getLinkedinSettings(connectedAccountId);

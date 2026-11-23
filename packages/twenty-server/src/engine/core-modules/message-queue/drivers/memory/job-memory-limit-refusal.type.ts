@@ -2,6 +2,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 
 export type JobMemoryLimitRefusal = {
   queueName: MessageQueue;
+  jobName: string;
   groupKey: string;
   reason: 'share' | 'size';
   requestedBytes: number;

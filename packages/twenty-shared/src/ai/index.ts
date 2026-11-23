@@ -9,6 +9,10 @@
 
 export { AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR } from './constants/agent-chat-assistant-mention-object-name-singular.const';
 export { AGENT_CHAT_ASSISTANT_NAME } from './constants/agent-chat-assistant-name.const';
+export type { AgentChatInboxNotificationLevel } from './constants/agent-chat-inbox-notification-level.const';
+export { AGENT_CHAT_INBOX_NOTIFICATION_LEVEL } from './constants/agent-chat-inbox-notification-level.const';
+export type { AgentChatThreadPresetFilter } from './constants/agent-chat-thread-preset-filter.const';
+export { AGENT_CHAT_THREAD_PRESET_FILTER } from './constants/agent-chat-thread-preset-filter.const';
 export { AGENT_MESSAGE_REACTION_EMOJI_MAX_LENGTH } from './constants/agent-message-reaction-emoji-max-length.const';
 export { AI_CHAT_ASSISTANT_AVATAR_COLORS } from './constants/ai-chat-assistant-avatar-colors.const';
 export { AI_CHAT_ASSISTANT_AVATAR_FACES } from './constants/ai-chat-assistant-avatar-faces.const';
@@ -27,11 +31,17 @@ export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
 export { ASK_QUESTION_TOOL_NAME } from './constants/ask-question-tool-name.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
 export { ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME } from './constants/attach-conversation-to-record-tool-name.const';
+export { ATTACH_CONVERSATION_TO_RECORDS_TOOL_NAME } from './constants/attach-conversation-to-records-tool-name.const';
 export type { AutoSelectModelId } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_MODEL_ID_BY_TIER } from './constants/auto-select-model-id-by-tier.const';
 export { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from './constants/auto-select-workspace-default-model-id.const';
 export { CHAT_REFERENCE_BODY_PATTERN } from './constants/chat-reference-body-pattern.const';
+export { CHAT_REFERENCE_IDENTITY_SHAPE_BY_KIND } from './constants/chat-reference-identity-shape-by-kind.const';
+export { CHAT_REFERENCE_MALFORMED_REGEX } from './constants/chat-reference-malformed-regex.const';
+export { CHAT_REFERENCE_METADATA_NAME_REGEX } from './constants/chat-reference-metadata-name-regex.const';
+export { CHAT_REFERENCE_REGEX } from './constants/chat-reference-regex.const';
 export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
+export { CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES } from './constants/code-interpreter-max-input-file-size-bytes.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export { DATA_RESIDENCIES_BY_REGION } from './constants/data-residencies-by-region.const';
 export type { DataResidencyRegion } from './constants/data-residency-regions.const';
@@ -60,7 +70,9 @@ export type { AgentChatInboxAction } from './types/AgentChatInboxAction';
 export type { AgentChatInboxState } from './types/AgentChatInboxState';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export { AgentChatThreadConversationType } from './types/AgentChatThreadConversationType';
+export type { AgentChatThreadInboxStatus } from './types/AgentChatThreadInboxStatus';
 export type { AgentMessageReactionSummary } from './types/AgentMessageReactionSummary';
+export type { AgentMessageRow } from './types/AgentMessageRow';
 export type {
   AgentResponseFormatType,
   AgentTextResponseFormat,
@@ -92,6 +104,9 @@ export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
 export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
 export type { AskQuestionToolResult } from './types/AskQuestionToolResult';
 export type { AskQuestionToolStatus } from './types/AskQuestionToolStatus';
+export type { ChatReferenceIdentity } from './types/ChatReferenceIdentity';
+export type { ChatReferenceKind } from './types/ChatReferenceKind';
+export type { ChatReferenceMatch } from './types/ChatReferenceMatch';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,
@@ -130,15 +145,24 @@ export {
 } from './types/ToolWidget';
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
+export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
+export { escapeMarkdownForChatReference } from './utils/escape-markdown-for-chat-reference.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
 export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
+export { getAgentChatDirectMessagePeerWorkspaceMemberIds } from './utils/get-agent-chat-direct-message-peer-workspace-member-ids.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
+export { getAgentChatPreviewPlainText } from './utils/get-agent-chat-preview-plain-text.util';
+export { getAgentChatThreadDisplayLabel } from './utils/get-agent-chat-thread-display-label.util';
+export { getAgentChatThreadInboxStatus } from './utils/get-agent-chat-thread-inbox-status.util';
+export { getAgentChatWebPushNotificationTag } from './utils/get-agent-chat-web-push-notification-tag.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
+export { getChatReferenceSegments } from './utils/get-chat-reference-segments.util';
 export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatAssistantReference } from './utils/is-agent-chat-assistant-reference.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
+export { isAgentChatThreadInPresetFilter } from './utils/is-agent-chat-thread-in-preset-filter.util';
 export { isAgentChatTurnEndEvent } from './utils/is-agent-chat-turn-end-event.util';
 export { isAiContentRecordingAllowed } from './utils/is-ai-content-recording-allowed.util';
 export { isAiDataPolicyActive } from './utils/is-ai-data-policy-active.util';
@@ -150,17 +174,22 @@ export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
 export { isDataResidencyRegion } from './utils/is-data-residency-region.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export type { McpServerToolAnnotationsHints } from './utils/is-destructive-mcp-server-tool.util';
+export { isDestructiveMcpServerTool } from './utils/is-destructive-mcp-server-tool.util';
 export { isFrontComponentProposedToolCall } from './utils/is-front-component-proposed-tool-call.util';
 export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
 export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
 export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';
+export { isSnakeCaseToolName } from './utils/is-snake-case-tool-name.util';
 export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { isValidChatReferenceLabel } from './utils/is-valid-chat-reference-label.util';
 export type { AgentMessagePartRow } from './utils/map-agent-message-part-to-ui-message-part.util';
 export { mapAgentMessagePartToUIMessagePart } from './utils/map-agent-message-part-to-ui-message-part.util';
-export type { AgentMessageRow } from './utils/map-agent-messages-to-ui-messages.util';
 export { mapAgentMessagesToUIMessages } from './utils/map-agent-messages-to-ui-messages.util';
 export { parseAgentChatAssistantReferenceBody } from './utils/parse-agent-chat-assistant-reference-body.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';
+export { parseChatReferenceBody } from './utils/parse-chat-reference-body.util';
+export { parseChatReferences } from './utils/parse-chat-references.util';
+export { replaceMalformedChatReferencesWithDisplayName } from './utils/replace-malformed-chat-references-with-display-name.util';

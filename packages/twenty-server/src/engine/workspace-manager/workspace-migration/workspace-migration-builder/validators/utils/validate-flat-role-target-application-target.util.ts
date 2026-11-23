@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { RoleTargetExceptionCode } from 'src/engine/metadata-modules/role/exceptions/role-target.exception';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type UniversalFlatRoleTarget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role-target.type';
@@ -74,8 +73,6 @@ export const validateFlatRoleTargetApplicationTarget = ({
       userFriendlyMessage: msg`Target application not found`,
     });
   } else if (
-    targetApplicationUniversalIdentifier ===
-      TWENTY_STANDARD_APPLICATION.universalIdentifier ||
     targetApplicationUniversalIdentifier ===
       workspaceCustomApplicationUniversalIdentifier ||
     isOAuthOnlyApplication(targetFlatApplication)

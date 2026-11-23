@@ -16,7 +16,6 @@ import {
   type WorkflowManifest,
   workflowManifestSchema,
 } from 'twenty-shared/application';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -29,6 +28,7 @@ import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/type
 const fromFlatWorkflowVersionToUniversalFlatWorkflowVersion = ({
   workspaceId: _workspaceId,
   applicationId: _applicationId,
+  coreWorkflowId: _coreWorkflowId,
   ...universalFlatWorkflowVersion
 }: FlatWorkflowVersion): UniversalFlatWorkflowVersion & { id: string } =>
   universalFlatWorkflowVersion;
@@ -40,7 +40,7 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   UniversalFlatWorkflowVersion,
   | 'universalIdentifier'
   | 'applicationUniversalIdentifier'
-  | 'coreWorkflowId'
+  | 'coreWorkflowUniversalIdentifier'
   | 'workflowId'
   | 'steps'
   | 'createdAt'
@@ -87,8 +87,8 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
   const definition = parsed.data;
   const workflowId = existingWorkflow?.id ?? v4();
 
-  const steps = definition.version.steps.map((step, index) =>
-    fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
+  const steps = definition.version.steps.map((step) =>
+    fromWorkflowStepManifestToActionOrThrow({ step, references }),
   );
 
   const trigger = fromWorkflowTriggerManifestToTriggerOrThrow({
@@ -116,7 +116,7 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
               workflowUniversalIdentifier: definition.universalIdentifier,
             }),
         applicationUniversalIdentifier,
-        coreWorkflowId: workflowId,
+        coreWorkflowUniversalIdentifier: definition.universalIdentifier,
         workflowId: existingWorkflow?.workspaceWorkflowId ?? null,
         trigger,
         steps,
@@ -136,13 +136,14 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     applicationUniversalIdentifier,
     name: definition.name,
     isSystem: definition.isSystem ?? false,
-    visibility: WorkflowVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     workspaceWorkflowId: null,
     lastPublishedVersionId: isDefined(keptActiveVersion)
       ? (existingWorkflow?.lastPublishedVersionId ?? null)
       : null,
     lastPublishedCoreWorkflowVersionId: versionId,
+    navigationMenuItemUniversalIdentifiers: [],
     createdAt: existingWorkflow?.createdAt ?? now,
     updatedAt: now,
     versionDefinitionHash: isDefined(keptActiveVersion)

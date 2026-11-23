@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { UsageUnit } from '~/generated-metadata/graphql';
+import { isCreditUsageUnit } from '@/settings/billing/utils/isCreditUsageUnit';
+import { type UsageUnit } from '~/generated-metadata/graphql';
 
 const CREDITS_UNIT_ICON_SIZE = 12;
 
@@ -24,6 +25,6 @@ export const SettingsBillingLimitAmount = ({
 }: SettingsBillingLimitAmountProps) => (
   <StyledAmount>
     {text}
-    {unit === UsageUnit.CREDIT && <IconCoins size={CREDITS_UNIT_ICON_SIZE} />}
+    {isCreditUsageUnit(unit) && <IconCoins size={CREDITS_UNIT_ICON_SIZE} />}
   </StyledAmount>
 );

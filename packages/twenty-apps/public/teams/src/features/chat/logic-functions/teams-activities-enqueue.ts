@@ -32,7 +32,7 @@ export default defineLogicFunction({
   universalIdentifier: TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER,
   name: 'teams-activities-enqueue',
   description:
-    'Receives a verified Microsoft Teams message activity from the activities route, in the workspace that claimed its tenant. When chat is enabled, records it as a Teams Assistant Request, once per conversation and activity id, then answers it: matches the sender to a workspace member by email, runs the Teams Assistant agent as that member and posts the answer back to the conversation.',
+    'Receives a verified Microsoft Teams message or install activity from the activities route, in the workspace that claimed its tenant. Posts a welcome when the bot is installed, the help text for help, hi and bare mentions, and a notice when chat is turned off. Otherwise, when chat is enabled, records the message as a Teams Assistant Request, once per conversation and activity id, then answers it: matches the sender to a workspace member by email, runs the Teams Assistant agent as that member and posts the answer back to the conversation.',
   timeoutSeconds: TEAMS_ASSISTANT_REQUEST_TIMEOUT_SECONDS,
   handler: teamsActivitiesEnqueueHandler,
 });

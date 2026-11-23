@@ -8,6 +8,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
+import { AgentRunStopService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-run-stop.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 
@@ -24,6 +25,7 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
     AgentChatStreamHeartbeatService,
     AgentChatStreamRecoveryService,
     AgentChatWaitingRunService,
+    AgentRunStopService,
     AgentTurnStreamService,
   ],
   exports: [
@@ -31,6 +33,7 @@ import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai
     AgentChatStreamHeartbeatService,
     AgentChatStreamRecoveryService,
     AgentChatWaitingRunService,
+    AgentRunStopService,
     AgentTurnStreamService,
   ],
 })

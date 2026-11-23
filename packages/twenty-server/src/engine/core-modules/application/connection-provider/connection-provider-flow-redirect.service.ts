@@ -2,18 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type Response } from 'express';
+import { type Request, type Response } from 'express';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
   isDefined,
+  isNonEmptyArray,
   isSafeInternalPath,
 } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ConnectionProviderAuthorizationStateService } from 'src/engine/core-modules/application/connection-provider/connection-provider-authorization-state.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderFlowCookieService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-cookie.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -26,6 +28,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 export class ConnectionProviderFlowRedirectService {
   constructor(
     private readonly authorizationStateService: ConnectionProviderAuthorizationStateService,
+    private readonly flowCookieService: ConnectionProviderFlowCookieService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -80,6 +83,50 @@ export class ConnectionProviderFlowRedirectService {
     return res.redirect(url.toString());
   }
 
+  async findWorkspaceHostCallbackUrl({
+    request,
+    state,
+  }: {
+    request: Request;
+    state: string | undefined;
+  }): Promise<string | null> {
+    const serverHost = new URL(this.twentyConfigService.get('SERVER_URL')).host;
+
+    if (
+      !isNonEmptyString(state) ||
+      request.get('host') !== serverHost ||
+      isNonEmptyArray(this.flowCookieService.readBrowserNonces(request))
+    ) {
+      return null;
+    }
+
+    const stateTarget =
+      await this.authorizationStateService.findRedirectTarget(state);
+    const workspace = isDefined(stateTarget)
+      ? await this.workspaceRepository.findOneBy({
+          id: stateTarget.workspaceId,
+        })
+      : null;
+
+    if (!isDefined(workspace)) {
+      return null;
+    }
+
+    const workspaceCallbackUrl = this.workspaceDomainsService.buildWorkspaceURL(
+      {
+        workspace,
+        pathname: request.path,
+        searchParams: Object.fromEntries(
+          new URL(request.originalUrl, `http://${serverHost}`).searchParams,
+        ),
+      },
+    );
+
+    return workspaceCallbackUrl.host === serverHost
+      ? null
+      : workspaceCallbackUrl.toString();
+  }
+
   async redirectToErrorFromState({
     res,
     state,
@@ -90,7 +137,7 @@ export class ConnectionProviderFlowRedirectService {
     error: unknown;
   }) {
     const errorRedirectTarget = isNonEmptyString(state)
-      ? await this.authorizationStateService.findErrorRedirectTarget(state)
+      ? await this.authorizationStateService.findRedirectTarget(state)
       : null;
 
     const workspace = isDefined(errorRedirectTarget)
@@ -123,7 +170,7 @@ export class ConnectionProviderFlowRedirectService {
   }) {
     const { pathname, searchParams, hash } = this.parseRedirectLocation({
       redirectLocation,
-      fallbackPathname: getSettingsPath(SettingsPath.Accounts),
+      fallbackPathname: getSettingsPath(SettingsPath.AppPreferences),
     });
 
     return res.redirect(

@@ -9,4 +9,7 @@ export class TwoFactorAuthenticationRecoveryCodeRedemptionDTO {
 
   @Field(() => String, { nullable: true })
   provisioningUri: string | null;
+
+  @Field(() => Boolean)
+  isTwoFactorAuthenticationReset: boolean;
 }

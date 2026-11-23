@@ -39,14 +39,21 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       permissionFlags
       isImpersonating
+      inboxNotificationLevel
+      isInboxNotificationPreviewEnabled
       objectRecordsPermissions {
         objectMetadataId
+        canCreateAllRecords
         canReadAllRecords
         canUpdateAllRecords
         canSoftDeleteAllRecords
         canDestroyAllRecords
-        restrictedFields
+        unreadableFields
+        uneditableFields
+        canReadSomeRecords
         rowLevelRecordsPermissions {
+          ruleId
+          canCreateRecords
           canReadRecords
           canUpdateRecords
           canSoftDeleteRecords
@@ -57,6 +64,8 @@ export const USER_QUERY_FRAGMENT = gql`
           predicateGroups {
             ...RowLevelPermissionPredicateGroupFragment
           }
+          unreadableFields
+          uneditableFields
         }
       }
       twoFactorAuthenticationMethodSummary {
@@ -90,6 +99,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       installedApplications {
+        runHealthCheckOnUserPreferences
         id
         name
         description
@@ -153,7 +163,7 @@ export const USER_QUERY_FRAGMENT = gql`
       trashRetentionDays
       eventLogRetentionDays
       editableProfileFields
-      isInternalMessagesImportEnabled
+      isInternalImportEnabled
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

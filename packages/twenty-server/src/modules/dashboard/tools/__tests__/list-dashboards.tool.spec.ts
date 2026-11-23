@@ -7,14 +7,14 @@ const AUTH_CONTEXT = {
   workspace: { id: WORKSPACE_ID },
 } as WorkspaceAuthContext;
 
-const buildDeps = () => {
+const buildDependencies = () => {
   const getRepository = jest.fn().mockReturnValue({
     find: jest.fn().mockResolvedValue([]),
   });
 
   return {
     getRepository,
-    deps: {
+    dependencies: {
       workspaceOrmManager: {
         executeInWorkspaceContext: jest
           .fn()
@@ -27,11 +27,14 @@ const buildDeps = () => {
 
 describe('createListDashboardsTool', () => {
   it('reads dashboards as the caller rather than bypassing permissions', async () => {
-    const { deps, getRepository } = buildDeps();
+    const { dependencies, getRepository } = buildDependencies();
 
-    const tool = createListDashboardsTool(deps, {
-      workspaceId: WORKSPACE_ID,
-      authContext: AUTH_CONTEXT,
+    const tool = createListDashboardsTool({
+      dependencies,
+      context: {
+        workspaceId: WORKSPACE_ID,
+        authContext: AUTH_CONTEXT,
+      },
     });
 
     const result = await tool.execute({});
@@ -40,7 +43,7 @@ describe('createListDashboardsTool', () => {
     expect(getRepository).toHaveBeenCalledTimes(1);
     expect(getRepository).toHaveBeenCalledWith('dashboard');
     expect(
-      deps.workspaceOrmManager.executeInWorkspaceContext,
+      dependencies.workspaceOrmManager.executeInWorkspaceContext,
     ).toHaveBeenCalledWith(expect.any(Function), AUTH_CONTEXT);
   });
 });

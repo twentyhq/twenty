@@ -2,8 +2,6 @@ import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
 
-const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
-
 type McpToolCallResult = {
   content?: Array<{ type: string; text: string }>;
   isError?: boolean;
@@ -175,14 +173,6 @@ describe('workflow MCP tools on core identities (integration)', () => {
 
       expect(coreWorkflow.workspaceWorkflowId).toBeNull();
       expect(coreVersion.workspaceWorkflowVersionId).toBeNull();
-
-      const [{ workspaceRowCount }] = await global.testDataSource.query(
-        `SELECT (SELECT count(*) FROM "${TEST_WORKSPACE_SCHEMA}"."workflow" WHERE "coreWorkflowId" = $1)::int
-           + (SELECT count(*) FROM "${TEST_WORKSPACE_SCHEMA}"."workflowVersion" WHERE "coreWorkflowVersionId" = $2)::int AS "workspaceRowCount"`,
-        [coreWorkflowId, coreWorkflowVersionId],
-      );
-
-      expect(workspaceRowCount).toBe(0);
     });
 
     it('should preserve the iterator loop connection and the step after the loop', async () => {

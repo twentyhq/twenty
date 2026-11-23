@@ -8,10 +8,5 @@
     "types": ["node"]
   },
   "include": ["src/**/*.js", "src/**/*.ts"],
-  "exclude": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/__mocks__/**/*",
-    "src/individual-entry.ts"
-  ]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/__mocks__/**/*"]
 }

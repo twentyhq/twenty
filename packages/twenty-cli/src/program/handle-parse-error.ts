@@ -2,6 +2,10 @@ import { type CommanderError } from 'commander';
 import { isNonEmptyString } from '@sniptt/guards';
 import { capitalize, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { getCommandName } from '@/catalog/get-command-name';
+import { readBooleanOption } from '@/catalog/read-command-values';
+import { AUTH_LOGIN_COMMAND_DEFINITION } from '@/commands/auth/login/auth-login.command-definition';
+import { API_KEY_STDIN_HINT } from '@/commands/auth/login/constants/api-key-stdin-hint.constant';
 import { VERSION_COMMAND_DEFINITION } from '@/commands/version/version.command-definition';
 import { CliError } from '@/output/cli-error';
 import { EXIT_CODE } from '@/output/constants/exit-code.constant';
@@ -58,7 +62,7 @@ export const handleParseError = async ({
   outputMode: OutputMode;
   capturedOutput: { standardOutput: string; standardError: string };
 }) => {
-  const { commanderError, commandName, operands } = error;
+  const { commanderError, commandName, operands, options } = error;
 
   if (commanderError.code === 'commander.version') {
     await runCommand({
@@ -88,6 +92,24 @@ export const handleParseError = async ({
       createUsageError({
         message: `Unknown command '${getUnknownHelpTarget(operands)}'`,
         commandName,
+      }),
+    );
+
+    return;
+  }
+
+  if (
+    commanderError.code === 'commander.excessArguments' &&
+    commandName === getCommandName(AUTH_LOGIN_COMMAND_DEFINITION) &&
+    readBooleanOption(options, 'withToken')
+  ) {
+    output.fail(
+      new CliError({
+        code: 'USAGE',
+        exitCode: EXIT_CODE.USAGE,
+        message:
+          '--with-token reads the API key from standard input, not as an argument.',
+        hint: API_KEY_STDIN_HINT,
       }),
     );
 
