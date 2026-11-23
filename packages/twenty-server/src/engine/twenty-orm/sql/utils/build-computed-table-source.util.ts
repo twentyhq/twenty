@@ -90,8 +90,7 @@ const renderComputedColumn = ({
   };
 };
 
-// A table whose computed columns hold their values, so every clause reads them like stored ones.
-// A value read through a record or a field the caller cannot read is NULL.
+// A value read through a record or a field the caller cannot read is NULL
 export const buildComputedTableSource = ({
   tableShape,
   getTableShape,

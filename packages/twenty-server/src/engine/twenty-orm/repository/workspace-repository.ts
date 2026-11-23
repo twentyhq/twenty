@@ -2173,7 +2173,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     await this.applyComputedTableSourcePermissions(queryBuilder);
   }
 
-  // A computed column reads other fields and, through lookups, other records: both stay subject to read permissions
   private async applyComputedTableSourcePermissions(
     queryBuilder: WorkspaceSelectQueryBuilder,
   ): Promise<void> {
