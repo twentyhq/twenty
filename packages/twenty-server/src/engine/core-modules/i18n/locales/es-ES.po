@@ -17577,6 +17577,16 @@ msgstr "No pudimos iniciar la conexión. Inténtalo de nuevo."
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "No hemos podido verificar esta clave. Compruébala o inténtalo de nuevo más tarde si el servicio no está disponible."
 
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr ""
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr ""
+
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't connect to your CalDAV server. Please check your server settings and try again."
