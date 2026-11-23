@@ -38,7 +38,6 @@ export const SettingsDataModelFieldSelectFormOptionDescriptionInput = ({
     <Dropdown.Section onKeyDown={handleKeyDown}>
       <DropdownMenuInput
         instanceId={`${dropdownId}-description`}
-        autoFocus
         value={description ?? ''}
         placeholder={t`Add a description`}
         maxLength={OPTION_DESCRIPTION_MAX_CHAR_LENGTH}

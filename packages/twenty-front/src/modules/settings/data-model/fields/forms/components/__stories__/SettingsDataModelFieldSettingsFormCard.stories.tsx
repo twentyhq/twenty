@@ -112,10 +112,12 @@ export const WithSelectForm: Story = {
         name: 'Add description',
       }),
     );
-    await userEvent.keyboard('Shown in pickers');
-    expect(await body.findByPlaceholderText('Add a description')).toHaveValue(
-      'Shown in pickers',
+    const descriptionInput = await body.findByPlaceholderText(
+      'Add a description',
     );
+
+    await userEvent.type(descriptionInput, 'Shown in pickers');
+    expect(descriptionInput).toHaveValue('Shown in pickers');
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('menu')).not.toBeInTheDocument(),

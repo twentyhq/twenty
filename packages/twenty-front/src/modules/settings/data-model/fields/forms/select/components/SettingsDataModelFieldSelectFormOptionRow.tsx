@@ -80,10 +80,9 @@ const StyledIconGripVerticalContainer = styled.span<{ isHidden: boolean }>`
   visibility: ${({ isHidden }) => (isHidden ? 'hidden' : 'visible')};
 `;
 
-const StyledDescriptionIconContainer = styled.span`
-  align-items: center;
+const StyledDescriptionIcon = styled(IconInfoCircle)`
   color: ${themeCssVariables.font.color.light};
-  display: flex;
+  flex-shrink: 0;
   margin-left: ${themeCssVariables.spacing[2]};
 `;
 
@@ -205,9 +204,10 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           delay={TooltipDelay.mediumDelay}
           positionMethod="fixed"
         >
-          <StyledDescriptionIconContainer aria-label={t`Description`}>
-            <IconInfoCircle size={theme.icon.size.md} />
-          </StyledDescriptionIconContainer>
+          <StyledDescriptionIcon
+            aria-label={t`Description`}
+            size={theme.icon.size.md}
+          />
         </Tooltip>
       )}
       <DropdownRoot dropdownId={SELECT_ACTIONS_DROPDOWN_ID} type="menu">
