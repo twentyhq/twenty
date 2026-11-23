@@ -15,18 +15,22 @@ import {
 } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  type NavigationMenuItem,
+} from '~/generated-metadata/graphql';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
+import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemMoveDestination';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { canPlaceNavigationMenuItemInContainer } from '@/navigation-menu-item/common/utils/canPlaceNavigationMenuItemInContainer';
-import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
-import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
+import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
@@ -44,6 +48,9 @@ export const NavigationMenuItemActions = ({
   const { getIcon } = useIcons();
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
   const containerId =
     section === 'workspace'
       ? getNavigationMenuItemContainerId({
@@ -55,34 +62,16 @@ export const NavigationMenuItemActions = ({
     useNavigationMenuItemMoveRemove(section, containerId);
   const { goToPage } = useDropdownPage();
   const siblings = getSortedSiblings(item.id) ?? [];
-  const homeSections = useWorkspaceNavigationMenuContainers({
-    type: NavigationMenuItemType.SECTION,
-    containerId: null,
-  });
   const tabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
     containerId: null,
   });
-  const sections =
-    section === 'workspace'
-      ? [
-          ...homeSections,
-          ...tabs.flatMap((tab) =>
-            getNavigationMenuContainersInDisplayOrder({
-              navigationMenuItems: workspaceNavigationMenuItems,
-              type: NavigationMenuItemType.SECTION,
-              containerId: tab.id,
-            }),
-          ),
-        ].filter(
-          (candidate) =>
-            !isNavigationMenuItemBuiltInSection(candidate) &&
-            candidate.id !== containerId,
-        )
-      : [];
-  const getTabName = (tabId: string | null | undefined) =>
+  const isFolder = item.type === NavigationMenuItemType.FOLDER;
+  const isMovingAcrossTabs =
+    section === 'workspace' && isCustomizableSidebarEnabled;
+  const getTabName = (tabId: string | null) =>
     tabs.find((tab) => tab.id === tabId)?.name ?? t`Home`;
-  const moveToLabel = sections.length > 0 ? t`Move to` : t`Move to folder`;
+  const moveToLabel = isMovingAcrossTabs ? t`Move to` : t`Move to folder`;
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const canPlaceIn = (targetContainerId: string | null) =>
     canPlaceNavigationMenuItemInContainer({
@@ -96,6 +85,41 @@ export const NavigationMenuItemActions = ({
   const run = (action: () => Promise<void>) => {
     void action();
     onClose();
+  };
+  const getFolderIcon = (folder: NavigationMenuItem) => (
+    <ColoredIcon
+      Icon={getIcon(folder.icon ?? FOLDER_ICON_DEFAULT)}
+      color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+    />
+  );
+  const toMoveOption = (
+    destination: NavigationMenuItemMoveDestination,
+  ): NavigationMenuItemOption => {
+    const moveOption = {
+      id: destination.containerId ?? 'home',
+      contextualText: getTabName(destination.tabId),
+      isDisabled:
+        (item.parentId ?? null) === destination.containerId ||
+        !canPlaceIn(destination.containerId),
+      onClick: () => run(() => moveToFolder(item.id, destination.containerId)),
+    };
+
+    switch (destination.kind) {
+      case 'root':
+        return { ...moveOption, label: t`Root level`, Icon: IconHierarchy2 };
+      case 'section':
+        return {
+          ...moveOption,
+          label: destination.item.name ?? t`Section`,
+          Icon: IconLayoutList,
+        };
+      case 'folder':
+        return {
+          ...moveOption,
+          label: destination.item.name ?? t`Folder`,
+          icon: getFolderIcon(destination.item),
+        };
+    }
   };
   const actions: NavigationMenuItemOption[] = [
     {
@@ -116,8 +140,7 @@ export const NavigationMenuItemActions = ({
       id: 'folder',
       label: moveToLabel,
       Icon: IconFolderSymlink,
-      isDisabled:
-        item.type === NavigationMenuItemType.FOLDER && sections.length === 0,
+      isDisabled: isFolder && !isMovingAcrossTabs,
       hasSubMenu: true,
       onClick: () => goToPage('folders'),
     },
@@ -145,7 +168,14 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => remove(item.id)),
     },
   ];
-  const folders: NavigationMenuItemOption[] = [
+  const getCrossTabMoveOptions = (): NavigationMenuItemOption[] =>
+    getNavigationMenuItemMoveDestinations({
+      items: workspaceNavigationMenuItems,
+      tabIds: tabs.map((tab) => tab.id),
+    })
+      .filter((destination) => !isFolder || destination.kind !== 'folder')
+      .map(toMoveOption);
+  const getContainerMoveOptions = (): NavigationMenuItemOption[] => [
     {
       id: 'root',
       label: t`Root level`,
@@ -156,31 +186,19 @@ export const NavigationMenuItemActions = ({
     },
     ...items
       .filter(
-        (folder) =>
-          folder.type === NavigationMenuItemType.FOLDER &&
-          item.type !== NavigationMenuItemType.FOLDER,
+        (folder) => folder.type === NavigationMenuItemType.FOLDER && !isFolder,
       )
       .map((folder) => ({
         id: folder.id,
         label: folder.name ?? t`Folder`,
-        icon: (
-          <ColoredIcon
-            Icon={getIcon(folder.icon ?? FOLDER_ICON_DEFAULT)}
-            color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
-          />
-        ),
+        icon: getFolderIcon(folder),
         isDisabled: folder.id === item.parentId || !canPlaceIn(folder.id),
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
-    ...sections.map((targetSection) => ({
-      id: targetSection.id,
-      label: targetSection.name ?? t`Section`,
-      contextualText: getTabName(targetSection.parentId),
-      Icon: IconLayoutList,
-      isDisabled: !canPlaceIn(targetSection.id),
-      onClick: () => run(() => moveToFolder(item.id, targetSection.id)),
-    })),
   ];
+  const folders = isMovingAcrossTabs
+    ? getCrossTabMoveOptions()
+    : getContainerMoveOptions();
   return (
     <>
       <Dropdown.Page id="root">
