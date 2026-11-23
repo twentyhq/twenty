@@ -16,6 +16,7 @@ export const filterVisibleWidgets = ({
       conditionalAvailabilityExpression:
         widget.conditionalAvailabilityExpression,
       conditionalDisplay: widget.conditionalDisplay,
+      conditionalAvailability: widget.conditionalAvailability,
       context,
     }),
   );

@@ -78,8 +78,11 @@ export const convertPageLayoutDraftToUpdateInput = (
               tab.layoutMode ?? PageLayoutTabLayoutMode.GRID,
             ),
             configuration: widget.configuration ?? null,
+            // TODO(@neo773): the two legacy rule fields are sent only so a new tree empties them; stop one release after stored rules are converted to trees
             conditionalAvailabilityExpression:
               widget.conditionalAvailabilityExpression ?? null,
+            conditionalDisplay: widget.conditionalDisplay ?? null,
+            conditionalAvailability: widget.conditionalAvailability ?? null,
           })),
         };
       }),
