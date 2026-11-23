@@ -26,7 +26,7 @@ export class StripePriceService {
 
   async getPriceByPriceId(priceId: string) {
     return await this.stripe.prices.retrieve(priceId, {
-      expand: ['data.currency_options', 'data.tiers'],
+      expand: ['currency_options', 'tiers'],
     });
   }
 

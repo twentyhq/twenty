@@ -42,6 +42,11 @@ msgstr "\"{0}\" không phải là một trường con hợp lệ của \"{1}\"."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\" đã nhận một giá trị không hợp lệ."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "\"{name}\" không thể được sử dụng trong hạn chế hiển thị này"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -406,6 +411,16 @@ msgstr "Một ghi chú"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Một mục tiêu ghi chú"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Không thể so sánh trực tiếp một quan hệ morph một-nhiều; hãy đi qua quan hệ để so sánh một trường của các bản ghi của quan hệ đó"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Một quan hệ một-nhiều chỉ hỗ trợ các toán hạng IS_EMPTY và IS_NOT_EMPTY; hãy đi qua quan hệ để so sánh một trường của các bản ghi của quan hệ đó"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3118,6 +3133,11 @@ msgstr "Các cuộc trò chuyện gắn với liên hệ"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Các cuộc trò chuyện gắn với cơ hội"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Việc kiểm tra xem mối quan hệ một-nhiều có trống hay không yêu cầu các bước nhảy quan hệ trong các vị từ quyền ở cấp hàng"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7866,6 +7886,11 @@ msgstr "viewUniversalIdentifier không hợp lệ cho tiện ích trường"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "viewUniversalIdentifier không hợp lệ cho tiện ích trường \"{widgetTitle}\". Mong đợi một UUID hợp lệ"
+
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Hạn chế hiển thị không hợp lệ: {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15558,6 +15583,13 @@ msgstr "Quyền của đối tượng này đã được thiết lập cho vai t
 msgid "This operand is not supported for this field"
 msgstr "Toán hạng này không được hỗ trợ cho trường này"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Toán hạng này không được hỗ trợ cho mối quan hệ này"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15832,6 +15864,11 @@ msgstr "Quy trình làm việc này đã tồn tại"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Quy trình làm việc này đã tồn tại."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Mã định danh quy trình làm việc này khớp với nhiều quy trình làm việc."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17476,6 +17513,16 @@ msgstr "ViewId là cần thiết để tạo một nhóm xem."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId là cần thiết để tạo một sắp xếp xem."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "Không thể đọc hạn chế hiển thị"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "Hạn chế hiển thị có quá nhiều điều kiện"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -17556,6 +17603,16 @@ msgstr "Chúng tôi không thể bắt đầu kết nối. Vui lòng thử lại
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Chúng tôi không thể xác minh khóa này. Hãy kiểm tra lại hoặc thử lại sau nếu dịch vụ đang ngừng hoạt động."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Chúng tôi không thể lập hóa đơn cho ứng dụng này. Hãy cập nhật phương thức thanh toán của bạn rồi thử lại."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Chúng tôi không thể lập hóa đơn cho kết nối này. Hãy cập nhật phương thức thanh toán của bạn rồi thử lại."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
