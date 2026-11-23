@@ -1971,6 +1971,7 @@ export type CreatePageLayoutTabInput = {
 };
 
 export type CreatePageLayoutWidgetInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   configuration: Scalars['JSON']['input'];
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId: Scalars['UUID']['input'];
@@ -5949,7 +5950,10 @@ export type PageLayoutWidget = {
   applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
+  conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];
@@ -8107,6 +8111,7 @@ export type UpdatePageLayoutTabWithWidgetsInput = {
 };
 
 export type UpdatePageLayoutWidgetInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
@@ -8119,6 +8124,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
