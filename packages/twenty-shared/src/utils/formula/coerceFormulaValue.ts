@@ -1,5 +1,6 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 
+import { RATING_VALUES } from '@/constants/RatingValues';
 import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type FormulaFieldMetadataType } from '@/types/FormulaFieldMetadataType';
 import { type FormulaValue } from '@/types/FormulaValue';
@@ -45,12 +46,32 @@ const coerceToDateTime = (value: unknown): string | null => {
   );
 };
 
+const coerceToRating = (value: unknown): string | null => {
+  if (isNumber(value)) {
+    return RATING_VALUES[value - 1] ?? null;
+  }
+
+  return RATING_VALUES.find((ratingValue) => ratingValue === value) ?? null;
+};
+
+// Without the options a select value cannot be trusted, so it is dropped
+const coerceToSelectOption = ({
+  value,
+  selectOptionValues,
+}: {
+  value: unknown;
+  selectOptionValues: readonly string[];
+}): string | null =>
+  isString(value) && selectOptionValues.includes(value) ? value : null;
+
 export const coerceFormulaValue = ({
   value,
   fieldMetadataType,
+  selectOptionValues = [],
 }: {
   value: unknown;
   fieldMetadataType: FormulaFieldMetadataType;
+  selectOptionValues?: readonly string[];
 }): FormulaValue => {
   switch (fieldMetadataType) {
     case FieldMetadataType.TEXT:
@@ -63,6 +84,10 @@ export const coerceFormulaValue = ({
       return coerceToDate(value);
     case FieldMetadataType.DATE_TIME:
       return coerceToDateTime(value);
+    case FieldMetadataType.SELECT:
+      return coerceToSelectOption({ value, selectOptionValues });
+    case FieldMetadataType.RATING:
+      return coerceToRating(value);
     default:
       return assertUnreachable(fieldMetadataType);
   }

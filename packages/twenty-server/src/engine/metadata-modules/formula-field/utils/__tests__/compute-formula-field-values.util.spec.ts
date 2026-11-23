@@ -1,9 +1,13 @@
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { type FormulaFieldEvaluationPlan } from 'src/engine/metadata-modules/formula-field/types/formula-field-evaluation-plan.type';
 import { computeFormulaFieldValues } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-values.util';
 
 const NOW = '2026-09-23T10:00:00.000Z';
 
 const TOTAL_PLAN: FormulaFieldEvaluationPlan = {
+  fieldMetadataId: 'total-id',
+  fieldMetadataType: FieldMetadataType.NUMBER,
   fieldName: 'total',
   ownFields: [
     { fieldMetadataId: 'price-id', fieldName: 'price', columnNames: ['price'] },
@@ -18,6 +22,8 @@ const TOTAL_PLAN: FormulaFieldEvaluationPlan = {
 };
 
 const SUPPLIER_LABEL_PLAN: FormulaFieldEvaluationPlan = {
+  fieldMetadataId: 'supplier-label-id',
+  fieldMetadataType: FieldMetadataType.TEXT,
   fieldName: 'supplierLabel',
   ownFields: [
     {
@@ -46,6 +52,7 @@ const compute = (record: { id: string } & Record<string, unknown>) =>
   computeFormulaFieldValues({
     record,
     formulaFieldEvaluationPlans: [TOTAL_PLAN, SUPPLIER_LABEL_PLAN],
+    selectOptionValuesByFieldMetadataId: new Map(),
     now: NOW,
   });
 

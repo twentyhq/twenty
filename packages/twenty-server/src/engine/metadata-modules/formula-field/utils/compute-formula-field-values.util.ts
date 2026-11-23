@@ -27,10 +27,12 @@ const areFormulaFieldDependenciesLoaded = ({
 export const computeFormulaFieldValues = <TRecord extends ObjectRecord>({
   record,
   formulaFieldEvaluationPlans,
+  selectOptionValuesByFieldMetadataId,
   now,
 }: {
   record: TRecord;
   formulaFieldEvaluationPlans: FormulaFieldEvaluationPlan[];
+  selectOptionValuesByFieldMetadataId: ReadonlyMap<string, readonly string[]>;
   now: string;
 }): TRecord => {
   if (formulaFieldEvaluationPlans.length === 0) {
@@ -53,7 +55,13 @@ export const computeFormulaFieldValues = <TRecord extends ObjectRecord>({
           record,
           formulaFieldEvaluationPlan,
         })
-          ? formulaFieldEvaluationPlan.evaluate({ record, now })
+          ? formulaFieldEvaluationPlan.evaluate({
+              record,
+              now,
+              selectOptionValues: selectOptionValuesByFieldMetadataId.get(
+                formulaFieldEvaluationPlan.fieldMetadataId,
+              ),
+            })
           : null,
       ]),
     ),

@@ -27,7 +27,7 @@ export const FIELD_LINKS_VARIANTS = ['url', 'domain'] as const;
 
 export type FieldLinksVariant = (typeof FIELD_LINKS_VARIANTS)[number];
 
-type FieldMetadataBooleanSettings = {
+type FieldMetadataFormulaOnlySettings = {
   formula?: FieldMetadataFormula | null;
 };
 
@@ -80,7 +80,9 @@ type FieldMetadataFilesSettings = {
 };
 
 export type FieldMetadataSettingsMapping = {
-  [FieldMetadataType.BOOLEAN]: FieldMetadataBooleanSettings | null;
+  [FieldMetadataType.BOOLEAN]: FieldMetadataFormulaOnlySettings | null;
+  [FieldMetadataType.SELECT]: FieldMetadataFormulaOnlySettings | null;
+  [FieldMetadataType.RATING]: FieldMetadataFormulaOnlySettings | null;
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;

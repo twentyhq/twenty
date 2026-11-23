@@ -1,11 +1,24 @@
+import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { FeatureFlagKey, type FieldMetadataType } from 'twenty-shared/types';
+import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 import { isFormulaFieldMetadataType } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsDataModelFieldFormulaForm } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+
+const getFormulaSectionDescription = (fieldType: FieldMetadataType) => {
+  if (fieldType === FieldMetadataType.SELECT) {
+    return t`Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand.`;
+  }
+
+  if (fieldType === FieldMetadataType.RATING) {
+    return t`Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand.`;
+  }
+
+  return t`Compute this field from other fields. Leave empty to enter values by hand.`;
+};
 
 type SettingsDataModelFieldFormulaSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -31,7 +44,7 @@ export const SettingsDataModelFieldFormulaSection = ({
     <Section.Root>
       <Section.Header
         title={t`Formula`}
-        description={t`Compute this field from other fields. Leave empty to enter values by hand.`}
+        description={getFormulaSectionDescription(fieldType)}
       />
       <SettingsDataModelFieldFormulaForm
         objectMetadataItem={objectMetadataItem}

@@ -84,11 +84,11 @@ export const buildFormulaFieldEvaluationPlans = ({
   const formulaFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  ).flatMap(({ name, type, settings }) => {
+  ).flatMap(({ id, name, type, settings }) => {
     const expression = getFieldMetadataFormulaExpression({ settings });
 
     return isDefined(expression) && isFormulaFieldMetadataType(type)
-      ? [{ name, type, expression }]
+      ? [{ id, name, type, expression }]
       : [];
   });
 
@@ -102,11 +102,13 @@ export const buildFormulaFieldEvaluationPlans = ({
     flatFieldMetadataMaps,
   });
 
-  return formulaFlatFieldMetadatas.map(({ name, type, expression }) => {
+  return formulaFlatFieldMetadatas.map(({ id, name, type, expression }) => {
     const compilation = compileFormulaExpression({ expression, fields });
 
     if (!compilation.isValid) {
       return {
+        fieldMetadataId: id,
+        fieldMetadataType: type,
         fieldName: name,
         ownFields: [],
         lookups: [],
@@ -122,6 +124,8 @@ export const buildFormulaFieldEvaluationPlans = ({
     });
 
     return {
+      fieldMetadataId: id,
+      fieldMetadataType: type,
       fieldName: name,
       ownFields: ownFields.map(
         ({ fieldMetadataId, fieldName, columnNames }) => ({

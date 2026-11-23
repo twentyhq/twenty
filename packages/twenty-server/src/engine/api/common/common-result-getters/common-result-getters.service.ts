@@ -22,8 +22,14 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type FormulaFieldEvaluationPlan } from 'src/engine/metadata-modules/formula-field/types/formula-field-evaluation-plan.type';
 import { computeFormulaFieldValues } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-values.util';
 import { getFormulaFieldEvaluationPlans } from 'src/engine/metadata-modules/formula-field/utils/get-formula-field-evaluation-plans.util';
+import { resolveFormulaSelectOptionValues } from 'src/engine/metadata-modules/formula-field/utils/resolve-formula-select-option-values.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const NO_FORMULA_SELECT_OPTION_VALUES: ReadonlyMap<string, readonly string[]> =
+  new Map();
 
 type ResultGettersArgs = {
   flatObjectMetadata: FlatObjectMetadata;
@@ -38,6 +44,10 @@ type ResultProcessingContext = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   workspaceId: string;
   now: string;
+  formulaSelectOptionValuesByObjectMetadataId: Map<
+    string,
+    Promise<ReadonlyMap<string, readonly string[]>>
+  >;
   fieldMetadataByNameByObjectMetadataId: Map<
     string,
     ReadonlyMap<string, OrmFlatFieldMetadata>
@@ -61,7 +71,10 @@ export class CommonResultGettersService {
     QueryResultGetterHandlerInterface
   >;
 
-  constructor(private readonly fileUrlService: FileUrlService) {
+  constructor(
+    private readonly fileUrlService: FileUrlService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {
     this.initializeObjectHandlers();
     this.initializeFieldHandlers();
   }
@@ -128,6 +141,7 @@ export class CommonResultGettersService {
       flatFieldMetadataMaps,
       workspaceId,
       now: new Date().toISOString(),
+      formulaSelectOptionValuesByObjectMetadataId: new Map(),
       fieldMetadataByNameByObjectMetadataId: new Map(),
     };
   }
@@ -237,18 +251,71 @@ export class CommonResultGettersService {
         recordFieldMetadataList,
       );
 
+    const formulaFieldEvaluationPlans = getFormulaFieldEvaluationPlans({
+      flatObjectMetadata,
+      flatObjectMetadataMaps: context.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+    });
+
     return {
       ...computeFormulaFieldValues({
         record: objectRecordProcessedWithoutRelationFields,
-        formulaFieldEvaluationPlans: getFormulaFieldEvaluationPlans({
-          flatObjectMetadata,
-          flatObjectMetadataMaps: context.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-        }),
+        formulaFieldEvaluationPlans,
+        selectOptionValuesByFieldMetadataId:
+          await this.getFormulaSelectOptionValues({
+            flatObjectMetadata,
+            formulaFieldEvaluationPlans,
+            context,
+          }),
         now: context.now,
       }),
       ...relationFieldsProcessedMap,
     };
+  }
+
+  // Options can change without the field changing, so they are read once per request instead of cached with the plan
+  private getFormulaSelectOptionValues({
+    flatObjectMetadata,
+    formulaFieldEvaluationPlans,
+    context,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    formulaFieldEvaluationPlans: FormulaFieldEvaluationPlan[];
+    context: ResultProcessingContext;
+  }): Promise<ReadonlyMap<string, readonly string[]>> {
+    const hasSelectFormula = formulaFieldEvaluationPlans.some(
+      ({ fieldMetadataType }) => fieldMetadataType === FieldMetadataType.SELECT,
+    );
+
+    if (!hasSelectFormula) {
+      return Promise.resolve(NO_FORMULA_SELECT_OPTION_VALUES);
+    }
+
+    const cachedSelectOptionValues =
+      context.formulaSelectOptionValuesByObjectMetadataId.get(
+        flatObjectMetadata.id,
+      );
+
+    if (isDefined(cachedSelectOptionValues)) {
+      return cachedSelectOptionValues;
+    }
+
+    const selectOptionValues = this.workspaceCacheService
+      .getOrRecompute(context.workspaceId, ['flatFieldMetadataOptionMaps'])
+      .then(({ flatFieldMetadataOptionMaps }) =>
+        resolveFormulaSelectOptionValues({
+          formulaFieldEvaluationPlans,
+          flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
+        }),
+      );
+
+    context.formulaSelectOptionValuesByObjectMetadataId.set(
+      flatObjectMetadata.id,
+      selectOptionValues,
+    );
+
+    return selectOptionValues;
   }
 
   private getOrBuildFieldMetadataByName(

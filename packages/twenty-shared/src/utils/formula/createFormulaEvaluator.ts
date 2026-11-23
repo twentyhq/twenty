@@ -15,11 +15,15 @@ export const createFormulaEvaluator = ({
 }): FormulaEvaluator => {
   const evaluateExpression = createExpressionEvaluator({ expression, fields });
 
-  return ({ record, now }) => {
+  return ({ record, now, selectOptionValues }) => {
     const evaluation = evaluateExpression({ record, now });
 
     return evaluation.status === 'evaluated'
-      ? coerceFormulaValue({ value: evaluation.value, fieldMetadataType })
+      ? coerceFormulaValue({
+          value: evaluation.value,
+          fieldMetadataType,
+          selectOptionValues,
+        })
       : null;
   };
 };

@@ -237,6 +237,51 @@ describe('Formula fields', () => {
     ]);
   });
 
+  it('should compute a select option and a rating, and drop a value that is not an option', async () => {
+    const options = [
+      { label: 'High', value: 'HIGH', color: 'green', position: 0 },
+      { label: 'Low', value: 'LOW', color: 'red', position: 1 },
+    ];
+
+    for (const { name, type, expression } of [
+      {
+        name: 'tier',
+        type: FieldMetadataType.SELECT,
+        expression: 'if(price * quantity > 100, "HIGH", "LOW")',
+      },
+      {
+        name: 'unknownTier',
+        type: FieldMetadataType.SELECT,
+        expression: '"MEDIUM"',
+      },
+      {
+        name: 'score',
+        type: FieldMetadataType.RATING,
+        expression: 'if(quantity > 5, 5, 2)',
+      },
+    ]) {
+      await createOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          name,
+          label: name,
+          type,
+          objectMetadataId: gadgetObjectMetadataId,
+          isLabelSyncedWithName: false,
+          settings: { formula: { expression } },
+          ...(type === FieldMetadataType.SELECT ? { options } : {}),
+        },
+        gqlFields: 'id settings',
+      });
+    }
+
+    expect(await findGadget('tier unknownTier score')).toEqual({
+      tier: 'LOW',
+      unknownTier: null,
+      score: 'RATING_2',
+    });
+  });
+
   it('should compute formulas through the REST API', async () => {
     const response = await makeRestApiRequest({
       method: 'get',

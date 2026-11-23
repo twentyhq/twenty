@@ -6,4 +6,6 @@ export const FORMULA_FIELD_METADATA_TYPES = [
   FieldMetadataType.BOOLEAN,
   FieldMetadataType.DATE,
   FieldMetadataType.DATE_TIME,
+  FieldMetadataType.SELECT,
+  FieldMetadataType.RATING,
 ] as const;

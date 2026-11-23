@@ -70,10 +70,48 @@ describe('coerceFormulaValue', () => {
       fieldMetadataType: FieldMetadataType.DATE_TIME,
       expected: null,
     },
+    {
+      value: 3,
+      fieldMetadataType: FieldMetadataType.RATING,
+      expected: 'RATING_3',
+    },
+    {
+      value: 'RATING_5',
+      fieldMetadataType: FieldMetadataType.RATING,
+      expected: 'RATING_5',
+    },
+    { value: 0, fieldMetadataType: FieldMetadataType.RATING, expected: null },
+    { value: 2.5, fieldMetadataType: FieldMetadataType.RATING, expected: null },
+    { value: 6, fieldMetadataType: FieldMetadataType.RATING, expected: null },
+    {
+      value: 'HOT',
+      fieldMetadataType: FieldMetadataType.SELECT,
+      expected: null,
+    },
   ] as const)(
     'should coerce $value to $expected for a $fieldMetadataType field',
     ({ value, fieldMetadataType, expected }) => {
       expect(coerceFormulaValue({ value, fieldMetadataType })).toBe(expected);
     },
   );
+
+  it('should keep a select value that is one of the options', () => {
+    expect(
+      coerceFormulaValue({
+        value: 'HOT',
+        fieldMetadataType: FieldMetadataType.SELECT,
+        selectOptionValues: ['HOT', 'COLD'],
+      }),
+    ).toBe('HOT');
+  });
+
+  it('should drop a select value that is not one of the options', () => {
+    expect(
+      coerceFormulaValue({
+        value: 'WARM',
+        fieldMetadataType: FieldMetadataType.SELECT,
+        selectOptionValues: ['HOT', 'COLD'],
+      }),
+    ).toBeNull();
+  });
 });
