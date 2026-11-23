@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.63.0', 1795440257654)
+@RegisteredInstanceCommand('2.63.0', 1795453666458)
 export class AddFieldMetadataOptionDescriptionFastInstanceCommand
   implements FastInstanceCommand
 {

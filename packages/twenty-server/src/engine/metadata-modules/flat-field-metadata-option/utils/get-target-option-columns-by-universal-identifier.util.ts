@@ -33,7 +33,7 @@ export const getTargetOptionColumnsByUniversalIdentifier = (
       value: option.value,
       label: option.label,
       color: 'color' in option && isDefined(option.color) ? option.color : null,
-      description: option.description ?? null,
+      description: isDefined(option.description) ? option.description : null,
       position: option.position,
       isActive: isFieldMetadataOptionActive(option),
     });
