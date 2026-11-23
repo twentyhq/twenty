@@ -38,6 +38,7 @@ const buildArgs = () => {
     ...baseArgs,
     dependencyFlatEntityMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
       flatViewMaps,
