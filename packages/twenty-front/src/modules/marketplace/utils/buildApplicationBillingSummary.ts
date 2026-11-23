@@ -9,7 +9,7 @@ const getApplicationBillingPriceLabel = ({
   formattedAmount: amount,
   appDisplayName,
 }: {
-  price: ApplicationBillingPrice;
+  price: Pick<ApplicationBillingPrice, 'type' | 'billingPeriod' | 'per'>;
   formattedAmount: string;
   appDisplayName: string;
 }): string => {
