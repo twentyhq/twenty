@@ -2290,11 +2290,6 @@ msgstr "Προσθήκη κάρτας"
 msgid "Add CC"
 msgstr "Προσθήκη κοινοποίησης"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Προσθήκη καναλιού"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "Σε λιγότερο από μία ημέρα"
 msgid "In progress"
 msgstr "Σε εξέλιξη"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Σε εξέλιξη: επιβολή της ορατότητας καναλιών μηνυμάτων και ημερολογίου με κανόνες δικαιωμάτων σε επίπεδο εγγραφής. Απαιτούνται μεταβάσεις σχέσεων."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Σε εξέλιξη: επιβολή της ορατότητας των καναλιών μηνυμάτων και ημερολογίου με κανόνες δικαιωμάτων σε επίπεδο εγγραφής. Απαιτούνται μεταβάσεις σχέσεων και διαδρομές σχετικών εγγραφών."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
