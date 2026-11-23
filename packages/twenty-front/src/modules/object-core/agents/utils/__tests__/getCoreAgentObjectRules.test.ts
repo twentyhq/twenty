@@ -31,14 +31,14 @@ describe('getCoreAgentObjectRules', () => {
     expect(
       getCoreAgentObjectRules({ role, objectMetadataId: 'people' }),
     ).toEqual({
-      hasRecordLevelFilter: false,
+      hasRule: false,
       unreadableFieldCount: 2,
       readOnlyFieldCount: 1,
     });
     expect(
       getCoreAgentObjectRules({ role, objectMetadataId: 'companies' }),
     ).toEqual({
-      hasRecordLevelFilter: true,
+      hasRule: true,
       unreadableFieldCount: 1,
       readOnlyFieldCount: 0,
     });

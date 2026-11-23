@@ -23,6 +23,7 @@ describe('transformEventBatchToWebhookEvents', () => {
       name: 'objectNameSingular.created',
       events: [
         {
+          eventId: 'event-1',
           recordId: 'recordId-1',
           properties: {
             after: {
@@ -32,6 +33,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
         {
+          eventId: 'event-2',
           recordId: 'recordId-2',
           properties: {
             before: {
@@ -41,6 +43,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
         {
+          eventId: 'event-3',
           recordId: 'recordId-3',
           properties: {
             after: {
@@ -74,6 +77,9 @@ describe('transformEventBatchToWebhookEvents', () => {
     const expectedResultWithoutEventDate = [
       {
         targetUrl: 'targetUrl',
+
+        eventId: 'event-1',
+
         eventName: 'objectNameSingular.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -89,6 +95,9 @@ describe('transformEventBatchToWebhookEvents', () => {
       },
       {
         targetUrl: 'targetUrl',
+
+        eventId: 'event-2',
+
         eventName: 'objectNameSingular.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -104,6 +113,9 @@ describe('transformEventBatchToWebhookEvents', () => {
       },
       {
         targetUrl: 'targetUrl',
+
+        eventId: 'event-3',
+
         eventName: 'objectNameSingular.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -121,6 +133,9 @@ describe('transformEventBatchToWebhookEvents', () => {
       },
       {
         targetUrl: 'targetUrl-2',
+
+        eventId: 'event-1',
+
         eventName: 'objectNameSingular.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -136,6 +151,9 @@ describe('transformEventBatchToWebhookEvents', () => {
       },
       {
         targetUrl: 'targetUrl-2',
+
+        eventId: 'event-2',
+
         eventName: 'objectNameSingular.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -151,6 +169,9 @@ describe('transformEventBatchToWebhookEvents', () => {
       },
       {
         targetUrl: 'targetUrl-2',
+
+        eventId: 'event-3',
+
         eventName: 'objectNameSingular.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -184,6 +205,7 @@ describe('transformEventBatchToWebhookEvents', () => {
       name: 'webhook.created',
       events: [
         {
+          eventId: 'event-4',
           recordId: 'recordId-1',
           properties: {
             after: {
@@ -212,6 +234,9 @@ describe('transformEventBatchToWebhookEvents', () => {
     const expectedResultWithoutEventDate = [
       {
         targetUrl: 'targetUrl',
+
+        eventId: 'event-4',
+
         eventName: 'webhook.created',
         objectMetadata: {
           id: mockObjectMetadata.id,
@@ -244,6 +269,7 @@ describe('transformEventBatchToWebhookEvents', () => {
       name: 'objectNameSingular.updated',
       events: [
         {
+          eventId: 'event-5',
           recordId: 'recordId-1',
           properties: {
             after: { id: 'id-1', nameSingular: 'nameSingular-1' },
@@ -251,6 +277,7 @@ describe('transformEventBatchToWebhookEvents', () => {
           },
         },
         {
+          eventId: 'event-6',
           recordId: 'recordId-2',
           properties: {
             after: { id: 'id-2', nameSingular: 'nameSingular-2' },

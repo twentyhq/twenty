@@ -1,18 +1,17 @@
 import { useState } from 'react';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
 import { AI_CHAT_NEW_THREAD_RECIPIENT_SUGGESTIONS_PAGE_SIZE } from '@/ai-chat/composer/constants/AiChatNewThreadRecipientSuggestionsPageSize';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selectors/aiChatAccessibleChannelsSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type UseAiChatNewThreadRecipientSuggestionsParams = {
@@ -24,12 +23,9 @@ export const useAiChatNewThreadRecipientSuggestions = ({
 }: UseAiChatNewThreadRecipientSuggestionsParams) => {
   const { displayName: assistantName } = useAiChatAssistantProfile();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
-  const aiChatNewThreadRecipients = useAtomFamilyStateValue(
-    aiChatNewThreadRecipientsFamilyState,
+  const aiChatComposerNewThreadRecipients = useAtomFamilyStateValue(
+    aiChatComposerNewThreadRecipientsFamilyState,
     newAiChatThreadId,
-  );
-  const aiChatNewThreadChannelId = useAtomStateValue(
-    aiChatNewThreadChannelIdState,
   );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -44,7 +40,7 @@ export const useAiChatNewThreadRecipientSuggestions = ({
 
   const searchQuery = search.trim();
   const isAssistantSuggested =
-    !aiChatNewThreadRecipients.isAssistantParticipant &&
+    !aiChatComposerNewThreadRecipients.isAssistantParticipant &&
     normalizeSearchText(assistantName).includes(
       normalizeSearchText(searchQuery),
     );
@@ -52,7 +48,9 @@ export const useAiChatNewThreadRecipientSuggestions = ({
     items: currentWorkspaceMembers.filter(
       ({ id }) =>
         id !== currentWorkspaceMember?.id &&
-        !aiChatNewThreadRecipients.recipientWorkspaceMemberIds.includes(id),
+        !aiChatComposerNewThreadRecipients.recipientWorkspaceMemberIds.includes(
+          id,
+        ),
     ),
     searchQuery,
     getSearchableValues: (workspaceMember) => [
@@ -62,7 +60,7 @@ export const useAiChatNewThreadRecipientSuggestions = ({
   });
   const matchingChannels = filterBySearchQuery({
     items: aiChatAccessibleChannels.filter(
-      ({ id }) => id !== aiChatNewThreadChannelId,
+      ({ id }) => id !== aiChatComposerNewThreadRecipients.channelId,
     ),
     searchQuery,
     getSearchableValues: ({ name }) => [name],

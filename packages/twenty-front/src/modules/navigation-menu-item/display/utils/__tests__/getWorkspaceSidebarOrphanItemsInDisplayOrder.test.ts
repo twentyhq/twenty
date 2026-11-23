@@ -24,6 +24,16 @@ const hiddenObjectBackedItem = {
   position: 2,
 } as NavigationMenuItem;
 
+const buildNavigationMenuItem = (
+  properties: Pick<NavigationMenuItem, 'id' | 'type' | 'position'> &
+    Partial<Pick<NavigationMenuItem, 'parentId'>>,
+): NavigationMenuItem => ({
+  isActive: true,
+  createdAt: '2026-11-19T00:00:00.000Z',
+  updatedAt: '2026-11-19T00:00:00.000Z',
+  ...properties,
+});
+
 describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
   it('drops an object-backed item whose object is absent from the metadata in customization mode', () => {
     const result = getWorkspaceSidebarOrphanItemsInDisplayOrder({
@@ -110,5 +120,39 @@ describe('getWorkspaceSidebarOrphanItemsInDisplayOrder', () => {
 
     expect(sectionResult.map((item) => item.id)).toEqual(['folder-id']);
     expect(rootResult.map((item) => item.id)).toEqual(['item-id']);
+  });
+
+  it('lists the top-level items with the items of the root section', () => {
+    const section = buildNavigationMenuItem({
+      id: 'workspace-section',
+      type: NavigationMenuItemType.SECTION,
+      position: 0,
+    });
+    const folderInSection = buildNavigationMenuItem({
+      id: 'folder-in-section',
+      type: NavigationMenuItemType.FOLDER,
+      parentId: section.id,
+      position: 1,
+    });
+    const topLevelFolder = buildNavigationMenuItem({
+      id: 'top-level-folder',
+      type: NavigationMenuItemType.FOLDER,
+      position: 2,
+    });
+
+    const result = getWorkspaceSidebarOrphanItemsInDisplayOrder({
+      workspaceNavigationMenuItems: [section, folderInSection, topLevelFolder],
+      workspaceNavigationMenuItemsSorted: [],
+      objectMetadataItems: [],
+      views: [],
+      objectPermissionsByObjectMetadataId: {},
+      containerId: section.id,
+      shouldIncludeTopLevelItems: true,
+    });
+
+    expect(result.map(({ id, parentId }) => ({ id, parentId }))).toEqual([
+      { id: 'folder-in-section', parentId: section.id },
+      { id: 'top-level-folder', parentId: section.id },
+    ]);
   });
 });

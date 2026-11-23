@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { useOpenAskAiThread } from '@/ai-chat/hooks/useOpenAskAiThread';
+import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { CoreAgentRunStatus } from '@/object-core/agents/components/CoreAgentRunStatus';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';

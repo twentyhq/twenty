@@ -1,5 +1,5 @@
 import { useAiChatUsage } from '@/ai-chat/usage/hooks/useAiChatUsage';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
 import { isAiChatUsageLimitReached } from '@/ai-chat/usage/utils/isAiChatUsageLimitReached';
 
 export const useHasReachedAiChatUsageLimit = () => {

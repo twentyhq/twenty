@@ -23,6 +23,7 @@ const deleteAgentInputSchema = z.object({
 
 @DefineTool({
   name: 'delete_agent',
+  isDestructive: true,
   category: ToolCategory.AGENT,
   accessPolicy: {
     ...AGENT_WRITE_ACCESS_POLICY,
@@ -69,10 +70,11 @@ export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
       );
     }
 
-    const agent = await this.agentService.deleteOneAgent(
-      input.id,
-      context.workspaceId,
-    );
+    const agent = await this.agentService.deleteOneAgent({
+      id: input.id,
+      workspaceId: context.workspaceId,
+      userWorkspaceId: context.userWorkspaceId,
+    });
 
     return {
       success: true,

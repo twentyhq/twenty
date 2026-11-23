@@ -3,6 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792170228100-add-connected-account-scope';
+import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795178831970-drop-connected-account-visibility';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
@@ -12,9 +13,12 @@ type ScopeColumns = { scope?: string | null; visibility?: string };
 
 describe('2-49 instance command 1792170228100 - add connected account scope (integration)', () => {
   const addScopeCommand = new AddConnectedAccountScopeFastInstanceCommand();
+  const dropVisibilityCommand =
+    new DropConnectedAccountVisibilityFastInstanceCommand();
   let queryRunner: QueryRunner;
 
   const restorePreUpgradeSchema = async () => {
+    await dropVisibilityCommand.down(queryRunner);
     await addScopeCommand.down(queryRunner);
   };
 

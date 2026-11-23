@@ -8,6 +8,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { findMarketplaceConnectListing } from 'src/engine/core-modules/application/application-marketplace/utils/find-marketplace-connect-listing.util';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -21,8 +22,10 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
+import { buildServedSdkClientCoreChecksum } from 'src/engine/core-modules/sdk-client/utils/build-served-sdk-client-core-checksum.util';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,6 +39,8 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -66,6 +71,7 @@ export class ApplicationResolver {
     private readonly applicationService: ApplicationService,
     private readonly applicationContentService: ApplicationContentService,
     private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
@@ -91,7 +97,7 @@ export class ApplicationResolver {
     }
 
     return {
-      core: application.sdkClientCoreChecksum,
+      core: buildServedSdkClientCoreChecksum(application.sdkClientCoreChecksum),
       metadata: (await getInstalledSdkMetadataModule()).checksum,
     };
   }
@@ -117,15 +123,44 @@ export class ApplicationResolver {
   // application's public assets, so clients never build file urls themselves.
   @ResolveField(() => String, { nullable: true })
   logoUrl(
-    @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
+    @Parent()
+    application: Pick<ApplicationDTO, 'id' | 'logo' | 'universalIdentifier'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    return buildPublicAssetLogoUrl({
+    const bundledLogoUrl = buildPublicAssetLogoUrl({
       logo: application.logo,
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+
+    if (isDefined(bundledLogoUrl)) {
+      return bundledLogoUrl;
+    }
+
+    const marketplaceConnectListing = findMarketplaceConnectListing(
+      application.universalIdentifier,
+    );
+
+    return isDefined(marketplaceConnectListing)
+      ? new URL(
+          marketplaceConnectListing.logoPath,
+          this.domainServerConfigService.getBaseUrl(),
+        ).toString()
+      : null;
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  description(
+    @Parent()
+    application: Pick<ApplicationDTO, 'description' | 'universalIdentifier'>,
+  ): string | null {
+    return (
+      findMarketplaceConnectListing(application.universalIdentifier)
+        ?.description ??
+      application.description ??
+      null
+    );
   }
 
   @ResolveField(() => UUIDScalarType, { nullable: true })
@@ -192,13 +227,15 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => [AgentDTO])
-  agents(
+  async agents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
     @AuthWorkspace()
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ) {
     if (
       !canCallerReachApplication({
@@ -211,10 +248,14 @@ export class ApplicationResolver {
       return [];
     }
 
-    return context.loaders.agentsByApplicationIdLoader.load({
+    const agents = await context.loaders.agentsByApplicationIdLoader.load({
       workspaceId,
       applicationId: application.id,
     });
+
+    return agents.filter((agent) =>
+      isAgentVisibleToUser({ agent, userWorkspaceId }),
+    );
   }
 
   @ResolveField(() => [FrontComponentDTO])

@@ -3,8 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import {
-  type AskQuestionToolResult,
   type AskQuestionsToolResult,
+  type AskQuestionToolResult,
+  getChatReferenceSegments,
 } from 'twenty-shared/ai';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -13,7 +14,6 @@ import { AiChatAskStatusRow } from '@/ai-chat/tool-calls/components/AiChatAskSta
 import { useIsAiChatToolCallAskedInComposer } from '@/ai-chat/tool-calls/hooks/useIsAiChatToolCallAskedInComposer';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
 import { getAskedQuestionEntries } from '@/ai-chat/tool-calls/utils/getAskedQuestionEntries';
-import { getChatReferenceSegments } from '@/ai-chat/message-content/utils/getChatReferenceSegments';
 import { StyledAiChatAskStatusDetail } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusDetail';
 import { StyledAiChatAskStatusMessage } from '@/ai-chat/tool-calls/components/StyledAiChatAskStatusMessage';
 
@@ -78,7 +78,6 @@ export const AiChatQuestionStatusRenderer = ({
 
     const pendingQuestion = entries[0].question.question;
 
-    // the shimmer clips text to a transparent fill, which would hide chip labels
     return (
       <AiChatAskStatusRow
         Icon={IconHelpCircle}

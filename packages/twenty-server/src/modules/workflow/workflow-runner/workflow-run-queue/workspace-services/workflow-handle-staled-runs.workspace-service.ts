@@ -93,10 +93,10 @@ export class WorkflowHandleStaledRunsWorkspaceService {
 
         for (const lostRunsBatch of chunk(lostRuns, QUERY_MAX_RECORDS)) {
           const { generatedMaps } = await workflowRunRepository.update(
-            getStaledRunsFindOptions().map((staledRunsWhere) => ({
-              ...staledRunsWhere,
+            {
+              ...getStaledRunsFindOptions(),
               id: In(lostRunsBatch.map(({ id }) => id)),
-            })),
+            },
             {
               status: WorkflowRunStatus.ENQUEUED,
               enqueuedAt: new Date().toISOString(),
@@ -306,9 +306,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
     findOptions,
   }: {
     workspaceId: string;
-    findOptions:
-      | FindOptionsWhere<WorkflowRunWorkspaceEntity>
-      | FindOptionsWhere<WorkflowRunWorkspaceEntity>[];
+    findOptions: FindOptionsWhere<WorkflowRunWorkspaceEntity>;
   }): Promise<WorkflowRunReference[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 

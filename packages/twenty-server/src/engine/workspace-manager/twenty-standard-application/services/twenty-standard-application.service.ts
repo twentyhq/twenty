@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
@@ -67,17 +66,12 @@ export class TwentyStandardApplicationService {
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
         isWorkspaceCreation: true,
       });
-    const arePermissionTablesEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED] === true;
-    const toTwentyStandardAllFlatEntityMaps = arePermissionTablesEnabled
-      ? temporaryOmitPermissionStorageObjectsFromTwentyStandardAllFlatEntityMaps(
-          allFlatEntityMaps,
-        )
-      : allFlatEntityMaps;
+    const toTwentyStandardAllFlatEntityMaps =
+      temporaryOmitPermissionStorageObjectsFromTwentyStandardAllFlatEntityMaps(
+        allFlatEntityMaps,
+      );
 
-    if (arePermissionTablesEnabled) {
-      await this.permissionTableService.createTables({ workspaceId });
-    }
+    await this.permissionTableService.createTables({ workspaceId });
 
     const fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps = {};
 

@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
+import { getAgentChatThreadDisplayLabel } from 'twenty-shared/ai';
 
 import { type AiChatThreadDisplayIdentity } from '@/ai-chat/threads/types/AiChatThreadDisplayIdentity';
-import { getAiChatThreadDisplayLabel } from '@/ai-chat/threads/utils/getAiChatThreadDisplayLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -19,7 +19,7 @@ export const useAiChatThreadDisplayLabel = ({
     currentWorkspaceMembersState,
   );
 
-  return getAiChatThreadDisplayLabel({
+  return getAgentChatThreadDisplayLabel({
     thread,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     workspaceMembers: currentWorkspaceMembers,

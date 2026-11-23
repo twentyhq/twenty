@@ -186,8 +186,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const agent = await this.agentService.createOneAgent(
-      {
+    const agent = await this.agentService.createOneAgent({
+      input: {
         label: 'Workflow Assistant',
         icon: 'IconLego',
         description: 'Runs the seeded workflows that wait for a person.',
@@ -197,7 +197,8 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         responseFormat: { type: 'text' },
       },
       workspaceId,
-    );
+      userWorkspaceId: undefined,
+    });
 
     for (const agentWorkflow of AGENT_WORKFLOWS_TO_SEED) {
       const stepId = seedId(agentWorkflow.stepKey, workspaceId);
@@ -374,7 +375,7 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
         ...INITIATORS[initiator],
         context: {},
       },
-      status: WorkflowRunStatus.NOT_STARTED,
+      status: WorkflowRunStatus.ENQUEUED,
       triggerPayload: {},
       workspaceId,
     });

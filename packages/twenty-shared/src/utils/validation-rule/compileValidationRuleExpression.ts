@@ -4,9 +4,9 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
-import { getValidationRuleSyntaxError } from '@/utils/validation-rule/getValidationRuleSyntaxError';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
@@ -42,7 +42,7 @@ export const compileValidationRuleExpression = ({
   } catch (error) {
     return {
       isValid: false,
-      ...getValidationRuleSyntaxError({ expression, error }),
+      ...getExpressionSyntaxError({ expression, error }),
     };
   }
 

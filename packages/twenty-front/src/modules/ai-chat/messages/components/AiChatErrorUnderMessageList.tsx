@@ -1,11 +1,9 @@
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
-import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
-import { aiChatIsStreamingFamilyState } from '@/ai-chat/states/aiChatIsStreamingFamilyState';
-import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
-import { aiChatMessageIdsFamilySelector } from '@/ai-chat/states/selectors/aiChatMessageIdsFamilySelector';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
+import { aiChatThreadIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadIsStreamingFamilySelector';
+import { aiChatIsLastMessageFromUserFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsLastMessageFromUserFamilySelector';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -16,29 +14,26 @@ const StyledErrorWrapper = styled.div`
 
 export const AiChatErrorUnderMessageList = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId,
-  });
-  const aiChatIsStreaming = useAtomFamilyStateValue(
-    aiChatIsStreamingFamilyState,
+  const aiChatThreadReplyError = useAtomFamilyStateValue(
+    aiChatThreadReplyErrorFamilyState,
+    {
+      threadId,
+    },
+  );
+  const aiChatThreadIsStreaming = useAtomFamilySelectorValue(
+    aiChatThreadIsStreamingFamilySelector,
     { threadId },
   );
 
-  const aiChatMessageIds = useAtomFamilySelectorValue(
-    aiChatMessageIdsFamilySelector,
+  const aiChatIsLastMessageFromUser = useAtomFamilySelectorValue(
+    aiChatIsLastMessageFromUserFamilySelector,
     threadId,
   );
 
-  const lastMessageId = aiChatMessageIds.at(-1);
-  const agentChatMessage = useAtomFamilySelectorValue(
-    aiChatThreadMessageFamilySelector,
-    { threadId, messageId: lastMessageId },
-  );
-
   const showError =
-    aiChatError &&
-    !aiChatIsStreaming &&
-    agentChatMessage?.role === AGENT_MESSAGE_ROLE.USER;
+    aiChatThreadReplyError &&
+    !aiChatThreadIsStreaming &&
+    aiChatIsLastMessageFromUser;
 
   if (!showError) {
     return null;
@@ -46,7 +41,7 @@ export const AiChatErrorUnderMessageList = () => {
 
   return (
     <StyledErrorWrapper>
-      <AiChatErrorRenderer error={aiChatError} />
+      <AiChatErrorRenderer error={aiChatThreadReplyError} />
     </StyledErrorWrapper>
   );
 };

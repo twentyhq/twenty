@@ -89,6 +89,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         {
           type: stepType,
           workspaceId,
+          userWorkspaceId,
           position,
           id,
           defaultSettings,
@@ -224,6 +225,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           existingStep,
           newStep: step,
           workspaceId,
+          userWorkspaceId,
         })
       : { updatedStep: step, additionalCreatedSteps: undefined };
 
@@ -618,10 +620,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     existingStep,
     newStep,
     workspaceId,
+    userWorkspaceId,
   }: {
     existingStep: WorkflowAction;
     newStep: WorkflowAction;
     workspaceId: string;
+    userWorkspaceId: string | undefined;
   }): Promise<{
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
@@ -631,6 +635,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         {
           type: newStep.type,
           workspaceId,
+          userWorkspaceId,
           position: newStep.position,
           id: existingStep.id,
           defaultSettings: newStep.settings,

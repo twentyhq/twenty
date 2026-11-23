@@ -13,8 +13,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -173,8 +172,7 @@ export const SignInUpTOTPVerification = () => {
   const { enqueueToast } = useToast();
 
   const navigate = useNavigateApp();
-  const { readCaptchaToken } = useReadCaptchaToken();
-  const { isCaptchaReady } = useCaptcha();
+  const { getCaptchaToken } = useGetCaptchaToken();
   const loginToken = useAtomStateValue(loginTokenState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const { t } = useLingui();
@@ -184,20 +182,11 @@ export const SignInUpTOTPVerification = () => {
   const submitOTP = async (values: OTPFormValues) => {
     setIsLoading(true);
     try {
-      if (!isCaptchaReady) {
-        enqueueToast({
-          status: 'error',
-          children: t`Captcha (anti-bot check) is still loading, try again`,
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      const captchaToken = readCaptchaToken();
-
       if (!loginToken) {
         return navigate(AppPath.SignInUp);
       }
+
+      const captchaToken = await getCaptchaToken();
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
     } catch (error) {

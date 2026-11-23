@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { AiChatProvider } from '@/ai-chat/components/AiChatProvider';
+import { AiChatProvider } from '@/ai-chat/instance/components/AiChatProvider';
 import { TrackPageViewEffect } from '@/analytics/components/TrackPageViewEffect';
 import { SharedAppProviders } from '@/app/components/SharedAppProviders';
 import { InboxEffects } from '@/inbox/components/InboxEffects';
