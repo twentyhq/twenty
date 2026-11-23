@@ -4,8 +4,29 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim());
 });
 
+const hasVisibleWindowClient = async () =>
+  (
+    await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+  ).some((windowClient) => windowClient.visibilityState === 'visible');
+
+const updateAppBadge = async (badgeCount) => {
+  if (
+    typeof badgeCount !== 'number' ||
+    !('setAppBadge' in self.navigator) ||
+    (await hasVisibleWindowClient())
+  ) {
+    return;
+  }
+
+  return badgeCount > 0
+    ? self.navigator.setAppBadge(badgeCount)
+    : self.navigator.clearAppBadge();
+};
+
 self.addEventListener('push', (event) => {
-  const { title, body, url, tag, renotify } = event.data.json();
+  const { title, body, url, tag, renotify, badgeCount } = event.data.json();
+
+  event.waitUntil(updateAppBadge(badgeCount).catch(console.error));
 
   event.waitUntil(
     self.registration
