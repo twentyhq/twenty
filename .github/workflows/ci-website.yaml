@@ -75,7 +75,7 @@ jobs:
   ci-website-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs: [changed-files-check, website-task, website-worker-smoke-test]
     steps:
       - name: Fail job if any needs failed

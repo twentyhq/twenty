@@ -67,7 +67,7 @@ export const RecordShowPageShell = ({
     />
   );
 
-  if (isInSidePanel && !loading && (isDefined(error) || !isDefined(record))) {
+  if (!loading && (isDefined(error) || !isDefined(record))) {
     return (
       <>
         {resourceEffect}

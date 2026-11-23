@@ -4,20 +4,25 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
+import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useCanAddRecordTableLookupColumns } from '@/object-record/record-table/hooks/useCanAddRecordTableLookupColumns';
 import { useDeleteRecordTableColumn } from '@/object-record/record-table/hooks/useDeleteRecordTableColumn';
 import { useMoveTableColumn } from '@/object-record/record-table/hooks/useMoveTableColumn';
 import { useOpenRecordFilterChipFromTableHeader } from '@/object-record/record-table/record-table-header/hooks/useOpenRecordFilterChipFromTableHeader';
+import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
   IconArrowsSort,
+  IconEdit,
   IconEyeOff,
   IconFilter,
   IconTrash,
@@ -108,13 +113,21 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
-    isFieldMetadataItemFilterableAndSortableSelector,
-    {
-      fieldMetadataItemId:
-        lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
-    },
+  const isSummaryColumn = isDefined(
+    recordField.relationScope?.aggregateOperation,
   );
+
+  const { isFilterable: isFieldFilterable, isSortable: isFieldSortable } =
+    useAtomFamilySelectorValue(
+      isFieldMetadataItemFilterableAndSortableSelector,
+      {
+        fieldMetadataItemId:
+          lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
+      },
+    );
+
+  const isFilterable = isFieldFilterable && !isSummaryColumn;
+  const isSortable = isFieldSortable && !isSummaryColumn;
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);
@@ -124,8 +137,18 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
 
+  const isScopedRelationColumn = isDefined(
+    useScopedRelationAlias(recordField.id),
+  );
+  const canAddLookupColumns = useCanAddRecordTableLookupColumns();
+
+  const canEditColumn = canAddLookupColumns && isScopedRelationColumn;
+
+  const { openEditColumnInSidePanel } =
+    useOpenEditColumnInSidePanel(recordTableId);
+
   const hasColumnActions =
-    canMoveLeft || canMoveRight || canHide || canDeleteColumn;
+    canMoveLeft || canMoveRight || canHide || canEditColumn || canDeleteColumn;
   const showSeparator = (isFilterable || isSortable) && hasColumnActions;
 
   return (
@@ -162,6 +185,17 @@ export const RecordTableColumnHeadDropdownMenu = ({
           startIcon={<IconEyeOff />}
           onClick={handleColumnVisibility}
         >{t`Hide`}</Dropdown.ActionItem>
+      )}
+      {canEditColumn && (
+        <Dropdown.ActionItem
+          startIcon={<IconEdit />}
+          onClick={() =>
+            openEditColumnInSidePanel({
+              fieldMetadataItemId: recordField.fieldMetadataItemId,
+              recordFieldId: recordField.id,
+            })
+          }
+        >{t`Edit column`}</Dropdown.ActionItem>
       )}
       {canDeleteColumn && (
         <Dropdown.ActionItem
