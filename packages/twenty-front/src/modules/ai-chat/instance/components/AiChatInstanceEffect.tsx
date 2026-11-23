@@ -16,7 +16,7 @@ import {
   type AiChatThreadVisit,
   aiChatThreadViewVisitFamilyState,
 } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
-import { useUpdateAiChatThreadStatus } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadStatus';
+import { useUpdateAiChatThreadInboxState } from '@/ai-chat/threads/hooks/useUpdateAiChatThreadInboxState';
 import { aiChatReopenedThreadActivityState } from '@/ai-chat/threads/states/aiChatReopenedThreadActivityState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
@@ -30,11 +30,10 @@ import { AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
 
-// Everything a chat does because it is on screen; thread data lives in AiChatThreadStreamsEffect
 export const AiChatInstanceEffect = () => {
   const store = useStore();
   const { instanceId, threadId, onThreadChange } = useAiChatInstanceOrThrow();
-  const { updateAgentChatThreadInboxState } = useUpdateAiChatThreadStatus();
+  const { updateAiChatThreadInboxState } = useUpdateAiChatThreadInboxState();
   const { processWorkspaceSetupCompletion } =
     useProcessWorkspaceSetupCompletion();
   const persistedThreadId = isValidUuid(threadId) ? threadId : null;
@@ -97,7 +96,6 @@ export const AiChatInstanceEffect = () => {
         null,
       );
 
-      // Filed on leave, not on read, so the chat stays put while being read
       const thread = store.get(
         aiChatThreadRecordFamilySelector.selectorFamily(persistedThreadId),
       );
@@ -117,7 +115,7 @@ export const AiChatInstanceEffect = () => {
           workspaceMemberId,
         })
       ) {
-        void updateAgentChatThreadInboxState({
+        void updateAiChatThreadInboxState({
           threadIds: [persistedThreadId],
           action: AgentChatInboxAction.ARCHIVE,
         });
@@ -131,7 +129,7 @@ export const AiChatInstanceEffect = () => {
         queueMicrotask(leaveIfNoViewLeft);
       }
     };
-  }, [store, persistedThreadId, updateAgentChatThreadInboxState]);
+  }, [store, persistedThreadId, updateAiChatThreadInboxState]);
 
   useEffect(() => {
     if (
@@ -153,15 +151,16 @@ export const AiChatInstanceEffect = () => {
       threadId: persistedThreadId,
     });
     const storedVisit = store.get(visitAtom);
-    // Taken before the read mark, so it keeps where the member left off
-    const newVisit: AiChatThreadVisit = {
+    const visitBeforeReadMark: AiChatThreadVisit = {
       threadId: persistedThreadId,
       isUnread,
       lastReadAt: participant?.lastReadAt ?? null,
       isKeptUnread: false,
     };
     const visit =
-      storedVisit?.threadId === persistedThreadId ? storedVisit : newVisit;
+      storedVisit?.threadId === persistedThreadId
+        ? storedVisit
+        : visitBeforeReadMark;
 
     if (visit !== storedVisit) {
       store.set(visitAtom, visit);
@@ -184,7 +183,7 @@ export const AiChatInstanceEffect = () => {
       readRequestedForActivityAt: lastActivityAt,
       readRequestedForParticipantUpdatedAt: participant?.updatedAt,
     });
-    void updateAgentChatThreadInboxState({
+    void updateAiChatThreadInboxState({
       threadIds: [persistedThreadId],
       action: AgentChatInboxAction.READ,
     });
@@ -192,7 +191,7 @@ export const AiChatInstanceEffect = () => {
     isVisible,
     lastActivityAt,
     aiChatThreadParticipants,
-    updateAgentChatThreadInboxState,
+    updateAiChatThreadInboxState,
     store,
     persistedThreadId,
   ]);

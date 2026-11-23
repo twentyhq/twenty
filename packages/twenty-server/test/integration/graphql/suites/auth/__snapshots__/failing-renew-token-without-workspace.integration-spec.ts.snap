@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renewToken with a refresh token not bound to a workspace (integration) should refuse a legacy refresh token without a workspace before revoking it 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Refresh token is not bound to a workspace",
+  "name": "UserInputError",
+}
+`;

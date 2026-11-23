@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatInitialLoadingIndicator } from '@/ai-chat/messages/components/AiChatInitialLoadingIndicator';
 import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
-import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadIsStreamingFamilySelector';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -21,11 +21,10 @@ export const AiChatPendingResponseIndicator = () => {
     aiChatIsAssistantReplyPendingFamilySelector,
     threadId,
   );
-  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
-    aiChatThreadReplyStatusFamilyState,
+  const aiChatThreadIsStreaming = useAtomFamilySelectorValue(
+    aiChatThreadIsStreamingFamilySelector,
     { threadId },
   );
-  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
   const aiChatThreadReplyError = useAtomFamilyStateValue(
     aiChatThreadReplyErrorFamilyState,
     {
@@ -35,7 +34,7 @@ export const AiChatPendingResponseIndicator = () => {
 
   const shouldRender =
     aiChatIsAssistantReplyPending &&
-    !isAiChatStreaming &&
+    !aiChatThreadIsStreaming &&
     !isDefined(aiChatThreadReplyError);
 
   if (!shouldRender) {

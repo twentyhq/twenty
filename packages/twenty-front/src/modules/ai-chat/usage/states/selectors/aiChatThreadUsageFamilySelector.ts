@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   aiChatThreadUsageFamilyState,
   type AiChatUsageState,
-} from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
+} from '@/ai-chat/usage/states/aiChatThreadUsageFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';

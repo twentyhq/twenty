@@ -40,7 +40,6 @@ export const AiModelTierDropdown = ({
   const [aiChatUserSelectedModelTier, setAiChatUserSelectedModelTier] =
     useAtomState(aiChatUserSelectedModelTierState);
 
-  // The setup chat always runs on the fast tier server-side.
   const workspaceTier: AiModelTier = isWorkspaceSetupChat ? 'fast' : chatTier;
 
   const selectedTier = aiChatUserSelectedModelTier ?? workspaceTier;

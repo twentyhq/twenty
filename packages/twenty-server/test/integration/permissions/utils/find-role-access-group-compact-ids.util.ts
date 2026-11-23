@@ -14,7 +14,7 @@ export const findRoleAccessGroupCompactIds = ({
 }): Promise<number[]> =>
   getAppProviderByClassName<AccessGroupReadService>(
     'AccessGroupReadService',
-  ).findPrincipalsCompactIds({
+  ).findPrincipalsAccessGroupCompactIds({
     principals: buildRolePermissionsPrincipals({
       workspaceId,
       roleIds: [roleId],
