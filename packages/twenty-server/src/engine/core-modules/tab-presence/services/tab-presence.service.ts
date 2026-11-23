@@ -13,11 +13,21 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 const FOCUSED_TAB_TTL_MS = TAB_PRESENCE_HEARTBEAT_INTERVAL_MS * 2;
 const ONLINE_TTL_MS = TAB_PRESENCE_HEARTBEAT_INTERVAL_MS * 5;
 
-const getFocusedTabKey = (workspaceId: string, workspaceMemberId: string) =>
+type WorkspaceMemberKeyParams = {
+  workspaceId: string;
+  workspaceMemberId: string;
+};
+
+const getFocusedTabKey = ({
+  workspaceId,
+  workspaceMemberId,
+}: WorkspaceMemberKeyParams) =>
   `focused-tab:${workspaceId}:${workspaceMemberId}`;
 
-const getOnlineKey = (workspaceId: string, workspaceMemberId: string) =>
-  `online:${workspaceId}:${workspaceMemberId}`;
+const getOnlineKey = ({
+  workspaceId,
+  workspaceMemberId,
+}: WorkspaceMemberKeyParams) => `online:${workspaceId}:${workspaceMemberId}`;
 
 type TabPresenceUpdate = {
   workspaceId: string;
@@ -40,7 +50,7 @@ export class TabPresenceService {
     await Promise.all([
       this.updateFocusedTab(tabPresenceUpdate),
       this.cacheStorageService.set(
-        getOnlineKey(workspaceId, workspaceMemberId),
+        getOnlineKey({ workspaceId, workspaceMemberId }),
         true,
         ONLINE_TTL_MS,
       ),
@@ -53,7 +63,10 @@ export class TabPresenceService {
     tabId,
     status,
   }: TabPresenceUpdate): Promise<void> {
-    const focusedTabKey = getFocusedTabKey(workspaceId, workspaceMemberId);
+    const focusedTabKey = getFocusedTabKey({
+      workspaceId,
+      workspaceMemberId,
+    });
 
     if (status === TabPresenceStatus.FOCUSED) {
       await this.cacheStorageService.set(
@@ -81,7 +94,7 @@ export class TabPresenceService {
     const onlineWorkspaceMemberIds = await this.findWorkspaceMemberIdsWithKey({
       workspaceMemberIds: Object.keys(flatWorkspaceMemberMaps.byId),
       getKey: (workspaceMemberId) =>
-        getOnlineKey(workspaceId, workspaceMemberId),
+        getOnlineKey({ workspaceId, workspaceMemberId }),
     });
 
     return [...onlineWorkspaceMemberIds];
@@ -97,7 +110,7 @@ export class TabPresenceService {
     return this.findWorkspaceMemberIdsWithKey({
       workspaceMemberIds,
       getKey: (workspaceMemberId) =>
-        getFocusedTabKey(workspaceId, workspaceMemberId),
+        getFocusedTabKey({ workspaceId, workspaceMemberId }),
     });
   }
 
