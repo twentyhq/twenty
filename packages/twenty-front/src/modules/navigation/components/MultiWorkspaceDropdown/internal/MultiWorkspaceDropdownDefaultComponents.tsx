@@ -66,12 +66,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     navigateSettings(SettingsPath.ProfilePage);
   };
 
-  const settingsActionItem = (
-    <Dropdown.ActionItem startIcon={<IconSettings />} onClick={handleSettings}>
-      {t`Settings`}
-    </Dropdown.ActionItem>
-  );
-
   const handleSupport = () => {
     window.FrontChat?.('show');
   };
@@ -156,7 +150,14 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <Dropdown.Section>
-        {!isCustomizableSidebarEnabled && isMobile && settingsActionItem}
+        {!isCustomizableSidebarEnabled && isMobile && (
+          <Dropdown.ActionItem
+            startIcon={<IconSettings />}
+            onClick={handleSettings}
+          >
+            {t`Settings`}
+          </Dropdown.ActionItem>
+        )}
         <Dropdown.ActionItem
           startIcon={
             <SelectOptionIcon
@@ -205,7 +206,14 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       {isCustomizableSidebarEnabled && (
         <>
           <Dropdown.Separator />
-          <Dropdown.Section>{settingsActionItem}</Dropdown.Section>
+          <Dropdown.Section>
+            <Dropdown.ActionItem
+              startIcon={<IconSettings />}
+              onClick={handleSettings}
+            >
+              {t`Settings`}
+            </Dropdown.ActionItem>
+          </Dropdown.Section>
         </>
       )}
     </>
