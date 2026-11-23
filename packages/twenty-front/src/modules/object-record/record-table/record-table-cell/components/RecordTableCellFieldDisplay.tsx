@@ -1,5 +1,5 @@
 import { ScopedRelationLookupFieldDisplay } from '@/object-record/record-column-scope/components/ScopedRelationLookupFieldDisplay';
-import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -10,9 +10,7 @@ export const RecordTableCellFieldDisplay = () => {
   const { recordField } = useContext(RecordTableCellContext);
   const { isForbidden } = useContext(FieldContext);
 
-  const lookupTarget = useContext(ScopedRelationAliasesContext).find(
-    ({ recordFieldId }) => recordFieldId === recordField.id,
-  )?.lookupTarget;
+  const lookupTarget = useScopedRelationAlias(recordField.id)?.lookupTarget;
 
   if (!isDefined(lookupTarget) || isForbidden === true) {
     return <FieldDisplay />;

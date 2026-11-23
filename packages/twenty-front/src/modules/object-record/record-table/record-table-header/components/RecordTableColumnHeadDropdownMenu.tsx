@@ -4,7 +4,7 @@ import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metad
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
-import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -17,7 +17,7 @@ import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColu
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -129,8 +129,8 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
 
-  const isScopedRelationColumn = useContext(ScopedRelationAliasesContext).some(
-    ({ recordFieldId }) => recordFieldId === recordField.id,
+  const isScopedRelationColumn = isDefined(
+    useScopedRelationAlias(recordField.id),
   );
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
 
