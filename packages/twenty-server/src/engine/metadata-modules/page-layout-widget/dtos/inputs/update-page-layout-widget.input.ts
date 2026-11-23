@@ -9,6 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
+import { ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
@@ -50,6 +51,7 @@ export class UpdatePageLayoutWidgetInput {
   @IsOptional()
   configuration?: AllPageLayoutWidgetConfiguration;
 
+  // TODO(@neo773): conditionalDisplay and conditionalAvailabilityExpression are legacy; no deprecationReason here because the front type generation drops deprecated input fields and it still sends null to empty them. Removed with the columns
   @Field(() => GraphQLJSON, { nullable: true })
   @IsObject()
   @IsOptional()
@@ -59,6 +61,11 @@ export class UpdatePageLayoutWidgetInput {
   @IsString()
   @IsOptional()
   conditionalAvailabilityExpression?: string | null;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  conditionalAvailability?: ConditionalAvailabilityNode | null;
 
   @Field(() => Boolean, { nullable: true })
   @IsBoolean()

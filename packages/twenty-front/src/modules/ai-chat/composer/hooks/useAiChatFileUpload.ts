@@ -2,9 +2,13 @@ import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/stat
 import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { formatFileSize } from '@/file/utils/formatFileSize';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { AgentChatThreadConversationType } from 'twenty-shared/ai';
+import {
+  AgentChatThreadConversationType,
+  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+} from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -89,14 +93,36 @@ export const useAiChatFileUpload = () => {
       return [];
     }
 
+    const acceptedFiles = files.filter((file) => {
+      if (file.size <= CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES) {
+        return true;
+      }
+
+      const fileName = file.name;
+      const maxUploadSize = formatFileSize(
+        CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
+      );
+
+      enqueueToast({
+        status: 'error',
+        children: t`Couldn't attach "${fileName}". Files must be ${maxUploadSize} or smaller.`,
+      });
+
+      return false;
+    });
+
+    if (!isNonEmptyArray(acceptedFiles)) {
+      return [];
+    }
+
     store.set(
       aiChatComposerUploadingFilesFamilyState.atomFamily({ threadId }),
-      (previousUploadingFiles) => [...previousUploadingFiles, ...files],
+      (previousUploadingFiles) => [...previousUploadingFiles, ...acceptedFiles],
     );
 
     const successfulUploads = (
       await Promise.all(
-        files.map((file) => uploadComposerFile({ file, threadId })),
+        acceptedFiles.map((file) => uploadComposerFile({ file, threadId })),
       )
     ).filter(isDefined);
 
