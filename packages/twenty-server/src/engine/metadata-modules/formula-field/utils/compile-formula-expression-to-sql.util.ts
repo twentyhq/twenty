@@ -40,9 +40,9 @@ const compileLiteral = (literal: unknown): FormulaSqlValue => {
     return { sql: `${literal}::numeric`, type: 'number', isNeverNull: true };
   }
 
-  throw new FormulaSqlCompilationException(
-    `"${String(literal)}" is not supported in a formula`,
-  );
+  throw new FormulaSqlCompilationException({
+    message: `"${String(literal)}" is not supported in a formula`,
+  });
 };
 
 const compileInstructions = ({
@@ -58,7 +58,9 @@ const compileInstructions = ({
     const entry = stack.pop();
 
     if (!isDefined(entry)) {
-      throw new FormulaSqlCompilationException('Formula is incomplete');
+      throw new FormulaSqlCompilationException({
+        message: 'Formula is incomplete',
+      });
     }
 
     return entry;
@@ -70,9 +72,9 @@ const compileInstructions = ({
     }
 
     if (entry.kind === 'list') {
-      throw new FormulaSqlCompilationException(
-        'A list can only be written after "in"',
-      );
+      throw new FormulaSqlCompilationException({
+        message: 'A list can only be written after "in"',
+      });
     }
 
     if (entry.path === NOW_PATH) {
@@ -82,9 +84,9 @@ const compileInstructions = ({
     const value = resolveReference(entry.path);
 
     if (!isDefined(value)) {
-      throw new FormulaSqlCompilationException(
-        `"${entry.path}" cannot be read by a formula`,
-      );
+      throw new FormulaSqlCompilationException({
+        message: `"${entry.path}" cannot be read by a formula`,
+      });
     }
 
     return value;
@@ -107,21 +109,24 @@ const compileInstructions = ({
         const entry = popEntry();
 
         if (entry.kind !== 'path') {
-          throw new FormulaSqlCompilationException(
-            `".${String(value)}" can only follow a field`,
-          );
+          throw new FormulaSqlCompilationException({
+            message: `".${String(value)}" can only follow a field`,
+          });
         }
 
         stack.push({ kind: 'path', path: `${entry.path}.${String(value)}` });
         break;
       }
       case 'IEXPR':
+        if (!Array.isArray(value)) {
+          throw new FormulaSqlCompilationException({
+            message: 'Formula is incomplete',
+          });
+        }
+
         stack.push({
           kind: 'value',
-          value: compileInstructions({
-            instructions: Array.isArray(value) ? value : [],
-            resolveReference,
-          }),
+          value: compileInstructions({ instructions: value, resolveReference }),
         });
         break;
       case 'IARRAY':
@@ -161,7 +166,9 @@ const compileInstructions = ({
         const functionEntry = popEntry();
 
         if (functionEntry.kind !== 'path') {
-          throw new FormulaSqlCompilationException('Unknown function');
+          throw new FormulaSqlCompilationException({
+            message: 'Unknown function',
+          });
         }
 
         stack.push({
@@ -174,16 +181,18 @@ const compileInstructions = ({
         break;
       }
       default:
-        throw new FormulaSqlCompilationException(
-          'This syntax is not supported in a formula',
-        );
+        throw new FormulaSqlCompilationException({
+          message: 'This syntax is not supported in a formula',
+        });
     }
   }
 
   const result = popValue();
 
   if (stack.length > 0) {
-    throw new FormulaSqlCompilationException('Formula is incomplete');
+    throw new FormulaSqlCompilationException({
+      message: 'Formula is incomplete',
+    });
   }
 
   return result;

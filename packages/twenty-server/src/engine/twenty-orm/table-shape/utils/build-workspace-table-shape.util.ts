@@ -1,7 +1,6 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildFormulaComputedColumnShapes } from 'src/engine/metadata-modules/formula-field/utils/build-formula-computed-column-shapes.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -26,12 +25,10 @@ import {
 export const buildWorkspaceTableShape = ({
   workspaceId,
   flatObjectMetadata,
-  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
   workspaceId: string;
   flatObjectMetadata: FlatObjectMetadata;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): WorkspaceTableShape => {
   const flatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
@@ -118,24 +115,14 @@ export const buildWorkspaceTableShape = ({
     };
   }
 
-  const schemaName = getWorkspaceSchemaName(workspaceId);
-  const tableName = computeObjectTargetTable(flatObjectMetadata);
-
   return {
     objectMetadataId: flatObjectMetadata.id,
     nameSingular: flatObjectMetadata.nameSingular,
-    schemaName,
-    tableName,
+    schemaName: getWorkspaceSchemaName(workspaceId),
+    tableName: computeObjectTargetTable(flatObjectMetadata),
     columnShapeByColumnName,
     columnNames: Object.keys(columnShapeByColumnName),
     relationShapeByFieldName,
     hasDeletedAtColumn: isDefined(columnShapeByColumnName['deletedAt']),
-    ...buildFormulaComputedColumnShapes({
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      schemaName,
-      tableName,
-    }),
   };
 };

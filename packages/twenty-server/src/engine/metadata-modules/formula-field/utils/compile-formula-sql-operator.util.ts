@@ -1,11 +1,11 @@
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
 import {
-  assertFormulaSqlType,
+  assertFormulaSqlTypeOrThrow,
   describeFormulaSqlType,
-  toNumberOperand,
-  toTextOperand,
-  unifyFormulaSqlValues,
+  toNumberOperandOrThrow,
+  toTextOperandOrThrow,
+  unifyFormulaSqlValuesOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
 
 const ARITHMETIC_OPERATORS = ['+', '-', '*', '/', '%'];
@@ -23,7 +23,7 @@ export const compileFormulaSqlUnaryOperator = ({
 
   if (operator === 'not') {
     return {
-      sql: `(NOT ${assertFormulaSqlType({ value: operand, type: 'boolean', usage }).sql})`,
+      sql: `(NOT ${assertFormulaSqlTypeOrThrow({ value: operand, type: 'boolean', usage }).sql})`,
       type: 'boolean',
     };
   }
@@ -37,12 +37,12 @@ export const compileFormulaSqlUnaryOperator = ({
     }
 
     return {
-      sql: `char_length(COALESCE(${assertFormulaSqlType({ value: operand, type: 'text', usage }).sql}, ''))::numeric`,
+      sql: `char_length(COALESCE(${assertFormulaSqlTypeOrThrow({ value: operand, type: 'text', usage }).sql}, ''))::numeric`,
       type: 'number',
     };
   }
 
-  const number = toNumberOperand({ value: operand, usage });
+  const number = toNumberOperandOrThrow({ value: operand, usage });
 
   if (operator === '-') {
     return { sql: `(-${number})`, type: 'number' };
@@ -61,9 +61,9 @@ export const compileFormulaSqlUnaryOperator = ({
     return { sql: `${operator}(${number})`, type: 'number' };
   }
 
-  throw new FormulaSqlCompilationException(
-    `"${operator}" is not supported in a formula`,
-  );
+  throw new FormulaSqlCompilationException({
+    message: `"${operator}" is not supported in a formula`,
+  });
 };
 
 export const compileFormulaSqlMembership = ({
@@ -78,7 +78,7 @@ export const compileFormulaSqlMembership = ({
   }
 
   const comparisons = candidates.map((candidate) => {
-    const [left, right] = unifyFormulaSqlValues({
+    const [left, right] = unifyFormulaSqlValuesOrThrow({
       left: value,
       right: candidate,
       usage: '"in"',
@@ -106,8 +106,8 @@ export const compileFormulaSqlBinaryOperator = ({
   const usage = `"${operator}"`;
 
   if (ARITHMETIC_OPERATORS.includes(operator)) {
-    const leftNumber = toNumberOperand({ value: left, usage });
-    const rightNumber = toNumberOperand({ value: right, usage });
+    const leftNumber = toNumberOperandOrThrow({ value: left, usage });
+    const rightNumber = toNumberOperandOrThrow({ value: right, usage });
 
     // A division by zero is empty instead of an error that would fail the whole query
     return {
@@ -120,12 +120,12 @@ export const compileFormulaSqlBinaryOperator = ({
   }
 
   if (operator === 'and' || operator === 'or') {
-    const leftCondition = assertFormulaSqlType({
+    const leftCondition = assertFormulaSqlTypeOrThrow({
       value: left,
       type: 'boolean',
       usage,
     });
-    const rightCondition = assertFormulaSqlType({
+    const rightCondition = assertFormulaSqlTypeOrThrow({
       value: right,
       type: 'boolean',
       usage,
@@ -138,7 +138,7 @@ export const compileFormulaSqlBinaryOperator = ({
   }
 
   if (operator === '==' || operator === '!=') {
-    const [unifiedLeft, unifiedRight] = unifyFormulaSqlValues({
+    const [unifiedLeft, unifiedRight] = unifyFormulaSqlValuesOrThrow({
       left,
       right,
       usage,
@@ -152,7 +152,7 @@ export const compileFormulaSqlBinaryOperator = ({
   }
 
   if (ORDERING_OPERATORS.includes(operator)) {
-    const [unifiedLeft, unifiedRight] = unifyFormulaSqlValues({
+    const [unifiedLeft, unifiedRight] = unifyFormulaSqlValuesOrThrow({
       left,
       right,
       usage,
@@ -164,9 +164,9 @@ export const compileFormulaSqlBinaryOperator = ({
       unifiedLeft.type === 'textArray' ||
       unifiedLeft.type === 'record'
     ) {
-      throw new FormulaSqlCompilationException(
-        `${usage} cannot order ${describeFormulaSqlType(unifiedLeft.type)}`,
-      );
+      throw new FormulaSqlCompilationException({
+        message: `${usage} cannot order ${describeFormulaSqlType(unifiedLeft.type)}`,
+      });
     }
 
     // Text is ordered by code point, as the validation rule evaluator does, whatever the database collation
@@ -180,13 +180,13 @@ export const compileFormulaSqlBinaryOperator = ({
 
   if (operator === 'in') {
     if (right.type !== 'textArray') {
-      throw new FormulaSqlCompilationException(
-        `"in" needs a list on its right side, but got ${describeFormulaSqlType(right.type)}`,
-      );
+      throw new FormulaSqlCompilationException({
+        message: `"in" needs a list on its right side, but got ${describeFormulaSqlType(right.type)}`,
+      });
     }
 
     return {
-      sql: `COALESCE(${assertFormulaSqlType({ value: left, type: 'text', usage }).sql} = ANY(${right.sql}), FALSE)`,
+      sql: `COALESCE(${assertFormulaSqlTypeOrThrow({ value: left, type: 'text', usage }).sql} = ANY(${right.sql}), FALSE)`,
       type: 'boolean',
     };
   }
@@ -200,13 +200,13 @@ export const compileFormulaSqlBinaryOperator = ({
     }
 
     return {
-      sql: `(${toTextOperand({ value: left, usage })} || ${toTextOperand({ value: right, usage })})`,
+      sql: `(${toTextOperandOrThrow({ value: left, usage })} || ${toTextOperandOrThrow({ value: right, usage })})`,
       type: 'text',
       isNeverNull: true,
     };
   }
 
-  throw new FormulaSqlCompilationException(
-    `"${operator}" is not supported in a formula`,
-  );
+  throw new FormulaSqlCompilationException({
+    message: `"${operator}" is not supported in a formula`,
+  });
 };

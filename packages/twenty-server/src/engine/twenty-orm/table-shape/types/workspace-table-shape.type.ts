@@ -24,7 +24,6 @@ export type WorkspaceComputedLookupShape = {
   relationFieldName: string;
 };
 
-// A column whose value is an expression over the record (COMPUTED_COLUMN_RECORD_ALIAS) and its lookups
 export type WorkspaceComputedColumnShape = {
   columnName: string;
   sqlType: string;

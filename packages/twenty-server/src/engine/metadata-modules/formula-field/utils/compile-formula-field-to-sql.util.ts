@@ -12,19 +12,23 @@ import {
   type FormulaSqlReferenceResolver,
 } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-expression-to-sql.util';
 import {
-  assertFormulaSqlType,
+  assertFormulaSqlTypeOrThrow,
   describeFormulaSqlType,
   keepFormulaSqlValueInRange,
   toDateLikeValueOrThrow,
   toDateTimeValue,
   toDoublePrecision,
   toSqlTextLiteral,
-  toTextSql,
+  toTextSqlOrThrow,
   toUtcDate,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
 
 type FormulaFieldSqlCompilationResult =
-  | { isValid: true; columnExpressions: string[] }
+  | {
+      isValid: true;
+      // One per stored column; a composite field names the sub-field each one fills
+      expressions: { compositePropertyName?: string; expression: string }[];
+    }
   | { isValid: false; errorMessage: string };
 
 const USAGE = 'This field';
@@ -51,7 +55,8 @@ const coerceToRating = (value: FormulaSqlValue): string => {
   }
 
   return keepAllowedText({
-    textSql: assertFormulaSqlType({ value, type: 'text', usage: USAGE }).sql,
+    textSql: assertFormulaSqlTypeOrThrow({ value, type: 'text', usage: USAGE })
+      .sql,
     allowedValuesSql: toTextArraySql(RATING_VALUES),
   });
 };
@@ -68,13 +73,18 @@ const coerceToColumnExpression = ({
 }): string => {
   switch (fieldMetadataType) {
     case FieldMetadataType.TEXT:
-      return toTextSql({ value, usage: USAGE });
+      return toTextSqlOrThrow({ value, usage: USAGE });
     case FieldMetadataType.NUMBER:
       return toDoublePrecision(
-        assertFormulaSqlType({ value, type: 'number', usage: USAGE }).sql,
+        assertFormulaSqlTypeOrThrow({ value, type: 'number', usage: USAGE })
+          .sql,
       );
     case FieldMetadataType.BOOLEAN:
-      return assertFormulaSqlType({ value, type: 'boolean', usage: USAGE }).sql;
+      return assertFormulaSqlTypeOrThrow({
+        value,
+        type: 'boolean',
+        usage: USAGE,
+      }).sql;
     case FieldMetadataType.DATE:
       return keepFormulaSqlValueInRange({
         sql: toUtcDate(toDateLikeValueOrThrow({ value, usage: USAGE })),
@@ -90,15 +100,18 @@ const coerceToColumnExpression = ({
       });
     case FieldMetadataType.SELECT:
       return keepAllowedText({
-        textSql: assertFormulaSqlType({ value, type: 'text', usage: USAGE })
-          .sql,
+        textSql: assertFormulaSqlTypeOrThrow({
+          value,
+          type: 'text',
+          usage: USAGE,
+        }).sql,
         // The enum itself lists the options, so the value always fits the column type
         allowedValuesSql: `enum_range(NULL::${selectEnumSqlType})::text[]`,
       });
     case FieldMetadataType.RATING:
       return coerceToRating(value);
     case FieldMetadataType.CURRENCY:
-      return `floor(${assertFormulaSqlType({ value, type: 'number', usage: USAGE }).sql} + 0.5)`;
+      return `floor(${assertFormulaSqlTypeOrThrow({ value, type: 'number', usage: USAGE }).sql} + 0.5)`;
     default:
       return assertUnreachable(fieldMetadataType);
   }
@@ -117,13 +130,14 @@ const compileOrThrow = ({
   });
 
   if (!compilation.isValid) {
-    throw new FormulaSqlCompilationException(compilation.errorMessage);
+    throw new FormulaSqlCompilationException({
+      message: compilation.errorMessage,
+    });
   }
 
   return compilation.value;
 };
 
-// One expression per stored column of the field: two for a currency (amount, then code), one otherwise
 export const compileFormulaFieldToSql = ({
   fieldMetadataType,
   expression,
@@ -145,13 +159,13 @@ export const compileFormulaFieldToSql = ({
     });
 
     if (fieldMetadataType !== FieldMetadataType.CURRENCY) {
-      return { isValid: true, columnExpressions: [columnExpression] };
+      return { isValid: true, expressions: [{ expression: columnExpression }] };
     }
 
     if (!isDefined(currencyCodeExpression)) {
-      throw new FormulaSqlCompilationException(
-        'A currency formula needs a currency code expression',
-      );
+      throw new FormulaSqlCompilationException({
+        message: 'A currency formula needs a currency code expression',
+      });
     }
 
     const currencyCode = compileOrThrow({
@@ -160,9 +174,9 @@ export const compileFormulaFieldToSql = ({
     });
 
     if (currencyCode.type !== 'text') {
-      throw new FormulaSqlCompilationException(
-        `The currency code needs text, but got ${describeFormulaSqlType(currencyCode.type)}`,
-      );
+      throw new FormulaSqlCompilationException({
+        message: `The currency code needs text, but got ${describeFormulaSqlType(currencyCode.type)}`,
+      });
     }
 
     const currencyCodeColumnExpression = keepAllowedText({
@@ -173,9 +187,15 @@ export const compileFormulaFieldToSql = ({
     // An amount without a currency, or a currency without an amount, is no value at all
     return {
       isValid: true,
-      columnExpressions: [
-        `CASE WHEN ${currencyCodeColumnExpression} IS NOT NULL THEN ${columnExpression} END`,
-        `CASE WHEN ${columnExpression} IS NOT NULL THEN ${currencyCodeColumnExpression} END`,
+      expressions: [
+        {
+          compositePropertyName: 'amountMicros',
+          expression: `CASE WHEN ${currencyCodeColumnExpression} IS NOT NULL THEN ${columnExpression} END`,
+        },
+        {
+          compositePropertyName: 'currencyCode',
+          expression: `CASE WHEN ${columnExpression} IS NOT NULL THEN ${currencyCodeColumnExpression} END`,
+        },
       ],
     };
   } catch (error) {

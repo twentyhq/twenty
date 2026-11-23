@@ -23,7 +23,7 @@ describe('buildFormulaComputedColumnShapes', () => {
       computedColumnShapes.find(({ columnName }) => columnName === 'total'),
     ).toEqual({
       columnName: 'total',
-      sqlType: 'double precision',
+      sqlType: 'float',
       expression: expect.stringContaining(
         '(COALESCE("record"."price"::numeric, 0) * COALESCE("record"."quantity"::numeric, 0))',
       ),
@@ -76,7 +76,7 @@ describe('buildFormulaComputedColumnShapes', () => {
       computedColumnShapes.find(({ columnName }) => columnName === 'broken'),
     ).toEqual({
       columnName: 'broken',
-      sqlType: 'double precision',
+      sqlType: 'float',
       expression: undefined,
       dependencies: [],
     });

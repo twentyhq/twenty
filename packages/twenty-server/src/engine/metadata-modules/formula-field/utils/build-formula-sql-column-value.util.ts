@@ -4,7 +4,6 @@ import { type FormulaSqlColumn } from 'src/engine/metadata-modules/formula-field
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-// Brings a stored column to the SQL type formulas compute in; undefined when a formula cannot read it
 export const buildFormulaSqlColumnValue = ({
   alias,
   formulaSqlColumn: { columnName, columnFieldMetadataType },
