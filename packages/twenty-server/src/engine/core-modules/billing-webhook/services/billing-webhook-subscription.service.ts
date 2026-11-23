@@ -179,6 +179,20 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
+    // Before the upsert: a retry after a failed mirror must still see the old trial end
+    const isOtherSubscriptionLive = allLiveSubscriptions.some(
+      (customerSubscription) => customerSubscription.id !== data.object.id,
+    );
+
+    if (!isOtherSubscriptionLive) {
+      await this.billingTrialExtensionService.mirrorStripeTrialEnd({
+        workspaceId,
+        previousTrialEnd: storedSubscription?.trialEnd ?? null,
+        status: incomingSubscription.status,
+        trialEnd: incomingSubscription.trialEnd ?? null,
+      });
+    }
+
     await this.billingSubscriptionRepository.upsert(
       {
         ...incomingSubscription,
@@ -211,19 +225,6 @@ export class BillingWebhookSubscriptionService {
       subscriptionWithSchedule,
       workspaceId,
     );
-
-    const isOtherSubscriptionLive = allLiveSubscriptions.some(
-      (customerSubscription) => customerSubscription.id !== data.object.id,
-    );
-
-    if (!isOtherSubscriptionLive) {
-      await this.billingTrialExtensionService.mirrorStripeTrialEnd({
-        workspaceId,
-        previousTrialEnd: storedSubscription?.trialEnd ?? null,
-        status: incomingSubscription.status,
-        trialEnd: incomingSubscription.trialEnd ?? null,
-      });
-    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',
