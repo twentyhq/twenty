@@ -284,6 +284,8 @@ describe('useListenToScopedRelationRecordOperation', () => {
       operation: { type: 'delete-one', deletedRecordId: 'task' },
     });
 
+    waitForDebounce();
+
     expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
     expect(readCachedScopedTaskTargets()).toBeNull();
     expect(readCachedScopedPeople()).not.toBeNull();
