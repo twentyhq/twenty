@@ -77,9 +77,9 @@ export const getFormulaSqlUnitOrThrow = <TUnit extends string>({
   const unit = units.find((candidate) => candidate === value.textLiteral);
 
   if (!isDefined(unit)) {
-    throw new FormulaSqlCompilationException(
-      `${usage} needs one of ${units.map((candidate) => `"${candidate}"`).join(', ')}`,
-    );
+    throw new FormulaSqlCompilationException({
+      message: `${usage} needs one of ${units.map((candidate) => `"${candidate}"`).join(', ')}`,
+    });
   }
 
   return unit;
@@ -89,7 +89,9 @@ const getIntervalUnitOrThrow = (unit: string): FormulaSqlIntervalUnit => {
   const intervalUnit = FORMULA_SQL_INTERVAL_UNITS[unit];
 
   if (!isDefined(intervalUnit)) {
-    throw new FormulaSqlCompilationException(`Unknown date unit "${unit}"`);
+    throw new FormulaSqlCompilationException({
+      message: `Unknown date unit "${unit}"`,
+    });
   }
 
   return intervalUnit;

@@ -24,9 +24,9 @@ export const toSqlTextLiteral = (text: string): string =>
 
 export const buildTextLiteralValue = (text: string): FormulaSqlValue => {
   if (text.includes('\u0000')) {
-    throw new FormulaSqlCompilationException(
-      'Text cannot contain a null character',
-    );
+    throw new FormulaSqlCompilationException({
+      message: 'Text cannot contain a null character',
+    });
   }
 
   return {
@@ -37,7 +37,7 @@ export const buildTextLiteralValue = (text: string): FormulaSqlValue => {
   };
 };
 
-export const assertFormulaSqlType = ({
+export const assertFormulaSqlTypeOrThrow = ({
   value,
   type,
   usage,
@@ -47,42 +47,42 @@ export const assertFormulaSqlType = ({
   usage: string;
 }): FormulaSqlValue => {
   if (value.type !== type) {
-    throw new FormulaSqlCompilationException(
-      `${usage} needs ${describeFormulaSqlType(type)}, but got ${describeFormulaSqlType(value.type)}`,
-    );
+    throw new FormulaSqlCompilationException({
+      message: `${usage} needs ${describeFormulaSqlType(type)}, but got ${describeFormulaSqlType(value.type)}`,
+    });
   }
 
   return value;
 };
 
 // Arithmetic reads an empty number as 0, as the validation rule evaluator does
-export const toNumberOperand = ({
+export const toNumberOperandOrThrow = ({
   value,
   usage,
 }: {
   value: FormulaSqlValue;
   usage: string;
 }): string => {
-  const { sql, isNeverNull } = assertFormulaSqlType({
+  const { sql, isNeverNull } = assertFormulaSqlTypeOrThrow({
     value,
     type: 'number',
     usage,
   });
 
-  return isNeverNull === true ? sql : `COALESCE(${sql}, 0)`;
+  return isNeverNull ? sql : `COALESCE(${sql}, 0)`;
 };
 
 // Concatenation reads an empty value as empty text
-export const toTextOperand = ({
+export const toTextOperandOrThrow = ({
   value,
   usage,
 }: {
   value: FormulaSqlValue;
   usage: string;
 }): string => {
-  const textSql = toTextSql({ value, usage });
+  const textSql = toTextSqlOrThrow({ value, usage });
 
-  return value.isNeverNull === true || value.type === 'boolean'
+  return value.isNeverNull || value.type === 'boolean'
     ? textSql
     : `COALESCE(${textSql}, '')`;
 };
@@ -106,7 +106,6 @@ export const toDoublePrecision = (numberSql: string): string =>
 const isDateValue = ({ type }: FormulaSqlValue): boolean =>
   type === 'date' || type === 'dateTime';
 
-// A text literal holding a date reads as that date wherever a date is expected
 export const toDateLikeValue = (
   value: FormulaSqlValue,
 ): FormulaSqlValue | undefined => {
@@ -143,9 +142,9 @@ export const toDateLikeValueOrThrow = ({
   const dateLikeValue = toDateLikeValue(value);
 
   if (!isDefined(dateLikeValue)) {
-    throw new FormulaSqlCompilationException(
-      `${usage} needs a date, but got ${describeFormulaSqlType(value.type)}`,
-    );
+    throw new FormulaSqlCompilationException({
+      message: `${usage} needs a date, but got ${describeFormulaSqlType(value.type)}`,
+    });
   }
 
   return dateLikeValue;
@@ -178,7 +177,7 @@ export const toDateTimeValue = (value: FormulaSqlValue): FormulaSqlValue =>
       })
     : value;
 
-export const toTextSql = ({
+export const toTextSqlOrThrow = ({
   value,
   usage,
 }: {
@@ -197,14 +196,13 @@ export const toTextSql = ({
     case 'dateTime':
       return `to_char(${toUtcTimestamp(value)}, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')`;
     default:
-      throw new FormulaSqlCompilationException(
-        `${usage} cannot turn ${describeFormulaSqlType(value.type)} into text`,
-      );
+      throw new FormulaSqlCompilationException({
+        message: `${usage} cannot turn ${describeFormulaSqlType(value.type)} into text`,
+      });
   }
 };
 
-// Brings two values to one type, or throws when they can never hold the same kind of value
-export const unifyFormulaSqlValues = ({
+export const unifyFormulaSqlValuesOrThrow = ({
   left,
   right,
   usage,
@@ -233,7 +231,7 @@ export const unifyFormulaSqlValues = ({
       : [toDateTimeValue(unifiedLeft), toDateTimeValue(unifiedRight)];
   }
 
-  throw new FormulaSqlCompilationException(
-    `${usage} cannot mix ${describeFormulaSqlType(left.type)} and ${describeFormulaSqlType(right.type)}`,
-  );
+  throw new FormulaSqlCompilationException({
+    message: `${usage} cannot mix ${describeFormulaSqlType(left.type)} and ${describeFormulaSqlType(right.type)}`,
+  });
 };

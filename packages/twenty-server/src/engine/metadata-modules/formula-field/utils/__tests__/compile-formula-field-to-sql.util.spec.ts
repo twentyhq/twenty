@@ -8,29 +8,34 @@ import {
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
 import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
 
-const toDescriptor = (
-  name: string,
-  type: FieldMetadataType,
-): ValidationRuleFieldDescriptor => ({
+const toDescriptor = ({
+  name,
+  type,
+}: {
+  name: string;
+  type: FieldMetadataType;
+}): ValidationRuleFieldDescriptor => ({
   name,
   type,
   universalIdentifier: `${name}-uid`,
 });
 
 const FIELDS: ValidationRuleFieldDescriptor[] = [
-  toDescriptor('name', FieldMetadataType.TEXT),
-  toDescriptor('price', FieldMetadataType.NUMBER),
-  toDescriptor('isActive', FieldMetadataType.BOOLEAN),
-  toDescriptor('createdAt', FieldMetadataType.DATE_TIME),
-  toDescriptor('dueDate', FieldMetadataType.DATE),
-  toDescriptor('tags', FieldMetadataType.MULTI_SELECT),
-  toDescriptor('stage', FieldMetadataType.SELECT),
-  toDescriptor('amount', FieldMetadataType.CURRENCY),
-  toDescriptor('payload', FieldMetadataType.RAW_JSON),
+  toDescriptor({ name: 'name', type: FieldMetadataType.TEXT }),
+  toDescriptor({ name: 'price', type: FieldMetadataType.NUMBER }),
+  toDescriptor({ name: 'isActive', type: FieldMetadataType.BOOLEAN }),
+  toDescriptor({ name: 'createdAt', type: FieldMetadataType.DATE_TIME }),
+  toDescriptor({ name: 'dueDate', type: FieldMetadataType.DATE }),
+  toDescriptor({ name: 'tags', type: FieldMetadataType.MULTI_SELECT }),
+  toDescriptor({ name: 'stage', type: FieldMetadataType.SELECT }),
+  toDescriptor({ name: 'amount', type: FieldMetadataType.CURRENCY }),
+  toDescriptor({ name: 'payload', type: FieldMetadataType.RAW_JSON }),
   {
-    ...toDescriptor('supplier', FieldMetadataType.RELATION),
+    ...toDescriptor({ name: 'supplier', type: FieldMetadataType.RELATION }),
     relationType: RelationType.MANY_TO_ONE,
-    relationTargetFields: [toDescriptor('name', FieldMetadataType.TEXT)],
+    relationTargetFields: [
+      toDescriptor({ name: 'name', type: FieldMetadataType.TEXT }),
+    ],
   },
 ];
 
@@ -96,7 +101,7 @@ describe('compileFormulaFieldToSql', () => {
   ])('should compile $expression', ({ type, expression, sql }) => {
     expect(compile({ type, expression })).toEqual({
       isValid: true,
-      columnExpressions: [sql],
+      expressions: [{ expression: sql }],
     });
   });
 
@@ -115,11 +120,17 @@ describe('compileFormulaFieldToSql', () => {
       }),
     ).toMatchObject({
       isValid: true,
-      columnExpressions: [
-        expect.stringContaining(
-          'THEN floor((COALESCE("record"."price"::numeric, 0) / NULLIF(0::numeric, 0)) + 0.5) END',
-        ),
-        expect.stringContaining('"record"."amountCurrencyCode"'),
+      expressions: [
+        {
+          compositePropertyName: 'amountMicros',
+          expression: expect.stringContaining(
+            'THEN floor((COALESCE("record"."price"::numeric, 0) / NULLIF(0::numeric, 0)) + 0.5) END',
+          ),
+        },
+        {
+          compositePropertyName: 'currencyCode',
+          expression: expect.stringContaining('"record"."amountCurrencyCode"'),
+        },
       ],
     });
   });

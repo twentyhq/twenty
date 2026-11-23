@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
@@ -135,9 +136,9 @@ describe('validateFlatFieldMetadataFormula', () => {
           universalSettings: {
             formula: {
               expression: 'price * 1000000',
-              ...(currencyCodeExpression === undefined
-                ? {}
-                : { currencyCodeExpression }),
+              ...(isDefined(currencyCodeExpression)
+                ? { currencyCodeExpression }
+                : {}),
             },
           },
         },
