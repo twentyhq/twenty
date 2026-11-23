@@ -16110,10 +16110,10 @@ msgstr "تا کمتر از یک روز دیگر"
 msgid "In progress"
 msgstr "در حال انجام"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "در حال انجام: اعمال قابلیت مشاهده کانال پیام و تقویم با قوانین مجوز در سطح رکورد. به پرش‌های رابطه نیاز دارد."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "در حال انجام: اعمال قابلیت مشاهده کانال‌های پیام و تقویم با قوانین مجوز در سطح رکورد. به پیمایش‌های رابطه و مسیرهای رکورد مرتبط نیاز دارد."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

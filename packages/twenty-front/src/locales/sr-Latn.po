@@ -16110,10 +16110,10 @@ msgstr "Za manje od jednog dana"
 msgid "In progress"
 msgstr "U toku"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "U toku: primena vidljivosti kanala za poruke i kalendar pomoću pravila dozvola na nivou zapisa. Potrebni su prelazi preko relacija."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "U toku: primeniti vidljivost kanala za poruke i kalendar pomoću pravila dozvola na nivou zapisa. Potrebni su prelazi relacija i putanje povezanih zapisa."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

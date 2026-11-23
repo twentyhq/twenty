@@ -16110,10 +16110,10 @@ msgstr "În mai puțin de o zi"
 msgid "In progress"
 msgstr "În progres"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "În curs: aplicarea vizibilității canalelor de mesaje și calendar cu reguli de permisiuni la nivel de înregistrare. Necesită parcurgerea relațiilor."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "În curs: aplicarea vizibilității canalelor de mesaje și calendar prin reguli de permisiuni la nivel de înregistrare. Necesită parcurgerea relațiilor și căi către înregistrări asociate."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

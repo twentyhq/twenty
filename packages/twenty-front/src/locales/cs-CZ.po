@@ -16110,10 +16110,10 @@ msgstr "Za méně než den"
 msgid "In progress"
 msgstr "Rozpracováno"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Probíhá: vynucení viditelnosti kanálů zpráv a kalendáře pomocí pravidel oprávnění na úrovni záznamů. Vyžaduje přechody mezi relacemi."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Probíhá: vynucení viditelnosti kanálů zpráv a kalendáře pomocí pravidel oprávnění na úrovni záznamů. Vyžaduje přechody relací a cesty souvisejících záznamů."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
