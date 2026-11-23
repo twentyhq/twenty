@@ -137,6 +137,50 @@ describe('createFormulaEvaluator', () => {
     expect(evaluate({ record: { company: null }, now: NOW })).toBe(' deal');
   });
 
+  it.each([
+    {
+      expression: 'coalesce(company.name, "No company")',
+      expected: 'No company',
+    },
+    {
+      expression: 'concat("Deal ", company.name, probability)',
+      expected: 'Deal 0.25',
+    },
+    { expression: 'upper(lower("AcMe"))', expected: 'ACME' },
+    { expression: 'lower(probability)', expected: null },
+  ])('should compute the text $expression', ({ expression, expected }) => {
+    const evaluate = createFormulaEvaluator({
+      expression,
+      fields: FIELDS,
+      fieldMetadataType: FieldMetadataType.TEXT,
+    });
+
+    expect(
+      evaluate({ record: { company: null, probability: 0.25 }, now: NOW }),
+    ).toBe(expected);
+  });
+
+  it.each([
+    {
+      expression: 'min(probability, 0.5, amount.amountMicros)',
+      expected: 0.256,
+    },
+    { expression: 'max(probability, 0.5)', expected: 0.5 },
+    { expression: 'max(company.name)', expected: null },
+    { expression: 'roundTo(probability, 2)', expected: 0.26 },
+    { expression: 'roundTo(probability, company.name)', expected: null },
+  ])('should compute the number $expression', ({ expression, expected }) => {
+    const evaluate = createFormulaEvaluator({
+      expression,
+      fields: FIELDS,
+      fieldMetadataType: FieldMetadataType.NUMBER,
+    });
+
+    expect(
+      evaluate({ record: { company: null, probability: 0.256 }, now: NOW }),
+    ).toBe(expected);
+  });
+
   it('should return null when the expression cannot be parsed', () => {
     const evaluate = createFormulaEvaluator({
       expression: 'probability *',
