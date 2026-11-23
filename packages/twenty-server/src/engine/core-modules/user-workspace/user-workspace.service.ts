@@ -608,12 +608,54 @@ export class UserWorkspaceService {
     queryRunner?: QueryRunner,
   ) {
     if (isExistingUser) {
-      return this.copyOldestDefaultAvatar({
-        userId,
-        workspaceId,
-        applicationUniversalIdentifier,
-        queryRunner,
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: {
+          userId,
+          defaultAvatarUrl: Not(IsNull()),
+        },
+        order: {
+          createdAt: 'ASC',
+        },
       });
+
+      if (!isDefined(userWorkspace?.defaultAvatarUrl)) {
+        return;
+      }
+
+      const sourceFileId = extractFileIdFromUrl(
+        userWorkspace.defaultAvatarUrl,
+        FileFolder.CorePicture,
+      );
+
+      if (!isDefined(sourceFileId)) {
+        return;
+      }
+
+      try {
+        const savedFile =
+          await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
+            sourceWorkspaceId: userWorkspace.workspaceId,
+            sourceFileId,
+            targetWorkspaceId: workspaceId,
+            targetApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            queryRunner,
+          });
+
+        if (!isDefined(savedFile)) {
+          return;
+        }
+
+        return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+          fileId: savedFile.id,
+          fileFolder: FileFolder.CorePicture,
+        });
+      } catch (error) {
+        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+          return;
+        }
+        throw error;
+      }
     }
 
     if (!isDefined(pictureUrl) || pictureUrl === '') {
@@ -638,66 +680,6 @@ export class UserWorkspaceService {
       fileId: savedFile.id,
       fileFolder: FileFolder.CorePicture,
     });
-  }
-
-  private async copyOldestDefaultAvatar({
-    userId,
-    workspaceId,
-    applicationUniversalIdentifier,
-    queryRunner,
-  }: {
-    userId: string;
-    workspaceId: string;
-    applicationUniversalIdentifier?: string;
-    queryRunner?: QueryRunner;
-  }): Promise<string | undefined> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: {
-        userId,
-        defaultAvatarUrl: Not(IsNull()),
-      },
-      order: {
-        createdAt: 'ASC',
-      },
-    });
-
-    if (!isDefined(userWorkspace?.defaultAvatarUrl)) {
-      return undefined;
-    }
-
-    const sourceFileId = extractFileIdFromUrl(
-      userWorkspace.defaultAvatarUrl,
-      FileFolder.CorePicture,
-    );
-
-    if (!isDefined(sourceFileId)) {
-      return undefined;
-    }
-
-    try {
-      const savedFile =
-        await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
-          sourceWorkspaceId: userWorkspace.workspaceId,
-          sourceFileId,
-          targetWorkspaceId: workspaceId,
-          targetApplicationUniversalIdentifier: applicationUniversalIdentifier,
-          queryRunner,
-        });
-
-      if (!isDefined(savedFile)) {
-        return undefined;
-      }
-
-      return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
-        fileId: savedFile.id,
-        fileFolder: FileFolder.CorePicture,
-      });
-    } catch (error) {
-      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-        return undefined;
-      }
-      throw error;
-    }
   }
 
   async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
