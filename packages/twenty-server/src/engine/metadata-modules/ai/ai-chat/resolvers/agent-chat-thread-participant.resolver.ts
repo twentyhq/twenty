@@ -31,23 +31,35 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: { withUser: true, withoutUser: false },
-      application: { withUser: true, withoutUser: false },
-    },
-    requiredPermissionFlags: [PermissionFlagType.AI],
-  }),
-)
+const USER_SESSION_PRINCIPALS = {
+  standard: true,
+  impersonated: true,
+  playground: true,
+  workspaceAgnostic: false,
+};
+
+const AGENT_CHAT_THREAD_PARTICIPANT_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: USER_SESSION_PRINCIPALS,
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  },
+  requiredPermissionFlags: [PermissionFlagType.AI],
+};
+
+const ADD_AGENT_CHAT_THREAD_PARTICIPANTS_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: USER_SESSION_PRINCIPALS,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [PermissionFlagType.AI],
+};
+
 @UsePipes(ResolverValidationPipe)
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -61,6 +73,7 @@ export class AgentChatThreadParticipantResolver {
   ) {}
 
   @Query(() => AgentChatOpenThreadsSummaryDTO)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_THREAD_PARTICIPANT_ACCESS_POLICY))
   async agentChatOpenThreadsSummary(
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -72,6 +85,7 @@ export class AgentChatThreadParticipantResolver {
   }
 
   @Mutation(() => [AgentChatThreadParticipantDTO])
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_THREAD_PARTICIPANT_ACCESS_POLICY))
   async updateAgentChatThreadInboxState(
     @Args('threadIds', { type: () => [UUIDScalarType] }) threadIds: string[],
     @Args('action', { type: () => AgentChatInboxAction })
@@ -102,6 +116,7 @@ export class AgentChatThreadParticipantResolver {
 
   // Clears the assignee when no member is given
   @Mutation(() => Boolean)
+  @UseGuards(AccessPolicyGuard(AGENT_CHAT_THREAD_PARTICIPANT_ACCESS_POLICY))
   async assignAgentChatThread(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @Args('assigneeWorkspaceMemberId', {
@@ -123,6 +138,9 @@ export class AgentChatThreadParticipantResolver {
   }
 
   @Mutation(() => [UUIDScalarType])
+  @UseGuards(
+    AccessPolicyGuard(ADD_AGENT_CHAT_THREAD_PARTICIPANTS_ACCESS_POLICY),
+  )
   async addAgentChatThreadParticipants(
     @Args('input')
     { threadId, workspaceMemberIds }: AddAgentChatThreadParticipantsInputDTO,
