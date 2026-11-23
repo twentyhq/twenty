@@ -26,7 +26,7 @@ jobs:
   upgrade-mutation-guard:
     if: github.event_name == 'merge_group'
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     steps:
       - name: Checkout merge candidate
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -71,7 +71,7 @@ jobs:
   ci-merge-queue-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs: [upgrade-mutation-guard]
     steps:
       - name: Fail job if any needs failed

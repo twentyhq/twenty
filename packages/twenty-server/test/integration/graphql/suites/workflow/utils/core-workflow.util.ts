@@ -23,7 +23,6 @@ export type CoreWorkflowVersion<
   status: string;
   trigger: Record<string, unknown> | null;
   steps: TStep[] | null;
-  workspaceWorkflowVersionId: string | null;
 };
 
 const CORE_WORKFLOW_VERSION_FIELDS = `
@@ -32,7 +31,6 @@ const CORE_WORKFLOW_VERSION_FIELDS = `
   status
   trigger
   steps
-  workspaceWorkflowVersionId
 `;
 
 export const coreWorkflowGraphqlRequest = async <TData>({
@@ -101,10 +99,7 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
   coreWorkflowId,
 }: {
   coreWorkflowId: string;
-}): Promise<{
-  workspaceWorkflowId: string;
-  workspaceWorkflowVersionIds: string[];
-}> => {
+}): Promise<{ workspaceWorkflowId: string }> => {
   const workspaceWorkflowId = randomUUID();
 
   await global.testDataSource.query(
@@ -112,30 +107,17 @@ export const linkCoreWorkflowToLegacyWorkspaceIds = async ({
     [coreWorkflowId, workspaceWorkflowId],
   );
 
-  const coreVersions: { id: string }[] = await global.testDataSource.query(
-    `SELECT id FROM core."workflowVersion" WHERE "coreWorkflowId" = $1 ORDER BY "createdAt"`,
-    [coreWorkflowId],
+  await global.testDataSource.query(
+    `UPDATE core."workflowVersion" SET "workflowId" = $2 WHERE "coreWorkflowId" = $1`,
+    [coreWorkflowId, workspaceWorkflowId],
   );
-
-  const workspaceWorkflowVersionIds: string[] = [];
-
-  for (const coreVersion of coreVersions) {
-    const workspaceWorkflowVersionId = randomUUID();
-
-    await global.testDataSource.query(
-      `UPDATE core."workflowVersion" SET "workflowId" = $2, "workspaceWorkflowVersionId" = $3 WHERE id = $1`,
-      [coreVersion.id, workspaceWorkflowId, workspaceWorkflowVersionId],
-    );
-
-    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
-  }
 
   await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
     SEED_APPLE_WORKSPACE_ID,
     ['flatWorkflowMaps', 'flatWorkflowVersionMaps'],
   );
 
-  return { workspaceWorkflowId, workspaceWorkflowVersionIds };
+  return { workspaceWorkflowId };
 };
 
 export const findCoreWorkflowVersions = async ({

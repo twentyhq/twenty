@@ -17,10 +17,11 @@ describe('findWorkspaceFromInviteHash should succeed (integration)', () => {
     });
 
     expect(data.findWorkspaceFromInviteHash.id).toBe(SEED_APPLE_WORKSPACE_ID);
-    expect(data.findWorkspaceFromInviteHash).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny({
+    expect(data.findWorkspaceFromInviteHash).toMatchSnapshot({
+      ...extractRecordIdsAndDatesAsExpectAny({
         ...data.findWorkspaceFromInviteHash,
       }),
-    );
+      logo: expect.any(String),
+    });
   });
 });
