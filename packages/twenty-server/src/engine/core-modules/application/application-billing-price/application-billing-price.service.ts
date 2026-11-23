@@ -15,8 +15,7 @@ export class ApplicationBillingPriceService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // Not gated on IS_APPLICATION_PRICE_BILLING_ENABLED: prices accepted at
-  // install or connection are billed as soon as the flag is turned on
+  // Ignores IS_APPLICATION_PRICE_BILLING_ENABLED: accepted prices bill once it is on
   shouldShowApplicationPrices(): boolean {
     return this.twentyConfigService.get('IS_BILLING_ENABLED');
   }
