@@ -26,6 +26,7 @@ import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-module
 import { WebhookSubscriptionRenewalCronCommand } from 'src/modules/connected-account/webhook-subscription-manager/crons/commands/webhook-subscription-renewal.cron.command';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
+import { ReconcileRollupFieldsCronCommand } from 'src/engine/core-modules/rollup-field/commands/reconcile-rollup-fields.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
 import { DeferredWorkspaceOperationRecoveryCronCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/commands/deferred-workspace-operation-recovery.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
@@ -80,6 +81,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly cleanSuspendedWorkspacesCronCommand: CleanSuspendedWorkspacesCronCommand,
     private readonly cleanOnboardingWorkspacesCronCommand: CleanOnboardingWorkspacesCronCommand,
     private readonly trashCleanupCronCommand: TrashCleanupCronCommand,
+    private readonly reconcileRollupFieldsCronCommand: ReconcileRollupFieldsCronCommand,
     private readonly eventLogCleanupCronCommand: EventLogCleanupCronCommand,
     private readonly enterpriseKeyValidationCronCommand: EnterpriseKeyValidationCronCommand,
     private readonly rotateSigningKeysCronCommand: RotateSigningKeysCronCommand,
@@ -207,6 +209,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'TrashCleanup',
         command: this.trashCleanupCronCommand,
+      },
+      {
+        name: 'ReconcileRollupFields',
+        command: this.reconcileRollupFieldsCronCommand,
       },
       {
         name: 'EventLogCleanup',

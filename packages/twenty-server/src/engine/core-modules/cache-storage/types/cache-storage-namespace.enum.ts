@@ -17,5 +17,6 @@ export enum CacheStorageNamespace {
   EngineOnboardingInviteSuggestions = 'engine:onboarding-invite-suggestions',
   EngineWebPush = 'engine:web-push',
   EngineTabPresence = 'engine:tab-presence',
+  EngineRollupField = 'engine:rollup-field',
   IntegrationTests = 'integration-tests',
 }

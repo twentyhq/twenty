@@ -1,0 +1,1 @@
+export const ROLLUP_FIELD_DIRTY_RECORDS_PER_JOB = 5_000;
