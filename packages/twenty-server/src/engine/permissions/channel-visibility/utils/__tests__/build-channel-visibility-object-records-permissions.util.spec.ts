@@ -79,7 +79,17 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
   });
 
   it('should give API keys what each channel shares, since they own no channel', () => {
-    expect(findReadableChannelIds({ type: 'apiKeys' })).toEqual([
+    expect(
+      findReadableChannelIds({
+        type: 'apiKeys',
+        writeGrants: {
+          canCreateAllObjectRecords: false,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+        },
+      }),
+    ).toEqual([
       { unreadableFields: ['subject'], channelIds: ['c1'] },
       { unreadableFields: [], channelIds: ['c2'] },
       { unreadableFields: [], channelIds: ['c3'] },

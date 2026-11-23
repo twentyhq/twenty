@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MessageChannelVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -14,6 +15,13 @@ import {
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import {
+  getApiKeysIndividualRoleWriteGrants,
+  isRoleRevokedForApiKeys,
+} from 'src/engine/permissions/channel-visibility/utils/get-api-keys-individual-role-write-grants.util';
+import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/channel-visibility/utils/is-api-key-exempt-from-channel-visibility.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
@@ -50,10 +58,11 @@ export class ChannelVisibilityRuleSyncService {
   }
 
   private async writeOrRemoveRules(workspaceId: string): Promise<void> {
-    const { featureFlagsMap, flatWorkspaceMemberMaps } =
+    const { featureFlagsMap, flatWorkspaceMemberMaps, flatRoleMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'featureFlagsMap',
         'flatWorkspaceMemberMaps',
+        'flatRoleMaps',
       ]);
 
     const holders: WorkspaceMemberIndividualRoleHolder[] = [
@@ -66,7 +75,7 @@ export class ChannelVisibilityRuleSyncService {
           )
         : []),
       ...(isApiKeyExemptFromChannelVisibility(featureFlagsMap)
-        ? [{ type: 'apiKeys' as const }]
+        ? this.findApiKeysHolders(flatRoleMaps)
         : []),
     ];
 
@@ -135,13 +144,53 @@ export class ChannelVisibilityRuleSyncService {
           ].map((objectRecordsPermissions) => ({
             ...objectRecordsPermissions,
             canReadAllRecords: false,
-            canCreateAllRecords: false,
-            canUpdateAllRecords: false,
-            canSoftDeleteAllRecords: false,
-            canDestroyAllRecords: false,
+            ...(holder.type === 'apiKeys'
+              ? {
+                  canCreateAllRecords:
+                    holder.writeGrants.canCreateAllObjectRecords,
+                  canUpdateAllRecords:
+                    holder.writeGrants.canUpdateAllObjectRecords,
+                  canSoftDeleteAllRecords:
+                    holder.writeGrants.canSoftDeleteAllObjectRecords,
+                  canDestroyAllRecords:
+                    holder.writeGrants.canDestroyAllObjectRecords,
+                }
+              : {
+                  canCreateAllRecords: false,
+                  canUpdateAllRecords: false,
+                  canSoftDeleteAllRecords: false,
+                  canDestroyAllRecords: false,
+                }),
           })),
         },
       })),
     });
+  }
+
+  private findApiKeysHolders(
+    flatRoleMaps: FlatEntityMaps<FlatRole>,
+  ): WorkspaceMemberIndividualRoleHolder[] {
+    const writeGrantsByUniversalIdentifier = new Map(
+      Object.values(flatRoleMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter(
+          (flatRole) =>
+            flatRole.canBeAssignedToApiKeys &&
+            isRoleRevokedForApiKeys({ flatRole }),
+        )
+        .map((flatRole) => {
+          const holder = {
+            type: 'apiKeys' as const,
+            writeGrants: getApiKeysIndividualRoleWriteGrants({ flatRole }),
+          };
+
+          return [
+            getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder }),
+            holder,
+          ] as const;
+        }),
+    );
+
+    return [...writeGrantsByUniversalIdentifier.values()];
   }
 }

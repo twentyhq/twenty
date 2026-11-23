@@ -4,6 +4,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findCurrentUserObjectRecordsPermissions } from 'test/integration/permissions/channel-visibility/utils/find-current-user-object-records-permissions.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
@@ -324,7 +325,7 @@ describe('channel visibility through row level rules (integration)', () => {
     });
   });
 
-  it('lets an API key on a role assignable to users read each channel as a member who does not own it, until channel visibility is enforced on API keys', async () => {
+  it('lets an API key on a role assignable to users read each channel as a member who does not own it and write as its role allows, until channel visibility is enforced on API keys', async () => {
     const findJonyMessagesAsApiKey = async () => {
       const response = await makeGraphqlApiRequest(
         findManyOperationFactory({
@@ -341,7 +342,8 @@ describe('channel visibility through row level rules (integration)', () => {
       );
 
       return (response.body.data?.messages?.edges ?? []).map(
-        ({ node }: { node: { subject: string; text: string } }) => node,
+        ({ node }: { node: { id: string; subject: string; text: string } }) =>
+          node,
       );
     };
 
@@ -356,6 +358,19 @@ describe('channel visibility through row level rules (integration)', () => {
           subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
       ),
     ).toBe(false);
+
+    const [sharedMessage] = sharedMessages;
+    const updateResponse = await makeGraphqlApiRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'message',
+        gqlFields: 'id subject',
+        recordId: sharedMessage.id,
+        data: { subject: sharedMessage.subject },
+      }),
+      API_KEY_ACCESS_TOKEN,
+    );
+
+    expect(updateResponse.body.errors).toBeUndefined();
 
     await setJonyChannelVisibility('METADATA');
 

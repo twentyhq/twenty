@@ -9,6 +9,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import {
+  getApiKeysIndividualRoleWriteGrants,
+  isRoleRevokedForApiKeys,
+} from 'src/engine/permissions/channel-visibility/utils/get-api-keys-individual-role-write-grants.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
@@ -147,15 +151,20 @@ export class PrincipalPermissionsReadService {
       : undefined;
 
     if (
-      !apiKeyFlatRole?.canBeAssignedToUsers ||
-      !apiKeyFlatRole.canReadAllObjectRecords
+      !isDefined(apiKeyFlatRole) ||
+      !isRoleRevokedForApiKeys({ flatRole: apiKeyFlatRole })
     ) {
       return undefined;
     }
 
     return flatRoleMaps.byUniversalIdentifier[
       getWorkspaceMemberIndividualRoleUniversalIdentifier({
-        holder: { type: 'apiKeys' },
+        holder: {
+          type: 'apiKeys',
+          writeGrants: getApiKeysIndividualRoleWriteGrants({
+            flatRole: apiKeyFlatRole,
+          }),
+        },
       })
     ]?.id;
   }
