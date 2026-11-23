@@ -25,8 +25,9 @@ export const RecordTableVirtualizedJunctionDataChangedEffect = () => {
 
   useListenToScopedRelationRecordOperation({
     objectNameSingular,
-    onScopedRelationRecordOperation:
-      debouncedResetVirtualizationBecauseDataChanged,
+    onScopedRelationRecordOperation: resetVirtualizationBecauseDataChanged,
+    debounceTimeInMs:
+      SSE_TABLE_DEBOUNCE_TIME_IN_MS_TO_AVOID_SSE_OWN_EVENTS_RACE_CONDITION,
   });
 
   return <></>;
