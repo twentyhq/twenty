@@ -1,14 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { type NavigationMenuBuiltInSectionRequirements } from '@/navigation-menu-item/common/types/NavigationMenuBuiltInSectionRequirements';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 
 export const useNavigationMenuBuiltInSectionAvailability = () => {
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const featureFlagsMap = useWorkspaceFeatureFlagsMap();
 
   const isBuiltInSectionAvailable = (
     builtInSectionKey: string | null | undefined,
@@ -29,10 +29,7 @@ export const useNavigationMenuBuiltInSectionAvailability = () => {
       permissionFlagMap[requiredPermissionFlag];
     const hasRequiredFeature =
       !isDefined(requiredFeatureFlag) ||
-      (currentWorkspace?.featureFlags?.some(
-        ({ key, value }) => key === requiredFeatureFlag && value,
-      ) ??
-        false);
+      featureFlagsMap[requiredFeatureFlag] === true;
 
     return hasRequiredPermission && hasRequiredFeature;
   };
