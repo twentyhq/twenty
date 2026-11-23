@@ -665,9 +665,19 @@ export type ApplicationConnectedMemberCount = {
   connectedMemberCount: Scalars['Int']['output'];
 };
 
+export type ApplicationConnectionPrice = {
+  __typename?: 'ApplicationConnectionPrice';
+  amountCents: Scalars['Int']['output'];
+  billingPeriod: Scalars['String']['output'];
+  currency: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  universalIdentifier: Scalars['String']['output'];
+};
+
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
+  connectedAccountPrices: Array<ApplicationConnectionPrice>;
   displayName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;

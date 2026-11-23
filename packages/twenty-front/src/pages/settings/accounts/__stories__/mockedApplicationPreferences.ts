@@ -104,6 +104,7 @@ const FATHOM_CONNECTION_PROVIDER = {
     scopes: ['read'],
     isClientCredentialsConfigured: true,
   },
+  connectedAccountPrices: [],
 };
 
 const GRANOLA_CONNECTION_PROVIDER = {

@@ -1,13 +1,13 @@
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 
 describe('buildApplicationBillingSummary', () => {
-  it('asks consent to bill credits during installation', () => {
+  it('asks consent to bill the workspace during installation', () => {
     expect(
       buildApplicationBillingSummary(true).map(({ label }) => label),
-    ).toEqual(['Bill credits to your workspace']);
+    ).toEqual(['Bill your workspace']);
   });
 
-  it('asks nothing for an app that bills no credits', () => {
+  it('asks nothing for a free app', () => {
     expect(buildApplicationBillingSummary(false)).toEqual([]);
   });
 });

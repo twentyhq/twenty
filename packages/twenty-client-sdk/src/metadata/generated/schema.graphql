@@ -619,8 +619,17 @@ type ApplicationConnectedMemberCount {
   connectedMemberCount: Int!
 }
 
+type ApplicationConnectionPrice {
+  amountCents: Int!
+  billingPeriod: String!
+  currency: String!
+  label: String!
+  universalIdentifier: String!
+}
+
 type ApplicationConnectionProvider {
   applicationId: String!
+  connectedAccountPrices: [ApplicationConnectionPrice!]!
   displayName: String!
   id: UUID!
   logoUrl: String

@@ -221,7 +221,7 @@ export const SettingsApplicationAboutSidebar = ({
       ? [
           {
             Icon: IconCurrencyDollar,
-            label: t`Bills credits`,
+            label: t`Paid app`,
             tooltip: trimmedPricingDescription,
           },
         ]

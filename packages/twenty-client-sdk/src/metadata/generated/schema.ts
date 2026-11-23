@@ -504,8 +504,18 @@ export interface ApplicationConnectedMemberCount {
     __typename: 'ApplicationConnectedMemberCount'
 }
 
+export interface ApplicationConnectionPrice {
+    amountCents: Scalars['Int']
+    billingPeriod: Scalars['String']
+    currency: Scalars['String']
+    label: Scalars['String']
+    universalIdentifier: Scalars['String']
+    __typename: 'ApplicationConnectionPrice'
+}
+
 export interface ApplicationConnectionProvider {
     applicationId: Scalars['String']
+    connectedAccountPrices: ApplicationConnectionPrice[]
     displayName: Scalars['String']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -5145,8 +5155,19 @@ export interface ApplicationConnectedMemberCountGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationConnectionPriceGenqlSelection{
+    amountCents?: boolean | number
+    billingPeriod?: boolean | number
+    currency?: boolean | number
+    label?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationConnectionProviderGenqlSelection{
     applicationId?: boolean | number
+    connectedAccountPrices?: ApplicationConnectionPriceGenqlSelection
     displayName?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
@@ -10285,6 +10306,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectedMemberCount = (obj?: { __typename?: any } | null): obj is ApplicationConnectedMemberCount => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedMemberCount"')
       return ApplicationConnectedMemberCount_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationConnectionPrice_possibleTypes: string[] = ['ApplicationConnectionPrice']
+    export const isApplicationConnectionPrice = (obj?: { __typename?: any } | null): obj is ApplicationConnectionPrice => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionPrice"')
+      return ApplicationConnectionPrice_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -96,18 +96,18 @@ describe('SettingsApplicationDetailAbout', () => {
     expect(await screen.findByText('1,098 installs')).toBeVisible();
   });
 
-  it('shows that the application bills credits, with its pricing on hover', async () => {
+  it('shows that the application is paid, with its pricing on hover', async () => {
     renderAbout({ billsCredits: true });
 
-    await userEvent.setup().hover(screen.getByText('Bills credits'));
+    await userEvent.setup().hover(screen.getByText('Paid app'));
 
     expect(await screen.findByText('$0.02 per minute recorded')).toBeVisible();
   });
 
-  it('does not claim credit billing for an application that bills none', () => {
+  it('does not claim billing for a free application', () => {
     renderAbout();
 
-    expect(screen.queryByText('Bills credits')).not.toBeInTheDocument();
+    expect(screen.queryByText('Paid app')).not.toBeInTheDocument();
   });
 
   it('renders the application identity, metadata and resources', () => {

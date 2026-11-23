@@ -13,5 +13,12 @@ export const APPLICATION_CONNECTION_PROVIDER_FRAGMENT = gql`
       scopes
       isClientCredentialsConfigured
     }
+    connectedAccountPrices {
+      universalIdentifier
+      label
+      amountCents
+      currency
+      billingPeriod
+    }
   }
 `;

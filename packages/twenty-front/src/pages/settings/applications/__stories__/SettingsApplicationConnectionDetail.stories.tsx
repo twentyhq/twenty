@@ -94,6 +94,7 @@ const meta: Meta<PageDecoratorArgs> = {
                     scopes: GRANTED_SCOPES,
                     isClientCredentialsConfigured: true,
                   },
+                  connectedAccountPrices: [],
                 },
               ],
             },

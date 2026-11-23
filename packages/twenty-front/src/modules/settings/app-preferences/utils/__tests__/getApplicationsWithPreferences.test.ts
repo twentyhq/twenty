@@ -91,6 +91,7 @@ const buildUserConnectionProvider = ({
     scopes: ['read'],
     isClientCredentialsConfigured: true,
   },
+  connectedAccountPrices: [],
 });
 
 const CURRENT_WORKSPACE = {

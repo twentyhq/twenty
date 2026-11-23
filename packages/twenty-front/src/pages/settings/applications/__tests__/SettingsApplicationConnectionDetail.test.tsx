@@ -139,6 +139,7 @@ describe('SettingsApplicationConnectionDetail', () => {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: true,
           },
+          connectedAccountPrices: [],
         },
       ],
       loading: false,

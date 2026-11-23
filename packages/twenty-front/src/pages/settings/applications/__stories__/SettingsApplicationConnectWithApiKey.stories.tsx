@@ -31,6 +31,7 @@ const connectionProvidersHandler = graphql.query(
             scope: 'USER',
             logoUrl: null,
             oauth: null,
+            connectedAccountPrices: [],
           },
         ],
       },

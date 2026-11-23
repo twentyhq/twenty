@@ -48,6 +48,7 @@ const buildLinearConnectionProvider = () => ({
     scopes: ['read'],
     isClientCredentialsConfigured: isLinearClientCredentialsConfigured,
   },
+  connectedAccountPrices: [],
 });
 
 export const buildLinearApplicationPreferences = () => ({

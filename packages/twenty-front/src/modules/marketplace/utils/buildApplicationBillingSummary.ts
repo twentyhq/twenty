@@ -6,6 +6,4 @@ import { type PermissionSummaryItem } from '@/marketplace/utils/buildPermissionS
 export const buildApplicationBillingSummary = (
   billsCredits: boolean,
 ): PermissionSummaryItem[] =>
-  billsCredits
-    ? [{ Icon: IconCreditCard, label: t`Bill credits to your workspace` }]
-    : [];
+  billsCredits ? [{ Icon: IconCreditCard, label: t`Bill your workspace` }] : [];

@@ -61,6 +61,7 @@ describe('SettingsApplicationConnectionsSection', () => {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: false,
           },
+          connectedAccountPrices: [],
         },
       ],
       loading: false,
@@ -128,6 +129,7 @@ describe('SettingsApplicationConnectionsSection', () => {
             scopes: ['calendar.readonly'],
             isClientCredentialsConfigured: true,
           },
+          connectedAccountPrices: [],
         },
       ],
       loading: false,
@@ -171,6 +173,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           scope: 'WORKSPACE',
           logoUrl: null,
           oauth: null,
+          connectedAccountPrices: [],
         },
       ],
       loading: false,
@@ -201,6 +204,64 @@ describe('SettingsApplicationConnectionsSection', () => {
     });
   });
 
+  it('asks to validate the subscription price before adding a billed connection', async () => {
+    mockedUseFindApplicationConnectionProviders.mockReturnValue({
+      connectionProviders: [
+        {
+          id: 'provider-1',
+          applicationId: 'app-1',
+          type: 'custom',
+          name: 'linkedin',
+          displayName: 'LinkedIn',
+          scope: 'WORKSPACE',
+          logoUrl: null,
+          oauth: null,
+          connectedAccountPrices: [
+            {
+              universalIdentifier: 'price-1',
+              label: 'Per connected account',
+              amountCents: 700,
+              currency: 'USD',
+              billingPeriod: 'MONTHLY',
+            },
+          ],
+        },
+      ],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    mockedUseApplicationConnectedAccounts.mockReturnValue({
+      accounts: [],
+      loading: false,
+      refetch: jest.fn(),
+    });
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter>
+          <SettingsApplicationConnectionsSection applicationId="app-1" />
+        </MemoryRouter>
+      </I18nProvider>,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Add connection/i }),
+    );
+
+    expect(mockTriggerAppOAuth).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText('Per connected account: $7 / month'),
+    ).toBeVisible();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Authorize' }));
+
+    expect(mockTriggerAppOAuth).toHaveBeenCalledWith({
+      applicationId: 'app-1',
+      providerName: 'linkedin',
+    });
+  });
+
   const buildProvider = ({
     scope,
     isClientCredentialsConfigured = true,
@@ -219,6 +280,7 @@ describe('SettingsApplicationConnectionsSection', () => {
       scopes: ['calendar.readonly'],
       isClientCredentialsConfigured,
     },
+    connectedAccountPrices: [],
   });
 
   const buildAccount = ({

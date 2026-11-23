@@ -47,6 +47,7 @@ export const mockedMcpServerSignInConnectionProvider: ApplicationConnectionProvi
     scope: ConnectionProviderScope.USER,
     logoUrl: null,
     oauth: null,
+    connectedAccountPrices: [],
   };
 
 export const mockedMcpServerWithSignIn: McpServerFragmentFragment = {
