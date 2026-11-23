@@ -1,15 +1,17 @@
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
+import { useStore } from 'jotai';
 import { type ViewFieldRelationScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 // Saved before the table changes, so a column the server rejects never shows
 export const useSaveScopedRelationColumn = (recordTableId: string) => {
-  const currentRecordFields = useAtomComponentStateValue(
+  const store = useStore();
+  const currentRecordFieldsCallbackState = useAtomComponentStateCallbackState(
     currentRecordFieldsComponentState,
     recordTableId,
   );
@@ -25,6 +27,7 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
     recordFieldId?: string;
     relationScope: ViewFieldRelationScope;
   }): Promise<boolean> => {
+    const currentRecordFields = store.get(currentRecordFieldsCallbackState);
     const recordFieldToSave = isDefined(recordFieldId)
       ? currentRecordFields.find(({ id }) => id === recordFieldId)
       : buildAddedRecordField({ currentRecordFields, fieldMetadataItemId });
