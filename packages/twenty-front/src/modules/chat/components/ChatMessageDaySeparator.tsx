@@ -50,7 +50,7 @@ const StyledNewLabel = styled.span`
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: 1.4;
+  line-height: ${themeCssVariables.spacing[4]};
   margin-inline-start: ${themeCssVariables.spacing[2]};
 `;
 
