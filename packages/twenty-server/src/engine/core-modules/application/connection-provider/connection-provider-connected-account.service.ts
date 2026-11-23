@@ -12,6 +12,7 @@ import { type ConnectionProviderEntity } from 'src/engine/core-modules/applicati
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
@@ -41,6 +42,7 @@ export class ConnectionProviderConnectedAccountService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
   async assertCallerCanConnectOrThrow({
@@ -151,32 +153,49 @@ export class ConnectionProviderConnectedAccountService {
         workspaceId,
       };
 
-      // Compared and written in one statement so overlapping reconnects cannot pin different accounts.
-      const updateResult = await this.connectedAccountRepository.update(
-        isDefined(identifiedAccount)
-          ? [
-              { ...reconnectTarget, externalAccountId: IsNull() },
-              {
-                ...reconnectTarget,
-                externalAccountId: identifiedAccount.externalAccountId,
-              },
-            ]
-          : reconnectTarget,
-        { ...sharedFields, userWorkspaceId },
-      );
-
-      const connectedAccount =
-        await this.connectedAccountRepository.findOneByOrFail(reconnectTarget);
-
-      if (updateResult.affected === 0 && isDefined(identifiedAccount)) {
-        const authorizedAccountHandle =
-          identifiedAccount.handle ?? identifiedAccount.externalAccountId;
-
-        throw new ConnectionProviderException(
-          `You authorized ${authorizedAccountHandle}, but this connection belongs to ${connectedAccount.handle}. Reconnect with ${connectedAccount.handle}, or add a new connection for ${authorizedAccountHandle}.`,
-          ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH,
+      const reconnect = async () => {
+        // Compared and written in one statement so overlapping reconnects cannot pin different accounts.
+        const updateResult = await this.connectedAccountRepository.update(
+          isDefined(identifiedAccount)
+            ? [
+                { ...reconnectTarget, externalAccountId: IsNull() },
+                {
+                  ...reconnectTarget,
+                  externalAccountId: identifiedAccount.externalAccountId,
+                },
+              ]
+            : reconnectTarget,
+          { ...sharedFields, userWorkspaceId },
         );
-      }
+
+        const reconnectedAccount =
+          await this.connectedAccountRepository.findOneByOrFail(
+            reconnectTarget,
+          );
+
+        if (updateResult.affected === 0 && isDefined(identifiedAccount)) {
+          const authorizedAccountHandle =
+            identifiedAccount.handle ?? identifiedAccount.externalAccountId;
+
+          throw new ConnectionProviderException(
+            `You authorized ${authorizedAccountHandle}, but this connection belongs to ${reconnectedAccount.handle}. Reconnect with ${reconnectedAccount.handle}, or add a new connection for ${authorizedAccountHandle}.`,
+            ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH,
+          );
+        }
+
+        return reconnectedAccount;
+      };
+
+      const reconnectingAccount =
+        await this.connectedAccountRepository.findOneBy(reconnectTarget);
+
+      const connectedAccount = isDefined(reconnectingAccount?.archivedAt)
+        ? await this.chargeThenPersist({
+            workspaceId,
+            applicationId: provider.applicationId,
+            persist: reconnect,
+          })
+        : await reconnect();
 
       this.emitConnectionChanged(connectedAccount);
 
@@ -201,12 +220,43 @@ export class ConnectionProviderConnectedAccountService {
       userWorkspaceId,
     });
 
-    const connectedAccount =
-      await this.connectedAccountRepository.save(created);
+    const connectedAccount = await this.chargeThenPersist({
+      workspaceId,
+      applicationId: provider.applicationId,
+      persist: () => this.connectedAccountRepository.save(created),
+    });
 
     this.emitConnectionChanged(connectedAccount);
 
     return connectedAccount;
+  }
+
+  private async chargeThenPersist({
+    workspaceId,
+    applicationId,
+    persist,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    persist: () => Promise<ConnectedAccountEntity>;
+  }): Promise<ConnectedAccountEntity> {
+    const chargeOutcome =
+      await this.billingSubscriptionUpdateService.chargeApplicationsThenPersist(
+        {
+          workspaceId,
+          additionalConnectedAccountApplicationId: applicationId,
+          persist,
+        },
+      );
+
+    if (chargeOutcome.isPaymentDeclined) {
+      throw new ConnectionProviderException(
+        "We couldn't bill this connection. Update your payment method and try again.",
+        ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED,
+      );
+    }
+
+    return chargeOutcome.persisted;
   }
 
   private emitConnectionChanged({

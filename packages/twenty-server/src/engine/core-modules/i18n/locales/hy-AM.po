@@ -42,6 +42,11 @@ msgstr "\"{0}\"-ը \"{1}\"-ի վավեր ենթադաշտ չէ։"
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\"-ը ստացել է անվավեր արժեք։"
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "\"{name}\"-ը չի կարող օգտագործվել տեսանելիության այս սահմանափակման մեջ"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -7866,6 +7871,11 @@ msgstr "Անվավեր viewUniversalIdentifier դաշտերի վիջեթի հա�
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "Անվավեր viewUniversalIdentifier դաշտերի վիջեթի համար \"{widgetTitle}\"։ Սպասվում է վավեր UUID"
+
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Տեսանելիության անվավեր սահմանափակում՝ {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -17475,6 +17485,16 @@ msgstr "View group ստեղծելու համար ViewId-ն պարտադիր է։
 #: src/engine/metadata-modules/view-sort/exceptions/view-sort.exception.ts
 msgid "ViewId is required to create a view sort."
 msgstr "View sort ստեղծելու համար ViewId-ն պարտադիր է։"
+
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "Տեսանելիության սահմանափակումը չի կարող ընթերցվել"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "Տեսանելիության սահմանափակումն ունի չափազանց շատ պայմաններ"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts

@@ -37,6 +37,7 @@ import {
   type CreateApplicationRegistrationVersionParams,
 } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
+import { areApplicationBillingPricesValid } from 'src/engine/core-modules/application/utils/are-application-billing-prices-valid.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-universal-identifier.util';
@@ -938,6 +939,18 @@ export class ApplicationRegistrationService {
     if (reservedVariableNames.length > 0) {
       this.logger.warn(
         `Skipping catalog entry from package ${params.sourcePackage}: variable names are reserved: ${reservedVariableNames.join(', ')}`,
+      );
+
+      return null;
+    }
+
+    if (
+      !areApplicationBillingPricesValid(
+        params.manifest.application.billing?.prices,
+      )
+    ) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: invalid or duplicated billing prices`,
       );
 
       return null;

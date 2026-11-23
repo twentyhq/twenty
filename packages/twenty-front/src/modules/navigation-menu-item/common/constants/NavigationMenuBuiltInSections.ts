@@ -5,7 +5,7 @@ import {
   IconHistory,
   IconInbox,
   IconLego,
-  IconMessage,
+  IconMessageHeart,
 } from 'twenty-ui/icon';
 
 import { INBOX_CHANNELS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxChannelsNavigationSectionId';
@@ -14,6 +14,10 @@ import { INBOX_RECENTS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxRece
 import { INBOX_TRIAGE_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxTriageNavigationSectionId';
 import { AI_AGENTS_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/built-in-sections/constants/AiAgentsNavigationSectionId';
 import { FAVORITES_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/sections/favorites/constants/FavoritesNavigationSectionId';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   {
@@ -31,14 +35,17 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     color: 'blue',
     isAi: true,
     navigationSectionId: INBOX_TRIAGE_NAVIGATION_SECTION_ID,
+    requiredPermissionFlag: PermissionFlagType.AI,
+    requiredFeatureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   },
   {
     key: 'aiChatFavorites',
     label: msg`Favorite chats`,
-    Icon: IconMessage,
+    Icon: IconMessageHeart,
     color: 'pink',
     isAi: true,
     navigationSectionId: INBOX_FAVORITES_NAVIGATION_SECTION_ID,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
   {
     key: 'aiChatChannels',
@@ -47,6 +54,8 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     color: 'green',
     isAi: true,
     navigationSectionId: INBOX_CHANNELS_NAVIGATION_SECTION_ID,
+    requiredPermissionFlag: PermissionFlagType.AI,
+    requiredFeatureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   },
   {
     key: 'aiChatRecents',
@@ -55,6 +64,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     color: 'orange',
     isAi: true,
     navigationSectionId: INBOX_RECENTS_NAVIGATION_SECTION_ID,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
   {
     key: 'aiAgents',
@@ -62,7 +72,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconLego,
     color: 'purple',
     isAi: false,
-    isAiPermissionRequired: true,
     navigationSectionId: AI_AGENTS_NAVIGATION_SECTION_ID,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
 ] as const;

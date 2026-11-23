@@ -41,6 +41,7 @@ export { CHAT_REFERENCE_MALFORMED_REGEX } from './constants/chat-reference-malfo
 export { CHAT_REFERENCE_METADATA_NAME_REGEX } from './constants/chat-reference-metadata-name-regex.const';
 export { CHAT_REFERENCE_REGEX } from './constants/chat-reference-regex.const';
 export { CHAT_REFERENCE_UUID_REGEX } from './constants/chat-reference-uuid-regex.const';
+export { CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES } from './constants/code-interpreter-max-input-file-size-bytes.const';
 export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export { DATA_RESIDENCIES_BY_REGION } from './constants/data-residencies-by-region.const';
 export type { DataResidencyRegion } from './constants/data-residency-regions.const';

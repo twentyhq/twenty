@@ -37,6 +37,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
 import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
+import { isRlsOneToManyEmptinessPredicate } from 'src/engine/permissions/internal/rls/utils/is-rls-one-to-many-emptiness-predicate.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -181,6 +182,20 @@ const buildPredicateRecordFilter = ({
             : 'NOT_NULL',
       },
     };
+  }
+
+  if (isRlsOneToManyEmptinessPredicate({ predicate, fieldMetadata })) {
+    if (!isRelationHopEnabled) {
+      return UNSATISFIABLE_RECORD_FILTER;
+    }
+
+    const hasRelatedRecordFilter: RecordGqlOperationFilter = {
+      [fieldMetadata.name]: { id: { is: 'NOT_NULL' } },
+    };
+
+    return predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+      ? { not: hasRelatedRecordFilter }
+      : hasRelatedRecordFilter;
   }
 
   let predicateValue = predicate.value;
