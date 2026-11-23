@@ -1,6 +1,5 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { isCachedRelationCopyWithArguments } from '@/apollo/optimistic-effect/utils/isCachedRelationCopyWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -64,15 +63,11 @@ export const triggerAttachRelationOptimisticEffect = ({
     fields: {
       [fieldNameOnTargetRecord]: (
         targetRecordFieldValue,
-        { toReference, storeFieldName, DELETE },
+        { toReference, storeFieldName },
       ) => {
-        if (
-          isCachedRelationCopyWithArguments({
-            storeFieldName,
-            relationFieldName: fieldNameOnTargetRecord,
-          })
-        ) {
-          return DELETE;
+        // Copies with arguments are left to useListenToScopedRelationRecordOperation
+        if (storeFieldName !== fieldNameOnTargetRecord) {
+          return targetRecordFieldValue;
         }
 
         const fieldValueIsObjectRecordConnectionWithRefs =

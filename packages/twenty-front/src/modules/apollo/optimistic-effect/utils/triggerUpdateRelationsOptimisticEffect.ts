@@ -1,7 +1,6 @@
 import { triggerAttachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerAttachRelationOptimisticEffect';
 import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { triggerDetachRelationOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDetachRelationOptimisticEffect';
-import { invalidateCachedRelationsWithArguments } from '@/apollo/optimistic-effect/utils/invalidateCachedRelationsWithArguments';
 import {
   FieldMetadataType,
   type ObjectRecordsPermissions,
@@ -11,7 +10,6 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
-import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -180,23 +178,6 @@ const triggerUpdateRelationOptimisticEffect = ({
     { strict: true },
   );
   if (noDiff && !isDeletion) {
-    // The record stays attached, but its new values may move it in or out of its target's copies with arguments
-    if (
-      relation.type === RelationType.MANY_TO_ONE &&
-      isDefined(updatedFieldValueOnSourceRecord)
-    ) {
-      invalidateCachedRelationsWithArguments({
-        cache,
-        recordCacheId: cache.identify({
-          id: updatedFieldValueOnSourceRecord.id,
-          __typename: getObjectTypename(
-            fullTargetObjectMetadataItem.nameSingular,
-          ),
-        }),
-        relationFieldName: targetFieldMetadataFullObject.name,
-      });
-    }
-
     return;
   }
 

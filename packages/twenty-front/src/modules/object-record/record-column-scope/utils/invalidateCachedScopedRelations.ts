@@ -1,6 +1,5 @@
-import { type ApolloCache } from '@apollo/client';
+import { type ApolloCache, type StoreObject } from '@apollo/client';
 
-import { invalidateCachedRelationsWithArguments } from '@/apollo/optimistic-effect/utils/invalidateCachedRelationsWithArguments';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { isPlainObject } from 'twenty-shared/utils';
 
@@ -29,10 +28,17 @@ export const invalidateCachedScopedRelations = ({
         }
 
         for (const relationFieldName of relationFieldNames) {
-          invalidateCachedRelationsWithArguments({
-            cache,
-            recordCacheId,
-            relationFieldName,
+          cache.modify<StoreObject>({
+            id: recordCacheId,
+            fields: {
+              [relationFieldName]: (
+                relationFieldValue,
+                { storeFieldName, DELETE },
+              ) =>
+                storeFieldName === relationFieldName
+                  ? relationFieldValue
+                  : DELETE,
+            },
           });
         }
       }

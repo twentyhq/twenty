@@ -8,7 +8,7 @@ import { useCallback, useContext, useEffect } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
-// Only the server applies a scope, so a write the client cannot place drops the cached scoped values.
+// Sole owner of cached scoped values, which optimistic effects leave untouched since only the server applies a scope.
 // A burst of writes scans the cache once, as a scan costs as much as the session has cached, and the reload
 // that follows refetches every scoped column of the table.
 export const useListenToScopedRelationRecordOperation = ({
