@@ -16,7 +16,7 @@ const emailsField = getMockFieldMetadataItemOrThrow({
 
 const buildPeopleAlias = (
   scopedRelationAlias: Pick<ScopedRelationAlias, 'responseKey'> &
-    Partial<ScopedRelationAlias>,
+    Partial<Pick<ScopedRelationAlias, 'lookupTarget'>>,
 ): ScopedRelationAlias => ({
   recordFieldId: scopedRelationAlias.responseKey,
   relationObjectMetadataItem: personObjectMetadataItem,
