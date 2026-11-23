@@ -24,6 +24,7 @@ type TestSetup = {
   adminRoleId: string;
   companyObjectMetadataId: string;
   companyNameFieldMetadataId: string;
+  companyPeopleFieldMetadataId: string;
   personCompanyFieldMetadataId: string;
   workspaceMemberCalendarStartDayFieldMetadataId: string;
   workspaceMemberBlocklistFieldMetadataId: string;
@@ -228,6 +229,27 @@ const failingRowLevelPermissionPredicateUpsertTestCases: EachTestingContext<Test
       },
     },
     {
+      title:
+        'when a one to many relation is compared with an operand other than emptiness',
+      context: {
+        input: (testSetup) => ({
+          roleId: testSetup.createdRoleId,
+          objectMetadataId: testSetup.companyObjectMetadataId,
+          rules: [
+            {
+              predicates: [
+                {
+                  fieldMetadataId: testSetup.companyPeopleFieldMetadataId,
+                  operand: RowLevelPermissionPredicateOperand.IS,
+                  value: ['20202020-0000-4000-8000-000000000000'],
+                },
+              ],
+            },
+          ],
+        }),
+      },
+    },
+    {
       title: 'when the relation hop does not exist',
       context: {
         input: (testSetup) => ({
@@ -294,6 +316,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let adminRoleId: string;
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
+  let companyPeopleFieldMetadataId: string;
   let personObjectMetadataId: string;
   let personCompanyFieldMetadataId: string;
   let workspaceMemberCalendarStartDayFieldMetadataId: string;
@@ -332,6 +355,13 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     jestExpectToBeDefined(nameField);
     companyNameFieldMetadataId = nameField.id;
+
+    const peopleField = companyObjectMetadata.fieldsList.find(
+      (field: { name: string }) => field.name === 'people',
+    );
+
+    jestExpectToBeDefined(peopleField);
+    companyPeopleFieldMetadataId = peopleField.id;
 
     const personObjectMetadata = objects.find(
       (object: { nameSingular: string }) => object.nameSingular === 'person',
@@ -444,6 +474,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
         adminRoleId,
         companyObjectMetadataId,
         companyNameFieldMetadataId,
+        companyPeopleFieldMetadataId,
         personCompanyFieldMetadataId,
         workspaceMemberCalendarStartDayFieldMetadataId,
         workspaceMemberBlocklistFieldMetadataId,

@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { isRlsOneToManyEmptinessPredicate } from 'src/engine/permissions/internal/rls/utils/is-rls-one-to-many-emptiness-predicate.util';
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
@@ -34,6 +35,23 @@ export const findRlsRuleRelationPredicatesToObject = ({
         ({ predicates }) => predicates,
       ),
     )
+    .map((predicate) => {
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: predicate.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      });
+
+      // Emptiness of a one-to-many relation reads the target's join column, like a hop through it
+      return isDefined(fieldMetadata) &&
+        isDefined(fieldMetadata.relationTargetFieldMetadataId) &&
+        isRlsOneToManyEmptinessPredicate({ predicate, fieldMetadata })
+        ? {
+            ...predicate,
+            relationFieldMetadataId: fieldMetadata.id,
+            fieldMetadataId: fieldMetadata.relationTargetFieldMetadataId,
+          }
+        : predicate;
+    })
     .filter(
       ({ relationFieldMetadataId, fieldMetadataId }) =>
         isDefined(relationFieldMetadataId) &&
