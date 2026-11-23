@@ -41,27 +41,22 @@ export const computeSubscriptionUpdateOptions = (
             proration: 'create_prorations',
             anchor: 'now',
           };
-    case SubscriptionUpdateType.QUANTITIES: {
-      const shouldInvoiceImmediately =
-        context?.isQuantityIncrease && !context?.isSendInvoice;
-
-      return {
-        proration: shouldInvoiceImmediately
-          ? 'always_invoice'
-          : 'create_prorations',
-      };
-    }
+    case SubscriptionUpdateType.QUANTITIES:
     case SubscriptionUpdateType.APPLICATIONS: {
       const shouldInvoiceImmediately =
         context?.isQuantityIncrease && !context?.isSendInvoice;
 
+      if (!shouldInvoiceImmediately) {
+        return { proration: 'create_prorations' };
+      }
+
       // A declined app charge leaves the subscription as it was instead of past_due
-      return shouldInvoiceImmediately
+      return subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS
         ? {
             proration: 'always_invoice',
             paymentBehavior: 'pending_if_incomplete',
           }
-        : { proration: 'create_prorations' };
+        : { proration: 'always_invoice' };
     }
     default:
       return assertUnreachable(

@@ -15,6 +15,7 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { type BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { type StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
@@ -77,6 +78,8 @@ describe('Application price billing (integration)', () => {
   let workspaceMemberCount: number;
   let stripeItems: StripeItem[];
   let updateSubscriptionSpy: jest.SpyInstance;
+  let voidInvoiceSpy: jest.SpyInstance;
+  let pendingUpdateInvoiceId: string | null;
   let spies: jest.SpyInstance[];
 
   const findStripeItem = (stripePriceId: string) =>
@@ -123,6 +126,7 @@ describe('Application price billing (integration)', () => {
       );
 
     spies = [];
+    pendingUpdateInvoiceId = null;
 
     const { subscriptionId: billingSubscriptionId } =
       await setupResourceCreditSubscription({
@@ -216,6 +220,10 @@ describe('Application price billing (integration)', () => {
       ({
         id: TEST_STRIPE_SUBSCRIPTION_ID,
         items: { data: stripeItems },
+        pending_update: isDefined(pendingUpdateInvoiceId)
+          ? { subscription_items: [] }
+          : null,
+        latest_invoice: pendingUpdateInvoiceId,
       }) as unknown as SubscriptionWithSchedule;
 
     updateSubscriptionSpy = jest
@@ -250,8 +258,20 @@ describe('Application price billing (integration)', () => {
         return buildStripeSubscription();
       });
 
+    voidInvoiceSpy = jest
+      .spyOn(
+        getAppProviderByClassName<StripeInvoiceService>('StripeInvoiceService'),
+        'voidInvoice',
+      )
+      .mockImplementation(async () => {
+        pendingUpdateInvoiceId = null;
+
+        return {} as Awaited<ReturnType<StripeInvoiceService['voidInvoice']>>;
+      });
+
     spies = [
       updateSubscriptionSpy,
+      voidInvoiceSpy,
       jest
         .spyOn(
           getAppProviderByClassName<StripeSubscriptionScheduleService>(
@@ -346,6 +366,16 @@ describe('Application price billing (integration)', () => {
         ]),
       }),
     );
+  }, 120000);
+
+  it('voids the invoice of a declined pending update once the application is uninstalled', async () => {
+    pendingUpdateInvoiceId = 'in_pending_update';
+    await setAcceptedBillingPrices([]);
+    await notifyInstallationChanged();
+
+    expect(voidInvoiceSpy).toHaveBeenCalledWith('in_pending_update');
+    expect(updateSubscriptionSpy).not.toHaveBeenCalled();
+    expect(findStripeItem(applicationMonthPriceId)).toBeUndefined();
   }, 120000);
 
   it('fails instead of removing a subscribed application item whose catalog entry is incomplete', async () => {

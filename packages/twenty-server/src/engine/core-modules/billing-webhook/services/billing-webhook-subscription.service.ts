@@ -286,7 +286,10 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (
-      this.isSubscriptionStarting(event, incomingSubscription.status) &&
+      this.isSubscriptionStarting({
+        event,
+        status: incomingSubscription.status,
+      }) &&
       (await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
         workspaceId,
       ))
@@ -316,13 +319,16 @@ export class BillingWebhookSubscriptionService {
     };
   }
 
-  private isSubscriptionStarting(
+  private isSubscriptionStarting({
+    event,
+    status,
+  }: {
     event:
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
-      | Stripe.CustomerSubscriptionDeletedEvent,
-    status: SubscriptionStatus,
-  ): boolean {
+      | Stripe.CustomerSubscriptionDeletedEvent;
+    status: SubscriptionStatus;
+  }): boolean {
     if (!WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(status)) {
       return false;
     }
@@ -332,7 +338,8 @@ export class BillingWebhookSubscriptionService {
         return true;
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
         return (
-          event.data.previous_attributes?.status === SubscriptionStatus.Incomplete
+          event.data.previous_attributes?.status ===
+          SubscriptionStatus.Incomplete
         );
       default:
         return false;

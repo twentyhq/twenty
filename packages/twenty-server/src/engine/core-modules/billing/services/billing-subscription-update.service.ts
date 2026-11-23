@@ -354,6 +354,8 @@ export class BillingSubscriptionUpdateService {
       subscription.stripeSubscriptionId,
     );
 
+    await this.discardPendingUpdate(stripeSubscription);
+
     const currentPrices = await this.getSubscriptionPricesFromItems(
       stripeSubscription.items.data,
     );
@@ -490,6 +492,24 @@ export class BillingSubscriptionUpdateService {
       syncSubscriptionToDatabase,
       buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
+  }
+
+  // A pending update is replayed if its open invoice gets paid later, even when its items are no longer wanted
+  private async discardPendingUpdate(
+    stripeSubscription: Stripe.Subscription,
+  ): Promise<void> {
+    const latestInvoice = stripeSubscription.latest_invoice;
+
+    if (
+      !isDefined(stripeSubscription.pending_update) ||
+      !isDefined(latestInvoice)
+    ) {
+      return;
+    }
+
+    await this.stripeInvoiceService.voidInvoice(
+      typeof latestInvoice === 'string' ? latestInvoice : latestInvoice.id,
     );
   }
 
