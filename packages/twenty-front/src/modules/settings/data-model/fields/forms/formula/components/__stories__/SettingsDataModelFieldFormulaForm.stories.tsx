@@ -5,6 +5,7 @@ import {
 } from '@storybook/react-vite';
 import { FormProvider, useForm } from 'react-hook-form';
 import { expect, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsDataModelFieldFormulaForm } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm';
@@ -18,7 +19,7 @@ const mockedOpportunityObjectMetadataItem =
     (item) => item.nameSingular === 'opportunity',
   );
 
-if (!mockedOpportunityObjectMetadataItem) {
+if (!isDefined(mockedOpportunityObjectMetadataItem)) {
   throw new Error('Opportunity object metadata item not found');
 }
 
