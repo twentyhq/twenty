@@ -307,6 +307,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
       transactionScope: queryRunnerContext.transactionScope,
       recordReadRestrictions: extendedQueryRunnerContext.recordReadRestrictions,
+      featureFlagsMap: extendedQueryRunnerContext.featureFlagsMap,
     });
 
     return { result: enrichedResult, relationAggregatedValues };
@@ -322,6 +323,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatFieldMetadataMaps,
     transactionScope,
     recordReadRestrictions,
+    featureFlagsMap,
   }: {
     results: Output;
     selection: CommonSelection;
@@ -332,6 +334,7 @@ export abstract class CommonBaseQueryRunnerService<
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     transactionScope: CommonBaseQueryRunnerContext['transactionScope'];
     recordReadRestrictions: RecordReadRestrictions;
+    featureFlagsMap: CommonExtendedQueryRunnerContext['featureFlagsMap'];
   }): Promise<Output> {
     const resultWithGetters = await this.processQueryResult({
       queryResult: results,
@@ -350,6 +353,7 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
       authContext,
       recordReadRestrictions,
+      featureFlagsMap,
     });
 
     const executePostQueryHooks = () =>
