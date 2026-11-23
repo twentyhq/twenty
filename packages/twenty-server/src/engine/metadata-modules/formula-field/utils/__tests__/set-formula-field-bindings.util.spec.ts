@@ -12,7 +12,9 @@ const setBindings = ({
   existingUniversalSettings,
 }: {
   universalSettings: Record<string, unknown> | null;
-  existingUniversalSettings?: unknown;
+  existingUniversalSettings?: Parameters<
+    typeof setFormulaFieldBindings
+  >[0]['existingUniversalSettings'];
 }) =>
   setFormulaFieldBindings({
     universalFlatFieldMetadata: getFlatFieldMetadataMock({

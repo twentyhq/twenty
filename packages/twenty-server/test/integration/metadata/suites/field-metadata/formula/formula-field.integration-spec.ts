@@ -36,7 +36,7 @@ const createFormulaField = ({
       objectMetadataId,
       isLabelSyncedWithName: false,
       settings: { formula: { expression } },
-      ...(isUnique === true ? { isUnique } : {}),
+      ...(isUnique ? { isUnique } : {}),
     },
     gqlFields: 'id settings',
   });

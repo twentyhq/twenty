@@ -125,7 +125,7 @@ export const validateFlatFieldMetadataFormula = ({
 
   const errors: FlatFieldMetadataValidationError[] = [];
 
-  if (isUnique === true) {
+  if (isUnique) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: 'A formula field cannot be unique',
@@ -133,7 +133,7 @@ export const validateFlatFieldMetadataFormula = ({
     });
   }
 
-  if (isSearchable === true) {
+  if (isSearchable) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: 'A formula field cannot be searchable',
