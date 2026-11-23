@@ -359,8 +359,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "secondFieldMetadataUniversalIdentifier",
       "thirdFieldMetadataUniversalIdentifier",
       "isInherent",
+      "isActive",
+      "overrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "role": {
     "propertiesToCompare": [

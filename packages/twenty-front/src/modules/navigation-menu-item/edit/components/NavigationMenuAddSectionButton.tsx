@@ -12,7 +12,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
@@ -51,7 +51,8 @@ export const NavigationMenuAddSectionButton = ({
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const hiddenNavigationMenuItems =
     useHiddenNavigationMenuItemsInTab(containerId);
@@ -69,7 +70,7 @@ export const NavigationMenuAddSectionButton = ({
 
   const builtInSectionsToOffer = NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(
     (builtInSection) =>
-      (!builtInSection.isAi || areAiChatSectionsAvailable) &&
+      isBuiltInSectionAvailable(builtInSection.key) &&
       canAddBuiltInSectionToContainer({
         builtInSectionKey: builtInSection.key,
         containerId,

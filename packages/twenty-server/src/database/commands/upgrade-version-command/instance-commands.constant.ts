@@ -328,7 +328,8 @@ import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/u
 import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429428999-add-view-field-relation-scope';
 import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429429999-add-view-field-label';
 import { AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795439034166-add-conditional-availability-to-page-layout-widget';
-import { AddFieldMetadataOptionDescriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795453666458-add-field-metadata-option-description';
+import { RelatedRecordPathOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795470470000-related-record-path-overridable-entity';
+import { AddFieldMetadataOptionDescriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477707848-add-field-metadata-option-description';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -659,5 +660,6 @@ export const INSTANCE_COMMANDS = [
   AddViewFieldRelationScopeFastInstanceCommand,
   AddViewFieldLabelFastInstanceCommand,
   AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand,
+  RelatedRecordPathOverridableEntityFastInstanceCommand,
   AddFieldMetadataOptionDescriptionFastInstanceCommand,
 ];
