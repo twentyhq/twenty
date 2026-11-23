@@ -9,7 +9,7 @@ import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
-import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
+import { canMoveBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canMoveBuiltInSectionToContainer';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { computeNavigationMenuItemDropPlacement } from '@/navigation-menu-item/common/utils/computeNavigationMenuItemDropPlacement';
 import { resolveNavigationMenuItemDroppableId } from '@/navigation-menu-item/common/utils/resolveNavigationMenuItemDroppableId';
@@ -153,7 +153,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       !isDefined(placement) ||
       (isDefined(draggedItem.builtInSectionKey) &&
         placement.parentId !== undefined &&
-        !canAddBuiltInSectionToContainer({
+        !canMoveBuiltInSectionToContainer({
           builtInSectionKey: draggedItem.builtInSectionKey,
           containerId: placement.parentId,
           items: allItems,
