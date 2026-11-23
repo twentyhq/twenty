@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import Linkify from 'linkify-react';
 
@@ -10,24 +11,39 @@ import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGrou
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
-import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
+import { StyledChatMessageFloatingActions } from '@/chat/components/StyledChatMessageFloatingActions';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
-import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
+import { CHAT_GROUPED_MESSAGE_GAP } from '@/chat/constants/ChatGroupedMessageGap';
+import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
+import { CHAT_RUN_GAP } from '@/chat/constants/ChatRunGap';
+import { LightCopyIconButtonBase } from '@/ui/input/components/LightCopyIconButtonBase';
 import {
   isDefined,
   isFieldValueRestricted,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
-const StyledGroup = styled.div`
+const StyledGroup = styled.div<{ isFollowedByRun: boolean }>`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${CHAT_GROUPED_MESSAGE_GAP};
+  margin-bottom: ${({ isFollowedByRun }) =>
+    isFollowedByRun ? `calc(${CHAT_RUN_GAP} - ${CHAT_MESSAGE_LIST_GAP})` : '0'};
+`;
+
+const StyledMessageRow = styled(StyledChatMessageRow)<{ hasFooter: boolean }>`
+  &:not(:last-child) {
+    margin-bottom: ${({ hasFooter }) =>
+      hasFooter
+        ? `calc(${CHAT_MESSAGE_LIST_GAP} - ${CHAT_GROUPED_MESSAGE_GAP})`
+        : '0'};
+  }
 `;
 
 const StyledMessageText = styled.span`
@@ -41,41 +57,47 @@ const StyledMessageText = styled.span`
 
 type ChatThreadMessageGroupProps = {
   group: ChatMessageGroup;
+  isFollowedByRun?: boolean;
   reactionsByMessageId?: Record<string, ChatMessageReaction[]>;
   onReactionToggle?: (messageId: string, emoji: string) => void;
 };
 
 export const ChatThreadMessageGroup = ({
   group,
+  isFollowedByRun = false,
   reactionsByMessageId,
   onReactionToggle,
 }: ChatThreadMessageGroupProps) => {
+  const { t } = useLingui();
+  const isTouchDevice = useIsTouchDevice();
   const [firstMessage] = group.messages;
   const { isOutgoing } = group;
 
   return (
-    <StyledGroup>
-      {group.messages.map((message) => {
+    <StyledGroup isFollowedByRun={isFollowedByRun}>
+      {group.messages.map((message, index) => {
         const headerSender =
           !isOutgoing && message.id === firstMessage.id
             ? message.sender
             : undefined;
-        const hasHeader = isDefined(headerSender);
-        const senderHeader = hasHeader && (
-          <ChatThreadMessageSenderHeader
-            sender={headerSender}
-            receivedAt={message.receivedAt}
-          />
+        const senderHeader = isDefined(headerSender) && (
+          <ChatThreadMessageSenderHeader sender={headerSender} />
         );
+        const isGroupedWithPrevious = index > 0;
+        const isGroupedWithNext = index < group.messages.length - 1;
 
         if (isFieldValueRestricted(message.text)) {
           return (
-            <StyledChatMessageRow key={message.id} isRightAligned={isOutgoing}>
+            <StyledMessageRow
+              key={message.id}
+              isRightAligned={isOutgoing}
+              hasFooter={false}
+            >
               {senderHeader}
               <EmailThreadNotShared
                 visibility={MessageChannelVisibility.METADATA}
               />
-            </StyledChatMessageRow>
+            </StyledMessageRow>
           );
         }
 
@@ -85,20 +107,29 @@ export const ChatThreadMessageGroup = ({
         const hasText = isNonEmptyString(message.text);
         const reactions = reactionsByMessageId?.[message.id] ?? [];
         const hasReactions = isNonEmptyArray(reactions);
+        const hasMeta = isOutgoing || isDefined(message.receivedAt);
 
         return (
-          <StyledChatMessageRow key={message.id} isRightAligned={isOutgoing}>
+          <StyledMessageRow
+            key={message.id}
+            isRightAligned={isOutgoing}
+            isGroupedWithPrevious={isGroupedWithPrevious}
+            isGroupedWithNext={isGroupedWithNext}
+            hasFooter={hasReactions}
+            data-hover-card={hasText ? '' : undefined}
+            tabIndex={hasText && isTouchDevice ? -1 : undefined}
+          >
             {senderHeader}
             {(hasText || !isNonEmptyArray(files)) && (
               <StyledChatMessageBubble isUser isOtherMember={!isOutgoing}>
                 <ChatMessageBubbleContent
                   meta={
-                    isOutgoing ? (
+                    hasMeta ? (
                       <>
                         {isDefined(message.receivedAt) && (
                           <ChatMessageTime date={message.receivedAt} />
                         )}
-                        <ChatMessageReceipt status="sent" />
+                        {isOutgoing && <ChatMessageReceipt status="sent" />}
                       </>
                     ) : undefined
                   }
@@ -122,29 +153,33 @@ export const ChatThreadMessageGroup = ({
                 isRightAligned={isOutgoing}
               />
             )}
-            {(hasText || hasReactions) && (
-              <StyledChatMessageFooter isRightAligned={isOutgoing}>
-                {hasReactions && (
-                  <ChatThreadMessageReactions
-                    reactions={reactions}
-                    onReactionToggle={
-                      isDefined(onReactionToggle)
-                        ? (emoji) => onReactionToggle(message.id, emoji)
-                        : undefined
-                    }
-                  />
-                )}
-                {hasText && (
-                  <StyledChatMessageActions
-                    className="message-actions"
-                    isRightAligned={isOutgoing}
-                  >
-                    <LightCopyIconButton copyText={message.text} />
-                  </StyledChatMessageActions>
-                )}
+            {hasReactions && (
+              <StyledChatMessageFooter isCompact isRightAligned={isOutgoing}>
+                <ChatThreadMessageReactions
+                  reactions={reactions}
+                  onReactionToggle={
+                    isDefined(onReactionToggle)
+                      ? (emoji) => onReactionToggle(message.id, emoji)
+                      : undefined
+                  }
+                />
               </StyledChatMessageFooter>
             )}
-          </StyledChatMessageRow>
+            {hasText && (
+              <StyledChatMessageFloatingActions
+                className="message-actions"
+                isAtStart={isOutgoing}
+              >
+                <ButtonGroup
+                  aria-label={t`Message actions`}
+                  framed
+                  attached={false}
+                >
+                  <LightCopyIconButtonBase copyText={message.text} />
+                </ButtonGroup>
+              </StyledChatMessageFloatingActions>
+            )}
+          </StyledMessageRow>
         );
       })}
     </StyledGroup>

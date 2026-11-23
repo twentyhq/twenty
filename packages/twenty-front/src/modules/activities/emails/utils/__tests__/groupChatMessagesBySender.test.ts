@@ -19,6 +19,7 @@ describe('groupChatMessagesBySender', () => {
         buildMessage('5', 'sundar'),
       ],
       new Set(['3', '4']),
+      'UTC',
     );
 
     expect(
@@ -37,6 +38,7 @@ describe('groupChatMessagesBySender', () => {
     const groups = groupChatMessagesBySender(
       [buildMessage('1', 'thomas'), buildMessage('2', 'sundar')],
       new Set(),
+      'UTC',
     );
 
     expect(groups).toHaveLength(2);
@@ -49,8 +51,36 @@ describe('groupChatMessagesBySender', () => {
     const groups = groupChatMessagesBySender(
       [senderlessMessage('1'), senderlessMessage('2')],
       new Set(),
+      'UTC',
     );
 
     expect(groups).toHaveLength(2);
+  });
+
+  it('should start a new group when the same sender writes on another day', () => {
+    const datedMessage = (id: string, receivedAt: string) => ({
+      ...buildMessage(id, 'sundar'),
+      receivedAt,
+    });
+
+    const groups = groupChatMessagesBySender(
+      [
+        datedMessage('1', '2026-11-22T22:00:00.000Z'),
+        datedMessage('2', '2026-11-22T23:30:00.000Z'),
+        datedMessage('3', '2026-11-23T08:00:00.000Z'),
+      ],
+      new Set(),
+      'UTC',
+    );
+
+    expect(
+      groups.map(({ isFirstOfDay, messages }) => ({
+        isFirstOfDay,
+        messageIds: messages.map(({ id }) => id),
+      })),
+    ).toEqual([
+      { isFirstOfDay: true, messageIds: ['1', '2'] },
+      { isFirstOfDay: true, messageIds: ['3'] },
+    ]);
   });
 });

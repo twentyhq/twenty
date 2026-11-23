@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 
+import { CHAT_MESSAGE_OWN_BUBBLE_BACKGROUND } from '@/chat/constants/ChatMessageOwnBubbleBackground';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledChatMessageBubble = styled.div<{
@@ -12,7 +13,7 @@ export const StyledChatMessageBubble = styled.div<{
     }
 
     if (isUser) {
-      return themeCssVariables.background.tertiary;
+      return CHAT_MESSAGE_OWN_BUBBLE_BACKGROUND;
     }
 
     return 'transparent';
@@ -33,7 +34,11 @@ export const StyledChatMessageBubble = styled.div<{
   max-width: 100%;
   overflow-wrap: break-word;
   padding: ${({ isUser }) =>
-    isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
+    isUser
+      ? `${themeCssVariables.spacing[0.5]} ${themeCssVariables.spacing[3]}`
+      : '0'};
+  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
   white-space: normal;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
   /* Pre-wrap on the container turns newlines between blocks into spacing; only code pre-wraps. */
