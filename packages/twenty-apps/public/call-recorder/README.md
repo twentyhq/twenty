@@ -32,9 +32,10 @@ variable to `false` to turn summaries off.
 ## 🤖 The Recording Bot field
 
 Each calendar event has a **Recording Bot** field. It starts blank and the app
-sets it to On when it actually schedules the recorder for that meeting, which
-happens once the meeting is less than a day away. Set it to Off to skip a
-meeting. Past meetings the recorder never joined simply stay blank.
+sets it to Auto when it schedules the recorder for that meeting on its own,
+which happens once the meeting is less than a day away. Set it to On to record
+a meeting the app would not pick by itself, or to Off to skip a meeting. Past
+meetings the recorder never joined simply stay blank.
 
 The app schedules the recorder on its own only for meetings that are on a
 calendar a workspace member connected. A meeting on no member's calendar, such

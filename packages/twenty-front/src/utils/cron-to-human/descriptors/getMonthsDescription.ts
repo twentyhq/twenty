@@ -6,6 +6,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '~/utils/cron-to-human/types/CronDescriptionOptions';
+import { expandCronListValues } from '~/utils/cron-to-human/utils/expandCronListValues';
 
 const getMonthName = (
   monthNum: number,
@@ -87,7 +88,7 @@ export const getMonthsDescription = (
   }
 
   if (isListValue(months)) {
-    const values = months.split(',').map((v) => v.trim());
+    const values = expandCronListValues(months);
     const monthNames = values.map((month) => {
       const monthNum = parseInt(month, 10);
       return !isNaN(monthNum)

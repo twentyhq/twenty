@@ -19,6 +19,7 @@ const StyledTitle = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+  padding-block: ${themeCssVariables.spacing[1]};
 `;
 
 type InboxDirectMessageTitleProps = {
