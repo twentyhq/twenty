@@ -179,7 +179,6 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    // Before the upsert: a retry after a failed mirror must still see the old trial end
     const isOtherSubscriptionLive = allLiveSubscriptions.some(
       (customerSubscription) => customerSubscription.id !== data.object.id,
     );

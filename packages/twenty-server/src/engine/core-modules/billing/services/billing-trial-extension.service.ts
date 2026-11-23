@@ -204,7 +204,6 @@ export class BillingTrialExtensionService {
     );
   }
 
-  // Runs under the subscription state lock held by the webhook
   async mirrorStripeTrialEnd({
     workspaceId,
     previousTrialEnd,

@@ -227,7 +227,6 @@ export class AdminPanelBillingArrangementService {
     return this.toArrangementDto(endedArrangement);
   }
 
-  // Validated before the Stripe call, so a refused draft never moves the trial
   private async extendTrial({
     workspaceId,
     draft,
