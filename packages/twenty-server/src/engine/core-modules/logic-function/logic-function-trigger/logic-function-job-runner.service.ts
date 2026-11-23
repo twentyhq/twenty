@@ -41,7 +41,7 @@ export type LogicFunctionJobPayload = {
 
 type EnqueueFailureHandler = (
   failureHandlerJob: LogicFunctionFailureHandlerJob,
-) => Promise<unknown>;
+) => Promise<string | undefined>;
 
 @Injectable()
 export class LogicFunctionJobRunnerService {
