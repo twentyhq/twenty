@@ -1,3 +1,4 @@
+import { type AggregateOperations } from './AggregateOperations';
 import { type FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 import { type SerializedRelation } from './SerializedRelation';
 import { type ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
@@ -34,6 +35,7 @@ export type ViewFieldRelationScope = {
   filterGroups: ViewFieldRelationScopeFilterGroup[];
   sorts: ViewFieldRelationScopeSort[];
   limit?: number | null;
+  aggregateOperation?: AggregateOperations | null;
 };
 
 export type UniversalViewFieldRelationScope =

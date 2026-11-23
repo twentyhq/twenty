@@ -4361,9 +4361,6 @@ export default {
             "position": [
                 8
             ],
-            "relationAggregateOperation": [
-                32
-            ],
             "relationScope": [
                 687
             ],
@@ -15406,9 +15403,6 @@ export default {
             "position": [
                 8
             ],
-            "relationAggregateOperation": [
-                32
-            ],
             "relationScope": [
                 687
             ],
@@ -16805,9 +16799,6 @@ export default {
             "position": [
                 8
             ],
-            "relationAggregateOperation": [
-                32
-            ],
             "relationScope": [
                 682
             ],
@@ -16878,6 +16869,9 @@ export default {
             ]
         },
         "ViewFieldRelationScope": {
+            "aggregateOperation": [
+                32
+            ],
             "filterGroups": [
                 684
             ],
@@ -16975,6 +16969,9 @@ export default {
             ]
         },
         "ViewFieldRelationScopeInput": {
+            "aggregateOperation": [
+                32
+            ],
             "filterGroups": [
                 685
             ],

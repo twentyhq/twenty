@@ -8,7 +8,6 @@ import {
 
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { validateFlatViewFieldRelationAggregate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util';
 
 const buildFlatFieldMetadata = (
@@ -32,20 +31,8 @@ const companyOpportunitiesField = buildFlatFieldMetadata({
   universalSettings: { relationType: RelationType.ONE_TO_MANY },
 });
 
-const opportunityCompanyField = buildFlatFieldMetadata({
-  universalIdentifier: 'opportunity-company',
-  type: FieldMetadataType.RELATION,
-  objectMetadataUniversalIdentifier: 'opportunity',
-  relationTargetObjectMetadataUniversalIdentifier: 'company',
-  universalSettings: {
-    relationType: RelationType.MANY_TO_ONE,
-    joinColumnName: 'companyId',
-  },
-});
-
 const flatFieldMetadatas = [
   companyOpportunitiesField,
-  opportunityCompanyField,
   buildFlatFieldMetadata({
     universalIdentifier: 'amount',
     type: FieldMetadataType.CURRENCY,
@@ -79,38 +66,31 @@ const FILTER_ONLY_SCOPE: UniversalViewFieldRelationScope = {
 };
 
 const validate = ({
-  relationAggregateOperation,
+  aggregateOperation,
   relationTargetFieldMetadataUniversalIdentifier = null,
   universalRelationScope = FILTER_ONLY_SCOPE,
-  flatFieldMetadata = companyOpportunitiesField,
-  isCanonical = false,
 }: {
-  relationAggregateOperation: AggregateOperations | null;
+  aggregateOperation: AggregateOperations | null;
   relationTargetFieldMetadataUniversalIdentifier?: string | null;
-  universalRelationScope?: UniversalViewFieldRelationScope | null;
-  flatFieldMetadata?: UniversalFlatFieldMetadata;
-  isCanonical?: boolean;
+  universalRelationScope?: UniversalViewFieldRelationScope;
 }) =>
   validateFlatViewFieldRelationAggregate({
     flatViewField: {
-      isCanonical,
-      relationAggregateOperation,
       relationTargetFieldMetadataUniversalIdentifier,
-      universalRelationScope,
+      universalRelationScope: { ...universalRelationScope, aggregateOperation },
     },
-    flatFieldMetadata,
     flatFieldMetadataMaps,
   });
 
 describe('validateFlatViewFieldRelationAggregate', () => {
   it('accepts a column without an aggregate', () => {
-    expect(validate({ relationAggregateOperation: null })).toEqual([]);
+    expect(validate({ aggregateOperation: null })).toEqual([]);
   });
 
   it('accepts a count of the related records the scope keeps', () => {
-    expect(
-      validate({ relationAggregateOperation: AggregateOperations.COUNT }),
-    ).toEqual([]);
+    expect(validate({ aggregateOperation: AggregateOperations.COUNT })).toEqual(
+      [],
+    );
   });
 
   it.each([
@@ -121,43 +101,10 @@ describe('validateFlatViewFieldRelationAggregate', () => {
   ])('accepts $operation of $field', ({ operation, field }) => {
     expect(
       validate({
-        relationAggregateOperation: operation,
+        aggregateOperation: operation,
         relationTargetFieldMetadataUniversalIdentifier: field,
       }),
     ).toEqual([]);
-  });
-
-  it('rejects an aggregate on a canonical column', () => {
-    expect(
-      validate({
-        relationAggregateOperation: AggregateOperations.COUNT,
-        isCanonical: true,
-      }),
-    ).toMatchObject([
-      { message: expect.stringContaining('Only non-canonical view fields') },
-    ]);
-  });
-
-  it('rejects an aggregate on a one-to-many column without a relation scope', () => {
-    expect(
-      validate({
-        relationAggregateOperation: AggregateOperations.COUNT,
-        universalRelationScope: null,
-      }),
-    ).toMatchObject([
-      { message: expect.stringContaining('with a relation scope') },
-    ]);
-  });
-
-  it('rejects an aggregate on a many-to-one column', () => {
-    expect(
-      validate({
-        relationAggregateOperation: AggregateOperations.COUNT,
-        flatFieldMetadata: opportunityCompanyField,
-      }),
-    ).toMatchObject([
-      { message: expect.stringContaining('one-to-many relation field') },
-    ]);
   });
 
   it.each([
@@ -182,7 +129,7 @@ describe('validateFlatViewFieldRelationAggregate', () => {
     ({ universalRelationScope }) => {
       expect(
         validate({
-          relationAggregateOperation: AggregateOperations.COUNT,
+          aggregateOperation: AggregateOperations.COUNT,
           universalRelationScope,
         }),
       ).toMatchObject([
@@ -194,7 +141,7 @@ describe('validateFlatViewFieldRelationAggregate', () => {
   it('rejects a count with a related record field', () => {
     expect(
       validate({
-        relationAggregateOperation: AggregateOperations.COUNT,
+        aggregateOperation: AggregateOperations.COUNT,
         relationTargetFieldMetadataUniversalIdentifier: 'amount',
       }),
     ).toMatchObject([
@@ -206,7 +153,7 @@ describe('validateFlatViewFieldRelationAggregate', () => {
 
   it('rejects a sum without a related record field', () => {
     expect(
-      validate({ relationAggregateOperation: AggregateOperations.SUM }),
+      validate({ aggregateOperation: AggregateOperations.SUM }),
     ).toMatchObject([
       { message: expect.stringContaining('requires a related record field') },
     ]);
@@ -215,7 +162,7 @@ describe('validateFlatViewFieldRelationAggregate', () => {
   it('rejects an operation other than count, sum, average, min and max', () => {
     expect(
       validate({
-        relationAggregateOperation: AggregateOperations.COUNT_EMPTY,
+        aggregateOperation: AggregateOperations.COUNT_EMPTY,
         relationTargetFieldMetadataUniversalIdentifier: 'name',
       }),
     ).toMatchObject([
@@ -231,7 +178,7 @@ describe('validateFlatViewFieldRelationAggregate', () => {
     ({ operation, field }) => {
       expect(
         validate({
-          relationAggregateOperation: operation,
+          aggregateOperation: operation,
           relationTargetFieldMetadataUniversalIdentifier: field,
         }),
       ).toMatchObject([
@@ -243,7 +190,7 @@ describe('validateFlatViewFieldRelationAggregate', () => {
   it('leaves a missing related record field to the relation target validator', () => {
     expect(
       validate({
-        relationAggregateOperation: AggregateOperations.SUM,
+        aggregateOperation: AggregateOperations.SUM,
         relationTargetFieldMetadataUniversalIdentifier: 'missing-field',
       }),
     ).toEqual([]);

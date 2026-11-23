@@ -34,7 +34,4 @@ export const fromFlatViewFieldToViewFieldManifest = ({
     ? { relationScope: flatViewField.universalRelationScope }
     : {}),
   ...(isDefined(flatViewField.label) ? { label: flatViewField.label } : {}),
-  ...(isDefined(flatViewField.relationAggregateOperation)
-    ? { relationAggregateOperation: flatViewField.relationAggregateOperation }
-    : {}),
 });

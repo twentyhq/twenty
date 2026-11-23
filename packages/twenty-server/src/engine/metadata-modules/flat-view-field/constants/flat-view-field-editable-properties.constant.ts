@@ -9,5 +9,4 @@ export const FLAT_VIEW_FIELD_EDITABLE_PROPERTIES = [
   'relationTargetFieldMetadataId',
   'relationScope',
   'label',
-  'relationAggregateOperation',
 ] as const satisfies MetadataEntityPropertyName<'viewField'>[];
