@@ -6,7 +6,7 @@ import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { findById, isDefined } from 'twenty-shared/utils';
 
-// The server validates the operation against the field; a field the user cannot read leaves no summary
+// The server already validates the operation against the field, so this only resolves what to query
 export const getRecordFieldSummary = ({
   aggregateOperation,
   relationTargetFieldMetadataId,
