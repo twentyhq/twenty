@@ -1,4 +1,6 @@
 import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
+import { isDefined } from 'twenty-shared/utils';
+
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
@@ -21,7 +23,7 @@ const findObjectMetadataItem = (nameSingular: string) => {
     (candidate) => candidate.nameSingular === nameSingular,
   );
 
-  if (objectMetadataItem === undefined) {
+  if (!isDefined(objectMetadataItem)) {
     throw new Error(`${nameSingular} object metadata item not found`);
   }
 
