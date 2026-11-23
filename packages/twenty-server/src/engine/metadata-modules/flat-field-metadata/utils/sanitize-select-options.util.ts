@@ -19,11 +19,16 @@ export const sanitizeSelectOptions = <TColor extends string>(
       ['color', 'description'],
     );
 
-    return {
+    const sanitizedOption = {
       ...option,
       color: color ?? DEFAULT_SELECT_OPTION_COLOR,
-      ...(isDefined(description)
-        ? { description: description === '' ? null : description }
-        : {}),
     };
+
+    if (!isDefined(description)) {
+      return sanitizedOption;
+    }
+
+    const sanitizedDescription = description === '' ? null : description;
+
+    return { ...sanitizedOption, description: sanitizedDescription };
   });
