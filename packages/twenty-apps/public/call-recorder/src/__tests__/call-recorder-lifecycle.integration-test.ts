@@ -162,19 +162,10 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
 // A permission flag the app role just gained takes a few seconds to apply after install.
 const waitForCalendarChannelsAccess = async (applicationAccessToken: string) =>
   vi.waitFor(
-    async () => {
-      const response = await fetch(`${process.env.TWENTY_API_URL}/metadata`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${applicationAccessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query: '{ calendarChannels { id } }' }),
-      });
-      const payload = (await response.json()) as { errors?: unknown[] };
-
-      expect(payload.errors).toBeUndefined();
-    },
+    () =>
+      new MetadataApiClient({
+        headers: { Authorization: `Bearer ${applicationAccessToken}` },
+      }).query({ calendarChannels: { id: true } }),
     { timeout: 60_000, interval: 1_000 },
   );
 
@@ -4577,6 +4568,10 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv(
+        'TWENTY_APP_APPLICATION_ACCESS_TOKEN',
+        applicationAccessToken,
+      );
 
       await client.mutation({
         updateCalendarEvent: {
