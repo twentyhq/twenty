@@ -128,7 +128,6 @@ export class PrincipalPermissionsReadService {
     return flatWorkspaceMemberMaps;
   }
 
-  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   private async findApiKeysIndividualRoleId(
     authContext: PermissionsAuthContext,
   ): Promise<string | undefined> {
