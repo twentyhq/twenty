@@ -20,6 +20,7 @@ import {
   ViewCalendarLayout,
   ViewKey,
   ViewOpenRecordIn,
+  ViewPresetFilter,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -33,6 +34,7 @@ import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 
 import { ADD_VIEW_GROUP_LOAD_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-view-group-load-limit-upgrade-command-name.constant';
 import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
 import { ADD_VIEW_SHOULD_DISPLAY_GROUPS_AS_TABS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-view-should-display-groups-as-tabs-upgrade-command-name.constant';
+import { ADD_PRESET_FILTERS_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-preset-filters-to-view-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -261,6 +263,18 @@ export class ViewEntity
 
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_PRESET_FILTERS_TO_VIEW_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(ViewPresetFilter),
+    array: true,
+    nullable: false,
+    default: '{}',
+  })
+  presetFilters: ViewPresetFilter[];
 
   @Column({
     type: 'enum',

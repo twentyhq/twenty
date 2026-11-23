@@ -70,6 +70,7 @@ type Assertions = [
       | 'kanbanColumnWidth'
       | 'groupLoadLimit'
       | 'anyFieldFilterValue'
+      | 'presetFilters'
       | 'visibility'
       | 'createdByUserWorkspaceId'
       | 'isActive'

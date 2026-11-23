@@ -1,6 +1,7 @@
 import { Field, HideField, InputType, Int } from '@nestjs/graphql';
 
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsInt,
@@ -18,6 +19,7 @@ import {
   ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewKey,
+  ViewPresetFilter,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -115,6 +117,12 @@ export class CreateViewInput {
   @IsString()
   @Field({ nullable: true })
   anyFieldFilterValue?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(ViewPresetFilter, { each: true })
+  @Field(() => [ViewPresetFilter], { nullable: true })
+  presetFilters?: ViewPresetFilter[];
 
   @IsOptional()
   @IsEnum(ViewCalendarLayout)
