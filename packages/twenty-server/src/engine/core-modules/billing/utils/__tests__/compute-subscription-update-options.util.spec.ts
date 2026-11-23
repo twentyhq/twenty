@@ -117,7 +117,7 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('invoices an applications update raising a quantity only once paid', () => {
+  it('rejects an applications update raising a quantity when the payment fails', () => {
     const result = computeSubscriptionUpdateOptions(
       { type: SubscriptionUpdateType.APPLICATIONS },
       { isQuantityIncrease: true },
@@ -125,20 +125,8 @@ describe('computeSubscriptionUpdateOptions', () => {
 
     expect(result).toEqual({
       proration: 'always_invoice',
-      paymentBehavior: 'pending_if_incomplete',
+      paymentBehavior: 'error_if_incomplete',
     });
-  });
-
-  it('invoices an applications update now without holding a declined charge once its pending update expired', () => {
-    const result = computeSubscriptionUpdateOptions(
-      {
-        type: SubscriptionUpdateType.APPLICATIONS,
-        isRetryAfterExpiredPendingUpdate: true,
-      },
-      { isQuantityIncrease: true },
-    );
-
-    expect(result).toEqual({ proration: 'always_invoice' });
   });
 
   it('prorates an applications update with no quantity going up on the next invoice', () => {

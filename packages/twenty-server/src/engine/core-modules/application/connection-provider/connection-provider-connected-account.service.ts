@@ -12,6 +12,7 @@ import { type ConnectionProviderEntity } from 'src/engine/core-modules/applicati
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import { extractEmailFromIdTokenClaims } from 'src/engine/core-modules/application/connection-provider/utils/extract-email-from-id-token-claims.util';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
@@ -41,6 +42,7 @@ export class ConnectionProviderConnectedAccountService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
   async assertCallerCanConnectOrThrow({
@@ -201,12 +203,48 @@ export class ConnectionProviderConnectedAccountService {
       userWorkspaceId,
     });
 
-    const connectedAccount =
-      await this.connectedAccountRepository.save(created);
+    const connectedAccount = await this.saveBilledConnectedAccount({
+      connectedAccount: created,
+      applicationId: provider.applicationId,
+      workspaceId,
+    });
 
     this.emitConnectionChanged(connectedAccount);
 
     return connectedAccount;
+  }
+
+  private async saveBilledConnectedAccount({
+    connectedAccount,
+    applicationId,
+    workspaceId,
+  }: {
+    connectedAccount: ConnectedAccountEntity;
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity> {
+    const { isPaymentDeclined } =
+      await this.billingSubscriptionUpdateService.chargeApplications({
+        workspaceId,
+        additionalConnectedAccountApplicationId: applicationId,
+      });
+
+    if (isPaymentDeclined) {
+      throw new ConnectionProviderException(
+        "We couldn't bill this connection. Update your payment method and try again.",
+        ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED,
+      );
+    }
+
+    try {
+      return await this.connectedAccountRepository.save(connectedAccount);
+    } catch (error) {
+      await this.billingSubscriptionUpdateService.chargeApplications({
+        workspaceId,
+      });
+
+      throw error;
+    }
   }
 
   private emitConnectionChanged({

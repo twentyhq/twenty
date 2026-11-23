@@ -8,11 +8,10 @@ import {
   assertUnreachable,
   findOrThrow,
   isDefined,
-  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
-import type Stripe from 'stripe';
+import Stripe from 'stripe';
 
 import {
   BillingException,
@@ -273,12 +272,52 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async syncApplications({
+  async chargeApplications({
     workspaceId,
-    isRetryAfterExpiredPendingUpdate,
+    additionalConnectedAccountApplicationId,
   }: {
     workspaceId: string;
-    isRetryAfterExpiredPendingUpdate?: boolean;
+    additionalConnectedAccountApplicationId?: string;
+  }): Promise<{ isPaymentDeclined: boolean }> {
+    if (
+      !this.twentyConfigService.get('IS_BILLING_ENABLED') ||
+      !(await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
+        workspaceId,
+      ))
+    ) {
+      return { isPaymentDeclined: false };
+    }
+
+    await this.billingApplicationProductService.createMissingProducts(
+      workspaceId,
+    );
+
+    try {
+      await this.syncApplications({
+        workspaceId,
+        additionalConnectedAccountApplicationId,
+      });
+    } catch (error) {
+      if (error instanceof Stripe.errors.StripeCardError) {
+        this.logger.warn(
+          `Application charge declined for workspace ${workspaceId}: ${error.message}`,
+        );
+
+        return { isPaymentDeclined: true };
+      }
+
+      throw error;
+    }
+
+    return { isPaymentDeclined: false };
+  }
+
+  async syncApplications({
+    workspaceId,
+    additionalConnectedAccountApplicationId,
+  }: {
+    workspaceId: string;
+    additionalConnectedAccountApplicationId?: string;
   }): Promise<void> {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -291,7 +330,7 @@ export class BillingSubscriptionUpdateService {
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.APPLICATIONS,
-      isRetryAfterExpiredPendingUpdate,
+      additionalConnectedAccountApplicationId,
     });
   }
 
@@ -373,6 +412,10 @@ export class BillingSubscriptionUpdateService {
           subscribedStripeProductIds: currentPrices.applicationItems.map(
             ({ stripeProductId }) => stripeProductId,
           ),
+          additionalConnectedAccountApplicationId:
+            subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS
+              ? subscriptionUpdate.additionalConnectedAccountApplicationId
+              : undefined,
         },
       );
 
@@ -391,18 +434,6 @@ export class BillingSubscriptionUpdateService {
       prices: { ...currentPrices, seats },
       targetApplicationProducts: updateApplicationProducts,
     });
-
-    if (
-      await this.isPendingUpdateUpToDate({
-        stripeSubscription,
-        subscriptionUpdate,
-        toUpdatePrices: toUpdateCurrentPrices,
-      })
-    ) {
-      return;
-    }
-
-    await this.discardPendingUpdate(stripeSubscription);
 
     const shouldUpdateAtPeriodEnd =
       await this.shouldUpdateAtSubscriptionPeriodEnd(
@@ -520,53 +551,6 @@ export class BillingSubscriptionUpdateService {
       syncSubscriptionToDatabase,
       buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
-    );
-  }
-
-  private async isPendingUpdateUpToDate({
-    stripeSubscription,
-    subscriptionUpdate,
-    toUpdatePrices,
-  }: {
-    stripeSubscription: Pick<Stripe.Subscription, 'pending_update'>;
-    subscriptionUpdate: SubscriptionUpdate;
-    toUpdatePrices: SubscriptionStripePrices;
-  }): Promise<boolean> {
-    const pendingItems = stripeSubscription.pending_update?.subscription_items;
-
-    if (!isNonEmptyArray(pendingItems)) {
-      return false;
-    }
-
-    const pendingPrices =
-      await this.getSubscriptionPricesFromItems(pendingItems);
-
-    return !isDefined(
-      computeImmediateSubscriptionUpdate({
-        subscriptionUpdate,
-        currentPrices: pendingPrices,
-        toUpdatePrices,
-      }),
-    );
-  }
-
-  private async discardPendingUpdate(
-    stripeSubscription: Pick<
-      Stripe.Subscription,
-      'pending_update' | 'latest_invoice'
-    >,
-  ): Promise<void> {
-    const latestInvoice = stripeSubscription.latest_invoice;
-
-    if (
-      !isDefined(stripeSubscription.pending_update) ||
-      !isDefined(latestInvoice)
-    ) {
-      return;
-    }
-
-    await this.stripeInvoiceService.voidInvoice(
-      typeof latestInvoice === 'string' ? latestInvoice : latestInvoice.id,
     );
   }
 

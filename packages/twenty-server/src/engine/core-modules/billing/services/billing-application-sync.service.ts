@@ -22,10 +22,8 @@ export class BillingApplicationSyncService {
 
   async enqueueApplicationsSync({
     workspaceId,
-    isRetryAfterExpiredPendingUpdate,
   }: {
     workspaceId: string;
-    isRetryAfterExpiredPendingUpdate?: boolean;
   }): Promise<void> {
     if (
       !this.twentyConfigService.get('IS_BILLING_ENABLED') ||
@@ -38,7 +36,7 @@ export class BillingApplicationSyncService {
 
     await this.messageQueueService.add<SyncSubscriptionApplicationsJobData>(
       SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME,
-      { workspaceId, isRetryAfterExpiredPendingUpdate },
+      { workspaceId },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
         workspaceId,

@@ -58,9 +58,11 @@ export class BillingApplicationProductService {
   async findTargetApplicationProducts({
     workspaceId,
     subscribedStripeProductIds = [],
+    additionalConnectedAccountApplicationId,
   }: {
     workspaceId: string;
     subscribedStripeProductIds?: string[];
+    additionalConnectedAccountApplicationId?: string;
   }): Promise<TargetApplicationProduct[]> {
     const declaredPrices = await this.findDeclaredPrices(workspaceId);
 
@@ -118,9 +120,13 @@ export class BillingApplicationProductService {
           per: declaredPrice.price.per,
           workspaceMemberCount,
           connectedAccountCount:
-            connectedAccountCountByApplicationId.get(
+            (connectedAccountCountByApplicationId.get(
               declaredPrice.applicationId,
-            ) ?? 0,
+            ) ?? 0) +
+            (declaredPrice.applicationId ===
+            additionalConnectedAccountApplicationId
+              ? 1
+              : 0),
         });
 
         return quantity > 0 ? [{ billingProduct, quantity }] : [];

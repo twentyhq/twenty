@@ -89,6 +89,8 @@ A price follows the billing interval of the workspace: a workspace on a monthly 
 
 Billing starts when the install completes and stops at uninstall, prorated to the days left in the billing period. A price `per: 'WORKSPACE_MEMBER'` follows the member count of the workspace. A price `per: 'CONNECTED_ACCOUNT'` follows the number of accounts connected to your app in the workspace. Accounts of all your app's connection providers count together: with a Google and a Microsoft provider, a workspace with two Google accounts and one Microsoft account pays for three. The price is not billed while no account is connected, and a disconnected account stops being billed. A workspace on a trial is not charged before the trial ends.
 
+The charge is taken before the install or the new connected account goes through. If the workspace's payment method is declined, the install fails or the account is not connected, the admin is asked to update the payment method, and the rest of the workspace is unaffected.
+
 A workspace keeps the prices it installed your app with, including after it upgrades. When a new version changes, adds or removes a price, only new installations get the new prices.
 
 Prices are not billed on a server without billing enabled, nor for an app synced from a local source with `twenty app dev`.

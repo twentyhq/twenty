@@ -80,21 +80,8 @@ export class BillingWebhookSubscriptionService {
     event:
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
-      | Stripe.CustomerSubscriptionDeletedEvent
-      | Stripe.CustomerSubscriptionPendingUpdateExpiredEvent,
+      | Stripe.CustomerSubscriptionDeletedEvent,
   ) {
-    if (
-      event.type ===
-      BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED
-    ) {
-      await this.billingApplicationSyncService.enqueueApplicationsSync({
-        workspaceId,
-        isRetryAfterExpiredPendingUpdate: true,
-      });
-
-      return {};
-    }
-
     return await this.cacheLockService.withLock(
       () => this.applySubscriptionEvent(workspaceId, event),
       buildBillingSubscriptionStateLockKey(String(event.data.object.customer)),

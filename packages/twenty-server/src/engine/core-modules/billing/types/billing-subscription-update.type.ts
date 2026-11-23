@@ -24,7 +24,7 @@ export type SubscriptionUpdate =
     }
   | {
       type: SubscriptionUpdateType.APPLICATIONS;
-      isRetryAfterExpiredPendingUpdate?: boolean;
+      additionalConnectedAccountApplicationId?: string;
     }
   | {
       type: SubscriptionUpdateType.INTERVAL;

@@ -133,8 +133,7 @@ export class BillingWebhookController {
 
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
-      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED:
-      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED: {
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
         const workspaceId = event.data.object.metadata?.workspaceId;
 
         if (!isNonEmptyString(workspaceId)) {

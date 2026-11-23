@@ -3,7 +3,6 @@
 import { Scope } from '@nestjs/common';
 
 import { SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME } from 'src/engine/core-modules/billing/constants/sync-subscription-applications-job-name.constant';
-import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -11,7 +10,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type SyncSubscriptionApplicationsJobData = {
   workspaceId: string;
-  isRetryAfterExpiredPendingUpdate?: boolean;
 };
 
 @Processor({
@@ -20,22 +18,15 @@ export type SyncSubscriptionApplicationsJobData = {
 })
 export class SyncSubscriptionApplicationsJob {
   constructor(
-    private readonly billingApplicationProductService: BillingApplicationProductService,
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
   @Process(SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME)
   async handle({
     workspaceId,
-    isRetryAfterExpiredPendingUpdate,
   }: SyncSubscriptionApplicationsJobData): Promise<void> {
-    await this.billingApplicationProductService.createMissingProducts(
+    await this.billingSubscriptionUpdateService.chargeApplications({
       workspaceId,
-    );
-
-    await this.billingSubscriptionUpdateService.syncApplications({
-      workspaceId,
-      isRetryAfterExpiredPendingUpdate,
     });
   }
 }
