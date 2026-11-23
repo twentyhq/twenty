@@ -67,7 +67,6 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     workspaceId: string;
     userIds: string[];
   }): Promise<void> {
-    // userWorkspace.defaultAvatarUrl can share the file and is copied when the user joins another workspace
     await this.userWorkspaceService.clearDefaultAvatarUrlsPointingToFiles({
       workspaceId,
       userIds,
