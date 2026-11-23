@@ -18,6 +18,7 @@ import { CREATABLE_VIEW_TYPES } from 'src/engine/metadata-modules/view/tools/con
 import { CompleteViewUpsertService } from 'src/engine/metadata-modules/view/tools/services/complete-view-upsert.service';
 import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
+import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 
 const fieldReferenceShape = {
   fieldName: z
@@ -210,7 +211,9 @@ export class UpsertCompleteViewTool extends BaseTool<
 
     if (!isDefined(existingView)) {
       await this.viewAccessService.canUserCreateView({
-        isPrivate: input.visibility === ViewVisibility.UNLISTED,
+        isPrivate:
+          resolveViewIsPrivateFromInput({ visibility: input.visibility }) ??
+          false,
         accessContext: { workspaceId, userWorkspaceId, authContext },
       });
     }
