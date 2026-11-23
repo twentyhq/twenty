@@ -19,13 +19,12 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-const StyledShownOnDrawerHover = styled.div`
-  display: flex;
+const StyledEditButton = styled(LightIconButton)`
   opacity: 0;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s);
 
   [data-click-outside-id='${NAVIGATION_DRAWER_CLICK_OUTSIDE_ID}']:hover &,
-  &:focus-within {
+  &:focus-visible {
     opacity: 1;
   }
 `;
@@ -55,20 +54,18 @@ export const MainNavigationDrawerEditButton = () => {
   }
 
   return (
-    <StyledShownOnDrawerHover>
-      <LightIconButton
-        emphasis="standard"
-        size="sm"
-        onClick={() => enterLayoutCustomizationMode()}
-        onMouseEnter={preloadNavigationMenuItemDndKit}
-        aria-label={t`Customize sidebar`}
-        tooltip={t`Customize sidebar`}
-        tooltipDelay={TooltipDelay.longDelay}
-        tooltipPlace="bottom"
-        tooltipOffset={5}
-      >
-        <IconPaint />
-      </LightIconButton>
-    </StyledShownOnDrawerHover>
+    <StyledEditButton
+      emphasis="standard"
+      size="sm"
+      onClick={() => enterLayoutCustomizationMode()}
+      onMouseEnter={preloadNavigationMenuItemDndKit}
+      aria-label={t`Customize sidebar`}
+      tooltip={t`Customize sidebar`}
+      tooltipDelay={TooltipDelay.longDelay}
+      tooltipPlace="bottom"
+      tooltipOffset={5}
+    >
+      <IconPaint />
+    </StyledEditButton>
   );
 };
