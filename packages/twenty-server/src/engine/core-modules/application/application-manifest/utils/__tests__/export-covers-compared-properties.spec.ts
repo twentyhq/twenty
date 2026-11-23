@@ -127,7 +127,6 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
     limit: 1,
   },
   label: 'Open opportunities',
-  relationAggregateOperation: AggregateOperations.SUM,
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {

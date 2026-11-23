@@ -1,5 +1,6 @@
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import {
+  AggregateOperations,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
@@ -61,6 +62,13 @@ export const viewFieldRelationScopeSchema = z
       .min(1)
       .max(QUERY_MAX_RECORDS_FROM_RELATION)
       .optional(),
+    aggregateOperation: z
+      .enum(AggregateOperations)
+      .nullable()
+      .optional()
+      .describe(
+        'Show per row an aggregate of the related records the filters keep instead of the records, with no sorts and no limit. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation.',
+      ),
   })
   .describe(
     'On an extra (non-canonical) column of a one-to-many relation field, the filters, sorts and limit applied to the related records, in the view filter and view sort shape, e.g. open tasks sorted by due date, first 1.',
