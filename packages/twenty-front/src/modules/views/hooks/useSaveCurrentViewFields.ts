@@ -71,6 +71,7 @@ export const useSaveCurrentViewFields = () => {
               relationScope: removeTypenames(
                 viewFieldToCreateOrUpdate.relationScope,
               ),
+              label: viewFieldToCreateOrUpdate.label,
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,
@@ -96,6 +97,9 @@ export const useSaveCurrentViewFields = () => {
               isVisible: createViewFieldInput.isVisible,
               aggregateOperation: createViewFieldInput.aggregateOperation,
               relationScope: createViewFieldInput.relationScope ?? null,
+              relationTargetFieldMetadataId:
+                createViewFieldInput.relationTargetFieldMetadataId ?? null,
+              label: createViewFieldInput.label ?? null,
             };
 
             const existingProperties: typeof updatedProperties = {
@@ -105,6 +109,9 @@ export const useSaveCurrentViewFields = () => {
               aggregateOperation: existingField.aggregateOperation,
               relationScope:
                 removeTypenames(existingField.relationScope) ?? null,
+              relationTargetFieldMetadataId:
+                existingField.relationTargetFieldMetadataId ?? null,
+              label: existingField.label ?? null,
             };
 
             const changedProperties = getDirtyFields(

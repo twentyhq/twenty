@@ -191,6 +191,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             relationTargetFieldMetadataId:
               viewField.relationTargetFieldMetadataId,
             relationScope: removeTypenames(viewField.relationScope),
+            label: viewField.label,
             viewId: newViewId,
           })),
       });

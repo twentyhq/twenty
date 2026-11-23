@@ -1,14 +1,15 @@
-import { VISIBILITY_ANY_DEVICE } from '@/side-panel/pages/page-layout/constants/VisibilityAnyDevice';
-import { VISIBILITY_DESKTOP } from '@/side-panel/pages/page-layout/constants/VisibilityDesktop';
-import { VISIBILITY_MOBILE } from '@/side-panel/pages/page-layout/constants/VisibilityMobile';
+import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
 import { useLingui } from '@lingui/react/macro';
 
-export const useVisibilityLabels = (): Record<string, string> => {
+export const useVisibilityLabels = (): Record<
+  WidgetVisibilityDevice,
+  string
+> => {
   const { t } = useLingui();
 
   return {
-    [VISIBILITY_ANY_DEVICE]: t`Any device`,
-    [VISIBILITY_MOBILE]: t`Mobile`,
-    [VISIBILITY_DESKTOP]: t`Desktop`,
+    ANY_DEVICE: t`Any device`,
+    MOBILE: t`Mobile`,
+    DESKTOP: t`Desktop`,
   };
 };

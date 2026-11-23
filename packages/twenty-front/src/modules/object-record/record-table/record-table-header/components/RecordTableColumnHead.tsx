@@ -49,8 +49,10 @@ export const RecordTableColumnHead = ({
   const fieldMetadataItem = isDefined(foundFieldMetadataItem)
     ? getRecordFieldColumnHeader({
         fieldMetadataItem: foundFieldMetadataItem,
-        lookupTarget,
+        lookupTarget: lookupTarget ?? scopedRelationAlias?.lookupTarget,
         isScopedRelationColumn: isDefined(scopedRelationAlias),
+        summary: scopedRelationAlias?.summary,
+        customLabel: recordField.label,
       })
     : undefined;
 
