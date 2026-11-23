@@ -25,10 +25,7 @@ export const buildAiFrontComponentSdk = async () => {
       ['utils', 'types', 'translations', 'ai', 'application'].map(
         (entryPoint) => [
           `twenty-shared/${entryPoint}`,
-          resolve(
-            SDK_DIRECTORY,
-            `../twenty-shared/src/${entryPoint}/index.ts`,
-          ),
+          resolve(SDK_DIRECTORY, `../twenty-shared/src/${entryPoint}/index.ts`),
         ],
       ),
     ),
