@@ -9,7 +9,7 @@ export class AddFieldMetadataOptionDescriptionFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadataOption" ADD "description" text',
+      'ALTER TABLE "core"."fieldMetadataOption" ADD "description" character varying',
     );
   }
 

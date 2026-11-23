@@ -1,6 +1,9 @@
 import { DEFAULT_SELECT_OPTION_COLOR } from 'twenty-shared/constants';
 import { type FieldMetadataComplexOption } from 'twenty-shared/types';
-import { extractAndSanitizeObjectStringFields } from 'twenty-shared/utils';
+import {
+  extractAndSanitizeObjectStringFields,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type SelectOptionWithOptionalColor<TColor extends string> = Omit<
   FieldMetadataComplexOption,
@@ -19,8 +22,8 @@ export const sanitizeSelectOptions = <TColor extends string>(
     return {
       ...option,
       color: color ?? DEFAULT_SELECT_OPTION_COLOR,
-      ...(description === undefined
-        ? {}
-        : { description: description === '' ? null : description }),
+      ...(isDefined(description)
+        ? { description: description === '' ? null : description }
+        : {}),
     };
   });

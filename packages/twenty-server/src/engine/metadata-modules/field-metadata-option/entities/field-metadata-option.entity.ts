@@ -69,7 +69,7 @@ export class FieldMetadataOptionEntity
     upgradeCommandName:
       ADD_FIELD_METADATA_OPTION_DESCRIPTION_UPGRADE_COMMAND_NAME,
   })
-  @Column({ nullable: true, type: 'text' })
+  @Column({ nullable: true, type: 'varchar' })
   description: string | null;
 
   @Column({ nullable: false, type: 'double precision', default: 0 })
