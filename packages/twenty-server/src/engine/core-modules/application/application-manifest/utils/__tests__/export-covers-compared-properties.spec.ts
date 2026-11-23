@@ -570,7 +570,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { isPrivate: 'visibility' },
     workspaceLocalProperties: [
       'isActive',
       'universalOverrides',

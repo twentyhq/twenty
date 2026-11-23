@@ -27,6 +27,9 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
+const WORKSPACE_ITEM_ID = 'workspace';
+const PRIVATE_ITEM_ID = 'private';
+
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();
   const location = useLocation();
@@ -42,7 +45,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
     dropdownId,
   );
 
-  const selectableItemIdArray = ['Workspace', 'Unlisted'];
+  const selectableItemIdArray = [WORKSPACE_ITEM_ID, PRIVATE_ITEM_ID];
 
   const handleIsPrivateChange = (isPrivate: boolean) => {
     if (!canPersistChanges || !currentView) {
@@ -83,7 +86,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem
-            itemId="Workspace"
+            itemId={WORKSPACE_ITEM_ID}
             onEnter={() =>
               hasViewsPermission &&
               canPersistChanges &&
@@ -98,7 +101,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             >
               <div id="workspace-visibility-option">
                 <ListItemButton
-                  focused={selectedItemId === 'Workspace'}
+                  focused={selectedItemId === WORKSPACE_ITEM_ID}
                   onClick={() => handleIsPrivateChange(false)}
                   disabled={!hasViewsPermission || !canPersistChanges}
                   role="option"
@@ -112,11 +115,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             </Tooltip>
           </SelectableListItem>
           <SelectableListItem
-            itemId="Unlisted"
+            itemId={PRIVATE_ITEM_ID}
             onEnter={() => canPersistChanges && handleIsPrivateChange(true)}
           >
             <ListItemButton
-              focused={selectedItemId === 'Unlisted'}
+              focused={selectedItemId === PRIVATE_ITEM_ID}
               onClick={() => handleIsPrivateChange(true)}
               disabled={!canPersistChanges}
               role="option"

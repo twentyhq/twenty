@@ -5,14 +5,6 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 jest.useRealTimers();
 
-const AUTHOR_UNIVERSAL_IDENTIFIER = '20202020-aaaa-4aaa-8aaa-000000000001';
-
-type ViewPrivacyRow = {
-  isPrivate: boolean;
-  visibility: string;
-  overrides: Record<string, unknown> | null;
-};
-
 describe('2-63 instance command 1795437642259 - add view isPrivate (integration)', () => {
   const addIsPrivateCommand = new AddViewIsPrivateFastInstanceCommand();
   let queryRunner: QueryRunner;
@@ -26,27 +18,35 @@ describe('2-63 instance command 1795437642259 - add view isPrivate (integration)
     return rows.map(({ id }) => id);
   };
 
-  const setLegacyPrivacy = async (
-    viewId: string,
-    {
-      visibility,
-      overrides,
-    }: { visibility: string; overrides: Record<string, unknown> | null },
-  ) => {
+  const setVisibility = async ({
+    viewId,
+    visibility,
+  }: {
+    viewId: string;
+    visibility: string;
+  }) => {
     await queryRunner.query(
-      `UPDATE "core"."view" SET "visibility" = $2, "overrides" = $3 WHERE "id" = $1`,
-      [viewId, visibility, overrides],
+      `UPDATE "core"."view" SET "visibility" = $2 WHERE "id" = $1`,
+      [viewId, visibility],
     );
   };
 
-  const findPrivacyRow = async (viewId: string): Promise<ViewPrivacyRow> => {
+  const findIsPrivate = async (viewId: string): Promise<boolean> => {
     const [row] = await queryRunner.query(
-      `SELECT "isPrivate", "visibility", "overrides" FROM "core"."view" WHERE "id" = $1`,
+      `SELECT "isPrivate" FROM "core"."view" WHERE "id" = $1`,
       [viewId],
     );
 
-    return row;
+    return row.isPrivate;
   };
+
+  const findIsPrivateColumn = async () =>
+    queryRunner.query(
+      `SELECT column_default AS "columnDefault", is_nullable AS "isNullable"
+         FROM information_schema.columns
+        WHERE table_schema = 'core' AND table_name = 'view'
+          AND column_name = 'isPrivate'`,
+    );
 
   beforeEach(async () => {
     queryRunner = globalThis.testDataSource.createQueryRunner();
@@ -64,114 +64,24 @@ describe('2-63 instance command 1795437642259 - add view isPrivate (integration)
 
     const [unlistedViewId, workspaceViewId] = await findSeededViewIds(2);
 
-    await setLegacyPrivacy(unlistedViewId, {
-      visibility: 'UNLISTED',
-      overrides: null,
-    });
-    await setLegacyPrivacy(workspaceViewId, {
-      visibility: 'WORKSPACE',
-      overrides: null,
-    });
+    await setVisibility({ viewId: unlistedViewId, visibility: 'UNLISTED' });
+    await setVisibility({ viewId: workspaceViewId, visibility: 'WORKSPACE' });
 
     await addIsPrivateCommand.up(queryRunner);
 
-    expect(await findPrivacyRow(unlistedViewId)).toEqual({
-      isPrivate: true,
-      visibility: 'UNLISTED',
-      overrides: null,
-    });
-    expect(await findPrivacyRow(workspaceViewId)).toEqual({
-      isPrivate: false,
-      visibility: 'WORKSPACE',
-      overrides: null,
-    });
+    expect(await findIsPrivate(unlistedViewId)).toBe(true);
+    expect(await findIsPrivate(workspaceViewId)).toBe(false);
   });
 
-  it('adds isPrivate next to the visibility overrides', async () => {
+  it('drops the column on down', async () => {
     await addIsPrivateCommand.down(queryRunner);
 
-    const [authoredViewId, legacyViewId, untouchedViewId] =
-      await findSeededViewIds(3);
-
-    await setLegacyPrivacy(authoredViewId, {
-      visibility: 'WORKSPACE',
-      overrides: {
-        [AUTHOR_UNIVERSAL_IDENTIFIER]: { visibility: 'UNLISTED', name: 'Mine' },
-      },
-    });
-    await setLegacyPrivacy(legacyViewId, {
-      visibility: 'UNLISTED',
-      overrides: { visibility: 'WORKSPACE' },
-    });
-    await setLegacyPrivacy(untouchedViewId, {
-      visibility: 'WORKSPACE',
-      overrides: { [AUTHOR_UNIVERSAL_IDENTIFIER]: { name: 'Renamed' } },
-    });
-
-    await addIsPrivateCommand.up(queryRunner);
-
-    expect((await findPrivacyRow(authoredViewId)).overrides).toEqual({
-      [AUTHOR_UNIVERSAL_IDENTIFIER]: {
-        visibility: 'UNLISTED',
-        isPrivate: true,
-        name: 'Mine',
-      },
-    });
-    expect((await findPrivacyRow(legacyViewId)).overrides).toEqual({
-      visibility: 'WORKSPACE',
-      isPrivate: false,
-    });
-    expect((await findPrivacyRow(untouchedViewId)).overrides).toEqual({
-      [AUTHOR_UNIVERSAL_IDENTIFIER]: { name: 'Renamed' },
-    });
-  });
-
-  it('removes isPrivate from the overrides and drops the column on down', async () => {
-    const [viewId] = await findSeededViewIds(1);
-
-    await queryRunner.query(
-      `UPDATE "core"."view" SET "overrides" = $2 WHERE "id" = $1`,
-      [
-        viewId,
-        {
-          [AUTHOR_UNIVERSAL_IDENTIFIER]: {
-            visibility: 'UNLISTED',
-            isPrivate: true,
-          },
-        },
-      ],
-    );
-
-    await addIsPrivateCommand.down(queryRunner);
-
-    const [{ overrides }] = await queryRunner.query(
-      `SELECT "overrides" FROM "core"."view" WHERE "id" = $1`,
-      [viewId],
-    );
-    const columns = await queryRunner.query(
-      `SELECT column_name AS "columnName"
-         FROM information_schema.columns
-        WHERE table_schema = 'core' AND table_name = 'view'
-          AND column_name = 'isPrivate'`,
-    );
-
-    expect(overrides).toEqual({
-      [AUTHOR_UNIVERSAL_IDENTIFIER]: { visibility: 'UNLISTED' },
-    });
-    expect(columns).toEqual([]);
+    expect(await findIsPrivateColumn()).toEqual([]);
   });
 
   it('defaults isPrivate to false after the upgrade', async () => {
-    const [{ columnDefault, isNullable }] = await queryRunner.query(
-      `SELECT column_default AS "columnDefault", is_nullable AS "isNullable"
-         FROM information_schema.columns
-        WHERE table_schema = 'core' AND table_name = 'view'
-          AND column_name = 'isPrivate'`,
-    );
-
-    expect({ columnDefault, isNullable }).toEqual({
-      columnDefault: 'false',
-      isNullable: 'NO',
-    });
+    expect(await findIsPrivateColumn()).toEqual([
+      { columnDefault: 'false', isNullable: 'NO' },
+    ]);
   });
 });

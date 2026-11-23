@@ -233,7 +233,7 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   }
 
   if (
-    isPrivate === true &&
+    isPrivate &&
     !existingFlatViewToUpdate.isPrivate &&
     isDefined(userWorkspaceId)
   ) {

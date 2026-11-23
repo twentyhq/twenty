@@ -328,6 +328,7 @@ import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/u
 import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429428999-add-view-field-relation-scope';
 import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429429999-add-view-field-label';
 import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795437642259-add-view-is-private';
+import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795443683411-backfill-view-is-private-overrides';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -658,4 +659,5 @@ export const INSTANCE_COMMANDS = [
   AddViewFieldRelationScopeFastInstanceCommand,
   AddViewFieldLabelFastInstanceCommand,
   AddViewIsPrivateFastInstanceCommand,
+  BackfillViewIsPrivateOverridesSlowInstanceCommand,
 ];

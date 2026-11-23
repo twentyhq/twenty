@@ -68,8 +68,7 @@ export class ViewAccessService {
     isPrivate: boolean;
     accessContext: ViewAccessContext;
   }): Promise<boolean> {
-    // A private view belongs to the user who created it, so a principal that
-    // is not a user - an API key or an application - has no owner to record
+    // Only a user can own a private view; API keys and applications cannot
     if (isPrivate) {
       if (!isDefined(accessContext.userWorkspaceId)) {
         this.throwCreatePermissionDenied();
