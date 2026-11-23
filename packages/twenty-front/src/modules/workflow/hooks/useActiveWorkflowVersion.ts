@@ -1,6 +1,6 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useQuery } from '@apollo/client/react';
-import { GetCoreWorkflowVersionsDocument } from '~/generated/graphql';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 
 type UseActiveWorkflowVersionProps = {
   workflowId: string;
@@ -9,18 +9,15 @@ type UseActiveWorkflowVersionProps = {
 export const useActiveWorkflowVersion = ({
   workflowId,
 }: UseActiveWorkflowVersionProps) => {
-  const client = useApolloCoreClient();
-  const { data, loading } = useQuery(GetCoreWorkflowVersionsDocument, {
-    client,
-    variables: { coreWorkflowId: workflowId },
-    skip: !workflowId,
-  });
+  const { coreWorkflowVersions, loading } = useCoreWorkflowVersions(
+    isNonEmptyString(workflowId) ? workflowId : undefined,
+  );
 
   return {
-    workflowVersion: data?.coreWorkflowVersions.find(
+    workflowVersion: coreWorkflowVersions.find(
       (version) => version.status === 'ACTIVE',
     ),
-    hasDraftVersion: data?.coreWorkflowVersions.some(
+    hasDraftVersion: coreWorkflowVersions.some(
       (version) => version.status === 'DRAFT',
     ),
     loading,

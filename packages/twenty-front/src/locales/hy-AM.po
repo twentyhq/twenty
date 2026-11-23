@@ -2290,11 +2290,6 @@ msgstr "Ավելացնել քարտ"
 msgid "Add CC"
 msgstr "Ավելացնել CC"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Ավելացնել ալիք"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -3606,6 +3601,16 @@ msgstr "Բոլոր աշխատանքային տարածքները"
 msgid "Allow"
 msgstr "Թույլատրել"
 
+#. js-lingui-id: rgjDVZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in macOS settings"
+msgstr "Թույլատրել {settingsEntryLabel}-ը macOS-ի կարգավորումներում"
+
+#. js-lingui-id: CzjC6l
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in Windows settings"
+msgstr "Թույլատրել {settingsEntryLabel}-ը Windows-ի կարգավորումներում"
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3656,6 +3661,16 @@ msgstr "Թույլատրե՞լ մեդիայի հասանելիությունը {
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Թույլատրել Microsoft-ով մուտքը SSO շրջանցման թույլտվություն ունեցող օգտատերերի համար։"
+
+#. js-lingui-id: iN398g
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Allow notifications"
+msgstr "Թույլատրել ծանուցումները"
+
+#. js-lingui-id: kDJaGH
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow notifications in your browser"
+msgstr "Թույլատրել ծանուցումները ձեր դիտարկիչում"
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -6363,6 +6378,11 @@ msgstr "Ստուգեք Ձեր էլփոստը"
 msgid "Check your inbox to verify your new email address."
 msgstr "Ստուգեք ձեր մուտքային նամակները՝ նոր էլ․ հասցեն հաստատելու համար։"
 
+#. js-lingui-id: iY9Tuz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Check your system notification settings"
+msgstr "Ստուգեք համակարգի ծանուցումների կարգավորումները"
+
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "checkbox"
@@ -6854,6 +6874,7 @@ msgstr "Փոխանակման բուֆերը պահանջում է անվտանգ
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -7833,6 +7854,7 @@ msgstr "Համատեքստի պատուհանը պետք է լինի դրակա�
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
@@ -10588,6 +10610,16 @@ msgstr "Թելադրումը ձախողվեց։ Կրկին փորձեք։"
 msgid "Dictation is not supported in this browser."
 msgstr "Թելադրումը չի աջակցվում այս դիտարկիչում։"
 
+#. js-lingui-id: rgWPME
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see a test notification?"
+msgstr "Տեսա՞ք փորձնական ծանուցումը:"
+
+#. js-lingui-id: kd/w8u
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see it this time?"
+msgstr "Այս անգամ տեսա՞ք այն:"
+
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
@@ -10778,6 +10810,11 @@ msgstr "DM-ներ"
 msgid "DNS records:"
 msgstr "DNS գրառումներ:"
 
+#. js-lingui-id: 5bBKM2
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Do not disturb"
+msgstr "Չանհանգստացնել"
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -10880,6 +10917,7 @@ msgstr "Չներմուծել անձնական նշված իրադարձությ�
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Done"
 msgstr "Կատարված"
 
@@ -14855,7 +14893,7 @@ msgid "Germany"
 msgstr "Գերմանիա"
 
 #. js-lingui-id: AWtGgd
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "Get help"
 msgstr "Ստանալ օգնություն"
 
@@ -16115,10 +16153,10 @@ msgstr "Մեկ օրից պակաս ժամանակում"
 msgid "In progress"
 msgstr "Ընթացքում"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Ընթացքի մեջ է. կիրառել հաղորդագրությունների և օրացույցի ալիքների տեսանելիությունը գրառումների մակարդակի թույլտվության կանոններով։ Անհրաժեշտ են հարաբերությունների անցումներ։"
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Ընթացքի մեջ է. կիրառել հաղորդագրությունների և օրացույցի ալիքների տեսանելիությունը գրանցման մակարդակի թույլտվությունների կանոններով։ Անհրաժեշտ են կապերի անցումներ և կապված գրանցումների ուղիներ։"
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -18433,6 +18471,11 @@ msgstr "Սկզբում՝ ամենացածրը"
 msgid "M"
 msgstr "մլն"
 
+#. js-lingui-id: PcJKDa
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
+msgstr "macOS-ը կարող է արգելափակել ծանուցումները, նույնիսկ եթե {browserLabel}-ը թույլատրում է Twenty-ին։ Բացեք «Ծանուցումներ»-ը, ընտրեք {settingsEntryLabel}-ը և միացրեք «Թույլատրել ծանուցումները»-ը։ Եթե «Կենտրոնացում»-ը միացված է, անջատեք այն։ Ապա ուղարկեք փորձնական ծանուցում։"
+
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
@@ -20037,8 +20080,13 @@ msgstr "Նոր խումբ"
 msgid "New inbox messages notify you while your browser is running"
 msgstr "Նոր մուտքային հաղորդագրությունները ծանուցում են ձեզ, մինչ ձեր դիտարկիչն աշխատում է"
 
+#. js-lingui-id: Wi5Riu
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "New inbox messages will show up like the test notification while your browser is running."
+msgstr "Նոր մուտքային հաղորդագրությունները կցուցադրվեն փորձնական ծանուցման նման, մինչ ձեր դիտարկիչը գործարկված է։"
+
 #. js-lingui-id: ynuJvo
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "New inbox messages will show up like this"
 msgstr "Նոր մուտքային հաղորդագրությունները կցուցադրվեն այսպես"
 
@@ -20303,6 +20351,7 @@ msgstr "Իններորդ"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -21387,6 +21436,11 @@ msgstr "Ձեր որոնման չափանիշներին համապատասխան�
 msgid "No workspaces match this search"
 msgstr "Ոչ մի աշխատատարածք չի համապատասխանում այս որոնմանը"
 
+#. js-lingui-id: LayLjZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "No, read the guide"
+msgstr "Ոչ, կարդալ ուղեցույցը"
+
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
@@ -21623,15 +21677,26 @@ msgstr "Այստեղ առաջարկելու ոչինչ չկա։"
 #. js-lingui-id: iDNBZe
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 #: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Ծանուցումներ"
 
+#. js-lingui-id: sdfGbU
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Notifications › {settingsEntryName}"
+msgstr "Ծանուցումներ › {settingsEntryName}"
+
 #. js-lingui-id: A09awi
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "Notifications are on"
 msgstr "Ծանուցումները միացված են"
+
+#. js-lingui-id: +j76n0
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Notifications are set up"
+msgstr "Ծանուցումները կարգավորված են"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -22325,6 +22390,11 @@ msgstr "Բացել կարգավորումները"
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
 msgstr "Բացել կողային վահանակը"
+
+#. js-lingui-id: TgKqjz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Open system settings"
+msgstr "Բացել համակարգի կարգավորումները"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -24214,6 +24284,11 @@ msgstr "Կարդալ համակարգի հուշումները"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
 msgstr "Կարդալ անդամների մասնավոր ալիքների հասցեն, սեփականատիրոջը և հաշվի կարգավիճակը"
+
+#. js-lingui-id: 4X88Wc
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Read the guide"
+msgstr "Կարդալ ուղեցույցը"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -27388,6 +27463,7 @@ msgstr "Ուղարկել հիմա"
 
 #. js-lingui-id: eus61c
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Send test"
 msgstr "Ուղարկել փորձնական ծանուցում"
 
@@ -29404,6 +29480,11 @@ msgstr "Համաժամեցումը կդադարի, և այս հաշվի մուտ
 msgid "System"
 msgstr "Համակարգ"
 
+#. js-lingui-id: q2LSdK
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "System › Notifications"
+msgstr "Համակարգ › Ծանուցումներ"
+
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 msgid "System fields"
@@ -30366,7 +30447,7 @@ msgid "This browser cannot show notifications"
 msgstr "Այս դիտարկիչը չի կարող ցուցադրել ծանուցումներ"
 
 #. js-lingui-id: 47wc2N
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "This browser could not turn on notifications"
 msgstr "Այս դիտարկիչում չհաջողվեց միացնել ծանուցումները"
 
@@ -31494,6 +31575,11 @@ msgstr "Թուրքերեն"
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
 msgstr "Փոխակերպել"
+
+#. js-lingui-id: Njwcqh
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Turn on notifications"
+msgstr "Միացնել ծանուցումները"
 
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -33579,6 +33665,16 @@ msgstr "Չհաջողվեց բեռնել սակագնային փաթեթները"
 msgid "We encountered an issue verifying"
 msgstr "Մենք խնդիր ունեցանք հաստատման ընթացքում"
 
+#. js-lingui-id: zXOO0X
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent another test notification."
+msgstr "Մենք հենց նոր ուղարկեցինք ևս մեկ փորձնական ծանուցում։"
+
+#. js-lingui-id: Ik3LPq
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent one. It shows up in a corner of your screen."
+msgstr "Մենք հենց նոր ուղարկեցինք մեկը։ Այն կհայտնվի ձեր էկրանի մի անկյունում։"
+
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
@@ -34027,6 +34123,11 @@ msgstr "Կձախողվի"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Will get this email"
 msgstr "Կստանա այս էլ. նամակը"
+
+#. js-lingui-id: BQiUZ6
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
+msgstr "Windows-ը կարող է արգելափակել {browserLabel}-ը, նույնիսկ եթե Twenty-ը թույլատրված է։ Բացեք «Ծանուցումներ»-ը, միացրեք {settingsEntryLabel}-ը և անջատեք «Չանհանգստացնել»-ը։ Ապա ուղարկեք փորձնական ծանուցում։"
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -34578,6 +34679,12 @@ msgstr "այո"
 msgid "Yes"
 msgstr "Այո"
 
+#. js-lingui-id: F91wPm
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Yes, I saw it"
+msgstr "Այո, տեսա"
+
 #. js-lingui-id: y/0uwd
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
@@ -34761,6 +34868,21 @@ msgstr "Ձեր վճարումը անմիջապես անցնում է տարեկ�
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to monthly on {0}, at the end of your current billing period."
 msgstr "Ձեր վճարումը {0}-ին՝ ձեր ընթացիկ վճարային ժամանակաշրջանի ավարտին, անցնում է ամսական վճարման։"
+
+#. js-lingui-id: AUurzR
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "your browser"
+msgstr "ձեր դիտարկիչը"
+
+#. js-lingui-id: TzFYej
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
+msgstr "Ձեր դիտարկիչը փակել է հարցումը կամ այն ցուցադրել է որպես պատկերակ հասցեի տողում։ Սեղմեք այդ պատկերակի վրա և ընտրեք «Թույլատրել», ապա շարունակեք։"
+
+#. js-lingui-id: o3PWYJ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
+msgstr "Ձեր դիտարկիչը կհարցնի՝ արդյոք ցուցադրի Twenty-ի ծանուցումները։ Ընտրեք «Թույլատրել»։"
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -34948,6 +35070,11 @@ msgstr "Ձեր բաժանորդագրության կարգավորումը չի 
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "Ձեր բաժանորդագրության կարգավիճակը՝ {statusLabel}"
+
+#. js-lingui-id: nH1nrf
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
+msgstr "Ձեր համակարգը կարող է արգելափակել {browserLabel}-ը, նույնիսկ եթե Twenty-ը թույլատրված է։ Ձեր համակարգի կարգավորումներում թույլատրեք {browserLabel}-ի ծանուցումները, ապա ուղարկեք փորձնական ծանուցում։"
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts

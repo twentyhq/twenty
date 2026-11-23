@@ -108,6 +108,9 @@ export const STANDARD_OBJECTS = {
       eventExternalIdIndex: {
         universalIdentifier: 'b14d63d0-c1ab-470f-927d-9c0c05277caa',
       },
+      accountOwnerIdIndex: {
+        universalIdentifier: '740776d1-fe14-41b9-80b9-11c610765f0c',
+      },
     },
     views: {
       allCalendarChannelEventAssociations: buildStandardObjectIndexView({
@@ -541,6 +544,9 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1b86ece8-7ce3-4df3-8771-fd4b5d45b2f2',
+      },
+      accountOwnerIdIndex: {
+        universalIdentifier: '0797b417-8f87-4df1-b838-d85fbb663110',
       },
     },
     views: {

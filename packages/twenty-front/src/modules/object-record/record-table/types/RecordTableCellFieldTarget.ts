@@ -11,4 +11,5 @@ export type RecordTableCellFieldTarget = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
   isRecordReadOnly: boolean;
   restrictedFieldNames: string[];
+  fieldValueKey?: string;
 };
