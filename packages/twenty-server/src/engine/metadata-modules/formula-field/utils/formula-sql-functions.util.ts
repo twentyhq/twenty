@@ -12,15 +12,15 @@ import {
   getFormulaSqlUnitOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-intervals.util';
 import {
-  assertFormulaSqlType,
+  assertFormulaSqlTypeOrThrow,
   describeFormulaSqlType,
   fromUtcTimestamp,
   toDateLikeValueOrThrow,
-  toNumberOperand,
-  toTextOperand,
+  toNumberOperandOrThrow,
+  toTextOperandOrThrow,
   toUtcDate,
   toUtcTimestamp,
-  unifyFormulaSqlValues,
+  unifyFormulaSqlValuesOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
 
 type FormulaSqlFunction = {
@@ -56,12 +56,17 @@ const unifyAll = ({
   const [firstValue, ...otherValues] = formulaSqlValues;
   const target = otherValues.reduce(
     (unifiedValue, value) =>
-      unifyFormulaSqlValues({ left: unifiedValue, right: value, usage })[0],
+      unifyFormulaSqlValuesOrThrow({
+        left: unifiedValue,
+        right: value,
+        usage,
+      })[0],
     firstValue,
   );
 
   return formulaSqlValues.map(
-    (value) => unifyFormulaSqlValues({ left: value, right: target, usage })[0],
+    (value) =>
+      unifyFormulaSqlValuesOrThrow({ left: value, right: target, usage })[0],
   );
 };
 
@@ -186,9 +191,9 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
         value.type !== 'date' &&
         value.type !== 'dateTime'
       ) {
-        throw new FormulaSqlCompilationException(
-          `isNonEmptyString needs text, but got ${describeFormulaSqlType(value.type)}`,
-        );
+        throw new FormulaSqlCompilationException({
+          message: `isNonEmptyString needs text, but got ${describeFormulaSqlType(value.type)}`,
+        });
       }
 
       return {
@@ -201,7 +206,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
     compile: ([container, value]) => {
-      const searchedText = assertFormulaSqlType({
+      const searchedText = assertFormulaSqlTypeOrThrow({
         value,
         type: 'text',
         usage: 'includes',
@@ -215,7 +220,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
       }
 
       return {
-        sql: `COALESCE(strpos(${assertFormulaSqlType({ value: container, type: 'text', usage: 'includes' }).sql}, ${searchedText.sql}) > 0, FALSE)`,
+        sql: `COALESCE(strpos(${assertFormulaSqlTypeOrThrow({ value: container, type: 'text', usage: 'includes' }).sql}, ${searchedText.sql}) > 0, FALSE)`,
         type: 'boolean',
       };
     },
@@ -224,7 +229,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
     compile: ([list]) => ({
-      sql: `COALESCE(cardinality(${assertFormulaSqlType({ value: list, type: 'textArray', usage: 'arrayLength' }).sql}), 0)::numeric`,
+      sql: `COALESCE(cardinality(${assertFormulaSqlTypeOrThrow({ value: list, type: 'textArray', usage: 'arrayLength' }).sql}), 0)::numeric`,
       type: 'number',
     }),
   },
@@ -259,7 +264,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
       });
       const interval = buildFormulaSqlInterval({
         unit,
-        amountSql: assertFormulaSqlType({
+        amountSql: assertFormulaSqlTypeOrThrow({
           value: amount,
           type: 'number',
           usage: 'dateAdd',
@@ -320,14 +325,15 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
     compile: ([condition, valueIfTrue, valueIfFalse]) => {
-      const [unifiedValueIfTrue, unifiedValueIfFalse] = unifyFormulaSqlValues({
-        left: valueIfTrue,
-        right: valueIfFalse,
-        usage: 'if',
-      });
+      const [unifiedValueIfTrue, unifiedValueIfFalse] =
+        unifyFormulaSqlValuesOrThrow({
+          left: valueIfTrue,
+          right: valueIfFalse,
+          usage: 'if',
+        });
 
       return {
-        sql: `(CASE WHEN ${assertFormulaSqlType({ value: condition, type: 'boolean', usage: 'if' }).sql} THEN ${unifiedValueIfTrue.sql} ELSE ${unifiedValueIfFalse.sql} END)`,
+        sql: `(CASE WHEN ${assertFormulaSqlTypeOrThrow({ value: condition, type: 'boolean', usage: 'if' }).sql} THEN ${unifiedValueIfTrue.sql} ELSE ${unifiedValueIfFalse.sql} END)`,
         type: unifiedValueIfTrue.type,
       };
     },
@@ -349,7 +355,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     maximumArgumentCount: Infinity,
     compile: (formulaSqlValues) => ({
       sql: `(${formulaSqlValues
-        .map((value) => toTextOperand({ value, usage: 'concat' }))
+        .map((value) => toTextOperandOrThrow({ value, usage: 'concat' }))
         .join(' || ')})`,
       type: 'text',
       isNeverNull: true,
@@ -359,7 +365,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
     compile: ([text]) => ({
-      sql: `lower(${assertFormulaSqlType({ value: text, type: 'text', usage: 'lower' }).sql})`,
+      sql: `lower(${assertFormulaSqlTypeOrThrow({ value: text, type: 'text', usage: 'lower' }).sql})`,
       type: 'text',
     }),
   },
@@ -367,7 +373,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
     compile: ([text]) => ({
-      sql: `upper(${assertFormulaSqlType({ value: text, type: 'text', usage: 'upper' }).sql})`,
+      sql: `upper(${assertFormulaSqlTypeOrThrow({ value: text, type: 'text', usage: 'upper' }).sql})`,
       type: 'text',
     }),
   },
@@ -375,7 +381,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
     compile: (formulaSqlValues) => ({
-      sql: `LEAST(${formulaSqlValues.map((value) => assertFormulaSqlType({ value, type: 'number', usage: 'min' }).sql).join(', ')})`,
+      sql: `LEAST(${formulaSqlValues.map((value) => assertFormulaSqlTypeOrThrow({ value, type: 'number', usage: 'min' }).sql).join(', ')})`,
       type: 'number',
     }),
   },
@@ -383,7 +389,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
     compile: (formulaSqlValues) => ({
-      sql: `GREATEST(${formulaSqlValues.map((value) => assertFormulaSqlType({ value, type: 'number', usage: 'max' }).sql).join(', ')})`,
+      sql: `GREATEST(${formulaSqlValues.map((value) => assertFormulaSqlTypeOrThrow({ value, type: 'number', usage: 'max' }).sql).join(', ')})`,
       type: 'number',
     }),
   },
@@ -391,7 +397,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
     compile: ([number, decimals]) => ({
-      sql: `round(${assertFormulaSqlType({ value: number, type: 'number', usage: 'roundTo' }).sql}, LEAST(GREATEST(trunc(${toNumberOperand({ value: decimals, usage: 'roundTo' })}), 0), 20)::integer)`,
+      sql: `round(${assertFormulaSqlTypeOrThrow({ value: number, type: 'number', usage: 'roundTo' }).sql}, LEAST(GREATEST(trunc(${toNumberOperandOrThrow({ value: decimals, usage: 'roundTo' })}), 0), 20)::integer)`,
       type: 'number',
     }),
   },
@@ -409,7 +415,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
           units: RELATIVE_DATE_DIRECTIONS,
           usage: 'isInRelativeDateRange',
         }),
-        amountSql: assertFormulaSqlType({
+        amountSql: assertFormulaSqlTypeOrThrow({
           value: amount,
           type: 'number',
           usage: 'isInRelativeDateRange',
@@ -435,7 +441,9 @@ export const compileFormulaSqlFunction = ({
   const formulaSqlFunction = FORMULA_SQL_FUNCTIONS[name];
 
   if (!isDefined(formulaSqlFunction)) {
-    throw new FormulaSqlCompilationException(`Unknown function "${name}"`);
+    throw new FormulaSqlCompilationException({
+      message: `Unknown function "${name}"`,
+    });
   }
 
   const { minimumArgumentCount, maximumArgumentCount, compile } =
@@ -445,9 +453,9 @@ export const compileFormulaSqlFunction = ({
     formulaSqlValues.length < minimumArgumentCount ||
     formulaSqlValues.length > maximumArgumentCount
   ) {
-    throw new FormulaSqlCompilationException(
-      `${name} takes ${minimumArgumentCount === maximumArgumentCount ? minimumArgumentCount : `at least ${minimumArgumentCount}`} argument(s), but got ${formulaSqlValues.length}`,
-    );
+    throw new FormulaSqlCompilationException({
+      message: `${name} takes ${minimumArgumentCount === maximumArgumentCount ? minimumArgumentCount : `at least ${minimumArgumentCount}`} argument(s), but got ${formulaSqlValues.length}`,
+    });
   }
 
   return compile(formulaSqlValues);

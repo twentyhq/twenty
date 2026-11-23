@@ -15,19 +15,19 @@ export const omitFormulaFieldBindings = <
     settings: universalSettings,
   });
 
+  if (!isDefined(expression)) {
+    return universalSettings;
+  }
+
   const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
     settings: universalSettings,
   });
 
-  return isDefined(expression)
-    ? {
-        ...universalSettings,
-        formula: {
-          expression,
-          ...(isDefined(currencyCodeExpression)
-            ? { currencyCodeExpression }
-            : {}),
-        },
-      }
-    : universalSettings;
+  return {
+    ...universalSettings,
+    formula: {
+      expression,
+      ...(isDefined(currencyCodeExpression) ? { currencyCodeExpression } : {}),
+    },
+  };
 };
