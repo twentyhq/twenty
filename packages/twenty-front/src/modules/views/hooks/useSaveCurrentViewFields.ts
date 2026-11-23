@@ -12,7 +12,7 @@ import {
   type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
 import isEmpty from 'lodash.isempty';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { getDirtyFields } from '~/utils/getDirtyFields';
 import { isDefined } from 'twenty-shared/utils';
 import { removeTypenames } from '~/utils/removeTypenames';
 
@@ -111,17 +111,10 @@ export const useSaveCurrentViewFields = () => {
                 existingField.relationTargetFieldMetadataId ?? null,
             };
 
-            const changedProperties = Object.fromEntries(
-              Object.entries(updatedProperties).filter(
-                ([propertyName, value]) =>
-                  !isDeeplyEqual(
-                    value,
-                    existingProperties[
-                      propertyName as keyof typeof updatedProperties
-                    ],
-                  ),
-              ),
-            ) as Partial<typeof updatedProperties>;
+            const changedProperties = getDirtyFields(
+              updatedProperties,
+              existingProperties,
+            );
 
             if (isEmpty(changedProperties)) {
               return {
