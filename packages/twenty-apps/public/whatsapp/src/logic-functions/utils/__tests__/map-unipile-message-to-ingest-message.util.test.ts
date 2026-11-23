@@ -63,6 +63,25 @@ describe('mapUnipileMessageToIngestMessage', () => {
     ]);
   });
 
+  it('addresses a message received in a group to the other members too', () => {
+    const sam = { id: '33633333333@s.whatsapp.net', display_name: 'Sam' };
+
+    expect(
+      mapUnipileMessageToIngestMessage({
+        message: buildMessage(),
+        channelHandle: CHANNEL_HANDLE,
+        counterparts: [
+          GRACE_COUNTERPART,
+          { user: sam, handle: '+33633333333' },
+        ],
+      })?.participants,
+    ).toEqual([
+      { role: 'FROM', handle: '+33622222222', displayName: 'Grace Hopper' },
+      { role: 'TO', handle: CHANNEL_HANDLE },
+      { role: 'TO', handle: '+33633333333', displayName: 'Sam' },
+    ]);
+  });
+
   it('finds the sender among the chat counterparts when the message carries only their id', () => {
     expect(
       mapUnipileMessageToIngestMessage({

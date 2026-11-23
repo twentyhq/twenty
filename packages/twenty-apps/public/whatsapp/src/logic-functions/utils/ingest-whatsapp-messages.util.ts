@@ -16,6 +16,7 @@ import { importWhatsappMessageAttachments } from 'src/logic-functions/utils/impo
 import { isWhatsappContactCreationAllowed } from 'src/logic-functions/utils/is-whatsapp-contact-creation-allowed.util';
 import { isWhatsappChatSelected } from 'src/logic-functions/utils/is-whatsapp-chat-selected.util';
 import { isWhatsappGroupChat } from 'src/logic-functions/utils/is-whatsapp-group-chat.util';
+import { limitWhatsappMessageParticipants } from 'src/logic-functions/utils/limit-whatsapp-message-participants.util';
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
 import { setMissingWhatsappPersonAvatars } from 'src/logic-functions/utils/set-missing-whatsapp-person-avatars.util';
 import { splitWhatsappUserName } from 'src/logic-functions/utils/split-whatsapp-user-name.util';
@@ -192,10 +193,13 @@ export const ingestWhatsappMessages = async ({
   const ingestMessagesInput = mappedMessages.map(({ ingestMessage }) => ({
     ...ingestMessage,
     subject,
-    participants: ingestMessage.participants.map((participant) => {
-      const personId = personIdByHandle.get(participant.handle);
+    participants: limitWhatsappMessageParticipants({
+      channelHandle: channel.handle,
+      participants: ingestMessage.participants.map((participant) => {
+        const personId = personIdByHandle.get(participant.handle);
 
-      return isDefined(personId) ? { ...participant, personId } : participant;
+        return isDefined(personId) ? { ...participant, personId } : participant;
+      }),
     }),
   }));
 

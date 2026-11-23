@@ -275,6 +275,34 @@ describe('ingestWhatsappMessages', () => {
     });
   });
 
+  it('links a message received in a group to every member, so the thread shows on each of them', async () => {
+    setPeopleInTwenty({ [PRIYA_HANDLE]: 'priya-person-id' });
+
+    await ingest({
+      chat: GROUP_CHAT,
+      counterparts: [PRIYA, SAM],
+      messages: [buildMessage(false, PRIYA)],
+      settings: {
+        ...DEFAULT_WHATSAPP_SETTINGS,
+        contactAutoCreationPolicy: 'SENT_AND_RECEIVED',
+      },
+    });
+
+    expect(ingestedParticipants()).toEqual([
+      expect.objectContaining({
+        role: 'FROM',
+        handle: PRIYA_HANDLE,
+        personId: 'priya-person-id',
+      }),
+      { role: 'TO', handle: CHANNEL_HANDLE },
+      expect.objectContaining({
+        role: 'TO',
+        handle: SAM_HANDLE,
+        personId: 'created-person-id',
+      }),
+    ]);
+  });
+
   it('skips a group chat where nobody is in Twenty, even with All chats', async () => {
     await expect(
       ingest({ chat: GROUP_CHAT, counterparts: [PRIYA, SAM] }),

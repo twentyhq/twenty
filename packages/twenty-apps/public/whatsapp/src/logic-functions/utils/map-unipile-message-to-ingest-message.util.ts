@@ -40,6 +40,11 @@ const buildWhatsappMessageParticipants = ({
   return [
     buildWhatsappParticipant({ role: 'FROM', counterpart: sender }),
     { role: 'TO', handle: channelHandle },
+    ...counterparts
+      .filter(({ handle }) => handle !== sender.handle)
+      .map((counterpart) =>
+        buildWhatsappParticipant({ role: 'TO', counterpart }),
+      ),
   ];
 };
 

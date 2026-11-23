@@ -27,6 +27,7 @@
 - **Only recent history is imported.** **Sync now** imports your most recent conversations: pick 20 (default), 50 or 100 in **Past conversations**, or **None** to skip history and only receive new messages. Right after linking, WhatsApp is still handing over your history, so a first sync can miss older conversations.
 - **You can pick the conversations to import.** In **Import**, choose **Selected chats** and tick the conversations Twenty should bring in: only those are imported, new messages and history alike, whoever is in them. The list shows your 200 most recent conversations at most, and up to 200 can be selected.
 - **Group chats need a contact.** A group is imported once at least one member is already a Person in Twenty.
+- **A group conversation shows on every member.** Each message of a group is linked to all its members whose number is known, so the conversation appears on the record of each of them. When contact auto-creation applies, a Person is created for every member WhatsApp gives a name for. Run **Sync now** again to link the members of groups imported earlier.
 - **Keep your phone online.** WhatsApp unlinks devices of a phone that stays offline for too long; the connection then asks to be reconnected with a new QR code.
 - **Settings are per member.** Import, visibility, contact auto-creation and read status live in **Settings → App preferences → WhatsApp → Sync** and apply to your own connection.
 
