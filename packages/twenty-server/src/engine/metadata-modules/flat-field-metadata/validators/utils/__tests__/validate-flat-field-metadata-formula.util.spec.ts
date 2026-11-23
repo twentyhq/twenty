@@ -32,7 +32,6 @@ const validate = ({
     },
     universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
     universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
-    pendingUniversalFlatFieldMetadatas: [],
     isFormulaFieldEnabled: true,
     ...overrides,
   }).map(({ message }) => ({ message }));
@@ -66,7 +65,7 @@ describe('validateFlatFieldMetadataFormula', () => {
     },
   );
 
-  it('should refuse a formula when the feature is not enabled', () => {
+  it('should refuse a new or changed formula when the feature is not enabled', () => {
     expect(
       validate({
         flatFieldMetadataToValidate: {},
@@ -75,6 +74,25 @@ describe('validateFlatFieldMetadataFormula', () => {
     ).toEqual([
       { message: 'Formula fields are not enabled for this workspace' },
     ]);
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {},
+        existingUniversalSettings: { formula: { expression: 'price * 0.1' } },
+        isFormulaFieldEnabled: false,
+      }),
+    ).toEqual([
+      { message: 'Formula fields are not enabled for this workspace' },
+    ]);
+  });
+
+  it('should let an unchanged formula through when the feature is not enabled', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {},
+        existingUniversalSettings: { formula: { expression: 'price * 0.2' } },
+        isFormulaFieldEnabled: false,
+      }),
+    ).toEqual([]);
   });
 
   it('should refuse a formula on a field type that cannot hold one', () => {
@@ -152,7 +170,9 @@ describe('validateFlatFieldMetadataFormula', () => {
         flatFieldMetadataToValidate: {
           universalSettings: { formula: { expression: 'price - cost' } },
         },
-        pendingUniversalFlatFieldMetadatas: [pendingUniversalFlatFieldMetadata],
+        pendingUniversalFlatFieldMetadataMaps: {
+          byUniversalIdentifier: { cost: pendingUniversalFlatFieldMetadata },
+        },
       }),
     ).toEqual([]);
   });

@@ -256,7 +256,8 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate,
         universalFlatObjectMetadataMaps: flatObjectMetadataMaps,
         universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-        pendingUniversalFlatFieldMetadatas: [],
+        existingUniversalSettings:
+          existingFlatFieldMetadataToUpdate.universalSettings,
         isFormulaFieldEnabled:
           additionalCacheDataMaps.featureFlagsMap[
             FeatureFlagKey.IS_FORMULA_FIELD_ENABLED
@@ -509,9 +510,8 @@ export class FlatFieldMetadataValidatorService {
         flatFieldMetadataToValidate,
         universalFlatObjectMetadataMaps: flatObjectMetadataMaps,
         universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
-        pendingUniversalFlatFieldMetadatas: Object.values(
-          remainingFlatEntityMapsToValidate.byUniversalIdentifier,
-        ).filter(isDefined),
+        pendingUniversalFlatFieldMetadataMaps:
+          remainingFlatEntityMapsToValidate,
         isFormulaFieldEnabled:
           additionalCacheDataMaps.featureFlagsMap[
             FeatureFlagKey.IS_FORMULA_FIELD_ENABLED

@@ -38,9 +38,18 @@ describe('buildFormulaFieldEvaluationPlans', () => {
 
   it('should list the columns a formula reads on its own record', () => {
     expect(findPlan('total')).toMatchObject({
-      ownFieldMetadataIds: ['gadget-price', 'gadget-quantity'],
-      ownFieldNames: ['price', 'quantity'],
-      ownColumnNames: ['price', 'quantity'],
+      ownFields: [
+        {
+          fieldMetadataId: 'gadget-price',
+          fieldName: 'price',
+          columnNames: ['price'],
+        },
+        {
+          fieldMetadataId: 'gadget-quantity',
+          fieldName: 'quantity',
+          columnNames: ['quantity'],
+        },
+      ],
       lookups: [],
     });
     expect(
@@ -53,30 +62,44 @@ describe('buildFormulaFieldEvaluationPlans', () => {
 
   it('should list the related record columns a lookup reads', () => {
     expect(findPlan('supplierLabel')).toMatchObject({
-      ownFieldNames: ['supplier'],
-      ownColumnNames: ['supplierId'],
+      ownFields: [
+        {
+          fieldMetadataId: 'gadget-supplier',
+          fieldName: 'supplier',
+          columnNames: ['supplierId'],
+        },
+      ],
       lookups: [
         {
           relationFieldName: 'supplier',
-          relationFieldMetadataId: 'gadget-supplier',
           targetObjectMetadataId: 'supplier-object',
-          targetFieldMetadataIds: ['supplier-name', 'supplier-revenue'],
-          targetFieldNames: ['name', 'revenue'],
-          targetColumnNames: [
-            'name',
-            'revenueAmountMicros',
-            'revenueCurrencyCode',
+          targetFields: [
+            {
+              fieldMetadataId: 'supplier-name',
+              fieldName: 'name',
+              columnNames: ['name'],
+            },
+            {
+              fieldMetadataId: 'supplier-revenue',
+              fieldName: 'revenue',
+              columnNames: ['revenueAmountMicros', 'revenueCurrencyCode'],
+            },
           ],
         },
       ],
     });
+    expect(
+      findPlan('supplierLabel').evaluate({
+        record: {
+          supplier: { name: 'Acme', revenue: { currencyCode: 'USD' } },
+        },
+        now: NOW,
+      }),
+    ).toBe('Acme (USD)');
   });
 
   it('should evaluate a formula that no longer compiles to null without reading anything', () => {
-    expect(findPlan('broken')).toMatchObject({
-      ownColumnNames: [],
-      lookups: [],
-    });
+    expect(findPlan('broken')).toMatchObject({ ownFields: [], lookups: [] });
     expect(findPlan('broken').evaluate({ record: {}, now: NOW })).toBeNull();
   });
 

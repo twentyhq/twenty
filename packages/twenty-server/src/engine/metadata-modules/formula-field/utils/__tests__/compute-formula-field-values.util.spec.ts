@@ -5,26 +5,38 @@ const NOW = '2026-09-23T10:00:00.000Z';
 
 const TOTAL_PLAN: FormulaFieldEvaluationPlan = {
   fieldName: 'total',
-  ownFieldMetadataIds: ['price-id', 'quantity-id'],
-  ownFieldNames: ['price', 'quantity'],
-  ownColumnNames: ['price', 'quantity'],
+  ownFields: [
+    { fieldMetadataId: 'price-id', fieldName: 'price', columnNames: ['price'] },
+    {
+      fieldMetadataId: 'quantity-id',
+      fieldName: 'quantity',
+      columnNames: ['quantity'],
+    },
+  ],
   lookups: [],
   evaluate: ({ record }) => Number(record.price) * Number(record.quantity),
 };
 
 const SUPPLIER_LABEL_PLAN: FormulaFieldEvaluationPlan = {
   fieldName: 'supplierLabel',
-  ownFieldMetadataIds: ['supplier-id'],
-  ownFieldNames: ['supplier'],
-  ownColumnNames: ['supplierId'],
+  ownFields: [
+    {
+      fieldMetadataId: 'supplier-id',
+      fieldName: 'supplier',
+      columnNames: ['supplierId'],
+    },
+  ],
   lookups: [
     {
       relationFieldName: 'supplier',
-      relationFieldMetadataId: 'supplier-id',
       targetObjectMetadataId: 'supplier-object',
-      targetFieldMetadataIds: ['supplier-name'],
-      targetFieldNames: ['name'],
-      targetColumnNames: ['name'],
+      targetFields: [
+        {
+          fieldMetadataId: 'supplier-name',
+          fieldName: 'name',
+          columnNames: ['name'],
+        },
+      ],
     },
   ],
   evaluate: () => 'Acme gadget',

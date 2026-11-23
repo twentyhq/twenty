@@ -2,7 +2,7 @@ import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derive
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { readAuthoredOverrideProperty } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-property.util';
-import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-ui-editable.util';
+import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-field-metadata-ui-editable.util';
 
 const resolveEffectiveEntityIsActive = (entity: {
   isActive: boolean;

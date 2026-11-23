@@ -1,15 +1,11 @@
-import { type FormulaValue } from 'twenty-shared/types';
+import { type FormulaEvaluator } from 'twenty-shared/types';
 
+import { type FormulaFieldDependency } from 'src/engine/metadata-modules/formula-field/types/formula-field-dependency.type';
 import { type FormulaFieldLookup } from 'src/engine/metadata-modules/formula-field/types/formula-field-lookup.type';
 
 export type FormulaFieldEvaluationPlan = {
   fieldName: string;
-  ownFieldMetadataIds: string[];
-  ownFieldNames: string[];
-  ownColumnNames: string[];
+  ownFields: FormulaFieldDependency[];
   lookups: FormulaFieldLookup[];
-  evaluate: (params: {
-    record: Record<string, unknown>;
-    now: string;
-  }) => FormulaValue;
+  evaluate: FormulaEvaluator;
 };

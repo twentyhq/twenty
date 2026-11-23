@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -19,14 +21,19 @@ export const getFormulaFieldEvaluationPlans = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): FormulaFieldEvaluationPlan[] => {
+  const existingPlansByObjectMetadata = formulaFieldEvaluationPlansCache.get(
+    flatFieldMetadataMaps,
+  );
   const cachedPlansByObjectMetadata =
-    formulaFieldEvaluationPlansCache.get(flatFieldMetadataMaps) ??
+    existingPlansByObjectMetadata ??
     new WeakMap<FlatObjectMetadata, FormulaFieldEvaluationPlan[]>();
 
-  formulaFieldEvaluationPlansCache.set(
-    flatFieldMetadataMaps,
-    cachedPlansByObjectMetadata,
-  );
+  if (!isDefined(existingPlansByObjectMetadata)) {
+    formulaFieldEvaluationPlansCache.set(
+      flatFieldMetadataMaps,
+      cachedPlansByObjectMetadata,
+    );
+  }
 
   const cachedPlans = cachedPlansByObjectMetadata.get(flatObjectMetadata);
 

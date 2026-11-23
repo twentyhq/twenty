@@ -1,3 +1,4 @@
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   getFieldMetadataFormulaExpression,
@@ -6,7 +7,10 @@ import {
   renameValidationRuleExpressionFields,
 } from 'twenty-shared/utils';
 
-import { buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
+import {
+  buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps,
+  type FormulaSourceUniversalFlatObjectMetadata,
+} from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type UniversalFlatFieldMetadataByUniversalIdentifier = Partial<
@@ -17,6 +21,7 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
   renamedFieldUniversalIdentifier,
   previousFieldName,
   newFieldName,
+  universalFlatObjectMetadataMaps,
   existingUniversalFlatFieldMetadataByUniversalIdentifier,
   pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier,
   deletedUniversalFlatFieldMetadataByUniversalIdentifier,
@@ -24,6 +29,11 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
   renamedFieldUniversalIdentifier: string;
   previousFieldName: string;
   newFieldName: string;
+  universalFlatObjectMetadataMaps: {
+    byUniversalIdentifier: Partial<
+      Record<string, FormulaSourceUniversalFlatObjectMetadata>
+    >;
+  };
   existingUniversalFlatFieldMetadataByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
   pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
   deletedUniversalFlatFieldMetadataByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
@@ -33,49 +43,25 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
     return {};
   }
 
-  const existingUniversalFlatFieldMetadatas = Object.values(
-    existingUniversalFlatFieldMetadataByUniversalIdentifier,
-  ).filter(isDefined);
-  const fieldUniversalIdentifiersByObjectUniversalIdentifier = new Map<
-    string,
-    string[]
-  >();
-
-  for (const {
-    universalIdentifier,
-    objectMetadataUniversalIdentifier,
-  } of existingUniversalFlatFieldMetadatas) {
-    fieldUniversalIdentifiersByObjectUniversalIdentifier.set(
-      objectMetadataUniversalIdentifier,
-      [
-        ...(fieldUniversalIdentifiersByObjectUniversalIdentifier.get(
-          objectMetadataUniversalIdentifier,
-        ) ?? []),
-        universalIdentifier,
-      ],
-    );
-  }
-
-  const universalFlatObjectMetadataMaps = {
-    byUniversalIdentifier: Object.fromEntries(
-      [...fieldUniversalIdentifiersByObjectUniversalIdentifier].map(
-        ([universalIdentifier, fieldUniversalIdentifiers]) => [
-          universalIdentifier,
-          { universalIdentifier, fieldUniversalIdentifiers },
-        ],
-      ),
-    ),
-  };
   const fieldNameByUniversalIdentifier = new Map([
     [renamedFieldUniversalIdentifier, newFieldName],
   ]);
-
+  const fieldDescriptorsByObjectUniversalIdentifier = new Map<
+    string,
+    ValidationRuleFieldDescriptor[]
+  >();
   const universalFlatFieldMetadataToUpdate: Record<
     string,
     UniversalFlatFieldMetadata
   > = {};
 
-  for (const existingUniversalFlatFieldMetadata of existingUniversalFlatFieldMetadatas) {
+  for (const existingUniversalFlatFieldMetadata of Object.values(
+    existingUniversalFlatFieldMetadataByUniversalIdentifier,
+  )) {
+    if (!isDefined(existingUniversalFlatFieldMetadata)) {
+      continue;
+    }
+
     const { universalIdentifier, objectMetadataUniversalIdentifier } =
       existingUniversalFlatFieldMetadata;
     const universalFlatFieldMetadata =
@@ -103,18 +89,25 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       continue;
     }
 
-    const compilation = compileFormulaExpression({
-      expression,
-      fields: buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
+    const fields =
+      fieldDescriptorsByObjectUniversalIdentifier.get(
+        objectMetadataUniversalIdentifier,
+      ) ??
+      buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
         universalFlatObjectMetadata,
         universalFlatObjectMetadataMaps,
         universalFlatFieldMetadataMaps: {
           byUniversalIdentifier:
             existingUniversalFlatFieldMetadataByUniversalIdentifier,
         },
-        pendingUniversalFlatFieldMetadatas: [],
-      }),
-    });
+      });
+
+    fieldDescriptorsByObjectUniversalIdentifier.set(
+      objectMetadataUniversalIdentifier,
+      fields,
+    );
+
+    const compilation = compileFormulaExpression({ expression, fields });
 
     if (
       !compilation.isValid ||

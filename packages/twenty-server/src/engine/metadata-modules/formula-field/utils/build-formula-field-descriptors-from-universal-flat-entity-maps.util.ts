@@ -5,7 +5,7 @@ import { buildFormulaFieldDescriptors } from 'src/engine/metadata-modules/formul
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-type FormulaSourceUniversalFlatFieldMetadata = Pick<
+export type FormulaSourceUniversalFlatFieldMetadata = Pick<
   UniversalFlatFieldMetadata,
   | 'name'
   | 'type'
@@ -15,7 +15,7 @@ type FormulaSourceUniversalFlatFieldMetadata = Pick<
   | 'relationTargetObjectMetadataUniversalIdentifier'
 >;
 
-type FormulaSourceUniversalFlatObjectMetadata = Pick<
+export type FormulaSourceUniversalFlatObjectMetadata = Pick<
   UniversalFlatObjectMetadata,
   'universalIdentifier' | 'fieldUniversalIdentifiers'
 >;
@@ -24,7 +24,7 @@ export const buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps = ({
   universalFlatObjectMetadata,
   universalFlatObjectMetadataMaps,
   universalFlatFieldMetadataMaps,
-  pendingUniversalFlatFieldMetadatas,
+  pendingUniversalFlatFieldMetadatas = [],
 }: {
   universalFlatObjectMetadata: FormulaSourceUniversalFlatObjectMetadata;
   universalFlatObjectMetadataMaps: {
@@ -38,7 +38,7 @@ export const buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps = ({
     >;
   };
   // Fields of the same build that are not validated yet, so a formula can read them whatever the order
-  pendingUniversalFlatFieldMetadatas: FormulaSourceUniversalFlatFieldMetadata[];
+  pendingUniversalFlatFieldMetadatas?: FormulaSourceUniversalFlatFieldMetadata[];
 }): ValidationRuleFieldDescriptor[] => {
   const findUniversalFlatFieldMetadatas = ({
     universalIdentifier,

@@ -8,13 +8,19 @@ import {
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
-import { buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
+import {
+  buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps,
+  type FormulaSourceUniversalFlatFieldMetadata,
+  type FormulaSourceUniversalFlatObjectMetadata,
+} from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
-type BuildFormulaFieldDescriptorsArgs = Parameters<
-  typeof buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps
->[0];
+type FormulaSourceUniversalFlatFieldMetadataMaps = {
+  byUniversalIdentifier: Partial<
+    Record<string, FormulaSourceUniversalFlatFieldMetadata>
+  >;
+};
 
 export const validateFlatFieldMetadataFormula = ({
   flatFieldMetadataToValidate: {
@@ -26,9 +32,10 @@ export const validateFlatFieldMetadataFormula = ({
     isUnique,
     isSearchable,
   },
+  existingUniversalSettings,
   universalFlatObjectMetadataMaps,
   universalFlatFieldMetadataMaps,
-  pendingUniversalFlatFieldMetadatas,
+  pendingUniversalFlatFieldMetadataMaps,
   isFormulaFieldEnabled,
 }: {
   flatFieldMetadataToValidate: Pick<
@@ -41,11 +48,12 @@ export const validateFlatFieldMetadataFormula = ({
     | 'isUnique'
     | 'isSearchable'
   >;
+  existingUniversalSettings?: UniversalFlatFieldMetadata['universalSettings'];
   universalFlatObjectMetadataMaps: {
     byUniversalIdentifier: Partial<
       Record<
         string,
-        BuildFormulaFieldDescriptorsArgs['universalFlatObjectMetadata'] &
+        FormulaSourceUniversalFlatObjectMetadata &
           Pick<
             UniversalFlatObjectMetadata,
             'labelIdentifierFieldMetadataUniversalIdentifier'
@@ -53,8 +61,8 @@ export const validateFlatFieldMetadataFormula = ({
       >
     >;
   };
-  universalFlatFieldMetadataMaps: BuildFormulaFieldDescriptorsArgs['universalFlatFieldMetadataMaps'];
-  pendingUniversalFlatFieldMetadatas: BuildFormulaFieldDescriptorsArgs['pendingUniversalFlatFieldMetadatas'];
+  universalFlatFieldMetadataMaps: FormulaSourceUniversalFlatFieldMetadataMaps;
+  pendingUniversalFlatFieldMetadataMaps?: FormulaSourceUniversalFlatFieldMetadataMaps;
   isFormulaFieldEnabled: boolean;
 }): FlatFieldMetadataValidationError[] => {
   if (
@@ -63,16 +71,6 @@ export const validateFlatFieldMetadataFormula = ({
     !isDefined(universalSettings.formula)
   ) {
     return [];
-  }
-
-  if (!isFormulaFieldEnabled) {
-    return [
-      {
-        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        message: 'Formula fields are not enabled for this workspace',
-        userFriendlyMessage: msg`Formula fields are not enabled for this workspace`,
-      },
-    ];
   }
 
   if (!isFormulaFieldMetadataType(type)) {
@@ -97,6 +95,21 @@ export const validateFlatFieldMetadataFormula = ({
         message: 'Formula must have a non-empty expression',
         userFriendlyMessage: msg`A formula needs an expression`,
         value: universalSettings.formula,
+      },
+    ];
+  }
+
+  // An existing formula stays editable when the flag is turned off
+  if (
+    !isFormulaFieldEnabled &&
+    expression !==
+      getFieldMetadataFormulaExpression({ settings: existingUniversalSettings })
+  ) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: 'Formula fields are not enabled for this workspace',
+        userFriendlyMessage: msg`Formula fields are not enabled for this workspace`,
       },
     ];
   }
@@ -145,7 +158,9 @@ export const validateFlatFieldMetadataFormula = ({
       universalFlatObjectMetadata,
       universalFlatObjectMetadataMaps,
       universalFlatFieldMetadataMaps,
-      pendingUniversalFlatFieldMetadatas,
+      pendingUniversalFlatFieldMetadatas: Object.values(
+        pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier ?? {},
+      ).filter(isDefined),
     }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name),
   });
 
