@@ -19,3 +19,4 @@ export { usePrefersReducedMotion } from './use-prefers-reduced-motion';
 export { useScrollProgress } from './use-scroll-progress';
 export { scheduleIdleTask } from './schedule-idle-task';
 export { useBreakpointStepSync } from './use-breakpoint-step-sync';
+export { SmoothAnchorScrollEffect } from './SmoothAnchorScrollEffect';
