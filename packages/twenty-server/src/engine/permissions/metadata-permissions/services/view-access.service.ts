@@ -148,7 +148,7 @@ export class ViewAccessService {
       view.createdByUserWorkspaceId === accessContext.userWorkspaceId;
 
     // Publishing an unlisted view creates a workspace view, so it needs VIEWS
-    const isStayingUnlisted = nextIsPrivate !== false;
+    const isStayingUnlisted = !isDefined(nextIsPrivate) || nextIsPrivate;
 
     if (isOwnUnlistedView && isStayingUnlisted) {
       return;
