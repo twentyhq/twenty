@@ -9,7 +9,11 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
+import { BrowserNotificationSetupDialog } from '@/settings/experience/components/BrowserNotificationSetupDialog';
+import { BROWSER_NOTIFICATION_SETUP_DIALOG_ID } from '@/settings/experience/constants/BrowserNotificationSetupDialogId';
+import { type BrowserNotificationSetupStep } from '@/settings/experience/types/BrowserNotificationSetupStep';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useSubscribeToWebPushNotifications } from '@/web-push/hooks/useSubscribeToWebPushNotifications';
 import { getBrowserNotificationPermission } from '@/web-push/utils/getBrowserNotificationPermission';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
@@ -26,9 +30,13 @@ const StyledButtons = styled.div`
 export const BrowserNotificationPermissionCard = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
+  const { openDialog, closeDialog } = useDialog();
   const [permission, setPermission] = useState(
     getBrowserNotificationPermission,
   );
+  const [setupStep, setSetupStep] =
+    useState<BrowserNotificationSetupStep>('allow');
+  const [isSetupLoading, setIsSetupLoading] = useState(false);
   const { subscribeToWebPushNotifications } =
     useSubscribeToWebPushNotifications();
 
@@ -77,7 +85,7 @@ export const BrowserNotificationPermissionCard = () => {
     const isSubscribed = await subscribeToWebPushNotificationsOrShowError();
 
     if (!isSubscribed) {
-      return;
+      return false;
     }
 
     const registration = await navigator.serviceWorker.ready;
@@ -86,15 +94,56 @@ export const BrowserNotificationPermissionCard = () => {
       body: t`New inbox messages will show up like this`,
       icon: '/images/icons/android/android-launchericon-192-192.png',
     });
+
+    return true;
+  };
+
+  // The OS can block the browser while Notification.permission stays
+  // granted, so only the user can confirm the test notification showed up
+  const sendTestNotificationAndAskIfSeen = async (
+    confirmStep: Extract<
+      BrowserNotificationSetupStep,
+      'confirm' | 'confirm-after-system-settings'
+    > = 'confirm',
+  ) => {
+    setIsSetupLoading(true);
+
+    const isSent = await sendTestNotification().finally(() =>
+      setIsSetupLoading(false),
+    );
+
+    if (!isSent) {
+      closeDialog(BROWSER_NOTIFICATION_SETUP_DIALOG_ID);
+
+      return;
+    }
+
+    setSetupStep(confirmStep);
+    openDialog(BROWSER_NOTIFICATION_SETUP_DIALOG_ID);
+  };
+
+  const openSetupDialog = () => {
+    setSetupStep('allow');
+    openDialog(BROWSER_NOTIFICATION_SETUP_DIALOG_ID);
   };
 
   const allowNotifications = async () => {
-    const requestedPermission = await Notification.requestPermission();
+    setIsSetupLoading(true);
+
+    const requestedPermission = await Notification.requestPermission().finally(
+      () => setIsSetupLoading(false),
+    );
 
     setPermission(requestedPermission);
 
     if (requestedPermission === 'granted') {
-      await sendTestNotification();
+      await sendTestNotificationAndAskIfSeen();
+
+      return;
+    }
+
+    if (requestedPermission === 'denied') {
+      closeDialog(BROWSER_NOTIFICATION_SETUP_DIALOG_ID);
     }
   };
 
@@ -104,7 +153,7 @@ export const BrowserNotificationPermissionCard = () => {
         size="sm"
         variant="solid"
         color="accent"
-        onClick={() => void allowNotifications()}
+        onClick={openSetupDialog}
       >
         {t`Allow`}
       </Button>
@@ -112,7 +161,11 @@ export const BrowserNotificationPermissionCard = () => {
     granted: (
       <StyledButtons>
         {helpButton}
-        <Button size="sm" onClick={() => void sendTestNotification()}>
+        <Button
+          size="sm"
+          onClick={() => void sendTestNotificationAndAskIfSeen()}
+          loading={isSetupLoading}
+        >
           {t`Send test`}
         </Button>
       </StyledButtons>
@@ -122,13 +175,25 @@ export const BrowserNotificationPermissionCard = () => {
   };
 
   return (
-    <Card.Root fullWidth>
-      <SettingsOptionCardContentButton
-        Icon={IconDeviceDesktop}
-        title={t`Notifications`}
-        description={descriptionByPermission[permission]}
-        Button={buttonByPermission[permission]}
+    <>
+      <Card.Root fullWidth>
+        <SettingsOptionCardContentButton
+          Icon={IconDeviceDesktop}
+          title={t`Notifications`}
+          description={descriptionByPermission[permission]}
+          Button={buttonByPermission[permission]}
+        />
+      </Card.Root>
+      <BrowserNotificationSetupDialog
+        step={setupStep}
+        isLoading={isSetupLoading}
+        onAllow={() => void allowNotifications()}
+        onSendTestAfterSystemSettings={() =>
+          void sendTestNotificationAndAskIfSeen('confirm-after-system-settings')
+        }
+        onStepChange={setSetupStep}
+        onOpenHelp={openNotificationsHelp}
       />
-    </Card.Root>
+    </>
   );
 };
