@@ -183,7 +183,6 @@ export const AddPathThroughRelations: Story = {
           fieldName: 'note',
         }),
         isInherent: false,
-        isActive: true,
       }),
     );
   },
