@@ -6,8 +6,14 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+
+import { RichTextFieldFileSync } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/rich-text-field-file-sync';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -84,6 +90,8 @@ const findFileIdsOwnedByRecord = async (
 describe('Rich text field <> files sync', () => {
   let objectMetadataId = '';
   let richTextFieldMetadataId = '';
+  let richTextFieldUniversalIdentifier = '';
+  let otherRichTextFieldMetadataId = '';
   let filesFieldMetadataId = '';
 
   const uploadFile = async (fieldMetadataId: string): Promise<string> => {
@@ -149,10 +157,25 @@ describe('Rich text field <> files sync', () => {
         type: FieldMetadataType.RICH_TEXT,
         objectMetadataId,
       },
-      gqlFields: 'id',
+      gqlFields: 'id universalIdentifier',
     });
 
     richTextFieldMetadataId = richTextField.id;
+    richTextFieldUniversalIdentifier = richTextField.universalIdentifier;
+
+    const {
+      data: { createOneField: otherRichTextField },
+    } = await createOneFieldMetadata({
+      input: {
+        name: 'summary',
+        label: 'Summary',
+        type: FieldMetadataType.RICH_TEXT,
+        objectMetadataId,
+      },
+      gqlFields: 'id',
+    });
+
+    otherRichTextFieldMetadataId = otherRichTextField.id;
 
     const {
       data: { createOneField: filesField },
@@ -314,6 +337,105 @@ describe('Rich text field <> files sync', () => {
     expect(response.body.errors).toBeUndefined();
     expect((await findFileRow(ownedFileId))?.deletedAt).not.toBeNull();
     expect((await findFileRow(foreignFileId))?.deletedAt).toBeNull();
+  });
+
+  it('should not claim an upload of another field whose extension is the identifier of this field', async () => {
+    const fileId = await uploadFile(otherRichTextFieldMetadataId);
+
+    await global.testDataSource.query(
+      `UPDATE core."file" SET "path" = "path" || '.' || $2 WHERE id = $1`,
+      [fileId, richTextFieldUniversalIdentifier],
+    );
+
+    const recordId = await createRecord([fileId]);
+
+    expect(await findFileIdsOwnedByRecord(recordId)).toBeNull();
+    expect(await findFileRow(fileId)).toMatchObject({
+      deletedAt: null,
+      settings: { isTemporaryFile: true },
+    });
+  });
+
+  it('should leave the upload unclaimed when the record write is rolled back', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
+      'WorkspaceOrmManager',
+    );
+
+    await expect(
+      workspaceOrmManager.executeTransactionInWorkspaceContext(
+        async (transactionScope) => {
+          await transactionScope
+            .getRepository('richTextFileSyncTestObject')
+            .insert({ name: 'Meeting', body: buildBody([fileId]) });
+
+          const [claimedFileRow] = await transactionScope.executeRawQuery(
+            'SELECT "settings" FROM core."file" WHERE id = $1',
+            [fileId],
+          );
+
+          expect(claimedFileRow.settings).toMatchObject({
+            isTemporaryFile: false,
+          });
+
+          throw new Error('The parent record could not be written');
+        },
+        buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+      ),
+    ).rejects.toThrow('The parent record could not be written');
+
+    expect(await findFileRow(fileId)).toMatchObject({
+      deletedAt: null,
+      settings: { isTemporaryFile: true },
+    });
+  });
+
+  it('should restore a released file the stored body references when the body is saved again', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const recordId = await createRecord([fileId]);
+
+    // What a save that read the record before another one released the file leaves behind.
+    await global.testDataSource.query(
+      'UPDATE core."file" SET "deletedAt" = now() WHERE id = $1',
+      [fileId],
+    );
+
+    await updateRecordBody({ id: recordId, fileIds: [fileId] });
+
+    expect((await findFileRow(fileId))?.deletedAt).toBeNull();
+  });
+
+  it('should not release a file when a newer save stored a body that references it', async () => {
+    const fileId = await uploadFile(richTextFieldMetadataId);
+    const recordId = await createRecord([fileId]);
+
+    // An older save dropping the file finishes after the newer one stored it again.
+    await new RichTextFieldFileSync({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    } as WorkspaceInternalContext).syncOwnedFiles({
+      recordWrites: [
+        {
+          recordId,
+          writtenDocuments: [
+            {
+              fieldName: 'body',
+              fieldUniversalIdentifier: richTextFieldUniversalIdentifier,
+              referencedFileIds: [],
+              addedFileIds: [],
+              removedFileIds: [fileId],
+            },
+          ],
+        },
+      ],
+      recordTable: {
+        tableExpression: `"${SCHEMA}"."${TABLE_NAME}"`,
+        executeRawQuery: (sql, parameters) =>
+          global.testDataSource.query(sql, parameters),
+      },
+      isInsert: false,
+    });
+
+    expect((await findFileRow(fileId))?.deletedAt).toBeNull();
   });
 
   it('should not return the owned files through the REST API', async () => {
