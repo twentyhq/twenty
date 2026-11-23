@@ -27,35 +27,30 @@ export const FIELD_LINKS_VARIANTS = ['url', 'domain'] as const;
 
 export type FieldLinksVariant = (typeof FIELD_LINKS_VARIANTS)[number];
 
-type FieldMetadataFormulaOnlySettings = {
+type FieldMetadataFormulaSettings = {
   formula?: FieldMetadataFormula | null;
 };
 
-type FieldMetadataNumberSettings = {
-  formula?: FieldMetadataFormula | null;
+type FieldMetadataNumberSettings = FieldMetadataFormulaSettings & {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
 };
 
-type FieldMetadataCurrencySettings = {
-  formula?: FieldMetadataFormula | null;
+type FieldMetadataCurrencySettings = FieldMetadataFormulaSettings & {
   format?: FieldCurrencyFormat;
   decimals?: number;
 };
 
-type FieldMetadataTextSettings = {
-  formula?: FieldMetadataFormula | null;
+type FieldMetadataTextSettings = FieldMetadataFormulaSettings & {
   displayedMaxRows?: number;
 };
 
-type FieldMetadataDateSettings = {
-  formula?: FieldMetadataFormula | null;
+type FieldMetadataDateSettings = FieldMetadataFormulaSettings & {
   displayFormat?: DateDisplayFormat;
 };
 
-type FieldMetadataDateTimeSettings = {
-  formula?: FieldMetadataFormula | null;
+type FieldMetadataDateTimeSettings = FieldMetadataFormulaSettings & {
   displayFormat?: DateDisplayFormat;
 };
 
@@ -81,9 +76,9 @@ type FieldMetadataFilesSettings = {
 };
 
 export type FieldMetadataSettingsMapping = {
-  [FieldMetadataType.BOOLEAN]: FieldMetadataFormulaOnlySettings | null;
-  [FieldMetadataType.SELECT]: FieldMetadataFormulaOnlySettings | null;
-  [FieldMetadataType.RATING]: FieldMetadataFormulaOnlySettings | null;
+  [FieldMetadataType.BOOLEAN]: FieldMetadataFormulaSettings | null;
+  [FieldMetadataType.SELECT]: FieldMetadataFormulaSettings | null;
+  [FieldMetadataType.RATING]: FieldMetadataFormulaSettings | null;
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
