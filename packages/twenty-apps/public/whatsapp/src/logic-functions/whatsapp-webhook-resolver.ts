@@ -42,6 +42,10 @@ export const whatsappWebhookResolverHandler = async (
     return new Response({ skipped: 'Not a WhatsApp event' });
   }
 
+  console.log(
+    `[whatsapp] webhook ${event.id} (${event.type}) for account ${event.account_id}`,
+  );
+
   const workspaceId = await kv.get<string>(
     getUnipileAccountClaimKey(event.account_id),
     { scope: 'SERVER' },

@@ -11,6 +11,7 @@ import { WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/
 import { WHATSAPP_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS } from 'src/constants/whatsapp-handle-webhook-event-timeout-seconds.constant';
 import { WHATSAPP_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { WHATSAPP_WEBHOOK_RATE_LIMIT_RETRY_LIMIT } from 'src/constants/whatsapp-webhook-rate-limit-retry-limit.constant';
+import { type WhatsappIngestResult } from 'src/logic-functions/types/whatsapp-ingest-result.type';
 import { type WhatsappWebhookEventJobPayload } from 'src/logic-functions/types/whatsapp-webhook-event-job-payload.type';
 import { findWhatsappConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-whatsapp-connection-by-unipile-account-id.util';
 import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whatsapp-chat-counterparts.util';
@@ -24,6 +25,17 @@ import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 type WhatsappWebhookEventResult = { handled: boolean; reason?: string };
+
+const NOT_IMPORTED_REASON_BY_SKIPPED_REASON: Record<
+  NonNullable<WhatsappIngestResult['skippedReason']>,
+  string
+> = {
+  NOT_SELECTED: 'Conversation is not selected',
+  GROUP_CHATS_OFF: 'Group chats are not imported',
+  NO_MESSAGES: 'Message carries no content',
+  NO_PHONE: 'WhatsApp hides the phone number of the people in this chat',
+  NO_CONTACT: 'Nobody in this chat is in Twenty',
+};
 
 const ingestUnipileMessage = async ({
   connectedAccountId,
@@ -62,7 +74,7 @@ const ingestUnipileMessage = async ({
       ? chatCounterparts
       : [...chatCounterparts, message.sender];
 
-  const { ingestedMessageCount } = await ingestWhatsappMessages({
+  const { ingestedMessageCount, skippedReason } = await ingestWhatsappMessages({
     unipileAccountId,
     attachmentDeadlineAtMs,
     channel,
@@ -76,7 +88,7 @@ const ingestUnipileMessage = async ({
     return {
       handled: false,
       reason:
-        'Message carries no content, hides the phone numbers or nobody in it is in Twenty',
+        NOT_IMPORTED_REASON_BY_SKIPPED_REASON[skippedReason ?? 'NO_MESSAGES'],
     };
   }
 
@@ -126,7 +138,15 @@ export const whatsappHandleWebhookEventHandler = async (
   event: WhatsappWebhookEventJobPayload,
 ): Promise<WhatsappWebhookEventResult> => {
   try {
-    return await handleWebhookEvent(event);
+    const result = await handleWebhookEvent(event);
+
+    if (!result.handled) {
+      console.log(
+        `[whatsapp] event ${event.id} (${event.type}) not handled: ${result.reason}`,
+      );
+    }
+
+    return result;
   } catch (error) {
     const rateLimitRetryCount = event.rateLimitRetryCount ?? 0;
 

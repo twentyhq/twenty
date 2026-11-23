@@ -88,6 +88,7 @@ const buildMessageEvent = (
 describe('whatsappHandleWebhookEventHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
     mocks.listConnections.mockResolvedValue([
       { id: 'connection-id', externalAccountId: 'acc_1' },
     ]);
@@ -260,8 +261,14 @@ describe('whatsappHandleWebhookEventHandler', () => {
           is_sender: false,
         }),
       ),
-    ).resolves.toMatchObject({ handled: false });
+    ).resolves.toEqual({
+      handled: false,
+      reason: 'WhatsApp hides the phone number of the people in this chat',
+    });
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
+    expect(console.log).toHaveBeenCalledWith(
+      '[whatsapp] event evt_1 (message.new) not handled: WhatsApp hides the phone number of the people in this chat',
+    );
   });
 
   it('ingests a sent message to the chat counterpart phone number and creates the person', async () => {

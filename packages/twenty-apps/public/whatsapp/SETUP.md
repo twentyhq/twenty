@@ -61,6 +61,7 @@ twenty app dev --create
 
 ## Troubleshooting
 
+- **New messages do not arrive**: Unipile must have a webhook endpoint of its own for this app, pointing at `whatsapp-webhook-resolver`; the LinkedIn app's endpoint answers `Not a LinkedIn event` to WhatsApp deliveries. Check the endpoint's deliveries in the Unipile dashboard, then watch `twenty app logs --name whatsapp-handle-webhook-event`: an event that is not imported logs why.
 - **The webhook answers `No workspace claims this account`**: the account's connection hook did not finish. Disconnect and reconnect WhatsApp.
 - **Messages land on no Person**: the Person's **Phones** field must hold the participant's number with its calling code (`+33 6 12 34 56 78`).
 - **The connection fails with `exposes no WhatsApp phone number`**: Unipile returned neither a phone number nor a `…@s.whatsapp.net` id for the account; check the account in the Unipile dashboard.
