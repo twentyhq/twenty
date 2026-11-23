@@ -50,13 +50,17 @@ export const computeSubscriptionUpdateOptions = (
         return { proration: 'create_prorations' };
       }
 
-      return subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS &&
-        subscriptionUpdate.isRetryAfterExpiredPendingUpdate !== true
-        ? {
-            proration: 'always_invoice',
-            paymentBehavior: 'pending_if_incomplete',
-          }
-        : { proration: 'always_invoice' };
+      if (
+        subscriptionUpdate.type === SubscriptionUpdateType.QUANTITIES ||
+        subscriptionUpdate.isRetryAfterExpiredPendingUpdate
+      ) {
+        return { proration: 'always_invoice' };
+      }
+
+      return {
+        proration: 'always_invoice',
+        paymentBehavior: 'pending_if_incomplete',
+      };
     }
     default:
       return assertUnreachable(
