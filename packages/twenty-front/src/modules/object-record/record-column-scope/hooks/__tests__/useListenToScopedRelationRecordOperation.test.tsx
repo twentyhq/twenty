@@ -1,6 +1,6 @@
 import { ApolloClient, ApolloLink, gql, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
@@ -89,6 +89,13 @@ const PEOPLE_CONNECTION = {
   ],
 };
 
+const DEBOUNCE_TIME_IN_MS = 100;
+
+const waitForDebounce = () =>
+  act(() => {
+    jest.advanceTimersByTime(DEBOUNCE_TIME_IN_MS);
+  });
+
 const buildApolloClient = () => {
   const apolloClient = new ApolloClient({
     cache: new InMemoryCache(),
@@ -149,6 +156,7 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
       useListenToScopedRelationRecordOperation({
         objectNameSingular: 'company',
         onScopedRelationRecordOperation,
+        debounceTimeInMs: DEBOUNCE_TIME_IN_MS,
       }),
     {
       wrapper: ({ children }: { children: ReactNode }) => (
@@ -179,6 +187,33 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
 };
 
 describe('useListenToScopedRelationRecordOperation', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('drops the cached scoped values and reloads once for a burst of writes', () => {
+    const { onScopedRelationRecordOperation, readCachedScopedPeople } =
+      renderListener([peopleAlias]);
+
+    for (const deletedRecordId of ['first-person', 'second-person']) {
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem: personObjectMetadataItem,
+        operation: { type: 'delete-one', deletedRecordId },
+      });
+    }
+
+    expect(onScopedRelationRecordOperation).not.toHaveBeenCalled();
+
+    waitForDebounce();
+
+    expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
+    expect(readCachedScopedPeople()).toBeNull();
+  });
+
   it('drops the cached scoped values and reloads when a record of a scoped column object is written', () => {
     const {
       onScopedRelationRecordOperation,
@@ -190,6 +225,8 @@ describe('useListenToScopedRelationRecordOperation', () => {
       objectMetadataItem: personObjectMetadataItem,
       operation: { type: 'delete-one', deletedRecordId: 'person' },
     });
+
+    waitForDebounce();
 
     expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
     expect(readCachedScopedPeople()).toBeNull();
@@ -204,6 +241,8 @@ describe('useListenToScopedRelationRecordOperation', () => {
       objectMetadataItem: taskObjectMetadataItem,
       operation: { type: 'delete-one', deletedRecordId: 'task' },
     });
+
+    waitForDebounce();
 
     expect(onScopedRelationRecordOperation).not.toHaveBeenCalled();
     expect(readCachedScopedPeople()).not.toBeNull();

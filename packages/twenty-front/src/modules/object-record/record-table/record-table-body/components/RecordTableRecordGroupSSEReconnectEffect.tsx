@@ -30,7 +30,8 @@ export const RecordTableRecordGroupSSEReconnectEffect = () => {
 
   useListenToScopedRelationRecordOperation({
     objectNameSingular,
-    onScopedRelationRecordOperation: debouncedReloadRecordGroup,
+    onScopedRelationRecordOperation: reloadRecordGroup,
+    debounceTimeInMs: SSE_RESYNC_DEBOUNCE_TIME_IN_MS,
   });
 
   return null;

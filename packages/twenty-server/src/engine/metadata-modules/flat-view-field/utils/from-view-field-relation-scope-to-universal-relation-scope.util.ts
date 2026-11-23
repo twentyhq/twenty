@@ -10,7 +10,7 @@ type RelationScopeFieldReference = Pick<
   'fieldMetadataId' | 'relationTargetFieldMetadataId'
 >;
 
-// Unresolved ids become null so the validator rejects them; a null relation target means none
+// Unresolved ids become null so the validator rejects them
 const toUniversalFieldReference = <
   TFieldReference extends RelationScopeFieldReference,
 >({

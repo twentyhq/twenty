@@ -82,10 +82,9 @@ export const RecordTableCellFieldContextWrapper = ({
             // A scoped relation only lists part of the related records, which the relation picker cannot edit
             isRecordReadOnly:
               (isRecordReadOnly ?? false) || isDefined(scopedRelationAlias),
-            restrictedFieldNames:
-              scopedRelationAlias?.isRestricted === true
-                ? [...restrictedFieldNames, fieldMetadataItem.name]
-                : restrictedFieldNames,
+            restrictedFieldNames: scopedRelationAlias?.isRestricted
+              ? [...restrictedFieldNames, fieldMetadataItem.name]
+              : restrictedFieldNames,
             fieldValueKey: scopedRelationAlias?.responseKey,
           }}
         >
