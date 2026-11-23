@@ -488,16 +488,12 @@ export class BullMQDriver
       void this.clearOversizedCompletedJobData(job);
       this.releaseFinishedJobMemory({ queueName, job });
     });
-    this.workerMap[queueName].on('failed', (job) => {
-      if (isDefined(job?.finishedOn)) {
-        this.releaseFinishedJobMemory({ queueName, job });
-      }
-    });
     this.workerMap[queueName].on('failed', (job, error) => {
       if (!isDefined(job?.finishedOn)) {
         return;
       }
 
+      this.releaseFinishedJobMemory({ queueName, job });
       this.eventEmitter.emit(QUEUE_JOB_FAILED_EVENT, {
         queueName,
         job: {
