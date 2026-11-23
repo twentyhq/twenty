@@ -146,24 +146,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
     useOpenEditColumnInSidePanel(recordTableId);
 
   const hasColumnActions =
-    canMoveLeft || canMoveRight || canHide || canEditColumn || canDeleteColumn;
+    canMoveLeft || canMoveRight || canHide || canDeleteColumn;
   const showSeparator = (isFilterable || isSortable) && hasColumnActions;
 
-  return (
-    <Dropdown.Section>
-      {isFilterable && (
-        <Dropdown.ActionItem
-          startIcon={<IconFilter />}
-          onClick={handleFilterClick}
-        >{t`Filter`}</Dropdown.ActionItem>
-      )}
-      {isSortable && (
-        <Dropdown.ActionItem
-          startIcon={<IconArrowsSort />}
-          onClick={handleSortClick}
-        >{t`Sort`}</Dropdown.ActionItem>
-      )}
-      {showSeparator && <Dropdown.Separator />}
+  const hasMoveOrHideActions = canMoveLeft || canMoveRight || canHide;
+
+  const moveAndHideItems = (
+    <>
       {canMoveLeft && (
         <Dropdown.ActionItem
           startIcon={<IconArrowLeft />}
@@ -184,17 +173,53 @@ export const RecordTableColumnHeadDropdownMenu = ({
           onClick={handleColumnVisibility}
         >{t`Hide`}</Dropdown.ActionItem>
       )}
-      {canEditColumn && (
+    </>
+  );
+
+  if (isScopedRelationColumn) {
+    return (
+      <Dropdown.Section>
+        {canEditColumn && (
+          <Dropdown.ActionItem
+            startIcon={<IconEdit />}
+            onClick={() =>
+              openEditColumnInSidePanel({
+                fieldMetadataItemId: recordField.fieldMetadataItemId,
+                recordFieldId: recordField.id,
+              })
+            }
+          >{t`Edit summary column…`}</Dropdown.ActionItem>
+        )}
+        {canDeleteColumn && (
+          <Dropdown.ActionItem
+            startIcon={<IconTrash />}
+            onClick={() => deleteRecordTableColumn(recordField.id)}
+          >{t`Delete summary column`}</Dropdown.ActionItem>
+        )}
+        {(canEditColumn || canDeleteColumn) && hasMoveOrHideActions && (
+          <Dropdown.Separator />
+        )}
+        {moveAndHideItems}
+      </Dropdown.Section>
+    );
+  }
+
+  return (
+    <Dropdown.Section>
+      {isFilterable && (
         <Dropdown.ActionItem
-          startIcon={<IconEdit />}
-          onClick={() =>
-            openEditColumnInSidePanel({
-              fieldMetadataItemId: recordField.fieldMetadataItemId,
-              recordFieldId: recordField.id,
-            })
-          }
-        >{t`Edit column`}</Dropdown.ActionItem>
+          startIcon={<IconFilter />}
+          onClick={handleFilterClick}
+        >{t`Filter`}</Dropdown.ActionItem>
       )}
+      {isSortable && (
+        <Dropdown.ActionItem
+          startIcon={<IconArrowsSort />}
+          onClick={handleSortClick}
+        >{t`Sort`}</Dropdown.ActionItem>
+      )}
+      {showSeparator && <Dropdown.Separator />}
+      {moveAndHideItems}
       {canDeleteColumn && (
         <Dropdown.ActionItem
           startIcon={<IconTrash />}
