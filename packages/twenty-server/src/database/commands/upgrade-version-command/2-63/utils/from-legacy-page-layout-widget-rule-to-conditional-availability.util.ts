@@ -12,8 +12,7 @@ type LegacyPageLayoutWidgetRuleConversion =
   | { isValid: true; node: ConditionalAvailabilityNode | null }
   | { isValid: false; errorMessage: string };
 
-// The only json-logic shape Twenty ever wrote on a widget, one per device.
-// Written out here so the command keeps reading it after the built-in constants are gone.
+// The only json-logic shape Twenty wrote on a widget, kept here so the command still reads it once the built-in constants are gone
 const buildLegacyDeviceJsonLogic = (device: ConditionalAvailabilityDevice) => ({
   and: [{ '===': [{ var: 'device' }, device] }],
 });

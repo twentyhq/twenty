@@ -104,8 +104,7 @@ export const computePageLayoutWidgetWithCopiedConditionalAvailability = <
     };
   }
 
-  // The tree is written into the override even when it is null: an override that
-  // cleared the rule must keep the widget visible once its own rule has a tree too.
+  // A null tree is written too: an override that cleared the rule must keep the widget visible once its own rule has a tree
   const { overrides } = dispatchUpdateToAuthoredOverride<
     { conditionalAvailability: ConditionalAvailabilityNode | null },
     PageLayoutWidgetOverrides

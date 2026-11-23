@@ -95,12 +95,6 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
       metadataName: 'pageLayoutWidget',
     });
 
-  if (!conditionalAvailabilityParseResult.isValid) {
-    throw new Error(
-      `Invalid conditional availability expression ${layoutName} ${tabTitle} ${widgetName}: ${conditionalAvailabilityParseResult.errorMessage}`,
-    );
-  }
-
   return {
     id: widgetIds.id,
     universalIdentifier: widgetDef.universalIdentifier,
@@ -126,7 +120,9 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     conditionalDisplay: conditionalDisplay ?? null,
     conditionalAvailabilityExpression:
       conditionalAvailabilityExpression ?? null,
-    conditionalAvailability: conditionalAvailabilityParseResult.node,
+    conditionalAvailability: conditionalAvailabilityParseResult.isValid
+      ? conditionalAvailabilityParseResult.node
+      : null,
     overrides: null,
     universalOverrides: null,
   };

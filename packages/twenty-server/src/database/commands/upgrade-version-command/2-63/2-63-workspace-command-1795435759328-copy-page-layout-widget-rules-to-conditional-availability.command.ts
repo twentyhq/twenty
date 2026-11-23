@@ -13,9 +13,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// Copies each widget rule from the two legacy columns into conditionalAvailability.
-// Nothing is emptied: the runtime keeps reading a legacy value while it exists, so a
-// wrong copy cannot change what a user sees. The legacy columns are dropped later.
+// Copies only, nothing is emptied: the runtime keeps reading a legacy value while it exists, so a wrong copy cannot change what a user sees
 @RegisteredWorkspaceCommand('2.63.0', 1795435759328)
 @Command({
   name: 'upgrade:2-63:copy-page-layout-widget-rules-to-conditional-availability',
