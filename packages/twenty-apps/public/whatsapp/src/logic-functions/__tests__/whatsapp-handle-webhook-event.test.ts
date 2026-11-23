@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   kvGet: vi.fn(),
   kvSet: vi.fn(),
   getUnipileChat: vi.fn(),
+  listUnipileChatParticipants: vi.fn(),
   downloadUnipileMessageAttachment: vi.fn(),
   query: vi.fn(),
   mutation: vi.fn(),
@@ -44,6 +45,10 @@ vi.mock('twenty-client-sdk/core', () => ({
 
 vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
   getUnipileChat: mocks.getUnipileChat,
+}));
+
+vi.mock('src/unipile/utils/list-unipile-chat-participants.util', () => ({
+  listUnipileChatParticipants: mocks.listUnipileChatParticipants,
 }));
 
 vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
@@ -240,6 +245,58 @@ describe('whatsappHandleWebhookEventHandler', () => {
     ).resolves.toEqual({ handled: true });
 
     expect(mocks.ingestMessages).toHaveBeenCalledOnce();
+  });
+
+  it('links a group message to the members Unipile lists apart from the chat', async () => {
+    const ada = {
+      id: '33633333333@s.whatsapp.net',
+      display_name: 'Ada Lovelace',
+    };
+
+    mocks.getUnipileChat.mockResolvedValue({
+      id: 'chat-1',
+      name: 'Founders',
+      is_group: true,
+      is_1to1: false,
+    });
+    mocks.listUnipileChatParticipants.mockResolvedValue([
+      { is_self: true, user: { id: 'self', display_name: 'Me' } },
+      { is_self: false, user: ada },
+      { is_self: false, user: DAPHNE },
+    ]);
+    mocks.query.mockImplementation(async (query: unknown) => ({
+      people: {
+        edges: JSON.stringify(query).includes('"633333333"')
+          ? [
+              {
+                node: {
+                  id: 'ada-id',
+                  phones: {
+                    primaryPhoneCallingCode: '+33',
+                    primaryPhoneNumber: '633333333',
+                  },
+                },
+              },
+            ]
+          : [],
+      },
+    }));
+
+    await expect(
+      whatsappHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({ handled: true });
+
+    expect(
+      mocks.ingestMessages.mock.calls[0][0].messages[0].participants.map(
+        (participant: { handle: string }) => participant.handle,
+      ),
+    ).toContain('+33633333333');
   });
 
   it('leaves out a message between numbers WhatsApp hides', async () => {

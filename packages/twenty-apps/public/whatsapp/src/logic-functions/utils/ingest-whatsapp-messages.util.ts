@@ -156,6 +156,13 @@ export const ingestWhatsappMessages = async ({
   }
 
   const counterparts = toWhatsappCounterparts(counterpartUsers);
+
+  if (counterparts.length < counterpartUsers.length) {
+    console.log(
+      `[whatsapp] chat ${chat.id}: ${counterparts.length} of ${counterpartUsers.length} members have a visible phone number`,
+    );
+  }
+
   const mappedMessages = messages.flatMap((message) => {
     const ingestMessage = mapUnipileMessageToIngestMessage({
       message,

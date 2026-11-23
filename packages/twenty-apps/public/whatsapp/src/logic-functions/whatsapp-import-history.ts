@@ -21,6 +21,7 @@ import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whats
 import { getWhatsappImportHistoryJobId } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
 import { ingestWhatsappMessages } from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
+import { withWhatsappGroupParticipants } from 'src/logic-functions/utils/with-whatsapp-group-participants.util';
 import {
   getWhatsappHistoryImportChunkChats,
   getWhatsappHistoryImportProgress,
@@ -212,7 +213,7 @@ export const whatsappImportHistoryHandler = async (
     channel: AppMessageChannel;
     settings: WhatsappSettings;
   }): Promise<void> => {
-    const chat =
+    const fetchedChat =
       getWhatsappChatCounterparts(listedChat).length > 0
         ? listedChat
         : await getUnipileChatIfExists({
@@ -220,11 +221,16 @@ export const whatsappImportHistoryHandler = async (
             chatId: listedChat.id,
           });
 
-    if (!isDefined(chat)) {
+    if (!isDefined(fetchedChat)) {
       await finishChat();
 
       return;
     }
+
+    const chat = await withWhatsappGroupParticipants({
+      unipileAccountId,
+      chat: fetchedChat,
+    });
 
     const counterparts = getWhatsappChatCounterparts(chat);
     const seenCursors = new Set<string>();

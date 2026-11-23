@@ -19,6 +19,7 @@ import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-sett
 import { ingestWhatsappMessages } from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
 import { isTransientWhatsappError } from 'src/logic-functions/utils/is-transient-whatsapp-error.util';
 import { isWhatsappChatSelected } from 'src/logic-functions/utils/is-whatsapp-chat-selected.util';
+import { withWhatsappGroupParticipants } from 'src/logic-functions/utils/with-whatsapp-group-participants.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
@@ -60,9 +61,13 @@ const ingestUnipileMessage = async ({
     return { handled: false, reason: 'Conversation is not selected' };
   }
 
-  const chat = await getUnipileChat({
-    accountId: unipileAccountId,
-    chatId: message.chat_id,
+  const chat = await withWhatsappGroupParticipants({
+    unipileAccountId,
+    chat: await getUnipileChat({
+      accountId: unipileAccountId,
+      chatId: message.chat_id,
+      deadlineAtMs: attachmentDeadlineAtMs,
+    }),
     deadlineAtMs: attachmentDeadlineAtMs,
   });
 
