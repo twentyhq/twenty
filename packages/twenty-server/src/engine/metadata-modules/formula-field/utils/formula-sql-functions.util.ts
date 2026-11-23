@@ -431,7 +431,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   },
 };
 
-export const compileFormulaSqlFunction = ({
+export const compileFormulaSqlFunctionOrThrow = ({
   name,
   formulaSqlValues,
 }: {

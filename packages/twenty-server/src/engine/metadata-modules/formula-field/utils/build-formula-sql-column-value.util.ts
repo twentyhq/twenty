@@ -9,7 +9,10 @@ export const buildFormulaSqlColumnValue = ({
   formulaSqlColumn: { columnName, columnFieldMetadataType },
 }: {
   alias: string;
-  formulaSqlColumn: FormulaSqlColumn;
+  formulaSqlColumn: Pick<
+    FormulaSqlColumn,
+    'columnName' | 'columnFieldMetadataType'
+  >;
 }): FormulaSqlValue | undefined => {
   const column = `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
