@@ -236,8 +236,9 @@ class FakeCoreApiClient {
           filter.id.in.includes(calendarEvent.id) &&
           (filter.callRecorderPreference.is === 'NULL'
             ? (calendarEvent.callRecorderPreference ?? null) === null
-            : calendarEvent.callRecorderPreference ===
-              filter.callRecorderPreference.eq),
+            : filter.callRecorderPreference.in.includes(
+                calendarEvent.callRecorderPreference,
+              )),
       );
 
       for (const calendarEvent of updatedCalendarEvents) {
@@ -446,6 +447,59 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       }),
     ]);
     expect(recallBotCreateCalls()).toHaveLength(1);
+  });
+
+  it('marks a blank preference Auto when it books a bot', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.calendarEvents[0].callRecorderPreference).toBe('AUTO');
+  });
+
+  it('leaves an On set by hand as it is when it books a bot', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: 'ON' })],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.calendarEvents[0].callRecorderPreference).toBe('ON');
+  });
+
+  it('clears an Auto once the meeting no longer earns a bot', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({ isCanceled: true, callRecorderPreference: 'AUTO' }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
   });
 
   it('books no bot for a meeting with no preference that is on no member calendar', async () => {
