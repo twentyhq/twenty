@@ -49,7 +49,7 @@ export class CoreWorkflowAccessService {
       select: {
         id: true,
         applicationId: true,
-        visibility: true,
+        isPrivate: true,
         createdByUserWorkspaceId: true,
       },
     });
@@ -382,7 +382,7 @@ export class CoreWorkflowAccessService {
     userWorkspaceId: string | undefined;
     coreWorkflows: Pick<
       WorkflowEntity,
-      'id' | 'applicationId' | 'visibility' | 'createdByUserWorkspaceId'
+      'id' | 'applicationId' | 'isPrivate' | 'createdByUserWorkspaceId'
     >[];
   }): Promise<void> {
     if (coreWorkflows.length === 0) {
@@ -423,13 +423,13 @@ export class CoreWorkflowAccessService {
     userWorkspaceId: string | undefined;
     coreWorkflows: Pick<
       WorkflowEntity,
-      'id' | 'visibility' | 'createdByUserWorkspaceId'
+      'id' | 'isPrivate' | 'createdByUserWorkspaceId'
     >[];
   }): void {
     const inaccessibleCoreWorkflow = coreWorkflows.find(
       (coreWorkflow) =>
         !isCoreWorkflowVisibleToUser({
-          visibility: coreWorkflow.visibility,
+          isPrivate: coreWorkflow.isPrivate,
           createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
           userWorkspaceId,
         }),
