@@ -22,6 +22,18 @@ export const formatFieldMetadataItemInput = (
 ) => {
   const formulaExpression = input.formula?.trim();
 
+  const formatSettings = () => {
+    if (!isDefined(formulaExpression)) {
+      return input.settings;
+    }
+
+    const formula = isNonEmptyString(formulaExpression)
+      ? { expression: formulaExpression }
+      : null;
+
+    return { ...input.settings, formula };
+  };
+
   return {
     defaultValue: input.defaultValue,
     description: input.description?.trim() ?? null,
@@ -29,14 +41,7 @@ export const formatFieldMetadataItemInput = (
     label: input.label?.trim(),
     name: input.name?.trim(),
     options: input.options,
-    settings: isDefined(formulaExpression)
-      ? {
-          ...input.settings,
-          formula: isNonEmptyString(formulaExpression)
-            ? { expression: formulaExpression }
-            : null,
-        }
-      : input.settings,
+    settings: formatSettings(),
     isLabelSyncedWithName: input.isLabelSyncedWithName,
     isUnique: input.isUnique,
   };
