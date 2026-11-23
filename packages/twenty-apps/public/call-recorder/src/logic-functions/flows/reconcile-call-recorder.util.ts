@@ -23,6 +23,7 @@ import {
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
+import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
 import { fetchOwnerUserWorkspaceIdByCalendarChannelId } from 'src/logic-functions/data/fetch-owner-user-workspace-id-by-calendar-channel-id.util';
 import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
 import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
@@ -93,8 +94,13 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     client,
     getUniqueSortedIds(calendarEventIds),
   );
-  const ownerUserWorkspaceIdByCalendarChannelId =
-    await fetchOwnerUserWorkspaceIdByCalendarChannelId();
+  const [
+    ownerUserWorkspaceIdByCalendarChannelId,
+    memberRecordingPreferenceByUserWorkspaceId,
+  ] = await Promise.all([
+    fetchOwnerUserWorkspaceIdByCalendarChannelId(),
+    fetchMemberRecordingPreferenceByUserWorkspaceId(),
+  ]);
   const affectedMeetingKeys = new Set<string>();
   const occurrenceStartsAtAnchors = new Set<string>();
   const changedCalendarEventPolicyResults = changedCalendarEvents.map(
@@ -102,6 +108,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       buildCallRecorderPolicyResult({
         calendarEvent,
         ownerUserWorkspaceIdByCalendarChannelId,
+        memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),
   );
@@ -149,6 +156,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       buildCallRecorderPolicyResult({
         calendarEvent,
         ownerUserWorkspaceIdByCalendarChannelId,
+        memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),
     );

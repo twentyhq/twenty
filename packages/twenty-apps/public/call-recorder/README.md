@@ -42,6 +42,19 @@ calendar a workspace member connected. A meeting on no member's calendar, such
 as one created through the API, stays blank until you set its Recording Bot
 field to On.
 
+## 🙋 Choosing which of your meetings are recorded
+
+Each member decides for their own calendars. Under **Settings → Apps
+preferences → Call Recorder**, **Meetings to record** is set to All my meetings
+by default; choose None of my meetings to stop the recorder joining your
+meetings on its own.
+
+A meeting that several members have on their calendars is recorded as soon as
+one of them chose to record it. The Recording Bot field of a meeting wins over
+these preferences: On records it whatever its members chose, Off skips it. A
+changed preference applies the next time the app checks upcoming meetings,
+which happens twice a day and whenever a meeting changes.
+
 ## 👥 Calls on record pages
 
 The app provides two record page widgets. Both read the meeting the recording
