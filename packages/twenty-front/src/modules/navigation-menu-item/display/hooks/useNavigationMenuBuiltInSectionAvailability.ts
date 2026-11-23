@@ -1,34 +1,40 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { type NavigationMenuBuiltInSectionRequirements } from '@/navigation-menu-item/common/types/NavigationMenuBuiltInSectionRequirements';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useNavigationMenuBuiltInSectionAvailability = () => {
-  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-  );
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const isBuiltInSectionAvailable = (
     builtInSectionKey: string | null | undefined,
   ) => {
-    const builtInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
-      ({ key }) => key === builtInSectionKey,
-    );
+    const builtInSection: NavigationMenuBuiltInSectionRequirements | undefined =
+      NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+        ({ key }) => key === builtInSectionKey,
+      );
 
     if (!isDefined(builtInSection)) {
       return false;
     }
 
-    return (
-      (!builtInSection.isAiPermissionRequired || hasAiPermission) &&
-      (!builtInSection.isAiChatInboxRequired || isAiChatInboxEnabled)
-    );
+    const { requiredPermissionFlag, requiredFeatureFlag } = builtInSection;
+
+    const hasRequiredPermission =
+      !isDefined(requiredPermissionFlag) ||
+      permissionFlagMap[requiredPermissionFlag];
+    const hasRequiredFeature =
+      !isDefined(requiredFeatureFlag) ||
+      (currentWorkspace?.featureFlags?.some(
+        ({ key, value }) => key === requiredFeatureFlag && value,
+      ) ??
+        false);
+
+    return hasRequiredPermission && hasRequiredFeature;
   };
 
   return { isBuiltInSectionAvailable };

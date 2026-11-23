@@ -8,6 +8,11 @@ import {
   IconMessage,
 } from 'twenty-ui/icon';
 
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+
 export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   {
     key: 'favorites',
@@ -15,8 +20,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHeart,
     color: 'red',
     isAi: false,
-    isAiPermissionRequired: false,
-    isAiChatInboxRequired: false,
   },
   {
     key: 'aiChatInbox',
@@ -24,8 +27,8 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconInbox,
     color: 'blue',
     isAi: true,
-    isAiPermissionRequired: true,
-    isAiChatInboxRequired: true,
+    requiredPermissionFlag: PermissionFlagType.AI,
+    requiredFeatureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   },
   {
     key: 'aiChatFavorites',
@@ -33,8 +36,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconMessage,
     color: 'pink',
     isAi: true,
-    isAiPermissionRequired: true,
-    isAiChatInboxRequired: false,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
   {
     key: 'aiChatChannels',
@@ -42,8 +44,8 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHash,
     color: 'green',
     isAi: true,
-    isAiPermissionRequired: true,
-    isAiChatInboxRequired: true,
+    requiredPermissionFlag: PermissionFlagType.AI,
+    requiredFeatureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   },
   {
     key: 'aiChatRecents',
@@ -51,8 +53,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconHistory,
     color: 'orange',
     isAi: true,
-    isAiPermissionRequired: true,
-    isAiChatInboxRequired: false,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
   {
     key: 'aiAgents',
@@ -60,7 +61,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconLego,
     color: 'purple',
     isAi: false,
-    isAiPermissionRequired: true,
-    isAiChatInboxRequired: false,
+    requiredPermissionFlag: PermissionFlagType.AI,
   },
 ] as const;
