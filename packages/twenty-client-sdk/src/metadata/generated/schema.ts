@@ -2791,6 +2791,7 @@ export interface NavigationMenuItem {
     targetRecordId?: Scalars['UUID']
     targetRecordIdentifier?: RecordIdentifier
     type: NavigationMenuItemType
+    universalIdentifier?: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     userWorkspaceId?: Scalars['UUID']
     viewId?: Scalars['UUID']
@@ -7719,6 +7720,7 @@ export interface NavigationMenuItemGenqlSelection{
     targetRecordId?: boolean | number
     targetRecordIdentifier?: RecordIdentifierGenqlSelection
     type?: boolean | number
+    universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     userWorkspaceId?: boolean | number
     viewId?: boolean | number
