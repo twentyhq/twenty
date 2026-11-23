@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { MISSING_STANDARD_RELATED_RECORD_PATH_UNIVERSAL_IDENTIFIERS } from 'src/database/commands/upgrade-version-command/2-62/constants/missing-standard-related-record-path-universal-identifiers.constant';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
@@ -25,7 +26,7 @@ const getHopsKey = (
 @Command({
   name: 'upgrade:2-62:add-missing-standard-related-record-paths',
   description:
-    'Add the standard related record paths a workspace is missing, such as the message and calendar event ones',
+    'Add the message and calendar event standard related record paths a workspace is missing',
 })
 export class AddMissingStandardRelatedRecordPathsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -46,7 +47,13 @@ export class AddMissingStandardRelatedRecordPathsCommand extends ProvisionedWork
         workspaceId: v4(),
         twentyStandardApplicationId: v4(),
       }).allFlatEntityMaps.flatRelatedRecordPathMaps.byUniversalIdentifier,
-    ).filter(isDefined);
+    ).filter(
+      (flatRelatedRecordPath): flatRelatedRecordPath is FlatRelatedRecordPath =>
+        isDefined(flatRelatedRecordPath) &&
+        Object.values(
+          MISSING_STANDARD_RELATED_RECORD_PATH_UNIVERSAL_IDENTIFIERS,
+        ).includes(flatRelatedRecordPath.universalIdentifier),
+    );
 
     return this.standardFlatRelatedRecordPaths;
   }
