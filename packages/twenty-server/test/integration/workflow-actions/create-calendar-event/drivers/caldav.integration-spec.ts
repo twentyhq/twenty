@@ -321,6 +321,43 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
     ]);
   }, 300000);
 
+  it('stores a weekly series under the canonical time zone of an alias zone', async () => {
+    const title = `CalDAV weekly series ${randomUUID()}`;
+
+    const workflowRun = await runWorkflowActionStep({
+      name: 'CalDAV create recurring calendar event workflow',
+      stepType: 'CREATE_CALENDAR_EVENT',
+      input: {
+        connectedAccountId,
+        title,
+        startsAt: '2026-11-30T03:30:00Z',
+        endsAt: '2026-11-30T04:30:00Z',
+        isFullDay: false,
+        timeZone: 'Asia/Calcutta',
+        sendInvitations: false,
+        addConferencing: false,
+        recurrence: {
+          frequency: 'WEEKLY',
+          interval: 2,
+          daysOfWeek: ['THURSDAY'],
+          occurrenceCount: 5,
+        },
+      },
+    });
+
+    expect(workflowRun.stepStatus).toBe('SUCCESS');
+
+    const storedICalendar = await fetchStoredICalendar(workflowRun.stepResult);
+
+    expect(storedICalendar).toContain(
+      'DTSTART;TZID=Asia/Kolkata:20261130T090000',
+    );
+    expect(storedICalendar).toContain(
+      'RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=MO,TH;COUNT=5',
+    );
+    expect(storedICalendar).toContain('TZID:Asia/Kolkata');
+  }, 300000);
+
   it('still creates the event when the invitation email cannot be sent', async () => {
     await greenmail.stop();
 

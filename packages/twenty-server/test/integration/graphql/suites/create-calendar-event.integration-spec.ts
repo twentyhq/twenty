@@ -43,4 +43,25 @@ describe('createCalendarEvent (metadata API) (e2e)', () => {
     expect(result.iCalUid).toBeNull();
     expect(result.conferenceLink).toBeNull();
   });
+
+  it('rejects a recurrence that ends before the first occurrence', async () => {
+    const response = await makeMetadataApiRequest({
+      query: CREATE_CALENDAR_EVENT_MUTATION,
+      variables: {
+        input: {
+          connectedAccountId: NON_EXISTENT_CONNECTED_ACCOUNT_ID,
+          title: 'Integration test series',
+          startsAt: '2026-07-01T15:00:00Z',
+          endsAt: '2026-07-01T16:00:00Z',
+          recurrence: { frequency: 'DAILY', endDate: '2026-06-30' },
+        },
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.createCalendarEvent).toMatchObject({
+      success: false,
+      error: expect.stringContaining('recurrence.endDate'),
+    });
+  });
 });

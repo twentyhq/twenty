@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { type Event } from '@microsoft/microsoft-graph-types';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MicrosoftCalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-import-events.service';
 import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
 import { toMicrosoftEventInput } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-microsoft-event-input.util';
 import {
@@ -18,6 +20,7 @@ import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oau
 export class MicrosoftCalendarCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
+    private readonly microsoftCalendarImportEventsService: MicrosoftCalendarImportEventsService,
   ) {}
 
   async createCalendarEvent(
@@ -28,22 +31,31 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
       connectedAccount.id,
     );
 
-    try {
-      // Request the created event back in UTC so its start/end are absolute
-      // instants. Graph otherwise echoes the request time zone, which the shared
-      // formatter would persist as an ambiguous wall-clock time. This matches how
-      // the import path consumes Graph datetimes.
-      const createdEvent: Event = await microsoftClient
-        .api('/me/calendar/events')
-        .header('Prefer', 'outlook.timezone="UTC"')
-        .post(toMicrosoftEventInput(input));
+    let createdEvent: Event;
 
-      return formatMicrosoftCalendarEvents([createdEvent])[0];
+    try {
+      createdEvent = await microsoftClient
+        .api('/me/calendar/events')
+        .post(toMicrosoftEventInput(input));
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Microsoft calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,
         CalendarEventCreationExceptionCode.PROVIDER_REQUEST_FAILED,
       );
     }
+
+    if (!isNonEmptyString(createdEvent.id)) {
+      return formatMicrosoftCalendarEvents([createdEvent])[0];
+    }
+
+    const [createdEventAsListedBySync] =
+      await this.microsoftCalendarImportEventsService
+        .getCalendarEvents(connectedAccount, [createdEvent.id])
+        .catch(() => []);
+
+    return (
+      createdEventAsListedBySync ??
+      formatMicrosoftCalendarEvents([createdEvent])[0]
+    );
   }
 }
