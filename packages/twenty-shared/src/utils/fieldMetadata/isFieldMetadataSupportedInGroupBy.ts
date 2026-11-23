@@ -2,6 +2,7 @@ import { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from '@/constants';
 import { FieldMetadataType, RelationType } from '@/types';
 import { isFieldMetadataDateKind } from '@/utils/fieldMetadata/isFieldMetadataDateKind';
 import { shouldExcludeFieldFromAgentToolSchema } from '@/utils/fieldMetadata/shouldExcludeFieldFromAgentToolSchema';
+import { isFormulaFieldMetadata } from '@/utils/formula/isFormulaFieldMetadata';
 
 const ALWAYS_GROUPABLE_SYSTEM_DATE_FIELD_NAMES = new Set([
   'createdAt',
@@ -23,12 +24,18 @@ export const isFieldMetadataSupportedInGroupBy = ({
   name,
   isSystem,
   relationType,
+  settings,
 }: {
   type: FieldMetadataType;
   name: string;
   isSystem: boolean;
   relationType?: RelationType | null;
+  settings?: unknown;
 }): boolean => {
+  if (isFormulaFieldMetadata({ settings })) {
+    return false;
+  }
+
   const isAlwaysGroupableSystemField =
     (ALWAYS_GROUPABLE_SYSTEM_DATE_FIELD_NAMES.has(name) &&
       isFieldMetadataDateKind(type)) ||

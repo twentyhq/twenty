@@ -244,6 +244,7 @@ export { coerceFormulaValue } from './formula/coerceFormulaValue';
 export { compileFormulaExpression } from './formula/compileFormulaExpression';
 export { createFormulaEvaluator } from './formula/createFormulaEvaluator';
 export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
+export { isFormulaFieldMetadata } from './formula/isFormulaFieldMetadata';
 export { isFormulaFieldMetadataType } from './formula/isFormulaFieldMetadataType';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';

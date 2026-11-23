@@ -1,13 +1,8 @@
 import { type FormulaFieldMetadataType } from '@/types/FormulaFieldMetadataType';
-import { type FormulaValue } from '@/types/FormulaValue';
+import { type FormulaEvaluator } from '@/types/FormulaEvaluator';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { createExpressionEvaluator } from '@/utils/expression/createExpressionEvaluator';
 import { coerceFormulaValue } from '@/utils/formula/coerceFormulaValue';
-
-type FormulaEvaluator = (params: {
-  record: Record<string, unknown>;
-  now: string;
-}) => FormulaValue;
 
 export const createFormulaEvaluator = ({
   expression,

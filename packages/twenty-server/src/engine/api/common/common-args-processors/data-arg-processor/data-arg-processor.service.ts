@@ -12,6 +12,7 @@ import {
   assertIsDefinedOrThrow,
   assertUnreachable,
   isDefined,
+  isFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -67,7 +68,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isFormulaFlatFieldMetadata } from 'src/engine/metadata-modules/formula-field/utils/is-formula-flat-field-metadata.util';
 
 @Injectable()
 export class DataArgProcessorService {
@@ -174,7 +174,7 @@ export class DataArgProcessorService {
           continue;
         }
 
-        if (isFormulaFlatFieldMetadata(fieldMetadata)) {
+        if (isFormulaFieldMetadata(fieldMetadata)) {
           throw new CommonQueryRunnerException(
             `${key} is a formula field and does not support write operations`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,

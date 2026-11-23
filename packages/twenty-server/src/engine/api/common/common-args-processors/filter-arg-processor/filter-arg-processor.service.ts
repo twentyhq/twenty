@@ -6,7 +6,11 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined, isFieldReferenceFilterOperator } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldReferenceFilterOperator,
+  isFormulaFieldMetadata,
+} from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -28,7 +32,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isFormulaFlatFieldMetadata } from 'src/engine/metadata-modules/formula-field/utils/is-formula-flat-field-metadata.util';
 
 function throwUseJoinColumnInstead(key: string): never {
   const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
@@ -375,7 +378,7 @@ export class FilterArgProcessorService {
       );
     }
 
-    if (isFormulaFlatFieldMetadata(fieldMetadata)) {
+    if (isFormulaFieldMetadata(fieldMetadata)) {
       throw new CommonQueryRunnerException(
         `Field "${key}" is a formula field and cannot be filtered on`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,

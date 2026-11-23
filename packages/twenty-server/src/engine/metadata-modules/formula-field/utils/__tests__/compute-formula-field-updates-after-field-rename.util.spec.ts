@@ -1,4 +1,7 @@
-import { FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
+import {
+  FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+  FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+} from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
 import { computeFormulaFieldUpdatesAfterFieldRename } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-updates-after-field-rename.util';
 
 const EXISTING_FIELDS =
@@ -16,6 +19,7 @@ const computeRenamedExpressions = (
   Object.fromEntries(
     Object.entries(
       computeFormulaFieldUpdatesAfterFieldRename({
+        universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         existingUniversalFlatFieldMetadataByUniversalIdentifier:
           EXISTING_FIELDS,
         pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier: {},

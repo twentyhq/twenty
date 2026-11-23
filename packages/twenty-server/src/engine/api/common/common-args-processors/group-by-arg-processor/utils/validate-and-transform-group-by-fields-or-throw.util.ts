@@ -28,7 +28,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isFormulaFlatFieldMetadata } from 'src/engine/metadata-modules/formula-field/utils/is-formula-flat-field-metadata.util';
 
 const getFieldMetadataForGroupByOrThrow = ({
   fieldName,
@@ -146,12 +145,12 @@ const validateAndTransformSingleGroupByFieldOrThrow = ({
     : null;
 
   if (
-    isFormulaFlatFieldMetadata(fieldMetadata) ||
     !isFieldMetadataSupportedInGroupBy({
       type: fieldMetadata.type,
       name: fieldMetadata.name,
       isSystem: fieldMetadata.isSystem,
       relationType,
+      settings: fieldMetadata.settings,
     })
   ) {
     throw new CommonQueryRunnerException(

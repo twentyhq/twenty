@@ -3,10 +3,7 @@ import {
   RelationType,
   type ValidationRuleFieldDescriptor,
 } from 'twenty-shared/types';
-import {
-  getFieldMetadataFormulaExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined, isFormulaFieldMetadata } from 'twenty-shared/utils';
 
 type FormulaFieldDescriptorSource = {
   name: string;
@@ -44,11 +41,7 @@ export const buildFormulaFieldDescriptors = <
   flatFieldMetadatas: TFlatFieldMetadata[];
 } & FormulaFieldDescriptorSourceReader<TFlatFieldMetadata>): ValidationRuleFieldDescriptor[] => {
   const isStored = (flatFieldMetadata: TFlatFieldMetadata) =>
-    !isDefined(
-      getFieldMetadataFormulaExpression({
-        settings: getSettings(flatFieldMetadata),
-      }),
-    );
+    !isFormulaFieldMetadata({ settings: getSettings(flatFieldMetadata) });
 
   return flatFieldMetadatas.filter(isStored).map((flatFieldMetadata) => {
     const settings = getSettings(flatFieldMetadata);

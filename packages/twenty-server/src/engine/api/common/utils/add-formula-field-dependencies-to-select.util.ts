@@ -15,7 +15,7 @@ import { getFormulaFieldEvaluationPlans } from 'src/engine/metadata-modules/form
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
 const canReadFormulaFieldDependencies = ({
-  formulaFieldEvaluationPlan: { ownFieldMetadataIds, lookups },
+  formulaFieldEvaluationPlan: { ownFields, lookups },
   relations,
   recordReadRestrictions: {
     unreadableFieldMetadataIds,
@@ -26,14 +26,15 @@ const canReadFormulaFieldDependencies = ({
   relations: CommonSelection['relations'];
   recordReadRestrictions: RecordReadRestrictions;
 }): boolean =>
-  ownFieldMetadataIds.every(
-    (fieldMetadataId) => !unreadableFieldMetadataIds.has(fieldMetadataId),
+  ownFields.every(
+    ({ fieldMetadataId }) => !unreadableFieldMetadataIds.has(fieldMetadataId),
   ) &&
   lookups.every(
-    ({ relationFieldName, targetObjectMetadataId, targetFieldMetadataIds }) =>
+    ({ relationFieldName, targetObjectMetadataId, targetFields }) =>
       !unreadableObjectMetadataIds.has(targetObjectMetadataId) &&
-      targetFieldMetadataIds.every(
-        (fieldMetadataId) => !unreadableFieldMetadataIds.has(fieldMetadataId),
+      targetFields.every(
+        ({ fieldMetadataId }) =>
+          !unreadableFieldMetadataIds.has(fieldMetadataId),
       ) &&
       (relations[relationFieldName]?.fieldName ?? relationFieldName) ===
         relationFieldName,
@@ -142,15 +143,15 @@ export const addFormulaFieldDependenciesToSelect = <
   const columns = {
     ...selection.columns,
     ...toSelectedColumns(
-      readableFormulaFieldEvaluationPlans.flatMap(
-        ({ ownColumnNames }) => ownColumnNames,
+      readableFormulaFieldEvaluationPlans.flatMap(({ ownFields }) =>
+        ownFields.flatMap(({ columnNames }) => columnNames),
       ),
     ),
   };
 
   for (const {
     relationFieldName,
-    targetColumnNames,
+    targetFields,
   } of readableFormulaFieldEvaluationPlans.flatMap(({ lookups }) => lookups)) {
     const relationSelection = relations[relationFieldName];
 
@@ -163,7 +164,9 @@ export const addFormulaFieldDependenciesToSelect = <
         ...relationSelection?.selection,
         columns: {
           ...relationSelection?.selection.columns,
-          ...toSelectedColumns(targetColumnNames),
+          ...toSelectedColumns(
+            targetFields.flatMap(({ columnNames }) => columnNames),
+          ),
         },
       },
     };

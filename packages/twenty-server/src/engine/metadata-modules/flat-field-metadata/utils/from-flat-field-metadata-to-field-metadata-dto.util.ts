@@ -1,6 +1,6 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-ui-editable.util';
+import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-field-metadata-ui-editable.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export const fromFlatFieldMetadataToFieldMetadataDto = (

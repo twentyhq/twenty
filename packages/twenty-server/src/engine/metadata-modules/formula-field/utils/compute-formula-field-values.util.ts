@@ -5,23 +5,21 @@ import { type FormulaFieldEvaluationPlan } from 'src/engine/metadata-modules/for
 
 const areFormulaFieldDependenciesLoaded = ({
   record,
-  formulaFieldEvaluationPlan: { ownFieldNames, lookups },
+  formulaFieldEvaluationPlan: { ownFields, lookups },
 }: {
   record: ObjectRecord;
   formulaFieldEvaluationPlan: Pick<
     FormulaFieldEvaluationPlan,
-    'ownFieldNames' | 'lookups'
+    'ownFields' | 'lookups'
   >;
 }): boolean =>
-  ownFieldNames.every((ownFieldName) => ownFieldName in record) &&
-  lookups.every(({ relationFieldName, targetFieldNames }) => {
+  ownFields.every(({ fieldName }) => fieldName in record) &&
+  lookups.every(({ relationFieldName, targetFields }) => {
     const relatedRecord: unknown = record[relationFieldName];
 
     return (
       !isPlainObject(relatedRecord) ||
-      targetFieldNames.every(
-        (targetFieldName) => targetFieldName in relatedRecord,
-      )
+      targetFields.every(({ fieldName }) => fieldName in relatedRecord)
     );
   });
 
@@ -35,6 +33,10 @@ export const computeFormulaFieldValues = <TRecord extends ObjectRecord>({
   formulaFieldEvaluationPlans: FormulaFieldEvaluationPlan[];
   now: string;
 }): TRecord => {
+  if (formulaFieldEvaluationPlans.length === 0) {
+    return record;
+  }
+
   const selectedFormulaFieldEvaluationPlans =
     formulaFieldEvaluationPlans.filter(({ fieldName }) => fieldName in record);
 
