@@ -620,6 +620,7 @@ export type Application = {
 export type ApplicationAuthorization = {
   __typename?: 'ApplicationAuthorization';
   applicationId: Scalars['UUID']['output'];
+  applicationLogoUrl?: Maybe<Scalars['String']['output']>;
   applicationName: Scalars['String']['output'];
   applicationUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
