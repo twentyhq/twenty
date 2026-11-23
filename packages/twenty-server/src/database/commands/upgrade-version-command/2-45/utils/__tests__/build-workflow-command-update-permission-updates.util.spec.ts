@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildWorkflowCommandUpdatePermissionUpdates } from 'src/database/commands/upgrade-version-command/2-45/utils/build-workflow-command-update-permission-updates.util';
+import { WORKFLOW_PRIVACY_COMMAND_MENU_ITEM_EXPRESSIONS } from 'src/database/commands/upgrade-version-command/2-62/constants/move-workflow-privacy-command-menu-items-to-is-private.constant';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -37,13 +38,21 @@ const getStandardItem = (universalIdentifier: string): FlatCommandMenuItem => {
     );
   }
 
+  // Rewritten by the 2-62 privacy command, so reverted to the expression this one handles
+  const privacyExpressions = WORKFLOW_PRIVACY_COMMAND_MENU_ITEM_EXPRESSIONS.find(
+    (privacyExpression) =>
+      privacyExpression.universalIdentifier === universalIdentifier,
+  );
+
   return {
     ...commandMenuItem,
     conditionalAvailabilityExpression:
+      privacyExpressions?.legacyExpression ??
       commandMenuItem.conditionalAvailabilityExpression?.replace(
         MANUAL_LAYOUT_CONDITION,
         '',
-      ) ?? null,
+      ) ??
+      null,
   };
 };
 
