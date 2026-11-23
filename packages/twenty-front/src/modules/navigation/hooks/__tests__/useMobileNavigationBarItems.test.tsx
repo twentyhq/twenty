@@ -1,4 +1,8 @@
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import { currentNavigationMenuItemFolderIdFamilyState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdFamilyState';
+import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -8,6 +12,7 @@ import { act, renderHook } from '@testing-library/react';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat');
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag');
@@ -40,6 +45,17 @@ jest.mock('@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel', () => ({
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
 }));
+
+const SALES_TAB: NamedNavigationMenuItem = {
+  id: 'sales-tab',
+  type: NavigationMenuItemType.TAB,
+  name: 'Sales',
+  icon: null,
+  position: 0,
+  isActive: true,
+  createdAt: '2026-01-01',
+  updatedAt: '2026-01-01',
+};
 
 const mockSwitchToNewChat = jest.fn();
 
@@ -99,13 +115,9 @@ describe('useMobileNavigationBarItems', () => {
   });
 
   it('offers each sidebar tab after home and opens home on it', () => {
-    jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([
-      {
-        id: 'sales-tab',
-        name: 'Sales',
-        icon: null,
-      },
-    ] as ReturnType<typeof useWorkspaceNavigationMenuContainers>);
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([SALES_TAB]);
 
     const { result } = renderMobileNavigationBarItems('/objects/people');
 
@@ -182,5 +194,58 @@ describe('useMobileNavigationBarItems', () => {
     act(() => result.current.navigate(-1));
 
     expect(result.current.location.pathname).toBe('/objects/people');
+  });
+
+  it('keeps each tab on the folder it had open', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([SALES_TAB]);
+
+    const { result, store } = renderMobileNavigationBarItems('/objects/people');
+    const salesFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('sales-tab');
+    const homeFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('home');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    act(() => store.set(salesFolderIdAtom, 'deals'));
+
+    act(() => tapItem(result, 'home'));
+    expect(store.get(homeFolderIdAtom)).toBeNull();
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    expect(store.get(salesFolderIdAtom)).toBe('deals');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    expect(store.get(salesFolderIdAtom)).toBeNull();
+  });
+
+  it('keeps each open folder on its own tab when leaving the AI drawer', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([SALES_TAB]);
+
+    const { result, store } = renderMobileNavigationBarItems('/objects/people');
+    const salesFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('sales-tab');
+    const homeFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('home');
+
+    act(() => tapItem(result, 'home'));
+    act(() => store.set(homeFolderIdAtom, 'home-folder'));
+    act(() => tapItem(result, 'tab-sales-tab'));
+    act(() => store.set(salesFolderIdAtom, 'deals'));
+    act(() =>
+      store.set(
+        navigationDrawerActiveTabState.atom,
+        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+      ),
+    );
+
+    act(() => tapItem(result, 'home'));
+    expect(store.get(homeFolderIdAtom)).toBe('home-folder');
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+    expect(store.get(salesFolderIdAtom)).toBe('deals');
   });
 });

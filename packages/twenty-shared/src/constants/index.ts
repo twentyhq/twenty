@@ -54,7 +54,6 @@ export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperator
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
-export { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from './FocusedTabHeartbeatIntervalMs';
 export { FORBIDDEN_PROPERTY_NAMES } from './ForbiddenPropertyNames';
 export { FORMULA_FIELD_METADATA_TYPES } from './FormulaFieldMetadataTypes';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
@@ -94,6 +93,7 @@ export { SESSION_COOKIE_OPT_IN_HEADER_NAME } from './SessionCookieOptInHeaderNam
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
+export { TAB_PRESENCE_HEARTBEAT_INTERVAL_MS } from './TabPresenceHeartbeatIntervalMs';
 export { TAG_COLORS } from './TagColors';
 export { TOOL_PERMISSION_FLAGS } from './ToolPermissionFlags';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
