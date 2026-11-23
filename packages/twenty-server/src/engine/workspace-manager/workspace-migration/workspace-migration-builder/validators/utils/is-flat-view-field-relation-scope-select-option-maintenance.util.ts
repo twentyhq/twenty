@@ -57,7 +57,6 @@ const isFilterUsingMissingSelectOption = ({
   );
 };
 
-// Renaming or deleting a select option rewrites or drops the filters that used it; no other change is maintenance
 export const isFlatViewFieldRelationScopeSelectOptionMaintenance = ({
   existingUniversalRelationScope,
   updatedUniversalRelationScope,
