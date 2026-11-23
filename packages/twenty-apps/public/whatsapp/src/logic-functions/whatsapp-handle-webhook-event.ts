@@ -1,0 +1,120 @@
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  listMessageChannels,
+  reportConnectionAuthFailure,
+} from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/whatsapp-attachment-deadline-margin-milliseconds.constant';
+import { WHATSAPP_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS } from 'src/constants/whatsapp-handle-webhook-event-timeout-seconds.constant';
+import { WHATSAPP_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { findWhatsappConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-whatsapp-connection-by-unipile-account-id.util';
+import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whatsapp-chat-counterparts.util';
+import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
+import { ingestWhatsappMessages } from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
+import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
+import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
+import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+
+type WhatsappWebhookEventResult = { handled: boolean; reason?: string };
+
+const ingestUnipileMessage = async ({
+  connectedAccountId,
+  unipileAccountId,
+  message,
+  attachmentDeadlineAtMs,
+}: {
+  connectedAccountId: string;
+  unipileAccountId: string;
+  message: UnipileMessage;
+  attachmentDeadlineAtMs: number;
+}): Promise<WhatsappWebhookEventResult> => {
+  const [channel] = await listMessageChannels({ connectedAccountId });
+
+  if (!isDefined(channel)) {
+    return { handled: false, reason: 'Connection has no message channel' };
+  }
+
+  const settings = await getWhatsappSettings(connectedAccountId);
+
+  const chat = await getUnipileChat({
+    accountId: unipileAccountId,
+    chatId: message.chat_id,
+  });
+
+  const chatCounterparts = getWhatsappChatCounterparts(chat);
+  const counterparts =
+    message.is_sender ||
+    !isDefined(message.sender) ||
+    chatCounterparts.some((user) => user.id === message.sender?.id)
+      ? chatCounterparts
+      : [...chatCounterparts, message.sender];
+
+  const { ingestedMessageCount } = await ingestWhatsappMessages({
+    unipileAccountId,
+    attachmentDeadlineAtMs,
+    channel,
+    settings,
+    chat,
+    counterparts,
+    messages: [message],
+  });
+
+  if (ingestedMessageCount === 0) {
+    return {
+      handled: false,
+      reason:
+        'Message carries no content, hides the phone numbers or nobody in it is in Twenty',
+    };
+  }
+
+  return { handled: true };
+};
+
+export const whatsappHandleWebhookEventHandler = async (
+  event: UnipileWebhookEvent,
+): Promise<WhatsappWebhookEventResult> => {
+  const attachmentDeadlineAtMs =
+    Date.now() +
+    WHATSAPP_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS * 1000 -
+    WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
+  const connection = await findWhatsappConnectionByUnipileAccountId(
+    event.account_id,
+  );
+
+  if (!isDefined(connection)) {
+    return { handled: false, reason: 'Unknown WhatsApp account' };
+  }
+
+  // Unipile also sends types the union does not list; they reach `default`.
+  const eventType: string = event.type;
+
+  switch (event.type) {
+    case 'message.new':
+      return ingestUnipileMessage({
+        connectedAccountId: connection.id,
+        unipileAccountId: event.account_id,
+        message: event.payload,
+        attachmentDeadlineAtMs,
+      });
+    case 'account.status.disconnected':
+    case 'account.status.errored':
+      await reportConnectionAuthFailure({
+        connectionId: connection.id,
+        reason: event.type,
+      });
+
+      return { handled: true };
+    default:
+      return { handled: false, reason: `Unhandled event ${eventType}` };
+  }
+};
+
+export default defineLogicFunction({
+  universalIdentifier: WHATSAPP_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER,
+  name: 'whatsapp-handle-webhook-event',
+  description:
+    'Imports new WhatsApp messages into the connection message channel and flags connections unlinked from the phone.',
+  timeoutSeconds: WHATSAPP_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS,
+  handler: whatsappHandleWebhookEventHandler,
+});
