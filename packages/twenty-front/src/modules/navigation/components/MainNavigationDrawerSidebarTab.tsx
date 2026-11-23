@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type MouseEvent } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -9,20 +8,14 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
-import { NavigationMenuTabCustomizeMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabCustomizeMenuContent';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
-import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { StyledNavigationDrawerUnreadDot } from '@/ui/navigation/navigation-drawer/components/StyledNavigationDrawerUnreadDot';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -55,41 +48,17 @@ export const MainNavigationDrawerSidebarTab = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const canCustomizeSidebar = useCanCustomizeSidebar();
-  const canOpenTabMenu =
-    isLayoutCustomizationModeEnabled || canCustomizeSidebar;
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
-  const { openDropdown } = useOpenDropdown();
-  const { closeDropdown } = useCloseDropdown();
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
 
-  const handleClick = (
-    event: MouseEvent<HTMLButtonElement> & {
-      preventBaseUIHandler?: () => void;
-    },
-  ) => {
-    if (isActive && canOpenTabMenu) {
+  const handleClick = () => {
+    if (isLayoutCustomizationModeEnabled && isActive) {
       return;
     }
 
-    event.preventBaseUIHandler?.();
     switchToNavigationMenuTab(tab.id);
-  };
-
-  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    if (isLayoutCustomizationModeEnabled && !isActive) {
-      switchToNavigationMenuTab(tab.id);
-    }
-
-    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
 
   const tabButton = (
@@ -102,14 +71,12 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      onContextMenu={canOpenTabMenu ? handleContextMenu : undefined}
-      isSelectedInEditMode={isLayoutCustomizationModeEnabled && isDropdownOpen}
       ariaLabel={isUnread ? t`${tab.name}, unread` : tab.name}
       iconAccessory={isUnread && <StyledUnreadDot aria-hidden="true" />}
     />
   );
 
-  if (!canOpenTabMenu) {
+  if (!isLayoutCustomizationModeEnabled) {
     return <StyledAnchor>{tabButton}</StyledAnchor>;
   }
 
@@ -121,22 +88,21 @@ export const MainNavigationDrawerSidebarTab = ({
           onOpen={() => setNavigationMenuItemIdToRename(null)}
         />
       )}
-      <StyledAnchor>
-        <Dropdown.Trigger render={tabButton} />
-      </StyledAnchor>
+      <Dropdown.Trigger
+        render={<StyledAnchor />}
+        nativeButton={false}
+        disabled={!isActive}
+        tabIndex={-1}
+      >
+        {tabButton}
+      </Dropdown.Trigger>
       <DropdownContent
         side="bottom"
         align="start"
         width={GenericDropdownContentWidth.Large}
         aria-label={t`Tab actions`}
       >
-        {isLayoutCustomizationModeEnabled ? (
-          <NavigationMenuTabMenuContent tab={tab} />
-        ) : (
-          <NavigationMenuTabCustomizeMenuContent
-            onClose={() => closeDropdown(dropdownId)}
-          />
-        )}
+        <NavigationMenuTabMenuContent tab={tab} />
       </DropdownContent>
     </DropdownRoot>
   );

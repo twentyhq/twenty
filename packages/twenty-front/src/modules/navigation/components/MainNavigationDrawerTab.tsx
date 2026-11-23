@@ -1,22 +1,14 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
-import {
-  type ComponentPropsWithRef,
-  type MouseEvent,
-  type ReactNode,
-} from 'react';
+import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
-const StyledMode = styled.button<{
-  isActive: boolean;
-  isExpanded: boolean;
-  isSelectedInEditMode: boolean;
-}>`
+const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   align-items: center;
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
@@ -47,11 +39,6 @@ const StyledMode = styled.button<{
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   min-width: 0;
-  outline: ${({ isSelectedInEditMode }) =>
-    isSelectedInEditMode
-      ? `1px solid ${themeCssVariables.color.blue}`
-      : 'none'};
-  outline-offset: -1px;
   padding: ${({ isExpanded }) =>
     isExpanded ? `0 ${themeCssVariables.spacing['1.5']}` : '0'};
   transition:
@@ -100,10 +87,7 @@ const StyledModeLabelBase = styled.span`
 
 const StyledModeLabel = motion.create(StyledModeLabelBase);
 
-type MainNavigationDrawerTabProps = Omit<
-  ComponentPropsWithRef<'button'>,
-  'onClick' | 'onContextMenu' | 'type' | 'children'
-> & {
+type MainNavigationDrawerTabProps = {
   Icon: IconComponent;
   label: string;
   isActive: boolean;
@@ -111,9 +95,7 @@ type MainNavigationDrawerTabProps = Omit<
   isDisabled: boolean;
   tooltip: string;
   shouldShowTooltip: boolean;
-  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
-  onContextMenu?: (event: MouseEvent<HTMLButtonElement>) => void;
-  isSelectedInEditMode?: boolean;
+  onClick: () => void;
   ariaLabel?: string;
   iconAccessory?: ReactNode;
 };
@@ -127,11 +109,8 @@ export const MainNavigationDrawerTab = ({
   tooltip,
   shouldShowTooltip,
   onClick,
-  onContextMenu,
-  isSelectedInEditMode = false,
   ariaLabel,
   iconAccessory,
-  ...buttonProps
 }: MainNavigationDrawerTabProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
@@ -145,23 +124,19 @@ export const MainNavigationDrawerTab = ({
       positionMethod="fixed"
     >
       <StyledMode
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...buttonProps}
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
-        isSelectedInEditMode={isSelectedInEditMode}
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}
-        onClick={(event) => {
+        onClick={() => {
           if (isDisabled) {
             return;
           }
 
-          onClick(event);
+          onClick();
         }}
-        onContextMenu={onContextMenu}
       >
         <StyledModeIcon>
           <Icon size={theme.icon.size.md} />
