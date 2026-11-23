@@ -89,17 +89,19 @@ export class BillingApplicationProductService {
       });
 
     const repairedCatalogEntries = await Promise.all(
-      catalogEntries.map(async (catalogEntry) =>
-        isDefined(catalogEntry.billingProduct) ||
-        !subscribedStripeProductIds.includes(catalogEntry.stripeProductId)
-          ? catalogEntry
-          : {
-              ...catalogEntry,
-              billingProduct: await this.createProduct(
-                catalogEntry.declaredPrice,
-              ),
-            },
-      ),
+      catalogEntries.map(async (catalogEntry) => {
+        if (
+          isDefined(catalogEntry.billingProduct) ||
+          !subscribedStripeProductIds.includes(catalogEntry.stripeProductId)
+        ) {
+          return catalogEntry;
+        }
+
+        return {
+          ...catalogEntry,
+          billingProduct: await this.createProduct(catalogEntry.declaredPrice),
+        };
+      }),
     );
 
     return repairedCatalogEntries.flatMap(
