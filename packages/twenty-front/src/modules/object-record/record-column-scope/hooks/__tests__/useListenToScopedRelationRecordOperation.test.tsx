@@ -151,7 +151,7 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
   const onScopedRelationRecordOperation = jest.fn();
   const apolloClient = buildApolloClient();
 
-  renderHook(
+  const { unmount } = renderHook(
     () =>
       useListenToScopedRelationRecordOperation({
         objectNameSingular: 'company',
@@ -170,6 +170,7 @@ const renderListener = (scopedRelationAliases: ScopedRelationAlias[]) => {
   );
 
   return {
+    unmount,
     onScopedRelationRecordOperation,
     readCachedScopedPeople: () =>
       apolloClient.cache.readQuery({
@@ -289,5 +290,20 @@ describe('useListenToScopedRelationRecordOperation', () => {
     expect(onScopedRelationRecordOperation).toHaveBeenCalledTimes(1);
     expect(readCachedScopedTaskTargets()).toBeNull();
     expect(readCachedScopedPeople()).not.toBeNull();
+  });
+
+  it('drops the cached scoped values without reloading when the table unmounts', () => {
+    const {
+      unmount,
+      onScopedRelationRecordOperation,
+      readCachedScopedPeople,
+      readCachedPeople,
+    } = renderListener([peopleAlias]);
+
+    unmount();
+
+    expect(onScopedRelationRecordOperation).not.toHaveBeenCalled();
+    expect(readCachedScopedPeople()).toBeNull();
+    expect(readCachedPeople()).not.toBeNull();
   });
 });
