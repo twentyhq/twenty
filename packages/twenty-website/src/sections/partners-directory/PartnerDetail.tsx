@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,7 +16,6 @@ import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
 import { titleCaseFallback } from '@/partners-marketplace/title-case-fallback';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import {
   color,
   DURATION,
@@ -43,9 +43,10 @@ import {
 import { PartnerCard } from './PartnerCard';
 import { PartnerMark } from './PartnerMark';
 import { partnerBaseRegion } from './partner-base-region';
-import { PARTNER_MAP_SETTINGS } from './partner-map-settings';
+import { RegionMapPoint } from './RegionMapPoint';
 
-// The partner's region, live under the pointer.
+// The partner's region: the same still as its directory card
+// (public/images/partners/regions), with the partner's place on it.
 const MapBand = styled.div`
   border: 1px solid ${semanticColor.line};
   border-radius: ${radius(2)};
@@ -282,12 +283,15 @@ export function PartnerDetail({
       <SectionShell rhythm="section" scheme="light">
         <SectionStack>
           <MapBand aria-hidden>
-            <HalftoneImageBackdrop
-              imageUrl={`/images/partners/regions/${baseRegion.toLowerCase()}-zoom.webp`}
-              loading="eager"
+            <NextImage
+              alt=""
+              fill
               priority
-              settings={PARTNER_MAP_SETTINGS}
+              sizes="(max-width: 921px) 100vw, 1440px"
+              src={`/images/partners/regions/${baseRegion.toLowerCase()}.webp`}
+              style={{ objectFit: 'cover' }}
             />
+            <RegionMapPoint partner={partner} />
           </MapBand>
           <Header>
             <PartnerMark

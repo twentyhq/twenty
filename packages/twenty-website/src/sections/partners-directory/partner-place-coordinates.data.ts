@@ -49,6 +49,7 @@ export const PARTNER_PLACE_COORDINATES: {
     coimbatore: [76.96, 11.0],
     mumbai: [72.88, 19.08],
     bangalore: [77.59, 12.97],
+    bengaluru: [77.59, 12.97],
     delhi: [77.1, 28.7],
     kyoto: [135.77, 35.01],
     tokyo: [139.69, 35.69],

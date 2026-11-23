@@ -18,11 +18,16 @@ export const resolvePartnerCoordinates = (
   const cityKey = Object.keys(PARTNER_PLACE_COORDINATES.cities).find((key) =>
     normalizedCity.includes(key),
   );
+  // The CRM enum (SOUTH_AFRICA), whatever casing or spacing it arrives in.
+  const countryKey = stripDiacritics(country)
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, '_');
 
   return (
     (isDefined(cityKey)
       ? PARTNER_PLACE_COORDINATES.cities[cityKey]
-      : PARTNER_PLACE_COORDINATES.countries[country]) ??
+      : PARTNER_PLACE_COORDINATES.countries[countryKey]) ??
     (isDefined(regions[0]) ? REGION_CENTER[regions[0]] : null)
   );
 };

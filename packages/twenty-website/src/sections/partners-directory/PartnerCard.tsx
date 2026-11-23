@@ -27,6 +27,7 @@ import { Body } from '@/ui';
 import { describePartner } from './describe-partner';
 import { partnerBaseRegion } from './partner-base-region';
 import { PartnerMark } from './PartnerMark';
+import { RegionMapPoint } from './RegionMapPoint';
 
 // The case-study cards' hover (case-study-catalog/CaseStudyCard).
 const Card = styled.article`
@@ -53,11 +54,13 @@ const Card = styled.article`
   }
 `;
 
-// The partner's region on the hero globe, rendered by the same halftone
-// engine (public/images/partners/regions, one still per region).
+// The partner's region: the profile band's map, same source, framing and
+// point, with a halftone sized for the card (<region>-card.webp) so the dots
+// stay crisp instead of blurring when the band's still is shrunk.
 const Cover = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
   height: 160px;
+  overflow: hidden;
   position: relative;
 `;
 
@@ -175,9 +178,10 @@ export function PartnerCard({ partner }: PartnerCardProps) {
           alt=""
           fill
           sizes="(max-width: 768px) 100vw, 420px"
-          src={`/images/partners/regions/${partnerBaseRegion(partner).toLowerCase()}.webp`}
+          src={`/images/partners/regions/${partnerBaseRegion(partner).toLowerCase()}-card.webp`}
           style={{ objectFit: 'cover' }}
         />
+        <RegionMapPoint partner={partner} />
       </Cover>
       <Content>
         <Logo>
