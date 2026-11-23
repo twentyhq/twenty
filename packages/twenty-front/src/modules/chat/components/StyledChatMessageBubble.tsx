@@ -13,11 +13,11 @@ const getBubbleBackground = ({
   isOtherMember,
   ownBackground,
 }: ChatMessageBubbleProps & { ownBackground: string }) => {
-  if (isOtherMember === true) {
+  if (isOtherMember) {
     return themeCssVariables.background.secondary;
   }
 
-  if (isUser === true) {
+  if (isUser) {
     return ownBackground;
   }
 
