@@ -5,12 +5,14 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  type RecordShareAccessLevel,
-  type RecordSharePrincipalType,
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -38,7 +40,49 @@ export class RecordShareSystemWriteService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly recordPermissionReadRepository: RecordPermissionReadRepository,
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
+    private readonly applicationGrantRoleLookupService: ApplicationGrantRoleLookupService,
   ) {}
+
+  // The grant an application gets on a record it creates through the API, for records a service creates on its behalf
+  async grantApplicationCreatorAccess({
+    workspaceId,
+    objectMetadataId,
+    recordId,
+    flatApplication,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    recordId: string;
+    flatApplication: Pick<
+      FlatApplication,
+      'id' | 'requestedRoleId' | 'sourceType'
+    >;
+  }): Promise<void> {
+    const applicationRoleId =
+      await this.applicationGrantRoleLookupService.findGrantRoleId({
+        workspaceId,
+        flatApplication,
+      });
+
+    if (!isDefined(applicationRoleId)) {
+      return;
+    }
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      recordShares: [
+        {
+          objectMetadataId,
+          recordId,
+          principalId: applicationRoleId,
+          principalType: RecordSharePrincipalType.ROLE,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.APPLICATION,
+          sourceId: flatApplication.id,
+        },
+      ],
+    });
+  }
 
   async transferRecordSharesToSuccessor({
     removedUserWorkspace,
