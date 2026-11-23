@@ -42,6 +42,11 @@ msgstr "\"{0}\" ist kein gültiges Unterfeld von \"{1}\"."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\" hat einen ungültigen Wert erhalten."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "„{name}“ kann in dieser Sichtbarkeitsbeschränkung nicht verwendet werden"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -175,7 +180,7 @@ msgstr "Es ist ein Cache-Sperrfehler aufgetreten."
 #. js-lingui-id: BGPUw0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A calculation on related records cannot be sorted or limited"
-msgstr ""
+msgstr "Eine Berechnung für verknüpfte Datensätze kann nicht sortiert oder begrenzt werden"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -217,7 +222,7 @@ msgstr "Ein Diagrammfilter des Widgets \"{widgetTitle}\" hat keine universelle F
 #. js-lingui-id: pSJj6s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A column name cannot be empty"
-msgstr ""
+msgstr "Ein Spaltenname darf nicht leer sein"
 
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -244,12 +249,12 @@ msgstr "Ein Verbindungsanbieter mit diesem Namen existiert für diese Anwendung 
 #. js-lingui-id: v8qK2D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A count of related records cannot have a related record field"
-msgstr ""
+msgstr "Eine Anzahl verknüpfter Datensätze kann kein Feld eines verknüpften Datensatzes haben"
 
 #. js-lingui-id: J6ov1V
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A count of related records cannot use a field"
-msgstr ""
+msgstr "Eine Anzahl verknüpfter Datensätze kann kein Feld verwenden"
 
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -272,7 +277,7 @@ msgstr "Ein deaktiviertes Feld kann nicht in einer Spalte angezeigt werden"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A deactivated field cannot be used to filter or sort related records"
-msgstr ""
+msgstr "Ein deaktiviertes Feld kann nicht zum Filtern oder Sortieren verknüpfter Datensätze verwendet werden"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -474,7 +479,7 @@ msgstr "Eine Aufzeichnung eines Meetings"
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
-msgstr ""
+msgstr "Ein Feld eines verknüpften Datensatzes kann nur in einem Viele-zu-eins-Beziehungsfeld oder in einem Eins-zu-viele-Beziehungsfeld mit Beziehungsbereich angezeigt werden"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -484,17 +489,17 @@ msgstr "Die Beziehung eines verknüpften Datensatzes kann nicht in einer Spalte 
 #. js-lingui-id: iBsZzI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A related record's relation cannot be used to filter or sort"
-msgstr ""
+msgstr "Die Beziehung eines verknüpften Datensatzes kann nicht zum Filtern oder Sortieren verwendet werden"
 
 #. js-lingui-id: OrK1uF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "A relation scope can only be set on a one-to-many relation field"
-msgstr ""
+msgstr "Ein Beziehungsbereich kann nur für ein Eins-zu-viele-Beziehungsfeld festgelegt werden"
 
 #. js-lingui-id: +RRVJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A relation scope related record field can only be used on a many-to-one relation field"
-msgstr ""
+msgstr "Ein Feld eines verknüpften Datensatzes im Beziehungsbereich kann nur in einem Viele-zu-eins-Beziehungsfeld verwendet werden"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -688,12 +693,12 @@ msgstr "Es ist ein Fehler in der Ansichtsfeldgruppe aufgetreten."
 #. js-lingui-id: Aexevl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A view field label cannot be empty, use null to show the default label"
-msgstr ""
+msgstr "Eine Ansichtsfeldbezeichnung darf nicht leer sein; verwenden Sie null, um die Standardbezeichnung anzuzeigen"
 
 #. js-lingui-id: JmypXw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "Eine Ansichtsfeldbezeichnung darf nicht länger als {IDENTIFIER_MAX_CHAR_LENGTH} Zeichen sein"
 
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
@@ -2385,7 +2390,7 @@ msgstr "Kalenderereignis"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event copies synced from this member's calendars"
-msgstr ""
+msgstr "Aus den Kalendern dieses Mitglieds synchronisierte Kalenderereigniskopien"
 
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -6615,13 +6620,13 @@ msgstr "Handle-Aliase sind erforderlich."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Handle of the calendar this event was synced from"
-msgstr ""
+msgstr "Kennung des Kalenders, aus dem dieses Ereignis synchronisiert wurde"
 
 #. js-lingui-id: fC7TD7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Handle of the mailbox this message was synced from"
-msgstr ""
+msgstr "Kennung des Postfachs, aus dem diese Nachricht synchronisiert wurde"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -7867,6 +7872,11 @@ msgstr "Ungültige viewUniversalIdentifier für Felder-Widget"
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "Ungültige viewUniversalIdentifier für Felder-Widget \"{widgetTitle}\". Erwartet wurde eine gültige UUID"
 
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Ungültige Sichtbarkeitsbeschränkung: {untranslatedErrorMessage}"
+
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
@@ -8922,7 +8932,7 @@ msgstr "Nachrichtenkanal nicht gefunden."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message copies synced from this member's mailboxes"
-msgstr ""
+msgstr "Aus den Postfächern dieses Mitglieds synchronisierte Nachrichtenkopien"
 
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -10178,12 +10188,12 @@ msgstr "Ein oder mehrere angeforderte Scopes sind ungültig."
 #. js-lingui-id: 7bNnyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
-msgstr ""
+msgstr "Nur eine Spalte, die auf einen Datensatz verweist, oder eine gefilterte Spalte verknüpfter Datensätze kann ein Feld der verknüpften Datensätze anzeigen"
 
 #. js-lingui-id: RryrSe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only a column listing related records can filter, sort or limit them"
-msgstr ""
+msgstr "Nur eine Spalte, die verknüpfte Datensätze auflistet, kann diese filtern, sortieren oder begrenzen"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10198,7 +10208,7 @@ msgstr "Nur ein Feld, das mit einem Datensatz verknüpft ist, kann nach einem Fe
 #. js-lingui-id: FnGPJ0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Only a field linking to one record can use a field of that record"
-msgstr ""
+msgstr "Nur ein Feld, das auf einen Datensatz verweist, kann ein Feld dieses Datensatzes verwenden"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10228,7 +10238,7 @@ msgstr "Nur ein Workspace-Mitglied kann einen privaten Agenten erstellen."
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
-msgstr ""
+msgstr "Nur hinzugefügte Spalten können verknüpfte Datensätze filtern, sortieren oder begrenzen"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10258,7 +10268,7 @@ msgstr "Nur Anwendungen, die aus einer lokalen Quelle synchronisiert wurden, kö
 #. js-lingui-id: 8t36/D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "Only count, sum, average, min and max can aggregate related records"
-msgstr ""
+msgstr "Nur Anzahl, Summe, Durchschnitt, Minimum und Maximum können verknüpfte Datensätze aggregieren"
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10273,7 +10283,7 @@ msgstr "Es sind nur Feldbeschränkungen zulässig."
 #. js-lingui-id: KmZMUH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only non-canonical view fields can have a relation scope"
-msgstr ""
+msgstr "Nur nicht kanonische Ansichtsfelder können einen Beziehungsbereich haben"
 
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -11072,7 +11082,7 @@ msgstr "Telefone"
 #. js-lingui-id: WPKlX/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "Pick a field of the related records to calculate on"
-msgstr ""
+msgstr "Wählen Sie ein Feld der verknüpften Datensätze für die Berechnung aus"
 
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -11823,12 +11833,12 @@ msgstr "Zugehörige Datensatzpfade erfordern den Organization-Plan."
 #. js-lingui-id: Kch20t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Related records can only be filtered or sorted by their own fields"
-msgstr ""
+msgstr "Verknüpfte Datensätze können nur anhand ihrer eigenen Felder gefiltert oder sortiert werden"
 
 #. js-lingui-id: GIT0tY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Related records cannot be filtered or sorted by a list of records"
-msgstr ""
+msgstr "Verknüpfte Datensätze können nicht anhand einer Liste von Datensätzen gefiltert oder sortiert werden"
 
 #. js-lingui-id: IyP1Db
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
@@ -11837,18 +11847,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Related records filter groups are invalid"
-msgstr ""
+msgstr "Filtergruppen für verknüpfte Datensätze sind ungültig"
 
 #. js-lingui-id: HbwlWt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Related records filters are invalid"
-msgstr ""
+msgstr "Filter für verknüpfte Datensätze sind ungültig"
 
 #. js-lingui-id: SV7HLW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
 msgid "Related records sort direction should be ascending or descending"
-msgstr ""
+msgstr "Die Sortierrichtung für verknüpfte Datensätze sollte aufsteigend oder absteigend sein"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11920,62 +11930,62 @@ msgstr "Die Beziehung ist für dieses Feld nicht aktiviert."
 #. js-lingui-id: 7ZohXD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope can only have one root filter group"
-msgstr ""
+msgstr "Der Beziehungsbereich kann nur eine Stammfiltergruppe haben"
 
 #. js-lingui-id: cvmKqs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields cannot be one-to-many relations"
-msgstr ""
+msgstr "Felder im Beziehungsbereich dürfen keine Eins-zu-viele-Beziehungen sein"
 
 #. js-lingui-id: 9w3/Xr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields must be active"
-msgstr ""
+msgstr "Felder im Beziehungsbereich müssen aktiv sein"
 
 #. js-lingui-id: NmTkV8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields must belong to the relation target object"
-msgstr ""
+msgstr "Felder im Beziehungsbereich müssen zum Zielobjekt der Beziehung gehören"
 
 #. js-lingui-id: ZTDFle
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group has an invalid logical operator"
-msgstr ""
+msgstr "Die Filtergruppe im Beziehungsbereich hat einen ungültigen logischen Operator"
 
 #. js-lingui-id: tY8Auj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group ids must be unique UUIDs"
-msgstr ""
+msgstr "IDs von Filtergruppen im Beziehungsbereich müssen eindeutige UUIDs sein"
 
 #. js-lingui-id: /OizQh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Relation scope filter group not found"
-msgstr ""
+msgstr "Filtergruppe im Beziehungsbereich nicht gefunden"
 
 #. js-lingui-id: LHu9vR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group parent not found"
-msgstr ""
+msgstr "Übergeordnete Filtergruppe im Beziehungsbereich nicht gefunden"
 
 #. js-lingui-id: FrK0wr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter groups can only be nested one level deep"
-msgstr ""
+msgstr "Filtergruppen im Beziehungsbereich können nur eine Ebene tief verschachtelt werden"
 
 #. js-lingui-id: aNv4KU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Relation scope filter ids must be unique UUIDs"
-msgstr ""
+msgstr "Filter-IDs im Beziehungsbereich müssen eindeutige UUIDs sein"
 
 #. js-lingui-id: cc0+ro
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
-msgstr ""
+msgstr "Das Limit des Beziehungsbereichs muss eine ganze Zahl zwischen 1 und {QUERY_MAX_RECORDS_FROM_RELATION} sein"
 
 #. js-lingui-id: xeyqWP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
 msgid "Relation scope sort has an invalid direction"
-msgstr ""
+msgstr "Die Sortierung im Beziehungsbereich hat eine ungültige Richtung"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -13693,13 +13703,13 @@ msgstr "Sonntag"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Synced Calendar Events"
-msgstr ""
+msgstr "Synchronisierte Kalenderereignisse"
 
 #. js-lingui-id: ZgRRP1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Synced Messages"
-msgstr ""
+msgstr "Synchronisierte Nachrichten"
 
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -14540,7 +14550,7 @@ msgstr "Das für dieses Widget konfigurierte verschachtelte Relationsfeld konnte
 #. js-lingui-id: MD4f/q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "The number of related records to show is out of range"
-msgstr ""
+msgstr "Die Anzahl der anzuzeigenden verknüpften Datensätze liegt außerhalb des zulässigen Bereichs"
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14665,7 +14675,7 @@ msgstr "Das Feld des verknüpften Datensatzes kann keine Beziehung sein"
 #. js-lingui-id: MBEG9i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "The related record field does not support this aggregate operation"
-msgstr ""
+msgstr "Das Feld des verknüpften Datensatzes unterstützt diese Aggregationsoperation nicht"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -14687,27 +14697,27 @@ msgstr "Das Feld des verknüpften Datensatzes einer Spalte, die zu einer Anwendu
 #. js-lingui-id: uHtomZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
 msgid "The relation scope of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Der Beziehungsbereich einer Anwendung gehörenden Spalte kann nicht geändert werden"
 
 #. js-lingui-id: Tl0b2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "The relation scope of an aggregate cannot have sorts or a limit"
-msgstr ""
+msgstr "Der Beziehungsbereich einer Aggregation darf keine Sortierungen oder ein Limit haben"
 
 #. js-lingui-id: c0bu85
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field cannot be a relation"
-msgstr ""
+msgstr "Das Feld eines verknüpften Datensatzes im Beziehungsbereich darf keine Beziehung sein"
 
 #. js-lingui-id: zJWJeQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field must be active"
-msgstr ""
+msgstr "Das Feld eines verknüpften Datensatzes im Beziehungsbereich muss aktiv sein"
 
 #. js-lingui-id: WY2/RN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field must belong to the relation target object"
-msgstr ""
+msgstr "Das Feld eines verknüpften Datensatzes im Beziehungsbereich muss zum Zielobjekt der Beziehung gehören"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -15007,7 +15017,7 @@ msgstr "Dieser Agent ist archiviert."
 #. js-lingui-id: IaSvAS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This aggregate operation requires a related record field"
-msgstr ""
+msgstr "Diese Aggregationsoperation erfordert ein Feld eines verknüpften Datensatzes"
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -15108,12 +15118,12 @@ msgstr "Der Push-Dienst dieses Browsers wird nicht unterstützt."
 #. js-lingui-id: ohxYfe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This calculation is not available for this field"
-msgstr ""
+msgstr "Diese Berechnung ist für dieses Feld nicht verfügbar"
 
 #. js-lingui-id: 4x0ihe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This calculation is not available on related records"
-msgstr ""
+msgstr "Diese Berechnung ist für verknüpfte Datensätze nicht verfügbar"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -15200,7 +15210,7 @@ msgstr "Diese Spalte stammt aus einer Anwendung, daher kann das Feld des verknü
 #. js-lingui-id: mY8Iz1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
 msgid "This column comes from an application, so the related records it shows cannot be changed"
-msgstr ""
+msgstr "Diese Spalte stammt aus einer Anwendung, daher können die angezeigten verknüpften Datensätze nicht geändert werden"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -15210,7 +15220,7 @@ msgstr "Diese Spalte ist bereits als eindeutig markiert. Deaktivieren Sie zuerst
 #. js-lingui-id: tEKss1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "This column name is too long"
-msgstr ""
+msgstr "Dieser Spaltenname ist zu lang"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -16188,6 +16198,11 @@ msgstr "Zu viele Administrator-Kandidaten gefunden."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Zu viele Teilnehmer: {attendeeCount}. Das zulässige Maximum ist {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: s/8N3l
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Too many domain validation emails sent. Please try again later."
+msgstr "Zu viele E-Mails zur Domainvalidierung gesendet. Bitte versuchen Sie es später erneut."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17471,6 +17486,16 @@ msgstr "ViewId ist erforderlich, um eine Ansichtsgruppe zu erstellen."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId ist erforderlich, um eine Ansichtsordnung zu erstellen."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "Sichtbarkeitsbeschränkung kann nicht gelesen werden"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "Sichtbarkeitsbeschränkung hat zu viele Bedingungen"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -18296,13 +18321,13 @@ msgstr "Arbeitsbereichsmitglied, das diese Nachricht gesendet hat"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member whose calendar this event was synced from"
-msgstr ""
+msgstr "Workspace-Mitglied, aus dessen Kalender dieses Ereignis synchronisiert wurde"
 
 #. js-lingui-id: 6oRXeC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member whose mailbox this message was synced from"
-msgstr ""
+msgstr "Workspace-Mitglied, aus dessen Postfach diese Nachricht synchronisiert wurde"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts

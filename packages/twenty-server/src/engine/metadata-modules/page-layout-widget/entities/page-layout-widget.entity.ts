@@ -1,5 +1,6 @@
 import { ObjectType } from '@nestjs/graphql';
 
+import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import {
   type GridPosition,
   PageLayoutWidgetConditionalDisplay,
@@ -21,6 +22,7 @@ import {
 } from 'typeorm';
 
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { ADD_CONDITIONAL_AVAILABILITY_TO_PAGE_LAYOUT_WIDGET_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-conditional-availability-to-page-layout-widget-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -36,6 +38,7 @@ export type PageLayoutWidgetOverrides = {
   position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
+  conditionalAvailability?: ConditionalAvailabilityNode | null;
   pageLayoutTabId?: SerializedRelation;
 };
 
@@ -89,11 +92,19 @@ export class PageLayoutWidgetEntity<
   @JoinColumn({ name: 'objectMetadataId' })
   objectMetadata: Relation<ObjectMetadataEntity> | null;
 
+  // TODO(@neo773): conditionalDisplay and conditionalAvailabilityExpression are replaced by conditionalAvailability; unused one release after stored rules are converted to trees, dropped the release after
   @Column({ type: 'jsonb', nullable: true })
   conditionalDisplay: JsonbProperty<PageLayoutWidgetConditionalDisplay | null>;
 
   @Column({ type: 'varchar', nullable: true })
   conditionalAvailabilityExpression: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_CONDITIONAL_AVAILABILITY_TO_PAGE_LAYOUT_WIDGET_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  conditionalAvailability: JsonbProperty<ConditionalAvailabilityNode | null>;
 
   @Column({ type: 'jsonb', nullable: false })
   gridPosition: WasRemovedInUpgrade<JsonbProperty<GridPosition>>;
