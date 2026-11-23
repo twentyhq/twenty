@@ -30,7 +30,6 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
-import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -51,7 +50,6 @@ export class BillingWebhookController {
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
-    private readonly billingApplicationSyncService: BillingApplicationSyncService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/stripe`)
@@ -144,19 +142,6 @@ export class BillingWebhookController {
             'Workspace ID is required for subscription events',
             BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
           );
-        }
-
-        // A declined app charge expired unpaid: bill it once more without holding it, so dunning takes over
-        if (
-          event.type ===
-          BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED
-        ) {
-          await this.billingApplicationSyncService.enqueueApplicationsSync({
-            workspaceId,
-            isRetryAfterExpiredPendingUpdate: true,
-          });
-
-          return {};
         }
 
         return await this.billingWebhookSubscriptionService.processStripeEvent(

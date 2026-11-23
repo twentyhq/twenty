@@ -88,46 +88,42 @@ export class BillingApplicationProductService {
         ],
       });
 
-    const targetApplicationProducts: TargetApplicationProduct[] = [];
+    const repairedCatalogEntries = await Promise.all(
+      catalogEntries.map(async (catalogEntry) =>
+        isDefined(catalogEntry.billingProduct) ||
+        !subscribedStripeProductIds.includes(catalogEntry.stripeProductId)
+          ? catalogEntry
+          : {
+              ...catalogEntry,
+              billingProduct: await this.createProduct(
+                catalogEntry.declaredPrice,
+              ),
+            },
+      ),
+    );
 
-    for (const {
-      declaredPrice,
-      stripeProductId,
-      billingProduct,
-    } of catalogEntries) {
-      // Skipping a subscribed product would remove it from the subscription
-      const resolvedBillingProduct =
-        billingProduct ??
-        (subscribedStripeProductIds.includes(stripeProductId)
-          ? await this.createProduct(declaredPrice)
-          : undefined);
+    return repairedCatalogEntries.flatMap(
+      ({ declaredPrice, billingProduct }) => {
+        if (!isDefined(billingProduct)) {
+          this.logger.warn(
+            `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
+          );
 
-      if (!isDefined(resolvedBillingProduct)) {
-        this.logger.warn(
-          `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
-        );
+          return [];
+        }
 
-        continue;
-      }
-
-      const quantity = computeApplicationPriceQuantity({
-        per: declaredPrice.price.per,
-        workspaceMemberCount,
-        connectedAccountCount:
-          connectedAccountCountByApplicationId.get(
-            declaredPrice.applicationId,
-          ) ?? 0,
-      });
-
-      if (quantity > 0) {
-        targetApplicationProducts.push({
-          billingProduct: resolvedBillingProduct,
-          quantity,
+        const quantity = computeApplicationPriceQuantity({
+          per: declaredPrice.price.per,
+          workspaceMemberCount,
+          connectedAccountCount:
+            connectedAccountCountByApplicationId.get(
+              declaredPrice.applicationId,
+            ) ?? 0,
         });
-      }
-    }
 
-    return targetApplicationProducts;
+        return quantity > 0 ? [{ billingProduct, quantity }] : [];
+      },
+    );
   }
 
   async createMissingProducts(workspaceId: string): Promise<void> {

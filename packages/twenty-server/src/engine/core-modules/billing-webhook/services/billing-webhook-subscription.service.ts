@@ -80,8 +80,21 @@ export class BillingWebhookSubscriptionService {
     event:
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
-      | Stripe.CustomerSubscriptionDeletedEvent,
+      | Stripe.CustomerSubscriptionDeletedEvent
+      | Stripe.CustomerSubscriptionPendingUpdateExpiredEvent,
   ) {
+    if (
+      event.type ===
+      BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED
+    ) {
+      await this.billingApplicationSyncService.enqueueApplicationsSync({
+        workspaceId,
+        isRetryAfterExpiredPendingUpdate: true,
+      });
+
+      return {};
+    }
+
     return await this.cacheLockService.withLock(
       () => this.applySubscriptionEvent(workspaceId, event),
       buildBillingSubscriptionStateLockKey(String(event.data.object.customer)),
@@ -284,7 +297,6 @@ export class BillingWebhookSubscriptionService {
         status: incomingSubscription.status,
       })
     ) {
-      // Apps installed or uninstalled while checkout was open are not in its line items
       await this.billingApplicationSyncService.enqueueApplicationsSync({
         workspaceId,
       });

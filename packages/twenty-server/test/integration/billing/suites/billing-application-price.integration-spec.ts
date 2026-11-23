@@ -84,6 +84,7 @@ describe('Application price billing (integration)', () => {
   let updateSubscriptionSpy: jest.SpyInstance;
   let voidInvoiceSpy: jest.SpyInstance;
   let pendingUpdateInvoiceId: string | null;
+  let pendingUpdateItems: StripeItem[];
   let spies: jest.SpyInstance[];
 
   const findStripeItem = (stripePriceId: string) =>
@@ -131,6 +132,7 @@ describe('Application price billing (integration)', () => {
 
     spies = [];
     pendingUpdateInvoiceId = null;
+    pendingUpdateItems = [];
 
     const { subscriptionId: billingSubscriptionId } =
       await setupResourceCreditSubscription({
@@ -225,7 +227,7 @@ describe('Application price billing (integration)', () => {
         id: TEST_STRIPE_SUBSCRIPTION_ID,
         items: { data: stripeItems },
         pending_update: isDefined(pendingUpdateInvoiceId)
-          ? { subscription_items: [] }
+          ? { subscription_items: pendingUpdateItems }
           : null,
         latest_invoice: pendingUpdateInvoiceId,
       }) as unknown as SubscriptionWithSchedule;
@@ -378,6 +380,23 @@ describe('Application price billing (integration)', () => {
     expect(voidInvoiceSpy).toHaveBeenCalledWith('in_pending_update');
     expect(updateSubscriptionSpy).not.toHaveBeenCalled();
     expect(findStripeItem(applicationMonthPriceId)).toBeUndefined();
+  }, 120000);
+
+  it('keeps a held charge that already matches the installed applications', async () => {
+    pendingUpdateInvoiceId = 'in_pending_update';
+    pendingUpdateItems = [
+      ...stripeItems,
+      {
+        id: 'si_pending_application',
+        price: { id: applicationMonthPriceId },
+        quantity: workspaceMemberCount,
+      },
+    ];
+
+    await notifyInstallationChanged();
+
+    expect(voidInvoiceSpy).not.toHaveBeenCalled();
+    expect(updateSubscriptionSpy).not.toHaveBeenCalled();
   }, 120000);
 
   it('repairs the catalog entry of a subscribed application item instead of removing it', async () => {

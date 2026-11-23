@@ -8,6 +8,7 @@ import {
   assertUnreachable,
   findOrThrow,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -353,8 +354,6 @@ export class BillingSubscriptionUpdateService {
       subscription.stripeSubscriptionId,
     );
 
-    await this.discardPendingUpdate(stripeSubscription);
-
     const currentPrices = await this.getSubscriptionPricesFromItems(
       stripeSubscription.items.data,
     );
@@ -380,6 +379,18 @@ export class BillingSubscriptionUpdateService {
       prices: { ...currentPrices, seats },
       targetApplicationProducts,
     });
+
+    if (
+      await this.isPendingUpdateUpToDate({
+        stripeSubscription,
+        subscriptionUpdate,
+        toUpdatePrices: toUpdateCurrentPrices,
+      })
+    ) {
+      return;
+    }
+
+    await this.discardPendingUpdate(stripeSubscription);
 
     const shouldUpdateAtPeriodEnd =
       await this.shouldUpdateAtSubscriptionPeriodEnd(
@@ -494,7 +505,33 @@ export class BillingSubscriptionUpdateService {
     );
   }
 
-  // A pending update is replayed if its open invoice gets paid later, even when its items are no longer wanted
+  private async isPendingUpdateUpToDate({
+    stripeSubscription,
+    subscriptionUpdate,
+    toUpdatePrices,
+  }: {
+    stripeSubscription: Pick<Stripe.Subscription, 'pending_update'>;
+    subscriptionUpdate: SubscriptionUpdate;
+    toUpdatePrices: SubscriptionStripePrices;
+  }): Promise<boolean> {
+    const pendingItems = stripeSubscription.pending_update?.subscription_items;
+
+    if (!isNonEmptyArray(pendingItems)) {
+      return false;
+    }
+
+    const pendingPrices =
+      await this.getSubscriptionPricesFromItems(pendingItems);
+
+    return !isDefined(
+      computeImmediateSubscriptionUpdate({
+        subscriptionUpdate,
+        currentPrices: pendingPrices,
+        toUpdatePrices,
+      }),
+    );
+  }
+
   private async discardPendingUpdate(
     stripeSubscription: Pick<
       Stripe.Subscription,
