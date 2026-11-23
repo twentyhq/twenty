@@ -617,7 +617,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this;
   }
 
-  // Computed columns then read as stored, i.e. NULL
   withStoredColumnsOnly(): this {
     this.shouldReadStoredColumnsOnly = true;
 

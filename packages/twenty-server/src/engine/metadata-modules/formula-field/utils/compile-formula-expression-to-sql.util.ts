@@ -54,7 +54,7 @@ const compileInstructions = ({
 }): FormulaSqlValue => {
   const stack: FormulaSqlStackEntry[] = [];
 
-  const popEntry = (): FormulaSqlStackEntry => {
+  const popEntryOrThrow = (): FormulaSqlStackEntry => {
     const entry = stack.pop();
 
     if (!isDefined(entry)) {
@@ -66,7 +66,7 @@ const compileInstructions = ({
     return entry;
   };
 
-  const toValue = (entry: FormulaSqlStackEntry): FormulaSqlValue => {
+  const toValueOrThrow = (entry: FormulaSqlStackEntry): FormulaSqlValue => {
     if (entry.kind === 'value') {
       return entry.value;
     }
@@ -92,10 +92,11 @@ const compileInstructions = ({
     return value;
   };
 
-  const popValue = (): FormulaSqlValue => toValue(popEntry());
+  const popValueOrThrow = (): FormulaSqlValue =>
+    toValueOrThrow(popEntryOrThrow());
 
-  const popValues = (count: number): FormulaSqlValue[] =>
-    Array.from({ length: count }, popValue).reverse();
+  const popValuesOrThrow = (count: number): FormulaSqlValue[] =>
+    Array.from({ length: count }, popValueOrThrow).reverse();
 
   for (const { type, value } of instructions) {
     switch (type) {
@@ -106,7 +107,7 @@ const compileInstructions = ({
         stack.push({ kind: 'path', path: String(value) });
         break;
       case 'IMEMBER': {
-        const entry = popEntry();
+        const entry = popEntryOrThrow();
 
         if (entry.kind !== 'path') {
           throw new FormulaSqlCompilationException({
@@ -130,20 +131,20 @@ const compileInstructions = ({
         });
         break;
       case 'IARRAY':
-        stack.push({ kind: 'list', values: popValues(Number(value)) });
+        stack.push({ kind: 'list', values: popValuesOrThrow(Number(value)) });
         break;
       case 'IOP1':
         stack.push({
           kind: 'value',
           value: compileFormulaSqlUnaryOperator({
             operator: String(value),
-            operand: popValue(),
+            operand: popValueOrThrow(),
           }),
         });
         break;
       case 'IOP2': {
-        const rightEntry = popEntry();
-        const left = popValue();
+        const rightEntry = popEntryOrThrow();
+        const left = popValueOrThrow();
 
         stack.push({
           kind: 'value',
@@ -156,14 +157,14 @@ const compileInstructions = ({
               : compileFormulaSqlBinaryOperator({
                   operator: String(value),
                   left,
-                  right: toValue(rightEntry),
+                  right: toValueOrThrow(rightEntry),
                 }),
         });
         break;
       }
       case 'IFUNCALL': {
-        const formulaSqlValues = popValues(Number(value));
-        const functionEntry = popEntry();
+        const formulaSqlValues = popValuesOrThrow(Number(value));
+        const functionEntry = popEntryOrThrow();
 
         if (functionEntry.kind !== 'path') {
           throw new FormulaSqlCompilationException({
@@ -187,7 +188,7 @@ const compileInstructions = ({
     }
   }
 
-  const result = popValue();
+  const result = popValueOrThrow();
 
   if (stack.length > 0) {
     throw new FormulaSqlCompilationException({

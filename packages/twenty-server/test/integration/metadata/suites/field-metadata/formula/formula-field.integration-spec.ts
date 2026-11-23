@@ -283,10 +283,13 @@ describe('Formula fields', () => {
   });
 
   it('should compute a currency from an amount and a currency code expression', async () => {
-    const buildCurrencyFormulaInput = (
-      name: string,
-      formula: { expression: string; currencyCodeExpression?: string },
-    ) => ({
+    const buildCurrencyFormulaInput = ({
+      name,
+      formula,
+    }: {
+      name: string;
+      formula: { expression: string; currencyCodeExpression?: string };
+    }) => ({
       name,
       label: name,
       type: FieldMetadataType.CURRENCY,
@@ -297,25 +300,34 @@ describe('Formula fields', () => {
 
     await createOneFieldMetadata({
       expectToFail: false,
-      input: buildCurrencyFormulaInput('totalValue', {
-        expression: 'price * quantity * 1000000',
-        currencyCodeExpression: 'if(quantity > 100, "EUR", "USD")',
+      input: buildCurrencyFormulaInput({
+        name: 'totalValue',
+        formula: {
+          expression: 'price * quantity * 1000000',
+          currencyCodeExpression: 'if(quantity > 100, "EUR", "USD")',
+        },
       }),
       gqlFields: 'id settings',
     });
     await createOneFieldMetadata({
       expectToFail: false,
-      input: buildCurrencyFormulaInput('unknownCurrencyValue', {
-        expression: 'price * 1000000',
-        currencyCodeExpression: '"NOPE"',
+      input: buildCurrencyFormulaInput({
+        name: 'unknownCurrencyValue',
+        formula: {
+          expression: 'price * 1000000',
+          currencyCodeExpression: '"NOPE"',
+        },
       }),
       gqlFields: 'id',
     });
 
     const { errors } = await createOneFieldMetadata({
       expectToFail: true,
-      input: buildCurrencyFormulaInput('valueWithoutCurrency', {
-        expression: 'price * 1000000',
+      input: buildCurrencyFormulaInput({
+        name: 'valueWithoutCurrency',
+        formula: {
+          expression: 'price * 1000000',
+        },
       }),
       gqlFields: 'id',
     });
