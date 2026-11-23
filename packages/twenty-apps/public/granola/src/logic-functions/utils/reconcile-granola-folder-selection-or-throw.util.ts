@@ -6,7 +6,7 @@ import {
   GRANOLA_WEBHOOK_REGISTRATION_KEY,
 } from 'src/constants/granola.constant';
 import { type GranolaPendingFolderSelection } from 'src/logic-functions/types/granola-pending-folder-selection.type';
-import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
+import { createWorkspaceGranolaClientOrThrow } from 'src/logic-functions/utils/create-workspace-granola-client-or-throw.util';
 import { findGranolaRegistrationForCurrentKey } from 'src/logic-functions/utils/find-granola-registration-for-current-key.util';
 
 export const reconcileGranolaFolderSelectionOrThrow =
@@ -27,7 +27,7 @@ export const reconcileGranolaFolderSelectionOrThrow =
       );
     }
 
-    const endpoint = await createGranolaClientOrThrow()
+    const endpoint = await createWorkspaceGranolaClientOrThrow()
       .updateWebhookEndpoint({
         webhookEndpointId: registration.webhookEndpointId,
         folder_ids: pending.folderIds,

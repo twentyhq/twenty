@@ -10,7 +10,7 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { styled } from '@linaria/react';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 const StyledSectionsContainer = styled.div`
   display: flex;
@@ -93,7 +93,7 @@ export const SettingsNavigationDrawerItems = () => {
       return matchPath(
         {
           path: pathName,
-          end: subItem.matchSubPages === false,
+          end: isDefined(subItem.matchSubPages) && !subItem.matchSubPages,
         },
         currentPathName,
       );

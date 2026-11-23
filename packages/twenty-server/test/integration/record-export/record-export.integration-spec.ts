@@ -25,7 +25,7 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createClient } from 'graphql-sse';
 import { setTimeout } from 'node:timers/promises';
 import { Readable } from 'node:stream';
@@ -82,7 +82,7 @@ describe('record export lifecycle (integration)', () => {
     getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
   const setApplicationRole = async (applicationRoleId: string | null) => {
     await globalThis.testDataSource.query(
-      'UPDATE core.application SET "defaultRoleId" = $1, "deletedAt" = NULL WHERE id = $2',
+      'UPDATE core.application SET "defaultRoleId" = $1, "requestedRoleId" = $1, "deletedAt" = NULL WHERE id = $2',
       [applicationRoleId, cliApplicationId],
     );
     await applicationCache().invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
@@ -328,12 +328,11 @@ describe('record export lifecycle (integration)', () => {
       await setApplicationRole(null);
     }
     if (isDefined(roleId)) {
-      await upsertRowLevelPermissionPredicates({
+      await upsertRowLevelPermissionRules({
         input: {
           roleId,
           objectMetadataId: input.objectMetadataId,
-          predicates: [],
-          predicateGroups: [],
+          rules: [],
         },
       });
       await upsertObjectPermissions({
@@ -588,12 +587,14 @@ describe('record export lifecycle (integration)', () => {
       await applications.update(otherApplication.id, {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         defaultRoleId: roleId,
+        requestedRoleId: roleId,
       });
       await download(ready).expect(200);
     } finally {
       await applications.update(otherApplication.id, {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         defaultRoleId: otherApplication.defaultRoleId,
+        requestedRoleId: otherApplication.requestedRoleId,
       });
     }
   });

@@ -351,7 +351,7 @@ const handler = async (event: RoutePayload) => {
   per i dettagli di fatturazione e operativi.
 </Note>
 
-**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
+**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, se l'app non è installata nel `workspaceId`, non viene eseguito nulla e la richiesta viene confermata con `200` e `{ queued: false, reason: "APPLICATION_NOT_INSTALLED" }`, quindi il provider smette di riconsegnare un evento che nessun workspace può elaborare. Se l'app è installata lì ma non dispone di alcuna funzione con quell'`targetLogicFunctionUniversalIdentifier`, la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
 
 | Campo                                    | Tipo                 | Note                                                                         |
 | ---------------------------------------- | -------------------- | ---------------------------------------------------------------------------- |
@@ -811,6 +811,17 @@ export default defineFrontComponent({
 ```
 
 Il componente viene montato non appena l'agente ha terminato lo streaming dei suoi argomenti, quindi gestisce l'intera chiamata, non solo il risultato. `toolCall.status` passa attraverso `input-available`, gli stati di approvazione quando lo strumento ne richiede una, e quindi `output-available`, `output-denied` o `output-error`; `input` è ciò che l'agente ha proposto, `output` ciò che il tuo gestore ha restituito. Esegui il rendering di ogni stato che ti interessa, poiché la riga del passaggio non è più presente per gestirli.
+
+Quando l'agente propone una chiamata che attende l'approvazione di una persona, la scheda di approvazione mostra lo stesso componente al posto degli argomenti JSON non elaborati. La scheda mantiene l'intestazione, **Rifiuta**, **Approva** e il feedback. Mentre `toolCall.status` è `approval-requested`, `input` contiene gli argomenti che **Approva** invierà e il componente può modificarli con `setToolCallArguments`:
+
+```tsx
+import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
+
+const toolCall = useToolCall();
+
+// Approve now runs the tool with decision DECLINE and the reason.
+setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
+```
 
 Sia `input` sia `output` sono tipizzati come `Record\<string, unknown>`, quindi restringi ogni campo prima di utilizzarlo anziché eseguire un cast. Ciò è particolarmente importante per tutto ciò che passi al DOM: un valore che inserisci in un `href` senza verificare che sia una stringa è un link controllato dall'output dello strumento.
 

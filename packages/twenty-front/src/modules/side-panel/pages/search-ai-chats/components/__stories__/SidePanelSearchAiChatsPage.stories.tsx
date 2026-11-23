@@ -1,3 +1,4 @@
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -13,18 +14,17 @@ import {
   StandardObjectNameSingular,
   SidePanelPages,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, assertIsDefinedOrThrow } from 'twenty-shared/utils';
 import { IconMessage, IconSearch } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { aiChatDraftsByThreadIdState } from '@/ai/states/aiChatDraftsByThreadIdState';
+import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -374,7 +374,10 @@ const meta = {
         lastLoadedActivityAt: null,
       },
     );
-    jotaiStore.set(aiChatThreadParticipantsState.atom, {});
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: {},
+    });
 
     const noteMetadata = getMockObjectMetadataItemOrThrow(
       StandardObjectNameSingular.Note,
@@ -413,8 +416,7 @@ const meta = {
         recordNode: mockedWorkspaceMemberRecords[0],
       }),
     );
-    jotaiStore.set(currentAiChatThreadState.atom, CURRENT_THREAD_ID);
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
+    jotaiStore.set(aiChatComposerDraftsState.atom, {
       [CURRENT_THREAD_ID]: PRESERVED_DRAFT,
     });
     jotaiStore.set(sidePanelSearchState.atom, '');
@@ -623,16 +625,26 @@ export const OpenChatWithKeyboard: Story = {
     await expect(
       await canvas.findByText('Conversation opened in the side panel'),
     ).toBeVisible();
-    await waitFor(() =>
-      expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-        SECOND_THREAD_ID,
-      ),
-    );
+    await waitFor(() => {
+      const askAiPageId = jotaiStore
+        .get(sidePanelNavigationStackState.atom)
+        .at(-1)?.pageId;
+
+      assertIsDefinedOrThrow(askAiPageId);
+
+      expect(
+        jotaiStore.get(
+          askAiSidePanelThreadIdComponentState.atomFamily({
+            instanceId: askAiPageId,
+          }),
+        ),
+      ).toBe(SECOND_THREAD_ID);
+    });
     await expect(
       canvas.getByTestId('underlying-record-path'),
     ).toHaveTextContent(RECORD_PATH);
     await expect(
-      jotaiStore.get(aiChatDraftsByThreadIdState.atom)[CURRENT_THREAD_ID],
+      jotaiStore.get(aiChatComposerDraftsState.atom)[CURRENT_THREAD_ID],
     ).toBe(PRESERVED_DRAFT);
   },
 };
@@ -695,9 +707,6 @@ export const LeaveWhileOpening: Story = {
         }),
       }),
     );
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      CURRENT_THREAD_ID,
-    );
     await expect(
       jotaiStore.get(sidePanelNavigationStackState.atom).at(-1)?.page,
     ).toBe(SidePanelPages.CommandMenuDisplay);
@@ -723,9 +732,6 @@ export const FailedOpen: Story = {
         'This chat could not be opened. Try selecting it again.',
       ),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      CURRENT_THREAD_ID,
-    );
     await expect(
       canvas.queryByRole('status', { name: 'Opening chat...' }),
     ).not.toBeInTheDocument();
@@ -772,9 +778,6 @@ export const UnavailableChat: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Quarterly planning notes' }),
     ).toBeVisible();
-    await expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
-      CURRENT_THREAD_ID,
-    );
   },
 };
 

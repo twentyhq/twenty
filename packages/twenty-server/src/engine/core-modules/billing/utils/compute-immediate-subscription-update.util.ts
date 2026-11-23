@@ -5,6 +5,7 @@ import {
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { isSameApplicationItems } from 'src/engine/core-modules/billing/utils/is-same-application-items.util';
 
 export const computeImmediateSubscriptionUpdate = ({
   subscriptionUpdate,
@@ -22,9 +23,18 @@ export const computeImmediateSubscriptionUpdate = ({
     return subscriptionUpdate;
   }
 
-  if (toUpdatePrices.seats === currentPrices.seats) {
+  if (
+    toUpdatePrices.seats === currentPrices.seats &&
+    isSameApplicationItems({
+      currentApplicationItems: currentPrices.applicationItems,
+      toUpdateApplicationItems: toUpdatePrices.applicationItems,
+    })
+  ) {
     return undefined;
   }
 
-  return { type: SubscriptionUpdateType.SEATS, newSeats: toUpdatePrices.seats };
+  return {
+    type: SubscriptionUpdateType.QUANTITIES,
+    newSeats: toUpdatePrices.seats,
+  };
 };

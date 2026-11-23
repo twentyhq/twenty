@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { generateServiceProviderMetadata } from '@node-saml/node-saml';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Response } from 'express';
@@ -199,11 +200,11 @@ export class SsoAuthController {
           ? ConnectedAccountProvider.SAML
           : ConnectedAccountProvider.OIDC;
 
-      const { loginToken } = await this.signInUpAndIssueLoginToken(
-        req.user,
+      const { loginToken } = await this.signInUpAndIssueLoginToken({
+        payload: req.user,
         currentWorkspace,
-        { oidcTokenClaims, connectedAccountProvider },
-      );
+        ssoContext: { oidcTokenClaims, connectedAccountProvider },
+      });
 
       return res.redirect(
         this.authService.computeRedirectURI({
@@ -225,14 +226,21 @@ export class SsoAuthController {
     }
   }
 
-  private async signInUpAndIssueLoginToken(
-    payload: { email: string; workspaceInviteHash?: string },
-    currentWorkspace: WorkspaceEntity,
+  private async signInUpAndIssueLoginToken({
+    payload: { workspacePersonalInviteToken, ...payload },
+    currentWorkspace,
+    ssoContext,
+  }: {
+    payload: Pick<
+      SamlRequest['user'],
+      'email' | 'workspaceInviteHash' | 'workspacePersonalInviteToken'
+    >;
+    currentWorkspace: WorkspaceEntity;
     ssoContext?: {
       oidcTokenClaims?: Record<string, unknown>;
       connectedAccountProvider: ConnectedAccountProvider;
-    },
-  ) {
+    };
+  }) {
     const existingUser = await this.userService.findUserByEmail(payload.email);
 
     const { userData } = this.authService.formatUserDataPayload(
@@ -243,10 +251,47 @@ export class SsoAuthController {
     let invitation: AppTokenEntity | undefined;
 
     if (isDefined(existingUser)) {
-      await this.userService.hasUserAccessToWorkspaceOrThrow(
-        existingUser.id,
-        currentWorkspace.id,
-      );
+      invitation = isNonEmptyString(workspacePersonalInviteToken)
+        ? await this.authService.findInvitationForSignInUp({
+            currentWorkspace,
+            workspacePersonalInviteToken,
+            email: payload.email,
+          })
+        : undefined;
+
+      if (
+        isDefined(invitation) &&
+        (existingUser.canAccessFullAdminPanel || existingUser.canImpersonate)
+      ) {
+        throw new AuthException(
+          'Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method.`,
+          },
+        );
+      }
+
+      if (
+        isDefined(invitation) &&
+        isNonEmptyString(existingUser.passwordHash) &&
+        !existingUser.isEmailVerified
+      ) {
+        throw new AuthException(
+          'An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO.',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          {
+            userFriendlyMessage: msg`An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO.`,
+          },
+        );
+      }
+
+      if (!isDefined(invitation)) {
+        await this.userService.hasUserAccessToWorkspaceOrThrow(
+          existingUser.id,
+          currentWorkspace.id,
+        );
+      }
     } else {
       invitation = await this.authService.findInvitationForSignInUp({
         currentWorkspace,

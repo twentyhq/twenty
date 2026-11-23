@@ -24,7 +24,6 @@ import { buildTrialExtensionSchedulePhases } from 'src/engine/core-modules/billi
 import { getTrialExtensionMirrorAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-mirror-action.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class BillingTrialExtensionService {
@@ -36,7 +35,6 @@ export class BillingTrialExtensionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly cacheLockService: CacheLockService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async extendTrial({
@@ -51,20 +49,23 @@ export class BillingTrialExtensionService {
     label: BillingArrangementLabel;
     comment: string | null;
     grantedByUserId: string;
-  }): Promise<void> {
+  }): Promise<BillingArrangementEntity> {
     const trialEnd = Math.floor(trialEndsAt.getTime() / 1000);
     const endsAt = new Date(trialEnd * 1000);
 
     if (endsAt <= new Date()) {
       throw new BillingException(
         `Trial end ${endsAt.toISOString()} for workspace ${workspaceId} is not in the future`,
-        BillingExceptionCode.BILLING_TRIAL_END_INVALID,
+        BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
       );
     }
 
-    const subscription = await this.getCurrentSubscriptionOrThrow(workspaceId);
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId },
+      );
 
-    await this.cacheLockService.withLock(
+    return await this.cacheLockService.withLock(
       async () => {
         const {
           subscription: stripeSubscription,
@@ -110,7 +111,7 @@ export class BillingTrialExtensionService {
           );
         }
 
-        await this.replaceActiveTrialExtension({
+        const trialExtension = await this.replaceActiveTrialExtension({
           workspaceId,
           activeTrialExtension,
           now,
@@ -120,10 +121,12 @@ export class BillingTrialExtensionService {
           actorUserId: grantedByUserId,
         });
 
-        await this.billingSubscriptionService.syncSubscriptionToDatabase(
+        await this.billingSubscriptionService.syncSubscriptionToDatabase({
           workspaceId,
-          subscription.stripeSubscriptionId,
-        );
+          stripeSubscriptionId: subscription.stripeSubscriptionId,
+        });
+
+        return trialExtension;
       },
       buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
@@ -132,12 +135,32 @@ export class BillingTrialExtensionService {
 
   async revokeTrialExtension({
     workspaceId,
+    arrangementId,
     revokedByUserId,
   }: {
     workspaceId: string;
+    arrangementId: string;
     revokedByUserId: string;
-  }): Promise<void> {
-    const subscription = await this.getCurrentSubscriptionOrThrow(workspaceId);
+  }): Promise<BillingArrangementEntity> {
+    const trialExtension =
+      await this.billingArrangementService.findArrangementOrThrow({
+        workspaceId,
+        arrangementId,
+      });
+
+    if (
+      !isBillingArrangementActive({
+        arrangement: trialExtension,
+        now: new Date(),
+      })
+    ) {
+      return trialExtension;
+    }
+
+    const subscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
+        { workspaceId },
+      );
 
     await this.cacheLockService.withLock(
       async () => {
@@ -147,11 +170,8 @@ export class BillingTrialExtensionService {
           now,
         });
 
-        if (!isDefined(activeTrialExtension)) {
-          throw new BillingException(
-            `Workspace ${workspaceId} has no active trial extension`,
-            BillingExceptionCode.BILLING_TRIAL_EXTENSION_NOT_FOUND,
-          );
+        if (activeTrialExtension?.id !== arrangementId) {
+          return;
         }
 
         const stripeSubscription =
@@ -168,19 +188,24 @@ export class BillingTrialExtensionService {
 
         await this.billingArrangementService.revokeArrangement({
           workspaceId,
-          arrangementId: activeTrialExtension.id,
+          arrangementId,
           revokedAt: now,
           revokedByUserId,
         });
 
-        await this.billingSubscriptionService.syncSubscriptionToDatabase(
+        await this.billingSubscriptionService.syncSubscriptionToDatabase({
           workspaceId,
-          subscription.stripeSubscriptionId,
-        );
+          stripeSubscriptionId: subscription.stripeSubscriptionId,
+        });
       },
       buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
     );
+
+    return await this.billingArrangementService.findArrangementOrThrow({
+      workspaceId,
+      arrangementId,
+    });
   }
 
   // Runs under the subscription state lock held by the webhook
@@ -239,19 +264,6 @@ export class BillingTrialExtensionService {
     }
   }
 
-  private async getCurrentSubscriptionOrThrow(workspaceId: string) {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      throw new BillingException(
-        `Billing is disabled, workspace ${workspaceId} has no trial`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-      );
-    }
-
-    return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId },
-    );
-  }
-
   private async findActiveTrialExtension({
     workspaceId,
     now,
@@ -286,8 +298,8 @@ export class BillingTrialExtensionService {
     label: BillingArrangementLabel;
     comment: string | null;
     actorUserId: string | null;
-  }): Promise<void> {
-    await this.dataSource.transaction(async (entityManager) => {
+  }): Promise<BillingArrangementEntity> {
+    return await this.dataSource.transaction(async (entityManager) => {
       if (isDefined(activeTrialExtension)) {
         await this.billingArrangementService.revokeArrangement({
           workspaceId,
@@ -298,7 +310,7 @@ export class BillingTrialExtensionService {
         });
       }
 
-      await this.billingArrangementService.insertArrangement({
+      return await this.billingArrangementService.insertArrangement({
         workspaceId,
         arrangement: {
           type: BillingArrangementType.TRIAL_EXTENSION,

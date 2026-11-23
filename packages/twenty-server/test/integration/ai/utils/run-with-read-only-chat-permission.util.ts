@@ -30,7 +30,7 @@ export const runWithReadOnlyChatPermission = async <TResult>({
     'flatObjectPermissionMaps',
     'flatObjectMetadataMaps',
   ]);
-  const roleId = userWorkspaceRoleMap[userWorkspaceId];
+  const roleId = userWorkspaceRoleMap[userWorkspaceId]?.[0];
 
   ok(isDefined(roleId), 'The seeded chat member has no role');
 

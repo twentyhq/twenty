@@ -1,27 +1,28 @@
-import { type UIEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const BOTTOM_THRESHOLD_IN_PX = 8;
+import { watchStickToBottomScroll } from '@/ui/utilities/scroll/utils/watchStickToBottomScroll';
 
-export const useStickToBottomScroll = (contentSize: number) => {
+export const useStickToBottomScroll = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isPinnedToBottom, setIsPinnedToBottom] = useState(true);
+  const scrollContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
+    const scrollContainerElement = scrollContainerRef.current;
+    const scrollContentElement = scrollContentRef.current;
 
-    if (isDefined(scrollContainer) && isPinnedToBottom) {
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    if (
+      !isDefined(scrollContainerElement) ||
+      !isDefined(scrollContentElement)
+    ) {
+      return;
     }
-  }, [contentSize, isPinnedToBottom]);
 
-  const handleScroll = (event: UIEvent<HTMLDivElement>) => {
-    const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+    return watchStickToBottomScroll({
+      scrollContainerElement,
+      scrollContentElement,
+    });
+  }, []);
 
-    setIsPinnedToBottom(
-      scrollHeight - scrollTop - clientHeight <= BOTTOM_THRESHOLD_IN_PX,
-    );
-  };
-
-  return { scrollContainerRef, handleScroll };
+  return { scrollContainerRef, scrollContentRef };
 };

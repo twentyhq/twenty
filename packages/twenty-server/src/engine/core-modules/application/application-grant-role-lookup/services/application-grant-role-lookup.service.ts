@@ -61,7 +61,7 @@ export class ApplicationGrantRoleLookupService {
     workspaceId: string;
     flatApplication: Pick<
       FlatApplication,
-      'id' | 'defaultRoleId' | 'sourceType'
+      'id' | 'requestedRoleId' | 'sourceType'
     >;
   }): Promise<string | undefined> {
     const workspaceCustomApplicationId =

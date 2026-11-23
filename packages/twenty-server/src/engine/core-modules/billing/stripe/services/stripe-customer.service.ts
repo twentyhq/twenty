@@ -35,7 +35,7 @@ export class StripeCustomerService {
     workspaceId: string,
   ) {
     await this.stripe.customers.update(stripeCustomerId, {
-      metadata: { workspaceId: workspaceId },
+      metadata: { workspaceId },
     });
   }
 

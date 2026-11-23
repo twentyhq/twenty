@@ -11,10 +11,9 @@ import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
+import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
-import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
-import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import {
@@ -92,7 +91,18 @@ export const ChatThreadMessageGroup = ({
             {senderHeader}
             {(hasText || !isNonEmptyArray(files)) && (
               <StyledChatMessageBubble isUser isOtherMember={!isOutgoing}>
-                <StyledChatMessageBubbleContent>
+                <ChatMessageBubbleContent
+                  meta={
+                    isOutgoing ? (
+                      <>
+                        {isDefined(message.receivedAt) && (
+                          <ChatMessageTime date={message.receivedAt} />
+                        )}
+                        <ChatMessageReceipt status="sent" />
+                      </>
+                    ) : undefined
+                  }
+                >
                   <StyledMessageText>
                     <Linkify
                       options={{
@@ -103,15 +113,7 @@ export const ChatThreadMessageGroup = ({
                       {message.text}
                     </Linkify>
                   </StyledMessageText>
-                  {isOutgoing && (
-                    <StyledChatMessageMeta>
-                      {isDefined(message.receivedAt) && (
-                        <ChatMessageTime date={message.receivedAt} />
-                      )}
-                      <ChatMessageReceipt status="sent" />
-                    </StyledChatMessageMeta>
-                  )}
-                </StyledChatMessageBubbleContent>
+                </ChatMessageBubbleContent>
               </StyledChatMessageBubble>
             )}
             {isNonEmptyArray(files) && (

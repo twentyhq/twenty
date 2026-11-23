@@ -1,0 +1,200 @@
+import { type MarkdownDisplayMode } from '@/ai-chat/message-content/types/MarkdownDisplayMode';
+import { CHAT_MESSAGE_META_SPACER_HEIGHT } from '@/chat/constants/ChatMessageMetaSpacerHeight';
+import { CHAT_MESSAGE_META_SPACER_WIDTH } from '@/chat/constants/ChatMessageMetaSpacerWidth';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const StyledMarkdownContainer = styled.div<{
+  displayMode: MarkdownDisplayMode;
+}>`
+  border-radius: ${themeCssVariables.border.radius.sm};
+  line-height: ${({ displayMode }) =>
+    displayMode === 'default'
+      ? `calc(${themeCssVariables.text.lineHeight.lg} * 100%)`
+      : themeCssVariables.spacing[6]};
+  margin: ${({ displayMode }) =>
+    displayMode === 'default' ? `${themeCssVariables.spacing['1.5']} 0` : '0'};
+  overflow-x: auto;
+  position: relative;
+  scroll-margin-bottom: ${themeCssVariables.spacing[10]};
+  scroll-margin-top: ${themeCssVariables.spacing[10]};
+
+  &:empty {
+    display: none;
+  }
+
+  > .markdown-paragraph:last-child::after {
+    content: '';
+    display: inline-block;
+    width: ${CHAT_MESSAGE_META_SPACER_WIDTH};
+  }
+
+  &:has(> :last-child:not(.markdown-paragraph)) {
+    padding-bottom: ${CHAT_MESSAGE_META_SPACER_HEIGHT};
+  }
+
+  .markdown-link {
+    -webkit-text-decoration: none;
+    color: ${themeCssVariables.accent.accent11};
+    text-decoration: none;
+  }
+
+  .markdown-link:visited {
+    color: ${themeCssVariables.accent.accent11};
+  }
+
+  .markdown-link:hover {
+    text-decoration: underline;
+  }
+
+  strong,
+  b {
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: ${themeCssVariables.font.weight.semiBold};
+  }
+
+  h1 {
+    font-size: 1.6em;
+    line-height: 1.25;
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+
+  h2 {
+    font-size: 1.3em;
+    line-height: 1.25;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  h3 {
+    font-size: 1.15em;
+    line-height: 1.25;
+    margin-bottom: 8px;
+    margin-top: 18px;
+  }
+
+  h4 {
+    font-size: 1.05em;
+    line-height: 1.25;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  h5 {
+    font-size: 0.95em;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+
+  h6 {
+    font-size: 0.85em;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+
+  hr {
+    background-color: ${themeCssVariables.border.color.light};
+    border: none;
+    height: 1px;
+    margin: ${themeCssVariables.spacing[4]} 0;
+  }
+
+  ol,
+  ul {
+    line-height: 1.4em;
+    margin: ${themeCssVariables.spacing[1]} 0;
+    padding-left: ${themeCssVariables.spacing[4]};
+  }
+
+  ul {
+    list-style-type: disc;
+  }
+
+  li {
+    line-height: 1.4em;
+    margin: ${themeCssVariables.spacing['0.5']} 0;
+    padding: ${themeCssVariables.spacing['0.5']} 0;
+  }
+
+  :not(pre) > code {
+    background-color: ${themeCssVariables.background.tertiary};
+    border-radius: ${themeCssVariables.border.radius.sm};
+    color: ${themeCssVariables.color.red10};
+    font-family: ${themeCssVariables.code.font.family}, monospace;
+    font-size: 1em;
+    padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
+    transition: all calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
+  }
+
+  :not(pre) > code[style*='cursor: pointer'] {
+    background-color: ${themeCssVariables.background.secondary};
+    border: 1px solid ${themeCssVariables.accent.accent10};
+    color: ${themeCssVariables.accent.accent10};
+  }
+
+  :not(pre) > code[style*='cursor: pointer']:hover {
+    background-color: ${themeCssVariables.background.transparent.blue};
+  }
+
+  .markdown-code-outer-container {
+    border-radius: ${themeCssVariables.border.radius.md};
+    overflow: hidden;
+  }
+
+  .markdown-block-code {
+    background-color: ${themeCssVariables.background.secondary};
+    border: 1px solid ${themeCssVariables.border.color.medium};
+    border-radius: ${themeCssVariables.border.radius.md};
+    overflow-x: auto;
+  }
+
+  .markdown-image {
+    height: auto;
+    max-width: 100%;
+  }
+`;
+
+export const StyledParagraph = styled.div`
+  line-height: inherit;
+  margin-block: ${themeCssVariables.spacing[2]};
+
+  &:first-child {
+    margin-block-start: 0;
+  }
+
+  &:last-child {
+    margin-block-end: 0;
+  }
+`;
+
+export const StyledSkeletonContainer = styled.div`
+  max-width: 100%;
+`;
+
+export const StyledTableScrollContainer = styled.div`
+  overflow-x: auto;
+
+  table {
+    border-collapse: collapse;
+    margin-block: ${themeCssVariables.spacing[2]};
+  }
+
+  th,
+  td {
+    border: 1px solid ${themeCssVariables.border.color.light};
+    padding: ${themeCssVariables.spacing[2]};
+  }
+
+  th {
+    background-color: ${themeCssVariables.background.secondary};
+    font-weight: ${themeCssVariables.font.weight.medium};
+  }
+`;

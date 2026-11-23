@@ -28,7 +28,7 @@ export const getTeamsConnectionForRequestOrThrow = async (
   if (!isDefined(connection)) {
     throw new TeamsConnectionUnavailableError({
       message:
-        'Microsoft Teams is not connected. Open Microsoft Teams app settings and add a connection first.',
+        'Microsoft Teams is not connected. Open the Teams app settings and add a connection first.',
       code: 'not-connected',
     });
   }

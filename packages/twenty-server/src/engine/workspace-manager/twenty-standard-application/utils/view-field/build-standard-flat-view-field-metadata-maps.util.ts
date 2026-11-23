@@ -27,7 +27,6 @@ import { computeStandardTaskTargetViewFields } from 'src/engine/workspace-manage
 import { computeStandardTaskViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-task-view-fields.util';
 import { computeStandardTimelineActivityViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-timeline-activity-view-fields.util';
 import { computeStandardWorkflowRunViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workflow-run-view-fields.util';
-import { computeStandardWorkflowVersionViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workflow-version-view-fields.util';
 import { computeStandardWorkspaceMemberViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-workspace-member-view-fields.util';
 import { type CreateStandardViewFieldArgs } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/create-standard-view-field-flat-metadata.util';
 
@@ -63,7 +62,6 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   taskTarget: computeStandardTaskTargetViewFields,
   timelineActivity: computeStandardTimelineActivityViewFields,
   workflowRun: computeStandardWorkflowRunViewFields,
-  workflowVersion: computeStandardWorkflowVersionViewFields,
   workspaceMember: computeStandardWorkspaceMemberViewFields,
 } as const satisfies {
   [P in AllStandardObjectName]?: StandardViewFieldBuilder<P>;

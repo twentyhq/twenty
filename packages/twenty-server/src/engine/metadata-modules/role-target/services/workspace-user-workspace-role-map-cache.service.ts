@@ -25,8 +25,10 @@ export class WorkspaceUserWorkspaceRoleMapCacheService extends WorkspaceDerivedC
       flatRoleTargetMaps.byUniversalIdentifier,
     )) {
       if (isDefined(flatRoleTarget?.userWorkspaceId)) {
-        userWorkspaceRoleMap[flatRoleTarget.userWorkspaceId] =
-          flatRoleTarget.roleId;
+        userWorkspaceRoleMap[flatRoleTarget.userWorkspaceId] = [
+          ...(userWorkspaceRoleMap[flatRoleTarget.userWorkspaceId] ?? []),
+          flatRoleTarget.roleId,
+        ];
       }
     }
 

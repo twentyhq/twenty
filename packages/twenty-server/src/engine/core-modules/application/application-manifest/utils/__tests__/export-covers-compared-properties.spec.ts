@@ -159,6 +159,7 @@ const VIEW_SORT_MANIFEST: ViewSortManifest = {
   fieldMetadataUniversalIdentifier: FIELD_UID,
   direction: ViewSortDirection.DESC,
   subFieldName: 'primaryLinkUrl',
+  relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const VIEW_MANIFEST: ViewManifest = {
@@ -226,7 +227,9 @@ const PAGE_LAYOUT_MANIFEST: PageLayoutManifest = {
   tabs: [PAGE_LAYOUT_TAB_MANIFEST],
 };
 
-const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
+const NAVIGATION_MENU_ITEM_MANIFEST: Required<
+  Omit<NavigationMenuItemManifest, 'folderUniversalIdentifier'>
+> = {
   universalIdentifier: '77777777-7777-4777-8777-777777777777',
   type: NavigationMenuItemType.VIEW,
   name: 'All pets',
@@ -235,7 +238,8 @@ const NAVIGATION_MENU_ITEM_MANIFEST: Required<NavigationMenuItemManifest> = {
   position: 12,
   link: 'https://example.com/pets',
   nativePageKey: 'workflows',
-  folderUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
+  builtInSectionKey: 'favorites',
+  parentUniversalIdentifier: '88888888-8888-4888-8888-888888888888',
   viewUniversalIdentifier: VIEW_UID,
   targetObjectUniversalIdentifier: OBJECT_UID,
   pageLayoutUniversalIdentifier: '99999999-9999-4999-8999-999999999999',
@@ -345,6 +349,9 @@ const NESTED_IN_RULE =
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
+const WORKSPACE_MEMBER_RELATION_GAP =
+  'no manifest slot yet for member values read through a relation of the workspace member';
+
 const ROW_LEVEL_PERMISSION_KIND_GAPS = {
   deletedAt:
     'soft-deleted row-level permission predicates and groups are reported as excluded instead of exported',
@@ -395,6 +402,7 @@ const exportWorkflowManifestOrThrow = (manifest: WorkflowManifest) => {
       ...flatUniversalWorkflowVersion,
       workspaceId: 'workspace-id',
       applicationId: 'application-id',
+      coreWorkflowId: universalFlatWorkflow.id,
     },
     references,
   });
@@ -657,7 +665,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {},
   },
   {
@@ -871,6 +879,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       relationFieldMetadataUniversalIdentifier:
         'no manifest slot yet for a predicate reached through a relation',
+      workspaceMemberRelationFieldMetadataUniversalIdentifier:
+        WORKSPACE_MEMBER_RELATION_GAP,
       rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
@@ -916,11 +926,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: ['visibility', 'createdByUserWorkspaceId'],
+    workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      jobConfig:
-        'no manifest slot yet, every application workflow gets the default',
       lastPublishedVersionId:
         'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
@@ -931,7 +939,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
+    workspaceLocalProperties: [
+      ...WORKSPACE_LOCAL_PROPERTIES,
+      'isPrivate',
+      'createdByUserWorkspaceId',
+    ],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',
@@ -951,6 +963,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'API key role assignments are reported as excluded, only agent roles are exported',
       webhookUniversalIdentifier:
         'webhook role assignments are reported as excluded, only agent roles are exported',
+      isSystemSideEffect:
+        'only the system holds a role for a member this way, and member role assignments are reported as excluded',
     },
   },
   {

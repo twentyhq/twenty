@@ -42,6 +42,7 @@ import {
 } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-discovery-provider.util';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const OAUTH_DISCOVERY_REQUEST_TIMEOUT_MS = 15_000;
@@ -60,6 +61,7 @@ export class DiscoveredOAuthClientDriver implements OAuthClientDriver {
     private readonly discoveredOAuthClientService: ConnectionProviderDiscoveredOAuthClientService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   async resolveForAuthorization(
@@ -307,9 +309,10 @@ export class DiscoveredOAuthClientDriver implements OAuthClientDriver {
     const { authorizationServerUrl, authorizationServerMetadata } =
       discoveryState;
     const clientMetadataUrl = this.getClientMetadataUrl();
-    const clientMetadata = buildOAuthDiscoveryClientMetadata(
-      this.twentyConfigService.get('SERVER_URL'),
-    );
+    const clientMetadata = buildOAuthDiscoveryClientMetadata({
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      frontendUrl: this.domainServerConfigService.getFrontUrl().toString(),
+    });
 
     if (
       authorizationServerMetadata?.client_id_metadata_document_supported &&

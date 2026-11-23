@@ -32,7 +32,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateNavigationMenuItemAction>): Promise<FlatCreateNavigationMenuItemAction> {
     const {
       targetObjectMetadataId,
-      folderId,
+      parentId,
       viewId,
       pageLayoutId,
       agentChatChannelId,
@@ -54,7 +54,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
       flatEntity: {
         ...action.flatEntity,
         targetObjectMetadataId,
-        folderId,
+        parentId,
         viewId,
         pageLayoutId,
         agentChatChannelId,

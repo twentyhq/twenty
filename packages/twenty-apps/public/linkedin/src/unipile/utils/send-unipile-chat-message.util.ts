@@ -5,6 +5,28 @@ import { type UnipileOutgoingAttachment } from 'src/unipile/types/unipile-outgoi
 import { getUnipileRequestOptions } from 'src/unipile/utils/get-unipile-request-options.util';
 import { requestUnipile } from 'src/unipile/utils/request-unipile.util';
 
+const buildMultipartBody = ({
+  text,
+  attachments,
+}: {
+  text: string;
+  attachments: UnipileOutgoingAttachment[];
+}): FormData => {
+  const formData = new FormData();
+
+  formData.append('text', text);
+
+  attachments.forEach(({ content, contentType, filename }, index) => {
+    formData.append(
+      `attachments[${index}]`,
+      new Blob([new Uint8Array(content)], { type: contentType }),
+      filename,
+    );
+  });
+
+  return formData;
+};
+
 export const sendUnipileChatMessage = async ({
   accountId,
   chatId,
@@ -22,7 +44,14 @@ export const sendUnipileChatMessage = async ({
       new UnipileMessaging().sendMessage({
         ...getUnipileRequestOptions(),
         path: { account_id: accountId, chat_id: chatId },
-        body: isNonEmptyArray(attachments) ? { text, attachments } : { text },
+        body: { text },
+        // Unipile rejects base64 attachments in a JSON body past ~1MB (413),
+        // and the SDK only types that form. Dropping Content-Type lets fetch
+        // set the multipart boundary.
+        ...(isNonEmptyArray(attachments) && {
+          bodySerializer: () => buildMultipartBody({ text, attachments }),
+          headers: { 'Content-Type': null },
+        }),
       }),
     { deadlineAtMs: Date.now() },
   );

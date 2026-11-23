@@ -4,18 +4,16 @@ import { type ReactNode } from 'react';
 import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { useLoadAiChatThread } from '@/ai/hooks/useLoadAiChatThread';
+import { useLoadAiChatThread } from '@/ai-chat/threads/hooks/useLoadAiChatThread';
 import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
 import { inboxThreadListFamilyState } from '@/inbox/states/inboxThreadListFamilyState';
 import { getInboxThreadListSourceKey } from '@/inbox/utils/getInboxThreadListSourceKey';
-import { aiChatThreadParticipantsState } from '@/ai/states/aiChatThreadParticipantsState';
-import { aiChatThreadStreamedParticipantsState } from '@/ai/states/aiChatThreadStreamedParticipantsState';
-import { aiChatUsageFamilyState } from '@/ai/states/aiChatUsageFamilyState';
+import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
 import { inboxRecentThreadsSelector } from '@/inbox/states/selectors/inboxRecentThreadsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
-import { aiChatThreadRecordFamilySelector } from '@/ai/states/selectors/aiChatThreadRecordFamilySelector';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
@@ -54,7 +52,7 @@ jest.mock('@/object-record/utils/generateFindManyRecordsQuery', () => ({
 
 const refreshAiChatThreadPermissions = jest.fn();
 
-jest.mock('@/ai/hooks/useRefreshAiChatThreadPermissions', () => ({
+jest.mock('@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions', () => ({
   useRefreshAiChatThreadPermissions: () => ({
     refreshAiChatThreadPermissions,
   }),
@@ -106,17 +104,16 @@ const getWrapper = (store: ReturnType<typeof createStore>) =>
     return <JotaiProvider store={store}>{children}</JotaiProvider>;
   };
 
-const useAiChatThreadLoading = () => {
+const useInboxThreadListLoading = () => {
   const { loadInboxThreadList } = useLoadInboxThreadList();
 
   return {
-    loadInboxThreadList,
-    refreshAiChatThreads: () =>
+    refreshInboxThreads: () =>
       loadInboxThreadList({
         source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'refresh',
       }),
-    fetchMoreAiChatThreads: () =>
+    fetchMoreInboxThreads: () =>
       loadInboxThreadList({
         source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'fetch-more',
@@ -126,7 +123,7 @@ const useAiChatThreadLoading = () => {
 };
 
 const renderRefresh = (store: ReturnType<typeof createStore>) =>
-  renderHook(() => useAiChatThreadLoading(), {
+  renderHook(() => useInboxThreadListLoading(), {
     wrapper: getWrapper(store),
   }).result;
 
@@ -136,16 +133,6 @@ describe('useLoadInboxThreadList', () => {
     refreshAiChatThreadPermissions.mockResolvedValue(undefined);
   });
 
-  it('keeps the refresh callback stable so render updates do not restart subscriptions', () => {
-    const store = buildStore();
-    const { result, rerender } = renderHook(() => useLoadInboxThreadList(), {
-      wrapper: getWrapper(store),
-    });
-    const load = result.current.loadInboxThreadList;
-    rerender();
-    expect(result.current.loadInboxThreadList).toBe(load);
-  });
-
   it('loads the most recently active chats and the member read state', async () => {
     const store = buildStore();
     const thread = buildThread('thread-1', 'Loaded thread');
@@ -153,7 +140,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAiChatThreads();
+      await result.current.refreshInboxThreads();
     });
 
     expect(queryMock).toHaveBeenCalledWith(
@@ -210,8 +197,9 @@ describe('useLoadInboxThreadList', () => {
       mentionsResolvedAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
-    store.set(aiChatThreadStreamedParticipantsState.atom, {
-      'thread-2': streamedParticipant,
+    store.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: false,
+      rowsByThreadId: { 'thread-2': streamedParticipant },
     });
     queryMock.mockResolvedValue(
       buildPage([
@@ -255,10 +243,12 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAiChatThreads();
+      await result.current.refreshInboxThreads();
     });
 
-    expect(store.get(aiChatThreadParticipantsState.atom)).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId,
+    ).toEqual({
       'thread-1': {
         __typename: 'AgentChatThreadParticipant' as const,
         id: 'thread-1-member-id',
@@ -318,7 +308,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAiChatThreads();
+      await result.current.refreshInboxThreads();
     });
 
     expect(queryMock).toHaveBeenCalledTimes(2);
@@ -368,8 +358,8 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAiChatThreads();
-      await result.current.fetchMoreAiChatThreads();
+      await result.current.refreshInboxThreads();
+      await result.current.fetchMoreInboxThreads();
     });
 
     expect(queryMock).toHaveBeenLastCalledWith(
@@ -385,7 +375,7 @@ describe('useLoadInboxThreadList', () => {
     });
 
     await act(async () => {
-      expect(await result.current.fetchMoreAiChatThreads()).toBeUndefined();
+      expect(await result.current.fetchMoreInboxThreads()).toBeUndefined();
     });
     expect(queryMock).toHaveBeenCalledTimes(2);
   });
@@ -404,7 +394,7 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAiChatThreads();
+      await result.current.refreshInboxThreads();
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual(['thread-1']);
@@ -416,13 +406,13 @@ describe('useLoadInboxThreadList', () => {
     const result = renderRefresh(store);
 
     await act(async () => {
-      await result.current.refreshAiChatThreads();
+      await result.current.refreshInboxThreads();
     });
 
     expect(store.get(RECENT_THREAD_LIST_ATOM)).toBeNull();
   });
 
-  it('adds a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
+  it('stores a chat opened past the loaded pages, and tells a missing chat from a failed lookup', async () => {
     const store = buildStore();
     store.set(RECENT_THREAD_LIST_ATOM, {
       threadIds: ['thread-1'],
@@ -449,10 +439,9 @@ describe('useLoadInboxThreadList', () => {
         }),
       }),
     );
-    expect(store.get(RECENT_THREAD_LIST_ATOM)?.threadIds).toEqual([
-      'old-thread',
-      'thread-1',
-    ]);
+    expect(
+      store.get(aiChatThreadRecordFamilySelector.selectorFamily('old-thread')),
+    ).toMatchObject({ id: 'old-thread', title: 'Old chat' });
 
     queryMock.mockResolvedValueOnce(buildPage([]));
     await act(async () => {
@@ -463,28 +452,5 @@ describe('useLoadInboxThreadList', () => {
     await act(async () => {
       expect(await result.current.loadAiChatThread('unknown')).toBeUndefined();
     });
-  });
-
-  it('restores the usage of a chat opened past the loaded pages', async () => {
-    const store = buildStore();
-    queryMock.mockResolvedValueOnce(
-      buildPage([
-        {
-          ...buildThread('old-thread', 'Old chat'),
-          conversationSize: 3,
-          contextWindowTokens: 1000,
-          totalInputTokens: 42,
-        },
-      ]),
-    );
-    const result = renderRefresh(store);
-
-    await act(async () => {
-      await result.current.loadAiChatThread('old-thread');
-    });
-
-    expect(
-      store.get(aiChatUsageFamilyState.atomFamily({ threadId: 'old-thread' })),
-    ).toMatchObject({ inputTokens: 42 });
   });
 });

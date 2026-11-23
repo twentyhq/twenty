@@ -1,12 +1,13 @@
 import { IconMessage } from 'twenty-ui/icon';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
-import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useIsAiChatThreadShownAsUnread } from '@/ai/hooks/useIsAiChatThreadShownAsUnread';
-import { useAiChatThreadDisplayLabel } from '@/ai/hooks/useAiChatThreadDisplayLabel';
+import { useAiChatThreadRename } from '@/ai-chat/threads/hooks/useAiChatThreadRename';
+import { useIsAiChatThreadShownAsUnread } from '@/ai-chat/threads/hooks/useIsAiChatThreadShownAsUnread';
+import { useAiChatThreadDisplayLabel } from '@/ai-chat/threads/hooks/useAiChatThreadDisplayLabel';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -36,7 +37,7 @@ export const NavigationDrawerInboxThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isDeleted = Boolean(thread.deletedAt);
+  const isDeleted = isNonEmptyString(thread.deletedAt);
   const isShownAsUnread = useIsAiChatThreadShownAsUnread(thread);
   const displayLabel = useAiChatThreadDisplayLabel({
     thread,

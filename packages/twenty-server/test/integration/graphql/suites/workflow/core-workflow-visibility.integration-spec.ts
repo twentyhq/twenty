@@ -139,6 +139,7 @@ const UPDATE_CORE_WORKFLOW_MUTATION = `
     updateCoreWorkflow(input: $input) {
       id
       name
+      isPrivate
       visibility
     }
   }
@@ -621,7 +622,7 @@ describe('core workflow visibility (e2e)', () => {
       });
 
       assertIsDefinedOrThrow(cachedFlatWorkflow);
-      expect(cachedFlatWorkflow.visibility).toBe(WorkflowVisibility.PRIVATE);
+      expect(cachedFlatWorkflow.isPrivate).toBe(true);
       expect(cachedFlatWorkflow.createdByUserWorkspaceId).not.toBeNull();
     });
 
@@ -652,7 +653,7 @@ describe('core workflow visibility (e2e)', () => {
               metadataName: 'workflow',
               recordId: updatedCoreWorkflowId,
               properties: expect.objectContaining({
-                updatedFields: ['visibility'],
+                updatedFields: ['isPrivate'],
               }),
             }),
           ]),
@@ -698,6 +699,38 @@ describe('core workflow visibility (e2e)', () => {
       });
     });
 
+    it('makes it private through isPrivate and reports both fields', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        { input: { coreWorkflowId: updatedCoreWorkflowId, isPrivate: true } },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        isPrivate: true,
+        visibility: 'PRIVATE',
+      });
+    });
+
+    it('lets isPrivate win over a deprecated visibility sent with it', async () => {
+      const response = await workflowGraphqlRequest(
+        UPDATE_CORE_WORKFLOW_MUTATION,
+        {
+          input: {
+            coreWorkflowId: updatedCoreWorkflowId,
+            isPrivate: false,
+            visibility: WorkflowVisibility.PRIVATE,
+          },
+        },
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateCoreWorkflow).toMatchObject({
+        isPrivate: false,
+        visibility: 'WORKSPACE',
+      });
+    });
+
     it('still lets another member rename a workspace-visible workflow', async () => {
       const response = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
         input: {
@@ -712,6 +745,54 @@ describe('core workflow visibility (e2e)', () => {
         visibility: 'WORKSPACE',
         canChangeVisibility: true,
       });
+    });
+  });
+
+  describe('an ownerless private workflow', () => {
+    let ownerlessPrivateCoreWorkflowId: string;
+
+    beforeAll(async () => {
+      ({ coreWorkflowId: ownerlessPrivateCoreWorkflowId } =
+        await createCoreWorkflow({ name: 'Ownerless Private Workflow' }));
+
+      await global.testDataSource.query(
+        `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL, "isPrivate" = true WHERE id = $1`,
+        [ownerlessPrivateCoreWorkflowId],
+      );
+
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+    });
+
+    afterAll(async () => {
+      if (isDefined(ownerlessPrivateCoreWorkflowId)) {
+        await global.testDataSource.query(
+          `UPDATE core."workflow" SET "isPrivate" = false WHERE id = $1`,
+          [ownerlessPrivateCoreWorkflowId],
+        );
+
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+
+        await deleteCoreWorkflows({
+          coreWorkflowIds: [ownerlessPrivateCoreWorkflowId],
+        });
+      }
+    });
+
+    it('is hidden from every member', async () => {
+      for (const requester of [workflowGraphqlRequest, asOtherMember]) {
+        const response = await requester(CORE_WORKFLOW_BY_ID_QUERY, {
+          coreWorkflowId: ownerlessPrivateCoreWorkflowId,
+        });
+
+        expect(response.body.data?.coreWorkflowById ?? null).toBeNull();
+        expect(await listCoreWorkflowIds(requester)).not.toContain(
+          ownerlessPrivateCoreWorkflowId,
+        );
+      }
     });
   });
 

@@ -1,10 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { getConnection } from 'twenty-sdk/logic-function';
+import {
+  getConnection,
+  type MarkAppThreadAsReadPayload,
+} from 'twenty-sdk/logic-function';
 
 import { LINKEDIN_MARK_THREAD_AS_READ_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
-import { type MarkAppThreadAsReadPayload } from 'src/types/mark-app-thread-as-read-payload.type';
 import { markUnipileChatAsRead } from 'src/unipile/utils/mark-unipile-chat-as-read.util';
 
 export const linkedinMarkThreadAsReadHandler = async ({

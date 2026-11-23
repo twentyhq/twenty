@@ -5,12 +5,11 @@ import {
   RECONCILE_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
-import { UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE } from 'src/logic-functions/constants/upcoming-calendar-event-reconciliation-batch-size';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
-import { fetchUpcomingCalendarEventIds } from 'src/logic-functions/data/fetch-upcoming-calendar-event-ids.util';
+import { fetchUpcomingCalendarEvents } from 'src/logic-functions/data/fetch-upcoming-calendar-events.util';
+import { groupUpcomingCalendarEventIdsIntoBatches } from 'src/logic-functions/domain/group-upcoming-calendar-event-ids-into-batches.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
-import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 
 type SweepUpcomingCalendarEventsResult =
   | { outcome: 'nothing-to-reconcile' }
@@ -25,19 +24,13 @@ export const sweepUpcomingCalendarEventsHandler =
     try {
       const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
 
-      const calendarEventIds = await fetchUpcomingCalendarEventIds(
-        client,
-        new Date(),
+      const calendarEventIdBatches = groupUpcomingCalendarEventIdsIntoBatches(
+        await fetchUpcomingCalendarEvents(client, new Date()),
       );
 
-      if (calendarEventIds.length === 0) {
+      if (calendarEventIdBatches.length === 0) {
         return { outcome: 'nothing-to-reconcile' };
       }
-
-      const calendarEventIdBatches = getBatches(
-        calendarEventIds,
-        UPCOMING_CALENDAR_EVENT_RECONCILIATION_BATCH_SIZE,
-      );
 
       await enqueueLogicFunctionJobs({
         logicFunctionUniversalIdentifier:
@@ -49,7 +42,7 @@ export const sweepUpcomingCalendarEventsHandler =
 
       return {
         outcome: 'batches-enqueued',
-        calendarEventCount: calendarEventIds.length,
+        calendarEventCount: calendarEventIdBatches.flat().length,
         batchCount: calendarEventIdBatches.length,
       };
     } catch (error) {

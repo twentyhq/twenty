@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`NavigationMenuItem batch creation should fail when batch contains item with invalid folderId 1`] = `
+exports[`NavigationMenuItem batch creation should fail when batch contains item with invalid parentId 1`] = `
 {
   "extensions": {
     "code": "GRAPHQL_VALIDATION_FAILED",

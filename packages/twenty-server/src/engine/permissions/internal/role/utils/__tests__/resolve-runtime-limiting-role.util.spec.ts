@@ -16,11 +16,9 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/modules/workflow/common/constants/legacy-workspace-workflow-object-universal-identifiers.constant';
 
 const PERSON_ID = 'person-id';
 const COMPANY_ID = 'company-id';
-const WORKFLOW_ID = 'workflow-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
 const CAMPAIGN_ID = 'campaign-id';
 const WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
@@ -33,7 +31,6 @@ const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
 for (const [id, universalIdentifier, isSystem] of [
   [PERSON_ID, 'person', false],
   [COMPANY_ID, 'company', false],
-  [WORKFLOW_ID, LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER, false],
   [WORKFLOW_RUN_ID, WORKFLOW_RUN_UNIVERSAL_IDENTIFIER, false],
   [CAMPAIGN_ID, 'campaign', true],
 ] as const) {
@@ -181,12 +178,6 @@ describe('resolveRuntimeLimitingRole', () => {
 
   describe.each([
     {
-      objectName: 'legacy workflow',
-      objectId: WORKFLOW_ID,
-      objectUniversalIdentifier:
-        LEGACY_WORKSPACE_WORKFLOW_OBJECT_UNIVERSAL_IDENTIFIER,
-    },
-    {
       objectName: 'workflowRun',
       objectId: WORKFLOW_RUN_ID,
       objectUniversalIdentifier: WORKFLOW_RUN_UNIVERSAL_IDENTIFIER,
@@ -312,7 +303,7 @@ describe('resolveRuntimeLimitingRole', () => {
             workspaceId: 'workspace-id',
             mainPrincipal: {
               type: 'workspaceMember',
-              roleId: 'member-role-id',
+              roleIds: ['member-role-id'],
               workspaceMemberId: 'workspace-member-id',
             },
             applicationPrincipal: { type: 'customApplication' },

@@ -40,6 +40,12 @@ const StyledChatThreadBody = styled.div`
   padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
 `;
 
+const StyledChatThreadScrollContent = styled.div`
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+`;
+
 type ChatThreadWidgetContentProps = {
   messageThreadId: string;
   messages: EmailThreadMessageWithSender[];
@@ -71,9 +77,7 @@ export const ChatThreadWidgetContent = ({
   );
   const counterparts = useChatThreadCounterparts(messages);
   const firstCounterpart = counterparts?.[0];
-  const { scrollContainerRef, handleScroll } = useStickToBottomScroll(
-    messages.length,
-  );
+  const { scrollContainerRef, scrollContentRef } = useStickToBottomScroll();
 
   const connectionProvider = applicationsWithPreferences
     .flatMap(({ connectionProviders }) => connectionProviders)
@@ -116,15 +120,14 @@ export const ChatThreadWidgetContent = ({
         )}
       <WidgetRelationsHeader />
       <StyledChatThreadBody>
-        <StyledWidgetScrollContainer
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-        >
-          <ChatThreadMessages messages={messages} />
-          <CustomResolverFetchMoreLoader
-            loading={loading}
-            onLastRowVisible={onFetchMoreMessages}
-          />
+        <StyledWidgetScrollContainer ref={scrollContainerRef}>
+          <StyledChatThreadScrollContent ref={scrollContentRef}>
+            <ChatThreadMessages messages={messages} />
+            <CustomResolverFetchMoreLoader
+              loading={loading}
+              onLastRowVisible={onFetchMoreMessages}
+            />
+          </StyledChatThreadScrollContent>
         </StyledWidgetScrollContainer>
         {hasSendPermission &&
           canChannelSend &&

@@ -108,7 +108,8 @@ RUN apk add --no-cache \
     'nghttp2-libs>=1.69.0-r0' \
     'libcrypto3>=3.5.8-r0' \
     'libssl3>=3.5.8-r0' \
-    'postgresql18-client>=18.5-r0' \
+    'postgresql18-client>=18.7-r0' \
+    'zlib>=1.4-r0' \
     'jq>=1.8.2-r0'
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh

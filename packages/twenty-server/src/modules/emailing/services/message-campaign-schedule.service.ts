@@ -98,7 +98,7 @@ export class MessageCampaignScheduleService {
     expectedRecipientCount?: number;
   }): Promise<SendCampaignResult> {
     const {
-      roleId,
+      roleIds,
       sendableRecipients,
       audience,
       expectedStatus,
@@ -115,7 +115,7 @@ export class MessageCampaignScheduleService {
       await this.messageCampaignLifecycleService.transitionCampaignStatus({
         workspaceId,
         campaignId,
-        roleId,
+        roleIds,
         from: expectedStatus,
         fromScheduledAt: expectedScheduledAt ?? undefined,
         to: MessageCampaignStatus.SCHEDULED,
@@ -150,7 +150,7 @@ export class MessageCampaignScheduleService {
         await this.messageCampaignLifecycleService.transitionCampaignStatus({
           workspaceId,
           campaignId,
-          roleId,
+          roleIds,
           from: MessageCampaignStatus.SCHEDULED,
           fromScheduledAt: scheduledAt,
           to: expectedStatus,

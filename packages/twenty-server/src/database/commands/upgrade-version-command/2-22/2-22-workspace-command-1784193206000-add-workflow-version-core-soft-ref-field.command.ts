@@ -1,22 +1,21 @@
 import { Command } from 'nest-commander';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-22/constants/legacy-workflow-version-universal-identifiers.constant';
+import { buildLegacyWorkflowVersionCoreWorkflowVersionIdFlatFieldMetadata } from 'src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const WORKFLOW_VERSION = STANDARD_OBJECTS.workflowVersion;
 const CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER =
-  WORKFLOW_VERSION.fields.coreWorkflowVersionId.universalIdentifier;
+  LEGACY_WORKFLOW_VERSION_CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER;
 
 @RegisteredWorkspaceCommand('2.22.0', 1784193206000)
 @Command({
@@ -49,7 +48,7 @@ export class AddWorkflowVersionCoreSoftRefFieldCommand extends ProvisionedWorksp
     const workflowVersionObjectMetadata =
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: WORKFLOW_VERSION.universalIdentifier,
+        universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
       });
 
     if (!isDefined(workflowVersionObjectMetadata)) {
@@ -75,26 +74,6 @@ export class AddWorkflowVersionCoreSoftRefFieldCommand extends ProvisionedWorksp
         { workspaceId },
       );
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
-    const standardField =
-      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-        flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
-        universalIdentifier:
-          CORE_WORKFLOW_VERSION_ID_FIELD_UNIVERSAL_IDENTIFIER,
-      });
-
-    if (!isDefined(standardField)) {
-      throw new Error(
-        'Standard application is missing workflowVersion field coreWorkflowVersionId',
-      );
-    }
-
     if (isDryRun) {
       this.logger.log(
         `[DRY RUN] Would add coreWorkflowVersionId field for workspace ${workspaceId}`,
@@ -103,11 +82,13 @@ export class AddWorkflowVersionCoreSoftRefFieldCommand extends ProvisionedWorksp
       return;
     }
 
-    const flatFieldMetadataToCreate: FlatFieldMetadata = {
-      ...standardField,
-      viewFieldIds: [],
-      viewFieldUniversalIdentifiers: [],
-    };
+    const flatFieldMetadataToCreate =
+      buildLegacyWorkflowVersionCoreWorkflowVersionIdFlatFieldMetadata({
+        workspaceId,
+        workflowVersionObjectMetadataId: workflowVersionObjectMetadata.id,
+        twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        now: new Date().toISOString(),
+      });
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(

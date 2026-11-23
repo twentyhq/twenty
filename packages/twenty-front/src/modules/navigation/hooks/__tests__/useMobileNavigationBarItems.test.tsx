@@ -1,4 +1,5 @@
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
+import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { i18n } from '@lingui/core';
@@ -8,8 +9,21 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 
-jest.mock('@/ai/hooks/useSwitchToNewAiChat');
+jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat');
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag');
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
+);
+
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats',
+  () => ({
+    useNavigationMenuTabIdsWithUnreadChats: () => ({
+      tabIdsWithUnreadChats: new Set(['sales-tab']),
+      unreadOpenThreadCount: 1,
+    }),
+  }),
+);
 
 jest.mock('@/object-metadata/hooks/useFilteredObjectMetadataItems', () => ({
   useFilteredObjectMetadataItems: () => ({
@@ -68,8 +82,9 @@ describe('useMobileNavigationBarItems', () => {
     localStorage.clear();
 
     jest.mocked(useHasPermissionFlag).mockReturnValue(true);
+    jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);
     jest.mocked(useSwitchToNewAiChat).mockReturnValue({
-      switchToNewChat: mockSwitchToNewChat,
+      switchToNewAiChat: mockSwitchToNewChat,
     });
   });
 
@@ -81,6 +96,37 @@ describe('useMobileNavigationBarItems', () => {
       'search',
       'newAiChat',
     ]);
+  });
+
+  it('offers each sidebar tab after home and opens home on it', () => {
+    jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([
+      {
+        id: 'sales-tab',
+        name: 'Sales',
+        icon: null,
+      },
+    ] as ReturnType<typeof useWorkspaceNavigationMenuContainers>);
+
+    const { result } = renderMobileNavigationBarItems('/objects/people');
+
+    expect(result.current.items.map(({ name }) => name)).toEqual([
+      'home',
+      'tab-sales-tab',
+      'search',
+      'newAiChat',
+    ]);
+    expect(
+      result.current.items.find(({ name }) => name === 'tab-sales-tab'),
+    ).toMatchObject({
+      label: 'Sales, 1 unread',
+      isUnread: true,
+      hasDividerAfter: true,
+    });
+
+    act(() => tapItem(result, 'tab-sales-tab'));
+
+    expect(result.current.location.pathname).toBe('/home');
+    expect(result.current.activeItemName).toBe('tab-sales-tab');
   });
 
   it('drops the new chat when the workspace has no AI permission', () => {

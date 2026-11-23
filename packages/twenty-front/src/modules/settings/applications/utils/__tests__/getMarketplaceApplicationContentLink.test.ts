@@ -19,6 +19,7 @@ const EMPTY_CONTENT: ApplicationContent = {
   roles: [],
   permissionFlags: [],
   connectionProviders: [],
+  mcpServers: [],
   publicAssets: [],
   translations: [],
 };

@@ -1,11 +1,22 @@
-import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
-import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadInitializationEffect';
-import { InboxThreadRecordOperationsEffect } from '@/inbox/components/InboxThreadRecordOperationsEffect';
+import { InboxChannelSyncEffect } from '@/inbox/components/InboxChannelSyncEffect';
+import { InboxThreadSyncEffect } from '@/inbox/components/InboxThreadSyncEffect';
+import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
+import { FocusedTabEffect } from '@/web-push/components/FocusedTabEffect';
+import { WebPushSubscriptionEffect } from '@/web-push/components/WebPushSubscriptionEffect';
 
-export const InboxEffects = () => (
-  <>
-    <InboxThreadInitializationEffect />
-    <InboxThreadRecordOperationsEffect />
-    <InboxChannelsEffect />
-  </>
-);
+export const InboxEffects = () => {
+  const isInboxWebPushEnabled = useIsInboxWebPushEnabled();
+
+  return (
+    <>
+      <InboxThreadSyncEffect />
+      <InboxChannelSyncEffect />
+      {isInboxWebPushEnabled && (
+        <>
+          <WebPushSubscriptionEffect />
+          <FocusedTabEffect />
+        </>
+      )}
+    </>
+  );
+};

@@ -68,6 +68,16 @@ export class FlatRoleTargetValidatorService {
         userFriendlyMessage: msg`Role not found`,
       });
     } else {
+      if (!buildOptions.isSystemBuild && referencedRole.isSystemSideEffect) {
+        const roleLabel = referencedRole.label;
+
+        validationResult.errors.push({
+          code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+          message: t`Role "${roleLabel}" is held by the system and cannot be assigned`,
+          userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned`,
+        });
+      }
+
       validationResult.errors.push(
         ...validateFlatRoleTargetAssignationAvailability({
           flatRole: referencedRole,

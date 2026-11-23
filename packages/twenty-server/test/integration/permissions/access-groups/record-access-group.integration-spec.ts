@@ -3,9 +3,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findRoleAccessGroupCompactIds } from 'test/integration/permissions/utils/find-role-access-group-compact-ids.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   FeatureFlagKey,
@@ -49,26 +50,25 @@ describe('access group ids on records (integration)', () => {
 
   const readCompactIds = async ({
     roleLabel,
-    predicateGroupId,
   }: {
     roleLabel: string;
-    predicateGroupId: string | null;
   }): Promise<number[]> => {
-    const rows: { compactId: number }[] = await global.testDataSource.query(
-      `SELECT "accessGroup"."compactId" FROM ${ACCESS_GROUP_TABLE} "accessGroup"
-        JOIN core."role" "role" ON "role"."id" = "accessGroup"."roleId"
-        WHERE "role"."label" = $1 AND "accessGroup"."objectMetadataId" = $2
-          AND "accessGroup"."rowLevelPermissionPredicateGroupId" IS NOT DISTINCT FROM (
-            SELECT "rowLevelPermissionRuleId" FROM core."rowLevelPermissionPredicateGroup" WHERE "id" = $3
-          )`,
-      [roleLabel, objectMetadataId, predicateGroupId],
+    const [{ id: roleId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."role" WHERE "workspaceId" = $1 AND "label" = $2`,
+      [SEED_APPLE_WORKSPACE_ID, roleLabel],
     );
 
-    return rows.map(({ compactId }) => compactId);
+    return findRoleAccessGroupCompactIds({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      roleId,
+      objectMetadataId,
+    });
   };
 
   const syncAndRecompute = async () => {
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
     await recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -144,31 +144,35 @@ describe('access group ids on records (integration)', () => {
       },
     });
     const roleId = data.createOneRole.id;
+    const ruleId = v4();
     const predicateGroupId = v4();
 
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     const upsertRule = (value: string) =>
-      upsertRowLevelPermissionPredicates({
+      upsertRowLevelPermissionRules({
         expectToFail: false,
         input: {
           roleId,
           objectMetadataId,
-          ...RULE_GRANTS,
-          predicateGroups: [
+          rules: [
             {
-              id: predicateGroupId,
-              objectMetadataId,
-              logicalOperator:
-                RowLevelPermissionPredicateGroupLogicalOperator.AND,
-            },
-          ],
-          predicates: [
-            {
-              id: v4(),
-              fieldMetadataId: jobTitleFieldMetadataId,
-              operand: RowLevelPermissionPredicateOperand.CONTAINS,
-              value,
-              rowLevelPermissionPredicateGroupId: predicateGroupId,
+              id: ruleId,
+              ...RULE_GRANTS,
+              predicateGroups: [
+                {
+                  id: predicateGroupId,
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  predicates: [
+                    {
+                      id: v4(),
+                      fieldMetadataId: jobTitleFieldMetadataId,
+                      operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                      value,
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -180,11 +184,9 @@ describe('access group ids on records (integration)', () => {
 
       const [adminCompactId] = await readCompactIds({
         roleLabel: 'Admin',
-        predicateGroupId: null,
       });
       const [parisCompactId] = await readCompactIds({
         roleLabel,
-        predicateGroupId,
       });
       const [parisPerson, londonPerson] = await readPeople();
 
@@ -199,7 +201,6 @@ describe('access group ids on records (integration)', () => {
 
       const [londonCompactId] = await readCompactIds({
         roleLabel,
-        predicateGroupId,
       });
       const [parisPersonAfterEdit, londonPersonAfterEdit] = await readPeople();
 
@@ -235,27 +236,29 @@ describe('access group ids on records (integration)', () => {
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     let createdPersonId: string | undefined;
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId,
         objectMetadataId,
-        ...RULE_GRANTS,
-        predicateGroups: [
+        rules: [
           {
-            id: predicateGroupId,
-            objectMetadataId,
-            logicalOperator:
-              RowLevelPermissionPredicateGroupLogicalOperator.AND,
-          },
-        ],
-        predicates: [
-          {
-            id: v4(),
-            fieldMetadataId: jobTitleFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Paris',
-            rowLevelPermissionPredicateGroupId: predicateGroupId,
+            ...RULE_GRANTS,
+            predicateGroups: [
+              {
+                id: predicateGroupId,
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                predicates: [
+                  {
+                    id: v4(),
+                    fieldMetadataId: jobTitleFieldMetadataId,
+                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                    value: 'Paris',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -271,7 +274,6 @@ describe('access group ids on records (integration)', () => {
 
       const [parisCompactId] = await readCompactIds({
         roleLabel,
-        predicateGroupId,
       });
       const readCreatedPersonAccessGroupIds = async (): Promise<number[]> => {
         const [{ accessGroupIds }] = await global.testDataSource.query(

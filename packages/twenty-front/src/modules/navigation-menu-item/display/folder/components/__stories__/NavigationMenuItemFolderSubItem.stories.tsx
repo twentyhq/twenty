@@ -37,11 +37,12 @@ export const Link: Story = {
   args: {
     navigationMenuItem: {
       id: '71c0a705-a53f-4e86-a2ba-4da7ae347c5d',
-      folderId: '6194edbc-ae3b-4c7c-b6ea-41ea28edc242',
+      parentId: '6194edbc-ae3b-4c7c-b6ea-41ea28edc242',
       type: NavigationMenuItemType.LINK,
       name: 'Example website',
       link: 'https://example.com',
       position: 0,
+      isActive: true,
       createdAt: '2026-01-01T12:00:00.000Z',
       updatedAt: '2026-01-01T12:00:00.000Z',
     },

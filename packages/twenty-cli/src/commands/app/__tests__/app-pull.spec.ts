@@ -113,7 +113,10 @@ const server = await startTestServer((request, response) => {
   if (unsupportedOptions.length > 0) {
     return sendJson(response, 400, {
       errors: unsupportedOptions.map((option) => ({
-        message: `Unknown argument "${option}" on field "Query.exportApplication". Did you mean "shouldIncludeDependencies"?`,
+        message:
+          option === 'encoding'
+            ? 'Cannot query field "encoding" on type "ApplicationExportFile".'
+            : `Unknown argument "${option}" on field "Query.exportApplication". Did you mean "shouldIncludeDependencies"?`,
         extensions: { code: 'GRAPHQL_VALIDATION_FAILED' },
       })),
     });
@@ -226,7 +229,15 @@ describe('app pull command with the packaged worker', () => {
 
   it.each([
     ['shouldIncludePublicAssets'],
-    ['shouldIncludeSourceFiles', 'shouldIncludePublicAssets'],
+    ['shouldIncludeLogicFunctionSources'],
+    ['shouldIncludeSourceDependencies'],
+    ['shouldIncludeSourceDependencies', 'encoding'],
+    [
+      'shouldIncludeSourceFiles',
+      'shouldIncludeLogicFunctionSources',
+      'shouldIncludePublicAssets',
+      'shouldIncludeSourceDependencies',
+    ],
   ])(
     'keeps metadata and dependency pull working without %j',
     async (...unsupportedOptions) => {
@@ -256,11 +267,22 @@ describe('app pull command with the packaged worker', () => {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
           shouldIncludeDependencies: true,
           shouldIncludeSourceFiles: true,
+          shouldIncludeSourceDependencies: true,
+          shouldIncludeLogicFunctionSources: true,
           shouldIncludePublicAssets: true,
         },
         {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
           shouldIncludeDependencies: true,
+          ...(!unsupportedOptions.includes('shouldIncludeLogicFunctionSources')
+            ? { shouldIncludeLogicFunctionSources: true }
+            : {}),
+          ...(!unsupportedOptions.includes('shouldIncludeSourceDependencies')
+            ? { shouldIncludeSourceDependencies: true }
+            : {}),
+          ...(!unsupportedOptions.includes('shouldIncludePublicAssets')
+            ? { shouldIncludePublicAssets: true }
+            : {}),
           ...(!unsupportedOptions.includes('shouldIncludeSourceFiles')
             ? { shouldIncludeSourceFiles: true }
             : {}),
@@ -325,6 +347,8 @@ describe('app pull command with the packaged worker', () => {
           universalIdentifier: SOURCE_TEST_APPLICATION_ID,
           shouldIncludeDependencies: true,
           shouldIncludeSourceFiles: true,
+          shouldIncludeSourceDependencies: true,
+          shouldIncludeLogicFunctionSources: true,
           shouldIncludePublicAssets: true,
         },
       ]);
@@ -538,6 +562,8 @@ export default defineObject({ nameSingular: 'invalid' });`,
       universalIdentifier: SOURCE_TEST_APPLICATION_ID,
       shouldIncludeDependencies: true,
       shouldIncludeSourceFiles: true,
+      shouldIncludeSourceDependencies: true,
+      shouldIncludeLogicFunctionSources: true,
       shouldIncludePublicAssets: true,
     });
     expect(
@@ -559,6 +585,8 @@ export default defineObject({ nameSingular: 'invalid' });`,
         universalIdentifier: SOURCE_TEST_APPLICATION_ID,
         shouldIncludeDependencies: true,
         shouldIncludeSourceFiles: true,
+        shouldIncludeSourceDependencies: true,
+        shouldIncludeLogicFunctionSources: true,
         shouldIncludePublicAssets: true,
       });
       expect(installAppDependenciesOrThrow).not.toHaveBeenCalled();

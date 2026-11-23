@@ -11,7 +11,7 @@ import { SettingsAiAssistantChoiceContent } from '~/pages/settings/ai/components
 import { SettingsAiAssistantCustomize } from '~/pages/settings/ai/components/SettingsAiAssistantCustomize';
 import { SETTINGS_AI_ASSISTANT_COLOR_LABELS } from '~/pages/settings/ai/constants/SettingsAiAssistantColorLabels';
 import { SETTINGS_AI_ASSISTANT_PRESETS } from '~/pages/settings/ai/constants/SettingsAiAssistantPresets';
-import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai/constants/AiChatAssistantAvatarShapeLabels';
+import { AI_CHAT_ASSISTANT_AVATAR_SHAPE_LABELS } from '@/ai-chat/constants/AiChatAssistantAvatarShapeLabels';
 import { type SettingsAiAssistantSectionProps } from '~/pages/settings/ai/types/SettingsAiAssistantSectionProps';
 import { getSettingsAiAssistantPreset } from '@/settings/ai/utils/getSettingsAiAssistantPreset';
 

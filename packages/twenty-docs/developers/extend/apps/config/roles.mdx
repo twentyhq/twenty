@@ -88,8 +88,10 @@ group.
 
 A predicate references a field by its `universalIdentifier`, an `operand`, and (optionally) a
 workspaceMember field whose value is injected at query time — so you can express "the record's owner
-relation **is** the current workspace member". This role can create any company, but reads and
-updates only the companies it owns:
+relation **is** the current workspace member". With `relationFieldUniversalIdentifier`, a predicate
+compares a field of the records related through that relation field instead, for example the
+`messageChannelId` of a message's channel associations. This role can create any company, but reads
+and updates only the companies it owns:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -243,7 +245,7 @@ Notes:
 - Row-level security is enforced for workspaces on the **Organization plan or above**. On other
   plans the rules declared in an app manifest still sync, they are simply not enforced.
 - The Metadata API behaves differently from the manifest here: without the entitlement,
-  `upsertRowLevelPermissionPredicates` is rejected with
+  `upsertRowLevelPermissionRules` is rejected with
   `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` rather than syncing. A workspace on a plan that does not
   include row-level security therefore cannot create predicates outside of an app manifest, even
   though the `rowLevelPermissionPredicates` field is present on the `Role` type when you introspect

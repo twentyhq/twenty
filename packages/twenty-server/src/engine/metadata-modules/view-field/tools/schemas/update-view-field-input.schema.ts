@@ -15,4 +15,11 @@ export const updateViewFieldInputSchema = z.object({
     .enum(AggregateOperations)
     .optional()
     .describe('Aggregate operation for this field.'),
+  relationTargetFieldMetadataId: z
+    .uuid()
+    .nullable()
+    .optional()
+    .describe(
+      'On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Null shows the related record again.',
+    ),
 });

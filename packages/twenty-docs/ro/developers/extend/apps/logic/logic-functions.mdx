@@ -352,7 +352,7 @@ const handler = async (event: RoutePayload) => {
   pentru detalii despre facturare și funcționare.
 </Note>
 
-**Contractul resolver-ului.** Tipul `LogicFunctionConfig` din SDK impune acest lucru la compilare: de îndată ce setați `serverRouteTriggerSettings`, handler-ul este constrâns să returneze fie un `Response`, fie `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (sau un `Promise` al uneia dintre acestea). Pe calea de trimitere, `workspaceId` trebuie să fie un workspace în care funcția țintă este instalată, altfel cererea este respinsă cu `404`. Un rezultat care nu corespunde niciuneia dintre forme — inclusiv unul ale cărui identificatoare nu sunt UUID-uri — este respins cu `502`.
+**Contractul resolver-ului.** Tipul `LogicFunctionConfig` din SDK impune acest lucru la compilare: de îndată ce setați `serverRouteTriggerSettings`, handler-ul este constrâns să returneze fie un `Response`, fie `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (sau un `Promise` al uneia dintre acestea). Pe calea de dispecerizare, dacă aplicația nu este instalată în `workspaceId`, nu se execută nimic, iar solicitarea este confirmată cu `200` și `{ queued: false, reason: "APPLICATION_NOT_INSTALLED" }`, astfel încât furnizorul nu mai livrează din nou un eveniment pe care niciun spațiu de lucru nu îl poate procesa. Dacă aplicația este instalată acolo, dar nu are nicio funcție cu acel `targetLogicFunctionUniversalIdentifier`, solicitarea este respinsă cu `404`. Un rezultat care nu corespunde niciuneia dintre forme — inclusiv unul ale cărui identificatoare nu sunt UUID-uri — este respins cu `502`.
 
 | Câmp                                     | Tip                 | Notițe                                                                            |
 | ---------------------------------------- | ------------------- | --------------------------------------------------------------------------------- |
@@ -813,6 +813,17 @@ export default defineFrontComponent({
 
 Componenta se montează imediat ce agentul a terminat transmiterea în flux a argumentelor sale, astfel încât gestionează întregul apel, nu doar rezultatul. `toolCall.status` trece prin `input-available`, stările de aprobare atunci când instrumentul are nevoie de aprobare, apoi prin `output-available`, `output-denied` sau `output-error`; `input` este ceea ce a propus agentul, iar `output` este ceea ce a returnat handlerul dvs. Afișați fiecare stare care vă interesează, deoarece rândul de pași nu mai este disponibil pentru a le acoperi.
 
+Când agentul propune un apel care așteaptă aprobarea unei persoane, cardul de aprobare afișează aceeași componentă în locul argumentelor JSON brute. Cardul își păstrează antetul, **Respinge**, **Aprobă** și feedbackul. Cât timp `toolCall.status` este `approval-requested`, `input` conține argumentele pe care le va trimite **Aprobă**, iar componenta le poate modifica folosind `setToolCallArguments`:
+
+```tsx
+import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
+
+const toolCall = useToolCall();
+
+// Approve now runs the tool with decision DECLINE and the reason.
+setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
+```
+
 Atât `input`, cât și `output` sunt tipizate ca `Record\<string, unknown>`, așa că restrângeți tipul fiecărui câmp înainte de a-l utiliza, în loc să faceți conversii de tip. Acest lucru contează cel mai mult pentru orice transmiteți DOM-ului: o valoare pe care o introduceți într-un `href` fără să verificați că este un șir este un link controlat de rezultatul instrumentului.
 
 <Note>
@@ -1221,7 +1232,7 @@ console.log(uploadedFile);
 | ---------------------------------- | -------- | ------------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer` | Conținutul brut al fișierului                                       |
 | `filename`                         | `șir`    | Numele fișierului (folosit pentru stocare și afișare)               |
-| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
+| `fieldMetadataUniversalIdentifier` | `șir`    | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
 

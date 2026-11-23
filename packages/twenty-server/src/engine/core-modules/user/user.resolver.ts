@@ -9,7 +9,6 @@ import { msg } from '@lingui/core/macro';
 import { GraphQLJSONObject } from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
@@ -23,6 +22,9 @@ import {
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import { isServerAdminAccessAllowedFromWorkspace } from 'src/engine/core-modules/impersonation/utils/is-server-admin-access-allowed-from-workspace.util';
+import { userCanServerImpersonate } from 'src/engine/core-modules/impersonation/utils/user-can-server-impersonate.util';
+import { userIsFullAdmin } from 'src/engine/core-modules/impersonation/utils/user-is-full-admin.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,
@@ -46,6 +48,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
+import { trimWorkspaceMemberName } from 'src/engine/core-modules/user/utils/trim-workspace-member-name.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -70,7 +73,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { RolePermissionsService } from 'src/engine/permissions/role-permissions.service';
-import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
+import { UserWorkspacePermissionsReadService } from 'src/engine/permissions/user-workspace-permissions-read.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -116,29 +119,8 @@ export class UserResolver {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly userWorkspacePermissionsReadService: UserWorkspacePermissionsReadService,
   ) {}
-
-  private async getUserWorkspacePermissions({
-    currentUserWorkspace,
-    workspace,
-  }: {
-    workspace: WorkspaceEntity;
-    currentUserWorkspace: UserWorkspaceEntity;
-  }): Promise<UserWorkspacePermissions> {
-    const workspaceIsPendingOrOngoingCreation = [
-      WorkspaceActivationStatus.PENDING_CREATION,
-      WorkspaceActivationStatus.ONGOING_CREATION,
-    ].includes(workspace.activationStatus);
-
-    if (workspaceIsPendingOrOngoingCreation) {
-      return this.settingPermissionsService.getDefaultUserWorkspacePermissions();
-    }
-
-    return await this.settingPermissionsService.getUserWorkspacePermissions({
-      userWorkspaceId: currentUserWorkspace.id,
-      workspaceId: workspace.id,
-    });
-  }
 
   @Query(() => UserEntity)
   @UseGuards(AccessPolicyGuard(USER_ACCESS_POLICY))
@@ -189,10 +171,12 @@ export class UserResolver {
 
     const userWorkspacePermissions =
       fromUserWorkspacePermissionsToUserWorkspacePermissionsDto(
-        await this.getUserWorkspacePermissions({
-          currentUserWorkspace,
-          workspace: refreshedWorkspace,
-        }),
+        await this.userWorkspacePermissionsReadService.findCurrentUserWorkspacePermissions(
+          {
+            workspace: refreshedWorkspace,
+            userWorkspaceId: currentUserWorkspace.id,
+          },
+        ),
       );
 
     const twoFactorAuthenticationMethodSummary = isUserSession
@@ -390,6 +374,40 @@ export class UserResolver {
     return isDefined(user.passwordHash);
   }
 
+  @ResolveField(() => Boolean)
+  canAccessFullAdminPanel(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): boolean {
+    return (
+      userIsFullAdmin(user) &&
+      isServerAdminAccessAllowedFromWorkspace({
+        workspaceId: workspace?.id,
+        serverAdminWorkspaceId: this.twentyConfigService.get(
+          'SERVER_ADMIN_WORKSPACE_ID',
+        ),
+      })
+    );
+  }
+
+  @ResolveField(() => Boolean)
+  canImpersonate(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): boolean {
+    return (
+      userCanServerImpersonate(user) &&
+      isServerAdminAccessAllowedFromWorkspace({
+        workspaceId: workspace?.id,
+        serverAdminWorkspaceId: this.twentyConfigService.get(
+          'SERVER_ADMIN_WORKSPACE_ID',
+        ),
+      })
+    );
+  }
+
   @ResolveField(() => String, {
     nullable: true,
   })
@@ -415,7 +433,12 @@ export class UserResolver {
   @UseGuards(
     AccessPolicyGuard({
       authPrincipals: {
-        userSession: true,
+        userSession: {
+          standard: true,
+          impersonated: { server: true, workspace: false },
+          playground: false,
+          workspaceAgnostic: true,
+        },
         apiKey: false,
         oauthClient: false,
         application: false,
@@ -560,13 +583,13 @@ export class UserResolver {
       );
     }
 
-    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
-      update: input.update,
-    });
+    const update = isDefined(input.update.name)
+      ? { ...input.update, name: trimWorkspaceMemberName(input.update.name) }
+      : input.update;
 
-    assertWorkspaceMemberUpdateValuesAreValid({
-      update: input.update,
-    });
+    assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({ update });
+
+    assertWorkspaceMemberUpdateValuesAreValid({ update });
 
     const workspaceMemberRepository =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
@@ -591,7 +614,7 @@ export class UserResolver {
     const workspaceMemberUpdatePayload: Partial<WorkspaceMemberWorkspaceEntity> =
       {
         id: workspaceMember.id,
-        ...(input.update as Partial<WorkspaceMemberWorkspaceEntity>),
+        ...(update as Partial<WorkspaceMemberWorkspaceEntity>),
       };
 
     await this.workspaceOrmManager.executeInWorkspaceContext(() =>
@@ -759,8 +782,8 @@ export class UserResolver {
       authPrincipals: {
         userSession: {
           standard: true,
-          impersonated: true,
-          playground: true,
+          impersonated: { server: true, workspace: false },
+          playground: false,
           workspaceAgnostic: false,
         },
         apiKey: false,

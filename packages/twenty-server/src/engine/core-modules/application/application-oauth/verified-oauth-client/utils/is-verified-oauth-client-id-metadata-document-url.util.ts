@@ -1,10 +1,8 @@
-import { VERIFIED_OAUTH_CLIENTS } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/constants/verified-oauth-clients.constant';
+import { isDefined } from 'twenty-shared/utils';
+
+import { findVerifiedOAuthClientForClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/find-verified-oauth-client-for-client-id-metadata-document-url.util';
 
 export const isVerifiedOAuthClientIdMetadataDocumentUrl = (
   clientId: string,
 ): boolean =>
-  VERIFIED_OAUTH_CLIENTS.some(
-    (verifiedClient) =>
-      'clientIdMetadataDocumentUrl' in verifiedClient &&
-      verifiedClient.clientIdMetadataDocumentUrl === clientId,
-  );
+  isDefined(findVerifiedOAuthClientForClientIdMetadataDocumentUrl(clientId));

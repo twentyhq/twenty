@@ -8,10 +8,10 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
 import { InboxThreadRowTriage } from '@/inbox/components/InboxThreadRowTriage';
-import { AiChatThreadCommandMenuItems } from '@/ai/components/AiChatThreadCommandMenuItems';
-import { useRefreshAiChatThreadPermissions } from '@/ai/hooks/useRefreshAiChatThreadPermissions';
-import { useTargetAiChatThreadsInContextStore } from '@/ai/hooks/useTargetAiChatThreadsInContextStore';
-import { aiChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/aiChatThreadPermissionsFamilySelector';
+import { AiChatThreadCommandMenuItems } from '@/ai-chat/threads/components/AiChatThreadCommandMenuItems';
+import { useRefreshAiChatThreadPermissions } from '@/ai-chat/threads/hooks/useRefreshAiChatThreadPermissions';
+import { useTargetAiChatThreadsInContextStore } from '@/ai-chat/threads/hooks/useTargetAiChatThreadsInContextStore';
+import { aiChatThreadPermissionsFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadPermissionsFamilySelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
@@ -22,7 +22,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
 type InboxThreadActionsDropdownProps = {
   thread: {

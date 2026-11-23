@@ -137,14 +137,14 @@ describe('buildWorkspaceAccessGroups', () => {
       rolesPermissions,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-      userWorkspaceRoleMap: { 'user-workspace': BROKEN_ROLE_ID },
+      userWorkspaceRoleMap: { 'user-workspace': [BROKEN_ROLE_ID] },
       flatWorkspaceMemberMaps: {
         idByUserWorkspaceId: { 'user-workspace': workspaceMember.id },
         byId: { [workspaceMember.id]: workspaceMember },
       },
     });
 
-    expect(accessGroups.map(({ roleId }) => roleId)).toEqual(['healthy']);
+    expect(accessGroups.map(({ type }) => type)).toEqual(['ALL_RECORDS']);
     expect(hasFailures).toBe(true);
   });
 });

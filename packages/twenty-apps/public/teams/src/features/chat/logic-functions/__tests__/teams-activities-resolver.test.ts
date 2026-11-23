@@ -2,14 +2,22 @@ import { Response } from 'twenty-sdk/logic-function';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TEAMS_ACTIVITIES_ENQUEUE_UNIVERSAL_IDENTIFIER } from 'src/features/chat/constants/universal-identifiers';
+import { TEAMS_ASSISTANT_NOT_CONNECTED_TEXT } from 'src/features/chat/logic-functions/constants/teams-assistant-not-connected-text';
+import { TEAMS_ASSISTANT_NOTICE_TTL_MS } from 'src/features/chat/logic-functions/constants/teams-assistant-notice-ttl-ms';
 import { teamsActivitiesResolverHandler } from 'src/features/chat/logic-functions/teams-activities-resolver';
 import { TeamsActivityTokenInvalidError } from 'src/features/chat/logic-functions/types/teams-activity-token-invalid-error';
 import { type TeamsInboundActivity } from 'src/features/chat/logic-functions/types/teams-inbound-activity.type';
 
-const { kvGetMock, verifyTokenMock } = vi.hoisted(() => ({
+const { kvGetMock, verifyTokenMock, sendNoticeMock } = vi.hoisted(() => ({
   kvGetMock: vi.fn(),
   verifyTokenMock: vi.fn(),
+  sendNoticeMock: vi.fn(),
 }));
+
+vi.mock(
+  'src/features/chat/logic-functions/utils/send-teams-assistant-notice',
+  () => ({ sendTeamsAssistantNotice: sendNoticeMock }),
+);
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<Record<string, unknown>>()),
@@ -46,6 +54,32 @@ describe('teamsActivitiesResolverHandler', () => {
     vi.stubEnv('TEAMS_BOT_TENANT_ID', 'bot-tenant-id');
     verifyTokenMock.mockResolvedValue(SERVICE_URL);
     kvGetMock.mockResolvedValue('workspace-1');
+    sendNoticeMock.mockResolvedValue(true);
+  });
+
+  it('routes a bot install so the workspace can post its welcome', async () => {
+    const result = await resolve({
+      ...MESSAGE_ACTIVITY,
+      type: 'installationUpdate',
+      action: 'add',
+      text: undefined,
+    });
+
+    expect(result).toMatchObject({
+      workspaceId: 'workspace-1',
+      payload: { activity: { type: 'installationUpdate', action: 'add' } },
+    });
+    expect(sendNoticeMock).not.toHaveBeenCalled();
+  });
+
+  it('does not route the bot being removed', async () => {
+    expect(
+      await resolve({
+        ...MESSAGE_ACTIVITY,
+        type: 'installationUpdate',
+        action: 'remove',
+      }),
+    ).toEqual(new Response({ ok: true, skipped: 'Not a message' }));
   });
 
   it('routes a verified message to the workspace that claimed its tenant', async () => {
@@ -152,5 +186,15 @@ describe('teamsActivitiesResolverHandler', () => {
         skipped: 'No workspace claims this Teams tenant',
       }),
     );
+    expect(sendNoticeMock).toHaveBeenCalledExactlyOnceWith({
+      payload: {
+        activity: MESSAGE_ACTIVITY,
+        serviceUrl: SERVICE_URL,
+        tenantId: 'tenant-1',
+      },
+      kind: 'not-connected',
+      text: TEAMS_ASSISTANT_NOT_CONNECTED_TEXT,
+      ttlMs: TEAMS_ASSISTANT_NOTICE_TTL_MS,
+    });
   });
 });

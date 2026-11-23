@@ -27,6 +27,10 @@ export const useChangeRecordFieldVisibility = (
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
+  const getLastPosition = () =>
+    currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
+      ?.position ?? 0;
+
   const changeRecordFieldVisibility = async ({
     fieldMetadataId,
     recordFieldId,
@@ -36,9 +40,7 @@ export const useChangeRecordFieldVisibility = (
     recordFieldId?: string;
     isVisible: boolean;
   }) => {
-    const lastPosition =
-      currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
-        ?.position ?? 0;
+    const lastPosition = getLastPosition();
 
     const shouldShowFieldMetadataItem = isVisible === true;
     const correspondingRecordField = isDefined(recordFieldId)
@@ -78,7 +80,30 @@ export const useChangeRecordFieldVisibility = (
     }
   };
 
+  const addLookupRecordField = async ({
+    fieldMetadataId,
+    relationTargetFieldMetadataId,
+  }: {
+    fieldMetadataId: string;
+    relationTargetFieldMetadataId: string;
+  }) => {
+    const lookupRecordField: RecordField = {
+      id: v4(),
+      fieldMetadataItemId: fieldMetadataId,
+      size: 100,
+      isVisible: true,
+      isCanonical: false,
+      position: getLastPosition() + 1,
+      relationTargetFieldMetadataId,
+    };
+
+    upsertRecordField(lookupRecordField);
+
+    await saveViewFields([mapRecordFieldToViewField(lookupRecordField)]);
+  };
+
   return {
     changeRecordFieldVisibility,
+    addLookupRecordField,
   };
 };

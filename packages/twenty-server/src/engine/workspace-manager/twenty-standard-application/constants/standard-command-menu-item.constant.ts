@@ -732,7 +732,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'isSelectAll or someEquals(selectedRecords, "status", "NOT_STARTED") or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
+      'isSelectAll or someEquals(selectedRecords, "status", "ENQUEUED") or someEquals(selectedRecords, "status", "RUNNING")',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -757,89 +757,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.RETRY_WORKFLOW_RUN,
-    hotKeys: null,
-  },
-  seeRunsWorkflowVersion: {
-    universalIdentifier: '44e305c7-4f0a-45ec-803f-6471b56455cb',
-    label: i18nLabel(
-      msg({ message: `See Runs`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconHistoryToggle',
-    isPinned: true,
-    position: 37,
-    shortLabel: i18nLabel(
-      msg({ message: `See Runs`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "coreWorkflowVersionId")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_RUNS_WORKFLOW_VERSION,
-    hotKeys: null,
-  },
-  seeWorkflowWorkflowVersion: {
-    universalIdentifier: 'b43052db-023e-4083-9b63-2c2dfbfd1320',
-    label: i18nLabel(
-      msg({ message: `See Workflow`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconSettingsAutomation',
-    isPinned: true,
-    position: 38,
-    shortLabel: i18nLabel(
-      msg({ message: `See Workflow`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "coreWorkflowVersionId")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_WORKFLOW_WORKFLOW_VERSION,
-    hotKeys: null,
-  },
-  useAsDraftWorkflowVersion: {
-    universalIdentifier: '483c0c1d-ea4d-4a4d-8a59-2dcf9f8e38f6',
-    label: i18nLabel(
-      msg({ message: `Use as Draft`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconPencil',
-    isPinned: true,
-    position: 39,
-    shortLabel: i18nLabel(
-      msg({ message: `Use as Draft`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'noneEquals(selectedRecords, "status", "DRAFT")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.USE_AS_DRAFT_WORKFLOW_VERSION,
-    hotKeys: null,
-  },
-  seeVersionsWorkflowVersion: {
-    universalIdentifier: '1d4abeb7-2750-4af7-9a92-fbadd2a9e4ba',
-    label: i18nLabel(
-      msg({
-        message: `See Versions History`,
-        context: 'commandMenuItem.label',
-      }),
-    ),
-    icon: 'IconVersions',
-    isPinned: false,
-    position: 40,
-    shortLabel: i18nLabel(
-      msg({ message: `See Versions`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "coreWorkflowVersionId")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowVersion.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_VERSIONS_WORKFLOW_VERSION,
     hotKeys: null,
   },
   searchRecords: {

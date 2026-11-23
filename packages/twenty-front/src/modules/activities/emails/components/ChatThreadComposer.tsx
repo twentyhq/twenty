@@ -12,9 +12,10 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
-import { useChatThreadComposerDraft } from '@/activities/emails/hooks/useChatThreadComposerDraft';
+import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
+import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/chatThreadComposerDraftFamilyState';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
-import { AiChatFilePreview } from '@/ai/components/internal/AiChatFilePreview';
+import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
@@ -96,7 +97,11 @@ export const ChatThreadComposer = ({
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [draft, setDraft] = useChatThreadComposerDraft(draftKey);
+  const [draft, setDraft] = useComposerDraft({
+    draftFamilyState: chatThreadComposerDraftFamilyState,
+    draftKey,
+    defaultDraft: '',
+  });
   const [files, setFiles] = useState<File[]>([]);
   const [pendingMessages, setPendingMessages] = useState<PendingChatMessage[]>(
     [],
@@ -249,7 +254,7 @@ export const ChatThreadComposer = ({
         {isNonEmptyArray(files) && (
           <StyledFiles>
             {files.map((file, index) => (
-              <AiChatFilePreview
+              <ChatFilePreview
                 key={`${index}-${file.name}`}
                 file={file}
                 onRemove={() =>

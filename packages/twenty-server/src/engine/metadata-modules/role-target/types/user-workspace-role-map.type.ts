@@ -1,1 +1,1 @@
-export type UserWorkspaceRoleMap = Record<string, string>;
+export type UserWorkspaceRoleMap = Record<string, string[]>;

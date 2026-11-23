@@ -1,4 +1,4 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRemoveWorkflowCoreIndexFlagCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-47/utils/build-remove-workflow-core-index-flag-command-menu-item-updates.util';
@@ -58,7 +58,7 @@ const WORKFLOW_VERSION_NAVIGATION_ITEM = buildItem({
   universalIdentifier: 'workflow-version-navigation',
   engineComponentKey: EngineComponentKey.NAVIGATION,
   navigationTargetObjectMetadataUniversalIdentifier:
-    STANDARD_OBJECTS.workflowVersion.universalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
   conditionalAvailabilityExpression: `not ${FLAG} and targetObjectReadPermissions.workflowVersion`,
 });
 

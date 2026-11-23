@@ -14,7 +14,7 @@ type TeamsWorkspaceGraphAccess =
   | { success: false; error: string };
 
 const NOT_CONNECTED_ERROR_MESSAGE =
-  'Microsoft Teams is not connected for this workspace. Open the Microsoft Teams app settings and reconnect.';
+  'Microsoft Teams is not connected for this workspace. Open the Teams app settings and reconnect.';
 
 const MISSING_DIRECTORY_SCOPE_ERROR_MESSAGE =
   'The Microsoft Teams connection cannot read the organization directory. Reconnect Microsoft Teams from the app settings to grant directory access, or remove the outdated connection.';
@@ -25,8 +25,7 @@ export const getTeamsWorkspaceGraphAccess =
       const connections = await listTeamsConnections();
       const workspaceConnections = connections.filter(
         (candidate) =>
-          candidate.scope === 'WORKSPACE' &&
-          !isDefined(candidate.authFailedAt),
+          candidate.scope === 'WORKSPACE' && !isDefined(candidate.authFailedAt),
       );
 
       if (!isNonEmptyArray(workspaceConnections)) {

@@ -15,7 +15,7 @@ import {
 
 import type { ObjectLiteral } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import {
   computeUpdatedFieldsFromDiff,
@@ -153,9 +153,9 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
               diff,
             },
           } satisfies
-            | ObjectRecordUpdateEvent<T>
-            | ObjectRecordDeleteEvent<T>
-            | ObjectRecordRestoreEvent<T>;
+            | Omit<ObjectRecordUpdateEvent<T>, 'eventId'>
+            | Omit<ObjectRecordDeleteEvent<T>, 'eventId'>
+            | Omit<ObjectRecordRestoreEvent<T>, 'eventId'>;
 
           switch (action) {
             case DatabaseEventAction.DELETED:

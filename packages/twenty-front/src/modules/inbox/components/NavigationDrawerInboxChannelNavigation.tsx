@@ -2,14 +2,14 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactElement, type ReactNode, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AiChatChannelIcon } from '@/ai/components/AiChatChannelIcon';
+import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIcon';
 import { INBOX_CHANNEL_NAVIGATION_ITEMS } from '@/inbox/constants/InboxChannelNavigationItems';
 import { useOpenInboxChannel } from '@/inbox/hooks/useOpenInboxChannel';
 import { type InboxChannelSummary } from '@/inbox/types/InboxChannelSummary';
 import { type InboxChannelView } from '@/inbox/types/InboxChannelView';
 import { getInboxChannelNavigationItemOrThrow } from '@/inbox/utils/getInboxChannelNavigationItemOrThrow';
 import { getInboxChannelViewKey } from '@/inbox/utils/getInboxChannelViewKey';
-import { type AiChatChannel } from '@/ai/types/AiChatChannel';
+import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';

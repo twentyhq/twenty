@@ -30,6 +30,7 @@ import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu
 import { UpdateOneNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
 import { NavigationMenuItemGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/navigation-menu-item/interceptors/navigation-menu-item-graphql-api-exception.interceptor';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
+import { resolveNavigationMenuItemParentIdAlias } from 'src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -110,7 +111,7 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.createMany({
-      inputs,
+      inputs: inputs.map(resolveNavigationMenuItemParentIdAlias),
       workspaceId: workspace.id,
       authUserWorkspaceId: userWorkspaceId,
     });
@@ -125,7 +126,7 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO> {
     return await this.navigationMenuItemService.create({
-      input,
+      input: resolveNavigationMenuItemParentIdAlias(input),
       workspaceId: workspace.id,
       authUserWorkspaceId: userWorkspaceId,
     });
@@ -141,7 +142,10 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
     return await this.navigationMenuItemService.updateMany({
-      inputs,
+      inputs: inputs.map((input) => ({
+        ...input,
+        update: resolveNavigationMenuItemParentIdAlias(input.update),
+      })),
       workspaceId: workspace.id,
       authUserWorkspaceId: userWorkspaceId,
     });
@@ -156,7 +160,10 @@ export class NavigationMenuItemResolver {
     userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO> {
     return await this.navigationMenuItemService.update({
-      input: { ...input.update, id: input.id },
+      input: {
+        ...resolveNavigationMenuItemParentIdAlias(input.update),
+        id: input.id,
+      },
       workspaceId: workspace.id,
       authUserWorkspaceId: userWorkspaceId,
     });

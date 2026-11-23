@@ -56,7 +56,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
           <Dropdown.ActionItem
             startIcon={<IconPlus />}
             closeOnClick={false}
-            onClick={() => onAdd({ folderId, position: itemCount })}
+            onClick={() => onAdd({ parentId: folderId, position: itemCount })}
           >{t`Add menu item`}</Dropdown.ActionItem>
           <Dropdown.ActionItem
             startIcon={<IconTrash />}

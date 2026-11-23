@@ -1,0 +1,1 @@
+export const MCP_SERVER_TOOL_TABLE_BODY_MAX_HEIGHT = '400px';

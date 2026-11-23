@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  OrderByDirection,
   RecordFilterGroupLogicalOperator,
   type RecordGqlOperationFilter,
   ViewFilterGroupLogicalOperator,
-  ViewSortDirection,
   ViewType,
 } from 'twenty-shared/types';
 import {
@@ -22,6 +20,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { computeViewSortsOrderBy } from 'src/engine/metadata-modules/view/utils/compute-view-sorts-order-by.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -120,25 +119,10 @@ export class ViewQueryParamsService {
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },
     });
 
-    const orderBy: ObjectRecordOrderBy = (view.viewSorts ?? [])
-      .map((sort) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: sort.fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) {
-          return null;
-        }
-
-        return {
-          [field.name]:
-            sort.direction === ViewSortDirection.DESC
-              ? OrderByDirection.DescNullsLast
-              : OrderByDirection.AscNullsFirst,
-        };
-      })
-      .filter(isDefined);
+    const orderBy = computeViewSortsOrderBy({
+      viewSorts: view.viewSorts ?? [],
+      flatFieldMetadataMaps,
+    });
 
     return {
       objectNameSingular: objectMetadata.nameSingular,

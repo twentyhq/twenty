@@ -54,6 +54,36 @@ const COMPILATION_FIELDS = [
 ];
 
 describe('ruleExpression', () => {
+  it.each([
+    ruleExpression.lt(
+      ruleExpression.dateDiff(field('closeDate'), now, 'HOUR'),
+      24,
+    ),
+    ruleExpression.lt(
+      field('closeDate'),
+      ruleExpression.dateAdd(now, 1, 'YEAR'),
+    ),
+    ruleExpression.gte(
+      field('closeDate'),
+      ruleExpression.dateTrunc(now, 'MONTH'),
+    ),
+    ruleExpression.lte(
+      ruleExpression.datePart(field('closeDate'), 'DAY_OF_WEEK'),
+      5,
+    ),
+  ])('writes a date expression the compiler accepts: $source', ({ source }) => {
+    expect(
+      compileValidationRuleExpression({
+        expression: source,
+        fields: COMPILATION_FIELDS,
+      }),
+    ).toMatchObject({ isValid: true });
+  });
+
+  it('does not expose the removed daysSince builder', () => {
+    expect(ruleExpression).not.toHaveProperty('daysSince');
+  });
+
   it('writes the syntax the server compiles', () => {
     const { source } = and(
       gt(field('amount'), 0),

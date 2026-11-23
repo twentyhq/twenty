@@ -38,7 +38,9 @@ vi.mock('src/features/chat/logic-functions/utils/collect-graph-users', () => ({
 
 vi.mock(
   'src/features/chat/logic-functions/data/find-workspace-member-ids-by-emails',
-  () => ({ findWorkspaceMemberIdsByEmails: findWorkspaceMemberIdsByEmailsMock }),
+  () => ({
+    findWorkspaceMemberIdsByEmails: findWorkspaceMemberIdsByEmailsMock,
+  }),
 );
 
 vi.mock(
@@ -64,7 +66,10 @@ const GUEST = {
 };
 
 const run = () =>
-  matchTeamsDirectoryByEmail({ accessToken: 'token', teamsTenantId: TENANT_ID });
+  matchTeamsDirectoryByEmail({
+    accessToken: 'token',
+    teamsTenantId: TENANT_ID,
+  });
 
 describe('matchTeamsDirectoryByEmail', () => {
   beforeEach(() => {
@@ -81,7 +86,11 @@ describe('matchTeamsDirectoryByEmail', () => {
       ambiguousEmailCount: 1,
     });
     linkTeamsDirectoryCandidatesMock.mockImplementation(
-      async ({ candidates }: { candidates: TeamsDirectoryMatchCandidate[] }) => ({
+      async ({
+        candidates,
+      }: {
+        candidates: TeamsDirectoryMatchCandidate[];
+      }) => ({
         linkedCount: candidates.length,
         failedCount: 0,
       }),

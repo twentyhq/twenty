@@ -60,7 +60,7 @@ const buildRequest = ({
     workspaceId: 'workspace-id',
     mainPrincipal: {
       type: 'workspaceMember',
-      roleId: ROLE_ID,
+      roleIds: [ROLE_ID],
       workspaceMemberId: 'member-id',
     },
     applicationPrincipal: { type: 'customApplication' },

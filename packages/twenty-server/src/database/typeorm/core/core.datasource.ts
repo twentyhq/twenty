@@ -1,6 +1,7 @@
 import { type TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { config } from 'dotenv';
+import { isNonEmptyString } from 'twenty-shared/utils';
 import { DataSource, type DataSourceOptions, type LogLevel } from 'typeorm';
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
@@ -54,6 +55,10 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
         ],
   synchronize: false,
   migrationsRun: false,
+  invalidWhereValuesBehavior: {
+    undefined: 'throw',
+    null: 'throw',
+  },
   poolSize: Number(process.env.PG_POOL_MAX_CONNECTIONS ?? 10),
   migrationsTableName: '_typeorm_migrations',
   metadataTableName: '_typeorm_generated_columns_and_materialized_views',
@@ -79,6 +84,11 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
       : undefined,
   extra: {
     query_timeout: Number(process.env.PG_DATABASE_PRIMARY_TIMEOUT_MS ?? 10000),
+    statement_timeout: isNonEmptyString(
+      process.env.PG_DATABASE_PRIMARY_TIMEOUT_MS,
+    )
+      ? Number(process.env.PG_DATABASE_PRIMARY_TIMEOUT_MS)
+      : undefined,
     idleTimeoutMillis: Number(process.env.PG_POOL_IDLE_TIMEOUT_MS ?? 600000),
     allowExitOnIdle: process.env.PG_POOL_ALLOW_EXIT_ON_IDLE === 'true',
   },

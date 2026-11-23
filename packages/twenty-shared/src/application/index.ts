@@ -19,6 +19,7 @@ export type { AiRunUsage } from './aiRunUsageType';
 export type { AppConnection } from './appConnectionType';
 export type { AppKeyValueScope } from './appKeyValueScopeType';
 export type { AppKeyValue } from './appKeyValueType';
+export type { ApplicationBillingPrice } from './applicationBillingPriceType';
 export type {
   RecurringChargePeriod,
   RecurringChargeUnit,
@@ -87,6 +88,10 @@ export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventN
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_SOURCE_FILE_EXTENSIONS } from './constants/application-source-file-extensions';
+export { APPLICATION_BILLING_PRICE_CURRENCIES } from './constants/ApplicationBillingPriceCurrencies';
+export { APPLICATION_BILLING_PRICE_PERIODS } from './constants/ApplicationBillingPricePeriods';
+export { APPLICATION_BILLING_PRICE_TYPES } from './constants/ApplicationBillingPriceTypes';
+export { APPLICATION_BILLING_PRICE_UNITS } from './constants/ApplicationBillingPriceUnits';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
 export { APPLICATION_PACKAGE_YARN_LOCK_PATH } from './constants/ApplicationPackageYarnLockPath';
 export { ASSETS_DIR } from './constants/AssetDirectory';
@@ -100,6 +105,7 @@ export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontCompo
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
 export { MARKETPLACE_APP_MCP_SERVER_URL_PLACEHOLDER } from './constants/MarketplaceAppMcpServerUrlPlaceholder';
+export { MAX_APPLICATION_BILLING_PRICE_AMOUNT_CENTS } from './constants/MaxApplicationBillingPriceAmountCents';
 export { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from './constants/MaxAppMessageAttachmentsPerMessage';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
@@ -158,6 +164,7 @@ export { getSystemPageLayoutWidgetUniversalIdentifier } from './deterministic-id
 export { getSystemRecordFormPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-form-page-layout-universal-identifier.util';
 export { getSystemRecordPageLayoutUniversalIdentifier } from './deterministic-identifier/get-system-record-page-layout-universal-identifier.util';
 export { getSystemRelationFieldUniversalIdentifier } from './deterministic-identifier/get-system-relation-field-universal-identifier.util';
+export { getSystemSideEffectRoleTargetUniversalIdentifier } from './deterministic-identifier/get-system-side-effect-role-target-universal-identifier.util';
 export { getSystemViewFieldGroupUniversalIdentifier } from './deterministic-identifier/get-system-view-field-group-universal-identifier.util';
 export { getSystemViewFieldUniversalIdentifier } from './deterministic-identifier/get-system-view-field-universal-identifier.util';
 export type { SystemViewKey } from './deterministic-identifier/get-system-view-universal-identifier.util';
@@ -211,6 +218,12 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isApplicationBillingPrice } from './isApplicationBillingPrice';
+export { isApplicationBillingPriceAmount } from './isApplicationBillingPriceAmount';
+export { isApplicationBillingPriceCurrency } from './isApplicationBillingPriceCurrency';
+export { isApplicationBillingPricePeriod } from './isApplicationBillingPricePeriod';
+export { isApplicationBillingPriceType } from './isApplicationBillingPriceType';
+export { isApplicationBillingPriceUnit } from './isApplicationBillingPriceUnit';
 export { isRecordEventTriggerManifestSettings } from './isRecordEventTriggerManifestSettings';
 export type {
   LogicFunctionManifest,
@@ -263,8 +276,8 @@ export type {
   LegacyObjectPermissionManifest,
   LegacyFieldPermissionManifest,
   LegacyRowLevelPermissionPredicateGroupManifest,
-  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
+  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
   FieldRestrictionsManifest,
   RowLevelRecordsPermissionsManifest,
@@ -345,6 +358,8 @@ export { computeDependencyFileChecksum } from './utils/computeDependencyFileChec
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
   RowLevelPermissionRuleLink,
+  FlattenedRowLevelPermissionPredicateGroupManifest,
+  FlattenedRowLevelPermissionPredicateManifest,
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';
@@ -370,12 +385,15 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isRestorableApplicationSourcePath } from './utils/isRestorableApplicationSourcePath';
 export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
+export { isSourceFileManifestList } from './utils/isSourceFileManifestList';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermissionRuleManifests';
 export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
 export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
+export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

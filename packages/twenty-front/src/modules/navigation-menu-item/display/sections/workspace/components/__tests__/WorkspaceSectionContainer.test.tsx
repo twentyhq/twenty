@@ -31,4 +31,13 @@ describe('WorkspaceSectionContainer', () => {
       screen.getByRole('button', { name: 'Customize' }),
     ).toBeInTheDocument();
   });
+
+  it('renders nothing without a title when there are no items', () => {
+    const { container } = render(<WorkspaceSectionContainer items={[]} />, {
+      wrapper: Wrapper,
+    });
+
+    expect(screen.queryByText('Workspace')).not.toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
+  });
 });

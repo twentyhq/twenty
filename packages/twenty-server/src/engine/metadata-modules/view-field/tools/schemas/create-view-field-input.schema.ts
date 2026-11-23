@@ -30,4 +30,17 @@ export const createViewFieldInputSchema = z.object({
     .describe(
       'Aggregate operation for this field (e.g., "SUM", "AVG", "COUNT").',
     ),
+  isCanonical: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe(
+      'False adds an extra column for a field the view already shows, e.g. to show a field of a related record.',
+    ),
+  relationTargetFieldMetadataId: z
+    .uuid()
+    .optional()
+    .describe(
+      'On an extra (non-canonical) column of a many-to-one relation field, show this field of the related record instead of the record. Must be a non-relation field of the related object.',
+    ),
 });

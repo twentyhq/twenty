@@ -5,11 +5,14 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
+import { getRecordTableWidgetLayoutViewType } from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -35,6 +38,10 @@ export const RecordTableDataSourceDropdownContent = () => {
   const { removeDraftViewForRecordTableWidget } =
     useRemoveDraftViewForRecordTableWidget(pageLayoutId);
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+  const recordTableWidgetViewDraft = useAtomComponentStateValue(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
 
   const readableActiveObjectMetadataItems =
     filterReadableActiveObjectMetadataItems(
@@ -61,6 +68,12 @@ export const RecordTableDataSourceDropdownContent = () => {
       return;
     }
 
+    const currentLayoutViewType = getRecordTableWidgetLayoutViewType(
+      isDefined(widgetInEditMode)
+        ? recordTableWidgetViewDraft[widgetInEditMode.id]?.view.type
+        : undefined,
+    );
+
     if (isDefined(widgetInEditMode)) {
       removeDraftViewForRecordTableWidget(widgetInEditMode.id);
     }
@@ -77,10 +90,11 @@ export const RecordTableDataSourceDropdownContent = () => {
     );
 
     if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
-      addDraftViewForRecordTableWidget(
-        widgetInEditMode.id,
-        selectedObjectMetadataItem,
-      );
+      addDraftViewForRecordTableWidget({
+        widgetId: widgetInEditMode.id,
+        objectMetadataItem: selectedObjectMetadataItem,
+        targetViewType: currentLayoutViewType,
+      });
 
       updatePageLayoutWidget(widgetInEditMode.id, {
         title: selectedObjectMetadataItem.labelPlural,

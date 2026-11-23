@@ -1,3 +1,4 @@
+import { InMemoryCache } from '@apollo/client';
 import { type MockedResponse } from '@apollo/client/testing';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -44,9 +45,17 @@ const buildJobStatusMock = (
 });
 
 const buildWrapper =
-  (mocks: MockedResponse[]) =>
+  ({
+    mocks,
+    cache = new InMemoryCache(),
+  }: {
+    mocks: MockedResponse[];
+    cache?: InMemoryCache;
+  }) =>
   ({ children }: { children: ReactNode }) => (
-    <MockedProvider mocks={mocks}>{children}</MockedProvider>
+    <MockedProvider mocks={mocks} cache={cache}>
+      {children}
+    </MockedProvider>
   );
 
 describe('useUninstallApplication', () => {
@@ -56,6 +65,20 @@ describe('useUninstallApplication', () => {
 
   it('tracks the triggered job and reports its completion', async () => {
     const onCompleted = jest.fn();
+    const cache = new InMemoryCache();
+    const cachedApplicationField = `findOneApplication({"universalIdentifier":"${UNIVERSAL_IDENTIFIER}"})`;
+
+    cache.restore({
+      ROOT_QUERY: {
+        __typename: 'Query',
+        [cachedApplicationField]: { __ref: 'Application:application-id' },
+      },
+      'Application:application-id': {
+        __typename: 'Application',
+        id: 'application-id',
+      },
+    });
+
     const { result } = renderHook(
       () =>
         useUninstallApplication({
@@ -63,7 +86,10 @@ describe('useUninstallApplication', () => {
           onCompleted,
         }),
       {
-        wrapper: buildWrapper([buildJobStatusMock(null), triggerUninstallMock]),
+        wrapper: buildWrapper({
+          mocks: [buildJobStatusMock(null), triggerUninstallMock],
+          cache,
+        }),
       },
     );
 
@@ -88,6 +114,9 @@ describe('useUninstallApplication', () => {
       children: 'Application successfully uninstalled.',
     });
     expect(onCompleted).toHaveBeenCalledTimes(1);
+    expect(cache.extract().ROOT_QUERY).not.toHaveProperty(
+      cachedApplicationField,
+    );
   });
 
   it('surfaces the failure reason of a failed job', async () => {
@@ -97,7 +126,9 @@ describe('useUninstallApplication', () => {
           universalIdentifier: UNIVERSAL_IDENTIFIER,
         }),
       {
-        wrapper: buildWrapper([buildJobStatusMock(null), triggerUninstallMock]),
+        wrapper: buildWrapper({
+          mocks: [buildJobStatusMock(null), triggerUninstallMock],
+        }),
       },
     );
 
@@ -129,15 +160,17 @@ describe('useUninstallApplication', () => {
           universalIdentifier: UNIVERSAL_IDENTIFIER,
         }),
       {
-        wrapper: buildWrapper([
-          buildJobStatusMock({
-            __typename: 'JobStatus',
-            jobId: JOB_ID,
-            state: JobState.ACTIVE,
-            failedReason: null,
-            progress: 20,
-          }),
-        ]),
+        wrapper: buildWrapper({
+          mocks: [
+            buildJobStatusMock({
+              __typename: 'JobStatus',
+              jobId: JOB_ID,
+              state: JobState.ACTIVE,
+              failedReason: null,
+              progress: 20,
+            }),
+          ],
+        }),
       },
     );
 

@@ -45,7 +45,11 @@ export const isUserFacingWorkflowExecutorError = (error: unknown): boolean => {
   }
 
   if (error instanceof LogicFunctionException) {
-    return error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN;
+    return (
+      error.code === LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN ||
+      error.code ===
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_WORKSPACE_SUSPENDED
+    );
   }
 
   return false;

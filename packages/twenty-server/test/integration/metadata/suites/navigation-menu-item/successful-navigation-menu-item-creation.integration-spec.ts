@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.util';
 import { createNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/create-navigation-menu-item.util';
 import { deleteNavigationMenuItem } from 'test/integration/metadata/suites/navigation-menu-item/utils/delete-navigation-menu-item.util';
@@ -12,6 +13,7 @@ describe('NavigationMenuItem creation should succeed', () => {
   let personObjectMetadataId: string;
   let validUserWorkspaceId: string | null;
   let createdFolderId: string | undefined;
+  let createdTabId: string | undefined;
 
   beforeAll(async () => {
     const { objects } = await findManyObjectMetadata({
@@ -67,6 +69,13 @@ describe('NavigationMenuItem creation should succeed', () => {
       });
       createdFolderId = undefined;
     }
+    if (isDefined(createdTabId)) {
+      await deleteNavigationMenuItem({
+        expectToFail: false,
+        input: { id: createdTabId },
+      });
+      createdTabId = undefined;
+    }
   });
 
   it('should create a basic navigation menu item with minimal input', async () => {
@@ -88,29 +97,26 @@ describe('NavigationMenuItem creation should succeed', () => {
       targetRecordId,
       targetObjectMetadataId: personObjectMetadataId,
       userWorkspaceId: null,
-      folderId: null,
+      parentId: null,
       position: expect.any(Number),
     });
   });
 
   it('should create navigation menu item with all optional fields', async () => {
     const targetRecordId = faker.string.uuid();
-    const folderTargetRecordId = faker.string.uuid();
-
     const { data: folderData } = await createNavigationMenuItem({
       expectToFail: false,
       input: {
-        type: NavigationMenuItemType.RECORD,
-        targetRecordId: folderTargetRecordId,
-        targetObjectMetadataId: companyObjectMetadataId,
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
         userWorkspaceId: validUserWorkspaceId ?? undefined,
       },
     });
 
-    const folderId = folderData?.createNavigationMenuItem?.id;
+    const parentId = folderData?.createNavigationMenuItem?.id;
 
-    jestExpectToBeDefined(folderId);
-    createdFolderId = folderId;
+    jestExpectToBeDefined(parentId);
+    createdFolderId = parentId;
 
     const { data } = await createNavigationMenuItem({
       expectToFail: false,
@@ -119,7 +125,7 @@ describe('NavigationMenuItem creation should succeed', () => {
         targetRecordId,
         targetObjectMetadataId: companyObjectMetadataId,
         userWorkspaceId: validUserWorkspaceId ?? undefined,
-        folderId,
+        parentId,
         position: 5,
       },
     });
@@ -131,7 +137,7 @@ describe('NavigationMenuItem creation should succeed', () => {
       targetRecordId,
       targetObjectMetadataId: companyObjectMetadataId,
       userWorkspaceId: validUserWorkspaceId,
-      folderId,
+      parentId,
       position: 5,
     });
   });
@@ -171,5 +177,46 @@ describe('NavigationMenuItem creation should succeed', () => {
       expectToFail: false,
       input: { id: firstItemId },
     });
+  });
+
+  it('should create an item inside a folder inside a section inside a tab', async () => {
+    const { data: tabData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: { type: NavigationMenuItemType.TAB, name: 'Tab' },
+    });
+
+    createdTabId = tabData.createNavigationMenuItem.id;
+
+    const { data: sectionData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.SECTION,
+        name: 'Section',
+        parentId: tabData.createNavigationMenuItem.id,
+      },
+    });
+
+    const { data: folderData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.FOLDER,
+        name: 'Folder',
+        parentId: sectionData.createNavigationMenuItem.id,
+      },
+    });
+
+    const { data: linkData } = await createNavigationMenuItem({
+      expectToFail: false,
+      input: {
+        type: NavigationMenuItemType.LINK,
+        name: 'Link',
+        link: 'https://example.com',
+        parentId: folderData.createNavigationMenuItem.id,
+      },
+    });
+
+    expect(linkData.createNavigationMenuItem.parentId).toBe(
+      folderData.createNavigationMenuItem.id,
+    );
   });
 });
