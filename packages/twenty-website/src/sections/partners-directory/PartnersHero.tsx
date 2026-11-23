@@ -13,8 +13,9 @@ import { Body, GuideCrosshair, Heading, HeadingPair, SectionShell } from '@/ui';
 import { GLOBE_MODEL_SETTINGS } from './globe-model-settings';
 import { GLOBE_VIEW } from './globe-view';
 
-// A real world in 3D (public/models/partners-globe.glb, the land raised on
-// a sphere), drawn by the site's halftone engine.
+// A real world in 3D (public/models/partners-globe.glb, Natural Earth land
+// on a 1° grid, raised a little on the sphere), drawn by the site's halftone
+// engine.
 const GLOBE_MODEL_URL = '/models/partners-globe.glb';
 
 // A banner: the top of a large globe, cut by the hero's bottom edge and, on

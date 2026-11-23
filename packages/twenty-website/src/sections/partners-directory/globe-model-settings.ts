@@ -24,7 +24,7 @@ export const GLOBE_MODEL_SETTINGS = {
   },
   halftone: {
     variant: 'band',
-    scale: 16,
+    scale: 10,
     power: -1.8,
     width: 1.4,
     dashColor: paletteColorNumber('blue'),
