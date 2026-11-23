@@ -7,6 +7,10 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
@@ -95,6 +99,13 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
       metadataName: 'pageLayoutWidget',
     });
 
+  if (!conditionalAvailabilityParseResult.isValid) {
+    throw new ApplicationException(
+      `Invalid rule on built-in widget ${layoutName} ${tabTitle} ${widgetName}: ${conditionalAvailabilityParseResult.errorMessage}`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
   return {
     id: widgetIds.id,
     universalIdentifier: widgetDef.universalIdentifier,
@@ -120,9 +131,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     conditionalDisplay: conditionalDisplay ?? null,
     conditionalAvailabilityExpression:
       conditionalAvailabilityExpression ?? null,
-    conditionalAvailability: conditionalAvailabilityParseResult.isValid
-      ? conditionalAvailabilityParseResult.node
-      : null,
+    conditionalAvailability: conditionalAvailabilityParseResult.node,
     overrides: null,
     universalOverrides: null,
   };
