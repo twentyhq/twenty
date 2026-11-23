@@ -8,7 +8,6 @@ import {
 export type CurrentWorkspace = Pick<
   Workspace,
   | 'id'
-  | 'inviteHash'
   | 'logo'
   | 'displayName'
   | 'allowImpersonation'

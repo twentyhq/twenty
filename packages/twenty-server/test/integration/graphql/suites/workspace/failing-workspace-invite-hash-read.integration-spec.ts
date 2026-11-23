@@ -68,7 +68,7 @@ const CALLERS_REFUSED_THE_INVITE_HASH: EachTestingContext<CallerTestContext>[] =
 
 describe('Workspace invite hash read should fail (integration)', () => {
   it.each(eachTestingContextFilter(CALLERS_REFUSED_THE_INVITE_HASH))(
-    'should return a null invite hash without an error to $title',
+    'should refuse the invite hash to $title',
     async ({ context }) => {
       const caller = await context.arrange();
 
@@ -78,14 +78,18 @@ describe('Workspace invite hash read should fail (integration)', () => {
         );
         const { data, errors } = await findCurrentWorkspaceInviteHash({
           token: caller.token,
-          expectToFail: false,
+          expectToFail: true,
         });
 
-        expect(errors).toBeUndefined();
         expect(data.currentWorkspace).toEqual({
           id: SEED_APPLE_WORKSPACE_ID,
           inviteHash: null,
         });
+        expect(errors).toEqual([
+          expect.objectContaining({
+            extensions: expect.objectContaining({ code: 'FORBIDDEN' }),
+          }),
+        ]);
         expect(JSON.stringify(data)).not.toContain(inviteHash);
       } finally {
         await caller.cleanup();

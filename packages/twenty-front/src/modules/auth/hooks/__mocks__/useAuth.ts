@@ -90,7 +90,6 @@ export const results = {
         id: 'id',
         displayName: 'displayName',
         logo: 'logo',
-        inviteHash: 'inviteHash',
         allowImpersonation: true,
         subscriptionStatus: 'subscriptionStatus',
         customDomain: null,

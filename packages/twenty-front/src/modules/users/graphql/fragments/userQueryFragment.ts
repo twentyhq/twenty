@@ -78,7 +78,6 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       displayName
       logo
-      inviteHash
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled

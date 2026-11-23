@@ -20,9 +20,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
-import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
@@ -73,8 +71,6 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES } from 'src/engine/guards/constants/workspace-activation-statuses-without-roles.constant';
-import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -116,7 +112,6 @@ export class WorkspaceResolver {
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly applicationService: ApplicationService,
     private readonly enterprisePlanService: EnterprisePlanService,
-    private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
 
   @Query(() => WorkspaceEntity)
@@ -358,29 +353,24 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
-  @UseGuards(NoPermissionGuard)
-  async inviteHash(
-    @Parent() workspace: WorkspaceEntity,
-    @AuthApplication({ allowUndefined: true })
-    application: FlatApplication | undefined,
-    @AuthWorkspace({ allowUndefined: true })
-    authWorkspace: WorkspaceEntity | undefined,
-  ): Promise<string | null> {
-    if (isDefined(getScopedCallingApplication(application))) {
-      return null;
-    }
-
-    const canReadInviteHash =
-      (isDefined(authWorkspace) &&
-        WORKSPACE_ACTIVATION_STATUSES_WITHOUT_ROLES.includes(
-          authWorkspace.activationStatus,
-        )) ||
-      (await this.settingPermissionsService.hasPermissionFlag({
-        authContext: workspaceAuthContextStorage.getStore(),
-        permissionFlag: PermissionFlagType.WORKSPACE_MEMBERS,
-      }));
-
-    return canReadInviteHash ? (workspace.inviteHash ?? null) : null;
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: false,
+      },
+      requiredPermissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+    }),
+  )
+  inviteHash(@Parent() workspace: WorkspaceEntity): string | null {
+    return workspace.inviteHash ?? null;
   }
 
   @ResolveField(() => RoleDTO, { nullable: true })

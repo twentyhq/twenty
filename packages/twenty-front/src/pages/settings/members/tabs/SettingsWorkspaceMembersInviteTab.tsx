@@ -16,7 +16,7 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,7 +27,10 @@ import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
+import {
+  GetCurrentWorkspaceInviteHashDocument,
+  GetWorkspaceInvitationsDocument,
+} from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 const StyledButtonContainer = styled.div`
@@ -89,6 +92,12 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   const workspaceInvitations = invitationsData?.findWorkspaceInvitations ?? [];
 
+  const { data: inviteHashData, error: inviteHashError } = useQuery(
+    GetCurrentWorkspaceInviteHashDocument,
+  );
+
+  const inviteHash = inviteHashData?.currentWorkspace.inviteHash;
+
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.error)) {
@@ -122,9 +131,10 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   return (
     <>
       <ToastOnQueryErrorEffect error={invitationsError} />
+      <ToastOnQueryErrorEffect error={inviteHashError} />
 
       <SettingsRolesQueryEffect />
-      {currentWorkspace?.inviteHash &&
+      {isNonEmptyString(inviteHash) &&
         currentWorkspace?.isPublicInviteLinkEnabled && (
           <Section.Root>
             <Section.Header
@@ -132,7 +142,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
               description={t`Share this link to invite users to join your workspace`}
             />
             <WorkspaceInviteLink
-              inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
+              inviteLink={`${window.location.origin}/invite/${inviteHash}`}
             />
           </Section.Root>
         )}
