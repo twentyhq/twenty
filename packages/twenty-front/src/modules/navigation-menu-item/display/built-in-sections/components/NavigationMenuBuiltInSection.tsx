@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
+import { NavigationMenuAiAgentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection';
 import { NavigationMenuAiChatFavoritesSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection';
 import { NavigationMenuAiChatRecentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection';
 import { FavoritesSectionDispatcher } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher';
@@ -21,6 +22,10 @@ export const NavigationMenuBuiltInSection = ({
 
   if (section.builtInSectionKey === 'favorites') {
     return <FavoritesSectionDispatcher />;
+  }
+
+  if (section.builtInSectionKey === 'aiAgents') {
+    return <NavigationMenuAiAgentsSection headerAction={headerAction} />;
   }
 
   if (!areAiChatSectionsAvailable) {

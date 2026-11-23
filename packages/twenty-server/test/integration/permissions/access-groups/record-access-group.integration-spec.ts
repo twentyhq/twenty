@@ -18,6 +18,8 @@ import { v4 } from 'uuid';
 
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -40,12 +42,16 @@ describe('access group ids on records (integration)', () => {
   let recordAccessGroupComputationService: RecordAccessGroupComputationService;
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
-  let originalPeople: Pick<PersonRow, 'id' | 'jobTitle'>[];
+  const [parisPersonId, londonPersonId] = [v4(), v4()].sort();
+  const people: Pick<PersonRow, 'id' | 'jobTitle'>[] = [
+    { id: parisPersonId, jobTitle: 'Paris office' },
+    { id: londonPersonId, jobTitle: 'London office' },
+  ];
 
   const readPeople = (): Promise<PersonRow[]> =>
     global.testDataSource.query(
       `SELECT "id", "jobTitle", "_accessGroupIds" AS "accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = ANY($1) ORDER BY "id"`,
-      [originalPeople.map(({ id }) => id)],
+      [people.map(({ id }) => id)],
     );
 
   const readCompactIds = async ({
@@ -94,23 +100,19 @@ describe('access group ids on records (integration)', () => {
       `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'jobTitle'`,
       [objectMetadataId],
     );
-    originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle" FROM ${PERSON_TABLE} ORDER BY "id" LIMIT 2`,
-    );
-
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = CASE "id" WHEN $1 THEN 'Paris office' ELSE 'London office' END WHERE "id" = ANY($2)`,
-      [originalPeople[0].id, originalPeople.map(({ id }) => id)],
-    );
+    for (const person of people) {
+      await createOneOperation({
+        objectMetadataSingularName: 'person',
+        input: person,
+      });
+    }
   });
 
   afterAll(async () => {
-    for (const { id, jobTitle } of originalPeople) {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1 WHERE "id" = $2`,
-        [jobTitle, id],
-      );
-    }
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [people.map(({ id }) => id)],
+    );
 
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
@@ -121,7 +123,7 @@ describe('access group ids on records (integration)', () => {
   it('should leave records of an object without rules untouched', async () => {
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = ANY($1)`,
-      [originalPeople.map(({ id }) => id)],
+      [people.map(({ id }) => id)],
     );
     await syncAndRecompute();
 
@@ -217,7 +219,7 @@ describe('access group ids on records (integration)', () => {
     }
   });
 
-  it('should recompute the groups of a record when it is created or updated', async () => {
+  it('should recompute the groups of a record when it is created or updated, including by a system write in the lite context', async () => {
     const roleLabel = 'Access group ids on record writes';
     const { data } = await createOneRole({
       expectToFail: false,
@@ -235,6 +237,7 @@ describe('access group ids on records (integration)', () => {
 
     await revokeObjectRecordsPermissions({ roleId, objectMetadataId });
     let createdPersonId: string | undefined;
+    const systemCreatedPersonId = v4();
 
     await upsertRowLevelPermissionRules({
       expectToFail: false,
@@ -308,13 +311,33 @@ describe('access group ids on records (integration)', () => {
       expect(await readCreatedPersonAccessGroupIds()).not.toContain(
         parisCompactId,
       );
-    } finally {
-      if (isDefined(createdPersonId)) {
+
+      const workspaceOrmManager =
+        getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
+
+      await workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
+            transactionScope
+              .getRepositoryWithoutPermissionChecks('person')
+              .insert({ id: systemCreatedPersonId, jobTitle: 'Paris office' }),
+          ),
+        buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
+        { lite: true },
+      );
+
+      const [{ accessGroupIds: systemCreatedPersonAccessGroupIds }] =
         await global.testDataSource.query(
-          `DELETE FROM ${PERSON_TABLE} WHERE "id" = $1`,
-          [createdPersonId],
+          `SELECT "_accessGroupIds" AS "accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = $1`,
+          [systemCreatedPersonId],
         );
-      }
+
+      expect(systemCreatedPersonAccessGroupIds).toContain(parisCompactId);
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+        [[createdPersonId, systemCreatedPersonId].filter(isDefined)],
+      );
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
         value: false,
