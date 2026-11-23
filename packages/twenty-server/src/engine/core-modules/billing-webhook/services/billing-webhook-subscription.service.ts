@@ -25,6 +25,7 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -56,6 +57,7 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly billingApplicationSyncService: BillingApplicationSyncService,
     // Stripe webhook upserts conflict-resolve globally on stripeSubscriptionId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
@@ -276,6 +278,17 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
+    if (
+      this.isSubscriptionStarting({
+        event,
+        status: incomingSubscription.status,
+      })
+    ) {
+      await this.billingApplicationSyncService.enqueueApplicationsSync({
+        workspaceId,
+      });
+    }
+
     if (shouldSetPendingInvoiceItemInterval(subscriptionWithSchedule)) {
       await this.stripeSubscriptionService.updateSubscription(
         subscriptionWithSchedule.id,
@@ -287,6 +300,33 @@ export class BillingWebhookSubscriptionService {
       stripeSubscriptionId: data.object.id,
       stripeCustomerId: data.object.customer,
     };
+  }
+
+  private isSubscriptionStarting({
+    event,
+    status,
+  }: {
+    event:
+      | Stripe.CustomerSubscriptionUpdatedEvent
+      | Stripe.CustomerSubscriptionCreatedEvent
+      | Stripe.CustomerSubscriptionDeletedEvent;
+    status: SubscriptionStatus;
+  }): boolean {
+    if (!WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(status)) {
+      return false;
+    }
+
+    switch (event.type) {
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
+        return true;
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
+        return (
+          event.data.previous_attributes?.status ===
+          SubscriptionStatus.Incomplete
+        );
+      default:
+        return false;
+    }
   }
 
   shouldSuspendWorkspace(subscription: SubscriptionWithSchedule): boolean {

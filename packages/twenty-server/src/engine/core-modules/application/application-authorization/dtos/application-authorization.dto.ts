@@ -19,6 +19,9 @@ export class ApplicationAuthorizationDTO {
   @Field(() => String)
   applicationName: string;
 
+  @Field(() => String, { nullable: true })
+  applicationLogoUrl: string | null;
+
   // Custom applications can share a name, so the name alone is ambiguous
   @Field(() => String, { nullable: true })
   applicationUniversalIdentifier: string | null;
