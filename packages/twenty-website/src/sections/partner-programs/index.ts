@@ -1,6 +1,9 @@
+export { CREATOR_HERO_MODEL } from './creator-hero-model';
+export { CREATOR_STEPPER_STEPS } from './creator-stepper-steps.data';
+export { CreatorApplyButton } from './CreatorApplyButton';
+export { CreatorAudiences } from './CreatorAudiences';
 export { PartnerLevels } from './PartnerLevels';
 export { ProgramExplainer } from './ProgramExplainer';
-export { ProgramStrip } from './ProgramStrip';
-export { ProgramStripSection } from './ProgramStripSection';
-export { CREATOR_STEPS } from './creator-steps.data';
+export { ProgramHero } from './ProgramHero';
+export { ProgramHeroVisual } from './ProgramHeroVisual';
 export { INTEGRATOR_STEPS } from './integrator-steps.data';

@@ -9,10 +9,11 @@ import {
 } from '@/platform/i18n/get-route-i18n';
 import { ContactCalModalRoot } from '@/contact-cal';
 import { PartnerAttributionEffect } from '@/partner-attribution';
+import { SmoothAnchorScrollEffect } from '@/platform/motion';
 import { I18nProvider } from '@/platform/i18n/I18nProvider';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
-import { color, fontFamily, tokenCssVariables } from '@/tokens';
+import { color, fontFamily, tokenCssVariables, MENU_HEIGHT_PX } from '@/tokens';
 
 const hostGrotesk = localFont({
   src: '../../fonts/host-grotesk-latin-variable.woff2',
@@ -87,6 +88,10 @@ const globalStyles = css`
     padding: 0;
   }
 
+  :global(html) {
+    scroll-padding-top: ${MENU_HEIGHT_PX}px;
+  }
+
   :global(body) {
     background-color: ${color('white')};
     color: ${color('black')};
@@ -118,6 +123,7 @@ const LocaleLayout = async ({
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable} ${inter.variable}`}
       >
         <PartnerAttributionEffect />
+        <SmoothAnchorScrollEffect />
         <I18nProvider locale={locale} messages={MESSAGES_BY_LOCALE[locale]}>
           <ContactCalModalRoot>{children}</ContactCalModalRoot>
         </I18nProvider>
