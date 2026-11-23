@@ -25,6 +25,7 @@ import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/bi
 import { buildTrialEndSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-end-schedule-phases.util';
 import { getTrialExtensionMirrorAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-mirror-action.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
+import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 
 @Injectable()
@@ -278,8 +279,8 @@ export class BillingTrialExtensionService {
     ) {
       await this.stripeSubscriptionScheduleService.updateSchedule(schedule.id, {
         phases: buildTrialEndSchedulePhases({
-          currentPhase,
-          nextPhase,
+          currentPhase: toPhaseUpdateParams(currentPhase),
+          nextPhase: toPhaseUpdateParams(nextPhase),
           trialEnd,
         }),
       });

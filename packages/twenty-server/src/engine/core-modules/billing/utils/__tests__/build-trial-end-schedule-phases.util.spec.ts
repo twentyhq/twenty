@@ -9,40 +9,22 @@ const TRIAL_END = Date.parse('2026-12-01T00:00:00Z') / 1000;
 const NEXT_PHASE_END = Date.parse('2027-01-01T00:00:00Z') / 1000;
 const EXTENDED_TRIAL_END = Date.parse('2026-12-15T00:00:00Z') / 1000;
 
-const buildPhase = (
-  phase: Partial<Stripe.SubscriptionSchedule.Phase>,
-): Stripe.SubscriptionSchedule.Phase =>
-  ({
-    billing_thresholds: null,
-    trial_end: null,
-    ...phase,
-  }) as Stripe.SubscriptionSchedule.Phase;
-
-const buildItem = (price: string): Stripe.SubscriptionSchedule.Phase.Item =>
-  ({ price, quantity: 1 }) as Stripe.SubscriptionSchedule.Phase.Item;
-
-const TRIAL_PHASE = buildPhase({
+const TRIAL_PHASE: Stripe.SubscriptionScheduleUpdateParams.Phase = {
   start_date: TRIAL_START,
   end_date: TRIAL_END,
   trial_end: TRIAL_END,
-  items: [buildItem('price_pro_monthly')],
-});
+  items: [{ price: 'price_pro_monthly', quantity: 1 }],
+  proration_behavior: 'none',
+};
 
-const NEXT_PHASE = buildPhase({
+const NEXT_PHASE: Stripe.SubscriptionScheduleUpdateParams.Phase = {
   start_date: TRIAL_END,
   end_date: NEXT_PHASE_END,
-  items: [buildItem('price_credit_pack_small')],
-});
+  items: [{ price: 'price_credit_pack_small', quantity: 1 }],
+  proration_behavior: 'none',
+};
 
 describe('buildTrialEndSchedulePhases', () => {
-  beforeEach(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2026-11-16T00:00:00Z'));
-  });
-
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it('moves the trial phase end and lets the next phase follow it', () => {
     const [trialPhase, nextPhase] = buildTrialEndSchedulePhases({
       currentPhase: TRIAL_PHASE,
@@ -50,18 +32,16 @@ describe('buildTrialEndSchedulePhases', () => {
       trialEnd: EXTENDED_TRIAL_END,
     });
 
-    expect(trialPhase).toMatchObject({
-      start_date: TRIAL_START,
+    expect(trialPhase).toEqual({
+      ...TRIAL_PHASE,
       end_date: EXTENDED_TRIAL_END,
       trial_end: EXTENDED_TRIAL_END,
-      items: [{ price: 'price_pro_monthly', quantity: 1 }],
     });
-    expect(nextPhase).toMatchObject({
-      items: [{ price: 'price_credit_pack_small', quantity: 1 }],
+    expect(nextPhase).toEqual({
+      ...NEXT_PHASE,
+      start_date: undefined,
+      end_date: undefined,
     });
-    expect(nextPhase.start_date).toBeUndefined();
-    expect(nextPhase.end_date).toBeUndefined();
-    expect(nextPhase.trial_end).toBeUndefined();
   });
 
   it('ends the trial phase now so the next phase starts right away', () => {
