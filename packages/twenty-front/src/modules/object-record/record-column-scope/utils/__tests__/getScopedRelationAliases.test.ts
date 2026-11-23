@@ -56,14 +56,16 @@ const CTO_RELATION_SCOPE: ViewFieldRelationScope = {
 const getAliases = ({
   recordFields,
   isLookupColumnsEnabled = true,
+  readableObjectMetadataItems = objectMetadataItems,
 }: {
   recordFields: Parameters<typeof getScopedRelationAliases>[0]['recordFields'];
   isLookupColumnsEnabled?: boolean;
+  readableObjectMetadataItems?: typeof objectMetadataItems;
 }) =>
   getScopedRelationAliases({
     recordFields,
     fieldMetadataItemByFieldMetadataItemId: { [peopleField.id]: peopleField },
-    objectMetadataItems,
+    objectMetadataItems: readableObjectMetadataItems,
     fieldMetadataItems: personObjectMetadataItem.fields,
     filterValueDependencies: {},
     isLookupColumnsEnabled,
@@ -111,10 +113,12 @@ describe('getScopedRelationAliases', () => {
         ...CTO_RELATION_WITH_ARGUMENTS,
         recordGqlFields: expect.objectContaining({ id: true }),
       },
+      reachedObjectMetadataItemIds: [personObjectMetadataItem.id],
+      isRestricted: false,
     });
   });
 
-  it('keeps the default order and no limit for an empty scope', () => {
+  it('keeps the default order and no limit for an empty scope, but counts the records the server leaves out', () => {
     const [
       {
         relationWithArguments: {
@@ -131,7 +135,63 @@ describe('getScopedRelationAliases', () => {
     expect(filter).toEqual({});
     expect(orderBy).toEqual([{ position: 'AscNullsFirst' }]);
     expect(first).toBeUndefined();
-    expect(aggregateGqlFieldNames).toBeUndefined();
+    expect(aggregateGqlFieldNames).toEqual(['totalCount']);
+  });
+
+  it('reaches the object of a related record field the scope filters on', () => {
+    const companyObjectMetadataItem =
+      getMockObjectMetadataItemOrThrow('company');
+    const personCompanyField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: personObjectMetadataItem,
+      fieldName: 'company',
+    });
+    const companyNameField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: companyObjectMetadataItem,
+      fieldName: 'name',
+    });
+
+    const [{ reachedObjectMetadataItemIds }] = getAliases({
+      recordFields: [
+        getPeopleColumn({
+          relationScope: {
+            ...EMPTY_RELATION_SCOPE,
+            filters: [
+              {
+                id: '20202020-0000-4000-8000-0000000000f3',
+                fieldMetadataId: personCompanyField.id,
+                relationTargetFieldMetadataId: companyNameField.id,
+                operand: ViewFilterOperand.CONTAINS,
+                value: 'acme',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    expect(reachedObjectMetadataItemIds).toEqual([
+      personObjectMetadataItem.id,
+      companyObjectMetadataItem.id,
+    ]);
+  });
+
+  it('restricts a scope filtering on a field the user cannot read', () => {
+    const [{ isRestricted }] = getAliases({
+      recordFields: [getPeopleColumn({ relationScope: CTO_RELATION_SCOPE })],
+      readableObjectMetadataItems: objectMetadataItems.map(
+        (objectMetadataItem) =>
+          objectMetadataItem.id === personObjectMetadataItem.id
+            ? {
+                ...objectMetadataItem,
+                readableFields: objectMetadataItem.readableFields.filter(
+                  ({ id }) => id !== jobTitleField.id,
+                ),
+              }
+            : objectMetadataItem,
+      ),
+    });
+
+    expect(isRestricted).toBe(true);
   });
 
   it('gives two columns of one relation their own response key', () => {
