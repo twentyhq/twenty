@@ -1,20 +1,33 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
+import { msg, plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
+import { type FilterCriteria } from '@/partners-marketplace/filter-criteria';
+import { filterPartners } from '@/partners-marketplace/filter-partners';
+import { MARKETPLACE_COPY } from '@/partners-marketplace/marketplace-copy';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
+import { PARTNER_SCOPE_LABELS } from '@/partners-marketplace/partner-scope-labels';
+import { PARTNER_SCOPES } from '@/partners-marketplace/partner-scopes';
+import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
+import { SERVED_GEOS } from '@/partners-marketplace/served-geos';
+import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
+import { SPOKEN_LANGUAGES } from '@/partners-marketplace/spoken-languages';
 import { PARTNER_DIRECTORY_ANCHOR_ID } from '@/platform/routing/partner-directory-anchor-id';
 import { mediaUp, radius, semanticColor, spacing } from '@/tokens';
 import {
   Body,
   Eyebrow,
+  FilterBar,
+  FilterEmptyState,
+  type FilterFacet,
   Heading,
   SectionIntro,
   SectionShell,
   SectionStack,
+  useUrlFilters,
 } from '@/ui';
 
 import { PartnerCard } from './PartnerCard';
@@ -37,6 +50,29 @@ const Grid = styled.div`
   ${mediaUp('md')} {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+`;
+
+// The URL params the production directory already used, and the values each
+// one accepts.
+const PARTNER_FILTER_VALUES = {
+  regions: SERVED_GEOS,
+  languages: SPOKEN_LANGUAGES,
+  categories: PARTNER_SCOPES,
+};
+
+// A facet lists only the values some partner has, in the vocabulary's order.
+const presentValues = <Value extends string>(
+  vocabulary: readonly Value[],
+  partners: readonly MarketplacePartner[],
+  read: (partner: MarketplacePartner) => readonly Value[],
+): Value[] => {
+  const present = new Set(partners.flatMap(read));
+  return vocabulary.filter((value) => present.has(value));
+};
+
+// The production directory's spacing between the filters and the results.
+const Results = styled.div`
+  margin-top: ${spacing(6)};
 `;
 
 const Offer = styled.div`
@@ -67,6 +103,54 @@ export function PartnersDirectory({
   partners,
 }: PartnersDirectoryProps) {
   const { i18n } = useLingui();
+  const { clearAll, hasAny, selected, toggle } = useUrlFilters(
+    PARTNER_FILTER_VALUES,
+  );
+
+  const criteria: FilterCriteria = selected;
+  const visiblePartners = useMemo(
+    () => filterPartners(partners, criteria),
+    [partners, criteria],
+  );
+
+  const facets: FilterFacet[] = [
+    {
+      key: 'regions',
+      label: i18n._(msg`Regions`),
+      options: presentValues(SERVED_GEOS, partners, (p) => p.region).map(
+        (value) => ({ label: i18n._(SERVED_GEO_LABELS[value]), value }),
+      ),
+      selected: criteria.regions,
+    },
+    {
+      key: 'languages',
+      label: i18n._(msg`Languages`),
+      options: presentValues(
+        SPOKEN_LANGUAGES,
+        partners,
+        (p) => p.languagesSpoken,
+      ).map((value) => ({
+        label: i18n._(SPOKEN_LANGUAGE_LABELS[value]),
+        value,
+      })),
+      selected: criteria.languages,
+    },
+    {
+      key: 'categories',
+      label: i18n._(MARKETPLACE_COPY.partnerScopeHeading),
+      options: presentValues(
+        PARTNER_SCOPES,
+        partners,
+        (p) => p.partnerScope,
+      ).map((value) => ({ label: i18n._(PARTNER_SCOPE_LABELS[value]), value })),
+      selected: criteria.categories,
+    },
+  ];
+
+  const total = partners.length;
+  const resultCount = hasAny
+    ? i18n._(msg`${visiblePartners.length} of ${total} partners`)
+    : i18n._(msg`${plural(total, { one: '# partner', other: '# partners' })}`);
 
   return (
     <SectionShell rhythm="section" scheme="light">
@@ -98,11 +182,27 @@ export function PartnersDirectory({
           </Offer>
         ) : (
           <div>
-            <Grid>
-              {partners.map((partner) => (
-                <PartnerCard key={partner.slug} partner={partner} />
-              ))}
-            </Grid>
+            <FilterBar
+              ariaLabel={i18n._(msg`Filter partners`)}
+              facets={facets}
+              onClearAll={clearAll}
+              onToggle={toggle}
+              resultCount={resultCount}
+            />
+            <Results>
+              {visiblePartners.length === 0 ? (
+                <FilterEmptyState
+                  onClearAll={clearAll}
+                  title={i18n._(msg`No partners match your filters`)}
+                />
+              ) : (
+                <Grid>
+                  {visiblePartners.map((partner) => (
+                    <PartnerCard key={partner.slug} partner={partner} />
+                  ))}
+                </Grid>
+              )}
+            </Results>
           </div>
         )}
       </SectionStack>
