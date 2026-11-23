@@ -415,12 +415,12 @@ msgstr "備註目標"
 #. js-lingui-id: PqP6rg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
-msgstr ""
+msgstr "一對多多型關聯無法直接比較，請透過該關聯比較其記錄的欄位"
 
 #. js-lingui-id: s0zuRf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
-msgstr ""
+msgstr "一對多關聯僅支援 IS_EMPTY 和 IS_NOT_EMPTY 運算元，請透過該關聯比較其記錄的欄位"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3137,7 +3137,7 @@ msgstr "與商機相關的聊天"
 #. js-lingui-id: YNDJWu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
-msgstr ""
+msgstr "檢查一對多關聯是否為空需要在資料列層級權限述詞中使用關聯跳轉"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -15588,7 +15588,7 @@ msgstr "此欄位不支援此運算元"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"
-msgstr ""
+msgstr "此關聯不支援此運算元"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -15868,7 +15868,7 @@ msgstr "此工作流程已存在。"
 #. js-lingui-id: Kd1y55
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow identifier matches more than one workflow."
-msgstr ""
+msgstr "此工作流程識別碼符合多個工作流程。"
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts

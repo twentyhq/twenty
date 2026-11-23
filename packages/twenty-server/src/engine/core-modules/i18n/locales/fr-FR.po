@@ -415,12 +415,12 @@ msgstr "Une cible de note"
 #. js-lingui-id: PqP6rg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
-msgstr ""
+msgstr "Une relation morphologique un-à-plusieurs ne peut pas être comparée directement, parcourez la relation pour comparer un champ de ses enregistrements"
 
 #. js-lingui-id: s0zuRf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
-msgstr ""
+msgstr "Une relation un-à-plusieurs ne prend en charge que les opérandes IS_EMPTY et IS_NOT_EMPTY, parcourez la relation pour comparer un champ de ses enregistrements"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3137,7 +3137,7 @@ msgstr "Chats liés à l'opportunité"
 #. js-lingui-id: YNDJWu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
-msgstr ""
+msgstr "La vérification qu'une relation un-à-plusieurs est vide nécessite des sauts de relation dans les prédicats d'autorisation au niveau des lignes"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -15588,7 +15588,7 @@ msgstr "Cet opérande n'est pas pris en charge pour ce champ"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"
-msgstr ""
+msgstr "Cet opérande n'est pas pris en charge pour cette relation"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -15868,7 +15868,7 @@ msgstr "Ce workflow existe déjà."
 #. js-lingui-id: Kd1y55
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow identifier matches more than one workflow."
-msgstr ""
+msgstr "Cet identifiant de workflow correspond à plusieurs workflows."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts

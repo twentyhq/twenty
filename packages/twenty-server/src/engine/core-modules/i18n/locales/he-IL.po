@@ -415,12 +415,12 @@ msgstr "יעד להערה"
 #. js-lingui-id: PqP6rg
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
-msgstr ""
+msgstr "לא ניתן להשוות ישירות קשר morph של אחד-לרבים; יש לעבור דרך הקשר כדי להשוות שדה מהרשומות שלו"
 
 #. js-lingui-id: s0zuRf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
-msgstr ""
+msgstr "קשר של אחד-לרבים תומך רק באופרנדים IS_EMPTY ו-IS_NOT_EMPTY; יש לעבור דרך הקשר כדי להשוות שדה מהרשומות שלו"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3137,7 +3137,7 @@ msgstr "שיחות שקשורות להזדמנות"
 #. js-lingui-id: YNDJWu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
-msgstr ""
+msgstr "בדיקה אם יחס של אחד-לרבים ריק מחייבת מעברי יחסים בפרדיקטים של הרשאות ברמת שורה"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -15588,7 +15588,7 @@ msgstr "אופרנד זה אינו נתמך עבור שדה זה"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported for this relation"
-msgstr ""
+msgstr "אופרנד זה אינו נתמך עבור יחס זה"
 
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -15868,7 +15868,7 @@ msgstr "זרימת עבודה זו כבר קיימת."
 #. js-lingui-id: Kd1y55
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow identifier matches more than one workflow."
-msgstr ""
+msgstr "מזהה זרימת העבודה הזה תואם ליותר מזרימת עבודה אחת."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
