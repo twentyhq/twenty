@@ -1,6 +1,6 @@
 import { CalendarEventRecurrenceDaysOfWeekInput } from '@/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
-import { type CalendarEventRecurrenceEndCondition } from '@/activities/calendar/types/CalendarEventRecurrenceEndCondition';
+import { type CalendarEventRecurrenceEnd } from '@/activities/calendar/types/CalendarEventRecurrenceEnd';
 import { getCalendarEventRecurrenceIntervalUnitLabel } from '@/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel';
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 import { FormDateFieldInput } from '@/object-record/record-field/ui/form-types/components/FormDateFieldInput';
@@ -48,7 +48,7 @@ export const CalendarEventComposerRecurrenceFields = ({
     startDateInTimeZone,
     updateRecurrence,
     handleRecurrenceFrequencyChange,
-    handleRecurrenceEndConditionChange,
+    handleRecurrenceEndTypeChange,
   } = composerState;
 
   const startDayOfMonth = Temporal.PlainDate.from(startDateInTimeZone).day;
@@ -73,12 +73,11 @@ export const CalendarEventComposerRecurrenceFields = ({
       },
     ];
 
-  const endConditionOptions: SelectOption<CalendarEventRecurrenceEndCondition>[] =
-    [
-      { label: t`Never`, value: 'NEVER' },
-      { label: t`On date`, value: 'ON_DATE' },
-      { label: t`After`, value: 'AFTER_OCCURRENCE_COUNT' },
-    ];
+  const endTypeOptions: SelectOption<CalendarEventRecurrenceEnd['type']>[] = [
+    { label: t`Never`, value: 'NEVER' },
+    { label: t`On date`, value: 'ON_DATE' },
+    { label: t`After`, value: 'AFTER_OCCURRENCE_COUNT' },
+  ];
 
   const handleIntervalChange = (interval: number | null) => {
     if (isDefined(interval) && interval >= 1) {
@@ -86,21 +85,25 @@ export const CalendarEventComposerRecurrenceFields = ({
     }
   };
 
-  const handleAdditionalDaysOfWeekChange = (
-    additionalDaysOfWeek: CalendarEventRecurrenceWeekday[],
+  const handleDaysOfWeekChange = (
+    daysOfWeek: CalendarEventRecurrenceWeekday[],
   ) => {
-    updateRecurrence({ additionalDaysOfWeek });
+    updateRecurrence({ daysOfWeek });
   };
 
   const handleEndDateChange = (endDate: string | null) => {
     if (isDefined(endDate)) {
-      updateRecurrence({ endDate: endDate.slice(0, 10) });
+      updateRecurrence({
+        end: { type: 'ON_DATE', endDate: endDate.slice(0, 10) },
+      });
     }
   };
 
   const handleOccurrenceCountChange = (occurrenceCount: number | null) => {
     if (isDefined(occurrenceCount) && occurrenceCount >= 1) {
-      updateRecurrence({ occurrenceCount });
+      updateRecurrence({
+        end: { type: 'AFTER_OCCURRENCE_COUNT', occurrenceCount },
+      });
     }
   };
 
@@ -125,15 +128,14 @@ export const CalendarEventComposerRecurrenceFields = ({
     recurrence.frequency,
     recurrence.interval,
   );
-  const occurrenceCountUnitLabel = plural(recurrence.occurrenceCount, {
-    one: 'occurrence',
-    other: 'occurrences',
-  });
   const isWeekly =
     recurrence.frequency === CalendarEventRecurrenceFrequency.WEEKLY;
-  const isEndingOnDate = recurrence.endCondition === 'ON_DATE';
-  const isEndingAfterOccurrenceCount =
-    recurrence.endCondition === 'AFTER_OCCURRENCE_COUNT';
+  const { end } = recurrence;
+  const isEndingOnDate = end.type === 'ON_DATE';
+  const isEndingAfterOccurrenceCount = end.type === 'AFTER_OCCURRENCE_COUNT';
+  const occurrenceCountUnitLabel = isEndingAfterOccurrenceCount
+    ? plural(end.occurrenceCount, { one: 'occurrence', other: 'occurrences' })
+    : undefined;
 
   return (
     <>
@@ -152,9 +154,9 @@ export const CalendarEventComposerRecurrenceFields = ({
       {isWeekly && (
         <ComposerFieldRow label={t`On`}>
           <CalendarEventRecurrenceDaysOfWeekInput
-            additionalDaysOfWeek={recurrence.additionalDaysOfWeek}
+            daysOfWeek={recurrence.daysOfWeek}
             startDateInTimeZone={startDateInTimeZone}
-            onAdditionalDaysOfWeekChange={handleAdditionalDaysOfWeekChange}
+            onDaysOfWeekChange={handleDaysOfWeekChange}
           />
         </ComposerFieldRow>
       )}
@@ -162,18 +164,18 @@ export const CalendarEventComposerRecurrenceFields = ({
         <StyledInlineControls>
           <StyledNonShrinkingContainer>
             <Select
-              dropdownId="calendar-event-composer-recurrence-end-condition"
+              dropdownId="calendar-event-composer-recurrence-end-type"
               variant="transparent"
-              value={recurrence.endCondition}
-              options={endConditionOptions}
-              onChange={handleRecurrenceEndConditionChange}
+              value={end.type}
+              options={endTypeOptions}
+              onChange={handleRecurrenceEndTypeChange}
             />
           </StyledNonShrinkingContainer>
           {isEndingOnDate && (
             <FormDateFieldInput
-              key={recurrence.endDate}
+              key={end.endDate}
               variant="transparent"
-              defaultValue={recurrence.endDate}
+              defaultValue={end.endDate}
               onChange={handleEndDateChange}
             />
           )}
@@ -182,7 +184,7 @@ export const CalendarEventComposerRecurrenceFields = ({
               <NumberStepper
                 aria-label={t`Number of occurrences`}
                 min={1}
-                value={recurrence.occurrenceCount}
+                value={end.occurrenceCount}
                 onValueChange={handleOccurrenceCountChange}
               />
               <StyledUnitLabel>{occurrenceCountUnitLabel}</StyledUnitLabel>

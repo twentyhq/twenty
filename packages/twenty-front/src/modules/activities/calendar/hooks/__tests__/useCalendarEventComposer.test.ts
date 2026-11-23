@@ -359,11 +359,9 @@ describe('useCalendarEventComposer', () => {
 
       act(() => {
         result.current.updateRecurrence({
-          additionalDaysOfWeek: [CalendarEventRecurrenceWeekday.THURSDAY],
+          daysOfWeek: [CalendarEventRecurrenceWeekday.THURSDAY],
         });
-        result.current.handleRecurrenceEndConditionChange(
-          'AFTER_OCCURRENCE_COUNT',
-        );
+        result.current.handleRecurrenceEndTypeChange('AFTER_OCCURRENCE_COUNT');
       });
 
       await act(async () => {
@@ -376,7 +374,6 @@ describe('useCalendarEventComposer', () => {
             frequency: CalendarEventRecurrenceFrequency.WEEKLY,
             interval: 1,
             daysOfWeek: [CalendarEventRecurrenceWeekday.THURSDAY],
-            endDate: undefined,
             occurrenceCount: 10,
           },
         }),
@@ -395,13 +392,18 @@ describe('useCalendarEventComposer', () => {
       });
 
       act(() => {
-        result.current.handleRecurrenceEndConditionChange('ON_DATE');
+        result.current.handleRecurrenceEndTypeChange('ON_DATE');
       });
 
-      expect(result.current.recurrence?.endDate).toBe('2027-07-20');
+      expect(result.current.recurrence?.end).toEqual({
+        type: 'ON_DATE',
+        endDate: '2027-07-20',
+      });
 
       act(() => {
-        result.current.updateRecurrence({ endDate: '2026-10-19' });
+        result.current.updateRecurrence({
+          end: { type: 'ON_DATE', endDate: '2026-10-19' },
+        });
       });
 
       expect(result.current.canCreate).toBe(false);

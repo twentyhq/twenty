@@ -1,4 +1,4 @@
-import { type CalendarEventRecurrenceEndCondition } from '@/activities/calendar/types/CalendarEventRecurrenceEndCondition';
+import { type CalendarEventRecurrenceEnd } from '@/activities/calendar/types/CalendarEventRecurrenceEnd';
 import {
   type CalendarEventRecurrenceFrequency,
   type CalendarEventRecurrenceWeekday,
@@ -7,8 +7,6 @@ import {
 export type CalendarEventComposerRecurrence = {
   frequency: CalendarEventRecurrenceFrequency;
   interval: number;
-  additionalDaysOfWeek: CalendarEventRecurrenceWeekday[];
-  endCondition: CalendarEventRecurrenceEndCondition;
-  endDate: string;
-  occurrenceCount: number;
+  daysOfWeek: CalendarEventRecurrenceWeekday[];
+  end: CalendarEventRecurrenceEnd;
 };

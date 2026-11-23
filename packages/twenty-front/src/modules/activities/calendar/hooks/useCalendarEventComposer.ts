@@ -8,7 +8,7 @@ import { type CalendarEventComposerInitialValues } from '@/activities/calendar/t
 import { CALENDAR_EVENT_RECURRENCE_DEFAULT_OCCURRENCE_COUNT } from '@/activities/calendar/constants/CalendarEventRecurrenceDefaultOccurrenceCount';
 import { type CalendarEventComposerRecurrence } from '@/activities/calendar/types/CalendarEventComposerRecurrence';
 import { type CalendarEventComposerTarget } from '@/activities/calendar/types/CalendarEventComposerTarget';
-import { type CalendarEventRecurrenceEndCondition } from '@/activities/calendar/types/CalendarEventRecurrenceEndCondition';
+import { type CalendarEventRecurrenceEnd } from '@/activities/calendar/types/CalendarEventRecurrenceEnd';
 import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
 import { getCalendarEventDatesAfterModeChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterModeChange';
 import { getCalendarEventDatesAfterStartChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterStartChange';
@@ -195,9 +195,10 @@ export const useCalendarEventComposer = ({
     ? dates.endsAt.slice(0, 10) > dates.startsAt.slice(0, 10)
     : Date.parse(dates.endsAt) > Date.parse(dates.startsAt);
 
+  const recurrenceEnd = recurrence?.end;
   const hasValidRecurrenceEndDate =
-    recurrence?.endCondition !== 'ON_DATE' ||
-    recurrence.endDate >= startDateInTimeZone;
+    recurrenceEnd?.type !== 'ON_DATE' ||
+    recurrenceEnd.endDate >= startDateInTimeZone;
 
   const canCreate =
     isNonEmptyString(title.trim()) &&
@@ -264,12 +265,8 @@ export const useCalendarEventComposer = ({
     setRecurrence((currentRecurrence) => ({
       frequency,
       interval: 1,
-      additionalDaysOfWeek: currentRecurrence?.additionalDaysOfWeek ?? [],
-      endCondition: currentRecurrence?.endCondition ?? 'NEVER',
-      endDate: currentRecurrence?.endDate ?? '',
-      occurrenceCount:
-        currentRecurrence?.occurrenceCount ??
-        CALENDAR_EVENT_RECURRENCE_DEFAULT_OCCURRENCE_COUNT,
+      daysOfWeek: currentRecurrence?.daysOfWeek ?? [],
+      end: currentRecurrence?.end ?? { type: 'NEVER' },
     }));
   };
 
@@ -285,29 +282,39 @@ export const useCalendarEventComposer = ({
     });
   };
 
-  const handleRecurrenceEndConditionChange = (
-    endCondition: CalendarEventRecurrenceEndCondition,
+  const handleRecurrenceEndTypeChange = (
+    endType: CalendarEventRecurrenceEnd['type'],
   ) => {
-    if (!isDefined(recurrence)) {
+    if (!isDefined(recurrence) || recurrence.end.type === endType) {
       return;
     }
 
-    const shouldPrefillEndDate =
-      endCondition === 'ON_DATE' && !isNonEmptyString(recurrence.endDate);
+    switch (endType) {
+      case 'NEVER':
+        updateRecurrence({ end: { type: 'NEVER' } });
 
-    if (!shouldPrefillEndDate) {
-      updateRecurrence({ endCondition });
+        return;
+      case 'ON_DATE': {
+        const defaultEndDate = getCalendarEventRecurrenceDefaultEndDate({
+          frequency: recurrence.frequency,
+          interval: recurrence.interval,
+          startDateInTimeZone,
+        });
 
-      return;
+        updateRecurrence({ end: { type: 'ON_DATE', endDate: defaultEndDate } });
+
+        return;
+      }
+      case 'AFTER_OCCURRENCE_COUNT':
+        updateRecurrence({
+          end: {
+            type: 'AFTER_OCCURRENCE_COUNT',
+            occurrenceCount: CALENDAR_EVENT_RECURRENCE_DEFAULT_OCCURRENCE_COUNT,
+          },
+        });
+
+        return;
     }
-
-    const defaultEndDate = getCalendarEventRecurrenceDefaultEndDate({
-      frequency: recurrence.frequency,
-      interval: recurrence.interval,
-      startDateInTimeZone,
-    });
-
-    updateRecurrence({ endCondition, endDate: defaultEndDate });
   };
 
   const handleCreate = useCallback(async () => {
@@ -402,7 +409,7 @@ export const useCalendarEventComposer = ({
     description,
     handleCreate,
     handleIsFullDayChange,
-    handleRecurrenceEndConditionChange,
+    handleRecurrenceEndTypeChange,
     handleRecurrenceFrequencyChange,
     handleStartsAtChange,
     handleTargetChange,

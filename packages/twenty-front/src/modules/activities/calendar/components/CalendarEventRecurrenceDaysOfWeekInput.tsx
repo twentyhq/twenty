@@ -17,24 +17,22 @@ const StyledFullWidthContainer = styled.div`
 `;
 
 type CalendarEventRecurrenceDaysOfWeekInputProps = {
-  additionalDaysOfWeek: CalendarEventRecurrenceWeekday[];
+  daysOfWeek: CalendarEventRecurrenceWeekday[];
   startDateInTimeZone: string;
-  onAdditionalDaysOfWeekChange: (
-    additionalDaysOfWeek: CalendarEventRecurrenceWeekday[],
-  ) => void;
+  onDaysOfWeekChange: (daysOfWeek: CalendarEventRecurrenceWeekday[]) => void;
 };
 
 export const CalendarEventRecurrenceDaysOfWeekInput = ({
-  additionalDaysOfWeek,
+  daysOfWeek,
   startDateInTimeZone,
-  onAdditionalDaysOfWeekChange,
+  onDaysOfWeekChange,
 }: CalendarEventRecurrenceDaysOfWeekInputProps) => {
   const { t, i18n } = useLingui();
   const { calendarStartDay } = useDateTimeFormat();
 
   const startWeekday =
     getCalendarEventRecurrenceWeekdayOfDate(startDateInTimeZone);
-  const selectedDaysOfWeek = [startWeekday, ...additionalDaysOfWeek];
+  const selectedDaysOfWeek = [startWeekday, ...daysOfWeek];
 
   const weekdayLabelsFromSunday = getDatePickerWeekdayLabels(i18n.locale);
   const weekStartIndexFromSunday =
@@ -58,13 +56,13 @@ export const CalendarEventRecurrenceDaysOfWeekInput = ({
   }).format(selectedWeekdayLabels);
 
   const handleSelectedDaysOfWeekChange = (nextSelectedDaysOfWeek: string[]) => {
-    const nextAdditionalDaysOfWeek =
+    const nextDaysOfWeek =
       CALENDAR_EVENT_RECURRENCE_WEEKDAYS_FROM_SUNDAY.filter(
         (weekday) =>
           weekday !== startWeekday && nextSelectedDaysOfWeek.includes(weekday),
       );
 
-    onAdditionalDaysOfWeekChange(nextAdditionalDaysOfWeek);
+    onDaysOfWeekChange(nextDaysOfWeek);
   };
 
   return (
