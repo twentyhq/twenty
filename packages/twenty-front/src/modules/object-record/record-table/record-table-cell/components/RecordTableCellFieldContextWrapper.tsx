@@ -1,5 +1,6 @@
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { RecordTableCellLookupFieldContext } from '@/object-record/record-column-lookup/components/RecordTableCellLookupFieldContext';
+import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -34,6 +35,8 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const lookupTarget = useRecordFieldLookupTarget(recordField);
 
+  const scopedRelationAlias = useScopedRelationAlias(recordField.id);
+
   const fieldMetadataItem =
     fieldMetadataItemByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
@@ -45,6 +48,8 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
+
+  const isScopedRelationRestricted = scopedRelationAlias?.isRestricted ?? false;
 
   if (isDefined(lookupTarget)) {
     return (
@@ -76,8 +81,13 @@ export const RecordTableCellFieldContextWrapper = ({
               fieldDefinitionByFieldMetadataItemId[
                 recordField.fieldMetadataItemId
               ],
-            isRecordReadOnly: isRecordReadOnly ?? false,
-            restrictedFieldNames,
+            // A scoped relation only lists part of the related records, which the relation picker cannot edit
+            isRecordReadOnly:
+              (isRecordReadOnly ?? false) || isDefined(scopedRelationAlias),
+            restrictedFieldNames: isScopedRelationRestricted
+              ? [...restrictedFieldNames, fieldMetadataItem.name]
+              : restrictedFieldNames,
+            fieldValueKey: scopedRelationAlias?.responseKey,
           }}
         >
           {children}

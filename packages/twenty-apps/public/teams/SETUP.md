@@ -102,14 +102,19 @@ and DoD tenants are not supported.
    the bot's Entra app registration must support **Accounts in any
    organizational directory**; the Azure Bot stays **Single Tenant**.
 
-3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
-   Adding it claims the connection's Microsoft tenant for this workspace, so
-   activities from that tenant route here, and links every directory user whose
-   email matches a workspace member. Personal connections do not claim a tenant,
-   and a tenant can only be claimed by one workspace. When another workspace
-   already holds the tenant, the connection is kept for transcripts and the app
-   settings page shows an error banner until that workspace disconnects and
-   this one reconnects.
+3. Add a **workspace-shared** Microsoft connection and turn on **Enable chat**,
+   in either order. The connection claims its Microsoft tenant for this
+   workspace, whatever the setting, so activities from that tenant route here;
+   **Enable chat** only decides whether the bot answers them. Connections that
+   existed before chat was released are claimed when the app is upgraded.
+   Adding a connection while chat is on also links every directory user whose
+   email matches a workspace member; otherwise members link on their first
+   message or from **Auto-link by email**. Personal connections do not claim a
+   tenant, and a tenant can only be claimed by one workspace, even one that has
+   chat turned off. When another workspace already holds the tenant, the
+   connection is kept for transcripts and the app settings page shows an error
+   banner until that workspace disconnects and this one reconnects. A warning
+   banner shows when chat is on but the tenant is not claimed.
 
 The route verifies the Bot Framework token on every activity. When no workspace
 has claimed the sender's tenant, the bot says so in that conversation, at most

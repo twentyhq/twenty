@@ -15,7 +15,7 @@ export const WorkspaceSectionAddMenuItemButton = ({
   const button = (
     <NavigationDrawerItem
       Icon={IconPlus}
-      label={t`Add menu item`}
+      label={t`Add item`}
       triggerEvent="CLICK"
       variant="tertiary"
     />

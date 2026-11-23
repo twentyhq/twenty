@@ -42,6 +42,11 @@ jobs:
         packages/twenty-server/src/database/commands/upgrade-version-command/**
         packages/twenty-server/src/engine/core-modules/upgrade/**
 
+  pick-runner:
+    permissions:
+      actions: read
+    uses: ./.github/workflows/ci-pick-runner.yaml
+
   server-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
@@ -243,9 +248,9 @@ jobs:
             exit 1
           fi
   server-test:
-    needs: server-build
+    needs: [server-build, pick-runner]
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -280,12 +285,14 @@ jobs:
           path: .cache/jest/packages/twenty-server
 
   server-integration-test:
-    needs: changed-files-check
+    needs: [changed-files-check, pick-runner]
     if: needs.changed-files-check.outputs.any_changed == 'true'
     permissions:
       actions: read
       contents: read
     uses: ./.github/workflows/ci-server-integration-test.yaml
+    with:
+      runner: ${{ needs.pick-runner.outputs.runner }}
     secrets:
       OKTA_SSO_TEST_CLIENT_SECRET: ${{ secrets.OKTA_SSO_TEST_CLIENT_SECRET }}
       OKTA_SSO_TEST_PASSWORD: ${{ secrets.OKTA_SSO_TEST_PASSWORD }}
@@ -307,9 +314,9 @@ jobs:
       changed-only: false
 
   server-apps-install-smoke:
-    needs: [discover-public-apps, server-build]
+    needs: [discover-public-apps, server-build, pick-runner]
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ${{ needs.pick-runner.outputs.runner || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
       matrix:
@@ -339,10 +346,11 @@ jobs:
   ci-server-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs:
       [
         changed-files-check,
+        pick-runner,
         server-build,
         server-lint-typecheck,
         server-upgrade-mutation-guard,
