@@ -210,7 +210,7 @@ jobs:
   ci-front-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-4-cores
     needs:
       [
         changed-files-check,
