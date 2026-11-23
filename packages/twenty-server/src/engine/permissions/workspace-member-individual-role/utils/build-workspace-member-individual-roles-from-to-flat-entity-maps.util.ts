@@ -149,21 +149,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
         universalIdentifier: roleUniversalIdentifier,
         label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${
           holder.type === 'apiKeys'
-            ? `${API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME} that can ${[
-                'read',
-                ...(holder.writeGrants.canCreateAllObjectRecords
-                  ? ['create']
-                  : []),
-                ...(holder.writeGrants.canUpdateAllObjectRecords
-                  ? ['update']
-                  : []),
-                ...(holder.writeGrants.canSoftDeleteAllObjectRecords
-                  ? ['delete']
-                  : []),
-                ...(holder.writeGrants.canDestroyAllObjectRecords
-                  ? ['destroy']
-                  : []),
-              ].join(', ')}`
+            ? API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME
             : holder.userWorkspaceId
         }`,
         description:
