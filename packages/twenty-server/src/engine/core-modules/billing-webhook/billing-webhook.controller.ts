@@ -30,6 +30,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
+import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeWebhookService } from 'src/engine/core-modules/billing/stripe/services/stripe-webhook.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -50,6 +51,7 @@ export class BillingWebhookController {
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
+    private readonly billingApplicationSyncService: BillingApplicationSyncService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/stripe`)
@@ -149,9 +151,9 @@ export class BillingWebhookController {
           event.type ===
           BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED
         ) {
-          await this.billingWebhookSubscriptionService.enqueueApplicationsSync(
+          await this.billingApplicationSyncService.enqueueApplicationsSync({
             workspaceId,
-          );
+          });
 
           return {};
         }
