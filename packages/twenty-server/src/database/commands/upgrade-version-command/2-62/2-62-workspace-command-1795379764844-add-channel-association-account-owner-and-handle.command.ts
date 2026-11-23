@@ -16,6 +16,10 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  WorkspaceSchemaManagerException,
+  WorkspaceSchemaManagerExceptionCode,
+} from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -214,17 +218,19 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
       });
     }
 
-    await this.runMigration({
-      workspaceId,
-      applicationUniversalIdentifier,
-      allFlatEntityOperationByMetadataName: {
-        index: {
-          flatEntityToCreate: indexesToCreate,
-          flatEntityToDelete: [],
-          flatEntityToUpdate: [],
+    if (indexesToCreate.length > 0) {
+      await this.runMigration({
+        workspaceId,
+        applicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          index: {
+            flatEntityToCreate: indexesToCreate,
+            flatEntityToDelete: [],
+            flatEntityToUpdate: [],
+          },
         },
-      },
-    });
+      });
+    }
 
     this.logger.log(
       `Created ${fieldsToCreate.length} field(s) and ${indexesToCreate.length} index(es) for workspace ${workspaceId}`,
@@ -325,14 +331,33 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
     tableName: string;
     indexToCreate: FlatIndexMetadata;
   }): Promise<void> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    let isQueryRunnerConnected = false;
+    if (this.dataSource.options.type !== 'postgres') {
+      throw new WorkspaceSchemaManagerException(
+        `Concurrent index builds need a postgres datasource, got ${this.dataSource.options.type}`,
+        WorkspaceSchemaManagerExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    // A concurrent build can outlast the core pool's query timeout, so it gets its own connection
+    const indexBuildDataSource = await new DataSource({
+      ...this.dataSource.options,
+      entities: [],
+      migrations: [],
+      subscribers: [],
+      poolSize: 1,
+      extra: {
+        ...this.dataSource.options.extra,
+        query_timeout: undefined,
+        statement_timeout: undefined,
+      },
+    }).initialize();
 
     try {
-      await queryRunner.connect();
-      isQueryRunnerConnected = true;
+      const queryRunner = indexBuildDataSource.createQueryRunner();
 
-      const invalidIndexes = await this.dataSource.query<{ name: string }[]>(
+      await queryRunner.connect();
+
+      const invalidIndexes: { name: string }[] = await queryRunner.query(
         `SELECT c.relname AS name
          FROM pg_index i
          JOIN pg_class c ON c.oid = i.indexrelid
@@ -368,9 +393,7 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
         concurrently: true,
       });
     } finally {
-      if (isQueryRunnerConnected) {
-        await queryRunner.release();
-      }
+      await indexBuildDataSource.destroy();
     }
   }
 
