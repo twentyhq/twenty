@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
+import { isNavigationMenuItemContainer } from '@/navigation-menu-item/common/utils/isNavigationMenuItemContainer';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
 
@@ -32,29 +33,31 @@ export const buildUpdateInputsFromDraft = ({
     }
 
     const positionChanged = original.position !== draftItem.position;
-    const folderIdChanged =
-      (original.folderId ?? null) !== (draftItem.folderId ?? null);
+    const parentIdChanged =
+      (original.parentId ?? null) !== (draftItem.parentId ?? null);
+    const isContainer = isNavigationMenuItemContainer(draftItem);
     const nameChanged =
-      (isNavigationMenuItemFolder(draftItem) ||
-        isNavigationMenuItemLink(draftItem)) &&
+      (isContainer || isNavigationMenuItemLink(draftItem)) &&
       (original.name ?? null) !== (draftItem.name ?? null);
     const linkChanged =
       isNavigationMenuItemLink(draftItem) &&
       (original.link ?? null) !== (draftItem.link ?? null);
     const iconChanged =
-      isNavigationMenuItemFolder(draftItem) &&
-      (original.icon ?? null) !== (draftItem.icon ?? null);
+      isContainer && (original.icon ?? null) !== (draftItem.icon ?? null);
     const colorChanged =
       isNavigationMenuItemFolder(draftItem) &&
       (original.color ?? null) !== (draftItem.color ?? null);
+    const isActiveChanged =
+      (original.isActive !== false) !== (draftItem.isActive !== false);
 
     if (
       !positionChanged &&
-      !folderIdChanged &&
+      !parentIdChanged &&
       !nameChanged &&
       !linkChanged &&
       !iconChanged &&
-      !colorChanged
+      !colorChanged &&
+      !isActiveChanged
     ) {
       continue;
     }
@@ -64,15 +67,12 @@ export const buildUpdateInputsFromDraft = ({
     if (positionChanged) {
       updatePayload.position = draftItem.position;
     }
-    if (folderIdChanged) {
-      updatePayload.folderId = isDefined(draftItem.folderId)
-        ? resolveFolderId(draftItem.folderId)
+    if (parentIdChanged) {
+      updatePayload.parentId = isDefined(draftItem.parentId)
+        ? resolveFolderId(draftItem.parentId)
         : null;
     }
-    if (nameChanged && isNavigationMenuItemFolder(draftItem)) {
-      updatePayload.name = draftItem.name;
-    }
-    if (nameChanged && isNavigationMenuItemLink(draftItem)) {
+    if (nameChanged) {
       updatePayload.name = draftItem.name;
     }
     if (linkChanged && isNavigationMenuItemLink(draftItem)) {
@@ -81,11 +81,14 @@ export const buildUpdateInputsFromDraft = ({
         ? getLinkNavigationMenuItemComputedLink({ link: linkUrl })
         : null;
     }
-    if (iconChanged && isNavigationMenuItemFolder(draftItem)) {
+    if (iconChanged) {
       updatePayload.icon = draftItem.icon ?? null;
     }
     if (colorChanged) {
       updatePayload.color = draftItem.color ?? null;
+    }
+    if (isActiveChanged) {
+      updatePayload.isActive = draftItem.isActive !== false;
     }
 
     updateInputs.push({

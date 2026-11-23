@@ -1,0 +1,393 @@
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import { ThinkingStepsDisplay } from '@/ai-chat/thinking-steps/components/ThinkingStepsDisplay';
+import { type ThinkingStepPart } from '@/ai-chat/thinking-steps/types/ThinkingStepPart';
+
+jest.mock('~/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({
+    copyToClipboard: jest.fn(),
+  }),
+}));
+
+jest.mock('@/ai/hooks/useGetToolIndex', () => ({
+  useGetToolIndex: () => ({
+    toolIndex: [],
+    loading: false,
+    error: undefined,
+  }),
+}));
+
+jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
+  TabList: ({ tabs }: { tabs: Array<{ id: string; title: string }> }) => (
+    <div>
+      {tabs.map((tab) => (
+        <button key={tab.id} type="button">
+          {tab.title}
+        </button>
+      ))}
+    </div>
+  ),
+}));
+
+jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
+  LazyMarkdownRenderer: ({ text }: { text: string }) => (
+    <div data-testid="markdown-renderer">{text}</div>
+  ),
+}));
+
+jest.mock('@/ai-chat/thinking-steps/components/ToolRecordsWidget', () => ({
+  ToolRecordsWidget: ({
+    recordReferences,
+  }: {
+    recordReferences: Array<{ displayName: string }>;
+  }) => (
+    <div>
+      {recordReferences.map((recordReference) => (
+        <span key={recordReference.displayName}>
+          {recordReference.displayName}
+        </span>
+      ))}
+    </div>
+  ),
+}));
+
+const createReasoningPart = ({
+  state = 'done',
+  text = 'Reasoning content',
+}: {
+  state?: string;
+  text?: string;
+} = {}): ThinkingStepPart =>
+  ({
+    type: 'reasoning',
+    text,
+    state,
+  }) as ThinkingStepPart;
+
+const createToolPart = ({
+  input = { query: 'crm software' },
+  output = { result: { ok: true } },
+  state = 'output-available',
+  type = 'tool-web_search',
+  errorText,
+}: {
+  type?: `tool-${string}`;
+  input?: Record<string, unknown>;
+  output?: unknown;
+  state?: string;
+  errorText?: string;
+} = {}): ThinkingStepPart =>
+  ({
+    type,
+    toolCallId: `${type}-call-id`,
+    input,
+    output,
+    state,
+    errorText,
+  }) as ThinkingStepPart;
+
+const renderThinkingStepsDisplay = ({
+  isLastMessageStreaming,
+  parts,
+  isTrailingWhileStreaming = false,
+  workDurationMs,
+}: {
+  parts: ThinkingStepPart[];
+  isLastMessageStreaming: boolean;
+  isTrailingWhileStreaming?: boolean;
+  workDurationMs?: number | null;
+}) => {
+  return render(
+    <ThemeProvider colorScheme="light">
+      <ThinkingStepsDisplay
+        parts={parts}
+        isLastMessageStreaming={isLastMessageStreaming}
+        isTrailingWhileStreaming={isTrailingWhileStreaming}
+        workDurationMs={workDurationMs}
+      />
+    </ThemeProvider>,
+  );
+};
+
+describe('ThinkingStepsDisplay', () => {
+  it('should show the running step as a single line while streaming', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'streaming',
+          text: 'Active reasoning content',
+        }),
+      ],
+    });
+
+    expect(
+      screen.getByRole('button', { name: /Thinking.*2 steps/ }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('Searched the web for crm software')).toBeNull();
+    expect(screen.queryByText('Active reasoning content')).toBeNull();
+  });
+
+  it('should label the line with a tool step awaiting its output', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should show thinking between steps', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.getByText('Thinking')).toBeInTheDocument();
+  });
+
+  it('should label the line with the running tool rather than thinking', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should count the steps while the answer streams', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      workDurationMs: 4_000,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.getByRole('button', { name: '1 step' })).toBeInTheDocument();
+    expect(screen.queryByText('Thinking')).toBeNull();
+  });
+
+  it('should keep the same single line when the stream ends', () => {
+    const parts = [
+      createToolPart(),
+      createReasoningPart({
+        state: 'done',
+        text: 'Completed reasoning content',
+      }),
+    ];
+    const { rerender } = renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts,
+    });
+
+    const line = screen.getByRole('button', { name: '2 steps' });
+
+    rerender(
+      <ThemeProvider colorScheme="light">
+        <ThinkingStepsDisplay
+          parts={parts}
+          isLastMessageStreaming={false}
+          workDurationMs={83_000}
+        />
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByRole('button', { name: 'Worked for 1m 23s' })).toBe(
+      line,
+    );
+    expect(screen.queryByText('Thought')).toBeNull();
+  });
+
+  it('should label the line with the latest reasoning title', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [
+        createReasoningPart({
+          state: 'streaming',
+          text: '**Looking into the data**\n\nFirst pass.\n\n**Selecting tool fields**\n\nThe query',
+        }),
+      ],
+    });
+
+    expect(screen.getByText('Selecting tool fields')).toBeInTheDocument();
+    expect(screen.queryByText('Thinking')).toBeNull();
+  });
+
+  it('should render done state collapsed by default', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
+
+    expect(summaryButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('Thought')).toBeNull();
+    expect(screen.queryByText('Completed reasoning content')).toBeNull();
+  });
+
+  it('should summarize done state with the work duration when known', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      workDurationMs: 83_000,
+      parts: [createToolPart(), createReasoningPart()],
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Worked for 1m 23s' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText(/steps/i)).toBeNull();
+  });
+
+  it('should render rows, then reasoning content once its row is expanded', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
+
+    await userEvent.click(summaryButton);
+
+    expect(summaryButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.queryByText('Completed reasoning content')).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Thought' }));
+
+    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
+    expect(
+      screen.getByText('Searched the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should toggle tool details and display output/input tabs', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
+    await userEvent.click(summaryButton);
+
+    const toolButton = screen.getByRole('button', {
+      name: /searched the web for crm software/i,
+    });
+
+    expect(toolButton).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
+
+    await userEvent.click(toolButton);
+
+    expect(toolButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Output' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Input' })).toBeInTheDocument();
+
+    await userEvent.click(toolButton);
+
+    expect(toolButton).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
+    });
+  });
+
+  it('should display output/input tabs for a tool step loaded from history', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [createToolPart({ errorText: '' })],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /searched the web for crm software/i,
+      }),
+    );
+
+    expect(screen.getByRole('button', { name: 'Output' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Input' })).toBeInTheDocument();
+  });
+
+  it('should display the error of a failed tool step', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart({
+          output: undefined,
+          state: 'output-error',
+          errorText: 'Search provider unavailable',
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+    await userEvent.click(
+      screen.getByRole('button', {
+        name: /searched the web for crm software/i,
+      }),
+    );
+
+    expect(screen.getByText('Search provider unavailable')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
+  });
+
+  it('should show the records a tool step found when its row is expanded', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      parts: [
+        createToolPart({
+          type: 'tool-find_many_companies',
+          input: {},
+          output: {
+            message: 'Found 1 company record',
+            recordReferences: [
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000001',
+                displayName: 'Clearstreet',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(screen.queryByText('Clearstreet')).toBeNull();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /find_many_companies/i }),
+    );
+
+    expect(screen.getByText('Clearstreet')).toBeInTheDocument();
+  });
+});

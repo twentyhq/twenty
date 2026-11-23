@@ -2,7 +2,6 @@ import { t } from '@lingui/core/macro';
 import { AppBasePath, AppPath, SettingsPath } from 'twenty-shared/types';
 
 enum SettingsPathPrefixes {
-  Accounts = `${AppBasePath.Settings}/${SettingsPath.Accounts}`,
   AppPreferences = `${AppBasePath.Settings}/${SettingsPath.AppPreferences}`,
   Billing = `${AppBasePath.Settings}/${SettingsPath.Billing}`,
   Partner = `${AppBasePath.Settings}/${SettingsPath.Partner}`,
@@ -41,8 +40,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return t`Create Profile`;
     case SettingsPathPrefixes.Experience:
       return t`Experience - Settings`;
-    case SettingsPathPrefixes.Accounts:
-      return t`Account - Settings`;
     case SettingsPathPrefixes.AppPreferences:
       return t`Apps preferences - Settings`;
     case SettingsPathPrefixes.Billing:

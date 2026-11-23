@@ -29,6 +29,7 @@ const FOLDER: NavigationMenuItem = {
   type: NavigationMenuItemType.FOLDER,
   name: 'New folder',
   position: 0,
+  isActive: true,
   createdAt: '',
   updatedAt: '',
 };
@@ -60,7 +61,7 @@ describe('useReadableNavigationMenuItems', () => {
     const unreadableItem = {
       ...FOLDER,
       id: 'object',
-      folderId: folder.id,
+      parentId: folder.id,
       type: NavigationMenuItemType.OBJECT,
       targetObjectMetadataId: 'inaccessible',
     };
@@ -88,14 +89,14 @@ describe('useReadableNavigationMenuItems', () => {
         {
           ...FOLDER,
           id: 'workflow',
-          folderId: FOLDER.id,
+          parentId: FOLDER.id,
           type: NavigationMenuItemType.WORKFLOW,
           workflowId: 'workflow-id',
         },
         {
           ...FOLDER,
           id: 'agent',
-          folderId: FOLDER.id,
+          parentId: FOLDER.id,
           type: NavigationMenuItemType.AGENT,
           agentId: 'agent-id',
         },

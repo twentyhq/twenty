@@ -125,7 +125,7 @@ export class ActionToolProvider implements ToolProvider {
           this.sendEmailTool,
           includeSchemas,
           context.locale,
-          EMAIL_TOOL_APPROVALS.send_email,
+          { approval: EMAIL_TOOL_APPROVALS.send_email },
         ),
       );
       descriptors.push(
@@ -134,7 +134,7 @@ export class ActionToolProvider implements ToolProvider {
           this.draftEmailTool,
           includeSchemas,
           context.locale,
-          EMAIL_TOOL_APPROVALS.draft_email,
+          { approval: EMAIL_TOOL_APPROVALS.draft_email },
         ),
       );
       descriptors.push(
@@ -229,6 +229,7 @@ export class ActionToolProvider implements ToolProvider {
         this.saveCampaignTool,
         includeSchemas,
         context.locale,
+        { isDestructive: true },
       ),
     );
 
@@ -239,6 +240,7 @@ export class ActionToolProvider implements ToolProvider {
           this.shareRecordTool,
           includeSchemas,
           context.locale,
+          { isDestructive: true },
         ),
       );
     }
@@ -299,7 +301,10 @@ export class ActionToolProvider implements ToolProvider {
     tool: Tool,
     includeSchemas: boolean,
     locale?: ToolProviderContext['locale'],
-    approval?: ToolApproval,
+    {
+      approval,
+      isDestructive,
+    }: { approval?: ToolApproval; isDestructive?: boolean } = {},
   ): ToolIndexEntry | ToolDescriptor {
     const labels: ActionToolLabel | undefined =
       ACTION_TOOL_LABELS[toolId as ActionToolId];
@@ -317,6 +322,8 @@ export class ActionToolProvider implements ToolProvider {
       }),
       executionRef: { kind: 'static', toolId },
       ...(isDefined(approval) && { approval }),
+      ...(tool.isReadOnly && { isReadOnly: true }),
+      ...(isDestructive && { isDestructive }),
     };
   }
 }

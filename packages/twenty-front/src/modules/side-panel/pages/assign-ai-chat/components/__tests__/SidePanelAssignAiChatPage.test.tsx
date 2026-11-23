@@ -10,7 +10,7 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
-import { assignAiChatThreadIdsComponentState } from '@/side-panel/pages/assign-ai-chat/states/assignAiChatThreadIdsComponentState';
+import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import {
@@ -25,7 +25,7 @@ i18n.activate(SOURCE_LOCALE);
 const assignAiChatThreads = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useAssignAiChatThreads', () => ({
+jest.mock('@/ai-chat/threads/hooks/useAssignAiChatThreads', () => ({
   useAssignAiChatThreads: () => ({ assignAiChatThreads }),
 }));
 

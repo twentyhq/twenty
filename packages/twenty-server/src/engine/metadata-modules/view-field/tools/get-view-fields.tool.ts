@@ -21,6 +21,7 @@ const getViewFieldsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_fields',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_FIELD_ACCESS_POLICY,
   description:
@@ -67,6 +68,10 @@ export class GetViewFieldsTool extends BaseTool<
       size: viewField.size,
       position: viewField.position,
       aggregateOperation: viewField.aggregateOperation,
+      isCanonical: viewField.isCanonical,
+      relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
+      relationScope: viewField.relationScope,
+      label: viewField.label,
     }));
 
     return {

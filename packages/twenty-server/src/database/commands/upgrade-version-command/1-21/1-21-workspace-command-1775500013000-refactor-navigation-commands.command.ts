@@ -48,8 +48,6 @@ const SETTINGS_NAVIGATION_ITEM_KEYS = [
   'goToSettings',
   'goToSettingsExperience',
   'goToSettingsAccounts',
-  'goToSettingsAccountsEmails',
-  'goToSettingsAccountsCalendars',
   'goToSettingsGeneral',
   'goToSettingsObjects',
   'goToSettingsMembers',

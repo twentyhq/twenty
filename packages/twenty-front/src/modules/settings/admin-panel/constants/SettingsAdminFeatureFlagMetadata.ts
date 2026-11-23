@@ -32,6 +32,14 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Internal import setting column`,
     description: msg`Read the internal import setting from its new workspace column. Turned on by the 2.59 upgrade.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED]: {
+    label: msg`Import recurring meetings 90 days ahead`,
+    description: msg`Import occurrences of recurring Google Calendar meetings up to 90 days ahead only, and import later occurrences as they come within 90 days.`,
+  },
+  [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
+    label: msg`Customizable sidebar`,
+    description: msg`Show sidebar tabs and sections.`,
+  },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
     description: msg`Create and preview frontend components in AI chat before adding them to the Workspace app.`,
@@ -43,10 +51,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED]: {
     label: msg`Direct message pair identity`,
     description: msg`Reuse the same conversation when the same two workspace members start a direct message. Enabled after the workspace upgrade completes.`,
-  },
-  [FeatureFlagKey.IS_APP_PREFERENCES_ENABLED]: {
-    label: msg`App preferences`,
-    description: msg`Replace the Accounts settings with App preferences, built around accounts and the apps that use them.`,
   },
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,
@@ -64,6 +68,15 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Record rules through relations`,
     description: msg`Let record-level permission rules compare a field of a related record.`,
   },
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
+    label: msg`Channel visibility through rules`,
+    description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
+  },
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
+    label: msg`Channel visibility on API keys`,
+    description: msg`Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would.`,
+  },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
@@ -75,10 +88,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
-  },
-  [FeatureFlagKey.IS_PERMISSION_TABLES_ENABLED]: {
-    label: msg`Permission tables`,
-    description: msg`Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created.`,
   },
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: {
     label: msg`Access groups`,
@@ -92,8 +101,12 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Group tabs`,
     description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
   },
-  [FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED]: {
-    label: msg`HTTP requests in the logic function runtime`,
-    description: msg`Send workflow HTTP requests, test requests and the AI agent HTTP tool through the logic function driver, which runs them in an isolated Lambda when logic functions run in Lambda.`,
+  [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED]: {
+    label: msg`Application price billing`,
+    description: msg`Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet.`,
+  },
+  [FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED]: {
+    label: msg`Lookup columns`,
+    description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,
   },
 };

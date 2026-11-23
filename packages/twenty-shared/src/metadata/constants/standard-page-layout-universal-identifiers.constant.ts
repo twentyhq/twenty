@@ -290,24 +290,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   }),
-  workflowVersionRecordPage: buildStandardObjectRecordPageLayout({
-    objectUniversalIdentifier:
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-    tabs: {
-      home: {
-        title: 'Home',
-        widgets: {
-          fields: 'Fields',
-        },
-      },
-      flow: {
-        title: 'Flow',
-        widgets: {
-          workflowVersion: 'Flow',
-        },
-      },
-    },
-  }),
   workflowRunRecordPage: buildStandardObjectRecordPageLayout({
     objectUniversalIdentifier:
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,

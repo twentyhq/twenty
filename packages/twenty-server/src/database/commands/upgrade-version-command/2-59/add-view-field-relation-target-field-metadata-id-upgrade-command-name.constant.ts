@@ -1,0 +1,2 @@
+export const ADD_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME =
+  '2.59.0_AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand_1794606690417';

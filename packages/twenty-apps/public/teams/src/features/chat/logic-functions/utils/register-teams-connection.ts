@@ -1,8 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type AppConnection, getConnection, kv } from 'twenty-sdk/logic-function';
+import {
+  type AppConnection,
+  getConnection,
+  kv,
+} from 'twenty-sdk/logic-function';
 
+import { type TeamsTenantClaimConflict } from 'src/features/chat/logic-functions/types/teams-tenant-claim-conflict.type';
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
-import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
+import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
+import { claimTeamsTenant } from 'src/features/chat/logic-functions/utils/claim-teams-tenant';
+import { deleteTeamsTenantClaimConflict } from 'src/features/chat/logic-functions/utils/delete-teams-tenant-claim-conflict';
 import { fetchTeamsTenantId } from 'src/features/chat/logic-functions/utils/fetch-teams-tenant-id';
 import { isTeamsChatEnabled } from 'src/features/chat/logic-functions/utils/is-teams-chat-enabled';
 import { matchTeamsDirectoryByEmail } from 'src/features/chat/logic-functions/utils/match-teams-directory-by-email';
@@ -39,9 +46,14 @@ const matchTeamsDirectoryOnConnect = async ({
 
 export const registerTeamsConnection = async ({
   connectedAccountId,
+  workspaceId,
 }: {
   connectedAccountId: string;
-}): Promise<{ claimedTenantId: string | null }> => {
+  workspaceId: string;
+}): Promise<{
+  claimedTenantId: string | null;
+  conflictingTenantId?: string;
+}> => {
   const isChatEnabled = isTeamsChatEnabled();
   const connection = isChatEnabled
     ? await getConnection(connectedAccountId)
@@ -49,6 +61,7 @@ export const registerTeamsConnection = async ({
 
   if (connection?.scope !== 'WORKSPACE') {
     await releaseTeamsConnectionTenant({ connectedAccountId });
+    await deleteTeamsTenantClaimConflict({ connectedAccountId });
 
     return { claimedTenantId: null };
   }
@@ -64,7 +77,20 @@ export const registerTeamsConnection = async ({
   }
 
   await kv.set(connectedAccountTenantKvKey, tenantId);
-  await kv.set(buildTeamsTenantKvKey(tenantId), null, { scope: 'SERVER' });
+
+  const isTenantClaimed = await claimTeamsTenant({ tenantId, workspaceId });
+
+  if (!isTenantClaimed) {
+    await kv.delete(connectedAccountTenantKvKey);
+    await kv.set<TeamsTenantClaimConflict>(
+      buildTeamsTenantClaimConflictKvKey(connectedAccountId),
+      { tenantId },
+    );
+
+    return { claimedTenantId: null, conflictingTenantId: tenantId };
+  }
+
+  await deleteTeamsTenantClaimConflict({ connectedAccountId });
 
   await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
 

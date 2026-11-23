@@ -14,8 +14,9 @@ export const isMainRoleRestrictedByRlsRule = ({
   metadataMaps: Pick<PermissionsMetadataMaps, 'rolesPermissions'>;
   objectMetadataId: string;
 }): boolean =>
-  isDefined(
-    metadataMaps.rolesPermissions[principals.mainPrincipal.roleId]?.objects[
-      objectMetadataId
-    ]?.rowLevelRecordsPermissions,
+  principals.mainPrincipal.roleIds.some((roleId) =>
+    isDefined(
+      metadataMaps.rolesPermissions[roleId]?.objects[objectMetadataId]
+        ?.rowLevelRecordsPermissions,
+    ),
   );

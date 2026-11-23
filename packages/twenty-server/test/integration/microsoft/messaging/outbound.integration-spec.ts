@@ -12,6 +12,7 @@ import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
+import { serializeEmailBody } from 'test/integration/utils/serialize-email-body.util';
 
 const HANDLE = 'microsoft-outbound@apple.dev';
 const ALIAS = 'microsoft-outbound-alias@apple.dev';
@@ -78,7 +79,10 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       cc: RECIPIENTS.cc,
       bcc: RECIPIENTS.bcc,
       subject,
-      body: '<p>Microsoft reply body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Microsoft reply body</p>',
+      }),
       inReplyTo: '<microsoft-parent@example.com>',
     });
 
@@ -186,7 +190,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       cc: RECIPIENTS.cc,
       bcc: RECIPIENTS.bcc,
       subject: DRAFT_SUBJECT,
-      body: 'Microsoft draft body',
+      body: serializeEmailBody({ type: 'text', text: 'Microsoft draft body' }),
       draftMessageId: draft.id,
     });
 
@@ -247,7 +251,10 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       fromHandle: ALIAS,
       to: RECIPIENTS.to,
       subject,
-      body: '<p>Microsoft alias body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Microsoft alias body</p>',
+      }),
     });
 
     expect(result).toMatchObject({ success: true });
@@ -267,7 +274,10 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       fromHandle: ALIAS,
       to: RECIPIENTS.to,
       subject,
-      body: '<p>Microsoft alias reply body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Microsoft alias reply body</p>',
+      }),
       inReplyTo: '<microsoft-parent@example.com>',
     });
 
@@ -286,7 +296,10 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       fromHandle: 'not-my-alias@apple.dev',
       to: RECIPIENTS.to,
       subject: `Microsoft rejected sender ${randomUUID()}`,
-      body: '<p>Microsoft rejected body</p>',
+      body: serializeEmailBody({
+        type: 'html',
+        html: '<p>Microsoft rejected body</p>',
+      }),
     });
 
     expect(result).toMatchObject({

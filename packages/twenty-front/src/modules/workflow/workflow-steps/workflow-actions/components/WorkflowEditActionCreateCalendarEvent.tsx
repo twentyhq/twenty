@@ -122,7 +122,7 @@ export const WorkflowEditActionCreateCalendarEvent = ({
               ? {
                   onClick: () => {
                     closeSidePanelMenu();
-                    navigate(SettingsPath.NewAccount);
+                    navigate(SettingsPath.AppPreferencesNewAccount);
                   },
                   Icon: IconPlus,
                   text: t`Add account`,

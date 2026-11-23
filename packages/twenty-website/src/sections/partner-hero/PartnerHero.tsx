@@ -1,20 +1,24 @@
-import { msg } from '@lingui/core/macro';
+import { type MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-import { BecomePartnerButton } from '@/partner-application';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
+  FONT_WEIGHT,
   fontFamily,
+  fontSize,
   GRADIENT,
   HERO_COMPOSITION,
   mediaUp,
+  radius,
   semanticColor,
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
+import { type PartnerHeroStat } from './partner-hero-stat.type';
 import { PartnerVisual } from './PartnerVisual';
 
 const GradientBackdrop = styled.div`
@@ -39,6 +43,25 @@ const IntroStack = styled.div`
   }
 `;
 
+const TitleBlock = styled.div`
+  & > * + * {
+    margin-top: ${spacing(5)};
+  }
+`;
+
+const Badge = styled.span`
+  border: 1px solid ${semanticColor.line};
+  border-radius: ${radius(2)};
+  color: ${semanticColor.inkMuted};
+  display: inline-block;
+  font-family: ${fontFamily('mono')};
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  line-height: 16px;
+  padding: 2px 7px;
+  text-transform: uppercase;
+`;
+
 const HeadingMeasure = styled.div`
   max-width: 360px;
   width: 100%;
@@ -57,40 +80,125 @@ const BodyMeasure = styled.div`
   }
 `;
 
-// The hero's single CTA sits on the shared 32px Body->CTA step (IntroStack's
-// owl rhythm); the buyer hand-off hangs 12px under it so it reads as a
-// footnote to the CTA rather than as a second step in that rhythm.
-const CtaStack = styled.div`
+const CtaRow = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  gap: ${spacing(3)};
+  justify-content: center;
+
+  ${mediaUp('sm')} {
+    flex-direction: row;
+  }
+`;
+
+const StatStage = styled.div`
+  margin-top: ${spacing(12)};
 
   & > * + * {
     margin-top: ${spacing(3)};
   }
 `;
 
-// Deliberately duplicated from partner-lead/PartnerBecomeStrip's LearnMoreLink:
-// sections may not import each other, so the recipe is copied, not shared.
-const HireLink = styled(LocalizedLink)`
-  color: ${semanticColor.inkMuted};
-  display: inline-block;
-  font-family: ${fontFamily('sans')};
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  ${typeRampDeclarations('bodySm')}
+// Hairlines between cells, no frame, on the hero's centered axis.
+const StatList = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
 
-  &:hover {
-    color: ${semanticColor.ink};
+  ${mediaUp('md')} {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+`;
+
+const StatCell = styled.li`
+  border-left: 1px solid ${semanticColor.line};
+  padding: ${spacing(5)} ${spacing(4)};
+  text-align: center;
+
+  & > * + * {
+    margin-top: ${spacing(1.5)};
+  }
+
+  &:nth-child(odd) {
+    border-left: none;
+  }
+
+  &:nth-child(n + 3) {
+    border-top: 1px solid ${semanticColor.line};
+  }
+
+  ${mediaUp('md')} {
+    padding: ${spacing(6)} ${spacing(4)};
+
+    &:nth-child(odd) {
+      border-left: 1px solid ${semanticColor.line};
+    }
+
+    &:nth-child(n + 3) {
+      border-top: none;
+    }
+
+    &:first-child {
+      border-left: none;
+    }
+  }
+`;
+
+const StatValue = styled.p`
+  color: ${semanticColor.ink};
+  font-family: ${fontFamily('sans')};
+  ${typeRampDeclarations('headingSm')}
+  font-weight: ${FONT_WEIGHT.light};
+  letter-spacing: -0.04em;
+`;
+
+const StatLabel = styled.p`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('mono')};
+  font-size: ${fontSize(3)};
+  font-weight: ${FONT_WEIGHT.medium};
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+const StatNote = styled.p`
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('sans')};
+  font-size: ${fontSize(3.5)};
+  line-height: 1.4;
+  text-align: center;
 `;
 
 const VisualStage = styled.div`
   margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
+
+  &[data-follows-stats] {
+    margin-top: ${spacing(6)};
+  }
   width: 100%;
 `;
 
-export function PartnerHero() {
+type PartnerHeroProps = {
+  heading: MessageDescriptor;
+  body: MessageDescriptor;
+  badge?: MessageDescriptor;
+  actions: ReactNode;
+  stats?: readonly PartnerHeroStat[];
+  statsNote?: MessageDescriptor;
+  visualImageUrl?: string;
+};
+
+export function PartnerHero({
+  heading,
+  body,
+  badge,
+  actions,
+  stats,
+  statsNote,
+  visualImageUrl,
+}: PartnerHeroProps) {
   const i18n = getServerI18n();
 
   return (
@@ -100,29 +208,42 @@ export function PartnerHero() {
       scheme="light"
     >
       <IntroStack>
-        <HeadingPair>
-          <HeadingMeasure>
-            <Heading as="h1" size="lg" weight="light">
-              {i18n._(msg`Become\n*our partner*`)}
-            </Heading>
-          </HeadingMeasure>
-          <BodyMeasure>
-            <Body muted size="sm">
-              {i18n._(
-                msg`Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners.`,
-              )}
-            </Body>
-          </BodyMeasure>
-        </HeadingPair>
-        <CtaStack>
-          <BecomePartnerButton label={msg`Become a partner`} />
-          <HireLink href="/partners">
-            {i18n._(msg`Looking to hire a partner?`)}
-          </HireLink>
-        </CtaStack>
+        <TitleBlock>
+          {isDefined(badge) && (
+            <div>
+              <Badge>{i18n._(badge)}</Badge>
+            </div>
+          )}
+          <HeadingPair>
+            <HeadingMeasure>
+              <Heading as="h1" size="lg" weight="light">
+                {i18n._(heading)}
+              </Heading>
+            </HeadingMeasure>
+            <BodyMeasure>
+              <Body muted size="sm">
+                {i18n._(body)}
+              </Body>
+            </BodyMeasure>
+          </HeadingPair>
+        </TitleBlock>
+        <CtaRow>{actions}</CtaRow>
       </IntroStack>
-      <VisualStage>
-        <PartnerVisual />
+      {isDefined(stats) && (
+        <StatStage>
+          <StatList>
+            {stats.map((stat) => (
+              <StatCell key={stat.label.id}>
+                <StatValue>{i18n._(stat.value)}</StatValue>
+                <StatLabel>{i18n._(stat.label)}</StatLabel>
+              </StatCell>
+            ))}
+          </StatList>
+          {isDefined(statsNote) && <StatNote>{i18n._(statsNote)}</StatNote>}
+        </StatStage>
+      )}
+      <VisualStage data-follows-stats={isDefined(stats) ? '' : undefined}>
+        <PartnerVisual imageUrl={visualImageUrl} />
       </VisualStage>
     </SectionShell>
   );

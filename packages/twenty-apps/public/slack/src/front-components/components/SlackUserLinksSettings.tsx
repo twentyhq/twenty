@@ -73,6 +73,7 @@ const SlackUserLinksSettingsContent = () => {
     connectionHealth,
     hasRosterMatchFailed,
     isConnectionStatusLoading,
+    hasConnectionStatusFailed,
   } = useSlackConnectionStatus();
   const {
     slackUserLinks,
@@ -180,9 +181,24 @@ const SlackUserLinksSettingsContent = () => {
     return <SlackUserLinksSettingsSkeleton />;
   }
 
-  // A broken connection is reported by the app health banner, which stays
-  // visible next to the connection itself; the tools below need a working one.
-  if (!isSlackConnected || isConnectionBroken) {
+  if (hasConnectionStatusFailed) {
+    return (
+      <StyledCenteredState>
+        Could not check the Slack connection. Reload the page to try again.
+      </StyledCenteredState>
+    );
+  }
+
+  if (!isSlackConnected) {
+    return (
+      <StyledCenteredState>
+        Slack is not connected yet. Add a connection from the General tab to
+        manage Slack user links.
+      </StyledCenteredState>
+    );
+  }
+
+  if (isConnectionBroken) {
     return null;
   }
 

@@ -4,7 +4,7 @@ import type { NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 type SectionDroppableConfig = {
   orphanDroppableId: string;
   folderHeaderPrefix: string;
-  folderPrefix: string;
+  listPrefix: string;
 };
 
 export const NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG: Record<
@@ -16,13 +16,13 @@ export const NAVIGATION_MENU_ITEM_SECTION_DROPPABLE_CONFIG: Record<
       NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS,
     folderHeaderPrefix:
       NavigationMenuItemDroppableIds.FAVORITE_FOLDER_HEADER_PREFIX,
-    folderPrefix: NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX,
+    listPrefix: NavigationMenuItemDroppableIds.FAVORITE_LIST_PREFIX,
   },
   workspace: {
     orphanDroppableId:
       NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS,
     folderHeaderPrefix:
       NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_HEADER_PREFIX,
-    folderPrefix: NavigationMenuItemDroppableIds.WORKSPACE_FOLDER_PREFIX,
+    listPrefix: NavigationMenuItemDroppableIds.WORKSPACE_LIST_PREFIX,
   },
 };

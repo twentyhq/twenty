@@ -1,6 +1,9 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 
-import { computeValidationRuleDaysSince } from '@/utils/validation-rule/computeValidationRuleDaysSince';
+import { addToExpressionDate } from '@/utils/expression-date/addToExpressionDate';
+import { computeExpressionDateDifference } from '@/utils/expression-date/computeExpressionDateDifference';
+import { getExpressionDatePart } from '@/utils/expression-date/getExpressionDatePart';
+import { truncateExpressionDate } from '@/utils/expression-date/truncateExpressionDate';
 import { isValidationRuleDateInRelativeRange } from '@/utils/validation-rule/isValidationRuleDateInRelativeRange';
 import { isValidationRuleValueDefined } from '@/utils/validation-rule/isValidationRuleValueDefined';
 import { isValidationRuleValueEmpty } from '@/utils/validation-rule/isValidationRuleValueEmpty';
@@ -29,9 +32,21 @@ export const VALIDATION_RULE_FUNCTIONS = {
     signature: 'arrayLength(list)',
     evaluate: (value: unknown) => (Array.isArray(value) ? value.length : 0),
   },
-  daysSince: {
-    signature: 'daysSince(date)',
-    evaluate: computeValidationRuleDaysSince,
+  dateDiff: {
+    signature: 'dateDiff(from, to, unit)',
+    evaluate: computeExpressionDateDifference,
+  },
+  dateAdd: {
+    signature: 'dateAdd(date, amount, unit)',
+    evaluate: addToExpressionDate,
+  },
+  dateTrunc: {
+    signature: 'dateTrunc(date, unit)',
+    evaluate: truncateExpressionDate,
+  },
+  datePart: {
+    signature: 'datePart(date, part)',
+    evaluate: getExpressionDatePart,
   },
   isInRelativeDateRange: {
     signature: 'isInRelativeDateRange(date, direction, amount, unit)',

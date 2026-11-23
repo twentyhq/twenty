@@ -99,7 +99,7 @@ describe('ApplicationPublicAssetExportService', () => {
         metadataName: 'file',
         universalIdentifier: 'second',
         status: 'UNSUPPORTED',
-        reason: expect.stringContaining('8 MiB total'),
+        reason: expect.stringContaining('12 MiB encoded total'),
       },
     ]);
     expect(Buffer.byteLength(JSON.stringify({ data: result }))).toBeLessThan(
@@ -113,7 +113,9 @@ describe('ApplicationPublicAssetExportService', () => {
       { id: 'small', path: 'public-asset/public/small.png' },
     ]);
     storage.readFile
-      .mockResolvedValueOnce(Readable.from([Buffer.alloc(8 * 1024 * 1024 + 1)]))
+      .mockResolvedValueOnce(
+        Readable.from([Buffer.alloc(12 * 1024 * 1024 + 1)]),
+      )
       .mockResolvedValueOnce(Readable.from([Buffer.from([0, 255])]));
     const result = await service.exportPublicAssets({
       workspaceId,

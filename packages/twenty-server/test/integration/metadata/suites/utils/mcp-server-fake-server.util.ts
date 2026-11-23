@@ -1,7 +1,10 @@
+import {
+  createFakeOAuthServer,
+  type FakeOAuthServer,
+} from 'test/integration/metadata/suites/utils/mcp-server-fake-oauth-server.util';
 import http from 'http';
 
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { createMcpHandler, McpServer } from '@modelcontextprotocol/server';
 import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -10,6 +13,8 @@ export type FakeMcpServer = {
   url: string;
   receivedAuthorizationHeaders: (string | undefined)[];
   stopOfferingSearchDocs: () => void;
+  startRequiringSignIn: () => void;
+  oauth: FakeOAuthServer;
   close: () => Promise<void>;
 };
 
@@ -29,7 +34,7 @@ const createMcpServer = ({
       'search_docs',
       {
         description: 'Search the documentation',
-        inputSchema: { query: z.string() },
+        inputSchema: z.object({ query: z.string() }),
         annotations: { readOnlyHint: true },
       },
       async ({ query }) => ({
@@ -43,7 +48,7 @@ const createMcpServer = ({
       'delete_page',
       {
         description: 'Delete a documentation page',
-        inputSchema: { pageId: z.string() },
+        inputSchema: z.object({ pageId: z.string() }),
         annotations: { destructiveHint: true },
       },
       async ({ pageId }) => ({
@@ -60,37 +65,104 @@ const createMcpServer = ({
   return mcpServer;
 };
 
-// A stateless transport is single-use, so every request gets its own server and transport.
+const readRequestBody = async (
+  request: http.IncomingMessage,
+): Promise<string> => {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of request) {
+    chunks.push(Buffer.from(chunk));
+  }
+
+  return Buffer.concat(chunks).toString('utf8');
+};
+
 const handleMcpRequest = async ({
   request,
   response,
   state,
+  baseUrl,
 }: {
   request: http.IncomingMessage;
   response: http.ServerResponse;
   state: FakeMcpServerState;
+  baseUrl: string;
 }): Promise<void> => {
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-  });
+  const headers = new Headers();
 
-  await createMcpServer(state).connect(transport);
-  await transport.handleRequest(request, response);
+  for (const [name, value] of Object.entries(request.headers)) {
+    if (isString(value)) {
+      headers.set(name, value);
+    }
+  }
+
+  const body =
+    request.method === 'POST' ? await readRequestBody(request) : undefined;
+  const mcpResponse = await createMcpHandler(() =>
+    createMcpServer(state),
+  ).fetch(
+    new Request(`${baseUrl}${request.url ?? '/'}`, {
+      method: request.method,
+      headers,
+      body,
+    }),
+  );
+
+  response.writeHead(
+    mcpResponse.status,
+    Object.fromEntries(mcpResponse.headers.entries()),
+  );
+  response.end(Buffer.from(await mcpResponse.arrayBuffer()));
 };
 
 export const startFakeMcpServer = ({
   isDeletePageOffered = false,
-}: { isDeletePageOffered?: boolean } = {}): Promise<FakeMcpServer> =>
+  isSignInRequired = false,
+}: {
+  isDeletePageOffered?: boolean;
+  isSignInRequired?: boolean;
+} = {}): Promise<FakeMcpServer> =>
   new Promise((resolve, reject) => {
     const receivedAuthorizationHeaders: (string | undefined)[] = [];
     const state: FakeMcpServerState = {
       isSearchDocsOffered: true,
       isDeletePageOffered,
     };
+    const fakeOAuthServer = createFakeOAuthServer();
+    let baseUrl = '';
+    let isSignInRequiredNow = isSignInRequired;
+
+    const handleRequest = async (
+      request: http.IncomingMessage,
+      response: http.ServerResponse,
+    ): Promise<void> => {
+      if (
+        isSignInRequiredNow &&
+        (await fakeOAuthServer.handleRequest({ request, response, baseUrl }))
+      ) {
+        return;
+      }
+
+      receivedAuthorizationHeaders.push(request.headers.authorization);
+
+      if (
+        isSignInRequiredNow &&
+        !fakeOAuthServer.isAuthorized(request.headers.authorization)
+      ) {
+        response
+          .writeHead(401, {
+            'WWW-Authenticate': `Bearer resource_metadata="${baseUrl}/.well-known/oauth-protected-resource/mcp", scope="docs:read"`,
+          })
+          .end();
+
+        return;
+      }
+
+      await handleMcpRequest({ request, response, state, baseUrl });
+    };
 
     const server = http.createServer((request, response) => {
-      receivedAuthorizationHeaders.push(request.headers.authorization);
-      handleMcpRequest({ request, response, state }).catch(() => {
+      handleRequest(request, response).catch(() => {
         response.writeHead(500).end();
       });
     });
@@ -104,11 +176,17 @@ export const startFakeMcpServer = ({
         return;
       }
 
+      baseUrl = `http://127.0.0.1:${address.port}`;
+
       resolve({
-        url: `http://127.0.0.1:${address.port}/mcp`,
+        url: `${baseUrl}/mcp`,
         receivedAuthorizationHeaders,
+        oauth: fakeOAuthServer.state,
         stopOfferingSearchDocs: () => {
           state.isSearchDocsOffered = false;
+        },
+        startRequiringSignIn: () => {
+          isSignInRequiredNow = true;
         },
         close: () =>
           new Promise((resolveClose) => {

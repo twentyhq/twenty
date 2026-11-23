@@ -9,7 +9,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import {
   WorkflowTriggerJob,
@@ -33,7 +32,6 @@ export class WorkflowTriggerDispatchWorkspaceService {
     private readonly messageQueueService: MessageQueueService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -66,7 +64,7 @@ export class WorkflowTriggerDispatchWorkspaceService {
     jobData: WorkflowTriggerJobData;
     exception: MessageQueueException;
   }): Promise<void> {
-    const { workspaceId, workflowId } = jobData;
+    const { workspaceId, workflowId, coreWorkflowVersionId } = jobData;
 
     try {
       const coreWorkflow =
@@ -74,18 +72,8 @@ export class WorkflowTriggerDispatchWorkspaceService {
           workspaceId,
           workflowId,
         );
-      const coreWorkflowVersionId =
-        await this.workflowVersionCoreSyncService.resolveDispatchedCoreVersionId(
-          {
-            workspaceId,
-            coreWorkflowVersionId: jobData.coreWorkflowVersionId,
-            workspaceWorkflowVersionId: jobData.workspaceWorkflowVersionId,
-            lastPublishedCoreWorkflowVersionId:
-              coreWorkflow?.lastPublishedCoreWorkflowVersionId,
-          },
-        );
 
-      if (!isDefined(coreWorkflow) || !isDefined(coreWorkflowVersionId)) {
+      if (!isDefined(coreWorkflow)) {
         throw new WorkflowTriggerException(
           `No core workflow version found for workflow ${workflowId}`,
           WorkflowTriggerExceptionCode.NOT_FOUND,

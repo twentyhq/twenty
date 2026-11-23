@@ -68,7 +68,7 @@ describe('buildInboxMessageToolCallPart', () => {
       arguments: {
         recipients: { to: 'team@acme.com', cc: '', bcc: '' },
         subject: 'Recap',
-        body: 'Here is the recap.\n\nJane',
+        body: { type: 'text', text: 'Here is the recap.\n\nJane' },
       },
       summary: 'Send the call recap to the team',
     };
@@ -173,6 +173,17 @@ describe('buildInboxMessageToolCallPart', () => {
           toolName: 'delete_one_company',
           arguments: { id: 'company-1' },
           summary: 'Delete the company',
+        },
+      },
+    ],
+    [
+      'a proposed email whose body is a bare string',
+      {
+        toolName: 'propose_tool_call',
+        input: {
+          toolName: 'send_email',
+          arguments: { subject: 'Recap', body: '<p>Recap</p>' },
+          summary: 'Send the recap',
         },
       },
     ],

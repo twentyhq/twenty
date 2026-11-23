@@ -253,7 +253,7 @@ await createMessageChannel({
 
 Furnizorul de mesagerie trebuie să aparțină aplicației dvs. și să utilizeze furnizorul de conexiune al contului canalului; furnizorul său de conexiune nu se poate modifica după prima sincronizare. Modificarea funcției de trimitere într-o versiune ulterioară se aplică fiecărui canal asociat cu furnizorul.
 
-Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul, fie `text`, fie, pentru furnizorii al căror `conversationStyle` este `'email'`, un bloc `email` (`to`, `cc`, `bcc`, `subject`, corpul cu text îmbogățit `body`, `inReplyTo`) și o `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează atunci când îl reîncearcă) și apelează funcția furnizorului:
+Răspunsurile sunt trimise cu mutația `sendAppChannelMessage`, care primește canalul, firul, fie `text`, fie, pentru furnizorii al căror `conversationStyle` este `'email'`, un bloc `email` (`to`, `cc`, `bcc`, `subject`, `body` ca document de e-mail serializat, `JSON.stringify` de `{ type: 'doc', attrs: { schemaVersion: 1 }, content: [...] }`, precum și `inReplyTo`), și o `idempotencyKey` (un UUID pe care clientul îl generează pentru fiecare răspuns și îl reutilizează când îl reîncearcă), și execută funcția furnizorului:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';

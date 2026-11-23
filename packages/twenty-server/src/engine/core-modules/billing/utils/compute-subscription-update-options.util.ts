@@ -10,7 +10,7 @@ import {
 export const computeSubscriptionUpdateOptions = (
   subscriptionUpdate: SubscriptionUpdate,
   context?: {
-    currentSeats?: number;
+    isQuantityIncrease?: boolean;
     isTrialing?: boolean;
     isSendInvoice?: boolean;
   },
@@ -18,6 +18,7 @@ export const computeSubscriptionUpdateOptions = (
   proration: Stripe.SubscriptionUpdateParams.ProrationBehavior;
   metadata?: Record<string, string>;
   anchor?: Stripe.SubscriptionUpdateParams.BillingCycleAnchor;
+  paymentBehavior?: Stripe.SubscriptionUpdateParams.PaymentBehavior;
 } => {
   switch (subscriptionUpdate.type) {
     case SubscriptionUpdateType.PLAN:
@@ -40,16 +41,22 @@ export const computeSubscriptionUpdateOptions = (
             proration: 'create_prorations',
             anchor: 'now',
           };
-    case SubscriptionUpdateType.SEATS: {
-      const currentSeats = context?.currentSeats ?? subscriptionUpdate.newSeats;
-
+    case SubscriptionUpdateType.QUANTITIES:
+    case SubscriptionUpdateType.APPLICATIONS: {
       const shouldInvoiceImmediately =
-        subscriptionUpdate.newSeats > currentSeats && !context?.isSendInvoice;
+        context?.isQuantityIncrease && !context?.isSendInvoice;
+
+      if (!shouldInvoiceImmediately) {
+        return { proration: 'create_prorations' };
+      }
+
+      if (subscriptionUpdate.type === SubscriptionUpdateType.QUANTITIES) {
+        return { proration: 'always_invoice' };
+      }
 
       return {
-        proration: shouldInvoiceImmediately
-          ? 'always_invoice'
-          : 'create_prorations',
+        proration: 'always_invoice',
+        paymentBehavior: 'error_if_incomplete',
       };
     }
     default:

@@ -107,6 +107,7 @@ describe('resolveManyToOneRelationIdsToUniversalIdentifiers', () => {
         fieldMetadataUniversalIdentifier: 'field-ui-1',
         viewUniversalIdentifier: 'view-ui-1',
         viewFieldGroupUniversalIdentifier: 'view-field-group-ui-1',
+        relationTargetFieldMetadataUniversalIdentifier: null,
       });
     });
 
@@ -199,6 +200,7 @@ describe('resolveManyToOneRelationIdsToUniversalIdentifiers', () => {
         fieldMetadataUniversalIdentifier: 'field-ui-1',
         viewUniversalIdentifier: 'view-ui-1',
         viewFieldGroupUniversalIdentifier: null,
+        relationTargetFieldMetadataUniversalIdentifier: null,
       });
     });
 

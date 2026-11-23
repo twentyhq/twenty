@@ -20,6 +20,8 @@ describe('buildTeamsUserSearchUrl', () => {
   it('escapes single quotes so a crafted query cannot break out of the literal', () => {
     const url = buildTeamsUserSearchUrl({ query: "o'brien", top: 10 });
 
-    expect(decodeURIComponent(url)).toContain("startswith(displayName,'o''brien')");
+    expect(decodeURIComponent(url)).toContain(
+      "startswith(displayName,'o''brien')",
+    );
   });
 });

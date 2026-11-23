@@ -9,13 +9,19 @@ const { createTeamsUserLinksMock, createTeamsUserLinkMock } = vi.hoisted(
   }),
 );
 
-vi.mock('src/features/chat/logic-functions/data/create-teams-user-links', () => ({
-  createTeamsUserLinks: createTeamsUserLinksMock,
-}));
+vi.mock(
+  'src/features/chat/logic-functions/data/create-teams-user-links',
+  () => ({
+    createTeamsUserLinks: createTeamsUserLinksMock,
+  }),
+);
 
-vi.mock('src/features/chat/logic-functions/data/create-teams-user-link', () => ({
-  createTeamsUserLink: createTeamsUserLinkMock,
-}));
+vi.mock(
+  'src/features/chat/logic-functions/data/create-teams-user-link',
+  () => ({
+    createTeamsUserLink: createTeamsUserLinkMock,
+  }),
+);
 
 const CLIENT = { mutation: vi.fn() };
 const TENANT_ID = 'tenant-1';

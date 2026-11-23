@@ -1,0 +1,86 @@
+name: CI Main
+
+# Only entry point for CI on main pushes: disabling this workflow stops main CI
+# and leaves PR and merge queue CI untouched.
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  app-prod-parity-e2e-dispatch:
+    uses: ./.github/workflows/app-prod-parity-e2e-dispatch.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      statuses: write
+  agent-skills:
+    uses: ./.github/workflows/ci-agent-skills.yaml
+    secrets: inherit
+    permissions:
+      contents: write
+  cache-warm:
+    uses: ./.github/workflows/ci-cache-warm.yaml
+    secrets: inherit
+  companion:
+    uses: ./.github/workflows/ci-companion.yaml
+    secrets: inherit
+  docs:
+    uses: ./.github/workflows/ci-docs.yaml
+    secrets: inherit
+  e2e-main:
+    uses: ./.github/workflows/ci-e2e-main.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: write
+      statuses: write
+  emails:
+    uses: ./.github/workflows/ci-emails.yaml
+    secrets: inherit
+  example-app-hello-world:
+    uses: ./.github/workflows/ci-example-app-hello-world.yaml
+    secrets: inherit
+  example-app-postcard:
+    uses: ./.github/workflows/ci-example-app-postcard.yaml
+    secrets: inherit
+  front:
+    uses: ./.github/workflows/ci-front.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      actions: read
+  front-visual-regression:
+    needs: front
+    uses: ./.github/workflows/visual-regression-dispatch.yaml
+    with:
+      project: twenty-front
+    secrets: inherit
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+  knip:
+    uses: ./.github/workflows/ci-knip.yaml
+    secrets: inherit
+  twenty-apps:
+    uses: ./.github/workflows/ci-twenty-apps.yaml
+    secrets: inherit
+  ui:
+    uses: ./.github/workflows/ci-ui.yaml
+    secrets: inherit
+  ui-visual-regression:
+    needs: ui
+    uses: ./.github/workflows/visual-regression-dispatch.yaml
+    with:
+      project: twenty-ui
+    secrets: inherit
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+  utils-test:
+    uses: ./.github/workflows/ci-utils-test.yaml
+    secrets: inherit

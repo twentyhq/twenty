@@ -1,7 +1,7 @@
 import { type MouseEvent } from 'react';
 
 import { InboxThreadList } from '@/inbox/components/InboxThreadList';
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 
 type InboxPageThreadListProps = {

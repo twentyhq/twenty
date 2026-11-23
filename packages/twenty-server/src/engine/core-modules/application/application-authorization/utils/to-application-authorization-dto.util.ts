@@ -19,7 +19,7 @@ export const toApplicationAuthorizationDTO = (
       authorization.application.universalIdentifier,
     marketplaceAppUniversalIdentifier: isDefined(applicationRegistration)
       ? (findVerifiedOAuthClientForRegistration(applicationRegistration)
-          ?.marketplaceAppUniversalIdentifier ?? null)
+          ?.universalIdentifier ?? null)
       : null,
     scopes: authorization.scopes,
     lastAuthorizedAt: authorization.lastAuthorizedAt,

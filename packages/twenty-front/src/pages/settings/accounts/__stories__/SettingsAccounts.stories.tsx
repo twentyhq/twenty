@@ -55,7 +55,7 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsAccounts,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts',
+    routePath: '/settings/app-preferences',
   },
   parameters: {
     layout: 'fullscreen',
@@ -127,18 +127,6 @@ const accountGroupsStory: Story = {
 const accountsTabStory: Story = {
   ...accountGroupsStory,
   args: { ...accountGroupsStory.args, routeHash: '#accounts' },
-};
-
-export const Default: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await canvas.findByText('Connected accounts', undefined, {
-      timeout: 3000,
-    });
-
-    expect(canvas.queryByText('Apps preferences')).not.toBeInTheDocument();
-  },
 };
 
 export const AppsTabOpensByDefault: Story = {

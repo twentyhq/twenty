@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { isAbsolute, relative, resolve } from 'path';
 
 import {
+  type ApplicationBillingPrice,
   type ApplicationCapability,
   Manifest,
 } from 'twenty-shared/application';
@@ -12,10 +13,13 @@ import { FileFolder, type IframeMediaPermission } from 'twenty-shared/types';
 import {
   intersectIframeMediaPermissions,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { resolveAcceptedBillingPricesOnInstallCompleted } from 'src/engine/core-modules/application/utils/resolve-accepted-billing-prices-on-install-completed.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
@@ -97,6 +101,7 @@ export class ApplicationInstallService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly metricsService: MetricsService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
   async installApplication(params: {
@@ -549,12 +554,19 @@ export class ApplicationInstallService {
         resolvedPackage.manifest.application.postInstallLogicFunction
           ?.shouldRunSynchronously === true;
 
+      const installCompletion = {
+        applicationId: application.id,
+        universalIdentifier: application.universalIdentifier,
+        version: newVersion,
+        acceptedBillingPrices: resolveAcceptedBillingPricesOnInstallCompleted({
+          previousVersion,
+          manifestBilling: resolvedPackage.manifest.application.billing,
+        }),
+        workspaceId: params.workspaceId,
+      };
+
       if (!isPostInstallHookSynchronous) {
-        await this.markInstallCompleted({
-          applicationId: application.id,
-          version: newVersion,
-          workspaceId: params.workspaceId,
-        });
+        await this.markInstallCompleted(installCompletion);
       }
 
       await this.runPostInstallHook({
@@ -567,11 +579,7 @@ export class ApplicationInstallService {
       });
 
       if (isPostInstallHookSynchronous) {
-        await this.markInstallCompleted({
-          applicationId: application.id,
-          version: newVersion,
-          workspaceId: params.workspaceId,
-        });
+        await this.markInstallCompleted(installCompletion);
       }
 
       await progressReporter.reportStepCompleted('POST_INSTALL_HOOK');
@@ -748,15 +756,39 @@ export class ApplicationInstallService {
 
   private async markInstallCompleted({
     applicationId,
+    universalIdentifier,
     version,
+    acceptedBillingPrices,
     workspaceId,
   }: {
     applicationId: string;
+    universalIdentifier: string;
     version: string;
+    acceptedBillingPrices: ApplicationBillingPrice[] | undefined;
     workspaceId: string;
   }): Promise<void> {
     await this.applicationService.update(applicationId, {
       version,
+      ...(isDefined(acceptedBillingPrices) ? { acceptedBillingPrices } : {}),
+      workspaceId,
+    });
+
+    if (isNonEmptyArray(acceptedBillingPrices)) {
+      const { isPaymentDeclined } =
+        await this.billingSubscriptionUpdateService.chargeApplications({
+          workspaceId,
+        });
+
+      if (isPaymentDeclined) {
+        throw new ApplicationException(
+          `Charge declined for application ${universalIdentifier} in workspace ${workspaceId}`,
+          ApplicationExceptionCode.APPLICATION_CHARGE_DECLINED,
+        );
+      }
+    }
+
+    this.applicationService.emitInstallationChanged({
+      universalIdentifier,
       workspaceId,
     });
   }

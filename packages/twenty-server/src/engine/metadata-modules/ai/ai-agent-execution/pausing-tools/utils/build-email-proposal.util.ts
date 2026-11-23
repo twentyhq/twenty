@@ -1,6 +1,6 @@
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import {
-  convertEmailBodyToEmailDocument,
+  convertEmailBodyInputToEmailDocument,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -29,22 +29,12 @@ export const buildEmailProposal = (
     };
   }
 
-  const bodyConversionResult = convertEmailBodyToEmailDocument(
-    parsedArguments.data.body,
-  );
-
-  if (!bodyConversionResult.success) {
-    return {
-      error: `The email body is not a valid email document: ${bodyConversionResult.error}`,
-    };
-  }
-
   return {
     proposal: {
       ...baseProposal,
       arguments: {
         ...baseProposal.arguments,
-        body: bodyConversionResult.document,
+        body: convertEmailBodyInputToEmailDocument(parsedArguments.data.body),
       },
       template: 'email',
     },

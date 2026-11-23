@@ -47,6 +47,7 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
           400,
         );
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
+      case AuthExceptionCode.IDENTITY_ASSERTION_REQUIRED:
       case AuthExceptionCode.WORKSPACE_SUSPENDED:
         return this.httpExceptionHandlerService.handleError(
           exception,

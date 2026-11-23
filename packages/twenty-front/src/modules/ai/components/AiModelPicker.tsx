@@ -12,7 +12,7 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { getModelIcon } from '@/ai/utils/getModelIcon';
-import { workspaceAiModelsSelector } from '@/ai/states/workspaceAiModelsSelector';
+import { workspaceAiModelsSelector } from '@/ai/states/selectors/workspaceAiModelsSelector';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

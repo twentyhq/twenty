@@ -1,10 +1,9 @@
 import { isAfter } from 'date-fns';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AiChatThreadRecord } from '@/ai/types/AiChatThreadRecord';
+import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { AgentChatChannelThreadStatus } from '~/generated-metadata/graphql';
 
-// Activity after the chat was filed reopens it, as for a member's own copy
 export const getInboxThreadChannelStatus = ({
   lastActivityAt,
   channelArchivedAt,

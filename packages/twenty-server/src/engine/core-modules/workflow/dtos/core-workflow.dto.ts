@@ -23,9 +23,6 @@ export class CoreWorkflowDTO {
   statuses: WorkflowStatus[];
 
   @Field(() => UUIDScalarType, { nullable: true })
-  lastPublishedVersionId: string | null;
-
-  @Field(() => UUIDScalarType, { nullable: true })
   lastPublishedCoreWorkflowVersionId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
@@ -37,7 +34,13 @@ export class CoreWorkflowDTO {
   @Field(() => Boolean, { nullable: false })
   isSystem: boolean;
 
-  @Field(() => WorkflowVisibility, { nullable: false })
+  @Field(() => Boolean, { nullable: false })
+  isPrivate: boolean;
+
+  @Field(() => WorkflowVisibility, {
+    nullable: false,
+    deprecationReason: 'Use isPrivate instead',
+  })
   visibility: WorkflowVisibility;
 
   // Exposed instead of the owner id, since the reader's own id never leaves the server.

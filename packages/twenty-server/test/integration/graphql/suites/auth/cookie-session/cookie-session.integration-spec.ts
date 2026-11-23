@@ -1,33 +1,13 @@
 import request from 'supertest';
+import { asWorkspaceRequest } from 'test/integration/graphql/suites/auth/cookie-session/utils/as-workspace-request.util';
+import { buildAppleHttpOrigin } from 'test/integration/graphql/suites/auth/cookie-session/utils/build-apple-http-origin.util';
+import { extractSessionCookie } from 'test/integration/graphql/suites/auth/cookie-session/utils/extract-session-cookie.util';
+import { signInAndGetSessionCookie } from 'test/integration/graphql/suites/auth/cookie-session/utils/sign-in-and-get-session-cookie.util';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 
 const SERVER_URL = `http://localhost:${APP_PORT}`;
-
-const buildAppleOrigin = (): string => {
-  const origin = new URL(SERVER_URL);
-
-  origin.hostname =
-    process.env.IS_MULTIWORKSPACE_ENABLED === 'true'
-      ? `apple.${origin.hostname}`
-      : origin.hostname;
-
-  return origin.origin;
-};
-
-// Without a Host matching the apple subdomain the server sees a cross-origin request and refuses the cookie.
-const asWorkspaceRequest = (
-  agent: request.Test,
-  originOverride?: string,
-): request.Test => {
-  const host = new URL(origin).host;
-
-  return agent
-    .set('Host', host)
-    .set('Origin', originOverride ?? origin)
-    .set(SESSION_COOKIE_OPT_IN_HEADER_NAME, '1');
-};
 
 const CURRENT_USER_QUERY = `
   query CurrentUser {
@@ -59,84 +39,7 @@ const FIND_COMPANIES_QUERY = `
 
 const AUTH_ERROR_CODES = ['UNAUTHENTICATED', 'FORBIDDEN'];
 
-const extractSessionCookie = (
-  setCookieHeader: string | string[] | undefined,
-): string | undefined => {
-  const setCookies =
-    typeof setCookieHeader === 'string'
-      ? [setCookieHeader]
-      : (setCookieHeader ?? []);
-
-  return setCookies
-    .find((cookie) => cookie.startsWith(`${USER_SESSION_COOKIE_NAME}=`))
-    ?.split(';')[0];
-};
-
-const origin = buildAppleOrigin();
-
-const signInAndGetSessionCookie = async (): Promise<string> => {
-  const loginResponse = await asWorkspaceRequest(
-    request(SERVER_URL).post('/metadata'),
-  )
-    .send({
-      query: `
-        mutation GetLoginTokenFromCredentials(
-          $email: String!
-          $password: String!
-          $origin: String!
-        ) {
-          getLoginTokenFromCredentials(
-            email: $email
-            password: $password
-            origin: $origin
-          ) {
-            loginToken {
-              token
-            }
-          }
-        }
-      `,
-      variables: {
-        email: 'tim@apple.dev',
-        password: 'tim@apple.dev',
-        origin,
-      },
-    })
-    .expect(200);
-
-  const loginToken =
-    loginResponse.body.data.getLoginTokenFromCredentials.loginToken.token;
-
-  const exchangeResponse = await asWorkspaceRequest(
-    request(SERVER_URL).post('/metadata'),
-  )
-    .send({
-      query: `
-        mutation GetAuthTokensFromLoginToken(
-          $loginToken: String!
-          $origin: String!
-        ) {
-          getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
-            tokens {
-              accessOrWorkspaceAgnosticToken {
-                token
-              }
-            }
-          }
-        }
-      `,
-      variables: { loginToken, origin },
-    })
-    .expect(200);
-
-  const sessionCookie = extractSessionCookie(
-    exchangeResponse.headers['set-cookie'],
-  );
-
-  expect(sessionCookie).toBeDefined();
-
-  return sessionCookie as string;
-};
+const origin = buildAppleHttpOrigin();
 
 describe('Cookie sessions (integration)', () => {
   let sessionCookie: string;

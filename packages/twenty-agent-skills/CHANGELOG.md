@@ -10,6 +10,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 
 ### Changed
 
+- `develop-app`: replaced `daysSince` with the date functions `dateDiff`, `dateAdd`, `dateTrunc` and `datePart` in validation rule expressions.
 - `manage-app`: covered CLI connections through authenticating proxies (`--proxy-header`, `--proxy-header-command`, `TWENTY_PROXY_HEADERS`, `TWENTY_PROXY_HEADER_COMMAND`, `PROXY_AUTH_REQUIRED`).
 - `develop-app`: documented `api-key` connection providers for services that authenticate with a key the user pastes.
 - `develop-app`: documented `oauth-discovery` connection providers for services that publish their OAuth settings, such as remote MCP servers.

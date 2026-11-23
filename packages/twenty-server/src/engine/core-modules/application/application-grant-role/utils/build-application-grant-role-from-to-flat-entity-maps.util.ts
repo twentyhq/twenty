@@ -307,6 +307,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
         canDestroyAllObjectRecords:
           requestedFlatRole.canDestroyAllObjectRecords,
         isEditable: false,
+        isSystemSideEffect: false,
         canBeAssignedToUsers: false,
         canBeAssignedToAgents: false,
         canBeAssignedToApiKeys: false,
@@ -326,6 +327,7 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
       {
         ...owner,
         ...grantRoleTargetIdentity,
+        isSystemSideEffect: false,
         userWorkspaceId: null,
         agentUniversalIdentifier: null,
         apiKeyId: null,

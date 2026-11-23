@@ -43,9 +43,13 @@ export class ApplicationExportFileDTO {
   path: string;
 
   @Field(() => String, {
-    description: 'Base64 for public-asset files, UTF-8 text for other folders.',
+    description:
+      'Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text.',
   })
   content: string;
+
+  @Field(() => String, { nullable: true })
+  encoding?: 'base64';
 }
 
 @ObjectType('ApplicationExport')

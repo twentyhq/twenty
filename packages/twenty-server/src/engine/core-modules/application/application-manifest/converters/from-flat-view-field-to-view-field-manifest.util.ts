@@ -24,4 +24,14 @@ export const fromFlatViewFieldToViewFieldManifest = ({
           flatViewField.viewFieldGroupUniversalIdentifier,
       }
     : {}),
+  ...(isDefined(flatViewField.relationTargetFieldMetadataUniversalIdentifier)
+    ? {
+        relationTargetFieldMetadataUniversalIdentifier:
+          flatViewField.relationTargetFieldMetadataUniversalIdentifier,
+      }
+    : {}),
+  ...(isDefined(flatViewField.universalRelationScope)
+    ? { relationScope: flatViewField.universalRelationScope }
+    : {}),
+  ...(isDefined(flatViewField.label) ? { label: flatViewField.label } : {}),
 });

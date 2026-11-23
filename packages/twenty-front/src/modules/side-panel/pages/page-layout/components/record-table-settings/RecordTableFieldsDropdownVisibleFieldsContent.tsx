@@ -8,6 +8,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
+import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
@@ -129,13 +130,16 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
                               applicationId={fieldMetadataItem.applicationId}
                             />
                           }
+                          // A hidden extra column couldn't be shown again: the hidden list only resolves canonical ones
                           actions={
-                            <LightIconButton
-                              aria-label={t`Hide ${fieldMetadataItem.label}`}
-                              onClick={() => handleHideField(recordField.id)}
-                            >
-                              <IconEyeOff />
-                            </LightIconButton>
+                            isCanonicalRecordField(recordField) ? (
+                              <LightIconButton
+                                aria-label={t`Hide ${fieldMetadataItem.label}`}
+                                onClick={() => handleHideField(recordField.id)}
+                              >
+                                <IconEyeOff />
+                              </LightIconButton>
+                            ) : undefined
                           }
                           dragHandleVisibility="always"
                         >

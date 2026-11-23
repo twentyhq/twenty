@@ -45,7 +45,7 @@ describe('checkIfFeatureFlagIsEnabledOnWorkspace', () => {
 
   it('should return false when feature flag is not found', () => {
     const workspace = makeWorkspace([
-      { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
+      { key: FeatureFlagKey.IS_MCP_SERVERS_ENABLED, value: true },
     ]);
 
     expect(

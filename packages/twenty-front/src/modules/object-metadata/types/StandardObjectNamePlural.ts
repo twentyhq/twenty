@@ -15,6 +15,5 @@ export enum StandardObjectNamePlural {
   WorkspaceMember = 'workspaceMembers',
   Workflow = 'workflows',
   MessageChannelMessageAssociation = 'messageChannelMessageAssociations',
-  WorkflowVersion = 'workflowVersions',
   WorkflowRun = 'workflowRuns',
 }

@@ -108,6 +108,9 @@ export const STANDARD_OBJECTS = {
       eventExternalIdIndex: {
         universalIdentifier: 'b14d63d0-c1ab-470f-927d-9c0c05277caa',
       },
+      accountOwnerIdIndex: {
+        universalIdentifier: '740776d1-fe14-41b9-80b9-11c610765f0c',
+      },
     },
     views: {
       allCalendarChannelEventAssociations: buildStandardObjectIndexView({
@@ -541,6 +544,9 @@ export const STANDARD_OBJECTS = {
       },
       messageChannelIdMessageIdUniqueIndex: {
         universalIdentifier: '1b86ece8-7ce3-4df3-8771-fd4b5d45b2f2',
+      },
+      accountOwnerIdIndex: {
+        universalIdentifier: '0797b417-8f87-4df1-b838-d85fbb663110',
       },
     },
     views: {
@@ -1265,9 +1271,6 @@ export const STANDARD_OBJECTS = {
       taskIdIndex: {
         universalIdentifier: '609cf622-86ef-48d1-812b-e1cab610a46c',
       },
-      workflowVersionIdIndex: {
-        universalIdentifier: 'd94329b3-5dc8-4141-ae28-31afe28f7135',
-      },
       workflowRunIdIndex: {
         universalIdentifier: '1a2bd046-7c23-4e0a-9f8a-c3ca3a16d3b9',
       },
@@ -1298,7 +1301,6 @@ export const STANDARD_OBJECTS = {
           'targetOpportunity',
           'targetTask',
           'targetNote',
-          'targetWorkflowVersion',
           'targetWorkflowRun',
           'targetDashboard',
         ],
@@ -1309,9 +1311,6 @@ export const STANDARD_OBJECTS = {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     fields: STANDARD_OBJECT_FIELDS.workflowRun,
     indexes: {
-      workflowVersionIdIndex: {
-        universalIdentifier: '8183c8d2-9114-4b6e-8c5d-12a3b14a5a14',
-      },
       coreWorkflowIdCreatedAtIndex: {
         universalIdentifier: '5f16fa40-7dd4-4a30-8331-9ad4a106f6be',
       },
@@ -1333,7 +1332,6 @@ export const STANDARD_OBJECTS = {
         viewFieldNames: [
           'status',
           'coreWorkflowId',
-          'workflowVersion',
           'startedAt',
           'endedAt',
           'createdAt',
@@ -1342,43 +1340,6 @@ export const STANDARD_OBJECTS = {
           'state',
           'updatedAt',
           'updatedBy',
-          'timelineActivities',
-        ],
-        viewFieldGroupNames: {
-          general: 'General',
-          system: 'System',
-        },
-      }),
-    },
-  },
-  workflowVersion: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-    fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-    indexes: {
-      searchVectorGinIndex: {
-        universalIdentifier: '6f3a65eb-2aee-4108-b8a0-c62da419d1dc',
-      },
-    },
-    views: {
-      allWorkflowVersions: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: ['name', 'status', 'updatedAt', 'runs'],
-      }),
-      workflowVersionRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-        fields: STANDARD_OBJECT_FIELDS.workflowVersion,
-        viewFieldNames: [
-          'status',
-          'trigger',
-          'createdAt',
-          'steps',
-          'createdBy',
-          'updatedAt',
-          'updatedBy',
-          'runs',
           'timelineActivities',
         ],
         viewFieldGroupNames: {

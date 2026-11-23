@@ -11,7 +11,7 @@ import {
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
@@ -53,17 +53,8 @@ const mockWorkflowCoreSyncService = {
   findCoreWorkflowByIdOrWorkspaceWorkflowId: jest.fn(),
 };
 
-const mockWorkflowVersionCoreSyncService = {
+const mockCoreWorkflowTriggerService = {
   findCoreVersionById: jest.fn(),
-  resolveDispatchedCoreVersionId: jest.fn(
-    async ({
-      coreWorkflowVersionId,
-      lastPublishedCoreWorkflowVersionId,
-    }: {
-      coreWorkflowVersionId?: string | null;
-      lastPublishedCoreWorkflowVersionId?: string | null;
-    }) => coreWorkflowVersionId ?? lastPublishedCoreWorkflowVersionId,
-  ),
 };
 
 const mockCoreWorkflowRunnerService = {
@@ -73,7 +64,6 @@ const mockCoreWorkflowRunnerService = {
 const buildCronTrigger = (index: number) => ({
   workflowId: `workflow-${index}`,
   coreWorkflowVersionId: `core-version-${index}`,
-  workspaceWorkflowVersionId: `workspace-version-${index}`,
   type: 'CRON',
   settings: { pattern: '* * * * *' },
 });
@@ -132,14 +122,10 @@ describe('WorkflowCronTriggerCronJob', () => {
         ),
       }),
     );
-    mockWorkflowVersionCoreSyncService.findCoreVersionById.mockImplementation(
+    mockCoreWorkflowTriggerService.findCoreVersionById.mockImplementation(
       async (_workspaceId: string, versionId: string) => ({
         id: versionId,
         coreWorkflowId: versionId.replace('core-version-', 'workflow-'),
-        workspaceWorkflowVersionId: versionId.replace(
-          'core-version-',
-          'workspace-version-',
-        ),
         status: 'ACTIVE',
         triggers: [
           {
@@ -187,8 +173,8 @@ describe('WorkflowCronTriggerCronJob', () => {
           useValue: mockWorkflowCoreSyncService,
         },
         {
-          provide: WorkflowVersionCoreSyncService,
-          useValue: mockWorkflowVersionCoreSyncService,
+          provide: CoreWorkflowTriggerService,
+          useValue: mockCoreWorkflowTriggerService,
         },
       ],
     }).compile();
@@ -235,7 +221,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {
@@ -252,7 +237,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           pattern: '* * * * *',
         }),
       ]);
@@ -265,7 +249,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_1,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {
@@ -497,7 +480,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             workflowId: 'workflow-1',
             legacyWorkflowId: 'workflow-1',
             coreWorkflowVersionId: 'core-version-1',
-            workspaceWorkflowVersionId: 'workspace-version-1',
             pattern: '* * * * *',
           }),
           ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
@@ -513,7 +495,6 @@ describe('WorkflowCronTriggerCronJob', () => {
             workflowId: 'workflow-2',
             legacyWorkflowId: 'workflow-2',
             coreWorkflowVersionId: 'core-version-2',
-            workspaceWorkflowVersionId: 'workspace-version-2',
             pattern: '* * * * *',
           }),
           ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
@@ -580,7 +561,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_2,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {
@@ -617,7 +597,6 @@ describe('WorkflowCronTriggerCronJob', () => {
           workspaceId: WORKSPACE_2,
           workflowId: 'workflow-1',
           coreWorkflowVersionId: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
           payload: {},
         },
         {

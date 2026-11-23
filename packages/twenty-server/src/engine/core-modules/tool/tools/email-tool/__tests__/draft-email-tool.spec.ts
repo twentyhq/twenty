@@ -29,7 +29,7 @@ const buildComposedEmail = (connectedAccount: {
 const baseInput: EmailToolInput = {
   recipients: { to: 'test@example.com', cc: '', bcc: '' },
   subject: 'Subject',
-  body: '<p>body</p>',
+  body: { type: 'html', html: '<p>body</p>' },
   files: [],
 };
 

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconFolder } from 'twenty-ui/icon';
 
 import { GRANOLA_FOLDER_SELECTION_LIMIT } from 'src/constants/granola-api.constant';
 import { GranolaFolderEmptyState } from 'src/front-components/components/GranolaFolderEmptyState';
@@ -10,12 +11,15 @@ import { GranolaFolderTree } from 'src/front-components/components/GranolaFolder
 import { GranolaFolderTreeSkeleton } from 'src/front-components/components/GranolaFolderTreeSkeleton';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { useAutosaveGranolaFolderSelection } from 'src/front-components/hooks/use-autosave-granola-folder-selection';
-import { type GranolaFolderPolicy } from 'src/front-components/types/granola-folder-policy.type';
+import { type GranolaFoldersResult } from 'src/front-components/types/granola-folders-result.type';
 import { type GranolaSettingsFolder } from 'src/front-components/types/granola-settings-folder.type';
 import { type GranolaStoredFolderSelection } from 'src/front-components/types/granola-stored-folder-selection.type';
+import { type GranolaWorkspaceFolderPolicy } from 'src/front-components/types/granola-workspace-folder-policy.type';
 import { computeGranolaFolderSelection } from 'src/front-components/utils/compute-granola-folder-selection.util';
 import { dropInaccessibleGranolaFolders } from 'src/front-components/utils/drop-inaccessible-granola-folders.util';
 import { fetchGranolaFoldersOrThrow } from 'src/front-components/utils/fetch-granola-folders-or-throw.util';
+import { getGranolaWorkspaceFolderPolicyOptions } from 'src/front-components/utils/get-granola-workspace-folder-policy-options.util';
+import { saveGranolaFolderSelectionOrThrow } from 'src/front-components/utils/save-granola-folder-selection-or-throw.util';
 
 const getSelectionHint = (selectedFolderCount: number) => {
   if (selectedFolderCount === 0) {
@@ -41,12 +45,18 @@ type GranolaFolderListState =
   | { step: 'FAILED' }
   | { step: 'LOADED'; folders: GranolaSettingsFolder[] };
 
-type GranolaFolderPickerProps = GranolaStoredFolderSelection;
+type GranolaFolderPickerProps = GranolaStoredFolderSelection & {
+  folderListRequest: Promise<GranolaFoldersResult | undefined>;
+};
 
 export const GranolaFolderPicker = ({
   selectedFolderIds,
   pendingFolderIds,
+  folderListRequest,
 }: GranolaFolderPickerProps) => {
+  const prefetchedFolderListRequest = useRef<
+    Promise<GranolaFoldersResult | undefined> | undefined
+  >(folderListRequest);
   const [selection, setSelection] = useState(() =>
     computeGranolaFolderSelection({ selectedFolderIds, pendingFolderIds }),
   );
@@ -65,9 +75,14 @@ export const GranolaFolderPicker = ({
     }
     setFolderList({ step: 'LOADING' });
 
-    const foldersResult = await fetchGranolaFoldersOrThrow().catch(
-      () => undefined,
-    );
+    const prefetchedFoldersResult = isSelectionStale
+      ? undefined
+      : await prefetchedFolderListRequest.current;
+    prefetchedFolderListRequest.current = undefined;
+
+    const foldersResult =
+      prefetchedFoldersResult ??
+      (await fetchGranolaFoldersOrThrow().catch(() => undefined));
 
     if (!isDefined(foldersResult)) {
       setFolderList({ step: 'FAILED' });
@@ -97,6 +112,7 @@ export const GranolaFolderPicker = ({
   };
 
   const { save } = useAutosaveGranolaFolderSelection({
+    saveFolderSelection: saveGranolaFolderSelectionOrThrow,
     onSaveSuccess: (folderIds) =>
       setSelection((current) => ({
         ...current,
@@ -121,7 +137,7 @@ export const GranolaFolderPicker = ({
     save(nextSelectedFolderIds);
   };
 
-  const handlePolicyChange = (nextPolicy: GranolaFolderPolicy) => {
+  const handlePolicyChange = (nextPolicy: GranolaWorkspaceFolderPolicy) => {
     setSelection((current) => ({ ...current, policy: nextPolicy }));
 
     if (
@@ -158,7 +174,12 @@ export const GranolaFolderPicker = ({
     }
 
     if (folderList.folders.length === 0) {
-      return <GranolaFolderEmptyState />;
+      return (
+        <GranolaFolderEmptyState
+          Icon={IconFolder}
+          message={t('No folders found for this key')}
+        />
+      );
     }
 
     return (
@@ -185,8 +206,11 @@ export const GranolaFolderPicker = ({
     <>
       <OnMountEffect onMount={loadFolderListIfSelected} />
       <GranolaFolderPolicyRadioCard
+        options={getGranolaWorkspaceFolderPolicyOptions()}
         policy={isLocked ? undefined : selection.policy}
-        selectedFoldersContent={getSelectedFoldersContent()}
+        expandedContentByPolicy={{
+          SELECTED_FOLDERS: getSelectedFoldersContent(),
+        }}
         onChange={handlePolicyChange}
       />
       {showsFolderListError && (

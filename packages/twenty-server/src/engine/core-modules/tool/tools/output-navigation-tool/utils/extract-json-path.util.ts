@@ -121,13 +121,11 @@ const resolveAccessors = (value: unknown, accessors: Accessor[]): unknown => {
     }
     case 'wildcard': {
       if (Array.isArray(value)) {
-        return value.map((child) => resolveAccessors(child, rest));
+        return resolveWildcardChildren(value, rest);
       }
 
       if (isObject(value)) {
-        return Object.values(value).map((child) =>
-          resolveAccessors(child, rest),
-        );
+        return resolveWildcardChildren(Object.values(value), rest);
       }
 
       throw new JsonPathError(
@@ -135,6 +133,32 @@ const resolveAccessors = (value: unknown, accessors: Accessor[]): unknown => {
       );
     }
   }
+};
+
+const resolveWildcardChildren = (
+  children: unknown[],
+  accessors: Accessor[],
+): unknown[] => {
+  const resolvedChildren: unknown[] = [];
+  let firstError: JsonPathError | undefined;
+
+  for (const child of children) {
+    try {
+      resolvedChildren.push(resolveAccessors(child, accessors));
+    } catch (error) {
+      if (!(error instanceof JsonPathError)) {
+        throw error;
+      }
+
+      firstError ??= error;
+    }
+  }
+
+  if (resolvedChildren.length === 0 && isDefined(firstError)) {
+    throw firstError;
+  }
+
+  return resolvedChildren;
 };
 
 const boundScalar = (value: unknown): unknown => {

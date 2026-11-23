@@ -2,7 +2,6 @@ import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/Workspace
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordIndexContainerGater } from '@/object-record/record-index/components/RecordIndexContainerGater';
-import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { RecordIndexSkeletonLoader } from '@/object-record/record-index/components/RecordIndexSkeletonLoader';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -56,14 +55,6 @@ export const RecordIndexPage = () => {
 
   if (isUndefined(objectMetadataItem)) {
     return <RecordIndexSkeletonLoader />;
-  }
-
-  if (
-    isWorkspaceWorkflowVersionRouteHidden({
-      objectNameSingular: routeObjectMetadataItem?.nameSingular,
-    })
-  ) {
-    return <WorkspaceRouteUnavailable />;
   }
 
   if (workspaceSurface.type === 'side-panel') {

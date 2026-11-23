@@ -1,7 +1,5 @@
-import {
-  evaluateConditionalAvailabilityExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,

@@ -2,6 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -17,6 +18,15 @@ export class UpdateNavigationMenuItemInput {
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
+  parentId?: string | null;
+
+  // TODO(@thomtrp): remove the deprecated folderId alias once API clients use parentId
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use parentId instead.',
+  })
   folderId?: string | null;
 
   @IsNumber()
@@ -48,6 +58,11 @@ export class UpdateNavigationMenuItemInput {
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })
   pageLayoutId?: string | null;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  isActive?: boolean;
 }
 
 @InputType()

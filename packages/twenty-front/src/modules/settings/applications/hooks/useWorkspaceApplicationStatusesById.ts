@@ -7,19 +7,14 @@ type UseWorkspaceApplicationStatusesByIdArgs = {
   applications: Parameters<
     typeof getWorkspaceApplicationStatusesById
   >[0]['applications'];
-  shouldSkip: boolean;
 };
 
 export const useWorkspaceApplicationStatusesById = ({
   applications,
-  shouldSkip,
 }: UseWorkspaceApplicationStatusesByIdArgs) => {
   const { data, loading, error, refetch } = useQuery(
     FindManyApplicationsForStatusDocument,
-    {
-      skip: shouldSkip,
-      fetchPolicy: 'cache-and-network',
-    },
+    { fetchPolicy: 'cache-and-network' },
   );
 
   return {

@@ -1,6 +1,7 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
   type AggregateOperations,
+  type UniversalViewFieldRelationScope,
   type ViewCalendarLayout,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
@@ -26,6 +27,9 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   aggregateOperation?: AggregateOperations;
   viewFieldGroupUniversalIdentifier?: string;
   isCanonical?: boolean;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
+  relationScope?: UniversalViewFieldRelationScope;
+  label?: string;
 };
 
 export type StandaloneViewFieldManifest = ViewFieldManifest & {
@@ -64,6 +68,7 @@ export type ViewSortManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
   direction: ViewSortDirection;
   subFieldName?: string;
+  relationTargetFieldMetadataUniversalIdentifier?: string;
 };
 
 export type ViewManifest = SyncableEntityOptions & {

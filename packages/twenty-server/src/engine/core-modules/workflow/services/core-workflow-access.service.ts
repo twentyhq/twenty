@@ -2,7 +2,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not } from 'typeorm';
 
@@ -10,7 +9,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
+import { isCoreWorkflowVisibleToUser } from 'src/engine/core-modules/workflow/utils/is-core-workflow-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -200,32 +199,20 @@ export class CoreWorkflowAccessService {
     workspaceId,
     userWorkspaceId,
     coreWorkflowVersionIds,
-    workspaceWorkflowVersionIds,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowVersionIds: string[];
-    workspaceWorkflowVersionIds: string[];
   }): Promise<Set<string>> {
-    if (
-      coreWorkflowVersionIds.length === 0 &&
-      workspaceWorkflowVersionIds.length === 0
-    ) {
+    if (coreWorkflowVersionIds.length === 0) {
       return new Set();
     }
 
     const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
-        where: [
-          { id: In(coreWorkflowVersionIds) },
-          { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
-        ],
-        select: {
-          id: true,
-          coreWorkflowId: true,
-          workspaceWorkflowVersionId: true,
-        },
+        where: { id: In(coreWorkflowVersionIds) },
+        select: { id: true, coreWorkflowId: true },
       },
     );
 
@@ -246,13 +233,13 @@ export class CoreWorkflowAccessService {
     );
 
     return new Set(
-      coreWorkflowVersions.flatMap(
-        ({ id, coreWorkflowId, workspaceWorkflowVersionId }) =>
-          isDefined(coreWorkflowId) &&
-          inaccessibleCoreWorkflowIds.has(coreWorkflowId)
-            ? [id, workspaceWorkflowVersionId].filter(isDefined)
-            : [],
-      ),
+      coreWorkflowVersions
+        .filter(
+          ({ coreWorkflowId }) =>
+            isDefined(coreWorkflowId) &&
+            inaccessibleCoreWorkflowIds.has(coreWorkflowId),
+        )
+        .map(({ id }) => id),
     );
   }
 
@@ -307,7 +294,7 @@ export class CoreWorkflowAccessService {
       where: { id: In(coreWorkflowIds) },
       select: {
         id: true,
-        visibility: true,
+        isPrivate: true,
         createdByUserWorkspaceId: true,
       },
     });
@@ -315,8 +302,8 @@ export class CoreWorkflowAccessService {
     // Unknown or deleted ids stay a no-op rather than a refusal.
     return coreWorkflows.filter(
       (coreWorkflow) =>
-        coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&
-        !canChangeCoreWorkflowVisibility({
+        !isCoreWorkflowVisibleToUser({
+          isPrivate: coreWorkflow.isPrivate,
           createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
           userWorkspaceId,
         }),

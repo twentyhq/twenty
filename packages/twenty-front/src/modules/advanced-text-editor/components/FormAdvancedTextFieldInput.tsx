@@ -49,6 +49,7 @@ const StyledAdvancedTextFieldFieldContainer = styled.div`
   flex-direction: column;
   flex-grow: 1;
   gap: ${themeCssVariables.spacing[2]};
+  min-height: 0;
   position: relative;
 `;
 

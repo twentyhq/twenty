@@ -50,7 +50,9 @@ exports[`registry-derived override property maps derives the overridable propert
   "logicFunction": [],
   "mcpServer": [],
   "messagingProvider": [],
-  "navigationMenuItem": [],
+  "navigationMenuItem": [
+    "isActive",
+  ],
   "objectMetadata": [
     "openRecordIn",
     "color",
@@ -75,6 +77,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "pageLayoutTabId",
     "conditionalDisplay",
     "conditionalAvailabilityExpression",
+    "conditionalAvailability",
     "isActive",
   ],
   "permissionFlag": [],
@@ -127,6 +130,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "position",
     "aggregateOperation",
     "viewFieldGroupId",
+    "label",
     "isActive",
   ],
   "viewFieldGroup": [

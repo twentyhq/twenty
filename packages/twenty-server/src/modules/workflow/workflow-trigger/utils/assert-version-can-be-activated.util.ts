@@ -2,30 +2,34 @@ import { msg } from '@lingui/core/macro';
 
 import {
   WorkflowVersionStatus,
-  type WorkflowVersionWorkspaceEntity,
-} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+  type WorkflowVersionEntity,
+} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowActionType } from 'twenty-shared/workflow';
-import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTriggerException,
   WorkflowTriggerExceptionCode,
 } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import {
+  type WorkflowTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { assertWaitForEventStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util';
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
-export function assertVersionCanBeActivated(
-  workflowVersion: Pick<
-    WorkflowVersionWorkspaceEntity,
-    'id' | 'status' | 'trigger' | 'steps'
-  >,
-  workflow: Pick<WorkflowEntity, 'lastPublishedVersionId'>,
-) {
-  assertVersionIsValid(workflowVersion);
+type ActivatableWorkflowVersion = Pick<
+  WorkflowVersionEntity,
+  'id' | 'status' | 'steps'
+> & { trigger: WorkflowTrigger | null };
 
-  const isLastPublishedVersion =
-    workflow.lastPublishedVersionId === workflowVersion.id;
+export function assertVersionCanBeActivated({
+  workflowVersion,
+  isLastPublishedVersion,
+}: {
+  workflowVersion: ActivatableWorkflowVersion;
+  isLastPublishedVersion: boolean;
+}) {
+  assertVersionIsValid(workflowVersion);
 
   const isDraft = workflowVersion.status === WorkflowVersionStatus.DRAFT;
 
@@ -44,12 +48,7 @@ export function assertVersionCanBeActivated(
   }
 }
 
-function assertVersionIsValid(
-  workflowVersion: Pick<
-    WorkflowVersionWorkspaceEntity,
-    'id' | 'status' | 'trigger' | 'steps'
-  >,
-) {
+function assertVersionIsValid(workflowVersion: ActivatableWorkflowVersion) {
   if (!workflowVersion.trigger) {
     throw new WorkflowTriggerException(
       'Workflow version does not contain trigger',

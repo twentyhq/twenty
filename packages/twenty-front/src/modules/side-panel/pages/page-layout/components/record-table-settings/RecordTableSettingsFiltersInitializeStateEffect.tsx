@@ -2,6 +2,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { isCurrentRecordViewFilter } from '@/page-layout/widgets/record-table/utils/isCurrentRecordViewFilter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -9,7 +10,6 @@ import { type View } from '@/views/types/View';
 import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { useEffect, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableSettingsFiltersInitializeStateEffectProps = {
   view: View;
@@ -33,48 +33,34 @@ export const RecordTableSettingsFiltersInitializeStateEffect = ({
     currentRecordFiltersComponentState,
   );
 
-  const currentRecordFilterGroups = useAtomComponentStateValue(
-    currentRecordFilterGroupsComponentState,
-  );
-
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
 
   const [hasInitializedFilters, setHasInitializedFilters] = useState(false);
 
-  const stateAlreadyHasFilters =
-    currentRecordFilters.length > 0 || currentRecordFilterGroups.length > 0;
-
+  // The editor state outlives the sub-page (record pages key it apart from the live widget), so reseed it on every open
   useEffect(() => {
     if (hasInitializedFilters) {
       return;
     }
 
-    if (stateAlreadyHasFilters) {
-      setHasInitializedFilters(true);
-      return;
-    }
-
-    const recordFilters = mapViewFiltersToFilters(
-      view.viewFilters,
-      flattenedFieldMetadataItems,
+    setCurrentRecordFilters(
+      mapViewFiltersToFilters(
+        view.viewFilters.filter(
+          (viewFilter) => !isCurrentRecordViewFilter(viewFilter),
+        ),
+        flattenedFieldMetadataItems,
+      ),
     );
-
-    setCurrentRecordFilters(recordFilters);
-
-    if (isDefined(view.viewFilterGroups) && view.viewFilterGroups.length > 0) {
-      setCurrentRecordFilterGroups(
-        mapViewFilterGroupsToRecordFilterGroups(view.viewFilterGroups),
-      );
-    }
-
+    setCurrentRecordFilterGroups(
+      mapViewFilterGroupsToRecordFilterGroups(view.viewFilterGroups ?? []),
+    );
     setHasInitializedFilters(true);
   }, [
     view,
     flattenedFieldMetadataItems,
     hasInitializedFilters,
-    stateAlreadyHasFilters,
     setCurrentRecordFilters,
     setCurrentRecordFilterGroups,
   ]);

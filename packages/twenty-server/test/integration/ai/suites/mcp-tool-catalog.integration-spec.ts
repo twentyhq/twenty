@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
@@ -89,8 +90,10 @@ const listMcpTools = async (
 ): Promise<
   {
     name: string;
+    title?: string;
     inputSchema: { type?: string };
     annotations?: {
+      title?: string;
       readOnlyHint: boolean;
       openWorldHint: boolean;
       destructiveHint: boolean;
@@ -304,7 +307,7 @@ describe('MCP tool catalog (integration)', () => {
   });
 
   describe('generic mode (default)', () => {
-    it('should list record tools that take the object as an argument, without per-object tools', async () => {
+    it('should list record tools and every workspace-independent tool, without per-object tools or meta-tools', async () => {
       const toolNames = (
         await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)
       ).map((tool) => tool.name);
@@ -321,19 +324,87 @@ describe('MCP tool catalog (integration)', () => {
           'merge_records',
           'get_field_metadata',
           'list_object_metadata_names',
-          'execute_tool',
-          'learn_tools',
+          'list_workflows',
+          'create_complete_workflow',
+          'create_complete_dashboard',
+          'get_views',
+          'list_webhooks',
         ]),
       );
 
       for (const unlistedToolName of [
         'find_many_companies',
         'create_one_person',
-        'create_complete_workflow',
         'http_request',
+        'get_tool_catalog',
+        'learn_tools',
+        'execute_tool',
       ]) {
         expect(toolNames).not.toContain(unlistedToolName);
       }
+    });
+
+    it('should flag the tools that overwrite or delete as destructive', async () => {
+      const destructiveHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.destructiveHint],
+        ),
+      );
+
+      expect(destructiveHintByToolName).toMatchObject({
+        create_records: false,
+        update_record: true,
+        update_records: true,
+        upsert_records: true,
+        delete_records: true,
+        merge_records: true,
+        create_object_metadata: false,
+        update_object_metadata: true,
+        delete_object_metadata: true,
+        create_complete_workflow: false,
+        delete_workflow: true,
+        create_draft_from_workflow_version: true,
+        save_campaign: true,
+        send_email: false,
+        get_views: false,
+      });
+    });
+
+    it('should mark the tools that change nothing as read-only', async () => {
+      const readOnlyHintByToolName = Object.fromEntries(
+        (await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH)).map(
+          (tool) => [tool.name, tool.annotations?.readOnlyHint],
+        ),
+      );
+
+      expect(readOnlyHintByToolName).toMatchObject({
+        find_records: true,
+        create_records: false,
+        get_object_metadata: true,
+        get_field_metadata: true,
+        get_views: true,
+        list_workflows: true,
+        search_help_center: true,
+        create_object_metadata: false,
+        update_object_metadata: false,
+        run_workflow_version: false,
+      });
+    });
+
+    it('should give every tool a title', async () => {
+      const tools = await listMcpTools(adminApiKeyToken, GENERIC_MODE_PATH);
+
+      expect(tools.filter((tool) => !isNonEmptyString(tool.title))).toEqual([]);
+      expect(
+        tools.filter((tool) => tool.annotations?.title !== tool.title),
+      ).toEqual([]);
+      expect(
+        Object.fromEntries(tools.map((tool) => [tool.name, tool.title])),
+      ).toMatchObject({
+        find_records: 'Find Records',
+        get_object_metadata: 'Get Object Metadata',
+        search_help_center: 'Search Help Center',
+      });
     });
 
     it('should list the same record tools to a restricted API key', async () => {
@@ -414,7 +485,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(result.isError).toBe(false);
     });
 
-    it('should run an unlisted tool through execute_tool', async () => {
+    it('should keep execute_tool callable for clients that listed it earlier', async () => {
       const result = await callMcpTool(
         adminApiKeyToken,
         'execute_tool',
@@ -427,7 +498,16 @@ describe('MCP tool catalog (integration)', () => {
 
     it('should not name workspace objects in the instructions', async () => {
       const response = await postMcp(
-        { jsonrpc: '2.0', method: 'initialize', id: '1' },
+        {
+          jsonrpc: '2.0',
+          method: 'initialize',
+          id: '1',
+          params: {
+            protocolVersion: '2025-06-18',
+            capabilities: {},
+            clientInfo: { name: 'integration-test', version: '1.0.0' },
+          },
+        },
         adminApiKeyToken,
         GENERIC_MODE_PATH,
       ).expect(200);
@@ -496,7 +576,7 @@ describe('MCP tool catalog (integration)', () => {
       expect(isDispatchFailure(result)).toBe(true);
     });
 
-    it('should mark database read tools read-only and keep execute hints on writes', async () => {
+    it('should mark database read tools read-only, creates non-destructive and other writes destructive', async () => {
       const annotationsByToolName = Object.fromEntries(
         (await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)).map((tool) => [
           tool.name,
@@ -504,15 +584,20 @@ describe('MCP tool catalog (integration)', () => {
         ]),
       );
 
-      expect(annotationsByToolName.find_many_people).toEqual({
+      expect(annotationsByToolName.find_many_people).toMatchObject({
         readOnlyHint: true,
         openWorldHint: false,
         destructiveHint: false,
       });
-      expect(annotationsByToolName.create_one_person).toEqual({
+      expect(annotationsByToolName.create_one_person).toMatchObject({
         readOnlyHint: false,
         openWorldHint: true,
         destructiveHint: false,
+      });
+      expect(annotationsByToolName.update_one_person).toMatchObject({
+        readOnlyHint: false,
+        openWorldHint: true,
+        destructiveHint: true,
       });
     });
 

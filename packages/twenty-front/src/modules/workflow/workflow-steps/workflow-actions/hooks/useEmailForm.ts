@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { type EmailFormData } from '@/workflow/types/EmailFormData';
 import { type WorkflowEmailAction } from '@/workflow/types/WorkflowEmailAction';
 import { type JsonValue } from 'type-fest';
@@ -27,7 +28,9 @@ export const useEmailForm = ({
         bcc: inputRecipients?.bcc ?? '',
       },
       subject: action.settings.input.subject ?? '',
-      body: action.settings.input.body ?? '',
+      body:
+        action.settings.input.body ??
+        serializePlainTextAsAdvancedTextEditorDocument(''),
       files: action.settings.input.files ?? [],
       inReplyTo: action.settings.input.inReplyTo ?? '',
     };

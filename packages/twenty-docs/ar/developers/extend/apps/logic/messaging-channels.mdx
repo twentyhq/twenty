@@ -253,7 +253,7 @@ await createMessageChannel({
 
 يجب أن ينتمي موفّر المراسلة إلى تطبيقك وأن يستخدم موفّر الاتصال الخاص بحساب القناة؛ ولا يمكن تغيير موفّر الاتصال الخاص به بعد المزامنة الأولى. يُطبّق تغيير دالة الإرسال في إصدار لاحق على كل قناة مرتبطة بالموفّر.
 
-تُرسل الردود باستخدام طفرة `sendAppChannelMessage`، التي تأخذ القناة وسلسلة المحادثة، وإما `text` أو، بالنسبة إلى المزوّدين الذين يكون `conversationStyle` لديهم هو `'email'`، كتلة `email` (`to` و`cc` و`bcc` و`subject`، ونصًا منسقًا `body`، و`inReplyTo`)، و`idempotencyKey` (معرّف UUID ينشئه العميل لكل رد ويعيد استخدامه عند إعادة المحاولة)، وتُشغّل دالة المزوّد:
+تُرسل الردود باستخدام عملية التغيير `sendAppChannelMessage`، التي تأخذ القناة، وسلسلة الرسائل، وإما `text` أو، بالنسبة إلى المزوّدين الذين تكون قيمة `conversationStyle` لديهم هي `'email'`، كتلة `email` (`to` و`cc` و`bcc` و`subject` و`body` كمستند بريد إلكتروني مُسلسل، و`JSON.stringify` لـ `{ type: 'doc', attrs: { schemaVersion: 1 }, content: [...] }`، و`inReplyTo`)، و`idempotencyKey` (معرّف UUID ينشئه العميل لكل رد ويعيد استخدامه عند إعادة محاولته)، ويشغّل دالة المزوّد:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';

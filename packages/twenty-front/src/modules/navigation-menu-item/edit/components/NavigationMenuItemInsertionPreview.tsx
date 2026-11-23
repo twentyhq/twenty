@@ -13,7 +13,7 @@ import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type NavigationMenuItemInsertionPreviewProps = {
-  folderId: string | null;
+  parentId: string | null;
   index: number;
   sectionId: NavigationSections;
   subItemState?: NavigationDrawerSubItemState;
@@ -25,7 +25,7 @@ const StyledPreview = styled.div<{ isInFolder: boolean }>`
 `;
 
 export const NavigationMenuItemInsertionPreview = ({
-  folderId,
+  parentId,
   index,
   sectionId,
   subItemState,
@@ -59,7 +59,7 @@ export const NavigationMenuItemInsertionPreview = ({
 
   if (
     navigationMenuItemInsertionPreview?.section !== section ||
-    navigationMenuItemInsertionPreview.folderId !== folderId ||
+    navigationMenuItemInsertionPreview.parentId !== parentId ||
     navigationMenuItemInsertionPreview.index !== index
   ) {
     return null;
@@ -68,7 +68,7 @@ export const NavigationMenuItemInsertionPreview = ({
   return (
     <StyledPreview
       ref={setAnchor}
-      isInFolder={isDefined(folderId)}
+      isInFolder={isDefined(parentId)}
       role="status"
       aria-label={t`Select a menu item`}
     >
@@ -76,7 +76,7 @@ export const NavigationMenuItemInsertionPreview = ({
         label={t`Select a menu item`}
         Icon={getIcon('IconFold')}
         variant="placeholder"
-        indentationLevel={isDefined(folderId) ? 2 : 1}
+        indentationLevel={isDefined(parentId) ? 2 : 1}
         subItemState={subItemState}
       />
     </StyledPreview>

@@ -41,7 +41,12 @@ const fathomListCallsByParticipantInputSchema: InputJsonSchema = {
 };
 
 type FathomListCallsByParticipantResult =
-  | { success: true; count: number; calls: FathomCallSummary[] }
+  | {
+      success: true;
+      count: number;
+      calls: FathomCallSummary[];
+      isTruncated: boolean;
+    }
   | { success: false; error: string };
 
 const clampLimit = (limit: unknown): number =>
@@ -79,9 +84,10 @@ export const fathomListCallsByParticipantHandler = async (
       normalizedInviteeEmail: participantEmail,
     });
   const matchingMeetingsByRecordingId = new Map<number, Meeting>();
+  const listings: Awaited<ReturnType<typeof listFathomMeetings>>[] = [];
 
   for (const connection of connections) {
-    const meetings = await listFathomMeetings({
+    const listing = await listFathomMeetings({
       fathomClient: createFathomClient(
         getConnectionAccessTokenOrThrow(connection),
       ),
@@ -89,7 +95,9 @@ export const fathomListCallsByParticipantHandler = async (
         listedMeetings.filter(hasParticipant).length >= limit,
     });
 
-    for (const meeting of meetings.filter(hasParticipant)) {
+    listings.push(listing);
+
+    for (const meeting of listing.meetings.filter(hasParticipant)) {
       matchingMeetingsByRecordingId.set(meeting.recordingId, meeting);
     }
   }
@@ -103,7 +111,12 @@ export const fathomListCallsByParticipantHandler = async (
     .slice(0, limit)
     .map(mapFathomMeetingToCallSummary);
 
-  return { success: true, count: calls.length, calls };
+  return {
+    success: true,
+    count: calls.length,
+    calls,
+    isTruncated: listings.some(({ isTruncated }) => isTruncated),
+  };
 };
 
 export default defineLogicFunction({
@@ -128,6 +141,7 @@ export default defineLogicFunction({
           success: { type: 'boolean' },
           error: { type: 'string' },
           count: { type: 'number' },
+          isTruncated: { type: 'boolean' },
           calls: {
             type: 'array',
             items: {

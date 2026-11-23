@@ -18,6 +18,7 @@ import { buildRetryableFathomError } from 'src/logic-functions/utils/build-retry
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
+import { excludeFathomMeetingsImportedByOtherConnections } from 'src/logic-functions/utils/exclude-fathom-meetings-imported-by-other-connections.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomRequeueDelay } from 'src/logic-functions/utils/get-fathom-requeue-delay.util';
@@ -66,8 +67,6 @@ export const fathomBackfillWorkerHandler = async (
       ),
       createdAfter,
       cursor: payload.cursor,
-      // Fathom can't name a token's account, so the handle (member's email) stands in for it.
-      recordedBy: connection.scope === 'USER' ? [connection.handle] : undefined,
     });
   } catch (error) {
     const delay = getFathomRequeueDelay({ error, now: new Date() });
@@ -109,11 +108,19 @@ export const fathomBackfillWorkerHandler = async (
     return { success: true, createdAfter, requeueDelay: delay };
   }
 
+  const coreApiClient = createFathomCoreApiClient();
   const serializedMeetings = meetingPage.meetings.map(serializeFathomMeeting);
-  const importableMeetings = await excludeDeletedFathomMeetings({
-    coreApiClient: createFathomCoreApiClient(),
+  const undeletedMeetings = await excludeDeletedFathomMeetings({
+    coreApiClient,
     meetings: serializedMeetings,
   });
+  const importableMeetings =
+    await excludeFathomMeetingsImportedByOtherConnections({
+      coreApiClient,
+      meetings: undeletedMeetings,
+      connectedAccountId: payload.connectedAccountId,
+      connectionScope: connection.scope,
+    });
   const meetingBatches = chunkIntoBatches(
     importableMeetings,
     FATHOM_BACKFILL_BATCH_SIZE,
@@ -166,7 +173,9 @@ export const fathomBackfillWorkerHandler = async (
     createdAfter,
     discoveredMeetingCount: meetingPage.meetings.length,
     skippedDeletedMeetingCount:
-      serializedMeetings.length - importableMeetings.length,
+      serializedMeetings.length - undeletedMeetings.length,
+    skippedMeetingImportedByOtherConnectionCount:
+      undeletedMeetings.length - importableMeetings.length,
     enqueuedBatchCount: meetingBatches.length,
     hasMoreMeetings: hasMoreMeetings && !isPageBoundReached,
   };

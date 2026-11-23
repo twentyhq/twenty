@@ -402,16 +402,6 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
       }),
     },
-    targetWorkflowVersion: {
-      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
-        relationTargetObjectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-      }),
-    },
     targetWorkflowRun: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -581,6 +571,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     recurringEventExternalId: {
       universalIdentifier: '20202020-c58f-4c69-9bf8-9518fa31aa50',
+    },
+    accountOwner: {
+      universalIdentifier: 'c87b6c5a-d761-4d8f-b62e-af459a11ba1f',
+    },
+    handle: {
+      universalIdentifier: 'f3a2e285-abb7-44c5-a4bf-06a44101a33f',
     },
   },
   calendarEventParticipant: {
@@ -993,6 +989,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     messageFolders: {
       universalIdentifier: '9bfc9da7-ae2d-44fd-9563-ede90c5d6222',
+    },
+    accountOwner: {
+      universalIdentifier: 'a54a940b-d839-4c47-a02c-5bab7e300841',
+    },
+    handle: {
+      universalIdentifier: 'ff274ea7-69e0-4d54-9389-8ec8f14c7073',
     },
   },
   messageChannelMessageAssociationMessageFolder: {
@@ -1510,9 +1512,6 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     ),
     name: { universalIdentifier: '20202020-b840-4253-aef9-4e5013694587' },
-    workflowVersion: {
-      universalIdentifier: '20202020-2f52-4ba8-8dc4-d0d6adb9578d',
-    },
     enqueuedAt: {
       universalIdentifier: '20202020-f1e3-4de1-a461-b5c4fdbc861d',
     },
@@ -1537,33 +1536,6 @@ export const STANDARD_OBJECT_FIELDS = {
           TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
         objectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
-        relationTargetObjectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
-      }),
-    },
-  },
-  workflowVersion: {
-    ...buildStandardObjectSystemFields(
-      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
-    ),
-    name: { universalIdentifier: '20202020-a12f-4cca-9937-a2e40cc65509' },
-    trigger: {
-      universalIdentifier: '20202020-4eae-43e7-86e0-212b41a30b48',
-    },
-    status: {
-      universalIdentifier: '20202020-5a34-440e-8a25-39d8c3d1d4cf',
-    },
-    runs: { universalIdentifier: '20202020-1d08-46df-901a-85045f18099a' },
-    steps: { universalIdentifier: '20202020-5988-4a64-b94a-1f9b7b989039' },
-    coreWorkflowVersionId: {
-      universalIdentifier: '20202020-58b4-46e8-b6d2-f1f3c74cf7f4',
-    },
-    timelineActivities: {
-      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
       }),
@@ -1615,6 +1587,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     calendarEventParticipants: {
       universalIdentifier: '20202020-0dbc-4841-9ce1-3e793b5b3512',
+    },
+    accountOwnerForCalendarChannelEventAssociations: {
+      universalIdentifier: '56aec2c7-5ae1-413c-81e8-880623b8f8b2',
+    },
+    accountOwnerForMessageChannelMessageAssociations: {
+      universalIdentifier: 'cfe10518-02e1-456f-a41a-0cc99b1686fe',
     },
     timelineActivities: {
       universalIdentifier: '20202020-e15b-47b8-94fe-8200e3c66615',

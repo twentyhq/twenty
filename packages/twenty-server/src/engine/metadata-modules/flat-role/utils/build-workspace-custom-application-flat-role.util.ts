@@ -28,6 +28,7 @@ export const buildWorkspaceCustomApplicationFlatRole = ({
     description: 'Default role of the workspace custom application',
     icon: 'IconApps',
     isEditable: false,
+    isSystemSideEffect: false,
     canUpdateAllSettings: true,
     canAccessAllTools: true,
     canAccessAllAgentChatChannels: true,

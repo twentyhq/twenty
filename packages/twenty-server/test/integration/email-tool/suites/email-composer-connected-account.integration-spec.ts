@@ -1,6 +1,7 @@
 import { EmailOperation } from 'twenty-shared/types';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -16,7 +17,7 @@ const UNKNOWN_CONNECTED_ACCOUNT_ID = '20202020-0000-4000-8000-00000000beef';
 const baseParams = {
   recipients: { to: 'customer@example.com' },
   subject: 'Subject',
-  body: '<p>body</p>',
+  body: buildEmailDocument('body'),
   files: [],
 };
 

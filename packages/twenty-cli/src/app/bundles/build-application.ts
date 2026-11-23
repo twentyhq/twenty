@@ -1,3 +1,4 @@
+import { collectEntrySourcePaths } from '@/app/bundles/collect-entry-source-paths';
 import { recordWatchFile } from '@/app/dev/collect-watch-inputs';
 import crypto from 'crypto';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -51,6 +52,8 @@ export type BuiltFileInfo = {
 
 export type AppBuildResult = {
   builtFileInfos: Map<string, BuiltFileInfo>;
+  frontComponentSourcePaths: Map<string, string[]>;
+  logicFunctionSourcePaths: Map<string, string[]>;
 };
 
 export const buildApplication = async (
@@ -123,7 +126,7 @@ export const buildApplication = async (
         })
       : null;
 
-  const styleInputs: string[] = [];
+  const styleInputs = new Map<string, string[]>();
   const frontBuild = await esbuildOneShotBuild({
     appPath: options.appPath,
     sourcePaths: frontComponents,
@@ -141,7 +144,8 @@ export const buildApplication = async (
         : {}),
       plugins: [
         ...getFrontComponentBuildPlugins({
-          onSourceFiles: (paths) => styleInputs.push(...paths),
+          onSourceFiles: ({ paths, entryPath }) =>
+            styleInputs.set(entryPath, paths),
           getSharedDependenciesBuildContext: () =>
             sharedDependenciesBuildContext,
         }),
@@ -157,8 +161,19 @@ export const buildApplication = async (
     buildInputs: [
       ...Object.keys(logicBuild?.inputs ?? {}).map((path) => resolve(path)),
       ...Object.keys(frontBuild?.inputs ?? {}).map((path) => resolve(path)),
-      ...styleInputs,
+      ...[...styleInputs.values()].flat(),
     ],
+  });
+  const frontComponentSourcePaths = collectEntrySourcePaths({
+    appPath: options.appPath,
+    entryPaths: frontComponents,
+    build: frontBuild,
+    additionalInputs: styleInputs,
+  });
+  const logicFunctionSourcePaths = collectEntrySourcePaths({
+    appPath: options.appPath,
+    entryPaths: logicFunctions,
+    build: logicBuild,
   });
   const builtPaths = new Set(
     [...builtFileInfos.values()].map(({ builtPath }) => builtPath),
@@ -216,7 +231,11 @@ export const buildApplication = async (
     dereferenceSymlinks: options.dereferenceSymlinks,
   });
 
-  return { builtFileInfos };
+  return {
+    builtFileInfos,
+    frontComponentSourcePaths,
+    logicFunctionSourcePaths,
+  };
 };
 
 const writeGeneratedAsset = async ({

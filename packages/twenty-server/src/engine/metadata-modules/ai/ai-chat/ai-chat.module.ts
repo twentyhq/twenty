@@ -52,7 +52,6 @@ import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatConversationAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-conversation-access.service';
 import { AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
-import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -60,6 +59,11 @@ import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
 import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
+import { TabPresenceModule } from 'src/engine/core-modules/tab-presence/tab-presence.module';
+import { WebPushModule } from 'src/engine/core-modules/web-push/web-push.module';
+import { AgentChatWebPushNotificationListener } from 'src/engine/metadata-modules/ai/ai-chat/listeners/agent-chat-web-push-notification.listener';
+import { SendAgentChatWebPushNotificationsJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications.job';
+import { AgentChatWebPushNotificationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-web-push-notification.service';
 
 @Module({
   imports: [
@@ -86,8 +90,13 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     ToolProviderModule,
     DashboardToolsModule,
     AiFrontComponentModule,
+    WebPushModule,
+    TabPresenceModule,
   ],
   providers: [
+    AgentChatWebPushNotificationService,
+    AgentChatWebPushNotificationListener,
+    SendAgentChatWebPushNotificationsJob,
     AgentChatActorService,
     AiChatUsageService,
     AiChatUsageResolver,
@@ -110,7 +119,6 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
 
     AgentChatConversationAccessService,
     AgentChatService,
-    AgentChatThreadTargetService,
     AgentChatStreamingService,
     AgentChatTurnPreflightService,
     WorkspaceSetupChatService,

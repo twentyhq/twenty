@@ -7,6 +7,7 @@ type SignInWithLocalOidcIssuerArgs = {
   identityProviderId: string;
   email: string;
   workspaceInviteHash?: string;
+  workspacePersonalInviteToken?: string;
 };
 
 // Drives the real OIDC login and callback, with the local issuer asserting the given email
@@ -14,9 +15,14 @@ export const signInWithLocalOidcIssuer = async ({
   identityProviderId,
   email,
   workspaceInviteHash,
+  workspacePersonalInviteToken,
 }: SignInWithLocalOidcIssuerArgs) => {
   const { data } = await getAuthorizationUrlForSso({
-    input: { identityProviderId, workspaceInviteHash },
+    input: {
+      identityProviderId,
+      workspaceInviteHash,
+      workspacePersonalInviteToken,
+    },
   });
 
   const { authorizationUrl, sessionCookie } = await startOidcLogin(

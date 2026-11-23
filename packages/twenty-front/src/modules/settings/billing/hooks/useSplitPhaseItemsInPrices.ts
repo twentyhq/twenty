@@ -1,37 +1,20 @@
+import { useAllBillingPrices } from '@/settings/billing/hooks/useAllBillingPrices';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
-import { usePriceAndBillingUsageByPriceId } from '@/settings/billing/hooks/usePriceAndBillingUsageByPriceId';
+import { splitPhaseItemsInPricesOrThrow } from '@/settings/billing/utils/splitPhaseItemsInPricesOrThrow';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  BillingUsageType,
-  type BillingPriceLicensed,
-} from '~/generated-metadata/graphql';
 
 export const useSplitPhaseItemsInPrices = () => {
   const { nextBillingPhase } = useNextBillingPhase();
-  const { getPriceAndBillingUsageByPriceId } =
-    usePriceAndBillingUsageByPriceId();
+  const { allBillingPrices } = useAllBillingPrices();
 
-  const splitedPhaseItemsInPrices = (nextBillingPhase?.items ?? []).reduce(
-    (acc, item) => {
-      const { price, billingUsage } = getPriceAndBillingUsageByPriceId(
-        item.price,
-      );
-
-      if (billingUsage === BillingUsageType.LICENSED) {
-        const licensedPrice = price as BillingPriceLicensed;
-        if (isDefined(licensedPrice.creditAmount)) {
-          acc.nextResourceCreditPrice = licensedPrice;
-        } else {
-          acc.nextBasePrice = licensedPrice;
-        }
-      }
-      return acc;
-    },
-    {} as {
-      nextBasePrice: BillingPriceLicensed | undefined;
-      nextResourceCreditPrice: BillingPriceLicensed | undefined;
-    },
-  );
+  const splitedPhaseItemsInPrices: Partial<
+    ReturnType<typeof splitPhaseItemsInPricesOrThrow>
+  > = isDefined(nextBillingPhase)
+    ? splitPhaseItemsInPricesOrThrow({
+        phaseItems: nextBillingPhase.items,
+        billingPrices: allBillingPrices,
+      })
+    : {};
 
   return { splitedPhaseItemsInPrices };
 };

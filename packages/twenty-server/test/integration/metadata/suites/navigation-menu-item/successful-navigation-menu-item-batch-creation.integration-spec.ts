@@ -92,14 +92,14 @@ describe('NavigationMenuItem batch creation should succeed', () => {
   });
 
   it('should create a folder and a child item in a single batch', async () => {
-    const folderId = faker.string.uuid();
+    const parentId = faker.string.uuid();
     const targetRecordId = faker.string.uuid();
 
     const { data } = await createManyNavigationMenuItems({
       expectToFail: false,
       inputs: [
         {
-          id: folderId,
+          id: parentId,
           type: NavigationMenuItemType.FOLDER,
           name: 'Test Folder',
           position: 1,
@@ -108,7 +108,7 @@ describe('NavigationMenuItem batch creation should succeed', () => {
           type: NavigationMenuItemType.RECORD,
           targetRecordId,
           targetObjectMetadataId: personObjectMetadataId,
-          folderId,
+          parentId,
           position: 1,
         },
       ],
@@ -123,14 +123,14 @@ describe('NavigationMenuItem batch creation should succeed', () => {
     expect(items).toHaveLength(2);
 
     expect(items[0]).toMatchObject({
-      id: folderId,
+      id: parentId,
       type: NavigationMenuItemType.FOLDER,
       name: 'Test Folder',
     });
 
     expect(items[1]).toMatchObject({
       targetRecordId,
-      folderId,
+      parentId,
     });
   });
 

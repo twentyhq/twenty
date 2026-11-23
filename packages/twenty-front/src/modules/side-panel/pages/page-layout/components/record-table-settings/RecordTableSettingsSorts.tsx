@@ -1,18 +1,13 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecordTableWidgetSortCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetSortCallbacks';
-import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
 import { RecordTableSettingsSortsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsInitializeStateEffect';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
+import { type View } from '@/views/types/View';
 import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon/provider';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
 const StyledSortSettingsContainer = styled.div`
@@ -23,64 +18,32 @@ const StyledSortSettingsContainer = styled.div`
 `;
 
 type RecordTableSettingsSortsProps = {
-  viewId: string;
+  view: View;
   widgetId: string;
   pageLayoutId: string;
-  objectMetadataId: string;
 };
 
 export const RecordTableSettingsSorts = ({
-  viewId,
+  view,
   widgetId,
   pageLayoutId,
-  objectMetadataId,
 }: RecordTableSettingsSortsProps) => {
   const { t } = useLingui();
-  const { view } = useRecordTableWidgetViewForDisplay({
-    viewId,
-    widgetId,
-    pageLayoutId,
-  });
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: objectMetadataId,
+    objectId: view.objectMetadataId,
   });
-
-  const { getIcon } = useIcons();
 
   const recordIndexId = getRecordIndexIdFromObjectNamePluralAndViewId(
     objectMetadataItem.namePlural,
-    viewId,
+    view.id,
   );
 
   const { handleSortUpdate } = useRecordTableWidgetSortCallbacks({
     pageLayoutId,
     widgetId,
-    viewId,
+    viewId: view.id,
     recordIndexId,
   });
-
-  if (!isDefined(view)) {
-    return null;
-  }
-
-  const sortableFieldOptions = objectMetadataItem.fields
-    .filter(filterSortableFieldMetadataItems)
-    .map((field) => ({
-      Icon: getIcon(field.icon),
-      label: field.label,
-      value: field.id,
-    }));
-
-  const directionOptions: Array<SelectOption<ViewSortDirection>> = [
-    {
-      label: t`Ascending`,
-      value: ViewSortDirection.ASC,
-    },
-    {
-      label: t`Descending`,
-      value: ViewSortDirection.DESC,
-    },
-  ];
 
   return (
     <StyledSortSettingsContainer>
@@ -89,8 +52,7 @@ export const RecordTableSettingsSorts = ({
         value={{ instanceId: recordIndexId }}
       >
         <RecordTableSettingsSortsContent
-          sortableFieldOptions={sortableFieldOptions}
-          directionOptions={directionOptions}
+          fieldMetadataItems={objectMetadataItem.fields}
           onUpdate={handleSortUpdate}
         />
         <RecordTableSettingsSortsInitializeStateEffect view={view} />

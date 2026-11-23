@@ -1,4 +1,7 @@
-import { type NavigationMenuItemManifest } from 'twenty-shared/application';
+import {
+  normalizeNavigationMenuItemManifest,
+  type NavigationMenuItemManifest,
+} from 'twenty-shared/application';
 
 import { type UniversalFlatNavigationMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-navigation-menu-item.type';
 
@@ -24,8 +27,10 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
         navigationMenuItemManifest.viewUniversalIdentifier ?? null,
       link: navigationMenuItemManifest.link ?? null,
       nativePageKey: navigationMenuItemManifest.nativePageKey ?? null,
-      folderUniversalIdentifier:
-        navigationMenuItemManifest.folderUniversalIdentifier ?? null,
+      builtInSectionKey: navigationMenuItemManifest.builtInSectionKey ?? null,
+      parentUniversalIdentifier:
+        normalizeNavigationMenuItemManifest(navigationMenuItemManifest)
+          .parentUniversalIdentifier ?? null,
       targetObjectMetadataUniversalIdentifier:
         navigationMenuItemManifest.targetObjectUniversalIdentifier ?? null,
       pageLayoutUniversalIdentifier:
@@ -35,6 +40,8 @@ export const fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem =
       agentUniversalIdentifier: null,
       targetRecordId: null,
       userWorkspaceId: null,
+      isActive: true,
+      overrides: null,
       createdAt: now,
       updatedAt: now,
     };

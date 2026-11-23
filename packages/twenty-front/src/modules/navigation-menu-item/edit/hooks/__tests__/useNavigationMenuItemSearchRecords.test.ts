@@ -71,8 +71,9 @@ describe('navigation record search duplicates', () => {
       id: 'navigation-ivan',
       type: NavigationMenuItemType.RECORD,
       targetRecordId: record.recordId,
-      folderId: 'folder',
+      parentId: 'folder',
       position: 0,
+      isActive: true,
       createdAt: '',
       updatedAt: '',
     };

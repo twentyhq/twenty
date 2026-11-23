@@ -17,6 +17,7 @@ const minimalValid: PartnerApplicationRequest = {
   twentyExperience: ['WORKFLOWS'],
   twentyExperienceNotes: validExperienceNotes,
   twentyExperienceProofLink: 'https://www.loom.com/share/example',
+  acceptsTerms: true,
 };
 
 const fullValid: PartnerApplicationRequest = {

@@ -253,7 +253,7 @@ await createMessageChannel({
 
 El proveedor de mensajería debe pertenecer a su aplicación y usar el proveedor de conexión de la cuenta del canal; su proveedor de conexión no puede cambiar después de la primera sincronización. Cambiar la función de envío en una versión posterior se aplica a todos los canales asociados al proveedor.
 
-Las respuestas se envían con la mutación `sendAppChannelMessage`, que recibe el canal, el hilo, ya sea `text` o, para los proveedores cuyo `conversationStyle` es `'email'`, un bloque `email` (`to`, `cc`, `bcc`, `subject`, `body` de texto enriquecido, `inReplyTo`), y una `idempotencyKey` (un UUID que el cliente genera para cada respuesta y reutiliza al reintentarla), y ejecuta la función del proveedor:
+Las respuestas se envían con la mutación `sendAppChannelMessage`, que acepta el canal, el hilo, ya sea `text` o, para los proveedores cuyo `conversationStyle` es `'email'`, un bloque `email` (`to`, `cc`, `bcc`, `subject`, `body` como un documento de correo electrónico serializado, `JSON.stringify` de `{ type: 'doc', attrs: { schemaVersion: 1 }, content: [...] }`, e `inReplyTo`), y una `idempotencyKey` (un UUID que el cliente genera para cada respuesta y reutiliza al volver a intentarlo), y ejecuta la función del proveedor:
 
 ```ts src/logic-functions/handlers/linkedin-send-message-handler.ts
 import { type SendAppMessagePayload } from 'twenty-sdk/logic-function';

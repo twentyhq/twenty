@@ -6,9 +6,13 @@ export const mapViewFieldToRecordField = (viewField: ViewField) => {
     id: viewField.id,
     fieldMetadataItemId: viewField.fieldMetadataId,
     isVisible: viewField.isVisible,
+    isCanonical: viewField.isCanonical,
     position: viewField.position,
     size: viewField.size,
     aggregateOperation: viewField.aggregateOperation,
+    relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
+    relationScope: viewField.relationScope,
+    label: viewField.label,
   };
 
   return recordField;

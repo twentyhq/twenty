@@ -1,7 +1,7 @@
 import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { type ToolCategory } from 'twenty-shared/ai';
+import { isSnakeCaseToolName, type ToolCategory } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -16,7 +16,6 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { buildInvalidToolArgumentsOutput } from 'src/engine/core-modules/tool-provider/utils/build-invalid-tool-arguments-output.util';
 import { buildToolInputJsonSchemaOrThrow } from 'src/engine/core-modules/tool-provider/utils/build-tool-input-json-schema-or-throw.util';
 import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provider/utils/build-tool-not-available-output.util';
-import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { AccessPolicyService } from 'src/engine/guards/access-policy/access-policy.service';
@@ -83,7 +82,14 @@ export class DefinedToolRegistryService implements OnModuleInit {
       .filter((_, index) => isAvailableByTool[index])
       .map(
         ({
-          options: { name, description, category, icon },
+          options: {
+            name,
+            description,
+            category,
+            icon,
+            isDestructive,
+            isReadOnly,
+          },
           inputJsonSchema,
         }) => {
           const entry: ToolIndexEntry = {
@@ -93,6 +99,8 @@ export class DefinedToolRegistryService implements OnModuleInit {
             category,
             executionRef: { kind: 'static', toolId: name },
             ...(isDefined(icon) && { icon }),
+            ...(isDestructive && { isDestructive }),
+            ...(isReadOnly && { isReadOnly }),
           };
 
           return includeSchemas

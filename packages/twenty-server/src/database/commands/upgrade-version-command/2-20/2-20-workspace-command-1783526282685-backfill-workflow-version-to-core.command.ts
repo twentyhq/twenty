@@ -5,10 +5,10 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type LegacyWorkflowVersionWorkspaceEntity } from 'src/database/commands/upgrade-version-command/2-20/types/legacy-workflow-version-workspace-entity.type';
+import { LegacyWorkflowVersionCoreUpsertService } from 'src/database/commands/upgrade-version-command/2-20/services/legacy-workflow-version-core-upsert.service';
 
 @RegisteredWorkspaceCommand('2.20.0', 1783526282685)
 @Command({
@@ -20,7 +20,7 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly legacyWorkflowVersionCoreUpsertService: LegacyWorkflowVersionCoreUpsertService,
   ) {
     super(workspaceIteratorService);
   }
@@ -62,10 +62,10 @@ export class BackfillWorkflowVersionToCoreCommand extends ProvisionedWorkspaceCo
       return;
     }
 
-    await this.workflowVersionCoreSyncService.upsertToCore(
+    await this.legacyWorkflowVersionCoreUpsertService.upsert({
       workspaceId,
-      workspaceWorkflowVersions,
-    );
+      workflowVersions: workspaceWorkflowVersions,
+    });
 
     this.logger.log(
       `Backfilled ${workspaceWorkflowVersions.length} workflowVersion row(s) into core for workspace ${workspaceId}`,

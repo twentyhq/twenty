@@ -25,6 +25,7 @@ export const objectPermissionsByObjectMetadataIdSelector =
             uneditableFields: objectRecordsPermissions.uneditableFields,
             rowLevelRecordsPermissions:
               objectRecordsPermissions.rowLevelRecordsPermissions,
+            canReadSomeRecords: objectRecordsPermissions.canReadSomeRecords,
           },
         ]),
       );

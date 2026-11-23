@@ -1,6 +1,3 @@
-import { WorkflowVisibility } from 'twenty-shared/types';
-
-import { DEFAULT_WORKFLOW_JOB_CONFIG } from 'src/engine/core-modules/workflow/constants/default-workflow-job-config.constant';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow } from 'src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
@@ -20,8 +17,7 @@ const existingFlatWorkflow: FlatWorkflow = {
   lastPublishedCoreWorkflowVersionId: null,
   workspaceWorkflowId: null,
   isSystem: false,
-  jobConfig: DEFAULT_WORKFLOW_JOB_CONFIG,
-  visibility: WorkflowVisibility.WORKSPACE,
+  isPrivate: false,
   createdByUserWorkspaceId: CREATOR_USER_WORKSPACE_ID,
   navigationMenuItemIds: [],
   navigationMenuItemUniversalIdentifiers: [],
@@ -39,7 +35,7 @@ describe('fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow', () => {
     ).toEqual(existingFlatWorkflow);
   });
 
-  it('should rename without touching the visibility or the creator', () => {
+  it('should rename without touching the privacy or the creator', () => {
     expect(
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow,
@@ -59,28 +55,28 @@ describe('fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow', () => {
     ).toEqual({ ...existingFlatWorkflow, name: 'Offboarding' });
   });
 
-  it('should set the caller as the creator when the visibility is provided', () => {
+  it('should set the caller as the creator when the privacy is provided', () => {
     expect(
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow: {
           ...existingFlatWorkflow,
           createdByUserWorkspaceId: null,
         },
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
         userWorkspaceId: OTHER_USER_WORKSPACE_ID,
       }),
     ).toEqual({
       ...existingFlatWorkflow,
-      visibility: WorkflowVisibility.PRIVATE,
+      isPrivate: true,
       createdByUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
     });
   });
 
-  it('should set the caller as the creator even when the visibility does not change', () => {
+  it('should set the caller as the creator even when the privacy does not change', () => {
     expect(
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow,
-        visibility: WorkflowVisibility.WORKSPACE,
+        isPrivate: false,
         userWorkspaceId: OTHER_USER_WORKSPACE_ID,
       }),
     ).toEqual({
@@ -89,26 +85,26 @@ describe('fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow', () => {
     });
   });
 
-  it('should apply the name and the visibility together', () => {
+  it('should apply the name and the privacy together', () => {
     expect(
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow,
         name: 'Offboarding',
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
         userWorkspaceId: CREATOR_USER_WORKSPACE_ID,
       }),
     ).toEqual({
       ...existingFlatWorkflow,
       name: 'Offboarding',
-      visibility: WorkflowVisibility.PRIVATE,
+      isPrivate: true,
     });
   });
 
-  it('should refuse a visibility change from a caller that is not a workspace member', () => {
+  it('should refuse a privacy change from a caller that is not a workspace member', () => {
     expect(() =>
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow,
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
         userWorkspaceId: undefined,
       }),
     ).toThrow(WorkflowQueryValidationException);

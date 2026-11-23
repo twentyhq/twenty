@@ -117,7 +117,7 @@ Rularea pusă în coadă moștenește utilizatorul activ al funcției care a pus
 
 ## Memoria cozii
 
-Sarcinile puse în coadă rămân în memorie până se finalizează, astfel încât fiecare spațiu de lucru și fiecare aplicație pot deține doar o parte din memoria cozii pe care celelalte o lasă liberă. O singură sarcină este, de asemenea, limitată la 5 MB de sarcină utilă serializată. Aceste limite se aplică numai pe serverele care le activează (`IS_REDIS_MEMORY_FAIRNESS_ENABLED`).
+Sarcinile puse în coadă rămân în memorie până se finalizează, astfel încât fiecare spațiu de lucru și fiecare aplicație pot deține doar o parte din memoria cozii pe care celelalte o lasă liberă. Un singur job este, de asemenea, limitat la 20 MB de date utile serializate.
 
 `enqueueJobs` raportează ce a utilizat fiecare apel. Aceste câmpuri necesită Twenty 2.57.0 sau o versiune ulterioară, care este și versiunea minimă a serverului pentru SDK:
 

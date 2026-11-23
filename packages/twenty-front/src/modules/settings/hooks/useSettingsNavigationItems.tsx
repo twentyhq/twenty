@@ -7,7 +7,6 @@ import { billingState } from '@/client-config/states/billingState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type NavigationDrawerItemModifier } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemModifier';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemIndentationLevel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,8 +14,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   IconAppWindow,
   IconApps,
-  IconAt,
-  IconCalendarEvent,
   IconCode,
   IconColorSwatch,
   type IconComponent,
@@ -24,7 +21,6 @@ import {
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy,
-  IconMail,
   IconMessage,
   IconMessageCircle,
   IconServer,
@@ -33,10 +29,7 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 import { useLingui } from '@lingui/react/macro';
 
@@ -74,9 +67,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
 
   return [
     {
@@ -93,32 +83,10 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconColorSwatch,
         },
         {
-          label: isAppPreferencesEnabled ? t`Apps preferences` : t`Accounts`,
-          path: isAppPreferencesEnabled
-            ? SettingsPath.AppPreferences
-            : SettingsPath.Accounts,
-          Icon: isAppPreferencesEnabled ? IconApps : IconAt,
+          label: t`Apps preferences`,
+          path: SettingsPath.AppPreferences,
+          Icon: IconApps,
           isHidden: !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
-          subItems: isAppPreferencesEnabled
-            ? undefined
-            : [
-                {
-                  label: t`Emails`,
-                  path: SettingsPath.AccountsEmails,
-                  Icon: IconMail,
-                  isHidden:
-                    !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
-                  indentationLevel: 2,
-                },
-                {
-                  label: t`Calendars`,
-                  path: SettingsPath.AccountsCalendars,
-                  Icon: IconCalendarEvent,
-                  isHidden:
-                    !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
-                  indentationLevel: 2,
-                },
-              ],
         },
       ],
     },
