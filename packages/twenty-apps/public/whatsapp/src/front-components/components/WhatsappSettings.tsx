@@ -23,6 +23,7 @@ import { WhatsappReadStatusSection } from 'src/front-components/components/Whats
 import { WhatsappVisibilitySection } from 'src/front-components/components/WhatsappVisibilitySection';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { TimeoutEffect } from 'src/front-components/components/TimeoutEffect';
+import { createSettingsSaveQueue } from 'src/front-components/utils/create-settings-save-queue.util';
 import { getNextWhatsappSyncProgress } from 'src/front-components/utils/get-next-whatsapp-sync-progress.util';
 import { notifyWhatsappHistoryImportEnd } from 'src/front-components/utils/notify-whatsapp-history-import-end.util';
 import { postWhatsappSettingsRouteOrThrow } from 'src/front-components/utils/post-whatsapp-settings-route-or-throw.util';
@@ -67,7 +68,9 @@ export const WhatsappSettings = () => {
     progress: number;
   } | null>(null);
   const lastHistoryImportRef = useRef<WhatsappHistoryImportState | null>(null);
-  const settingsSaveQueueRef = useRef<Promise<void>>(Promise.resolve());
+  const [settingsSaveQueue] = useState(() =>
+    createSettingsSaveQueue<WhatsappSettingsView>(),
+  );
 
   const showView = (view: WhatsappSettingsView) => {
     const historyImport = view.isConnected ? view.historyImport : null;
@@ -85,11 +88,13 @@ export const WhatsappSettings = () => {
 
   const loadSettings = async () => {
     try {
-      showView(
-        await postWhatsappSettingsRouteOrThrow({
-          routePath: WHATSAPP_SETTINGS_ROUTE_PATHS.get,
-        }),
-      );
+      const view = await postWhatsappSettingsRouteOrThrow({
+        routePath: WHATSAPP_SETTINGS_ROUTE_PATHS.get,
+      });
+
+      if (!settingsSaveQueue.hasPendingSave()) {
+        showView(view);
+      }
     } catch {
       setState((current) =>
         current.step === 'ready' ? current : { step: 'unavailable' },
@@ -114,33 +119,31 @@ export const WhatsappSettings = () => {
         : current,
     );
 
-    const save = async () => {
-      try {
-        showView(
-          await postWhatsappSettingsRouteOrThrow({
-            routePath: WHATSAPP_SETTINGS_ROUTE_PATHS.update,
-            body: update,
-          }),
-        );
-      } catch {
+    await settingsSaveQueue.enqueue({
+      save: () =>
+        postWhatsappSettingsRouteOrThrow({
+          routePath: WHATSAPP_SETTINGS_ROUTE_PATHS.update,
+          body: update,
+        }),
+      onSaved: showView,
+      onFailed: async (hasPendingSave) => {
         enqueueSnackbar({
           message: t('Could not save WhatsApp settings. Try again.'),
           variant: 'error',
         });
-        await loadSettings();
-      }
-    };
 
-    settingsSaveQueueRef.current = settingsSaveQueueRef.current.then(save);
-
-    await settingsSaveQueueRef.current;
+        if (!hasPendingSave) {
+          await loadSettings();
+        }
+      },
+    });
   };
 
   const handleSync = async () => {
     setIsSyncStarting(true);
 
     try {
-      await settingsSaveQueueRef.current;
+      await settingsSaveQueue.whenIdle();
 
       showView(
         await postWhatsappSettingsRouteOrThrow({

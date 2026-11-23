@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton, SearchInput } from 'twenty-ui/components/input';
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { IconUser, IconUsers } from 'twenty-ui/icon';
+import { IconMessage, IconUser, IconUsers } from 'twenty-ui/icon';
 import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -14,6 +14,7 @@ import { WHATSAPP_CHAT_OPTIONS_PAGE_SIZE } from 'src/constants/whatsapp-chat-opt
 import { WHATSAPP_SELECTED_CHATS_MAX_COUNT } from 'src/constants/whatsapp-selected-chats-max-count.constant';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { fetchWhatsappChatOptions } from 'src/front-components/utils/fetch-whatsapp-chat-options.util';
+import { getUnlistedSelectedWhatsappChatIds } from 'src/front-components/utils/get-unlisted-selected-whatsapp-chat-ids.util';
 import { toggleWhatsappChatSelection } from 'src/front-components/utils/toggle-whatsapp-chat-selection.util';
 import { type WhatsappChatOptionsPage } from 'src/types/whatsapp-chat-options-page.type';
 
@@ -93,6 +94,13 @@ export const WhatsappChatPicker = ({
           chat.name.toLowerCase().includes(normalizedSearch),
         )
       : [];
+  const unlistedSelectedChatIds =
+    state.step === 'ready' && normalizedSearch === ''
+      ? getUnlistedSelectedWhatsappChatIds({
+          selectedChatIds,
+          chats: state.page.chats,
+        })
+      : [];
   const isSelectionFull =
     selectedChatIds.length >= WHATSAPP_SELECTED_CHATS_MAX_COUNT;
 
@@ -132,7 +140,7 @@ export const WhatsappChatPicker = ({
       )}
       {state.step === 'ready' && (
         <>
-          {visibleChats.length === 0 ? (
+          {visibleChats.length === 0 && unlistedSelectedChatIds.length === 0 ? (
             <Text size="sm" color="tertiary">
               {t('No conversation found.')}
             </Text>
@@ -172,6 +180,23 @@ export const WhatsappChatPicker = ({
                   </ListItemButton>
                 );
               })}
+              {unlistedSelectedChatIds.map((chatId) => (
+                <ListItemButton
+                  key={chatId}
+                  role="checkbox"
+                  aria-checked
+                  indicator="checkbox"
+                  selected
+                  startIcon={<IconMessage />}
+                  onClick={() =>
+                    onChange(
+                      toggleWhatsappChatSelection({ selectedChatIds, chatId }),
+                    )
+                  }
+                >
+                  {t('Conversation not listed above')}
+                </ListItemButton>
+              ))}
             </StyledList>
           )}
           <StyledFooter>

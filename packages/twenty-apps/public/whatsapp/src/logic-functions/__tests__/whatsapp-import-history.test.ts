@@ -42,7 +42,7 @@ vi.mock('src/logic-functions/utils/ingest-whatsapp-messages.util', () => ({
   ingestWhatsappMessages: mocks.ingestWhatsappMessages,
 }));
 
-const { UnipileRateLimitError } =
+const { UnipileRateLimitError, UnipileRequestError } =
   await import('src/unipile/utils/request-unipile.util');
 
 const { whatsappImportHistoryHandler } =
@@ -131,6 +131,22 @@ describe('whatsappImportHistoryHandler', () => {
       .mockReset()
       .mockResolvedValueOnce(IMPORTED)
       .mockResolvedValueOnce(SKIPPED);
+  });
+
+  it('skips a conversation deleted on WhatsApp since it was selected', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRequestError('Chat not found', 404),
+    );
+    mocks.ingestWhatsappMessages.mockReset().mockResolvedValue(IMPORTED);
+
+    await expect(whatsappImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'COMPLETED',
+      importedConversationCount: 1,
+    });
+    expect(mocks.ingestWhatsappMessages).toHaveBeenCalledOnce();
+    expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual(
+      expect.objectContaining({ completedChunkCount: 3 }),
+    );
   });
 
   it('imports its page and adds it to the run progress', async () => {

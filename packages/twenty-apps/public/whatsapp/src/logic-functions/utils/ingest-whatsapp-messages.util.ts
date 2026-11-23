@@ -77,7 +77,6 @@ const resolvePersonIdByHandle = async ({
     }
   }
 
-  // A conversation the member picked is imported whoever is in it
   const isContactRequired =
     settings.importPolicy === 'CONTACTS_ONLY' ||
     (isGroupChat && settings.importPolicy !== 'SELECTED');

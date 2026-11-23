@@ -28,7 +28,7 @@ import {
 } from 'src/logic-functions/utils/whatsapp-history-import-kv.util';
 import { type WhatsappSettings } from 'src/types/whatsapp-settings.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
-import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { getUnipileChatIfExists } from 'src/unipile/utils/get-unipile-chat-if-exists.util';
 import { listUnipileChatMessagesPage } from 'src/unipile/utils/list-unipile-chat-messages-page.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
@@ -203,10 +203,18 @@ export const whatsappImportHistoryHandler = async (
     const chat =
       getWhatsappChatCounterparts(listedChat).length > 0
         ? listedChat
-        : await getUnipileChat({
+        : await getUnipileChatIfExists({
             accountId: unipileAccountId,
             chatId: listedChat.id,
           });
+
+    if (!isDefined(chat)) {
+      processedChatCount += 1;
+      await saveCurrentProgress();
+
+      return;
+    }
+
     const counterparts = getWhatsappChatCounterparts(chat);
     const seenCursors = new Set<string>();
 

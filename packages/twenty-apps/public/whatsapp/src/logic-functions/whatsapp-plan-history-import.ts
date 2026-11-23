@@ -15,7 +15,6 @@ import { failWhatsappHistoryImportJob } from 'src/logic-functions/utils/fail-wha
 import { getActiveWhatsappHistoryImportState } from 'src/logic-functions/utils/get-active-whatsapp-history-import-state.util';
 import { getWhatsappPlanHistoryImportJobId } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
-import { listSelectedWhatsappChats } from 'src/logic-functions/utils/list-selected-whatsapp-chats.util';
 import {
   getWhatsappHistoryImportPlanning,
   getWhatsappHistoryImportProgress,
@@ -157,14 +156,12 @@ const planHistoryImport = async ({
     const deadlineAtMs =
       Date.now() + WHATSAPP_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS;
 
+    // The import job reads each selected conversation itself, so none is read here
     chats =
       importPolicy === 'SELECTED'
-        ? await listSelectedWhatsappChats({
-            unipileAccountId,
-            selectedChatIds: (await getWhatsappSettings(connectedAccountId))
-              .selectedChatIds,
-            deadlineAtMs,
-          })
+        ? (await getWhatsappSettings(connectedAccountId)).selectedChatIds.map(
+            (id) => ({ id, name: '', is_group: false, is_1to1: false }),
+          )
         : await listMostRecentUnipileChats({
             accountId: unipileAccountId,
             limit: conversationLimit,
