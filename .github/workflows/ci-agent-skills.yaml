@@ -1,13 +1,7 @@
 name: CI Agent Skills
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - package.json
-      - packages/twenty-agent-skills/**
-      - .github/workflows/ci-agent-skills.yaml
+  workflow_call:
 
   pull_request:
 
@@ -15,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-agent-skills-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:

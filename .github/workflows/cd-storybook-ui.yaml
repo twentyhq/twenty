@@ -2,23 +2,13 @@ name: CD Storybook UI
 
 on:
   push:
-    branches: [main]
     tags: ['sdk/v*', 'ui/v*']
-    paths:
-      - .github/workflows/cd-storybook-ui.yaml
-      - .github/actions/yarn-install/**
-      - package.json
-      - yarn.lock
-      - nx.json
-      - tsconfig.base.json
-      - packages/twenty-ui/**
-      - packages/twenty-shared/**
-      - packages/twenty-docs/**
+  workflow_call:
 
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: cd-storybook-ui-${{ github.ref }}
   cancel-in-progress: ${{ github.ref == 'refs/heads/main' }}
 
 jobs:
