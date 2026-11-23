@@ -123,6 +123,35 @@ describe('whatsappSyncHistoryHandler', () => {
     );
   });
 
+  it('imports the selected conversations, whatever the number of past conversations', async () => {
+    mocks.kvStore.set('whatsapp-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChatIds: ['chat-1'],
+      historyConversationLimit: 0,
+    });
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
+    expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
+      expect.objectContaining({
+        status: 'IMPORTING',
+        importPolicy: 'SELECTED',
+      }),
+    );
+  });
+
+  it('imports nothing while no conversation is selected', async () => {
+    mocks.kvStore.set('whatsapp-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChatIds: [],
+    });
+
+    await syncHistory();
+
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+  });
+
   it('leaves a running import alone', async () => {
     setHistoryImport('IMPORTING');
 

@@ -1,12 +1,17 @@
-import { isBoolean } from '@sniptt/guards';
+import { isArray, isBoolean, isNonEmptyString } from '@sniptt/guards';
 
 import { WHATSAPP_HISTORY_CONVERSATION_LIMITS } from 'src/constants/whatsapp-history-conversation-limits.constant';
+import { WHATSAPP_SELECTED_CHATS_MAX_COUNT } from 'src/constants/whatsapp-selected-chats-max-count.constant';
 import { type WhatsappContactAutoCreationPolicy } from 'src/types/whatsapp-contact-auto-creation-policy.type';
 import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
 import { type WhatsappSettings } from 'src/types/whatsapp-settings.type';
 import { type WhatsappVisibility } from 'src/types/whatsapp-visibility.type';
 
-const IMPORT_POLICIES: WhatsappImportPolicy[] = ['ALL', 'CONTACTS_ONLY'];
+const IMPORT_POLICIES: WhatsappImportPolicy[] = [
+  'ALL',
+  'CONTACTS_ONLY',
+  'SELECTED',
+];
 
 const CONTACT_AUTO_CREATION_POLICIES: WhatsappContactAutoCreationPolicy[] = [
   'SENT_AND_RECEIVED',
@@ -30,6 +35,14 @@ export const parseWhatsappSettingsUpdate = (
 
   if (isOneOf(IMPORT_POLICIES, body?.importPolicy)) {
     update.importPolicy = body.importPolicy;
+  }
+
+  if (
+    isArray(body?.selectedChatIds) &&
+    body.selectedChatIds.every(isNonEmptyString) &&
+    body.selectedChatIds.length <= WHATSAPP_SELECTED_CHATS_MAX_COUNT
+  ) {
+    update.selectedChatIds = [...new Set(body.selectedChatIds)];
   }
 
   if (

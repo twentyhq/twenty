@@ -14,6 +14,7 @@ import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whats
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
 import { ingestWhatsappMessages } from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
 import { isTransientWhatsappError } from 'src/logic-functions/utils/is-transient-whatsapp-error.util';
+import { isWhatsappChatSelected } from 'src/logic-functions/utils/is-whatsapp-chat-selected.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
@@ -38,6 +39,10 @@ const ingestUnipileMessage = async ({
   }
 
   const settings = await getWhatsappSettings(connectedAccountId);
+
+  if (!isWhatsappChatSelected({ settings, chatId: message.chat_id })) {
+    return { handled: false, reason: 'Conversation is not selected' };
+  }
 
   const chat = await getUnipileChat({
     accountId: unipileAccountId,

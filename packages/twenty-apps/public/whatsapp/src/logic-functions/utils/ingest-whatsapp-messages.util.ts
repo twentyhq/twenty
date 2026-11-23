@@ -14,6 +14,7 @@ import { createWhatsappPerson } from 'src/logic-functions/utils/create-whatsapp-
 import { findPersonIdsByWhatsappPhone } from 'src/logic-functions/utils/find-person-ids-by-whatsapp-phone.util';
 import { importWhatsappMessageAttachments } from 'src/logic-functions/utils/import-whatsapp-message-attachments.util';
 import { isWhatsappContactCreationAllowed } from 'src/logic-functions/utils/is-whatsapp-contact-creation-allowed.util';
+import { isWhatsappChatSelected } from 'src/logic-functions/utils/is-whatsapp-chat-selected.util';
 import { isWhatsappGroupChat } from 'src/logic-functions/utils/is-whatsapp-group-chat.util';
 import { mapUnipileMessageToIngestMessage } from 'src/logic-functions/utils/map-unipile-message-to-ingest-message.util';
 import { setMissingWhatsappPersonAvatars } from 'src/logic-functions/utils/set-missing-whatsapp-person-avatars.util';
@@ -76,8 +77,10 @@ const resolvePersonIdByHandle = async ({
     }
   }
 
+  // A conversation the member picked is imported whoever is in it
   const isContactRequired =
-    settings.importPolicy === 'CONTACTS_ONLY' || isGroupChat;
+    settings.importPolicy === 'CONTACTS_ONLY' ||
+    (isGroupChat && settings.importPolicy !== 'SELECTED');
 
   if (isContactRequired && personIdByHandle.size === 0) {
     return undefined;
@@ -134,7 +137,15 @@ export const ingestWhatsappMessages = async ({
     importedAttachmentCount: 0,
   };
 
-  if (isGroupChat && !settings.areGroupChatsImported) {
+  if (!isWhatsappChatSelected({ settings, chatId: chat.id })) {
+    return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
+  }
+
+  if (
+    isGroupChat &&
+    settings.importPolicy !== 'SELECTED' &&
+    !settings.areGroupChatsImported
+  ) {
     return { ...emptyResult, skippedReason: 'GROUP_CHATS_OFF' };
   }
 

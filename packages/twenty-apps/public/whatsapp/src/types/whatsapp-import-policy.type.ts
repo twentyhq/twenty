@@ -1,1 +1,1 @@
-export type WhatsappImportPolicy = 'ALL' | 'CONTACTS_ONLY';
+export type WhatsappImportPolicy = 'ALL' | 'CONTACTS_ONLY' | 'SELECTED';

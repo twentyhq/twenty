@@ -298,6 +298,41 @@ describe('ingestWhatsappMessages', () => {
     expect(mocks.findPersonIdsByWhatsappPhone).not.toHaveBeenCalled();
   });
 
+  it('skips a conversation the member did not select', async () => {
+    await expect(
+      ingest({
+        settings: {
+          ...DEFAULT_WHATSAPP_SETTINGS,
+          importPolicy: 'SELECTED',
+          selectedChatIds: ['chat-2'],
+        },
+      }),
+    ).resolves.toMatchObject({
+      ingestedMessageCount: 0,
+      skippedReason: 'NOT_SELECTED',
+    });
+    expect(mocks.findPersonIdsByWhatsappPhone).not.toHaveBeenCalled();
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it('imports a selected group chat even when nobody in it is in Twenty and group chats are off', async () => {
+    await expect(
+      ingest({
+        chat: GROUP_CHAT,
+        counterparts: [PRIYA, SAM],
+        settings: {
+          ...DEFAULT_WHATSAPP_SETTINGS,
+          importPolicy: 'SELECTED',
+          selectedChatIds: ['chat-2'],
+          areGroupChatsImported: false,
+        },
+      }),
+    ).resolves.toMatchObject({
+      ingestedMessageCount: 1,
+      matchedPersonCount: 0,
+    });
+  });
+
   it('skips a chat with someone whose phone number WhatsApp hides', async () => {
     await expect(
       ingest({

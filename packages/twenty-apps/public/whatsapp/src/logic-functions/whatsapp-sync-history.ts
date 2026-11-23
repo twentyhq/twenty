@@ -26,7 +26,11 @@ export const whatsappSyncHistoryHandler = async (
   if (historyImport?.status !== 'IMPORTING') {
     const settings = await getWhatsappSettings(connection.id);
 
-    if (settings.historyConversationLimit > 0) {
+    if (
+      settings.importPolicy === 'SELECTED'
+        ? settings.selectedChatIds.length > 0
+        : settings.historyConversationLimit > 0
+    ) {
       await startWhatsappHistoryImport({
         connectedAccountId: connection.id,
         settings,
@@ -41,7 +45,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_SYNC_HISTORY_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-sync-history',
   description:
-    'Starts importing the most recent past WhatsApp conversations of the requesting member connection, up to the number their settings allow.',
+    'Starts importing the past WhatsApp conversations of the requesting member connection: the ones they selected, or the most recent ones up to the number their settings allow.',
   timeoutSeconds: 15,
   handler: whatsappSyncHistoryHandler,
   httpRouteTriggerSettings: {

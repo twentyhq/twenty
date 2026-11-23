@@ -373,6 +373,29 @@ describe('whatsappHandleWebhookEventHandler', () => {
     ).rejects.toMatchObject({ name: 'UnipileRequestError' });
   });
 
+  it('leaves out a message of a conversation the member did not select, without reading it', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'whatsapp-settings:connection-id'
+        ? { importPolicy: 'SELECTED', selectedChatIds: ['chat-2'] }
+        : null,
+    );
+
+    await expect(
+      whatsappHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({
+      handled: false,
+      reason: 'Conversation is not selected',
+    });
+    expect(mocks.getUnipileChat).not.toHaveBeenCalled();
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
   it('ignores events of accounts no connection owns', async () => {
     mocks.listConnections.mockResolvedValue([]);
 

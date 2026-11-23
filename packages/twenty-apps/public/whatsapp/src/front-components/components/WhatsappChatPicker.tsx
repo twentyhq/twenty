@@ -1,0 +1,200 @@
+import styled from '@emotion/styled';
+import { useState } from 'react';
+import { t } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-sdk/utils';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { LightButton, SearchInput } from 'twenty-ui/components/input';
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconUser, IconUsers } from 'twenty-ui/icon';
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { WHATSAPP_CHAT_OPTIONS_PAGE_SIZE } from 'src/constants/whatsapp-chat-options-page-size.constant';
+import { WHATSAPP_SELECTED_CHATS_MAX_COUNT } from 'src/constants/whatsapp-selected-chats-max-count.constant';
+import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
+import { fetchWhatsappChatOptions } from 'src/front-components/utils/fetch-whatsapp-chat-options.util';
+import { toggleWhatsappChatSelection } from 'src/front-components/utils/toggle-whatsapp-chat-selection.util';
+import { type WhatsappChatOptionsPage } from 'src/types/whatsapp-chat-options-page.type';
+
+const SKELETON_ROW_COUNT = 4;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[2]};
+`;
+
+const StyledList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing['0.5']};
+  max-height: 320px;
+  overflow-y: auto;
+`;
+
+const StyledFooter = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  min-height: ${() => themeCssVariables.spacing[6]};
+`;
+
+type WhatsappChatPickerState =
+  | { step: 'loading' }
+  | { step: 'unavailable' }
+  | { step: 'ready'; page: WhatsappChatOptionsPage };
+
+type WhatsappChatPickerProps = {
+  selectedChatIds: string[];
+  onChange: (selectedChatIds: string[]) => void;
+};
+
+export const WhatsappChatPicker = ({
+  selectedChatIds,
+  onChange,
+}: WhatsappChatPickerProps) => {
+  const [state, setState] = useState<WhatsappChatPickerState>({
+    step: 'loading',
+  });
+  const [limit, setLimit] = useState(WHATSAPP_CHAT_OPTIONS_PAGE_SIZE);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const loadChats = async (requestedLimit: number) => {
+    try {
+      const page = await fetchWhatsappChatOptions(requestedLimit);
+
+      setLimit(requestedLimit);
+      setState({ step: 'ready', page });
+    } catch {
+      setState((current) =>
+        current.step === 'ready' ? current : { step: 'unavailable' },
+      );
+    }
+  };
+
+  const handleRetry = async () => {
+    setState({ step: 'loading' });
+    await loadChats(limit);
+  };
+
+  const handleLoadMore = async () => {
+    setIsLoadingMore(true);
+    await loadChats(limit + WHATSAPP_CHAT_OPTIONS_PAGE_SIZE);
+    setIsLoadingMore(false);
+  };
+
+  const normalizedSearch = search.trim().toLowerCase();
+  const visibleChats =
+    state.step === 'ready'
+      ? state.page.chats.filter((chat) =>
+          chat.name.toLowerCase().includes(normalizedSearch),
+        )
+      : [];
+  const isSelectionFull =
+    selectedChatIds.length >= WHATSAPP_SELECTED_CHATS_MAX_COUNT;
+
+  return (
+    <StyledContainer>
+      <OnMountEffect onMount={() => loadChats(limit)} />
+      <SearchInput
+        aria-label={t('Search conversations')}
+        placeholder={t('Search conversations')}
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+      />
+      {state.step === 'loading' && (
+        <StyledList aria-busy="true" aria-label={t('Loading')}>
+          {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
+            <Skeleton
+              key={index}
+              layout="block"
+              height={SKELETON_HEIGHT_SIZES.m}
+            />
+          ))}
+        </StyledList>
+      )}
+      {state.step === 'unavailable' && (
+        <InlineBanner
+          layout="compact"
+          status="error"
+          fullWidth
+          action={
+            <InlineBanner.Action onClick={handleRetry}>
+              {t('Retry')}
+            </InlineBanner.Action>
+          }
+        >
+          {t('Could not load your WhatsApp conversations.')}
+        </InlineBanner>
+      )}
+      {state.step === 'ready' && (
+        <>
+          {visibleChats.length === 0 ? (
+            <Text size="sm" color="tertiary">
+              {t('No conversation found.')}
+            </Text>
+          ) : (
+            <StyledList role="group" aria-label={t('Conversations')}>
+              {visibleChats.map((chat) => {
+                const isSelected = selectedChatIds.includes(chat.id);
+
+                return (
+                  <ListItemButton
+                    key={chat.id}
+                    role="checkbox"
+                    aria-checked={isSelected}
+                    indicator="checkbox"
+                    selected={isSelected}
+                    disabled={!isSelected && isSelectionFull}
+                    startIcon={chat.isGroup ? <IconUsers /> : <IconUser />}
+                    description={
+                      isDefined(chat.lastMessageAt)
+                        ? new Date(chat.lastMessageAt).toLocaleDateString(
+                            undefined,
+                            { day: 'numeric', month: 'short', year: 'numeric' },
+                          )
+                        : undefined
+                    }
+                    descriptionPlacement="end"
+                    onClick={() =>
+                      onChange(
+                        toggleWhatsappChatSelection({
+                          selectedChatIds,
+                          chatId: chat.id,
+                        }),
+                      )
+                    }
+                  >
+                    {chat.name}
+                  </ListItemButton>
+                );
+              })}
+            </StyledList>
+          )}
+          <StyledFooter>
+            <Text size="sm" color="tertiary" aria-live="polite">
+              {isSelectionFull
+                ? t('{count} selected, the most that can be imported', {
+                    count: selectedChatIds.length,
+                  })
+                : t('{count} selected', { count: selectedChatIds.length })}
+            </Text>
+            {state.page.hasMore && (
+              <LightButton
+                size="sm"
+                onClick={handleLoadMore}
+                loading={isLoadingMore}
+                disabled={isLoadingMore}
+              >
+                {t('Load more')}
+              </LightButton>
+            )}
+          </StyledFooter>
+        </>
+      )}
+    </StyledContainer>
+  );
+};

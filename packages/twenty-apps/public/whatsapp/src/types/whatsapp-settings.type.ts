@@ -4,6 +4,7 @@ import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type
 
 export type WhatsappSettings = {
   importPolicy: WhatsappImportPolicy;
+  selectedChatIds: string[];
   areGroupChatsImported: boolean;
   historyConversationLimit: WhatsappHistoryConversationLimit;
   contactAutoCreationPolicy: WhatsappContactAutoCreationPolicy;

@@ -47,7 +47,12 @@ const StyledLabel = styled(StyledBullet)`
   width: auto;
 `;
 
-const ROW_IS_ACTIVE_FOR_CONTACTS_ONLY = [false, false, true, false, true];
+const ROW_IS_ACTIVE_BY_IMPORT_POLICY: Record<WhatsappImportPolicy, boolean[]> =
+  {
+    ALL: [true, true, true, true, true],
+    CONTACTS_ONLY: [false, false, true, false, true],
+    SELECTED: [true, false, false, true, false],
+  };
 
 type WhatsappImportPolicyIconProps = {
   importPolicy: WhatsappImportPolicy;
@@ -58,16 +63,12 @@ export const WhatsappImportPolicyIcon = ({
 }: WhatsappImportPolicyIconProps) => (
   <StyledCardMedia>
     <StyledCardMediaContent>
-      {ROW_IS_ACTIVE_FOR_CONTACTS_ONLY.map((isActiveForContactsOnly, index) => {
-        const isActive = importPolicy === 'ALL' || isActiveForContactsOnly;
-
-        return (
-          <StyledRow key={index}>
-            <StyledBullet $isActive={isActive} />
-            <StyledLabel $isActive={isActive} />
-          </StyledRow>
-        );
-      })}
+      {ROW_IS_ACTIVE_BY_IMPORT_POLICY[importPolicy].map((isActive, index) => (
+        <StyledRow key={index}>
+          <StyledBullet $isActive={isActive} />
+          <StyledLabel $isActive={isActive} />
+        </StyledRow>
+      ))}
     </StyledCardMediaContent>
   </StyledCardMedia>
 );

@@ -14,12 +14,15 @@ import { enqueueWhatsappImportHistoryJob } from 'src/logic-functions/utils/enque
 import { failWhatsappHistoryImportJob } from 'src/logic-functions/utils/fail-whatsapp-history-import-job.util';
 import { getActiveWhatsappHistoryImportState } from 'src/logic-functions/utils/get-active-whatsapp-history-import-state.util';
 import { getWhatsappPlanHistoryImportJobId } from 'src/logic-functions/utils/get-whatsapp-history-import-job-id.util';
+import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
+import { listSelectedWhatsappChats } from 'src/logic-functions/utils/list-selected-whatsapp-chats.util';
 import {
   getWhatsappHistoryImportPlanning,
   getWhatsappHistoryImportProgress,
   saveWhatsappHistoryImportChunkChats,
   saveWhatsappHistoryImportPlanning,
 } from 'src/logic-functions/utils/whatsapp-history-import-kv.util';
+import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 import { listMostRecentUnipileChats } from 'src/unipile/utils/list-most-recent-unipile-chats.util';
@@ -131,9 +134,11 @@ const planChunk = async ({
 
 const planHistoryImport = async ({
   payload,
+  importPolicy,
   conversationLimit,
 }: {
   payload: WhatsappPlanHistoryImportJobPayload;
+  importPolicy: WhatsappImportPolicy;
   conversationLimit: number;
 }): Promise<WhatsappPlanHistoryImportResult> => {
   const { connectedAccountId, runId } = payload;
@@ -149,12 +154,22 @@ const planHistoryImport = async ({
   let chats: UnipileChat[];
 
   try {
-    chats = await listMostRecentUnipileChats({
-      accountId: unipileAccountId,
-      limit: conversationLimit,
-      deadlineAtMs:
-        Date.now() + WHATSAPP_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS,
-    });
+    const deadlineAtMs =
+      Date.now() + WHATSAPP_PLAN_HISTORY_IMPORT_TIME_BUDGET_MILLISECONDS;
+
+    chats =
+      importPolicy === 'SELECTED'
+        ? await listSelectedWhatsappChats({
+            unipileAccountId,
+            selectedChatIds: (await getWhatsappSettings(connectedAccountId))
+              .selectedChatIds,
+            deadlineAtMs,
+          })
+        : await listMostRecentUnipileChats({
+            accountId: unipileAccountId,
+            limit: conversationLimit,
+            deadlineAtMs,
+          });
   } catch (error) {
     if (!(error instanceof UnipileRateLimitError)) {
       throw error;
@@ -229,6 +244,7 @@ export const whatsappPlanHistoryImportHandler = async (
   try {
     return await planHistoryImport({
       payload,
+      importPolicy: state.importPolicy,
       conversationLimit: state.conversationLimit,
     });
   } catch (error) {
@@ -256,7 +272,7 @@ export default defineLogicFunction({
   universalIdentifier: WHATSAPP_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-plan-history-import',
   description:
-    'Lists the most recent past WhatsApp conversations of a connection, up to the limit of the run, stores them page by page for the import jobs and starts the import chain.',
+    'Lists the past WhatsApp conversations of a connection to import, the selected ones or the most recent ones up to the limit of the run, stores them page by page for the import jobs and starts the import chain.',
   timeoutSeconds: WHATSAPP_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: whatsappPlanHistoryImportHandler,
 });

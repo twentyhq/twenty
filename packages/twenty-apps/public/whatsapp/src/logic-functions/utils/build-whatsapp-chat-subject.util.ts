@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whatsapp-chat-counterparts.util';
+import { getWhatsappUserName } from 'src/logic-functions/utils/get-whatsapp-user-name.util';
 import { isWhatsappGroupChat } from 'src/logic-functions/utils/is-whatsapp-group-chat.util';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 
@@ -10,7 +11,7 @@ export const buildWhatsappChatSubject = (
   chat: UnipileChat,
 ): string | undefined => {
   const counterpartNames = getWhatsappChatCounterparts(chat)
-    .map((counterpart) => counterpart.display_name?.trim())
+    .map(getWhatsappUserName)
     .filter(isNonEmptyString);
 
   if (!isWhatsappGroupChat(chat)) {

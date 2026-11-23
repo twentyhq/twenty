@@ -7,6 +7,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { WHATSAPP_HISTORY_CONVERSATION_LIMITS } from 'src/constants/whatsapp-history-conversation-limits.constant';
+import { WhatsappChatPicker } from 'src/front-components/components/WhatsappChatPicker';
 import { WhatsappImportPolicyIcon } from 'src/front-components/components/WhatsappImportPolicyIcon';
 import { WhatsappSyncButton } from 'src/front-components/components/WhatsappSyncButton';
 import { SettingsOptionCardContentSegmentedControl } from 'src/front-components/components/SettingsOptionCardContentSegmentedControl';
@@ -24,6 +25,7 @@ const StyledStack = styled.div`
 
 type WhatsappImportSectionProps = {
   importPolicy: WhatsappImportPolicy;
+  selectedChatIds: string[];
   areGroupChatsImported: boolean;
   historyConversationLimit: WhatsappHistoryConversationLimit;
   historyImport: WhatsappHistoryImportState | null;
@@ -31,6 +33,7 @@ type WhatsappImportSectionProps = {
   isSyncStarting: boolean;
   isSyncCancelling: boolean;
   onChange: (importPolicy: WhatsappImportPolicy) => void;
+  onSelectedChatIdsChange: (selectedChatIds: string[]) => void;
   onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onHistoryConversationLimitChange: (
     historyConversationLimit: WhatsappHistoryConversationLimit,
@@ -41,6 +44,7 @@ type WhatsappImportSectionProps = {
 
 export const WhatsappImportSection = ({
   importPolicy,
+  selectedChatIds,
   areGroupChatsImported,
   historyConversationLimit,
   historyImport,
@@ -48,6 +52,7 @@ export const WhatsappImportSection = ({
   isSyncStarting,
   isSyncCancelling,
   onChange,
+  onSelectedChatIdsChange,
   onGroupChatsImportChange,
   onHistoryConversationLimitChange,
   onSync,
@@ -79,38 +84,54 @@ export const WhatsappImportSection = ({
             title: t('Contacts only'),
             description: t('Import chats with people already in Twenty'),
           },
+          {
+            value: 'SELECTED',
+            cardMedia: <WhatsappImportPolicyIcon importPolicy="SELECTED" />,
+            title: t('Selected chats'),
+            description: t('Import only the conversations you pick'),
+            cardContentExpanded: (
+              <WhatsappChatPicker
+                selectedChatIds={selectedChatIds}
+                onChange={onSelectedChatIdsChange}
+              />
+            ),
+          },
         ]}
       />
-      <Card.Root fullWidth>
-        <SettingsOptionCardContentSwitch
-          Icon={IconUsers}
-          title={t('Import group chats')}
-          description={t('Groups where at least one member is a contact')}
-          checked={areGroupChatsImported}
-          onChange={onGroupChatsImportChange}
-          divider
-        />
-        <SettingsOptionCardContentSegmentedControl
-          Icon={IconHistory}
-          title={t('Past conversations')}
-          description={t('Most recent conversations imported on sync')}
-          options={WHATSAPP_HISTORY_CONVERSATION_LIMITS.map((limit) => ({
-            value: String(limit),
-            label: limit === 0 ? t('None') : String(limit),
-          }))}
-          value={String(historyConversationLimit)}
-          onChange={(value) => {
-            const limit = WHATSAPP_HISTORY_CONVERSATION_LIMITS.find(
-              (candidate) => String(candidate) === value,
-            );
+      {importPolicy !== 'SELECTED' && (
+        <Card.Root fullWidth>
+          <SettingsOptionCardContentSwitch
+            Icon={IconUsers}
+            title={t('Import group chats')}
+            description={t('Groups where at least one member is a contact')}
+            checked={areGroupChatsImported}
+            onChange={onGroupChatsImportChange}
+            divider
+          />
+          <SettingsOptionCardContentSegmentedControl
+            Icon={IconHistory}
+            title={t('Past conversations')}
+            description={t('Most recent conversations imported on sync')}
+            options={WHATSAPP_HISTORY_CONVERSATION_LIMITS.map((limit) => ({
+              value: String(limit),
+              label: limit === 0 ? t('None') : String(limit),
+            }))}
+            value={String(historyConversationLimit)}
+            onChange={(value) => {
+              const limit = WHATSAPP_HISTORY_CONVERSATION_LIMITS.find(
+                (candidate) => String(candidate) === value,
+              );
 
-            if (isDefined(limit)) {
-              onHistoryConversationLimitChange(limit);
-            }
-          }}
-        />
-      </Card.Root>
-      {(historyConversationLimit > 0 ||
+              if (isDefined(limit)) {
+                onHistoryConversationLimitChange(limit);
+              }
+            }}
+          />
+        </Card.Root>
+      )}
+      {((importPolicy === 'SELECTED'
+        ? selectedChatIds.length > 0
+        : historyConversationLimit > 0) ||
         historyImport?.status === 'IMPORTING') && (
         <WhatsappSyncButton
           historyImport={historyImport}

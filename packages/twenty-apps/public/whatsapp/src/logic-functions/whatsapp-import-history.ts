@@ -121,6 +121,7 @@ export const whatsappImportHistoryHandler = async (
     createdPersonCount: 0,
     attachmentCount: 0,
     skippedChatCounts: {
+      NOT_SELECTED: 0,
       GROUP_CHATS_OFF: 0,
       NO_MESSAGES: 0,
       NO_PHONE: 0,
