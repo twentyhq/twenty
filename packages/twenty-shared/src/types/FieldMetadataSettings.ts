@@ -1,4 +1,5 @@
 import { type AllowedAddressSubField } from '@/types/AddressFieldsType';
+import { type FieldMetadataFormula } from '@/types/FieldMetadataFormula';
 import { type FieldMetadataMultiItemSettings } from '@/types/FieldMetadataMultiItemSettings';
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
@@ -26,26 +27,35 @@ export const FIELD_LINKS_VARIANTS = ['url', 'domain'] as const;
 
 export type FieldLinksVariant = (typeof FIELD_LINKS_VARIANTS)[number];
 
+type FieldMetadataFormulaOnlySettings = {
+  formula?: FieldMetadataFormula | null;
+};
+
 type FieldMetadataNumberSettings = {
+  formula?: FieldMetadataFormula | null;
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
 };
 
 type FieldMetadataCurrencySettings = {
+  formula?: FieldMetadataFormula | null;
   format?: FieldCurrencyFormat;
   decimals?: number;
 };
 
 type FieldMetadataTextSettings = {
+  formula?: FieldMetadataFormula | null;
   displayedMaxRows?: number;
 };
 
 type FieldMetadataDateSettings = {
+  formula?: FieldMetadataFormula | null;
   displayFormat?: DateDisplayFormat;
 };
 
 type FieldMetadataDateTimeSettings = {
+  formula?: FieldMetadataFormula | null;
   displayFormat?: DateDisplayFormat;
 };
 
@@ -71,6 +81,9 @@ type FieldMetadataFilesSettings = {
 };
 
 export type FieldMetadataSettingsMapping = {
+  [FieldMetadataType.BOOLEAN]: FieldMetadataFormulaOnlySettings | null;
+  [FieldMetadataType.SELECT]: FieldMetadataFormulaOnlySettings | null;
+  [FieldMetadataType.RATING]: FieldMetadataFormulaOnlySettings | null;
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
