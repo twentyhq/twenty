@@ -426,7 +426,10 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "properties": {
                   "color": {
                     "description": "Tag color",
-                    "type": "string",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
                   },
                   "id": {
                     "description": "Option ID, keep it when updating",
@@ -645,7 +648,10 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "properties": {
                   "color": {
                     "description": "Tag color",
-                    "type": "string",
+                    "type": [
+                      "string",
+                      "null",
+                    ],
                   },
                   "id": {
                     "description": "Option ID, keep it when updating",
@@ -819,7 +825,10 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                       "properties": {
                         "color": {
                           "description": "Tag color",
-                          "type": "string",
+                          "type": [
+                            "string",
+                            "null",
+                          ],
                         },
                         "id": {
                           "description": "Option ID, keep it when updating",
@@ -1052,7 +1061,10 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                       "properties": {
                         "color": {
                           "description": "Tag color",
-                          "type": "string",
+                          "type": [
+                            "string",
+                            "null",
+                          ],
                         },
                         "id": {
                           "description": "Option ID, keep it when updating",

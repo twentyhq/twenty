@@ -7,7 +7,7 @@ const fieldMetadataOptionInputSchema = z.looseObject({
   label: z.string().describe('Display label'),
   value: z.string().describe('Stored value (SCREAMING_SNAKE_CASE)'),
   position: z.number().optional().describe('Position in the list'),
-  color: z.string().optional().describe('Tag color'),
+  color: z.string().nullable().optional().describe('Tag color'),
   isActive: z.boolean().optional().describe('Whether it can still be picked'),
 });
 
