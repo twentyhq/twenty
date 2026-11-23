@@ -29,7 +29,7 @@ import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ViewFieldRelationScope } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidRelationScopeLimit } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, Field } from 'twenty-ui/primitives/input';
@@ -102,11 +102,7 @@ export const SidePanelEditColumnForm = ({
 
   const trimmedLimitInput = limitInput.trim();
   const limit = trimmedLimitInput === '' ? null : Number(trimmedLimitInput);
-  const isLimitValid =
-    !isDefined(limit) ||
-    (Number.isInteger(limit) &&
-      limit >= 1 &&
-      limit <= QUERY_MAX_RECORDS_FROM_RELATION);
+  const isLimitValid = isValidRelationScopeLimit(limit);
 
   const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
     relationObjectMetadataItem,
@@ -204,7 +200,7 @@ export const SidePanelEditColumnForm = ({
         <FormFieldInputContainer>
           <Field.Label>{t`Sort`}</Field.Label>
           <RecordTableSettingsSortsContent
-            objectMetadataItem={relationObjectMetadataItem}
+            fieldMetadataItems={relationObjectMetadataItem.fields}
           />
         </FormFieldInputContainer>
         <TextInput
