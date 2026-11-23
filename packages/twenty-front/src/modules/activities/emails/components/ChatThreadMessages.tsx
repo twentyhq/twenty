@@ -48,11 +48,11 @@ export const ChatThreadMessages = ({
     viewerMessageChannelIds: new Set(channels.map(({ id }) => id)),
   });
 
-  const groups = groupChatMessagesBySender(
+  const groups = groupChatMessagesBySender({
     messages,
     outgoingMessageIds,
     timeZone,
-  );
+  });
 
   return (
     <StyledContainer>

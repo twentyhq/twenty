@@ -86,22 +86,23 @@ export const ChatThreadMessage = ({
   const hasText = isNonEmptyString(message.text);
   const hasReactions = isNonEmptyArray(reactions);
   const hasBubble = hasText || !isNonEmptyArray(files);
-  const meta =
-    !isTimeSharedWithNext && (isOutgoing || isDefined(message.receivedAt)) ? (
-      <>
-        {isDefined(message.receivedAt) && (
-          <ChatMessageTime date={message.receivedAt} />
-        )}
-        {isOutgoing && <ChatMessageReceipt status="sent" />}
-      </>
-    ) : undefined;
+  const hasMeta =
+    !isTimeSharedWithNext && (isOutgoing || isDefined(message.receivedAt));
+  const meta = hasMeta ? (
+    <>
+      {isDefined(message.receivedAt) && (
+        <ChatMessageTime date={message.receivedAt} />
+      )}
+      {isOutgoing && <ChatMessageReceipt status="sent" />}
+    </>
+  ) : undefined;
 
   return (
     <StyledMessageRow
       isRightAligned={isOutgoing}
       isGroupedWithPrevious={isGroupedWithPrevious}
       isGroupedWithNext={isGroupedWithNext}
-      hasFooter={hasReactions || (!hasBubble && isDefined(meta))}
+      hasFooter={hasReactions || (!hasBubble && hasMeta)}
       data-hover-card={hasText ? '' : undefined}
       tabIndex={hasText && isTouchDevice ? -1 : undefined}
     >
@@ -125,7 +126,7 @@ export const ChatThreadMessage = ({
       {isNonEmptyArray(files) && (
         <ChatMessageAttachments files={files} isRightAligned={isOutgoing} />
       )}
-      {!hasBubble && isDefined(meta) && (
+      {!hasBubble && hasMeta && (
         <StyledChatMessageStandaloneMeta isRightAligned={isOutgoing}>
           {meta}
         </StyledChatMessageStandaloneMeta>

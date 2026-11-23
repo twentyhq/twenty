@@ -30,7 +30,7 @@ export const StyledChatMessageRow = styled.div<{
     background: ${themeCssVariables.background.transparent.light};
     border-radius: ${themeCssVariables.border.radius.md};
     bottom: ${({ isGroupedWithNext }) =>
-      isGroupedWithNext === true
+      isGroupedWithNext
         ? `calc(${CHAT_GROUPED_MESSAGE_GAP} / -2)`
         : `calc(-1 * ${themeCssVariables.spacing[2]})`};
     content: '';
@@ -40,7 +40,7 @@ export const StyledChatMessageRow = styled.div<{
     position: absolute;
     right: calc(-1 * ${themeCssVariables.spacing[2]});
     top: ${({ isGroupedWithPrevious }) =>
-      isGroupedWithPrevious === true
+      isGroupedWithPrevious
         ? `calc(${CHAT_GROUPED_MESSAGE_GAP} / -2)`
         : `calc(-1 * ${themeCssVariables.spacing[2]})`};
     transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)

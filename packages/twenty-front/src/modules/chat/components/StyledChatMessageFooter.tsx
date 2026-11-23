@@ -18,8 +18,6 @@ export const StyledChatMessageFooter = styled.div<{
   justify-content: ${({ isSpreadOut }) =>
     isSpreadOut ? 'space-between' : 'flex-start'};
   margin-top: ${({ isCompact }) =>
-    isCompact === true
-      ? themeCssVariables.spacing[1]
-      : themeCssVariables.spacing[2]};
+    isCompact ? themeCssVariables.spacing[1] : themeCssVariables.spacing[2]};
   width: 100%;
 `;

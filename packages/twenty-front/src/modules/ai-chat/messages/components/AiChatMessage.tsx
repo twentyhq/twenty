@@ -78,12 +78,17 @@ const StyledMessageRow = styled(StyledChatMessageRow)<{
   isTightlyGroupedWithNext: boolean;
   isLastOfRun: boolean;
 }>`
-  margin-bottom: ${({ isTightlyGroupedWithNext, isLastOfRun }) =>
-    isTightlyGroupedWithNext
-      ? `calc(${CHAT_GROUPED_MESSAGE_GAP} - ${CHAT_MESSAGE_LIST_GAP})`
-      : isLastOfRun
-        ? `calc(${CHAT_RUN_GAP} - ${CHAT_MESSAGE_LIST_GAP})`
-        : '0'};
+  margin-bottom: ${({ isTightlyGroupedWithNext, isLastOfRun }) => {
+    if (isTightlyGroupedWithNext) {
+      return `calc(${CHAT_GROUPED_MESSAGE_GAP} - ${CHAT_MESSAGE_LIST_GAP})`;
+    }
+
+    if (isLastOfRun) {
+      return `calc(${CHAT_RUN_GAP} - ${CHAT_MESSAGE_LIST_GAP})`;
+    }
+
+    return '0';
+  }};
 
   &:last-child {
     margin-bottom: 0;

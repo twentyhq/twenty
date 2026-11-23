@@ -10,17 +10,17 @@ const buildMessage = (id: string, senderHandle: string) =>
 
 describe('groupChatMessagesBySender', () => {
   it('should group consecutive messages from the same sender', () => {
-    const groups = groupChatMessagesBySender(
-      [
+    const groups = groupChatMessagesBySender({
+      messages: [
         buildMessage('1', 'sundar'),
         buildMessage('2', 'sundar'),
         buildMessage('3', 'phil'),
         buildMessage('4', 'phil'),
         buildMessage('5', 'sundar'),
       ],
-      new Set(['3', '4']),
-      'UTC',
-    );
+      outgoingMessageIds: new Set(['3', '4']),
+      timeZone: 'UTC',
+    });
 
     expect(
       groups.map(({ isOutgoing, messages }) => ({
@@ -35,11 +35,11 @@ describe('groupChatMessagesBySender', () => {
   });
 
   it('should split messages of different senders in a group chat', () => {
-    const groups = groupChatMessagesBySender(
-      [buildMessage('1', 'thomas'), buildMessage('2', 'sundar')],
-      new Set(),
-      'UTC',
-    );
+    const groups = groupChatMessagesBySender({
+      messages: [buildMessage('1', 'thomas'), buildMessage('2', 'sundar')],
+      outgoingMessageIds: new Set(),
+      timeZone: 'UTC',
+    });
 
     expect(groups).toHaveLength(2);
   });
@@ -48,11 +48,11 @@ describe('groupChatMessagesBySender', () => {
     const senderlessMessage = (id: string) =>
       ({ id, text: id, sender: undefined }) as EmailThreadMessageWithSender;
 
-    const groups = groupChatMessagesBySender(
-      [senderlessMessage('1'), senderlessMessage('2')],
-      new Set(),
-      'UTC',
-    );
+    const groups = groupChatMessagesBySender({
+      messages: [senderlessMessage('1'), senderlessMessage('2')],
+      outgoingMessageIds: new Set(),
+      timeZone: 'UTC',
+    });
 
     expect(groups).toHaveLength(2);
   });
@@ -63,15 +63,15 @@ describe('groupChatMessagesBySender', () => {
       receivedAt,
     });
 
-    const groups = groupChatMessagesBySender(
-      [
+    const groups = groupChatMessagesBySender({
+      messages: [
         datedMessage('1', '2026-11-22T22:00:00.000Z'),
         datedMessage('2', '2026-11-22T23:30:00.000Z'),
         datedMessage('3', '2026-11-23T08:00:00.000Z'),
       ],
-      new Set(),
-      'UTC',
-    );
+      outgoingMessageIds: new Set(),
+      timeZone: 'UTC',
+    });
 
     expect(
       groups.map(({ isFirstOfDay, messages }) => ({

@@ -4,11 +4,15 @@ import { getChatMessageDayKey } from '@/chat/utils/getChatMessageDayKey';
 import { getIsFirstChatMessageOfDayByIndex } from '@/chat/utils/getIsFirstChatMessageOfDayByIndex';
 import { isDefined } from 'twenty-shared/utils';
 
-export const groupChatMessagesBySender = (
-  messages: EmailThreadMessageWithSender[],
-  outgoingMessageIds: ReadonlySet<string>,
-  timeZone: string,
-): ChatMessageGroup[] => {
+export const groupChatMessagesBySender = ({
+  messages,
+  outgoingMessageIds,
+  timeZone,
+}: {
+  messages: EmailThreadMessageWithSender[];
+  outgoingMessageIds: ReadonlySet<string>;
+  timeZone: string;
+}): ChatMessageGroup[] => {
   const isFirstOfDayByIndex = getIsFirstChatMessageOfDayByIndex(
     messages.map((message) =>
       getChatMessageDayKey({
