@@ -52,6 +52,7 @@ type UseNavigationMenuItemAddOptionsParams = {
   objectId: string | null;
   parentId?: string;
   currentItems: NavigationMenuItem[];
+  hiddenItems: NavigationMenuItem[];
   isSearchingAllItems: boolean;
   addItem: (input: NewNavigationMenuItemInput) => void;
   navigateToStep: (step: NavigationMenuItemAddStep) => void;
@@ -64,6 +65,7 @@ export const useNavigationMenuItemAddOptions = ({
   objectId,
   parentId,
   currentItems,
+  hiddenItems,
   isSearchingAllItems,
   addItem,
   navigateToStep,
@@ -94,7 +96,10 @@ export const useNavigationMenuItemAddOptions = ({
     objectMetadataIdsWithIndexView,
     objectMetadataIdsAlreadyAdded,
     viewIdsAlreadyAdded,
-  } = useNavigationMenuObjectMetadataForSection(currentItems);
+  } = useNavigationMenuObjectMetadataForSection([
+    ...currentItems,
+    ...hiddenItems,
+  ]);
   const {
     navigationMenuItemSearchRecords,
     recordSearchLoading,

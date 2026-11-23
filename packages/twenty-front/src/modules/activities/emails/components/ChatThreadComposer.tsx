@@ -1,7 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ChangeEvent, type KeyboardEvent, useRef, useState } from 'react';
+import {
+  type ChangeEvent,
+  type ClipboardEvent,
+  type KeyboardEvent,
+  useRef,
+  useState,
+} from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -15,7 +21,7 @@ import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThr
 import { useComposerDraft } from '@/activities/emails/hooks/useComposerDraft';
 import { chatThreadComposerDraftFamilyState } from '@/activities/emails/states/chatThreadComposerDraftFamilyState';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
-import { AiChatFilePreview } from '@/ai-chat/composer/components/AiChatFilePreview';
+import { ChatFilePreview } from '@/chat/components/ChatFilePreview';
 import { StyledChatComposerBox } from '@/chat/components/StyledChatComposerBox';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
@@ -195,8 +201,7 @@ export const ChatThreadComposer = ({
     }
   };
 
-  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files ?? []);
+  const addFiles = (selectedFiles: File[]) => {
     const acceptedFiles = selectedFiles.slice(
       0,
       Math.max(MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE - files.length, 0),
@@ -212,7 +217,27 @@ export const ChatThreadComposer = ({
     }
 
     setFiles((currentFiles) => [...currentFiles, ...acceptedFiles]);
+  };
+
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    addFiles(Array.from(event.target.files ?? []));
     event.target.value = '';
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLTextAreaElement>) => {
+    const pastedFiles = Array.from(event.clipboardData.files);
+
+    // Rich text copies (Word, Excel, web pages) also carry an image rendition: paste them as text
+    if (
+      !canAttachFiles ||
+      !isNonEmptyArray(pastedFiles) ||
+      event.clipboardData.types.includes('text/html')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    addFiles(pastedFiles);
   };
 
   const getPlaceholder = () => {
@@ -250,11 +275,12 @@ export const ChatThreadComposer = ({
           disabled={isDisconnected}
           onChange={(event) => setDraft(event.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
         />
         {isNonEmptyArray(files) && (
           <StyledFiles>
             {files.map((file, index) => (
-              <AiChatFilePreview
+              <ChatFilePreview
                 key={`${index}-${file.name}`}
                 file={file}
                 onRemove={() =>

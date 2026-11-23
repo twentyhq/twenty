@@ -42,6 +42,11 @@ msgstr "\"{0}\" není platné podpole \"{1}\"."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\" obsahuje neplatnou hodnotu."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "\"{name}\" nelze použít v tomto omezení viditelnosti"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -116,6 +121,11 @@ msgstr "Pro doménu \"{domainName}\" byl nalezen počet názvů hostitelů: {hos
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} pro {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr "{senderName} v {threadLabel}"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -138,7 +148,7 @@ msgstr "Položku navigační nabídky typu {type} nelze umístit do položky typ
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a built-in section"
-msgstr ""
+msgstr "Položku navigační nabídky typu {type} nelze umístit do vestavěné sekce"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -154,7 +164,7 @@ msgstr "Integrovaný poskytovatel již používá tento název. Zvolte jiný št
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A builtInSectionKey is only allowed on SECTION type"
-msgstr ""
+msgstr "builtInSectionKey je povolen pouze pro typ SECTION"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -166,6 +176,11 @@ msgstr "Hromadné odeslání e-mailu publiku se statistikami doručení"
 #: src/engine/core-modules/cache-lock/exceptions/cache-lock.exception.ts
 msgid "A cache lock error occurred."
 msgstr "Došlo k chybě zámku mezipaměti."
+
+#. js-lingui-id: BGPUw0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A calculation on related records cannot be sorted or limited"
+msgstr "Výpočet pro související záznamy nelze řadit ani omezit"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -204,6 +219,11 @@ msgstr "Filtr grafu nemá žádné pole"
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
 msgstr "Filtr grafu widgetu \"{widgetTitle}\" nemá univerzální identifikátor metadat pole"
 
+#. js-lingui-id: pSJj6s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A column name cannot be empty"
+msgstr "Název sloupce nesmí být prázdný"
+
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -226,6 +246,16 @@ msgstr "Poskytovatel připojení s tímto názvem již pro tuto aplikaci existuj
 msgid "A connection provider with this name already exists for this application."
 msgstr "Poskytovatel připojení s tímto názvem již pro tuto aplikaci existuje."
 
+#. js-lingui-id: v8qK2D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot have a related record field"
+msgstr "Počet souvisejících záznamů nemůže mít pole souvisejícího záznamu"
+
+#. js-lingui-id: J6ov1V
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot use a field"
+msgstr "Počet souvisejících záznamů nemůže používat pole"
+
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -242,6 +272,12 @@ msgstr "Databázový trigger události v této aplikaci je neplatný."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
 msgstr "Deaktivované pole nelze zobrazit ve sloupci"
+
+#. js-lingui-id: ef/Kdg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A deactivated field cannot be used to filter or sort related records"
+msgstr "Deaktivované pole nelze použít k filtrování ani řazení souvisejících záznamů"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -440,15 +476,30 @@ msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Záznam schůzky"
 
-#. js-lingui-id: p5HHUZ
+#. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
-msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr "Pole souvisejícího záznamu lze zobrazit pouze u pole vztahu typu many-to-one"
+msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
+msgstr "Pole souvisejícího záznamu lze zobrazit pouze u relačního pole mnoho ku jedné nebo u relačního pole jedna ku mnoha s rozsahem relace"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
 msgstr "Vztah souvisejícího záznamu nelze zobrazit ve sloupci"
+
+#. js-lingui-id: iBsZzI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A related record's relation cannot be used to filter or sort"
+msgstr "Relaci souvisejícího záznamu nelze použít k filtrování ani řazení"
+
+#. js-lingui-id: OrK1uF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "A relation scope can only be set on a one-to-many relation field"
+msgstr "Rozsah relace lze nastavit pouze u relačního pole jedna ku mnoha"
+
+#. js-lingui-id: +RRVJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A relation scope related record field can only be used on a many-to-one relation field"
+msgstr "Pole souvisejícího záznamu v rozsahu relace lze použít pouze u relačního pole mnoho ku jedné"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -569,7 +620,7 @@ msgstr "Platný agentUniversalIdentifier je vyžadován pro typ AGENT"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid builtInSectionKey is required for a built-in SECTION"
-msgstr ""
+msgstr "Pro vestavěnou SECTION je vyžadován platný builtInSectionKey"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -639,6 +690,16 @@ msgstr "Došlo k chybě pole zobrazení."
 msgid "A view field group error occurred."
 msgstr "Došlo k chybě skupiny polí zobrazení."
 
+#. js-lingui-id: Aexevl
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be empty, use null to show the default label"
+msgstr "Popisek pole zobrazení nesmí být prázdný, pro zobrazení výchozího popisku použijte null"
+
+#. js-lingui-id: JmypXw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
+msgstr "Popisek pole zobrazení nemůže být delší než {IDENTIFIER_MAX_CHAR_LENGTH} znaků"
+
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
@@ -691,6 +752,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Člen pracovního prostoru"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "Relace člena pracovního prostoru potřebuje pole pro čtení v souvisejících záznamech"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -742,7 +808,9 @@ msgid "Access token not found."
 msgstr "Přístupový token nenalezen."
 
 #. js-lingui-id: 4MiH8E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Account Owner"
 msgstr "Vlastník účtu"
@@ -2126,6 +2194,11 @@ msgstr "Přeneste své společnosti, kontakty a obchody z libovolného exportu C
 msgid "Bring your team into Twenty."
 msgstr "Přiveďte svůj tým do Twenty."
 
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr "Oznámení prohlížeče byla nastavena pomocí zastaralého klíče. Obnovte stránku a nastavte je znovu."
+
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2312,6 +2385,12 @@ msgstr "Událost v kalendáři"
 msgctxt "fieldMetadata.label"
 msgid "Calendar Event"
 msgstr "Událost v kalendáři"
+
+#. js-lingui-id: r6+1Ni
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event copies synced from this member's calendars"
+msgstr "Kopie událostí kalendáře synchronizované z kalendářů tohoto člena"
 
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -3059,6 +3138,11 @@ msgstr "Vyberte existující typ aktivity časové osy, který chcete přepsat."
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Vyberte jednu osobu nebo jednu roli, se kterou chcete sdílet."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Vyberte pole pro čtení v souvisejících záznamech"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5589,6 +5673,11 @@ msgstr "Pole \"{relationFieldName}\" není vztahem"
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Pole \"{workspaceMemberFieldName}\" není polem objektu workspaceMember, predikát by se nikdy nepoužil"
 
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "Pole \"{workspaceMemberRelationFieldName}\" není relací typu jedna ku mnoha objektu workspaceMember"
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6074,6 +6163,11 @@ msgstr "ID prvního člena přímé zprávy"
 msgid "First friendly message"
 msgstr "První přívětivá zpráva"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Křestní jméno může mít nejvýše {WORKSPACE_MEMBER_NAME_MAX_LENGTH} znaků."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6123,6 +6217,11 @@ msgstr "Pole akce formuláře musí mít unikátní názvy"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Akce formuláře musí mít alespoň jedno pole"
+
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr "Bývalý člen"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -6504,7 +6603,9 @@ msgstr "Identifikátor"
 
 #. js-lingui-id: 86G6IW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Handle"
@@ -6514,6 +6615,18 @@ msgstr "Identifikátor"
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "Jsou vyžadovány aliasy identifikátorů."
+
+#. js-lingui-id: x9jVPQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the calendar this event was synced from"
+msgstr "Identifikátor kalendáře, ze kterého byla tato událost synchronizována"
+
+#. js-lingui-id: fC7TD7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the mailbox this message was synced from"
+msgstr "Identifikátor poštovní schránky, ze které byla tato zpráva synchronizována"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -7759,6 +7872,11 @@ msgstr "Neplatné viewUniversalIdentifier pro widget polí"
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "Neplatné viewUniversalIdentifier pro widget polí \"{widgetTitle}\". Očekáváno platné UUID"
 
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Neplatné omezení viditelnosti: {untranslatedErrorMessage}"
+
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
@@ -8133,6 +8251,11 @@ msgstr "Poslední zpráva"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Odesílatel poslední zprávy"
+
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Příjmení může mít nejvýše {WORKSPACE_MEMBER_NAME_MAX_LENGTH} znaků."
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -8805,6 +8928,12 @@ msgstr "Přiřazení zpráv kanálu zpráv"
 msgid "Message channel not found."
 msgstr "Kanál zpráv nenalezen."
 
+#. js-lingui-id: 7lDI1E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message copies synced from this member's mailboxes"
+msgstr "Kopie zpráv synchronizované z poštovních schránek tohoto člena"
+
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9411,6 +9540,11 @@ msgstr "Nový"
 msgid "New backup codes were generated for your account"
 msgstr "Pro váš účet byly vygenerovány nové záložní kódy"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr "Nový chat"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9427,6 +9561,11 @@ msgstr "Nový chat"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
+msgstr "Nová zpráva"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9614,12 +9753,6 @@ msgstr "Nezaznamenáno"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
 msgstr "Nenastaveno"
-
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Nezahájeno"
 
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -10052,10 +10185,15 @@ msgstr "Jedna nebo více přesměrovacích URI jsou neplatné."
 msgid "One or more requested scopes are invalid."
 msgstr "Jeden nebo více požadovaných rozsahů oprávnění jsou neplatné."
 
-#. js-lingui-id: A69o8a
+#. js-lingui-id: 7bNnyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
-msgid "Only a column linking to one record can show a field of that record"
-msgstr "Pouze sloupec odkazující na jeden záznam může zobrazit pole daného záznamu"
+msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
+msgstr "Pole souvisejících záznamů může zobrazit pouze sloupec odkazující na jeden záznam nebo filtrovaný sloupec souvisejících záznamů"
+
+#. js-lingui-id: RryrSe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only a column listing related records can filter, sort or limit them"
+msgstr "Související záznamy může filtrovat, řadit nebo omezovat pouze sloupec, který je vypisuje"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10066,6 +10204,11 @@ msgstr "Odeslat lze pouze koncept nebo naplánovanou kampaň."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
 msgstr "Pouze pole odkazující na jeden záznam lze řadit podle pole tohoto záznamu"
+
+#. js-lingui-id: FnGPJ0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Only a field linking to one record can use a field of that record"
+msgstr "Pole daného záznamu může používat pouze pole odkazující na jeden záznam"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10086,6 +10229,16 @@ msgstr "Obnovovací kódy pro tohoto člena může spravovat pouze správce serv
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Pouze člen pracovního prostoru může změnit, kdo uvidí workflow"
+
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Soukromého agenta může vytvořit pouze člen pracovního prostoru."
+
+#. js-lingui-id: VBcVkv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only added columns can filter, sort or limit related records"
+msgstr "Související záznamy mohou filtrovat, řadit nebo omezovat pouze přidané sloupce"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10112,6 +10265,11 @@ msgstr "Tímto způsobem lze nárokovat pouze aplikace publikované na npm."
 msgid "Only applications synced from local source can be exported."
 msgstr "Exportovat lze pouze aplikace synchronizované z místního zdroje."
 
+#. js-lingui-id: 8t36/D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Only count, sum, average, min and max can aggregate related records"
+msgstr "Související záznamy mohou agregovat pouze operace počet, součet, průměr, minimum a maximum"
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10121,6 +10279,11 @@ msgstr "Jediná chyba"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Jsou povolena pouze omezení polí."
+
+#. js-lingui-id: KmZMUH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only non-canonical view fields can have a relation scope"
+msgstr "Rozsah relace mohou mít pouze nekanonická pole zobrazení"
 
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10137,6 +10300,12 @@ msgstr "Na každé kartě je povolen pouze jeden widget s plnou výškou"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Jeho spouštěče může změnit pouze aplikace, která tohoto agenta vlastní"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Pouze člen, který agenta vlastní, může změnit, kdo jej uvidí."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -10910,6 +11079,11 @@ msgctxt "fieldMetadata.label"
 msgid "Phones"
 msgstr "Telefony"
 
+#. js-lingui-id: WPKlX/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Pick a field of the related records to calculate on"
+msgstr "Vyberte pole souvisejících záznamů, pro které se má provést výpočet"
+
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
@@ -11085,6 +11259,11 @@ msgstr "Hodnota predikátu není pro tento operand platná"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Predikáty, které dosahují pole prostřednictvím vztahu, nejsou pro tento pracovní prostor povoleny"
+
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Predikáty čtoucí aktuálního člena prostřednictvím relace nejsou pro tento pracovní prostor povoleny"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11651,6 +11830,36 @@ msgstr "Objekt cesty souvisejícího záznamu nenalezen"
 msgid "Related record paths require the Organization plan."
 msgstr "Cesty souvisejících záznamů vyžadují plán Organization."
 
+#. js-lingui-id: Kch20t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records can only be filtered or sorted by their own fields"
+msgstr "Související záznamy lze filtrovat nebo řadit pouze podle jejich vlastních polí"
+
+#. js-lingui-id: GIT0tY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records cannot be filtered or sorted by a list of records"
+msgstr "Související záznamy nelze filtrovat ani řadit podle seznamu záznamů"
+
+#. js-lingui-id: IyP1Db
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Related records filter groups are invalid"
+msgstr "Skupiny filtrů souvisejících záznamů jsou neplatné"
+
+#. js-lingui-id: HbwlWt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Related records filters are invalid"
+msgstr "Filtry souvisejících záznamů jsou neplatné"
+
+#. js-lingui-id: SV7HLW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Related records sort direction should be ascending or descending"
+msgstr "Směr řazení souvisejících záznamů musí být vzestupný nebo sestupný"
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11717,6 +11926,66 @@ msgstr "Filtry relace mohou procházet pouze jednu úroveň relace do hloubky"
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "Vztah není pro toto pole povolen."
+
+#. js-lingui-id: 7ZohXD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope can only have one root filter group"
+msgstr "Rozsah relace může mít pouze jednu kořenovou skupinu filtrů"
+
+#. js-lingui-id: cvmKqs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields cannot be one-to-many relations"
+msgstr "Pole rozsahu relace nemohou být relacemi jedna ku mnoha"
+
+#. js-lingui-id: 9w3/Xr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must be active"
+msgstr "Pole rozsahu relace musí být aktivní"
+
+#. js-lingui-id: NmTkV8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must belong to the relation target object"
+msgstr "Pole rozsahu relace musí patřit cílovému objektu relace"
+
+#. js-lingui-id: ZTDFle
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group has an invalid logical operator"
+msgstr "Skupina filtrů rozsahu relace má neplatný logický operátor"
+
+#. js-lingui-id: tY8Auj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group ids must be unique UUIDs"
+msgstr "ID skupin filtrů rozsahu relace musí být jedinečné identifikátory UUID"
+
+#. js-lingui-id: /OizQh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter group not found"
+msgstr "Skupina filtrů rozsahu relace nebyla nalezena"
+
+#. js-lingui-id: LHu9vR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group parent not found"
+msgstr "Nadřazená skupina filtrů rozsahu relace nebyla nalezena"
+
+#. js-lingui-id: FrK0wr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter groups can only be nested one level deep"
+msgstr "Skupiny filtrů rozsahu relace lze vnořit pouze do jedné úrovně"
+
+#. js-lingui-id: aNv4KU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter ids must be unique UUIDs"
+msgstr "ID filtrů rozsahu relace musí být jedinečné identifikátory UUID"
+
+#. js-lingui-id: cc0+ro
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
+msgstr "Limit rozsahu relace musí být celé číslo mezi 1 a {QUERY_MAX_RECORDS_FROM_RELATION}"
+
+#. js-lingui-id: xeyqWP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Relation scope sort has an invalid direction"
+msgstr "Řazení rozsahu relace má neplatný směr"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -11843,10 +12112,10 @@ msgstr "Vyžádáno"
 msgid "Requested file range cannot be served."
 msgstr "Požadovaný rozsah souboru nelze poskytnout."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Povinná pole a relace nelze omezit v pravidle oprávnění na úrovni řádků."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Povinná pole a morfologické relace nelze omezit v pravidle oprávnění na úrovni řádku."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12311,6 +12580,7 @@ msgid "Rule"
 msgstr "Pravidlo"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Pravidla prostřednictvím vztahu nejsou pro tento pracovní prostor povolena"
@@ -13429,6 +13699,18 @@ msgstr "Souhrn"
 msgid "Sunday"
 msgstr "Neděle"
 
+#. js-lingui-id: uHrdjd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Calendar Events"
+msgstr "Synchronizované události kalendáře"
+
+#. js-lingui-id: ZgRRP1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Messages"
+msgstr "Synchronizované zprávy"
+
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "System"
@@ -14104,6 +14386,7 @@ msgid "The field configured for this widget could not be found."
 msgstr "Pole nakonfigurované pro tento widget nebylo nalezeno."
 
 #. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The field must belong to the related object"
@@ -14264,6 +14547,11 @@ msgstr "Členové, kteří psali ve vlákně"
 msgid "The nested relation field configured for this widget could not be found."
 msgstr "Vnořené relační pole nakonfigurované pro tento widget nebylo nalezeno."
 
+#. js-lingui-id: MD4f/q
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "The number of related records to show is out of range"
+msgstr "Počet souvisejících záznamů k zobrazení je mimo povolený rozsah"
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -14384,6 +14672,11 @@ msgstr "Obsah přijatého e‑mailu již není k dispozici."
 msgid "The related record field cannot be a relation"
 msgstr "Pole souvisejícího záznamu nemůže být vztahem"
 
+#. js-lingui-id: MBEG9i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The related record field does not support this aggregate operation"
+msgstr "Pole souvisejícího záznamu nepodporuje tuto agregační operaci"
+
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -14400,6 +14693,31 @@ msgstr "Pole souvisejícího záznamu musí patřit cílovému objektu vztahu"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
 msgstr "Pole souvisejícího záznamu ve sloupci vlastněném aplikací nelze změnit"
+
+#. js-lingui-id: uHtomZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "The relation scope of a column owned by an application cannot be changed"
+msgstr "Rozsah relace sloupce vlastněného aplikací nelze změnit"
+
+#. js-lingui-id: Tl0b2t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The relation scope of an aggregate cannot have sorts or a limit"
+msgstr "Rozsah relace agregace nemůže obsahovat řazení ani limit"
+
+#. js-lingui-id: c0bu85
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field cannot be a relation"
+msgstr "Pole souvisejícího záznamu v rozsahu relace nemůže být relací"
+
+#. js-lingui-id: zJWJeQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must be active"
+msgstr "Pole souvisejícího záznamu v rozsahu relace musí být aktivní"
+
+#. js-lingui-id: WY2/RN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must belong to the relation target object"
+msgstr "Pole souvisejícího záznamu v rozsahu relace musí patřit cílovému objektu relace"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14696,6 +15014,11 @@ msgstr "Tento agent nemá žádná výstupní pole. Přidejte do jeho formátu o
 msgid "This agent is archived."
 msgstr "Tento agent je archivován."
 
+#. js-lingui-id: IaSvAS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This aggregate operation requires a related record field"
+msgstr "Tato agregační operace vyžaduje pole souvisejícího záznamu"
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -14736,6 +15059,11 @@ msgstr "Tato aplikace vyžaduje novější verzi serveru Twenty. Aktualizujte pr
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Tato aplikace vyžaduje novější verzi, než na jakou má tento pracovní prostor dokončenou aktualizaci. Zkuste to prosím znovu po dokončení aktualizace pracovního prostoru."
+
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "Tato aplikace deklaruje neplatné ceny"
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14781,6 +15109,21 @@ msgstr "Tento obor proměnné aplikace není podporován."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
 msgstr "Toto fakturační ujednání má neplatné nastavení."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr "Služba push tohoto prohlížeče není podporována."
+
+#. js-lingui-id: ohxYfe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available for this field"
+msgstr "Tento výpočet není pro toto pole k dispozici"
+
+#. js-lingui-id: 4x0ihe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available on related records"
+msgstr "Tento výpočet není pro související záznamy k dispozici"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14864,10 +15207,20 @@ msgstr "Tento kód patří k publikované verzi workflow. Upravte jej z konceptu
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
 msgstr "Tento sloupec pochází z aplikace, takže pole souvisejícího záznamu, které zobrazuje, nelze změnit"
 
+#. js-lingui-id: mY8Iz1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "This column comes from an application, so the related records it shows cannot be changed"
+msgstr "Tento sloupec pochází z aplikace, proto nelze změnit související záznamy, které zobrazuje"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Tento sloupec je již označen jako jedinečný. Pokud chcete omezení spravovat zde, nejprve vypněte přepínač pole „Unique“."
+
+#. js-lingui-id: tEKss1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "This column name is too long"
+msgstr "Název tohoto sloupce je příliš dlouhý"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14993,6 +15346,11 @@ msgstr "Toto pole nepatří k objektu člena pracovního prostoru"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Toto pole nemá sloupec databáze k indexování."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Toto pole není relací jedna k mnoha objektu člena pracovního prostoru"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -15840,6 +16198,11 @@ msgstr "Nalezeno příliš mnoho kandidátů na administrátora."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Příliš mnoho účastníků: {attendeeCount}. Maximální povolený počet je {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: s/8N3l
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Too many domain validation emails sent. Please try again later."
+msgstr "Bylo odesláno příliš mnoho e-mailů pro ověření domény. Zkuste to prosím znovu později."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17123,6 +17486,16 @@ msgstr "ViewId je vyžadován k vytvoření skupiny zobrazení."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId je vyžadován k vytvoření třídění zobrazení."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "Omezení viditelnosti nelze přečíst"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "Omezení viditelnosti má příliš mnoho podmínek"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -17760,6 +18133,12 @@ msgctxt "fieldMetadata.label"
 msgid "Workspace"
 msgstr "Pracovní prostor"
 
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Workspace"
+msgstr "Pracovní prostor"
+
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
@@ -17902,6 +18281,12 @@ msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Pole stránky záznamu člena pracovního prostoru"
 
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Metadata relačního pole člena pracovního prostoru nebyla nalezena"
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17931,6 +18316,18 @@ msgstr "Člen pracovního prostoru, který reagoval; prázdné, pokud reagoval a
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who sent this message"
 msgstr "Člen pracovního prostoru, který odeslal tuto zprávu"
+
+#. js-lingui-id: SXhaY/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose calendar this event was synced from"
+msgstr "Člen pracovního prostoru, z jehož kalendáře byla tato událost synchronizována"
+
+#. js-lingui-id: 6oRXeC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose mailbox this message was synced from"
+msgstr "Člen pracovního prostoru, z jehož poštovní schránky byla tato zpráva synchronizována"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -18214,6 +18611,11 @@ msgstr "Nemáte oprávnění k přístupu k této funkci. Kontaktujte prosím sv
 msgid "You do not have permission to access this workflow."
 msgstr "Nemáte oprávnění pro přístup k tomuto pracovnímu postupu."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Nemáte oprávnění změnit tento záznam."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18409,6 +18811,11 @@ msgstr "Vaše role nemůže odstranit některé z těchto záznamů, takže je n
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Vaše role v tomto pracovním prostoru nebyla nalezena. Kontaktujte prosím svého správce pracovního prostoru."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr "Platnost vaší relace vypršela. Přihlaste se znovu, abyste zapnuli oznámení prohlížeče."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

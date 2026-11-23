@@ -1,4 +1,4 @@
-import { type OAuthClientMetadata } from '@modelcontextprotocol/sdk/shared/auth.js';
+import { type OAuthClientMetadata } from '@modelcontextprotocol/client';
 
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/connection-provider/utils/build-callback-url.util';
 import { TWENTY_CURRENT_VERSION } from 'src/engine/core-modules/upgrade/constants/twenty-current-version.constant';

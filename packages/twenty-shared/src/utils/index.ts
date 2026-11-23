@@ -33,8 +33,6 @@ export { canAccessThroughAllRecordsOrRlsPermission } from './canAccessThroughAll
 export { canAccessThroughAllRecordsPermission } from './canAccessThroughAllRecordsPermission';
 export { canAccessThroughRlsPermission } from './canAccessThroughRlsPermission';
 export { canRlsRuleAccessOperation } from './canRlsRuleAccessOperation';
-export { conditionalAvailabilityParser } from './command-menu-items/conditionalAvailabilityParser';
-export { evaluateConditionalAvailabilityExpression } from './command-menu-items/evaluateConditionalAvailabilityExpression';
 export { isCommandMenuCoreObjectName } from './command-menu-items/isCommandMenuCoreObjectName';
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
@@ -91,6 +89,7 @@ export { parseExpressionDate } from './expression-date/parseExpressionDate';
 export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
+export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -242,6 +241,7 @@ export { formatToShortNumber } from './format/formatToShortNumber';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';
+export { computeRelationWithArgumentsResponseKey } from './graphql/computeRelationWithArgumentsResponseKey';
 export {
   getNodeTypename,
   getConnectionTypename,
@@ -262,12 +262,14 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isBuiltInSectionKey } from './navigation/isBuiltInSectionKey';
 export { isNativePageKey } from './navigation/isNativePageKey';
+export { normalizeViewFieldLabel } from './normalizeViewFieldLabel';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { sortWidgetsWithViewportFillingLast } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { parseJson } from './parseJson';
+export { isValidRelationScopeLimit } from './relation-scope/isValidRelationScopeLimit';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
@@ -373,6 +375,7 @@ export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
 export { isNonEmptyString } from './typeguard/isNonEmptyString';
 export { isPlainObject } from './typeguard/isPlainObject';
+export { isRecordGqlFieldsRelationWithArguments } from './typeguard/isRecordGqlFieldsRelationWithArguments';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
@@ -404,7 +407,6 @@ export { createValidationRuleEvaluator } from './validation-rule/createValidatio
 export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
 export { getValidationRulePreviousValueFieldPath } from './validation-rule/getValidationRulePreviousValueFieldPath';
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
-export { getValidationRuleSyntaxError } from './validation-rule/getValidationRuleSyntaxError';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';

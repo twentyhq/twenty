@@ -54,6 +54,7 @@ export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperator
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
 export { FILES_FIELD_MAX_NUMBER_OF_VALUES } from './FilesFieldMaxNumberOfValues';
+export { FORBIDDEN_PROPERTY_NAMES } from './ForbiddenPropertyNames';
 export { GIN_COMPATIBLE_FIELD_TYPES } from './GinCompatibleFieldTypes';
 export { GROUP_BY_DATE_GRANULARITY_THAT_REQUIRE_TIME_ZONE } from './GroupByDateGranularityThatRequireTimeZone';
 export { IANA_TIME_ZONES } from './IanaTimeZones';
@@ -91,6 +92,7 @@ export { SESSION_COOKIE_OPT_IN_HEADER_NAME } from './SessionCookieOptInHeaderNam
 export { STANDARD_OBJECT_RECORDS_UNDER_OBJECT_RECORDS_PERMISSIONS } from './StandardObjectRecordsUnderObjectRecordsPermissions';
 export { SUBDOMAIN_PATTERN } from './SubdomainPattern';
 export { SystemPermissionFlag } from './SystemPermissionFlag';
+export { TAB_PRESENCE_HEARTBEAT_INTERVAL_MS } from './TabPresenceHeartbeatIntervalMs';
 export { TAG_COLORS } from './TagColors';
 export { TOOL_PERMISSION_FLAGS } from './ToolPermissionFlags';
 export { TWENTY_COMPANIES_BASE_URL } from './TwentyCompaniesBaseUrl';
@@ -105,3 +107,5 @@ export { VALIDATION_RULE_PREVIOUS_VARIABLE_NAME } from './ValidationRulePrevious
 export { VIEW_GROUP_LOAD_LIMIT_OPTIONS } from './ViewGroupLoadLimitOptions';
 export { VIEW_GROUP_VISIBLE_OPTIONS_MAX } from './ViewGroupVisibleOptionsMax';
 export { VIEW_TYPE_DEFAULT_ICONS } from './ViewTypeDefaultIcons';
+export { WORKSPACE_DISPLAY_NAME_MAX_LENGTH } from './WorkspaceDisplayNameMaxLength';
+export { WORKSPACE_MEMBER_NAME_MAX_LENGTH } from './WorkspaceMemberNameMaxLength';

@@ -21,6 +21,8 @@ export const NAVIGATION_MENU_ITEM_FRAGMENT = gql`
     agentId
     position
     applicationId
+    universalIdentifier
+    isActive
     createdAt
     updatedAt
   }

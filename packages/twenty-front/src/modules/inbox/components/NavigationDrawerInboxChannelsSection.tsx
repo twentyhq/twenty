@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHash, IconPlus } from 'twenty-ui/icon';
@@ -14,15 +14,19 @@ import { aiChatAccessibleChannelsSelector } from '@/ai-chat/threads/states/selec
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const INBOX_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
-export const NavigationDrawerInboxChannelsSection = () => {
+type NavigationDrawerInboxChannelsSectionProps = {
+  headerAction?: ReactNode;
+};
+
+export const NavigationDrawerInboxChannelsSection = ({
+  headerAction,
+}: NavigationDrawerInboxChannelsSectionProps) => {
   const { t } = useLingui();
   const aiChatChannels = useAtomStateValue(aiChatChannelsState);
   const aiChatAccessibleChannels = useAtomStateValue(
@@ -32,21 +36,18 @@ export const NavigationDrawerInboxChannelsSection = () => {
   const { openNavigationSection } = useNavigationSection(
     INBOX_CHANNELS_NAVIGATION_SECTION_ID,
   );
-  const { createAgentChatChannel } = useCreateInboxChannel();
+  const { createInboxChannel } = useCreateInboxChannel();
   const canManageChannels = useHasPermissionFlag(
     PermissionFlagType.AI_SETTINGS,
   );
   const { openInboxChannel } = useOpenInboxChannel();
-  const isNavigationDrawerContentExpanded =
-    useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
-  if (!isDefined(aiChatChannels)) {
+  if (!isDefined(aiChatChannels) && !isDefined(headerAction)) {
     return null;
   }
 
-  // Listed only for who manages channels, so they keep a way to set them up
-  const inaccessibleChannels = aiChatChannels.filter(
+  const inaccessibleChannels = (aiChatChannels ?? []).filter(
     ({ isAccessible }) => !isAccessible,
   );
 
@@ -64,7 +65,7 @@ export const NavigationDrawerInboxChannelsSection = () => {
       return;
     }
 
-    const channelId = await createAgentChatChannel(trimmedName);
+    const channelId = await createInboxChannel(trimmedName);
 
     if (isDefined(channelId)) {
       openInboxChannel({ channelId });
@@ -75,9 +76,12 @@ export const NavigationDrawerInboxChannelsSection = () => {
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_CHANNELS_NAVIGATION_SECTION_ID}
       label={t`Channels`}
-      alwaysShowRightIcon={aiChatAccessibleChannels.length === 0}
+      alwaysShowRightIcon={
+        isDefined(headerAction) || aiChatAccessibleChannels.length === 0
+      }
       rightIcon={
-        canManageChannels ? (
+        headerAction ??
+        (canManageChannels ? (
           <LightIconButton
             emphasis="subtle"
             aria-label={t`New channel`}
@@ -85,7 +89,7 @@ export const NavigationDrawerInboxChannelsSection = () => {
           >
             <IconPlus />
           </LightIconButton>
-        ) : undefined
+        ) : undefined)
       }
     >
       {aiChatAccessibleChannels.map((channel) => (
@@ -108,7 +112,7 @@ export const NavigationDrawerInboxChannelsSection = () => {
           canManage={canManageChannels}
         />
       ))}
-      {isDefined(newChannelName) ? (
+      {isDefined(newChannelName) && (
         <NavigationDrawerInput
           Icon={IconHash}
           value={newChannelName}
@@ -118,17 +122,6 @@ export const NavigationDrawerInboxChannelsSection = () => {
           onClickOutside={(_event, name) => void commitCreate(name)}
           placeholder={t`Channel name`}
         />
-      ) : (
-        canManageChannels &&
-        isNavigationDrawerContentExpanded && (
-          <NavigationDrawerItem
-            label={t`Add channel`}
-            Icon={IconPlus}
-            variant="tertiary"
-            onClick={startCreate}
-            triggerEvent="CLICK"
-          />
-        )
       )}
     </CollapsibleNavigationDrawerSection>
   );

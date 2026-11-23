@@ -9,7 +9,7 @@ import { InboxLayoutDropdown } from '@/inbox/components/InboxLayoutDropdown';
 import { InboxTriageCommandMenuItems } from '@/inbox/components/InboxTriageCommandMenuItems';
 import { InboxPersonalViewDropdown } from '@/inbox/components/InboxPersonalViewDropdown';
 import { InboxViewHeading } from '@/inbox/components/InboxViewHeading';
-import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
@@ -33,14 +33,14 @@ export const InboxListHeader = ({
     inboxSelectedChannelViewSelector,
   );
   const isMobile = useIsMobile();
-  const { switchToNewChat } = useSwitchToNewAiChat({
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage: true,
   });
   const { resetRecordSelection } = useResetRecordSelection();
 
   const handleNewChat = () => {
     resetRecordSelection();
-    switchToNewChat();
+    switchToNewAiChat();
   };
 
   const viewDropdown = isDefined(inboxSelectedChannelView) ? (

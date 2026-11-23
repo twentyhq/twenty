@@ -20,6 +20,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "blue",
     "position": 0,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -37,6 +38,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "blue",
     "position": 1,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -54,6 +56,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "gray",
     "position": 1,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -71,6 +74,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "red",
     "position": 2,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -88,6 +92,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "turquoise",
     "position": 3,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -105,6 +110,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "turquoise",
     "position": 4,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -122,6 +128,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "gray",
     "position": 5,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -139,6 +146,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": "orange",
     "position": 6,
     "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:56.200Z",
     "updatedAt": "2026-04-10T08:55:56.200Z",
     "targetRecordIdentifier": null
@@ -156,6 +164,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": null,
     "position": 7,
     "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:57.800Z",
     "updatedAt": "2026-04-10T08:55:57.800Z",
     "targetRecordIdentifier": null
@@ -173,6 +182,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": null,
     "position": 8,
     "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:58.075Z",
     "updatedAt": "2026-04-10T08:55:58.075Z",
     "targetRecordIdentifier": null
@@ -190,6 +200,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": null,
     "position": 9,
     "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:58.471Z",
     "updatedAt": "2026-04-10T08:55:58.471Z",
     "targetRecordIdentifier": null
@@ -207,6 +218,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": null,
     "position": 10,
     "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:58.898Z",
     "updatedAt": "2026-04-10T08:55:58.898Z",
     "targetRecordIdentifier": null
@@ -224,6 +236,7 @@ export const mockedNavigationMenuItems: NavigationMenuItem[] =
     "color": null,
     "position": 11,
     "applicationId": "029204a9-b419-41d8-a483-57690c3d1a18",
+    "isActive": true,
     "createdAt": "2026-04-10T08:55:59.196Z",
     "updatedAt": "2026-04-10T08:55:59.196Z",
     "targetRecordIdentifier": null

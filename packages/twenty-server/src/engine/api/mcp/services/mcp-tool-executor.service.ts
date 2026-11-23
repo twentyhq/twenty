@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  type CallToolResult,
+  type JSONObject,
+  type ListToolsResult,
+  type Tool,
+} from '@modelcontextprotocol/server';
 import { isString } from '@sniptt/guards';
 import { asSchema, type ToolExecuteFunction } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,16 +18,13 @@ import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
 import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
+import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 
-import { MCP_PROGRESS_NOTIFICATION_METHOD } from 'src/engine/api/mcp/constants/mcp-progress-notification.constant';
 import {
   McpException,
   McpExceptionCode,
 } from 'src/engine/api/mcp/exceptions/mcp.exception';
-import { type McpListedTool } from 'src/engine/api/mcp/types/mcp-listed-tool.type';
-import { type McpToolCallResult } from 'src/engine/api/mcp/types/mcp-tool-call-result.type';
 import { type McpToolSet } from 'src/engine/api/mcp/types/mcp-tool-set.type';
-import { type McpToolsListResult } from 'src/engine/api/mcp/types/mcp-tools-list-result.type';
 
 @Injectable()
 export class McpToolExecutorService {
@@ -31,15 +34,13 @@ export class McpToolExecutorService {
     toolSet,
     toolName,
     toolArguments,
-    progressToken,
-    sseWriter,
+    notifyToolCallStarted,
   }: {
     toolSet: McpToolSet;
     toolName: string;
     toolArguments: Record<string, unknown> | undefined;
-    progressToken: string | number | undefined;
-    sseWriter?: (data: Record<string, unknown>) => void;
-  }): Promise<McpToolCallResult> {
+    notifyToolCallStarted?: () => Promise<void>;
+  }): Promise<CallToolResult> {
     const tool = toolSet[toolName];
 
     if (!isDefined(tool) || !isDefined(tool.execute)) {
@@ -49,17 +50,7 @@ export class McpToolExecutorService {
       );
     }
 
-    if (isDefined(sseWriter) && isDefined(progressToken)) {
-      sseWriter({
-        jsonrpc: '2.0',
-        method: MCP_PROGRESS_NOTIFICATION_METHOD,
-        params: {
-          progressToken,
-          progress: 0,
-          total: 1,
-        },
-      });
-    }
+    await notifyToolCallStarted?.();
 
     const metricToolName = getToolMetricName(
       resolveToolName({
@@ -125,22 +116,29 @@ export class McpToolExecutorService {
     }
   }
 
-  async handleToolsListing(toolSet: McpToolSet): Promise<McpToolsListResult> {
+  async handleToolsListing(toolSet: McpToolSet): Promise<ListToolsResult> {
     const tools = await Promise.all(
       Object.entries(toolSet)
         .filter(([, tool]) => isDefined(tool.inputSchema))
-        .map(async ([name, tool]): Promise<McpListedTool> => ({
-          name,
-          // AI SDK v7 also allows a description resolver, which MCP clients cannot call
-          description: isString(tool.description)
-            ? tool.description
-            : undefined,
-          inputSchema: {
-            ...(await asSchema(tool.inputSchema).jsonSchema),
-            type: 'object',
-          },
-          annotations: tool.annotations,
-        })),
+        .map(async ([name, tool]): Promise<Tool> => {
+          const title = tool.title ?? humanizeToolName(name);
+
+          return {
+            name,
+            // Directory reviews (Claude) require a title without saying which of the two fields they read
+            title,
+            // AI SDK v7 also allows a description resolver, which MCP clients cannot call
+            description: isString(tool.description)
+              ? tool.description
+              : undefined,
+            inputSchema: {
+              // The AI SDK's JSONSchema7 type does not declare what it is at runtime: plain JSON
+              ...((await asSchema(tool.inputSchema).jsonSchema) as JSONObject),
+              type: 'object',
+            },
+            annotations: { ...tool.annotations, title },
+          };
+        }),
     );
 
     return { tools };

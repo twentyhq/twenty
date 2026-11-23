@@ -1,0 +1,2 @@
+export const ADD_NAVIGATION_MENU_ITEM_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME =
+  '2.61.0_AddNavigationMenuItemOverridableEntityFastInstanceCommand_1795167647639';

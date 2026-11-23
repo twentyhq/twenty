@@ -115,6 +115,18 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   aggregateOperation: AggregateOperations.COUNT,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
   relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
+  relationScope: {
+    filters: [],
+    filterGroups: [],
+    sorts: [
+      {
+        fieldMetadataUniversalIdentifier: FIELD_UID,
+        direction: ViewSortDirection.ASC,
+      },
+    ],
+    limit: 1,
+  },
+  label: 'Open opportunities',
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {
@@ -349,6 +361,9 @@ const NESTED_IN_RULE =
 const PREDICATE_GROUP_OPERATIONS_GAP =
   'not in app manifests until the engine reads predicate group operations';
 
+const WORKSPACE_MEMBER_RELATION_GAP =
+  'no manifest slot yet for member values read through a relation of the workspace member';
+
 const ROW_LEVEL_PERMISSION_KIND_GAPS = {
   deletedAt:
     'soft-deleted row-level permission predicates and groups are reported as excluded instead of exported',
@@ -573,7 +588,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
         }),
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { universalRelationScope: 'relationScope' },
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: VIEW_KIND_GAPS,
   },
@@ -662,7 +677,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {},
   },
   {
@@ -726,6 +741,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
     knownGaps: {
       ...PAGE_LAYOUT_KIND_GAPS,
       conditionalAvailabilityExpression:
+        'no manifest slot; a widget carrying one is reported as unsupported',
+      conditionalAvailability:
         'no manifest slot; a widget carrying one is reported as unsupported',
     },
   },
@@ -876,6 +893,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
       ...ROW_LEVEL_PERMISSION_KIND_GAPS,
       relationFieldMetadataUniversalIdentifier:
         'no manifest slot yet for a predicate reached through a relation',
+      workspaceMemberRelationFieldMetadataUniversalIdentifier:
+        WORKSPACE_MEMBER_RELATION_GAP,
       rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
@@ -921,7 +940,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: ['visibility', 'createdByUserWorkspaceId'],
+    workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
       lastPublishedVersionId:
@@ -934,7 +953,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
+    workspaceLocalProperties: [
+      ...WORKSPACE_LOCAL_PROPERTIES,
+      'isPrivate',
+      'createdByUserWorkspaceId',
+    ],
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',

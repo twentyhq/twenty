@@ -471,6 +471,12 @@ msgstr "{0} су се одјавили од ове теме"
 msgid "{0} retries"
 msgstr "{0} покушаја поново"
 
+#. js-lingui-id: nrONSU
+#. placeholder {0}: rules.length
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{0} rules"
+msgstr "{0} правила"
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(numberOfSelectedRecords)
 #. placeholder {0}: formatNumber(selectedThreadCount)
@@ -558,6 +564,12 @@ msgstr "{0} без имејл адресе"
 msgid "{0} workspace members"
 msgstr "{0} чланова радног простора"
 
+#. js-lingui-id: elMxkj
+#. placeholder {0}: tab.name
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
+msgid "{0}, {unreadOpenThreadCount} unread"
+msgstr "{0}, {unreadOpenThreadCount} непрочитано"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -565,11 +577,18 @@ msgstr "{0} чланова радног простора"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu.tsx
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}, назад на поља"
+
+#. js-lingui-id: VxMSt6
+#. placeholder {0}: tab.name
+#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
+msgid "{0}, unread"
+msgstr "{0}, непрочитано"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -599,14 +618,14 @@ msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} од {fieldLabel}"
 
 #. js-lingui-id: zEkduP
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount}"
-msgstr ""
+msgstr "{allowedFieldCount} од {fieldCount}"
 
 #. js-lingui-id: LoDOIo
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "{allowedFieldCount} of {fieldCount} fields"
-msgstr ""
+msgstr "{allowedFieldCount} од {fieldCount} поља"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -622,6 +641,16 @@ msgstr "{appDisplayName} жели да:"
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "{appLabel} installed"
 msgstr "{appLabel} је инсталиран"
+
+#. js-lingui-id: jUUqOu
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "{applicationName} can no longer access the account of {memberName}"
+msgstr "{applicationName} више не може да приступи налогу корисника {memberName}"
+
+#. js-lingui-id: 1NAf56
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "{applicationName} can no longer access your account"
+msgstr "{applicationName} више не може да приступи вашем налогу"
 
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
@@ -685,6 +714,11 @@ msgstr "{cardCount, plural, one {Одобрити # радњу?} few {Одобр
 #: src/modules/activities/emails/components/ChatThreadDisconnectedBanner.tsx
 msgid "{channelName} is disconnected."
 msgstr "Веза са {channelName} је прекинута."
+
+#. js-lingui-id: Y1n+1u
+#: src/modules/settings/applications/utils/getApplicationsWithConnectedMembersDescription.ts
+msgid "{connectedMemberCount, plural, =0 {No members connected} one {Connected by # member} other {Connected by # members}}"
+msgstr "{connectedMemberCount, plural, =0 {Нема повезаних чланова} one {Повезао је # члан} few {Повезала су # члана} other {Повезало је # чланова}}"
 
 #. js-lingui-id: 3gdGx+
 #: src/modules/settings/applications/hooks/useConnectApplicationWithApiKey.ts
@@ -828,6 +862,11 @@ msgstr "Отпремање {fileName} одбијено"
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 msgid "{filterRulesCount, plural, one {{filterRulesCount} rule} other {{filterRulesCount} rules}}"
 msgstr "{filterRulesCount, plural, one {{filterRulesCount} правило} few {{filterRulesCount} правила} other {{filterRulesCount} правила}}"
+
+#. js-lingui-id: 11/gul
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{firstPredicateLabel} +{otherPredicateCount}"
+msgstr "{firstPredicateLabel} +{otherPredicateCount}"
 
 #. js-lingui-id: WS/avX
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -1012,11 +1051,6 @@ msgstr "{num, selectordinal, one {{num}ст} few {{num}нд} other {{num}ти}}"
 msgid "{numberOfSelectedItems} workspace members"
 msgstr "{numberOfSelectedItems, plural, one {# члан радног простора} few {# члана радног простора} other {# чланова радног простора}}"
 
-#. js-lingui-id: DQ+6r7
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "{objectLabelPlural} permissions"
-msgstr "Дозволе за {objectLabelPlural}"
-
 #. js-lingui-id: luWGLQ
 #: src/modules/workflow/workflow-variables/utils/generate/generateWaitForEventOutputSchema.ts
 msgid "{objectLabelSingular} Before Update"
@@ -1036,16 +1070,6 @@ msgstr "{participantLabels} ће бити додат као учесник и д
 #: src/modules/ai-chat/composer/components/AiChatParticipantMentionBar.tsx
 msgid "{participantLabels} will be added as participants and get access to this chat"
 msgstr "{participantLabels} ће бити додати као учесници и добиће приступ овом чету"
-
-#. js-lingui-id: jCjuhm
-#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
-msgid "{participantNames} are typing…"
-msgstr "{participantNames} куцају…"
-
-#. js-lingui-id: E0CZYQ
-#: src/modules/ai-chat/messages/components/AiChatTypingIndicator.tsx
-msgid "{participantNames} is typing…"
-msgstr "{participantNames} куца…"
 
 #. js-lingui-id: v5nX2L
 #: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
@@ -1094,6 +1118,11 @@ msgstr "{queuedMessage}, прескаче се {skipReasons}"
 msgid "{readOnlyFieldCount, plural, one {Can't edit # field} other {Can't edit # fields}}"
 msgstr "{readOnlyFieldCount, plural, one {Није могуће уређивати # поље} few {Није могуће уређивати # поља} other {Није могуће уређивати # поља}}"
 
+#. js-lingui-id: HFkZ/O
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "{recordCount} records"
+msgstr "{recordCount} записа"
+
 #. js-lingui-id: ociapy
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
 msgid "{remainingBackupCodeCount, plural, one {# backup code left} other {# backup codes left}}"
@@ -1125,10 +1154,35 @@ msgstr "{retentionInHours, plural, one {# сат} few {# сата} other {# са
 msgid "{retriedCount, plural, one {Successfully retried {retriedCount} job} other {Successfully retried {retriedCount} jobs}}"
 msgstr "{retriedCount, plural, one {Успешно је поновљен {retriedCount} посао} few {Успешно су поновљена {retriedCount} посла} other {Успешно је поновљено {retriedCount} послова}}"
 
+#. js-lingui-id: ssmJCL
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already deletes every {objectLabelSingular}"
+msgstr "{roleLabel} већ брише сваки {objectLabelSingular}"
+
+#. js-lingui-id: 09pjSA
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already destroys every {objectLabelSingular}"
+msgstr "{roleLabel} већ уништава сваки {objectLabelSingular}"
+
+#. js-lingui-id: dPD2BG
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already edits every {objectLabelSingular}"
+msgstr "{roleLabel} већ уређује сваки {objectLabelSingular}"
+
+#. js-lingui-id: Qs0rBC
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "{roleLabel} already sees every {objectLabelSingular}"
+msgstr "{roleLabel} већ види сваки {objectLabelSingular}"
+
 #. js-lingui-id: uHZWwU
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModal.tsx
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} ће бити додељен у улогу \"{newRoleName}\"."
+
+#. js-lingui-id: uqrFkj
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
+msgid "{ruleOperationsLabel} when {ruleLabel}"
+msgstr "{ruleOperationsLabel} када је {ruleLabel}"
 
 #. js-lingui-id: Tsqb9x
 #: src/modules/object-core/agents/components/CoreAgentRunConversation.tsx
@@ -1314,6 +1368,11 @@ msgstr "{unitCount, plural, one {Година} few {Године} other {Год�
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
 msgstr "{unlistedCount, plural, one {Ниједна наведена апликација се не подудара. Доступна је # ненаведена апликација.} few {Ниједна наведена апликација се не подудара. Доступне су # ненаведене апликације.} other {Ниједна наведена апликација се не подудара. Доступно је # ненаведених апликација.}}"
+
+#. js-lingui-id: dCxqaV
+#: src/modules/object-record/record-field/ui/meta-types/display/components/RelationWithUnloadedRecordCount.tsx
+msgid "{unloadedRecordCount, plural, one {# more related record} other {# more related records}}"
+msgstr "{unloadedRecordCount, plural, one {# додатни повезани запис} few {# додатна повезана записа} other {# додатних повезаних записа}}"
 
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -1504,6 +1563,11 @@ msgstr "1 објекат"
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailChannelDomainStatusCell.tsx
 msgid "1 of 2 done"
 msgstr "1 од 2 је завршено"
+
+#. js-lingui-id: qarnor
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "1 record"
+msgstr "1 запис"
 
 #. js-lingui-id: lKmQeh
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -1750,16 +1814,6 @@ msgstr "Могућност додавања више од једног теле�
 msgid "Ability to add more than one URL"
 msgstr "Могућност додавања више од једне URL адресе"
 
-#. js-lingui-id: MjUIIf
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with"
-msgstr "Могућност филтрирања записа са којима корисник може да интерагује"
-
-#. js-lingui-id: 7J3Y++
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Ability to filter the records a user can interact with."
-msgstr "Могућност филтрирања записа са којима корисник може да интерагује."
-
 #. js-lingui-id: ssjjFt
 #: src/modules/settings/components/SettingsImageInput.tsx
 msgid "Abort"
@@ -1810,7 +1864,7 @@ msgstr "Прихваћени и потписани DPA споразуми за �
 
 #. js-lingui-id: LuXP9q
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Приступ"
@@ -2043,7 +2097,7 @@ msgstr "Актер"
 
 #. js-lingui-id: m16xKo
 #: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
-#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSection.tsx
+#: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Add"
@@ -2118,7 +2172,7 @@ msgid "Add a recipient before sending"
 msgstr "Додајте примаоца пре слања"
 
 #. js-lingui-id: erAaSc
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Add a recipient or a channel before sending."
 msgstr "Додајте примаоца или канал пре слања."
 
@@ -2242,14 +2296,10 @@ msgstr "Додај картицу"
 msgid "Add CC"
 msgstr ""
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Додај канал"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
+#: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Add column"
 msgstr "Додај колону"
 
@@ -2262,6 +2312,13 @@ msgstr "Додај колону лево"
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandleMenu.tsx
 msgid "Add column right"
 msgstr "Додај колону десно"
+
+#. js-lingui-id: ADCve+
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFilterBuilderContent.tsx
+msgid "Add condition"
+msgstr "Додајте услов"
 
 #. js-lingui-id: 3iIvQg
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -2280,7 +2337,7 @@ msgid "Add credit card"
 msgstr "Додај кредитну картицу"
 
 #. js-lingui-id: NKMrde
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerEndTrialPeriod.tsx
 msgid "Add Credit Card"
 msgstr "Додај кредитну картицу"
@@ -2353,8 +2410,6 @@ msgstr "Додајте датотеке, записе или вештине"
 #. js-lingui-id: vCSBPD
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelCreateRootFilterButton.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/views/components/ViewBarDetailsAddFilterButton.tsx
 msgid "Add filter"
 msgstr "Додајте филтер"
@@ -2389,6 +2444,11 @@ msgid "Add inputs to your form"
 msgstr "Додај уносе у ваш образац"
 
 #. js-lingui-id: NQ8llq
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton.tsx
 msgid "Add item"
@@ -2409,14 +2469,6 @@ msgstr "Додај везу"
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
 msgstr "Додајте MCP сервер"
-
-#. js-lingui-id: gaZXkv
-#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
-#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-msgid "Add menu item"
-msgstr "Додај ставку менија"
 
 #. js-lingui-id: JbORSt
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
@@ -2456,8 +2508,8 @@ msgid "Add node"
 msgstr "Додај чвор"
 
 #. js-lingui-id: dEO3Zx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Add object"
@@ -2474,7 +2526,7 @@ msgid "Add or remove users"
 msgstr "Додајте или уклоните кориснике"
 
 #. js-lingui-id: 7YdkgZ
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Додај излазно поље"
 
@@ -2555,8 +2607,6 @@ msgstr "Додај ред испод"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilderContent.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
@@ -2905,7 +2955,7 @@ msgstr "Администратори"
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverrideRow.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideRow.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Advanced"
 msgstr "Напредно"
@@ -3026,6 +3076,8 @@ msgid "Agent Web Search"
 msgstr "Веб претрага агента"
 
 #. js-lingui-id: 8Uv5e6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 #: src/modules/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs.ts
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions.ts
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
@@ -3129,7 +3181,7 @@ msgstr "AI кредити"
 
 #. js-lingui-id: leS03Y
 #. placeholder {0}: userCreditsUsage.daysUntilReset
-#: src/modules/ai-chat/components/AiChatUserCreditsExhaustedMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatUserCreditsExhaustedMessage.tsx
 msgid "AI credits renew in {0, plural, one {# day} other {# days}}."
 msgstr "AI кредити се обнављају за {0, plural, one {# дан} few {# дана} other {# дана}}."
 
@@ -3236,12 +3288,12 @@ msgid "AI usage limit reached. Ask an admin to raise the limit."
 msgstr "Достигнуто је ограничење коришћења ВИ. Затражите од администратора да повећа ограничење."
 
 #. js-lingui-id: YfXPCQ
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 msgid "AI usage limit reached. Ask an admin to upgrade the plan."
 msgstr "Достигнуто је ограничење коришћења АИ-ја. Замолите администратора да надогради план."
 
 #. js-lingui-id: wBA/cx
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 msgid "AI usage limit reached. Contact support to upgrade."
 msgstr "Достигнуто је ограничење коришћења АИ-ја. Обратите се подршци да бисте надоградили план."
 
@@ -3355,6 +3407,11 @@ msgstr "Све апликације"
 msgid "All channels"
 msgstr "Сви канали"
 
+#. js-lingui-id: 7cbQyX
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "All chats you follow"
+msgstr "Сва ћаскања која пратите"
+
 #. js-lingui-id: tZLcDK
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 msgid "All Companies"
@@ -3384,8 +3441,8 @@ msgid "All failed jobs have been retried"
 msgstr "Сви неуспели послови су поново покренути"
 
 #. js-lingui-id: 3xugyj
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 msgid "All fields"
 msgstr "Сва поља"
@@ -3441,7 +3498,7 @@ msgid "all objects"
 msgstr "сви објекти"
 
 #. js-lingui-id: zIk4M6
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 msgid "All objects"
 msgstr "Сви објекти"
@@ -3470,7 +3527,7 @@ msgstr "сви записи"
 
 #. js-lingui-id: rAUKN+
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "All records"
 msgstr "Сви записи"
 
@@ -3545,6 +3602,21 @@ msgstr "Сви чланови радног простора већ имају о
 msgid "All workspaces"
 msgstr "Сви радни простори"
 
+#. js-lingui-id: h7peZQ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow"
+msgstr "Дозволи"
+
+#. js-lingui-id: rgjDVZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in macOS settings"
+msgstr "Дозволите {settingsEntryLabel} у macOS подешавањима"
+
+#. js-lingui-id: CzjC6l
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in Windows settings"
+msgstr "Дозволите {settingsEntryLabel} у Windows подешавањима"
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3596,6 +3668,16 @@ msgstr "Дозволити приступ медијима за {applicationName
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Дозволи пријаву преко Мајкрософта за кориснике са дозволама за обилажење ССО-а."
 
+#. js-lingui-id: iN398g
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Allow notifications"
+msgstr "Дозволите обавештења"
+
+#. js-lingui-id: kDJaGH
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow notifications in your browser"
+msgstr "Дозволите обавештења у прегледачу"
+
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -3605,6 +3687,11 @@ msgstr "Дозволите приступ тиму за подршку"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Омогућите позивање нових корисника дељењем везе за позив."
+
+#. js-lingui-id: lIfNCI
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Allow this browser to show new inbox messages as notifications"
+msgstr "Дозволите овом прегледачу да приказује нове поруке пријемног сандучета као обавештења"
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3617,8 +3704,8 @@ msgid "Allow users to sign in with an email and password."
 msgstr "Омогућите корисницима да се пријаве са е-мејлом и лозинком."
 
 #. js-lingui-id: Vwi3xW
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectActionsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOperationsSelect.tsx
 msgid "Allowed actions"
 msgstr "Дозвољене радње"
 
@@ -3628,7 +3715,9 @@ msgid "Allowed redirect URIs for OAuth flows"
 msgstr "Дозвољени URI-ји за преусмеравање за OAuth токове"
 
 #. js-lingui-id: L36XXB
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
 msgid "Allows"
 msgstr "Омогућава"
 
@@ -3654,10 +3743,10 @@ msgid "Alt text"
 msgstr "Алтернативни текст"
 
 #. js-lingui-id: Lz58MZ
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Always visible"
-msgstr ""
+msgstr "Увек видљиво"
 
 #. js-lingui-id: Tco16H
 #: src/modules/localization/utils/formatZonedDateTimeTimePart.ts
@@ -3840,7 +3929,6 @@ msgid "Any {0} field"
 msgstr "Било које поље {0}"
 
 #. js-lingui-id: COyjuu
-#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Any device"
 msgstr "Било који уређај"
@@ -4079,6 +4167,11 @@ msgstr "Апликација је успешно инсталирана."
 msgid "Application Logs"
 msgstr "Дневници апликације"
 
+#. js-lingui-id: UiH6l9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Application price billing"
+msgstr "Обрачун цена апликације"
+
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -4131,7 +4224,7 @@ msgid "Applies to"
 msgstr "Примењује се на"
 
 #. js-lingui-id: 9xcLbN
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAllObjectsCard.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAllObjectsCard.tsx
 msgid "Applies to all objects before overrides"
 msgstr "Примењује се на све објекте пре изузетака"
 
@@ -4223,6 +4316,11 @@ msgstr "Подешавања апликација"
 #: src/utils/title-utils.ts
 msgid "Apps preferences - Settings"
 msgstr "Подешавања апликација - Подешавања"
+
+#. js-lingui-id: Eve12g
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Apps that can access this workspace on your behalf"
+msgstr "Апликације које могу да приступе овом радном простору у ваше име"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -4404,7 +4502,7 @@ msgstr "растуће"
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Ascending"
@@ -5133,6 +5231,11 @@ msgstr "између {startOrdinal} и {endOrdinal} дана у месецу"
 msgid "Bill credits to your workspace"
 msgstr "Наплати кредите вашем радном простору"
 
+#. js-lingui-id: jKtUV8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
+msgstr "Наплатите цене које су инсталиране апликације навеле у претплати на радни простор. Цена се још не приказује пре инсталације."
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5221,6 +5324,11 @@ msgstr "Стил блока"
 msgid "Blocked"
 msgstr "Блокирано"
 
+#. js-lingui-id: z3pfdo
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Blocked in this browser. Allow notifications for this site in the browser settings"
+msgstr "Блокирано у овом прегледачу. Дозволите обавештења за овај сајт у подешавањима прегледача"
+
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
@@ -5282,7 +5390,7 @@ msgid "Book a Call"
 msgstr "Закажите позив"
 
 #. js-lingui-id: bOwPjT
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions.ts
 msgid "Boolean"
 msgstr "Булевска вредност"
 
@@ -5347,7 +5455,7 @@ msgid "Breakdown across AI models."
 msgstr "Подела по AI моделима."
 
 #. js-lingui-id: qDsMss
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Brief explanation of this output field"
 msgstr "Кратко објашњење овог излазног поља"
 
@@ -5447,6 +5555,12 @@ msgstr "Листа са знацима за набрајање"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
 msgstr ""
+
+#. js-lingui-id: gxG5Ip
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
+msgid "Bundled"
+msgstr "У пакету"
 
 #. js-lingui-id: 9emr42
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
@@ -5732,14 +5846,14 @@ msgid "Campaign unscheduled and back in your drafts"
 msgstr "Отказано је заказивање кампање и враћена је у ваше нацрте"
 
 #. js-lingui-id: AnhtKd
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be edited"
-msgstr ""
+msgstr "Не може се уређивати"
 
 #. js-lingui-id: XccYlu
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Can't be seen"
-msgstr ""
+msgstr "Не може се видети"
 
 #. js-lingui-id: YXzPl1
 #: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
@@ -5773,6 +5887,7 @@ msgstr "Канада"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
 #: src/modules/side-panel/pages/add-to-message-list/components/SidePanelAddToMessageListPage.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -5968,17 +6083,6 @@ msgstr "Ограничите колико ваш радни простор мо�
 msgid "Caps on what your workspace can spend and who they apply to"
 msgstr "Ограничења потрошње радног простора и на кога се примењују"
 
-#. js-lingui-id: Po5MgW
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
-#: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
-#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignInUp.ts
-#: src/modules/auth/sign-in-up/hooks/useSignUpInNewWorkspace.ts
-#: src/pages/auth/PasswordReset.tsx
-msgid "Captcha (anti-bot check) is still loading, try again"
-msgstr "Captcha (анти-бот провера) се још увек учитава, покушајте поново"
-
 #. js-lingui-id: kryGs+
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -6077,7 +6181,7 @@ msgid "Change Password"
 msgstr "Промени лозинку"
 
 #. js-lingui-id: 98W3AT
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 msgid "Change status in {scopeLabel}"
 msgstr "Промени статус у {scopeLabel}"
 
@@ -6146,6 +6250,16 @@ msgstr "Опције канала"
 msgid "channel role"
 msgstr "улога канала"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "Видљивост канала за API кључеве"
+
+#. js-lingui-id: Kjphnm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility through rules"
+msgstr "Видљивост канала путем правила"
+
 #. js-lingui-id: lfFsZ4
 #: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
@@ -6203,7 +6317,7 @@ msgid "Chat Sessions"
 msgstr "Сесије ћаскања"
 
 #. js-lingui-id: VGw5+N
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Chat stopped: no more available credits."
 msgstr "Чет је заустављен: нема више доступних кредита."
 
@@ -6274,6 +6388,11 @@ msgstr "Проверите имејл пошту"
 #: src/modules/settings/profile/hooks/useUpdateEmail.ts
 msgid "Check your inbox to verify your new email address."
 msgstr "Проверите пријемно сандуче да потврдите своју нову имејл адресу."
+
+#. js-lingui-id: iY9Tuz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Check your system notification settings"
+msgstr "Проверите подешавања системских обавештења"
 
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -6681,7 +6800,7 @@ msgid "Click on \"Add Field\" below to add the first input to your form. The for
 msgstr "Кликните на „Додај поље“ испод да бисте додали први унос у образац. Образац се појављује за особу која ручно покреће ток рада. За токове рада са другим покретачима, попуњава се из покретања тока рада."
 
 #. js-lingui-id: q2R9+z
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Click on \"Add Output Field\" below to define the structure of your agent's response. These fields will be used to format and validate the agent's output when the workflow is executed, and can be referenced by subsequent workflow steps."
 msgstr "Кликните на \"Додај излазно поље\" испод да дефинишете структуру одговора вашег агента. Ова поља ће се користити за форматирање и валидацију излаза агента када се радни ток извршава и на њих се могу позивати наредни кораци радног тока."
 
@@ -6766,7 +6885,8 @@ msgstr "Клипборд захтева безбедну везу (HTTPS). Пр�
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -7236,6 +7356,8 @@ msgid "Computed at"
 msgstr "Израчунато у"
 
 #. js-lingui-id: wpT1VN
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/validation-rules/components/ValidationRuleExpressionEditor.tsx
 msgid "Condition"
@@ -7600,6 +7722,16 @@ msgstr "Повежите сопствени {0} налог за овај сер�
 msgid "Connected"
 msgstr "Повезано"
 
+#. js-lingui-id: YGP/lN
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Connected apps"
+msgstr "Повезане апликације"
+
+#. js-lingui-id: OVjUoE
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Connected members"
+msgstr "Повезани чланови"
+
 #. js-lingui-id: exyUec
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -7641,7 +7773,7 @@ msgid "Connection successfully updated"
 msgstr "Веза је успешно ажурирана"
 
 #. js-lingui-id: 3/kWN3
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "Connection to the assistant was lost. Reload to see the response."
 msgstr "Веза са асистентом је прекинута. Поново учитајте да бисте видели одговор."
 
@@ -7733,6 +7865,7 @@ msgstr "Контекстни прозор мора бити позитиван �
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
@@ -7823,7 +7956,7 @@ msgid "Conversation key"
 msgstr "Кључ разговора"
 
 #. js-lingui-id: 9xGqrK
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversation list"
 msgstr "Листа разговора"
 
@@ -7838,7 +7971,7 @@ msgid "Conversations"
 msgstr "Разговори"
 
 #. js-lingui-id: gM204O
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations in this channel will appear here."
 msgstr "Разговори у овом каналу ће се појавити овде."
 
@@ -7848,7 +7981,7 @@ msgid "Conversations linked to this record will appear here."
 msgstr "Разговори повезани са овим записом појавиће се овде."
 
 #. js-lingui-id: LMvWS1
-#: src/pages/inbox/InboxPage.tsx
+#: src/modules/inbox/components/InboxPageListPane.tsx
 msgid "Conversations you can open will appear here."
 msgstr "Разговори које можете да отворите појавиће се овде."
 
@@ -8235,6 +8368,11 @@ msgstr "Није могуће ажурирати тип инстанце"
 msgid "Couldn't add to favorites"
 msgstr "Није било могуће додати у омиљене"
 
+#. js-lingui-id: l5bv5j
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
+msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
+msgstr "Није могуће приложити „{fileName}“. Датотеке морају бити величине {maxUploadSize} или мање."
+
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 msgid "Couldn't check availability. Please try again."
@@ -8563,11 +8701,6 @@ msgstr "Креирај запис"
 msgid "Create Record"
 msgstr "Креирај запис"
 
-#. js-lingui-id: fYhMZY
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create record share and access group storage as tables owned by the permission engine instead of objects. Only applies when a workspace is created."
-msgstr "Креирајте складиште дељења записа и приступних група као табеле у власништву механизма за дозволе уместо као објекте. Примењује се само када се креира радни простор."
-
 #. js-lingui-id: frmOeu
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Create records permission"
@@ -8660,8 +8793,8 @@ msgid "Created {beautifiedCreatedAt}"
 msgstr ""
 
 #. js-lingui-id: 6vWyWm
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Created {objectLabel}"
 msgstr "Креирано {objectLabel}"
 
@@ -8687,8 +8820,8 @@ msgid "Created view <0>Renewals this quarter</0>"
 msgstr "Креиран је приказ <0>Обнове у овом кварталу</0>"
 
 #. js-lingui-id: sfLpPB
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Creating {objectLabel}"
 msgstr "Креирање {objectLabel}"
 
@@ -9177,7 +9310,7 @@ msgstr "Прилагођене улоге"
 #. js-lingui-id: 2jzCZZ
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Custom section"
-msgstr ""
+msgstr "Прилагођени одељак"
 
 #. js-lingui-id: BjGDEB
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -9811,7 +9944,7 @@ msgstr "обриши"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsSecurityApprovedAccessDomainRowDropdownMenu.tsx
 #: src/modules/settings/security/components/sso/SettingsSecuritySsoRowDropdownMenu.tsx
 #: src/modules/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage.tsx
@@ -10034,14 +10167,19 @@ msgstr "Обриши ниво"
 msgid "Delete limit"
 msgstr "Обриши ограничење"
 
+#. js-lingui-id: Fh7KV2
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Delete matching {objectLabelPlural}"
+msgstr "Избриши одговарајуће {objectLabelPlural}"
+
 #. js-lingui-id: u+Hoy8
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerDangerZone.tsx
 msgid "Delete MCP server"
 msgstr "Избришите MCP сервер"
 
 #. js-lingui-id: KDfTdX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Delete message"
 msgstr "Обриши поруку"
 
@@ -10090,10 +10228,20 @@ msgstr "Трајно избришите улогу"
 msgid "Delete row"
 msgstr "Обриши ред"
 
+#. js-lingui-id: 39Aq/E
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Delete rule"
+msgstr "Обриши правило"
+
 #. js-lingui-id: rvJGTw
 #: src/pages/settings/ai/components/SettingsSkillDangerZone.tsx
 msgid "Delete Skill"
 msgstr "Обришите вештину"
+
+#. js-lingui-id: 6XdrVG
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Delete some {objectLabelPlural} · {throughRules}"
+msgstr "Обриши неке {objectLabelPlural} · {throughRules}"
 
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
@@ -10212,8 +10360,8 @@ msgid "Deleted"
 msgstr "Обрисано"
 
 #. js-lingui-id: /AmZ+I
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Deleted {objectLabel}"
 msgstr "Обрисано {objectLabel}"
 
@@ -10238,8 +10386,8 @@ msgid "Deleted role"
 msgstr "Обрисана улога"
 
 #. js-lingui-id: mhwpOC
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Deleting {objectLabel}"
 msgstr "Брисање {objectLabel}"
 
@@ -10276,7 +10424,7 @@ msgstr "опадајуће"
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Descending"
@@ -10333,7 +10481,6 @@ msgid "Description provided by the application"
 msgstr "Опис који је обезбедила апликација"
 
 #. js-lingui-id: BBqGS9
-#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Desktop"
 msgstr "Десктоп"
@@ -10345,7 +10492,7 @@ msgstr "уништи"
 
 #. js-lingui-id: 2xxBws
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "Destroy"
 msgstr "Уништи"
 
@@ -10358,6 +10505,16 @@ msgstr "Уништи {objectLabel}"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Destroy all records"
 msgstr "Уништи све записе"
+
+#. js-lingui-id: LhvVfx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Destroy matching {objectLabelPlural}"
+msgstr "Уништи одговарајуће {objectLabelPlural}"
+
+#. js-lingui-id: rEJ7+y
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Destroy some {objectLabelPlural} · {throughRules}"
+msgstr "Уништи неке {objectLabelPlural} · {throughRules}"
 
 #. js-lingui-id: FOcBn3
 #: src/modules/inbox/components/InboxThreadActionsDropdown.tsx
@@ -10468,20 +10625,40 @@ msgstr "Диктирање није успело. Покушајте понов�
 msgid "Dictation is not supported in this browser."
 msgstr "Диктирање није подржано у овом прегледачу."
 
+#. js-lingui-id: rgWPME
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see a test notification?"
+msgstr "Да ли сте видели пробно обавештење?"
+
+#. js-lingui-id: kd/w8u
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see it this time?"
+msgstr "Да ли сте га овог пута видели?"
+
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
 msgstr "Идентитет пара директних порука"
 
 #. js-lingui-id: 23aX1b
-#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessagesSection.tsx
 msgid "Direct messages"
 msgstr "Директне поруке"
+
+#. js-lingui-id: yBEIpe
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages and mentions"
+msgstr "Директне поруке и помињања"
 
 #. js-lingui-id: Rz4s9r
 #: src/modules/ai-chat/composer/hooks/useOpenNewAiChatAsDirectMessage.ts
 msgid "Direct messages don't support attachments."
 msgstr "Директне поруке не подржавају прилоге."
+
+#. js-lingui-id: +ILAOG
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Direct messages, mentions and chats assigned to you"
+msgstr "Директне поруке, помињања и ћаскања додељена вама"
 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10648,6 +10825,11 @@ msgstr "ДП"
 msgid "DNS records:"
 msgstr "DNS записи:"
 
+#. js-lingui-id: 5bBKM2
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Do not disturb"
+msgstr "Не узнемиравај"
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -10743,13 +10925,14 @@ msgid "Don't import events marked as private"
 msgstr "Не увози догађаје означене као приватне"
 
 #. js-lingui-id: DPfwMq
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/components/InboxBulkActions.tsx
 #: src/modules/inbox/components/InboxThreadTriageButtons.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Done"
 msgstr "Завршено"
 
@@ -11028,7 +11211,7 @@ msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
 msgstr "На пример, \"Ми смо B2B SaaS компанија. Увек користите формалан језик...\""
 
 #. js-lingui-id: GhTFTJ
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
 msgstr "нпр. резиме, статус, број"
 
@@ -11048,7 +11231,7 @@ msgid "Each slice represents"
 msgstr "Сваки део представља"
 
 #. js-lingui-id: 5oD9f/
-#: src/modules/inbox/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 msgid "Earlier"
 msgstr "Раније"
 
@@ -11093,7 +11276,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Edit"
 msgstr "Уреди"
@@ -11131,6 +11314,12 @@ msgstr "Уреди радње"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Edit all records"
 msgstr "Уреди све записе"
+
+#. js-lingui-id: QM4RhQ
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
+msgid "Edit column"
+msgstr "Уреди колону"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -11209,9 +11398,14 @@ msgstr "Уреди линк"
 msgid "Edit linked records"
 msgstr "Уреди повезане записе"
 
+#. js-lingui-id: pFCxAz
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "Edit matching {objectLabelPlural}"
+msgstr "Измени одговарајуће {objectLabelPlural}"
+
 #. js-lingui-id: QjH+ZX
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 msgid "Edit message"
 msgstr "Измени поруку"
 
@@ -11268,6 +11462,11 @@ msgstr "Уреди правило"
 #: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 msgid "Edit shared labels"
 msgstr "Уреди дељене ознаке"
+
+#. js-lingui-id: yYBXaf
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Edit some {objectLabelPlural} · {throughRules}"
+msgstr "Уреди неке {objectLabelPlural} · {throughRules}"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -11702,7 +11901,7 @@ msgid "Enable microphone and camera"
 msgstr "Омогући микрофон и камеру"
 
 #. js-lingui-id: gZo0V9
-#: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
+#: src/modules/ai/components/AiModelCapabilityToggles.tsx
 msgid "Enable model-specific features"
 msgstr "Омогући специфичне карактеристике модела"
 
@@ -11875,6 +12074,11 @@ msgstr "Унесите нову вредност тајне"
 #: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "Унесите број"
+
+#. js-lingui-id: 14OSiZ
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Enter a number between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
+msgstr "Унесите број између 1 и {QUERY_MAX_RECORDS_FROM_RELATION}"
 
 #. js-lingui-id: LsUGyx
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -12538,8 +12742,13 @@ msgstr "сваког минута"
 msgid "Every Monday"
 msgstr "Сваког понедељка"
 
+#. js-lingui-id: WZ4tRP
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Every new message in a chat you take part in or follow"
+msgstr "Свака нова порука у ћаскању у ком учествујете или које пратите"
+
 #. js-lingui-id: QU6LCC
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Every object follows the all objects access."
 msgstr "Сваки објекат прати приступ за све објекте."
 
@@ -12956,6 +13165,11 @@ msgstr "Израз није важећи"
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
 msgid "External Event ID"
 msgstr "ID спољног догађаја"
+
+#. js-lingui-id: ejIVcx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "External tools agents and workflows can use"
+msgstr "Спољни алати које агенти и токови рада могу да користе"
 
 #. js-lingui-id: 07Wl2A
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -13376,6 +13590,16 @@ msgstr "Није успело враћање типа активности на 
 msgid "Failed to retry jobs. Please try again later."
 msgstr "Није успело понављање послова. Покушајте поново касније."
 
+#. js-lingui-id: YTYTep
+#: src/modules/settings/profile/connected-apps/components/SettingsConnectedAppRowDropdownMenu.tsx
+msgid "Failed to revoke access for {applicationName}"
+msgstr "Опозивање приступа за {applicationName} није успело"
+
+#. js-lingui-id: nNwzE+
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMemberActionsCell.tsx
+msgid "Failed to revoke access for {memberName}"
+msgstr "Опозивање приступа за {memberName} није успело"
+
 #. js-lingui-id: 70UyPr
 #: src/modules/settings/admin-panel/signing-keys/hooks/useRevokeSigningKey.ts
 msgid "Failed to revoke signing key. Please try again later."
@@ -13625,7 +13849,7 @@ msgstr "Брзо"
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Favorite chats"
-msgstr ""
+msgstr "Омиљена ћаскања"
 
 #. js-lingui-id: X9kySA
 #: src/modules/inbox/components/NavigationDrawerInboxFavoritesSection.tsx
@@ -13772,8 +13996,8 @@ msgstr "Дозволе на нивоу поља"
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetFieldDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -13824,14 +14048,14 @@ msgid "Fields shown in each view, and their order"
 msgstr "Поља приказана у сваком приказу и њихов редослед"
 
 #. js-lingui-id: RWZvyt
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to edit"
-msgstr ""
+msgstr "Поља за уређивање"
 
 #. js-lingui-id: YsJAML
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "Fields to see"
-msgstr ""
+msgstr "Поља за преглед"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -13953,6 +14177,7 @@ msgstr "Попуни примером уноса из"
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
@@ -14034,6 +14259,11 @@ msgstr "Филтрирајте временску линију"
 msgid "Filter workflows"
 msgstr "Филтрирај токове рада"
 
+#. js-lingui-id: 03Qqf9
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Filtered"
+msgstr "Филтрирано"
+
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
 msgid "filtering"
@@ -14048,7 +14278,7 @@ msgid "Filters"
 msgstr "Филтери"
 
 #. js-lingui-id: YTaTdm
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Finding {objectLabel}"
 msgstr "Проналажење {objectLabel}"
 
@@ -14058,7 +14288,7 @@ msgid "Finding connected accounts"
 msgstr "Проналажење повезаних налога"
 
 #. js-lingui-id: JmZ/+d
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Finish"
 msgstr "Завршити"
 
@@ -14195,6 +14425,7 @@ msgstr "Цвет"
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
 #: src/modules/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14218,7 +14449,7 @@ msgid "Folders"
 msgstr "Фасцикле"
 
 #. js-lingui-id: 2z3uoE
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 msgid "Follow for me"
 msgstr "Прати уместо мене"
 
@@ -14228,7 +14459,7 @@ msgid "Follow us on X"
 msgstr "Запратите нас на X"
 
 #. js-lingui-id: y6sq5j
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 msgid "Following"
 msgstr "Праћено"
 
@@ -14316,7 +14547,7 @@ msgstr "Формати"
 #: src/modules/ai-chat/threads/hooks/useAiChatThreadDisplayLabel.ts
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/inbox/components/InboxDirectMessageTitle.tsx
-#: src/modules/inbox/components/NavigationDrawerDirectMessageItem.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessageItem.tsx
 msgid "Former member"
 msgstr "Бивши члан"
 
@@ -14336,7 +14567,7 @@ msgid "Forwarding address copied to clipboard"
 msgstr "Адреса за прослеђивање је копирана у клипборд"
 
 #. js-lingui-id: /KxDzG
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Found {objectLabel}"
 msgstr "Пронађено {objectLabel}"
 
@@ -14694,11 +14925,21 @@ msgstr "Немачки"
 msgid "Germany"
 msgstr "Немачка"
 
+#. js-lingui-id: AWtGgd
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
+msgid "Get help"
+msgstr "Затражите помоћ"
+
 #. js-lingui-id: Et23WT
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Купите још кредита"
+
+#. js-lingui-id: LBG67E
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+msgid "Get notified of new inbox messages on this device when you are not looking at Twenty. Your choices below apply to every device"
+msgstr "Примајте обавештења о новим порукама у пријемном сандучету на овом уређају када не гледате Twenty. Ваши избори у наставку важе за сваки уређај"
 
 #. js-lingui-id: AvbPI1
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -15005,7 +15246,7 @@ msgid "Group tabs"
 msgstr "Картице група"
 
 #. js-lingui-id: Qt5Mu7
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Grouped {objectLabel}"
 msgstr "Груписано {objectLabel}"
 
@@ -15015,7 +15256,7 @@ msgid "Grouped by error code and function"
 msgstr "Груписано према коду грешке и функцији"
 
 #. js-lingui-id: 5FTAZt
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Grouping {objectLabel}"
 msgstr "Груписање {objectLabel}"
 
@@ -15235,6 +15476,11 @@ msgstr "Хебрејски"
 msgid "hello, world"
 msgstr "здраво, свете"
 
+#. js-lingui-id: c3XJ18
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "Help"
+msgstr "Помоћ"
+
 #. js-lingui-id: CRzGla
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Help center"
@@ -15251,6 +15497,7 @@ msgid "Hexagon"
 msgstr "Шестоугао"
 
 #. js-lingui-id: D+zLDD
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
@@ -15380,7 +15627,9 @@ msgid "Hire a partner to help you implement and customize Twenty."
 msgstr "Ангажујте партнера који ће вам помоћи да примените и прилагодите Twenty."
 
 #. js-lingui-id: i0qMbr
-#: src/modules/ai-chat/components/AiChatNewThreadPageActions.tsx
+#: src/modules/ai-chat/instance/components/AiChatNewThreadPageActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 msgid "Home"
@@ -15419,7 +15668,7 @@ msgid "Hours between triggers"
 msgstr "Сати између окидача"
 
 #. js-lingui-id: 3WYTm2
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "How can I help you?"
 msgstr "Како могу да вам помогнем?"
 
@@ -15937,6 +16186,11 @@ msgstr "За мање од једног дана"
 msgid "In progress"
 msgstr "У току"
 
+#. js-lingui-id: q6UzTa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "У току: применити видљивост канала за поруке и календар помоћу правила дозвола на нивоу записа. Потребни су преласци преко релација и путање повезаних записа."
+
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In the list"
@@ -16287,7 +16541,7 @@ msgid "Instance status"
 msgstr "Статус инстанце"
 
 #. js-lingui-id: tc328m
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Instruction for AI"
 msgstr "Упутство за AI"
 
@@ -16739,6 +16993,11 @@ msgstr "Елементи за итерацију"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/IteratorAction.ts
 msgid "Iterator"
 msgstr "Итератор"
+
+#. js-lingui-id: 48n0Ly
+#: src/modules/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations.ts
+msgid "its app"
+msgstr "његова апликација"
 
 #. js-lingui-id: R9VnB9
 #: src/modules/inbox/components/NavigationDrawerInboxChannelItem.tsx
@@ -17276,6 +17535,16 @@ msgstr "Последње ажурирање"
 msgid "Last Updated: {0}"
 msgstr "Последње ажурирање: {0}"
 
+#. js-lingui-id: JGvwnU
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Last used"
+msgstr "Последње коришћено"
+
+#. js-lingui-id: 484c8n
+#: src/modules/settings/profile/connected-apps/components/SettingsProfileConnectedAppsSection.tsx
+msgid "Last used {lastUsed}"
+msgstr "Последњи пут коришћено {lastUsed}"
+
 #. js-lingui-id: p9uaTd
 #: src/modules/ai-chat/threads/utils/getAiChatThreadSnoozeOptions.ts
 msgid "Later today"
@@ -17512,7 +17781,7 @@ msgid "Let this member sign in again if they lost their authenticator app"
 msgstr "Омогућите овом члану да се поново пријави ако је изгубио апликацију за аутентификацију"
 
 #. js-lingui-id: RIWS8s
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 msgid "Let's set it up around the way you work."
 msgstr "Хајде да га подесимо према вашем начину рада."
 
@@ -17577,6 +17846,7 @@ msgstr "Лајм"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
@@ -17942,7 +18212,7 @@ msgid "Loading jobs..."
 msgstr "Учитавање послова..."
 
 #. js-lingui-id: YyMToN
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 msgid "Loading members"
 msgstr "Учитавање чланова"
 
@@ -18234,6 +18504,11 @@ msgstr "Најниже прво"
 #: src/modules/localization/utils/formatNumber.ts
 msgid "M"
 msgstr "мил."
+
+#. js-lingui-id: PcJKDa
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
+msgstr "macOS може да блокира обавештења чак и када их {browserLabel} дозвољава. Отворите Обавештења, изаберите {settingsEntryLabel} и укључите Дозволи обавештења. Ако је Фокус укључен, искључите га. Затим пошаљите пробно обавештење."
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -18581,6 +18856,7 @@ msgstr "Максималне вредности"
 #. js-lingui-id: nA8kxD
 #: src/modules/settings/ai/utils/getSettingsAiTabs.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
+#: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
 msgid "MCP"
 msgstr "МКП"
 
@@ -18617,6 +18893,7 @@ msgstr "MCP сервер је успешно обрисан"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "MCP servers"
 msgstr "MCP сервери"
@@ -18631,25 +18908,30 @@ msgstr "MCP сервери нису доступни"
 msgid "MCP tool step"
 msgstr "Корак MCP алата"
 
+#. js-lingui-id: 37Lzw8
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "me"
+msgstr "ја"
+
 #. js-lingui-id: upbzgm
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect.tsx
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 #: src/modules/views/utils/computeRelationFilterDisplayValue.ts
 msgid "Me"
 msgstr "Ја"
 
 #. js-lingui-id: pfWzog
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Me (User ID)"
 msgstr "Ја (Кориснички ИД)"
 
 #. js-lingui-id: BDc6e1
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Me / {workspaceMemberFieldLabel}"
 msgstr "Ја / {workspaceMemberFieldLabel}"
 
@@ -18717,11 +18999,10 @@ msgid "Member removed from workspace"
 msgstr ""
 
 #. js-lingui-id: wlQNTg
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -18741,6 +19022,11 @@ msgstr "Чланови - Подешавања"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Members & invitees"
 msgstr "Чланови и позвани"
+
+#. js-lingui-id: tajf6H
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
+msgid "Members who let this app access the workspace on their behalf"
+msgstr "Чланови који су овој апликацији дозволили приступ радном простору у своје име"
 
 #. js-lingui-id: pbIEgB
 #: src/modules/ai-chat/threads/constants/AiChatThreadReasons.ts
@@ -18803,12 +19089,12 @@ msgid "Merge with"
 msgstr "Споји са"
 
 #. js-lingui-id: 1uAvIV
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Merged {objectLabel}"
 msgstr "Спојено {objectLabel}"
 
 #. js-lingui-id: v4CzQ/
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Merging {objectLabel}"
 msgstr "Спајање {objectLabel}"
 
@@ -19023,7 +19309,6 @@ msgid "Mission accomplished!"
 msgstr "Мисија завршена!"
 
 #. js-lingui-id: dMsM20
-#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Mobile"
 msgstr "Мобилни уређај"
@@ -19236,6 +19521,7 @@ msgstr "Напреднија поља за напредне пројекте"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRowDropdownMenu.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
@@ -19315,6 +19601,11 @@ msgstr "Помери удесно"
 msgid "Move through list items"
 msgstr "Крећите се кроз ставке листе"
 
+#. js-lingui-id: mcfB2A
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Move to"
+msgstr "Премести у"
+
 #. js-lingui-id: TH+XKl
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection.tsx
 msgid "Move to another tab"
@@ -19329,9 +19620,14 @@ msgstr "Премести у канал"
 
 #. js-lingui-id: JCPOml
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Move to folder"
 msgstr "Премести у фасциклу"
+
+#. js-lingui-id: 2SnSKo
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+msgid "Move to tab"
+msgstr "Премести на картицу"
 
 #. js-lingui-id: HV6Nkp
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -19411,10 +19707,20 @@ msgstr "мора бити низ важећих е-пошти"
 msgid "Must be true to save. A write that makes it false is rejected."
 msgstr "Мора бити испуњено да би се сачувало. Упис који га чини неиспуњеним се одбија."
 
+#. js-lingui-id: lPmo1u
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my {workspaceMemberFieldLabel}"
+msgstr "моје {workspaceMemberFieldLabel}"
+
 #. js-lingui-id: OJCJh9
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
 msgid "My apps"
 msgstr "Моје апликације"
+
+#. js-lingui-id: oAOi31
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
+msgid "my unknown field"
+msgstr "моје непознато поље"
 
 #. js-lingui-id: XTGSZU
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -19451,6 +19757,7 @@ msgstr "N/A"
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/applications/components/SettingsApplicationConnectedMembersSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentItemsTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentTypeTable.tsx
 #: src/modules/settings/applications/components/SettingsApplicationTableHeaderRow.tsx
@@ -19694,6 +20001,11 @@ msgstr "Нови налог"
 msgid "New Account"
 msgstr "Нови налог"
 
+#. js-lingui-id: PlBr35
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
+msgid "New agent"
+msgstr "Нови агент"
+
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "New Agent"
@@ -19733,7 +20045,7 @@ msgid "New channel"
 msgstr "Нови канал"
 
 #. js-lingui-id: hIQkLb
-#: src/modules/ai-chat/components/AiChatPageHeader.tsx
+#: src/modules/ai-chat/instance/components/AiChatNewThreadPageHeader.tsx
 #: src/modules/inbox/components/InboxListHeader.tsx
 #: src/modules/inbox/components/NavigationDrawerInboxThreadItem.tsx
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerItem.tsx
@@ -19757,7 +20069,7 @@ msgid "New credit pack"
 msgstr "Нови пакет кредита"
 
 #. js-lingui-id: ctNfZE
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 msgid "New direct message"
 msgstr "Нова директна порука"
 
@@ -19800,6 +20112,21 @@ msgstr "Нова група"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationEditor.tsx
 msgid "New Group"
 msgstr "Нова група"
+
+#. js-lingui-id: TC11mZ
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "New inbox messages notify you while your browser is running"
+msgstr "Нове поруке у пријемном сандучету вас обавештавају док је прегледач покренут"
+
+#. js-lingui-id: Wi5Riu
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "New inbox messages will show up like the test notification while your browser is running."
+msgstr "Нове поруке у пријемном сандучету ће се приказивати као пробно обавештење док је прегледач покренут."
+
+#. js-lingui-id: ynuJvo
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
+msgid "New inbox messages will show up like this"
+msgstr "Нове поруке у пријемном сандучету ће се приказивати овако"
 
 #. js-lingui-id: //H2Cs
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -19862,6 +20189,8 @@ msgstr "Нови лимит за пренос"
 
 #. js-lingui-id: yBF5J5
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "New rule"
 msgstr "Ново правило"
 
@@ -20060,6 +20389,7 @@ msgstr "Девети"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -20091,7 +20421,7 @@ msgstr "Није пронађен ниједан {objectLabelSingular}"
 
 #. js-lingui-id: oPoLg+
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/utils/getObjectOperationsSummary.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsSummary.ts
 msgid "No access"
 msgstr "Нема приступа"
 
@@ -20157,7 +20487,7 @@ msgstr "Ниједан AI модел у овом радном простору �
 
 #. js-lingui-id: iH1iv+
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "No AI provider is configured on this instance."
 msgstr "Ниједан AI добављач није конфигурисан на овој инстанци."
@@ -20285,10 +20615,15 @@ msgid "No chats yet"
 msgstr "Још нема четова"
 
 #. js-lingui-id: qTxPPY
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "No compatible fields"
 msgstr "Нема компатибилних поља"
+
+#. js-lingui-id: RY3VxI
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "No condition"
+msgstr "Без услова"
 
 #. js-lingui-id: YFLMyY
 #: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables.tsx
@@ -20306,8 +20641,8 @@ msgid "No conversation uses this channel."
 msgstr "Ниједан разговор не користи овај канал."
 
 #. js-lingui-id: ICXANZ
+#: src/modules/inbox/components/InboxPageListPane.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
-#: src/pages/inbox/InboxPage.tsx
 msgid "No conversations"
 msgstr "Нема разговора"
 
@@ -20465,9 +20800,9 @@ msgid "No field configured"
 msgstr "Нема подешеног поља"
 
 #. js-lingui-id: gRHpoy
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 msgid "No fields"
-msgstr ""
+msgstr "Нема поља"
 
 #. js-lingui-id: /hvarH
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -20478,7 +20813,7 @@ msgstr ""
 
 #. js-lingui-id: VEYHd4
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -20616,7 +20951,7 @@ msgid "No members assigned"
 msgstr "Нема додељених чланова"
 
 #. js-lingui-id: FK5/sf
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 msgid "No members found"
 msgstr "Није пронађен ниједан члан"
 
@@ -20666,8 +21001,13 @@ msgstr "Ниједан модел није доступан за овај реж
 msgid "No notes"
 msgstr "Нема белешки"
 
+#. js-lingui-id: 9F6fiv
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "No notification for new messages"
+msgstr "Нема обавештења за нове поруке"
+
 #. js-lingui-id: arel2K
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 msgid "No objects found"
 msgstr "Није пронађен ниједан објекат"
 
@@ -21134,6 +21474,11 @@ msgstr "Нису пронађени радни простори који одг�
 msgid "No workspaces match this search"
 msgstr "Ниједан радни простор не одговара овој претрази"
 
+#. js-lingui-id: LayLjZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "No, read the guide"
+msgstr "Не, прочитајте водич"
+
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
@@ -21151,9 +21496,9 @@ msgid "Node settings"
 msgstr "Подешавања чвора"
 
 #. js-lingui-id: EdQY6l
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadLabelsField.tsx
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
@@ -21334,20 +21679,10 @@ msgstr "Није дељено од стране {notSharedByFullName}"
 msgid "Not shared with"
 msgstr "Није подељено са"
 
-#. js-lingui-id: mu1gVr
-#: src/modules/workflow/workflow-diagram/utils/getWorkflowRunStatusTagProps.ts
-msgid "Not started"
-msgstr "Није започето"
-
 #. js-lingui-id: hZWthZ
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
 msgid "Not synced"
 msgstr "Није синхронизовано"
-
-#. js-lingui-id: 5xvHen
-#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
-msgid "Not yet"
-msgstr "Још увек не"
 
 #. js-lingui-id: KiJn9B
 #: src/modules/page-layout/hooks/useCreateRecordPageNoteWidget.ts
@@ -21378,10 +21713,28 @@ msgid "Nothing to suggest here."
 msgstr "Овде нема шта да се предложи."
 
 #. js-lingui-id: iDNBZe
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Обавештења"
+
+#. js-lingui-id: sdfGbU
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Notifications › {settingsEntryName}"
+msgstr "Обавештења › {settingsEntryName}"
+
+#. js-lingui-id: A09awi
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
+msgid "Notifications are on"
+msgstr "Обавештења су укључена"
+
+#. js-lingui-id: +j76n0
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Notifications are set up"
+msgstr "Обавештења су подешена"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21416,9 +21769,9 @@ msgid "number"
 msgstr "број"
 
 #. js-lingui-id: HptUxX
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/settings/data-model/fields/forms/number/constants/NumberDataModelSelectOptions.ts
 #: src/modules/ui/input/components/internal/date/components/RelativeDatePickerHeader.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 msgid "Number"
@@ -21487,6 +21840,11 @@ msgstr ""
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "OAuth"
 msgstr "OAuth"
+
+#. js-lingui-id: TkatNO
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
+msgid "OAuth (automatic)"
+msgstr "OAuth (аутоматски)"
 
 #. js-lingui-id: C1b55F
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -21578,7 +21936,7 @@ msgstr "Јединствена поља објекта"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
@@ -21596,7 +21954,7 @@ msgid "Objects"
 msgstr "Објекти"
 
 #. js-lingui-id: /8Yh6y
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Objects and fields permissions settings"
 msgstr "Подешавања дозвола за објекте и поља"
 
@@ -21609,6 +21967,11 @@ msgstr "Објекти, поља и индекси који обликују в�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "of"
 msgstr "од"
+
+#. js-lingui-id: az8lvo
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Off"
+msgstr "Искључено"
 
 #. js-lingui-id: KNz3EF
 #: src/pages/not-found/NotFound.tsx
@@ -21767,6 +22130,26 @@ msgstr "Разговори један на један између људи"
 msgid "Online"
 msgstr "На мрежи"
 
+#. js-lingui-id: P/Sdzf
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can delete"
+msgstr "Само {applicationName} може да избрише"
+
+#. js-lingui-id: 5K6L4C
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can destroy"
+msgstr "Само {applicationName} може да уништи"
+
+#. js-lingui-id: BUPbj+
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can edit"
+msgstr "Само {applicationName} може да уређује"
+
+#. js-lingui-id: Iysrni
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
+msgid "Only {applicationName} can see"
+msgstr "Само {applicationName} може да види"
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -21875,7 +22258,7 @@ msgid "Only you will be able to see your emails and events"
 msgstr "Само ћете ви моћи да видите своје имејлове и догађаје"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
@@ -22055,6 +22438,11 @@ msgstr "Отвори подешавања"
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
 msgstr "Отвори бочни панел"
+
+#. js-lingui-id: TgKqjz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Open system settings"
+msgstr "Отворите подешавања система"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -22416,11 +22804,11 @@ msgstr "Аутлук"
 #: src/modules/ai-chat/message-content/components/CodeExecutionDisplay.tsx
 #: src/modules/ai-chat/message-content/components/TerminalOutput.tsx
 #: src/modules/ai-chat/thinking-steps/components/ThinkingToolStepRow.tsx
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminChatToolCallPart.tsx
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 #: src/modules/workflow/components/WorkflowStepExecutionResult.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsToolCallRow.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/computeStepOutputSchema.ts
@@ -22461,7 +22849,7 @@ msgid "Override Draft"
 msgstr "Замени нацрт"
 
 #. js-lingui-id: sJNF3W
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Overrides"
 msgstr "Изузеци"
 
@@ -22912,11 +23300,6 @@ msgstr "заставица дозволе"
 msgid "Permission flags"
 msgstr "Заставице дозвола"
 
-#. js-lingui-id: yAZKh+
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Permission tables"
-msgstr "Табеле дозвола"
-
 #. js-lingui-id: 9cDpsw
 #: src/modules/settings/app-preferences/components/SettingsAccountGroupsSection.tsx
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -22925,12 +23308,6 @@ msgstr "Табеле дозвола"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 msgid "Permissions"
 msgstr "Дозволе"
-
-#. js-lingui-id: KiuPPj
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
-msgid "Permissions · {objectLabelSingular}"
-msgstr "Дозволе · {objectLabelSingular}"
 
 #. js-lingui-id: JFI3iH
 #: src/modules/localization/hooks/useLocaleOptions.ts
@@ -23398,7 +23775,7 @@ msgid "Previous"
 msgstr "Претходно"
 
 #. js-lingui-id: x97ifc
-#: src/modules/inbox/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 msgid "Previous 7 days"
 msgstr "Претходних 7 дана"
 
@@ -23927,16 +24304,6 @@ msgstr "Читај и пиши {target}"
 msgid "Read and write data model configuration"
 msgstr "Читај и пиши конфигурацију модела података"
 
-#. js-lingui-id: RXivwU
-#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
-msgid "Read by {readerCount} of {recipientCount}"
-msgstr "Прочитало {readerCount} од {recipientCount}"
-
-#. js-lingui-id: bgP1Ip
-#: src/modules/ai-chat/messages/components/AiChatMessageReceipt.tsx
-msgid "Read by {readerNames}"
-msgstr "Прочитали: {readerNames}"
-
 #. js-lingui-id: 549d7o
 #: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Read changelog"
@@ -23965,6 +24332,11 @@ msgstr "Прочитајте системске промптове"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
 msgstr "Читање адресе, власника и статуса налога приватних канала чланова"
+
+#. js-lingui-id: 4X88Wc
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Read the guide"
+msgstr "Прочитајте водич"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -24074,7 +24446,7 @@ msgstr "Недавно"
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 msgid "Recent chats"
-msgstr ""
+msgstr "Недавни разговори"
 
 #. js-lingui-id: ZVr1+K
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -24327,12 +24699,6 @@ msgstr "Текст записа"
 msgid "Record Type"
 msgstr "Тип записа"
 
-#. js-lingui-id: uMOyEH
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "Record-level"
-msgstr "Ниво записа"
-
 #. js-lingui-id: VQ4KjL
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "Record-level filter"
@@ -24390,11 +24756,6 @@ msgstr "Рекорди"
 #: src/modules/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType.ts
 msgid "Records by date"
 msgstr "Записи по датуму"
-
-#. js-lingui-id: b/xmDA
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
-msgid "Records matching the rule"
-msgstr "Записи који одговарају правилу"
 
 #. js-lingui-id: CjlKOu
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -24690,7 +25051,7 @@ msgid "Remove {0} navigation menu items?"
 msgstr "Уклонити {0} ставке навигационог менија?"
 
 #. js-lingui-id: boQErO
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Remove {displayName}"
 msgstr "Уклони {displayName}"
 
@@ -24831,12 +25192,12 @@ msgid "Remove option"
 msgstr "Уклони опцију"
 
 #. js-lingui-id: y/tlit
-#: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaFieldHeader.tsx
 msgid "Remove output field"
 msgstr "Уклони излазно поље"
 
 #. js-lingui-id: c8Kx/b
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Remove override"
 msgstr "Уклони изузетак"
 
@@ -24888,7 +25249,7 @@ msgid "Remove searchable field"
 msgstr "Уклони поље за претрагу"
 
 #. js-lingui-id: uXfxoE
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Remove section"
 msgstr "Уклони одељак"
 
@@ -24906,6 +25267,11 @@ msgstr "Уклони сортирање"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Уклони сортирање?"
+
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Уклоните приступ API кључева порукама и календару за улоге које се могу доделити корисницима. Када је искључено, ти API кључеви их читају онако како би то чинио члан који није власник канала."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -25009,7 +25375,7 @@ msgid "Replit install links require an HTTPS MCP URL."
 msgstr "Replit линкови за инсталацију захтевају HTTPS MCP URL."
 
 #. js-lingui-id: ImOQa9
-#: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/ai-chat/messages/components/AiChatMessageActions.tsx
 #: src/modules/ai-chat/threads/components/AiChatThreadRequestActions.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunDetails.tsx
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -25158,7 +25524,7 @@ msgid "Reset to default"
 msgstr "Врати на подразумевано"
 
 #. js-lingui-id: 14xBUx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionValueInput.tsx
 msgid "Reset to static value"
 msgstr "Ресетуј на статичну вредност"
 
@@ -25400,6 +25766,7 @@ msgstr "Опозови"
 
 #. js-lingui-id: cg+Poy
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
+#: src/modules/settings/components/SettingsRevokeAccessDropdownMenu.tsx
 msgid "Revoke access"
 msgstr "Укини приступ"
 
@@ -25506,8 +25873,8 @@ msgstr "Улога је успешно ажурирана"
 #: src/modules/object-record/record-sharing/utils/getRecordSharingRecipientGroups.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
@@ -25530,6 +25897,7 @@ msgid "Romanian"
 msgstr "Румунски"
 
 #. js-lingui-id: cepC1f
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Root level"
 msgstr "Корени ниво"
@@ -25571,6 +25939,11 @@ msgstr "група предиката дозвола на нивоу реда"
 msgid "row level permission rule"
 msgstr "правило дозвола на нивоу реда"
 
+#. js-lingui-id: m9LWSX
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
+msgid "Row-level permission"
+msgstr "Дозвола на нивоу реда"
+
 #. js-lingui-id: Wdh41P
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Row-level permissions"
@@ -25602,9 +25975,9 @@ msgid "Ruby"
 msgstr "Рубин"
 
 #. js-lingui-id: oAN4H/
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectOverridePanel.tsx
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleForm.tsx
 msgid "Rule"
-msgstr ""
+msgstr "Правило"
 
 #. js-lingui-id: tijGcA
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -25816,6 +26189,7 @@ msgstr "Субота"
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 #: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26025,12 +26399,12 @@ msgid "Search {lowerCaseTypeLabel}..."
 msgstr "Претражите {lowerCaseTypeLabel}..."
 
 #. js-lingui-id: g2dQp/
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 {fieldTypeLabelLowercase} field"
 msgstr "Претражите 1 {fieldTypeLabelLowercase} поље"
 
 #. js-lingui-id: 4XD2Lr
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Search 1 field"
 msgstr "Претражите 1 поље"
 
@@ -26226,10 +26600,10 @@ msgstr "метаподаци поља за претрагу"
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectFieldsSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartFieldSelectionForAggregateOperationDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartGroupByFieldSelectionDropdownContentBase.tsx
@@ -26277,16 +26651,16 @@ msgid "Search icon"
 msgstr "Претрага сличица"
 
 #. js-lingui-id: AaDUlx
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
-#: src/modules/inbox/components/DirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
+#: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Претражите чланове"
 
 #. js-lingui-id: two5rl
 #: src/modules/object-core/agents/components/SidePanelCoreAgentDataAccessPage.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
-#: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsAddObjectDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartDataSourceDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableDataSourceDropdownContent.tsx
@@ -26363,7 +26737,7 @@ msgid "Search..."
 msgstr "Претрага..."
 
 #. js-lingui-id: V/CFeK
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Searched {objectLabel}"
 msgstr "Претражено {objectLabel}"
 
@@ -26395,7 +26769,7 @@ msgid "Searches"
 msgstr "Претраге"
 
 #. js-lingui-id: EvDUJy
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Searching {objectLabel}"
 msgstr "Претраживање {objectLabel}"
 
@@ -26501,6 +26875,7 @@ msgstr "секција"
 #. js-lingui-id: BhZ5PL
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 msgid "Section"
 msgstr "Секција"
@@ -26511,7 +26886,7 @@ msgid "Section actions"
 msgstr "Радње одељка"
 
 #. js-lingui-id: vKc3fL
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenu.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
 msgid "Section name"
 msgstr "Назив одељка"
 
@@ -26532,7 +26907,7 @@ msgstr "Безбедност"
 
 #. js-lingui-id: h+8V38
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
-#: src/modules/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig.ts
 msgid "See"
 msgstr "Види"
 
@@ -26578,11 +26953,18 @@ msgid "See installed applications"
 msgstr "Погледајте инсталиране апликације"
 
 #. js-lingui-id: uPo3PQ
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 msgid "See less"
 msgstr "Прикажи мање"
 
+#. js-lingui-id: KaSkAp
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "See matching {objectLabelPlural}"
+msgstr "Погледај одговарајуће {objectLabelPlural}"
+
 #. js-lingui-id: V1fa9u
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection.tsx
 #: src/modules/navigation-menu-item/display/containers/components/NavigationMenuSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
@@ -26598,6 +26980,11 @@ msgstr "Отвори на маркетплејсу"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "See records"
 msgstr "Види записе"
+
+#. js-lingui-id: 6+1BUt
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "See some {objectLabelPlural} · {throughRules}"
+msgstr "Прикажи неке {objectLabelPlural} · {throughRules}"
 
 #. js-lingui-id: SXaufV
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
@@ -26663,12 +27050,12 @@ msgid "Select {targetObjectNameSingular}"
 msgstr "Изабери {targetObjectNameSingular}"
 
 #. js-lingui-id: 9NFSzl
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 {fieldTypeLabelLowercase} field"
 msgstr "Изаберите 1 {fieldTypeLabelLowercase} поље"
 
 #. js-lingui-id: VjMMyZ
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 msgid "Select 1 field"
 msgstr "Изаберите 1 поље"
 
@@ -26698,7 +27085,7 @@ msgid "Select a currency"
 msgstr "Изаберите валуту"
 
 #. js-lingui-id: PWGE2B
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionVariablePicker.tsx
 msgid "Select a current user field"
 msgstr "Изаберите поље тренутног корисника"
 
@@ -26731,7 +27118,7 @@ msgid "Select a field to display in this widget"
 msgstr "Изаберите поље за приказ у овом виџету"
 
 #. js-lingui-id: 0DL3XU
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelect.tsx
 msgid "Select a filter field"
 msgstr "Изаберите поље филтера"
 
@@ -27114,7 +27501,7 @@ msgid "Send later"
 msgstr "Пошаљи касније"
 
 #. js-lingui-id: pi1oME
-#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatSendMessageButton.tsx
 #: src/modules/ai-chat/tool-calls/components/AiChatQuestionCard.tsx
 msgid "Send message"
 msgstr "Пошаљи поруку"
@@ -27128,6 +27515,12 @@ msgstr "Пошаљи сада"
 #: src/modules/activities/emails/utils/buildCampaignSendButtonTitle.ts
 msgid "Send Now"
 msgstr "Пошаљи одмах"
+
+#. js-lingui-id: eus61c
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Send test"
+msgstr "Пошаљи тест"
 
 #. js-lingui-id: doZzL7
 #: src/modules/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage.tsx
@@ -27588,6 +27981,11 @@ msgstr "Да ли промена етикете објекта треба да �
 msgid "Should changing the label also change the API name?"
 msgstr "Да ли промена назива треба да промени и API име?"
 
+#. js-lingui-id: 8vETh9
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Show"
+msgstr "Прикажи"
+
 #. js-lingui-id: h8lzfw
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownHiddenFieldsContent.tsx
@@ -27617,6 +28015,7 @@ msgstr "Прикажи све апликације"
 
 #. js-lingui-id: E1fsbl
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
+#: src/modules/object-record/record-column-scope/components/ScopedRelationLookupFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/MorphRelationOneToManyFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/MultiSelectFieldDisplay.tsx
@@ -27667,7 +28066,7 @@ msgstr "Прикажи пријемно сандуче"
 #. js-lingui-id: 6lGV3K
 #: src/modules/ai-chat/composer/components/AiChatQueuedMessageList.tsx
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
-#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessagesSection.tsx
 msgid "Show less"
 msgstr "Прикажи мање"
 
@@ -27676,9 +28075,14 @@ msgstr "Прикажи мање"
 msgid "Show logs"
 msgstr "Прикажи евиденције"
 
+#. js-lingui-id: /l2KYB
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show message preview"
+msgstr "Прикажи преглед поруке"
+
 #. js-lingui-id: fMPkxb
 #: src/modules/ai-chat/messages/components/AiChatUserMessageCollapsibleContent.tsx
-#: src/modules/inbox/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/modules/inbox/components/NavigationDrawerInboxDirectMessagesSection.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces.tsx
 msgid "Show more"
@@ -27709,6 +28113,11 @@ msgstr "Прикажите страницу Почетак рада и карт�
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Privacy tab and enforce its AI data policy and data sharing settings. Turning this off lifts any stored policy. Enable after the instance upgrade completes."
 msgstr "Прикажите картицу Приватност и примените њену политику података за AI и подешавања дељења података. Искључивањем ове опције уклања се свака сачувана политика. Омогућите је након завршетка надоградње инстанце."
+
+#. js-lingui-id: soWlp2
+#: src/modules/settings/experience/components/InboxNotificationPreferences.tsx
+msgid "Show the sender, the chat and the message text in notifications. Leave it off on shared screens and devices"
+msgstr "Прикажите пошиљаоца, ћаскање и текст поруке у обавештењима. Оставите искључено на дељеним екранима и уређајима"
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -28072,7 +28481,7 @@ msgid "Snooze until {snoozedUntilLabel}"
 msgstr "Одложи до {snoozedUntilLabel}"
 
 #. js-lingui-id: rz6s8e
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/inbox/constants/InboxChannelNavigationItems.ts
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgid "Snoozed"
@@ -28109,6 +28518,11 @@ msgstr "Неке измене распореда нису могле бити с
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Део података лога је одбачен да би се испоштовало ограничење величине ({0} уноса, {1} бајтова)."
+
+#. js-lingui-id: XG7UMq
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "Some records"
+msgstr "Неки записи"
 
 #. js-lingui-id: b5Z5wY
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -28190,6 +28604,7 @@ msgstr "Жао нам је, нисмо могли да утврдимо испр
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -28473,8 +28888,8 @@ msgid "Statistics"
 msgstr "Статистика"
 
 #. js-lingui-id: uAQUqI
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalRecordReview.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 #: src/modules/log-console/constants/LogConsoleWebhookStatusColumn.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
@@ -28564,7 +28979,7 @@ msgid "Stop impersonating"
 msgstr "Заустави имперсонацију"
 
 #. js-lingui-id: lQeGNv
-#: src/modules/ai-chat/composer/components/SendMessageButton.tsx
+#: src/modules/ai-chat/composer/components/AiChatSendMessageButton.tsx
 msgid "Stop response"
 msgstr "Заустави одговор"
 
@@ -28777,7 +29192,7 @@ msgid "Subscribe"
 msgstr "Претплати се"
 
 #. js-lingui-id: ShbDuS
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Subscribe Now"
 msgstr "Претплати се сада"
@@ -29127,6 +29542,11 @@ msgstr "Синхронизација ће се зауставити, а акре
 msgid "System"
 msgstr "Систем"
 
+#. js-lingui-id: q2LSdK
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "System › Notifications"
+msgstr "Систем › Обавештења"
+
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 msgid "System fields"
@@ -29392,9 +29812,9 @@ msgstr "текст"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorTextInsertionItems.ts
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 #: src/modules/advanced-text-editor/hooks/useTurnIntoBlockOptions.ts
-#: src/modules/ai/constants/OutputFieldTypeOptions.ts
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBlockInsertList.tsx
 #: src/modules/side-panel/pages/email-block-settings/constants/EmailBodyThemeFields.ts
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/OutputFieldTypeOptions.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormFieldDefaultTexts.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -30083,6 +30503,16 @@ msgstr "Регистрацију ове апликације преузео је
 msgid "This billing period"
 msgstr "Овај период наплате"
 
+#. js-lingui-id: YDcfdL
+#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+msgid "This browser cannot show notifications"
+msgstr "Овај прегледач не може да приказује обавештења"
+
+#. js-lingui-id: 47wc2N
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
+msgid "This browser could not turn on notifications"
+msgstr "Овај прегледач није могао да укључи обавештења"
+
 #. js-lingui-id: XkzBBX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "This call is being recorded…"
@@ -30127,7 +30557,7 @@ msgstr "Ова веза не постоји или није доступна з�
 
 #. js-lingui-id: HWM4G8
 #: src/modules/ai-chat/composer/components/AiChatEditorSection.tsx
-#: src/modules/ai-chat/hooks/useAiChatSubscription.ts
+#: src/modules/ai-chat/instance/utils/openAiChatThreadStream.ts
 msgid "This conversation is no longer available."
 msgstr "Овај разговор више није доступан."
 
@@ -30152,7 +30582,7 @@ msgid "This evening"
 msgstr "Вечерас"
 
 #. js-lingui-id: i6mVT3
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "This feature is part of the Organization plan"
 msgstr "Ова функција је део Organization плана"
 
@@ -30427,7 +30857,7 @@ msgid "This website is already in the list."
 msgstr "Ова веб-локација је већ на листи."
 
 #. js-lingui-id: yByRxz
-#: src/modules/inbox/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions.ts
 #: src/modules/settings/billing/constants/UsageLimitPeriodSpanLabels.ts
 msgid "This week"
@@ -30505,6 +30935,16 @@ msgstr "три"
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
 msgid "Three columns side by side"
 msgstr "Три колоне једна поред друге"
+
+#. js-lingui-id: JayY0v
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through {ruleCount} rules"
+msgstr "путем {ruleCount} правила"
+
+#. js-lingui-id: AbJpHn
+#: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
+msgid "through 1 rule"
+msgstr "путем 1 правила"
 
 #. js-lingui-id: kkDQ8m
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -30638,7 +31078,7 @@ msgid "To"
 msgstr ""
 
 #. js-lingui-id: ecUA8p
-#: src/modules/inbox/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
@@ -31198,6 +31638,11 @@ msgstr "Турски"
 msgid "Turn into"
 msgstr "Претвори у"
 
+#. js-lingui-id: Njwcqh
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Turn on notifications"
+msgstr "Укључите обавештења"
+
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Turn the AI tab into an inbox to triage, assign, snooze and follow chats, let workflows send messages and agent questions to a member's inbox, and show a Conversations tab on record pages."
@@ -31305,7 +31750,6 @@ msgid "Two-factor authentication was reset for this workspace. Set it up again f
 msgstr "Двофакторска аутентификација је ресетована за овај радни простор. Поново је подесите у Подешавањима, у Профилу."
 
 #. js-lingui-id: +zy2Nq
-#: src/modules/ai/components/AgentOutputFieldTypeSelector.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
@@ -31323,6 +31767,7 @@ msgstr "Двофакторска аутентификација је ресет�
 #: src/modules/settings/data-model/object-details/components/SettingsObjectIndexTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputFieldTypeSelector.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/classify-action/components/WorkflowEditActionClassify.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings.tsx
 #: src/modules/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema.ts
@@ -31496,7 +31941,7 @@ msgid "Unexpected error in cron expression parsing"
 msgstr "Неочекивана грешка при рашчлањивању cron израза"
 
 #. js-lingui-id: 6Y7jUZ
-#: src/modules/ai-chat/threads/components/AiChatThreadFollowersField.tsx
+#: src/modules/inbox/components/AiChatThreadFollowersField.tsx
 msgid "Unfollow for me"
 msgstr "Престани да пратиш у моје име"
 
@@ -31620,6 +32065,7 @@ msgstr "Непозната грешка"
 
 #. js-lingui-id: IU3aCs
 #: src/modules/ai-chat/hooks/useGetBrowsingContext.ts
+#: src/modules/settings/roles/role-permissions/object-overrides/utils/getRowLevelPermissionRuleLabel.ts
 msgid "Unknown field"
 msgstr "Непознато поље"
 
@@ -31634,7 +32080,7 @@ msgid "Unknown field \"{fieldName}\" on \"{relationFieldName}\""
 msgstr "Непознато поље „{fieldName}“ у „{relationFieldName}“"
 
 #. js-lingui-id: +K1Lj4
-#: src/modules/ai-chat/composer/components/AiChatFilePreview.tsx
+#: src/modules/chat/components/ChatFilePreview.tsx
 msgid "Unknown file"
 msgstr "Непозната датотека"
 
@@ -31668,6 +32114,7 @@ msgstr "Непозната тема"
 
 #. js-lingui-id: 63niL6
 #: src/modules/log-console/hooks/useLogConsoleMember.ts
+#: src/modules/settings/applications/utils/getApplicationConnectedMemberName.ts
 msgid "Unknown user"
 msgstr "Непознат корисник"
 
@@ -31888,7 +32335,7 @@ msgid "Untitled agent"
 msgstr "Неименовани агент"
 
 #. js-lingui-id: zJsHrW
-#: src/modules/ai/components/AgentOutputSchemaFieldHeader.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaFieldHeader.tsx
 msgid "Untitled field"
 msgstr "Неназвано поље"
 
@@ -32072,8 +32519,8 @@ msgid "Updated (on specific fields)"
 msgstr "Ажурирано (на одређеним пољима)"
 
 #. js-lingui-id: ccNyRS
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Updated {objectLabel}"
 msgstr "Ажурирано {objectLabel}"
 
@@ -32083,8 +32530,8 @@ msgid "Updated Fields"
 msgstr "Ажурирана поља"
 
 #. js-lingui-id: xuCD/Q
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Updating {objectLabel}"
 msgstr "Ажурирање {objectLabel}"
 
@@ -32095,15 +32542,15 @@ msgid "Updating..."
 msgstr "Ажурирање..."
 
 #. js-lingui-id: kwkhPe
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/application-monitoring/constants/ApplicationLogSourceLabels.ts
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade"
 msgstr "Унапређење"
 
@@ -32145,7 +32592,7 @@ msgstr "Надоградите на {0}"
 #. placeholder {0}: nextResourceCreditsAmount ?? ''
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Upgrade to {0} credits for ${1}/{2}."
 msgstr "Надоградите на {0} кредита за ${1}/{2}."
@@ -32161,7 +32608,7 @@ msgid "Upgrade to {planLabel}?"
 msgstr "Надоградите на {planLabel}?"
 
 #. js-lingui-id: ggd+Ee
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
 msgid "Upgrade to access"
 msgstr "Надоградите да бисте приступили"
 
@@ -32315,12 +32762,12 @@ msgid "Upserted"
 msgstr "Upsert"
 
 #. js-lingui-id: PZd7QF
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Upserted {objectLabel}"
 msgstr "Upsert-овано {objectLabel}"
 
 #. js-lingui-id: QaPv0m
-#: src/modules/ai/constants/CrudToolOperationVerbs.ts
+#: src/modules/ai/constants/CrudToolStatusLabels.ts
 msgid "Upserting {objectLabel}"
 msgstr "Upsert-овање {objectLabel}"
 
@@ -32346,6 +32793,7 @@ msgstr "URI је обавезан"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormLinksFieldInput.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 #: src/modules/settings/developers/components/SettingsWebhooksTable.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerFormFields.tsx
@@ -32503,7 +32951,7 @@ msgid "Use lowercase letters, digits and underscores, starting with a letter"
 msgstr "Користите мала слова, цифре и доње црте, почевши словом"
 
 #. js-lingui-id: oSORjU
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Use only letters, numbers, underscores, dots or hyphens (max 64 characters)."
 msgstr "Користите само слова, бројеве, доње црте, тачке или цртице (највише 64 карактера)."
 
@@ -32765,7 +33213,7 @@ msgid "Variable {title} updated"
 msgstr "Променљива {title} је ажурирана"
 
 #. js-lingui-id: +woNYv
-#: src/modules/ai/components/AgentOutputSchemaBuilder.tsx
+#: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Variable Name"
 msgstr "Назив променљиве"
 
@@ -33116,7 +33564,7 @@ msgid "Wait for Event"
 msgstr "Сачекај догађај"
 
 #. js-lingui-id: 3wIkaN
-#: src/modules/ai-chat/hooks/useAiChat.ts
+#: src/modules/ai-chat/composer/hooks/useSendAiChatMessage.ts
 msgid "Wait for the attachments to finish uploading."
 msgstr "Сачекајте да се отпремање прилога заврши."
 
@@ -33278,6 +33726,16 @@ msgstr "Нисмо могли да учитамо планове"
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "We encountered an issue verifying"
 msgstr "Дошло је до проблема приликом верификације"
+
+#. js-lingui-id: zXOO0X
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent another test notification."
+msgstr "Управо смо послали још једно пробно обавештење."
+
+#. js-lingui-id: Ik3LPq
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent one. It shows up in a corner of your screen."
+msgstr "Управо смо послали једно. Појавиће се у углу екрана."
 
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
@@ -33478,7 +33936,7 @@ msgid "Welcome to Twenty"
 msgstr "Добродошли у Twenty"
 
 #. js-lingui-id: t8ZvkC
-#: src/modules/onboarding/components/WorkspaceSetupChatPreamble.tsx
+#: src/modules/ai-chat/workspace-setup/components/WorkspaceSetupChatPreamble.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Welcome to your workspace"
 msgstr "Добродошли у ваш радни простор"
@@ -33493,13 +33951,18 @@ msgstr "Добродошли, {workspaceName}."
 msgid "What {applicationName} adds to your workspace"
 msgstr "Шта {applicationName} додаје вашем радном простору"
 
+#. js-lingui-id: 256yw5
+#: src/modules/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection.tsx
+msgid "What {roleLabel} can do on {objectLabelPlural} matching this rule."
+msgstr "Шта {roleLabel} може да ради са {objectLabelPlural} који одговарају овом правилу."
+
 #. js-lingui-id: 1rpyKy
 #: src/modules/object-core/agents/components/CoreAgentModelSection.tsx
 msgid "What AI model should your agent run on"
 msgstr "На ком АИ моделу треба да ради ваш агент"
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts.tsx
+#: src/modules/ai-chat/composer/components/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Чиме могу да вам помогнем?"
 
@@ -33553,6 +34016,11 @@ msgstr "Које алате овај агент може да користи з�
 #: src/pages/settings/communications/SettingsWorkspaceCommunications.tsx
 msgid "Whatsapp"
 msgstr "Whatsapp"
+
+#. js-lingui-id: 1ZF9KQ
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionLogicalOperatorCell.tsx
+msgid "When"
+msgstr "Када"
 
 #. js-lingui-id: 8ssTdk
 #: src/modules/ai-chat/threads/components/AiChatSnoozeMenu.tsx
@@ -33622,7 +34090,6 @@ msgstr "Када се пробни период заврши, биће вам н
 #. js-lingui-id: YvwwqC
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell.tsx
 #: src/modules/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelLogicalOperatorCell.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterLogicalOperatorCell.tsx
 msgid "Where"
 msgstr "Где"
@@ -33646,6 +34113,12 @@ msgstr "Где се сервер налази"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Whether this model supports chain-of-thought reasoning"
 msgstr "Да ли овај модел подржава ланчано резоновање"
+
+#. js-lingui-id: 5WnHkc
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+#: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection.tsx
+msgid "Which {objectLabelPlural} this rule applies to. Me is the person viewing."
+msgstr "На које се {objectLabelPlural} примењује ово правило. Ја сам особа која прегледа."
 
 #. js-lingui-id: UbN9B0
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields.tsx
@@ -33712,6 +34185,11 @@ msgstr "Неће успети"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Will get this email"
 msgstr "Примиће ову е-пошту"
+
+#. js-lingui-id: BQiUZ6
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
+msgstr "Windows може да блокира {browserLabel} чак и када је Twenty дозвољен. Отворите Обавештења, укључите {settingsEntryLabel} и искључите Не узнемиравај. Затим пошаљите пробно обавештење."
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -33848,10 +34326,10 @@ msgstr "Верзије тока рада"
 msgid "Workflows"
 msgstr "Токови Рада"
 
-#. js-lingui-id: HoWgut
+#. js-lingui-id: H2Xc6F
 #: src/modules/settings/applications/constants/ApplicationContentSections.ts
-msgid "Workflows, functions and agents that act for your team."
-msgstr "Токови рада, функције и агенти који делују за ваш тим."
+msgid "Workflows, functions, agents and tools that act for your team."
+msgstr "Токови рада, функције, агенти и алати који делују за ваш тим."
 
 #. js-lingui-id: OskBrZ
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -33898,7 +34376,6 @@ msgstr "Почетак радног времена"
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-#: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -34264,8 +34741,14 @@ msgstr "да"
 msgid "Yes"
 msgstr "Да"
 
+#. js-lingui-id: F91wPm
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Yes, I saw it"
+msgstr "Да, видео/видела сам га"
+
 #. js-lingui-id: y/0uwd
-#: src/modules/inbox/utils/groupThreadsByDate.ts
+#: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
 msgid "Yesterday"
@@ -34423,7 +34906,7 @@ msgid "You're about to change your workspace subdomain. This action will log out
 msgstr "Ускоро ћете променити поддомен вашег радног простора. Ова акција ће одјавити све кориснике."
 
 #. js-lingui-id: 6x8lJe
-#: src/modules/ai-chat/usage/components/AiChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai-chat/usage/components/AiChatWorkspaceCreditsExhaustedBanner.tsx
 msgid "You’ve reached your AI usage limit."
 msgstr "Достигли сте ограничење коришћења AI-ја."
 
@@ -34447,6 +34930,21 @@ msgstr "Ваша наплата одмах прелази на годишњу. �
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to monthly on {0}, at the end of your current billing period."
 msgstr "Ваша наплата прелази на месечну дана {0}, на крају тренутног обрачунског периода."
+
+#. js-lingui-id: AUurzR
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "your browser"
+msgstr "ваш прегледач"
+
+#. js-lingui-id: TzFYej
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
+msgstr "Прегледач је затворио захтев или га је приказао као икону на траци за адресу. Кликните на ту икону и изаберите Дозволи, а затим наставите."
+
+#. js-lingui-id: o3PWYJ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
+msgstr "Прегледач ће затражити да приказује обавештења из Twenty. Изаберите Дозволи."
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -34497,7 +34995,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr "Ваш обрађивач прима овај објекат. Тело је празно јер GET захтеви не садрже тело поруке."
 
 #. js-lingui-id: HCqgJ0
-#: src/modules/ai-chat/threads/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
 msgid "Your inbox"
 msgstr "Ваше пријемно сандуче"
 
@@ -34634,6 +35132,11 @@ msgstr "Подешавање претплате није завршено."
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "Статус ваше претплате је: {statusLabel}"
+
+#. js-lingui-id: nH1nrf
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
+msgstr "Систем може да блокира {browserLabel} чак и када је Twenty дозвољен. Дозволите обавештења за {browserLabel} у подешавањима система, а затим пошаљите пробно обавештење."
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts

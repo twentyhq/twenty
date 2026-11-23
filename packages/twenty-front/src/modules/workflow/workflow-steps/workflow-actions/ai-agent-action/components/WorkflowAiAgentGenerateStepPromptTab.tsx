@@ -1,5 +1,5 @@
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
-import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
+import { AiModelCapabilityToggles } from '@/ai/components/AiModelCapabilityToggles';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { WorkflowAiAgentOutputFormatField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentOutputFormatField';
 import { WorkflowAiAgentPromptField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPromptField';
@@ -49,7 +49,7 @@ export const WorkflowAiAgentGenerateStepPromptTab = ({
         onPromptChange={(prompt) => onInputChange({ prompt })}
       />
 
-      <SettingsAgentModelCapabilities
+      <AiModelCapabilityToggles
         selectedModelId={selectedModelId}
         modelConfiguration={input.modelConfiguration ?? {}}
         onConfigurationChange={(modelConfiguration) =>

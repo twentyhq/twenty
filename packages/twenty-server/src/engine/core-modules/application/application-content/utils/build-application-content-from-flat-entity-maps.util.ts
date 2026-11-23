@@ -1,4 +1,4 @@
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
@@ -34,6 +34,7 @@ export type ApplicationContentFlatEntityMaps = Pick<
   | 'flatPermissionFlagMaps'
   | 'flatRolePermissionFlagMaps'
   | 'flatConnectionProviderMaps'
+  | 'flatMcpServerMaps'
 >;
 
 export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
@@ -58,6 +59,7 @@ export const APPLICATION_CONTENT_FLAT_ENTITY_MAPS_KEYS = [
   'flatPermissionFlagMaps',
   'flatRolePermissionFlagMaps',
   'flatConnectionProviderMaps',
+  'flatMcpServerMaps',
 ] as const satisfies (keyof ApplicationContentFlatEntityMaps)[];
 
 // Workspace caches load soft-deleted rows too
@@ -128,7 +130,7 @@ export const buildApplicationContentFromFlatEntityMaps = ({
     flatEntityMaps.flatCommandMenuItemMaps,
   ).filter((commandMenuItem) => !commandMenuItem.isSystemSideEffect);
   const workflows = findOwned(flatEntityMaps.flatWorkflowMaps).filter(
-    (workflow) => workflow.visibility === WorkflowVisibility.WORKSPACE,
+    (workflow) => !workflow.isPrivate,
   );
   const frontComponents = findOwned(flatEntityMaps.flatFrontComponentMaps);
   const roles = findOwned(flatEntityMaps.flatRoleMaps);
@@ -367,13 +369,15 @@ export const buildApplicationContentFromFlatEntityMaps = ({
         timeoutSeconds: logicFunction.timeoutSeconds,
       }),
     ),
-    agents: findOwned(flatEntityMaps.flatAgentMaps).map((agent) => ({
-      id: agent.id,
-      universalIdentifier: agent.universalIdentifier,
-      label: agent.label,
-      icon: agent.icon,
-      description: agent.description,
-    })),
+    agents: findOwned(flatEntityMaps.flatAgentMaps)
+      .filter((agent) => !agent.isPrivate)
+      .map((agent) => ({
+        id: agent.id,
+        universalIdentifier: agent.universalIdentifier,
+        label: agent.label,
+        icon: agent.icon,
+        description: agent.description,
+      })),
     skills: findOwned(flatEntityMaps.flatSkillMaps).map((skill) => ({
       id: skill.id,
       universalIdentifier: skill.universalIdentifier,
@@ -406,6 +410,14 @@ export const buildApplicationContentFromFlatEntityMaps = ({
       label: connectionProvider.displayName,
       tag: connectionProvider.type,
     })),
+    mcpServers: findOwned(flatEntityMaps.flatMcpServerMaps).map(
+      (mcpServer) => ({
+        id: mcpServer.id,
+        universalIdentifier: mcpServer.universalIdentifier,
+        label: mcpServer.label,
+        description: mcpServer.url,
+      }),
+    ),
     publicAssets: [],
     translations: [],
   };

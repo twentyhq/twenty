@@ -1,6 +1,7 @@
 import { type AxiosInstance } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 
+import { CAPTCHA_SCORE_BELOW_THRESHOLD_ERROR } from 'src/engine/core-modules/captcha/constants/captcha-score-below-threshold-error.constant';
 import { type CaptchaDriver } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-driver.interface';
 import { type CaptchaServerResponse } from 'src/engine/core-modules/captcha/drivers/interfaces/captcha-server-response';
 
@@ -43,7 +44,11 @@ export class GoogleRecaptchaDriver implements CaptchaDriver {
     const { score } = responseData;
 
     if (isDefined(score) && score < this.minScore) {
-      return { success: false, error: 'score-below-threshold', score };
+      return {
+        success: false,
+        error: CAPTCHA_SCORE_BELOW_THRESHOLD_ERROR,
+        score,
+      };
     }
 
     return { success: true, score };

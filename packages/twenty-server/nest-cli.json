@@ -70,6 +70,10 @@
         "outDir": "dist"
       },
       {
+        "include": "engine/core-modules/application/application-bundled/mcp-servers/bundled-mcp-servers.json",
+        "outDir": "dist"
+      },
+      {
         "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
       },

@@ -13,7 +13,6 @@ import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/
 
 import { In } from 'typeorm';
 import { msg } from '@lingui/core/macro';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,6 +35,7 @@ import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
+import { getCoreWorkflowVisibilityFromIsPrivate } from 'src/engine/core-modules/workflow/utils/get-core-workflow-visibility-from-is-private.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -182,7 +182,7 @@ export class CoreWorkflowMutationWorkspaceService {
       userWorkspaceId,
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
-      visibility: sourceCoreWorkflow.visibility,
+      isPrivate: sourceCoreWorkflow.isPrivate,
     });
 
     try {
@@ -370,13 +370,13 @@ export class CoreWorkflowMutationWorkspaceService {
     userWorkspaceId,
     coreWorkflowId,
     name,
-    visibility,
+    isPrivate,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowId: string;
     name?: string;
-    visibility?: WorkflowVisibility;
+    isPrivate?: boolean;
   }): Promise<void> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
@@ -402,7 +402,7 @@ export class CoreWorkflowMutationWorkspaceService {
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow,
         name,
-        visibility,
+        isPrivate,
         userWorkspaceId,
       });
 
@@ -528,12 +528,12 @@ export class CoreWorkflowMutationWorkspaceService {
     workspaceId,
     userWorkspaceId,
     name,
-    visibility,
+    isPrivate,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     name?: string;
-    visibility?: WorkflowVisibility;
+    isPrivate?: boolean;
   }): Promise<CoreWorkflowDTO> {
     const applicationId =
       await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
@@ -548,7 +548,7 @@ export class CoreWorkflowMutationWorkspaceService {
       universalIdentifier: uuidv4(),
       workspaceWorkflowId: null,
       isSystem: false,
-      visibility: visibility ?? WorkflowVisibility.WORKSPACE,
+      isPrivate: isPrivate ?? false,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
@@ -610,11 +610,13 @@ export class CoreWorkflowMutationWorkspaceService {
       id: coreWorkflow.id,
       name: coreWorkflow.name,
       statuses: [WorkflowStatus.DRAFT],
-      lastPublishedVersionId: null,
       applicationId,
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,
-      visibility: coreWorkflow.visibility,
+      isPrivate: coreWorkflow.isPrivate,
+      visibility: getCoreWorkflowVisibilityFromIsPrivate(
+        coreWorkflow.isPrivate,
+      ),
       canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt,
       updatedAt: coreWorkflow.updatedAt,

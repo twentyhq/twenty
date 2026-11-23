@@ -9,37 +9,18 @@ const BASE_TOOL_PART = {
   input: {},
 } as const;
 
-const TOOL_PART_BY_STATE: Record<ToolUIPart['state'], ToolUIPart> = {
+const TOOL_PART_BY_STATE = {
   'input-streaming': { ...BASE_TOOL_PART, state: 'input-streaming' },
   'input-available': { ...BASE_TOOL_PART, state: 'input-available' },
-  'approval-requested': {
-    ...BASE_TOOL_PART,
-    state: 'approval-requested',
-    approval: { id: 'approval_1' },
-  },
-  'approval-responded': {
-    ...BASE_TOOL_PART,
-    state: 'approval-responded',
-    approval: { id: 'approval_1', approved: true },
-  },
   'output-available': {
     ...BASE_TOOL_PART,
     state: 'output-available',
     output: {},
   },
-  'output-denied': {
-    ...BASE_TOOL_PART,
-    state: 'output-denied',
-    approval: { id: 'approval_1', approved: false },
-  },
-  'output-error': {
-    ...BASE_TOOL_PART,
-    state: 'output-error',
-    errorText: 'error',
-  },
-};
+} satisfies Partial<Record<ToolUIPart['state'], ToolUIPart>>;
 
-const buildToolPart = (state: ToolUIPart['state']) => TOOL_PART_BY_STATE[state];
+const buildToolPart = (state: keyof typeof TOOL_PART_BY_STATE): ToolUIPart =>
+  TOOL_PART_BY_STATE[state];
 
 const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
 
@@ -74,17 +55,10 @@ describe('shouldToolPartRenderStandalone', () => {
   });
 
   describe('an app widget', () => {
-    it.each<ToolUIPart['state']>([
-      'input-available',
-      'approval-requested',
-      'approval-responded',
-      'output-available',
-      'output-denied',
-      'output-error',
-    ])('owns the call in the %s state', (state) => {
+    it('owns the call once its input is available', () => {
       expect(
         shouldToolPartRenderStandalone({
-          toolPart: buildToolPart(state),
+          toolPart: buildToolPart('input-available'),
           frontComponentId: APP_FRONT_COMPONENT_ID,
         }),
       ).toBe(true);

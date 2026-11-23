@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -13,13 +14,17 @@ import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
+  FeatureFlagKey,
   type NavigationMenuItem,
   NavigationMenuItemType,
   ViewKey,
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
-import { mockedUserData } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedUserData,
+} from '~/testing/mock-data/users';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
@@ -47,6 +52,7 @@ const buildObjectNavigationMenuItem = (
     getMockObjectMetadataItemOrThrow(objectNameSingular).id,
   position,
   parentId,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -60,9 +66,37 @@ const buildFolderNavigationMenuItem = (
   type: NavigationMenuItemType.FOLDER,
   name: 'Folder',
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
+
+const buildContainerNavigationMenuItem = ({
+  type,
+  id,
+  position,
+}: {
+  type: NavigationMenuItemType.TAB | NavigationMenuItemType.SECTION;
+  id: string;
+  position: number;
+}): NavigationMenuItem => ({
+  __typename: 'NavigationMenuItem',
+  id,
+  type,
+  name: id,
+  position,
+  isActive: true,
+  createdAt: '2024-01-01T00:00:00.000Z',
+  updatedAt: '2024-01-01T00:00:00.000Z',
+});
+
+const enableCustomizableSidebar = () =>
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      { key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED, value: true },
+    ],
+  });
 
 const buildPageLayoutNavigationMenuItem = (
   pageLayoutId: string,
@@ -73,6 +107,7 @@ const buildPageLayoutNavigationMenuItem = (
   type: NavigationMenuItemType.PAGE_LAYOUT,
   pageLayoutId,
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -83,6 +118,7 @@ const buildLinkNavigationMenuItem = (position: number): NavigationMenuItem => ({
   type: NavigationMenuItemType.LINK,
   link: 'https://example.com',
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -96,6 +132,7 @@ const buildViewNavigationMenuItem = (
   type: NavigationMenuItemType.VIEW,
   viewId,
   position,
+  isActive: true,
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',
 });
@@ -219,6 +256,7 @@ const renderHooks = ({
 describe('useDefaultHomePagePath', () => {
   afterEach(() => {
     mockIsMobile = false;
+    jotaiStore.set(currentWorkspaceState.atom, null);
   });
 
   it('should return proper path when no currentUser', async () => {
@@ -263,6 +301,79 @@ describe('useDefaultHomePagePath', () => {
         buildObjectNavigationMenuItem('company', 0, 'folder-1'),
         buildObjectNavigationMenuItem('person', 1),
         buildFolderNavigationMenuItem('folder-1', 2),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
+  it('should redirect to the first item of a custom Home section when no item sits outside sections', async () => {
+    enableCustomizableSidebar();
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'sales-section',
+          position: 0,
+        }),
+        buildObjectNavigationMenuItem('person', 0, 'sales-section'),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
+  it('should interleave Home sections and items by position', async () => {
+    enableCustomizableSidebar();
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        buildObjectNavigationMenuItem('person', 1),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'sales-section',
+          position: 0,
+        }),
+        buildObjectNavigationMenuItem('company', 0, 'sales-section'),
+      ],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
+    });
+  });
+  it('should follow the Home section order and skip tabs', async () => {
+    enableCustomizableSidebar();
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.TAB,
+          id: 'other-tab',
+          position: 0,
+        }),
+        buildObjectNavigationMenuItem('opportunity', 0, 'other-tab'),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'second-section',
+          position: 2,
+        }),
+        buildObjectNavigationMenuItem('company', 0, 'second-section'),
+        buildContainerNavigationMenuItem({
+          type: NavigationMenuItemType.SECTION,
+          id: 'first-section',
+          position: 1,
+        }),
+        buildObjectNavigationMenuItem('person', 0, 'first-section'),
       ],
     });
 

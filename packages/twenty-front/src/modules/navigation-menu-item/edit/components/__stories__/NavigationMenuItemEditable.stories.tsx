@@ -38,6 +38,7 @@ const ITEMS: NavigationMenuItem[] = ['Docs', 'Status'].map(
     name,
     link: 'https://example.com',
     position,
+    isActive: true,
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   }),
@@ -438,7 +439,7 @@ export const AddPickerFocusesSearch: Story = {
       keys: '[MouseRight]',
     });
     await userEvent.click(await body.findByText('Add menu item after'));
-    const picker = await body.findByRole('dialog', { name: 'Add menu item' });
+    const picker = await body.findByRole('dialog', { name: 'Add item' });
     const search = within(picker).getByPlaceholderText('Search...');
 
     await waitFor(() => expect(search).toHaveFocus());

@@ -42,6 +42,11 @@ msgstr "A(z) \"{0}\" nem érvényes almezője a(z) \"{1}\" mezőnek."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\" érvénytelen értéket kapott."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "A(z) \"{name}\" nem használható ebben a láthatósági korlátozásban"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -116,6 +121,11 @@ msgstr "{hostnameCount} gépnév található a(z) \"{domainName}\" domainhez. V�
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} a(z) {aggregateFieldLabel} alapján"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr "{senderName} a következő beszélgetésben: {threadLabel}"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -138,7 +148,7 @@ msgstr "Egy {type} típusú navigációs menüelem nem helyezhető el egy {paren
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a built-in section"
-msgstr ""
+msgstr "A(z) {type} navigációs menüelem nem helyezhető be beépített szakaszba"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -154,7 +164,7 @@ msgstr "Egy beépített szolgáltató már használja ezt a nevet. Válasszon m�
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A builtInSectionKey is only allowed on SECTION type"
-msgstr ""
+msgstr "A builtInSectionKey csak SECTION típusnál engedélyezett"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -166,6 +176,11 @@ msgstr "Tömeges e-mail küldése egy célközönségnek, kézbesítési statisz
 #: src/engine/core-modules/cache-lock/exceptions/cache-lock.exception.ts
 msgid "A cache lock error occurred."
 msgstr "Gyorsítótár-zárolási hiba történt."
+
+#. js-lingui-id: BGPUw0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A calculation on related records cannot be sorted or limited"
+msgstr "A kapcsolódó rekordokon végzett számítás nem rendezhető és nem korlátozható"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -204,6 +219,11 @@ msgstr "Egy diagram szűrőnek nincs mezője"
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
 msgstr "A(z) \"{widgetTitle}\" widget diagram szűrőjének nincs a mező metaadatához tartozó univerzális azonosítója."
 
+#. js-lingui-id: pSJj6s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A column name cannot be empty"
+msgstr "Az oszlop neve nem lehet üres"
+
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -226,6 +246,16 @@ msgstr "Ehhez az alkalmazáshoz már létezik ilyen nevű kapcsolatszolgáltató
 msgid "A connection provider with this name already exists for this application."
 msgstr "Már létezik ilyen nevű kapcsolatszolgáltató ehhez az alkalmazáshoz."
 
+#. js-lingui-id: v8qK2D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot have a related record field"
+msgstr "A kapcsolódó rekordok száma nem tartalmazhat kapcsolódórekord-mezőt"
+
+#. js-lingui-id: J6ov1V
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot use a field"
+msgstr "A kapcsolódó rekordok száma nem használhat mezőt"
+
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -242,6 +272,12 @@ msgstr "Az alkalmazásban található adatbázis-eseményindító érvénytelen.
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
 msgstr "A deaktivált mező nem jeleníthető meg oszlopban"
+
+#. js-lingui-id: ef/Kdg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A deactivated field cannot be used to filter or sort related records"
+msgstr "Inaktivált mező nem használható kapcsolódó rekordok szűrésére vagy rendezésére"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -440,15 +476,30 @@ msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Egy megbeszélés felvétele"
 
-#. js-lingui-id: p5HHUZ
+#. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
-msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr "A kapcsolódó rekord mezője csak több-az-egyhez kapcsolati mezőn jeleníthető meg"
+msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
+msgstr "Kapcsolódórekord-mező csak több-egyhez relációs mezőn, illetve kapcsolati hatókörrel rendelkező egy-többhöz relációs mezőn jeleníthető meg"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
 msgstr "A kapcsolódó rekord kapcsolata nem jeleníthető meg oszlopban"
+
+#. js-lingui-id: iBsZzI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A related record's relation cannot be used to filter or sort"
+msgstr "Kapcsolódó rekord relációja nem használható szűrésre vagy rendezésre"
+
+#. js-lingui-id: OrK1uF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "A relation scope can only be set on a one-to-many relation field"
+msgstr "Kapcsolati hatókör csak egy-többhöz relációs mezőn állítható be"
+
+#. js-lingui-id: +RRVJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A relation scope related record field can only be used on a many-to-one relation field"
+msgstr "Kapcsolati hatókör kapcsolódórekord-mezője csak több-egyhez relációs mezőn használható"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -569,7 +620,7 @@ msgstr "Érvényes agentUniversalIdentifier szükséges az AGENT típushoz"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid builtInSectionKey is required for a built-in SECTION"
-msgstr ""
+msgstr "Érvényes builtInSectionKey szükséges egy beépített SECTION elemhez"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -639,6 +690,16 @@ msgstr "Hiba történt a nézetmezőnél."
 msgid "A view field group error occurred."
 msgstr "Hiba történt a nézetmező-csoportnál."
 
+#. js-lingui-id: Aexevl
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be empty, use null to show the default label"
+msgstr "A nézetmező címkéje nem lehet üres, az alapértelmezett címke megjelenítéséhez használjon null értéket"
+
+#. js-lingui-id: JmypXw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
+msgstr "A nézetmező címkéje nem lehet hosszabb {IDENTIFIER_MAX_CHAR_LENGTH} karakternél"
+
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
@@ -691,6 +752,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Egy munkaterület tagja"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "A munkaterület-tag kapcsolat esetén meg kell adni a kapcsolódó rekordokon olvasandó mezőt"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -742,7 +808,9 @@ msgid "Access token not found."
 msgstr "Hozzáférési token nem található."
 
 #. js-lingui-id: 4MiH8E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Account Owner"
 msgstr "Fióktulajdonos"
@@ -2126,6 +2194,11 @@ msgstr "Hozza be vállalatait, kapcsolatait és üzleteit bármely CRM-exportbó
 msgid "Bring your team into Twenty."
 msgstr "Hozza be csapatát a Twentybe."
 
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr "A böngészőértesítések elavult kulccsal lettek beállítva. Töltse újra az oldalt az ismételt beállításukhoz."
+
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2312,6 +2385,12 @@ msgstr "Naptári esemény"
 msgctxt "fieldMetadata.label"
 msgid "Calendar Event"
 msgstr "Naptári esemény"
+
+#. js-lingui-id: r6+1Ni
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event copies synced from this member's calendars"
+msgstr "E tag naptáraiból szinkronizált naptári események másolatai"
 
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -3059,6 +3138,11 @@ msgstr "Válasszon ki egy meglévő, felülírandó idővonal-tevékenységtípu
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Válasszon ki egy személyt vagy egy szerepkört a megosztáshoz."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Válassza ki a kapcsolódó rekordokon olvasandó mezőt"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5589,6 +5673,11 @@ msgstr "A \"{relationFieldName}\" mező nem kapcsolat."
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "A(z) \"{workspaceMemberFieldName}\" mező nem a workspaceMember objektum mezője, ezért a predikátum soha nem lenne alkalmazva"
 
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "A \"{workspaceMemberRelationFieldName}\" mező nem a workspaceMember objektum egy-a-többhöz kapcsolata"
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6074,6 +6163,11 @@ msgstr "Az első közvetlen üzenet tagjának azonosítója"
 msgid "First friendly message"
 msgstr "Első felhasználóbarát üzenet"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "A keresztnév legfeljebb {WORKSPACE_MEMBER_NAME_MAX_LENGTH} karakterből állhat."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6123,6 +6217,11 @@ msgstr "Az űrlap műveleti mezőknek egyedi nevekkel kell rendelkezniük"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Az űrlap műveletnek legalább egy mezővel kell rendelkeznie"
+
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr "Korábbi tag"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -6504,7 +6603,9 @@ msgstr "Kezelő"
 
 #. js-lingui-id: 86G6IW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Handle"
@@ -6514,6 +6615,18 @@ msgstr "Kezelő"
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "Aliasok megadása kötelező."
+
+#. js-lingui-id: x9jVPQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the calendar this event was synced from"
+msgstr "A naptár azonosítója, amelyből ez az esemény szinkronizálva lett"
+
+#. js-lingui-id: fC7TD7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the mailbox this message was synced from"
+msgstr "A postafiók azonosítója, amelyből ez az üzenet szinkronizálva lett"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -7759,6 +7872,11 @@ msgstr "Érvénytelen viewUniversalIdentifier a mezők widgethez"
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "Érvénytelen viewUniversalIdentifier a(z) \"{widgetTitle}\" mezők widgethez. Várt: érvényes UUID"
 
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Érvénytelen láthatósági korlátozás: {untranslatedErrorMessage}"
+
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
@@ -8133,6 +8251,11 @@ msgstr "Utolsó üzenet"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Utolsó üzenet küldője"
+
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "A vezetéknév legfeljebb {WORKSPACE_MEMBER_NAME_MAX_LENGTH} karakterből állhat."
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -8805,6 +8928,12 @@ msgstr "Üzenetcsatorna üzenet-társítások"
 msgid "Message channel not found."
 msgstr "Üzenetcsatorna nem található."
 
+#. js-lingui-id: 7lDI1E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message copies synced from this member's mailboxes"
+msgstr "E tag postafiókjaiból szinkronizált üzenetek másolatai"
+
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9411,6 +9540,11 @@ msgstr "Új"
 msgid "New backup codes were generated for your account"
 msgstr "Új tartalékkódokat hoztak létre a fiókjához"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr "Új csevegés"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9427,6 +9561,11 @@ msgstr "Új csevegés"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
+msgstr "Új üzenet"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9614,12 +9753,6 @@ msgstr "Nincs rögzítve"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
 msgstr "Nincs beállítva"
-
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Nem kezdődött el"
 
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -10052,10 +10185,15 @@ msgstr "Egy vagy több átirányítási URI érvénytelen."
 msgid "One or more requested scopes are invalid."
 msgstr "Egy vagy több kért hatókör érvénytelen."
 
-#. js-lingui-id: A69o8a
+#. js-lingui-id: 7bNnyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
-msgid "Only a column linking to one record can show a field of that record"
-msgstr "Csak egy rekordhoz kapcsolódó oszlop jelenítheti meg annak a rekordnak egy mezőjét"
+msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
+msgstr "Csak egy rekordhoz kapcsolódó oszlop vagy kapcsolódó rekordok szűrt oszlopa jeleníthet meg a kapcsolódó rekordok egyik mezőjét"
+
+#. js-lingui-id: RryrSe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only a column listing related records can filter, sort or limit them"
+msgstr "Csak kapcsolódó rekordokat felsoroló oszlop szűrheti, rendezheti vagy korlátozhatja azokat"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10066,6 +10204,11 @@ msgstr "Csak piszkozat vagy ütemezett kampány küldhető el."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
 msgstr "Csak egy rekordhoz kapcsolódó mező rendezhető annak a rekordnak egy mezője alapján"
+
+#. js-lingui-id: FnGPJ0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Only a field linking to one record can use a field of that record"
+msgstr "Csak egy rekordhoz kapcsolódó mező használhatja annak a rekordnak egy mezőjét"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10086,6 +10229,16 @@ msgstr "Csak egy kiszolgáló-rendszergazda kezelheti ennek a tagnak a helyreál
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Csak egy munkaterület-tag módosíthatja, hogy ki láthat egy munkafolyamatot"
+
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Csak egy munkaterületi tag hozhat létre privát ügynököt."
+
+#. js-lingui-id: VBcVkv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only added columns can filter, sort or limit related records"
+msgstr "Csak hozzáadott oszlopok szűrhetik, rendezhetik vagy korlátozhatják a kapcsolódó rekordokat"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10112,6 +10265,11 @@ msgstr "Ilyen módon csak az npm-en közzétett alkalmazások igényelhetők."
 msgid "Only applications synced from local source can be exported."
 msgstr "Csak a helyi forrásból szinkronizált alkalmazások exportálhatók."
 
+#. js-lingui-id: 8t36/D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Only count, sum, average, min and max can aggregate related records"
+msgstr "Kapcsolódó rekordok csak darabszám, összeg, átlag, minimum és maximum alapján aggregálhatók"
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10121,6 +10279,11 @@ msgstr "Egyetlen hiba"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Csak mezőkorlátozások engedélyezettek."
+
+#. js-lingui-id: KmZMUH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only non-canonical view fields can have a relation scope"
+msgstr "Csak nem kanonikus nézetmezők rendelkezhetnek kapcsolati hatókörrel"
 
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10137,6 +10300,12 @@ msgstr "Laponként csak egy teljes magasságú widget engedélyezett"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Csak az ügynököt birtokló alkalmazás módosíthatja az indítóit"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Csak az ügynök tulajdonosa módosíthatja, hogy ki láthatja azt."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -10910,6 +11079,11 @@ msgctxt "fieldMetadata.label"
 msgid "Phones"
 msgstr "Telefonok"
 
+#. js-lingui-id: WPKlX/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Pick a field of the related records to calculate on"
+msgstr "Válassza ki a kapcsolódó rekordok azon mezőjét, amelyen számítást szeretne végezni"
+
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
@@ -11085,6 +11259,11 @@ msgstr "A predikátum értéke nem érvényes ehhez az operandushoz."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "A kapcsolaton keresztül mezőt elérő predikátumok nincsenek engedélyezve ehhez a munkaterülethez"
+
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "A jelenlegi tagot kapcsolaton keresztül olvasó predikátumok nincsenek engedélyezve ebben a munkaterületben"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11651,6 +11830,36 @@ msgstr "A kapcsolódó rekord útvonalának objektuma nem található"
 msgid "Related record paths require the Organization plan."
 msgstr "A kapcsolódó rekordútvonalakhoz Organization csomag szükséges."
 
+#. js-lingui-id: Kch20t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records can only be filtered or sorted by their own fields"
+msgstr "A kapcsolódó rekordok csak a saját mezőik alapján szűrhetők vagy rendezhetők"
+
+#. js-lingui-id: GIT0tY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records cannot be filtered or sorted by a list of records"
+msgstr "A kapcsolódó rekordok nem szűrhetők vagy rendezhetők rekordlista alapján"
+
+#. js-lingui-id: IyP1Db
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Related records filter groups are invalid"
+msgstr "A kapcsolódó rekordok szűrőcsoportjai érvénytelenek"
+
+#. js-lingui-id: HbwlWt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Related records filters are invalid"
+msgstr "A kapcsolódó rekordok szűrői érvénytelenek"
+
+#. js-lingui-id: SV7HLW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Related records sort direction should be ascending or descending"
+msgstr "A kapcsolódó rekordok rendezési irányának növekvőnek vagy csökkenőnek kell lennie"
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11717,6 +11926,66 @@ msgstr "A relációs szűrők csak egy relációs szint mélységig haladhatnak"
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "A kapcsolat nincs engedélyezve ehhez a mezőhöz."
+
+#. js-lingui-id: 7ZohXD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope can only have one root filter group"
+msgstr "A kapcsolati hatókörnek csak egy gyökérszűrőcsoportja lehet"
+
+#. js-lingui-id: cvmKqs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields cannot be one-to-many relations"
+msgstr "A kapcsolati hatókör mezői nem lehetnek egy-többhöz relációk"
+
+#. js-lingui-id: 9w3/Xr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must be active"
+msgstr "A kapcsolati hatókör mezőinek aktívnak kell lenniük"
+
+#. js-lingui-id: NmTkV8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must belong to the relation target object"
+msgstr "A kapcsolati hatókör mezőinek a reláció célobjektumához kell tartozniuk"
+
+#. js-lingui-id: ZTDFle
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group has an invalid logical operator"
+msgstr "A kapcsolati hatókör szűrőcsoportja érvénytelen logikai operátort tartalmaz"
+
+#. js-lingui-id: tY8Auj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group ids must be unique UUIDs"
+msgstr "A kapcsolati hatókör szűrőcsoport-azonosítóinak egyedi UUID-knak kell lenniük"
+
+#. js-lingui-id: /OizQh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter group not found"
+msgstr "A kapcsolati hatókör szűrőcsoportja nem található"
+
+#. js-lingui-id: LHu9vR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group parent not found"
+msgstr "A kapcsolati hatókör szűrőcsoportjának szülője nem található"
+
+#. js-lingui-id: FrK0wr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter groups can only be nested one level deep"
+msgstr "A kapcsolati hatókör szűrőcsoportjai csak egy szint mélységig ágyazhatók egymásba"
+
+#. js-lingui-id: aNv4KU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter ids must be unique UUIDs"
+msgstr "A kapcsolati hatókör szűrőazonosítóinak egyedi UUID-knak kell lenniük"
+
+#. js-lingui-id: cc0+ro
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
+msgstr "A kapcsolati hatókör korlátjának 1 és {QUERY_MAX_RECORDS_FROM_RELATION} közötti egész számnak kell lennie"
+
+#. js-lingui-id: xeyqWP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Relation scope sort has an invalid direction"
+msgstr "A kapcsolati hatókör rendezése érvénytelen irányt tartalmaz"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -11843,10 +12112,10 @@ msgstr "Igényelve"
 msgid "Requested file range cannot be served."
 msgstr "A kért fájltartomány nem szolgálható ki."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "A kötelező mezők és kapcsolatok nem korlátozhatók rekordszintű jogosultsági szabályban."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "A kötelező mezők és a morfológiai kapcsolatok nem korlátozhatók rekordszintű jogosultsági szabályban."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12311,6 +12580,7 @@ msgid "Rule"
 msgstr "Szabály"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "A kapcsolaton keresztüli szabályok nincsenek engedélyezve ehhez a munkaterülethez"
@@ -13429,6 +13699,18 @@ msgstr "Összegzés"
 msgid "Sunday"
 msgstr "Vasárnap"
 
+#. js-lingui-id: uHrdjd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Calendar Events"
+msgstr "Szinkronizált naptári események"
+
+#. js-lingui-id: ZgRRP1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Messages"
+msgstr "Szinkronizált üzenetek"
+
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "System"
@@ -14104,6 +14386,7 @@ msgid "The field configured for this widget could not be found."
 msgstr "A widgethez beállított mező nem található."
 
 #. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The field must belong to the related object"
@@ -14264,6 +14547,11 @@ msgstr "A szálba író tagok"
 msgid "The nested relation field configured for this widget could not be found."
 msgstr "A widgethez beállított beágyazott relációs mező nem található."
 
+#. js-lingui-id: MD4f/q
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "The number of related records to show is out of range"
+msgstr "A megjelenítendő kapcsolódó rekordok száma kívül esik a megengedett tartományon"
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -14384,6 +14672,11 @@ msgstr "A fogadott e-mail tartalma már nem érhető el."
 msgid "The related record field cannot be a relation"
 msgstr "A kapcsolódó rekord mezője nem lehet kapcsolat"
 
+#. js-lingui-id: MBEG9i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The related record field does not support this aggregate operation"
+msgstr "A kapcsolódórekord-mező nem támogatja ezt az aggregációs műveletet"
+
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -14400,6 +14693,31 @@ msgstr "A kapcsolódó rekord mezőjének a kapcsolat célobjektumához kell tar
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
 msgstr "Az alkalmazás tulajdonában lévő oszlop kapcsolódó rekordmezője nem módosítható"
+
+#. js-lingui-id: uHtomZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "The relation scope of a column owned by an application cannot be changed"
+msgstr "Az alkalmazás tulajdonában lévő oszlop kapcsolati hatóköre nem módosítható"
+
+#. js-lingui-id: Tl0b2t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The relation scope of an aggregate cannot have sorts or a limit"
+msgstr "Egy aggregátum kapcsolati hatóköre nem tartalmazhat rendezéseket vagy korlátot"
+
+#. js-lingui-id: c0bu85
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field cannot be a relation"
+msgstr "A kapcsolati hatókör kapcsolódórekord-mezője nem lehet reláció"
+
+#. js-lingui-id: zJWJeQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must be active"
+msgstr "A kapcsolati hatókör kapcsolódórekord-mezőjének aktívnak kell lennie"
+
+#. js-lingui-id: WY2/RN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must belong to the relation target object"
+msgstr "A kapcsolati hatókör kapcsolódórekord-mezőjének a reláció célobjektumához kell tartoznia"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14696,6 +15014,11 @@ msgstr "Ennek az ügynöknek nincsenek kimeneti mezői. Adjon hozzá legalább e
 msgid "This agent is archived."
 msgstr "Ez az ügynök archiválva van."
 
+#. js-lingui-id: IaSvAS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This aggregate operation requires a related record field"
+msgstr "Ez az aggregációs művelet kapcsolódórekord-mezőt igényel"
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -14736,6 +15059,11 @@ msgstr "Ez az alkalmazás a Twenty kiszolgáló újabb verzióját igényli. Fri
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Ez az alkalmazás újabb verziót igényel annál, mint amire ez a munkaterület frissítve lett. Próbálja újra, miután a munkaterület frissítése befejeződött."
+
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "Ez az alkalmazás érvénytelen árakat ad meg"
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14781,6 +15109,21 @@ msgstr "Ez az alkalmazásváltozó-hatókör nem támogatott."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
 msgstr "Ennek a számlázási megállapodásnak érvénytelen beállításai vannak."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr "Ennek a böngészőnek a push szolgáltatása nem támogatott."
+
+#. js-lingui-id: ohxYfe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available for this field"
+msgstr "Ez a számítás nem érhető el ehhez a mezőhöz"
+
+#. js-lingui-id: 4x0ihe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available on related records"
+msgstr "Ez a számítás nem érhető el kapcsolódó rekordokon"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14864,10 +15207,20 @@ msgstr "Ez a kód egy közzétett munkafolyamat-verzióhoz tartozik. Szerkessze 
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
 msgstr "Ez az oszlop egy alkalmazásból származik, ezért az általa megjelenített kapcsolódó rekordmező nem módosítható"
 
+#. js-lingui-id: mY8Iz1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "This column comes from an application, so the related records it shows cannot be changed"
+msgstr "Ez az oszlop egy alkalmazásból származik, ezért az általa megjelenített kapcsolódó rekordok nem módosíthatók"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Ez az oszlop már egyedinek van megjelölve. Ha itt szeretné kezelni a kényszert, először kapcsolja ki a mező \"Unique\" beállítását."
+
+#. js-lingui-id: tEKss1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "This column name is too long"
+msgstr "Ez az oszlopnév túl hosszú"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14993,6 +15346,11 @@ msgstr "Ez a mező nem tartozik a munkaterületi tag objektumhoz"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Ennek a mezőnek nincs indexelhető adatbázisoszlopa."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Ez a mező nem a munkaterület-tag objektum egy-a-többhöz kapcsolata"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -15840,6 +16198,11 @@ msgstr "Túl sok admin jelöltet találtunk."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Túl sok résztvevő: {attendeeCount}. A megengedett maximum: {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: s/8N3l
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Too many domain validation emails sent. Please try again later."
+msgstr "Túl sok domainérvényesítési e-mailt küldtek. Kérjük, próbálja meg később."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17123,6 +17486,16 @@ msgstr "A ViewId szükséges a nézetcsoport létrehozásához."
 msgid "ViewId is required to create a view sort."
 msgstr "A ViewId szükséges a nézet rendezés létrehozásához."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "A láthatósági korlátozás nem olvasható"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "A láthatósági korlátozás túl sok feltételt tartalmaz"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -17760,6 +18133,12 @@ msgctxt "fieldMetadata.label"
 msgid "Workspace"
 msgstr "Munkaterület"
 
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Workspace"
+msgstr "Munkaterület"
+
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
@@ -17902,6 +18281,12 @@ msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Munkaterület-tag rekordoldalának mezői"
 
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "A munkaterület-tag kapcsolati mezőjének metaadatai nem találhatók"
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17931,6 +18316,18 @@ msgstr "A reakciót adó munkaterületi tag; üres, ha egy ügynök vagy az assz
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who sent this message"
 msgstr "A munkaterületnek az üzenetet küldő tagja"
+
+#. js-lingui-id: SXhaY/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose calendar this event was synced from"
+msgstr "Az a munkaterületi tag, akinek a naptárából ez az esemény szinkronizálva lett"
+
+#. js-lingui-id: 6oRXeC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose mailbox this message was synced from"
+msgstr "Az a munkaterületi tag, akinek a postafiókjából ez az üzenet szinkronizálva lett"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -18214,6 +18611,11 @@ msgstr "Nincs engedélye a funkció eléréséhez. Kérjük, lépjen kapcsolatba
 msgid "You do not have permission to access this workflow."
 msgstr "Nincs jogosultsága ennek a munkafolyamatnak az eléréséhez."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Nincs jogosultsága a bejegyzés módosításához."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18409,6 +18811,11 @@ msgstr "A szerepköröd nem törölhet néhányat ezek közül a rekordok közü
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "A szerepköre ebben a munkaterületen nem található. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr "A munkamenete lejárt. Jelentkezzen be újra a böngészőértesítések bekapcsolásához."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -6,9 +6,8 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { SyncSubscriptionApplicationsJob } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
 import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
-import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.module';
-import { ApplicationRecurringChargeCronJob } from 'src/engine/core-modules/billing/app-billing/crons/jobs/application-recurring-charge.cron.job';
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -119,11 +118,9 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     PendingWakeUpModule,
     BillingReminderModule,
     UsageLimitInstanceOverrideModule,
-    ApplicationRecurringChargeModule,
     WorkspaceMigrationRunnerModule,
   ],
   providers: [
-    ApplicationRecurringChargeCronJob,
     BillingReminderCronJob,
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
@@ -137,6 +134,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     RefreshCampaignStatsJob,
     ReconcileWorkspaceCampaignStatsJob,
     UpdateSubscriptionQuantityJob,
+    SyncSubscriptionApplicationsJob,
     HandleWorkspaceMemberDeletedJob,
     WorkspaceDeletionApplicationUninstallJob,
     CleanWorkspaceDeletionWarningUserVarsJob,

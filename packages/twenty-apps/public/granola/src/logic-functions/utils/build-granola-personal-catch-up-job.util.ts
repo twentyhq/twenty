@@ -3,10 +3,34 @@ import { getGranolaJobId } from 'src/logic-functions/utils/get-granola-job-id.ut
 
 export const buildGranolaPersonalCatchUpJob = (
   payload: GranolaPersonalCatchUpPayload,
-) => ({
-  payload,
-  jobId: getGranolaJobId({
-    prefix: payload.kind === 'note' ? 'granola-note' : 'granola-discovery',
-    identity: payload,
-  }),
-});
+) => {
+  const { connectionId, userWorkspaceId } = payload.scope;
+  const identity = {
+    connectionId,
+    userWorkspaceId,
+    updatedAfter: payload.updatedAfter,
+  };
+
+  if (payload.kind === 'note') {
+    return {
+      payload,
+      jobId: getGranolaJobId({
+        prefix: 'granola-note',
+        identity: { ...identity, noteId: payload.noteId },
+      }),
+    };
+  }
+
+  return {
+    payload,
+    jobId: getGranolaJobId({
+      prefix: 'granola-discovery',
+      identity: {
+        ...identity,
+        folderId: payload.folderId,
+        cursor: payload.cursor,
+        pageIndex: payload.pageIndex,
+      },
+    }),
+  };
+};

@@ -42,6 +42,11 @@ msgstr "\"{0}\" \"{1}\" ning yaroqli quyi-maydoni emas."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\" yaroqsiz qiymat qabul qildi."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "\"{name}\" ushbu ko‘rinish cheklovida ishlatilmaydi"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -116,6 +121,11 @@ msgstr "\"{domainName}\" domeni uchun {hostnameCount} ta hostname topildi. 1 ta 
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{aggregateFieldLabel} bo‘yicha {operationLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr "{senderName}, {threadLabel} ichida"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -138,7 +148,7 @@ msgstr "{type} navigatsiya menyusi elementi {parentType} ichiga joylashtirilishi
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
 msgid "A {type} navigation menu item cannot be placed inside a built-in section"
-msgstr ""
+msgstr "{type} navigatsiya menyusi elementi o‘rnatilgan bo‘lim ichiga joylashtirilmaydi"
 
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
@@ -154,7 +164,7 @@ msgstr "O‘rnatilgan provayder allaqachon bu nomdan foydalanmoqda. Boshqa yorli
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A builtInSectionKey is only allowed on SECTION type"
-msgstr ""
+msgstr "builtInSectionKey faqat SECTION turida ruxsat etiladi"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -166,6 +176,11 @@ msgstr "Auditoriyaga ommaviy elektron xat yuborilishi va yetkazib berish statist
 #: src/engine/core-modules/cache-lock/exceptions/cache-lock.exception.ts
 msgid "A cache lock error occurred."
 msgstr "Kesh blokirovka xatosi yuz berdi."
+
+#. js-lingui-id: BGPUw0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A calculation on related records cannot be sorted or limited"
+msgstr "Bog‘liq yozuvlar bo‘yicha hisoblashni saralash yoki cheklash mumkin emas"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -204,6 +219,11 @@ msgstr "Diagramma filtrida maydon yo‘q"
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
 msgstr "\"{widgetTitle}\" vidjetining diagramma filtrida maydon metamaʼlumotlarining universal identifikatori yo‘q"
 
+#. js-lingui-id: pSJj6s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A column name cannot be empty"
+msgstr "Ustun nomi bo‘sh bo‘lishi mumkin emas"
+
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -226,6 +246,16 @@ msgstr "Bu ilova uchun ushbu nomga ega ulanish provayderi allaqachon mavjud"
 msgid "A connection provider with this name already exists for this application."
 msgstr "Bu ilova uchun ushbu nomga ega ulanish provayderi allaqachon mavjud."
 
+#. js-lingui-id: v8qK2D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot have a related record field"
+msgstr "Bog‘liq yozuvlar sonida bog‘liq yozuv maydoni bo‘lishi mumkin emas"
+
+#. js-lingui-id: J6ov1V
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot use a field"
+msgstr "Bog‘liq yozuvlar soni maydondan foydalana olmaydi"
+
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -242,6 +272,12 @@ msgstr "Ushbu ilovadagi ma’lumotlar bazasi hodisasi triggeri yaroqsiz."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A deactivated field cannot be shown in a column"
 msgstr "Faolsizlantirilgan maydon ustunda ko‘rsatilmaydi"
+
+#. js-lingui-id: ef/Kdg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A deactivated field cannot be used to filter or sort related records"
+msgstr "Faolsizlantirilgan maydondan bog‘liq yozuvlarni filtrlash yoki saralash uchun foydalanib bo‘lmaydi"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -440,15 +476,30 @@ msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Uchrashuv yozuvi"
 
-#. js-lingui-id: p5HHUZ
+#. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
-msgid "A related record field can only be shown on a many-to-one relation field"
-msgstr "Bog‘liq yozuv maydoni faqat ko‘pdan-birga munosabat maydonida ko‘rsatilishi mumkin"
+msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
+msgstr "Bog‘liq yozuv maydoni faqat ko‘pdan-birga bog‘lanish maydonida yoki bog‘lanish doirasiga ega birdan-ko‘pga bog‘lanish maydonida ko‘rsatilishi mumkin"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record's relation cannot be shown in a column"
 msgstr "Bog‘liq yozuvning munosabati ustunda ko‘rsatilmaydi"
+
+#. js-lingui-id: iBsZzI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A related record's relation cannot be used to filter or sort"
+msgstr "Bog‘liq yozuvning bog‘lanishidan filtrlash yoki saralash uchun foydalanib bo‘lmaydi"
+
+#. js-lingui-id: OrK1uF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "A relation scope can only be set on a one-to-many relation field"
+msgstr "Bog‘lanish doirasini faqat birdan-ko‘pga bog‘lanish maydonida o‘rnatish mumkin"
+
+#. js-lingui-id: +RRVJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A relation scope related record field can only be used on a many-to-one relation field"
+msgstr "Bog‘lanish doirasining bog‘liq yozuv maydonidan faqat ko‘pdan-birga bog‘lanish maydonida foydalanish mumkin"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -569,7 +620,7 @@ msgstr "AGENT turi uchun to‘g‘ri agentUniversalIdentifier talab qilinadi"
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid builtInSectionKey is required for a built-in SECTION"
-msgstr ""
+msgstr "O‘rnatilgan SECTION uchun yaroqli builtInSectionKey talab qilinadi"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -639,6 +690,16 @@ msgstr "Ko‘rinish maydoni bo‘yicha xato yuz berdi."
 msgid "A view field group error occurred."
 msgstr "Ko‘rinish maydonlari guruhi xatosi yuz berdi."
 
+#. js-lingui-id: Aexevl
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be empty, use null to show the default label"
+msgstr "Ko‘rinish maydoni yorlig‘i bo‘sh bo‘lishi mumkin emas, standart yorliqni ko‘rsatish uchun null dan foydalaning"
+
+#. js-lingui-id: JmypXw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
+msgstr "Ko‘rinish maydoni yorlig‘i {IDENTIFIER_MAX_CHAR_LENGTH} belgidan uzun bo‘lishi mumkin emas"
+
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "A view filter cannot stay in a view filter group that is being removed"
@@ -691,6 +752,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Ish maydoni a’zosi"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "Ish maydoni a'zosi bog'lanishi bog'liq yozuvlarida o'qish uchun maydonni talab qiladi"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -742,7 +808,9 @@ msgid "Access token not found."
 msgstr "Kirish tokeni topilmadi."
 
 #. js-lingui-id: 4MiH8E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Account Owner"
 msgstr "Hisob egasi"
@@ -2126,6 +2194,11 @@ msgstr "Istalgan CRM eksportidan kompaniyalaringizni, kontaktlaringizni va bitim
 msgid "Bring your team into Twenty."
 msgstr "Jamoangizni Twenty’ga olib keling."
 
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr "Brauzer bildirishnomalari eskirgan kalit bilan sozlangan. Ularni qayta sozlash uchun sahifani qayta yuklang."
+
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2312,6 +2385,12 @@ msgstr "Kalendar hodisasi"
 msgctxt "fieldMetadata.label"
 msgid "Calendar Event"
 msgstr "Kalendar hodisasi"
+
+#. js-lingui-id: r6+1Ni
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event copies synced from this member's calendars"
+msgstr "Bu a’zoning kalendarlaridan sinxronlangan kalendar hodisalari nusxalari"
 
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -3059,6 +3138,11 @@ msgstr "Qayta belgilash uchun mavjud vaqt jadvali faoliyati turini tanlang"
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Ulashish uchun bitta shaxs yoki bitta rolni tanlang."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Bog'liq yozuvlarda o'qish uchun maydonni tanlang"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5589,6 +5673,11 @@ msgstr "\"{relationFieldName}\" maydoni bog‘lanish emas"
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "\"{workspaceMemberFieldName}\" maydoni workspaceMember ob’ektining maydoni emas, predikat hech qachon qo‘llanilmaydi"
 
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "\"{workspaceMemberRelationFieldName}\" maydoni workspaceMember obyektining bir-ko'pga bog'lanishi emas"
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6074,6 +6163,11 @@ msgstr "Birinchi to‘g‘ridan-to‘g‘ri xabar a’zosi IDsi"
 msgid "First friendly message"
 msgstr "Birinchi do‘stona xabar"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Ism ko‘pi bilan {WORKSPACE_MEMBER_NAME_MAX_LENGTH} ta belgidan iborat bo‘lishi kerak."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6123,6 +6217,11 @@ msgstr "Forma amali maydonlarining nomlari noyob bo‘lishi kerak"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Forma amali kamida bitta maydonga ega bo‘lishi kerak"
+
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr "Sobiq a’zo"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -6504,7 +6603,9 @@ msgstr "Identifikator"
 
 #. js-lingui-id: 86G6IW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Handle"
@@ -6514,6 +6615,18 @@ msgstr "Identifikator"
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "Handle taxalluslari majburiy."
+
+#. js-lingui-id: x9jVPQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the calendar this event was synced from"
+msgstr "Bu hodisa sinxronlangan kalendarning tutqichi"
+
+#. js-lingui-id: fC7TD7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the mailbox this message was synced from"
+msgstr "Bu xabar sinxronlangan pochta qutisining tutqichi"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -7759,6 +7872,11 @@ msgstr "Maydonlar vidjeti uchun viewUniversalIdentifier noto‘g‘ri"
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "\"{widgetTitle}\" maydonlar vidjeti uchun viewUniversalIdentifier noto‘g‘ri. To‘g‘ri UUID bo‘lishi kerak"
 
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Ko‘rinish cheklovi noto‘g‘ri: {untranslatedErrorMessage}"
+
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
@@ -8133,6 +8251,11 @@ msgstr "Oxirgi xabar"
 msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Oxirgi xabar yuboruvchisi"
+
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Familiya ko‘pi bilan {WORKSPACE_MEMBER_NAME_MAX_LENGTH} ta belgidan iborat bo‘lishi kerak."
 
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -8805,6 +8928,12 @@ msgstr "Xabar kanali xabar assotsiatsiyalari"
 msgid "Message channel not found."
 msgstr "Xabar kanali topilmadi."
 
+#. js-lingui-id: 7lDI1E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message copies synced from this member's mailboxes"
+msgstr "Bu a’zoning pochta qutilaridan sinxronlangan xabarlar nusxalari"
+
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -9411,6 +9540,11 @@ msgstr "Yangi"
 msgid "New backup codes were generated for your account"
 msgstr "Hisobingiz uchun yangi zaxira kodlari yaratildi"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr "Yangi chat"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9427,6 +9561,11 @@ msgstr "Yangi chat"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr "Yangi elektron pochta joriy elektron pochtadan farq qilishi kerak"
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
+msgstr "Yangi xabar"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9614,12 +9753,6 @@ msgstr "Yozib olinmagan"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
 msgstr "O‘rnatilmagan"
-
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Boshlanmagan"
 
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -10052,10 +10185,15 @@ msgstr "Bir yoki bir nechta yo‘naltirish URIlari yaroqsiz."
 msgid "One or more requested scopes are invalid."
 msgstr "So‘ralgan vakolat doiralaridan biri yoki bir nechtasi yaroqsiz."
 
-#. js-lingui-id: A69o8a
+#. js-lingui-id: 7bNnyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
-msgid "Only a column linking to one record can show a field of that record"
-msgstr "Faqat bitta yozuvga bog‘lanadigan ustun o‘sha yozuvning maydonini ko‘rsatishi mumkin"
+msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
+msgstr "Faqat bitta yozuvga bog‘langan ustun yoki bog‘liq yozuvlarning filtrlangan ustuni bog‘liq yozuvlar maydonini ko‘rsatishi mumkin"
+
+#. js-lingui-id: RryrSe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only a column listing related records can filter, sort or limit them"
+msgstr "Faqat bog‘liq yozuvlarni ro‘yxatlovchi ustun ularni filtrlashi, saralashi yoki cheklashi mumkin"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10066,6 +10204,11 @@ msgstr "Faqat qoralama yoki rejalashtirilgan kampaniyani yuborish mumkin."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "Only a field linking to one record can be sorted by a field of that record"
 msgstr "Faqat bitta yozuvga bog‘langan maydonni o‘sha yozuv maydoni bo‘yicha saralash mumkin"
+
+#. js-lingui-id: FnGPJ0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Only a field linking to one record can use a field of that record"
+msgstr "Faqat bitta yozuvga bog‘langan maydon o‘sha yozuv maydonidan foydalanishi mumkin"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10086,6 +10229,16 @@ msgstr "Bu a’zo uchun tiklash kodlarini faqat server administratori boshqarish
 #: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Ish jarayonini kim ko‘rishini faqat ish maydoni a’zosi o‘zgartirishi mumkin"
+
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Faqat ish maydoni a’zosi shaxsiy agent yaratishi mumkin."
+
+#. js-lingui-id: VBcVkv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only added columns can filter, sort or limit related records"
+msgstr "Faqat qo‘shilgan ustunlar bog‘liq yozuvlarni filtrlashi, saralashi yoki cheklashi mumkin"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10112,6 +10265,11 @@ msgstr "Bu tarzda faqat npm’da chop etilgan ilovalarning egaligini tasdiqlash 
 msgid "Only applications synced from local source can be exported."
 msgstr "Faqat mahalliy manbadan sinxronlangan ilovalarni eksport qilish mumkin."
 
+#. js-lingui-id: 8t36/D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Only count, sum, average, min and max can aggregate related records"
+msgstr "Faqat count, sum, average, min va max bog‘liq yozuvlarni jamlashi mumkin"
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10121,6 +10279,11 @@ msgstr "Yagona xato"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Faqat maydon cheklovlariga ruxsat beriladi."
+
+#. js-lingui-id: KmZMUH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only non-canonical view fields can have a relation scope"
+msgstr "Faqat kanonik bo‘lmagan ko‘rinish maydonlari bog‘lanish doirasiga ega bo‘lishi mumkin"
 
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10137,6 +10300,12 @@ msgstr "Har bir varaq uchun faqat bitta to‘liq balandlikdagi vidjetga ruxsat b
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Faqat ushbu agentga egalik qiluvchi ilova uning tetiklagichlarini o‘zgartira oladi"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Faqat agent egasi bo‘lgan a’zo uni kim ko‘rishini o‘zgartirishi mumkin."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -10910,6 +11079,11 @@ msgctxt "fieldMetadata.label"
 msgid "Phones"
 msgstr "Telefonlar"
 
+#. js-lingui-id: WPKlX/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Pick a field of the related records to calculate on"
+msgstr "Hisoblash uchun bog‘liq yozuvlar maydonini tanlang"
+
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
@@ -11085,6 +11259,11 @@ msgstr "Predikat qiymati ushbu operand uchun yaroqsiz"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Bog‘lanish orqali maydonga yetib boruvchi predikatlar ushbu ish maydoni uchun yoqilmagan"
+
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Bog'lanish orqali joriy a'zoni o'qiydigan predikatlar ushbu ish maydoni uchun yoqilmagan"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11651,6 +11830,36 @@ msgstr "Bog‘liq yozuv yo‘li obyekti topilmadi"
 msgid "Related record paths require the Organization plan."
 msgstr "Tegishli yozuv yoʻllari Organization rejasini talab qiladi."
 
+#. js-lingui-id: Kch20t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records can only be filtered or sorted by their own fields"
+msgstr "Bog‘liq yozuvlarni faqat o‘z maydonlari bo‘yicha filtrlash yoki saralash mumkin"
+
+#. js-lingui-id: GIT0tY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records cannot be filtered or sorted by a list of records"
+msgstr "Bog‘liq yozuvlarni yozuvlar ro‘yxati bo‘yicha filtrlash yoki saralash mumkin emas"
+
+#. js-lingui-id: IyP1Db
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Related records filter groups are invalid"
+msgstr "Bog‘liq yozuvlar filtri guruhlari noto‘g‘ri"
+
+#. js-lingui-id: HbwlWt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Related records filters are invalid"
+msgstr "Bog‘liq yozuvlar filtrlari noto‘g‘ri"
+
+#. js-lingui-id: SV7HLW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Related records sort direction should be ascending or descending"
+msgstr "Bog‘liq yozuvlarni saralash yo‘nalishi o‘sish yoki kamayish tartibida bo‘lishi kerak"
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11717,6 +11926,66 @@ msgstr "Aloqa filtrlarida faqat bitta darajagacha bo‘lgan aloqalar bo‘yicha 
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "Bu maydon uchun aloqa yoqilmagan."
+
+#. js-lingui-id: 7ZohXD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope can only have one root filter group"
+msgstr "Bog‘lanish doirasida faqat bitta ildiz filtri guruhi bo‘lishi mumkin"
+
+#. js-lingui-id: cvmKqs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields cannot be one-to-many relations"
+msgstr "Bog‘lanish doirasi maydonlari birdan-ko‘pga bog‘lanishlar bo‘lishi mumkin emas"
+
+#. js-lingui-id: 9w3/Xr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must be active"
+msgstr "Bog‘lanish doirasi maydonlari faol bo‘lishi kerak"
+
+#. js-lingui-id: NmTkV8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must belong to the relation target object"
+msgstr "Bog‘lanish doirasi maydonlari bog‘lanishning maqsad obyektiga tegishli bo‘lishi kerak"
+
+#. js-lingui-id: ZTDFle
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group has an invalid logical operator"
+msgstr "Bog‘lanish doirasi filtri guruhida noto‘g‘ri mantiqiy operator mavjud"
+
+#. js-lingui-id: tY8Auj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group ids must be unique UUIDs"
+msgstr "Bog‘lanish doirasi filtri guruhi identifikatorlari noyob UUID bo‘lishi kerak"
+
+#. js-lingui-id: /OizQh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter group not found"
+msgstr "Bog‘lanish doirasi filtri guruhi topilmadi"
+
+#. js-lingui-id: LHu9vR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group parent not found"
+msgstr "Bog‘lanish doirasi filtri guruhining yuqori guruhi topilmadi"
+
+#. js-lingui-id: FrK0wr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter groups can only be nested one level deep"
+msgstr "Bog‘lanish doirasi filtri guruhlari faqat bir daraja ichma-ich joylashtirilishi mumkin"
+
+#. js-lingui-id: aNv4KU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter ids must be unique UUIDs"
+msgstr "Bog‘lanish doirasi filtri identifikatorlari noyob UUID bo‘lishi kerak"
+
+#. js-lingui-id: cc0+ro
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
+msgstr "Bog‘lanish doirasi chegarasi 1 va {QUERY_MAX_RECORDS_FROM_RELATION} oralig‘idagi butun son bo‘lishi kerak"
+
+#. js-lingui-id: xeyqWP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Relation scope sort has an invalid direction"
+msgstr "Bog‘lanish doirasini saralashda noto‘g‘ri yo‘nalish mavjud"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -11843,10 +12112,10 @@ msgstr "So‘ralgan"
 msgid "Requested file range cannot be served."
 msgstr "So‘ralgan fayl diapazoniga xizmat ko‘rsatib bo‘lmaydi."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Majburiy maydonlar va munosabatlar satr darajasidagi ruxsat qoidasida cheklanishi mumkin emas."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Majburiy maydonlar va morf aloqalarni qator darajasidagi ruxsat qoidasi bilan cheklab bo‘lmaydi."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12311,6 +12580,7 @@ msgid "Rule"
 msgstr "Qoida"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Bog‘lanish orqali qoidalar ushbu ish maydoni uchun yoqilmagan"
@@ -13429,6 +13699,18 @@ msgstr "Xulosa"
 msgid "Sunday"
 msgstr "Yakshanba"
 
+#. js-lingui-id: uHrdjd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Calendar Events"
+msgstr "Sinxronlangan kalendar hodisalari"
+
+#. js-lingui-id: ZgRRP1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Messages"
+msgstr "Sinxronlangan xabarlar"
+
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "System"
@@ -14104,6 +14386,7 @@ msgid "The field configured for this widget could not be found."
 msgstr "Ushbu vidjet uchun sozlangan maydon topilmadi."
 
 #. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
 msgid "The field must belong to the related object"
@@ -14264,6 +14547,11 @@ msgstr "Mavzuda yozgan a’zolar"
 msgid "The nested relation field configured for this widget could not be found."
 msgstr "Ushbu vidjet uchun sozlangan ichki aloqador maydon topilmadi."
 
+#. js-lingui-id: MD4f/q
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "The number of related records to show is out of range"
+msgstr "Ko‘rsatiladigan bog‘liq yozuvlar soni ruxsat etilgan diapazondan tashqarida"
+
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
@@ -14384,6 +14672,11 @@ msgstr "Qabul qilingan e-pochta mazmuni endi mavjud emas."
 msgid "The related record field cannot be a relation"
 msgstr "Bog‘liq yozuv maydoni munosabat bo‘la olmaydi"
 
+#. js-lingui-id: MBEG9i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The related record field does not support this aggregate operation"
+msgstr "Bog‘liq yozuv maydoni ushbu jamlash amalini qo‘llab-quvvatlamaydi"
+
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
@@ -14400,6 +14693,31 @@ msgstr "Bog‘liq yozuv maydoni munosabat maqsad obyektiga tegishli bo‘lishi k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
 msgid "The related record field of a column owned by an application cannot be changed"
 msgstr "Ilovaga tegishli ustunning bog‘liq yozuv maydonini o‘zgartirib bo‘lmaydi"
+
+#. js-lingui-id: uHtomZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "The relation scope of a column owned by an application cannot be changed"
+msgstr "Ilovaga tegishli ustunning bog‘lanish doirasini o‘zgartirib bo‘lmaydi"
+
+#. js-lingui-id: Tl0b2t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The relation scope of an aggregate cannot have sorts or a limit"
+msgstr "Jamlashning bog‘lanish doirasida saralashlar yoki chegara bo‘lishi mumkin emas"
+
+#. js-lingui-id: c0bu85
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field cannot be a relation"
+msgstr "Bog‘lanish doirasining bog‘liq yozuv maydoni bog‘lanish bo‘lishi mumkin emas"
+
+#. js-lingui-id: zJWJeQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must be active"
+msgstr "Bog‘lanish doirasining bog‘liq yozuv maydoni faol bo‘lishi kerak"
+
+#. js-lingui-id: WY2/RN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must belong to the relation target object"
+msgstr "Bog‘lanish doirasining bog‘liq yozuv maydoni bog‘lanishning maqsad obyektiga tegishli bo‘lishi kerak"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14696,6 +15014,11 @@ msgstr "Bu agentda natija maydonlari yo‘q. Uning javob formatiga kamida bitta 
 msgid "This agent is archived."
 msgstr "Bu agent arxivlangan."
 
+#. js-lingui-id: IaSvAS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This aggregate operation requires a related record field"
+msgstr "Bu jamlash amali bog‘liq yozuv maydonini talab qiladi"
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -14736,6 +15059,11 @@ msgstr "Bu ilova Twenty serverining yangiroq versiyasini talab qiladi. Iltimos, 
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Ushbu ilova ish maydoningiz yangilanganidan ko‘ra yangiroq versiyani talab qiladi. Ish maydonini yangilash tugagach, qaytadan urinib ko‘ring."
+
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "Ushbu ilova noto‘g‘ri narxlarni e’lon qiladi"
 
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14781,6 +15109,21 @@ msgstr "Ushbu ilova o‘zgaruvchisi doirasi qo‘llab-quvvatlanmaydi."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
 msgstr "Ushbu hisob-kitob kelishuvi noto‘g‘ri sozlamalarga ega."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr "Bu brauzerning push xizmati qo‘llab-quvvatlanmaydi."
+
+#. js-lingui-id: ohxYfe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available for this field"
+msgstr "Bu hisoblash ushbu maydon uchun mavjud emas"
+
+#. js-lingui-id: 4x0ihe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available on related records"
+msgstr "Bu hisoblash bog‘liq yozuvlarda mavjud emas"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14864,10 +15207,20 @@ msgstr "Bu kod chop etilgan ish jarayoni versiyasiga tegishli. Uni qoralamadan t
 msgid "This column comes from an application, so the related record field it shows cannot be changed"
 msgstr "Ushbu ustun ilovadan olingan, shuning uchun u ko‘rsatadigan bog‘liq yozuv maydonini o‘zgartirib bo‘lmaydi"
 
+#. js-lingui-id: mY8Iz1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "This column comes from an application, so the related records it shows cannot be changed"
+msgstr "Bu ustun ilovadan olingan, shuning uchun u ko‘rsatadigan bog‘liq yozuvlarni o‘zgartirib bo‘lmaydi"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Ushbu ustun allaqachon noyob deb belgilangan. Cheklovni bu yerdan boshqarishni istasangiz, avval maydonning \"Unique\" parametrini o‘chirib qo‘ying."
+
+#. js-lingui-id: tEKss1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "This column name is too long"
+msgstr "Bu ustun nomi juda uzun"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14993,6 +15346,11 @@ msgstr "Bu maydon ish maydoni a’zosi ob’ektiga tegishli emas"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Ushbu maydonda indekslash uchun ma’lumotlar bazasi ustuni yo‘q."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Bu maydon ish maydoni a’zosi obyektining birdan-ko‘pga munosabati emas"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -15840,6 +16198,11 @@ msgstr "Juda ko‘p administrator nomzodlari topildi."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Qatnashchilar soni juda ko‘p: {attendeeCount}. Ruxsat etilgan eng katta son: {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: s/8N3l
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Too many domain validation emails sent. Please try again later."
+msgstr "Juda ko‘p domenni tasdiqlash xatlari yuborildi. Iltimos, birozdan keyin qayta urinib ko‘ring."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -17123,6 +17486,16 @@ msgstr "Ko‘rinish guruhini yaratish uchun ViewId talab qilinadi."
 msgid "ViewId is required to create a view sort."
 msgstr "Ko‘rinish saralashini yaratish uchun ViewId talab qilinadi."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "Ko‘rinish cheklovini o‘qib bo‘lmaydi"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "Ko‘rinish cheklovida shartlar juda ko‘p"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -17760,6 +18133,12 @@ msgctxt "fieldMetadata.label"
 msgid "Workspace"
 msgstr "Ish maydoni"
 
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Workspace"
+msgstr "Ish maydoni"
+
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
@@ -17902,6 +18281,12 @@ msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Ish maydoni a'zosi yozuv sahifasi maydonlari"
 
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Ish maydoni a’zosi munosabat maydoni metama’lumoti topilmadi"
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17931,6 +18316,18 @@ msgstr "Reaksiya bildirgan ish maydoni a’zosi, agent yoki yordamchi bildirgani
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who sent this message"
 msgstr "Ushbu xabarni yuborgan ish maydoni aʼzosi"
+
+#. js-lingui-id: SXhaY/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose calendar this event was synced from"
+msgstr "Ushbu hodisa kalendaridan sinxronlangan ish maydoni a’zosi"
+
+#. js-lingui-id: 6oRXeC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose mailbox this message was synced from"
+msgstr "Ushbu xabar pochta qutisidan sinxronlangan ish maydoni a’zosi"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -18214,6 +18611,11 @@ msgstr "Sizda ushbu funksiyaga kirish ruxsati yo‘q. Iltimos, ish maydoni admin
 msgid "You do not have permission to access this workflow."
 msgstr "Ushbu ish jarayoniga kirish uchun sizda ruxsat yo‘q."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "Ushbu yozuvni o‘zgartirish huquqiga ega emassiz."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18409,6 +18811,11 @@ msgstr "Sizning rolingiz ushbu yozuvlarning ayrimlarini o‘chira olmaydi, shuni
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ushbu ish maydonida sizning rolingiz topilmadi. Iltimos, ish maydoni administratoriga murojaat qiling."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr "Seansingiz muddati tugadi. Brauzer bildirishnomalarini yoqish uchun qaytadan kiring."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

@@ -14,6 +14,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 
 const DEFAULT_LIST_WORKFLOWS_LIMIT = 50;
 
@@ -42,58 +43,60 @@ type ListWorkflowsInput = z.infer<typeof listWorkflowsSchema>;
 export const createListWorkflowsTool = (
   deps: Pick<WorkflowToolDependencies, 'coreWorkflowListService'>,
   context: WorkflowToolContext,
-) => ({
-  name: 'list_workflows' as const,
-  description:
-    'List all workflows in the workspace. Supports filtering by status and cursor pagination. Returns core workflow IDs (coreWorkflowId), which every other workflow tool expects. Use get_workflow_current_version to get the workflow current core version.',
-  inputSchema: listWorkflowsSchema,
-  execute: async (parameters: ListWorkflowsInput) => {
-    try {
-      const { edges, pageInfo, totalCount } =
-        await deps.coreWorkflowListService.findManyByWorkspaceId({
-          workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
-          callerApplication: undefined,
-          first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
-          after: parameters.after,
-          orderBy: CoreWorkflowOrderByField.UPDATED_AT,
-          orderByDirection: CoreWorkflowOrderByDirection.DESC,
-          filter: parameters.status
-            ? {
-                logicalOperator: CoreWorkflowFilterLogicalOperator.AND,
-                rules: [
-                  {
-                    fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
-                    operand: CoreWorkflowFilterOperand.CONTAINS,
-                    value: JSON.stringify([parameters.status]),
-                  },
-                ],
-              }
-            : undefined,
-        });
+) =>
+  ({
+    name: 'list_workflows' as const,
+    isReadOnly: true,
+    description:
+      'List all workflows in the workspace. Supports filtering by status and cursor pagination. Returns core workflow IDs (coreWorkflowId), which every other workflow tool expects. Use get_workflow_current_version to get the workflow current core version.',
+    inputSchema: listWorkflowsSchema,
+    execute: async (parameters: ListWorkflowsInput) => {
+      try {
+        const { edges, pageInfo, totalCount } =
+          await deps.coreWorkflowListService.findManyByWorkspaceId({
+            workspaceId: context.workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            callerApplication: undefined,
+            first: parameters.limit ?? DEFAULT_LIST_WORKFLOWS_LIMIT,
+            after: parameters.after,
+            orderBy: CoreWorkflowOrderByField.UPDATED_AT,
+            orderByDirection: CoreWorkflowOrderByDirection.DESC,
+            filter: parameters.status
+              ? {
+                  logicalOperator: CoreWorkflowFilterLogicalOperator.AND,
+                  rules: [
+                    {
+                      fieldKey: CoreWorkflowFilterFieldKey.STATUSES,
+                      operand: CoreWorkflowFilterOperand.CONTAINS,
+                      value: JSON.stringify([parameters.status]),
+                    },
+                  ],
+                }
+              : undefined,
+          });
 
-      return {
-        success: true,
-        workflows: edges.map(({ node }) => ({
-          coreWorkflowId: node.id,
-          name: node.name,
-          statuses: node.statuses,
-          createdAt: node.createdAt,
-          updatedAt: node.updatedAt,
-        })),
-        totalCount,
-        endCursor: pageInfo.endCursor,
-        hasNextPage: pageInfo.hasNextPage,
-      };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+        return {
+          success: true,
+          workflows: edges.map(({ node }) => ({
+            coreWorkflowId: node.id,
+            name: node.name,
+            statuses: node.statuses,
+            createdAt: node.createdAt,
+            updatedAt: node.updatedAt,
+          })),
+          totalCount,
+          endCursor: pageInfo.endCursor,
+          hasNextPage: pageInfo.hasNextPage,
+        };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
 
-      return {
-        success: false,
-        error: errorMessage,
-        message: `Failed to list workflows: ${errorMessage}`,
-      };
-    }
-  },
-});
+        return {
+          success: false,
+          error: errorMessage,
+          message: `Failed to list workflows: ${errorMessage}`,
+        };
+      }
+    },
+  }) satisfies WorkflowTool;

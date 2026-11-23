@@ -4,15 +4,13 @@ permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
   pull_request:
   merge_group:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-knip-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
@@ -46,7 +44,7 @@ jobs:
   ci-knip-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-2-cores
     needs: [changed-files-check, knip]
     steps:
       - name: Fail job if any needs failed

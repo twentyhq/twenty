@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`findWorkspaceFromInviteHash should succeed (integration) should return the fields the invite page selects to an unauthenticated caller 1`] = `
+{
+  "allowImpersonation": true,
+  "displayName": "Apple",
+  "id": Any<String>,
+  "logo": Any<String>,
+}
+`;

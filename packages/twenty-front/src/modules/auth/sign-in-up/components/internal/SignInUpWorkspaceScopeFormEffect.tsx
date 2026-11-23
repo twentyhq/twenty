@@ -4,35 +4,17 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { captchaState } from '@/client-config/states/captchaState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const searchParams = new URLSearchParams(window.location.search);
 const email = searchParams.get('email');
 
-enum LoadingStatus {
-  Loading = 'loading',
-  RequestingCaptchaToken = 'requestingCaptchaToken',
-  Done = 'done',
-}
-
 export const SignInUpWorkspaceScopeFormEffect = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
-
-  const isRequestingCaptchaToken = useAtomStateValue(
-    isRequestingCaptchaTokenState,
-  );
-
-  const captcha = useAtomStateValue(captchaState);
-
-  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>(
-    LoadingStatus.Loading,
-  );
 
   const { form } = useSignInUpForm();
 
@@ -57,28 +39,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
   }, [setSignInUpStep, workspaceAuthProviders]);
 
   useEffect(() => {
-    if (loadingStatus === LoadingStatus.Done) {
-      return;
-    }
-
-    if (!isDefined(captcha?.provider)) {
-      setLoadingStatus(LoadingStatus.Done);
-      return;
-    }
-
-    if (isRequestingCaptchaToken) {
-      setLoadingStatus(LoadingStatus.RequestingCaptchaToken);
-    }
-
-    if (
-      !isRequestingCaptchaToken &&
-      loadingStatus === LoadingStatus.RequestingCaptchaToken
-    ) {
-      setLoadingStatus(LoadingStatus.Done);
-    }
-  }, [captcha?.provider, isRequestingCaptchaToken, loadingStatus]);
-
-  useEffect(() => {
     if (!workspaceAuthProviders) {
       return;
     }
@@ -97,8 +57,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       signInUpStep !== SignInUpStep.Password &&
       signInUpStep !== SignInUpStep.Email &&
       isDefined(email) &&
-      workspaceAuthProviders.password &&
-      loadingStatus === LoadingStatus.Done
+      workspaceAuthProviders.password
     ) {
       continueWithCredentials();
     }
@@ -107,7 +66,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
     workspaceAuthProviders,
     continueWithEmail,
     continueWithCredentials,
-    loadingStatus,
   ]);
 
   return <></>;

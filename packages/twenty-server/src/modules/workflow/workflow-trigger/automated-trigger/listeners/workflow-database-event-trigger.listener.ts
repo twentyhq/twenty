@@ -1,4 +1,3 @@
-import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -36,21 +35,21 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
 import { isDatabaseEventTriggerListeningToEvent } from 'src/engine/workspace-event-emitter/utils/is-database-event-trigger-listening-to-event.util';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 import {
   type AutomatedTriggerSettings,
   type BaseDatabaseEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
   legacyWorkflowId?: string;
+  coreWorkflowVersionId: string;
   applicationId: string;
   settings: AutomatedTriggerSettings;
-} & CoreDispatchIds;
+};
 
 type TriggerEvaluationArgs = {
   eventPayload: ObjectRecordEvent;
@@ -66,7 +65,7 @@ export class WorkflowDatabaseEventTriggerListener {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerDispatchWorkspaceService: WorkflowTriggerDispatchWorkspaceService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordEventPermissionsReadService: RecordEventPermissionsReadService,
     private readonly applicationService: ApplicationService,
@@ -154,7 +153,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    } = await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+    } = await this.workflowMetadataReadService.getObjectMetadataInfo(
       payload.objectMetadata.nameSingular,
       workspaceId,
     );
@@ -176,7 +175,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    } = await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+    } = await this.workflowMetadataReadService.getObjectMetadataInfo(
       payload.objectMetadata.nameSingular,
       workspaceId,
     );
@@ -205,7 +204,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    } = await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+    } = await this.workflowMetadataReadService.getObjectMetadataInfo(
       payload.objectMetadata.nameSingular,
       workspaceId,
     );
@@ -227,7 +226,7 @@ export class WorkflowDatabaseEventTriggerListener {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    } = await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+    } = await this.workflowMetadataReadService.getObjectMetadataInfo(
       payload.objectMetadata.nameSingular,
       workspaceId,
     );
@@ -413,7 +412,7 @@ export class WorkflowDatabaseEventTriggerListener {
                 workspaceId,
                 workflowId:
                   eventListener.legacyWorkflowId ?? eventListener.workflowId,
-                ...buildCoreDispatchIds(eventListener),
+                coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
                 payload: eventPayload,
               },
               jobOptions: {

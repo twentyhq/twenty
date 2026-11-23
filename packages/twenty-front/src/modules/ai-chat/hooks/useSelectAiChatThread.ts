@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 import { useProjectAiChatThreadToUrl } from '@/ai-chat/hooks/useProjectAiChatThreadToUrl';
 import { getCurrentAiChatPageThreadId } from '@/ai-chat/utils/getCurrentAiChatPageThreadId';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 
 export const useSelectAiChatThread = () => {
   const store = useStore();
@@ -12,7 +12,7 @@ export const useSelectAiChatThread = () => {
   const selectAiChatThread = useCallback(
     (toThreadId: string) => {
       if (getCurrentAiChatPageThreadId(store) !== toThreadId) {
-        store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+        store.set(isWorkspaceSetupChatActiveState.atom, false);
       }
 
       projectAiChatThreadToUrl(toThreadId);

@@ -36,6 +36,10 @@ excluded from external directory observation; symlink aliases use the same
 restriction. Known files there remain watched, and dev warns when missing-import
 recovery would require an excluded directory.
 
+`app dev --verbose` reports the effective scope after updates. Reports include
+retained successful inputs after failures and appear only when paths change.
+NDJSON exposes the same paths in `watch-scope` progress events.
+
 ## Apply and client generation
 
 `applyAppBuild` handles remote operations. Dev supplies a revision-specific

@@ -4,53 +4,47 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai-chat/threads/hooks/useIsCurrentAiChatThreadReadOnly';
 import { useAiChatSentMessageHandOff } from '@/ai-chat/messages/hooks/useAiChatSentMessageHandOff';
-import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { AGENT_MESSAGE_ROLE } from '@/ai-chat/messages/constants/AgentMessageRole';
-import { shouldFocusChatEditorState } from '@/ai-chat/states/shouldFocusChatEditorState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
+import { AI_CHAT_GROUPED_MESSAGE_GAP } from '@/ai-chat/messages/constants/AiChatGroupedMessageGap';
+import { AI_CHAT_MESSAGE_LIST_GAP } from '@/ai-chat/messages/constants/AiChatMessageListGap';
 import { AI_CHAT_USER_MESSAGE_MAX_WIDTH } from '@/ai-chat/messages/constants/AiChatUserMessageMaxWidth';
 import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueFromFilePart';
 
 import { AiChatMessageAuthorHeader } from '@/ai-chat/messages/components/AiChatMessageAuthorHeader';
 import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMessageReplyQuote';
-import { AiChatAssistantMessageRenderer } from '@/ai-chat/messages/components/AiChatAssistantMessageRenderer';
-import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
+import { AiChatMessagePartsRenderer } from '@/ai-chat/messages/components/AiChatMessagePartsRenderer';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
-import { AiChatMessageReceipt } from '@/ai-chat/messages/components/AiChatMessageReceipt';
-import { aiChatThreadReadPositionsFamilyState } from '@/ai-chat/threads/states/aiChatThreadReadPositionsFamilyState';
+import { AiChatMessageActions } from '@/ai-chat/messages/components/AiChatMessageActions';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { ChatMessageTimestamp } from '@/chat/components/ChatMessageTimestamp';
-import { StyledChatMessageBubbleContent } from '@/chat/components/StyledChatMessageBubbleContent';
-import { StyledChatMessageMeta } from '@/chat/components/StyledChatMessageMeta';
+import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { AiChatUserMessageCollapsibleContent } from '@/ai-chat/messages/components/AiChatUserMessageCollapsibleContent';
 import { aiChatFirstUnreadMessageIdFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatFirstUnreadMessageIdFamilySelector';
 import { aiChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsMessageBeforeFirstUserMessageFamilySelector';
+import { aiChatMessageGroupPositionFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatMessageGroupPositionFamilySelector';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
+import { AI_CHAT_UNGROUPED_MESSAGE_POSITION } from '@/ai-chat/messages/constants/AiChatUngroupedMessagePosition';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
+import { getAiChatMessageText } from '@/ai-chat/messages/utils/getAiChatMessageText';
 import { parseAiChatMessageQuote } from '@/ai-chat/messages/utils/parseAiChatMessageQuote';
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMessage';
 import { getAiChatMessageWorkDurationMs } from '@/ai-chat/messages/utils/getAiChatMessageWorkDurationMs';
 import { type AiChatError } from '@/ai-chat/types/AiChatError';
-import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 import { isExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconArrowBackUp, IconEdit, IconTrash } from 'twenty-ui/icon';
 import { LabeledSeparator } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -77,10 +71,23 @@ const StyledMessageContainer = styled.div<{
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
-const StyledUserMessageContent = styled.div`
+const StyledMessageRow = styled(StyledChatMessageRow)<{
+  isTightlyGroupedWithNext: boolean;
+}>`
+  margin-bottom: ${({ isTightlyGroupedWithNext }) =>
+    isTightlyGroupedWithNext
+      ? `calc(${AI_CHAT_GROUPED_MESSAGE_GAP} - ${AI_CHAT_MESSAGE_LIST_GAP})`
+      : '0'};
+`;
+
+const StyledMessageLine = styled.div<{ isRightAligned: boolean }>`
+  align-items: flex-end;
   display: flex;
-  flex-direction: column;
+  flex-direction: ${({ isRightAligned }) =>
+    isRightAligned ? 'row-reverse' : 'row'};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
+  width: 100%;
 `;
 
 type AiChatUserMessageTextProps = {
@@ -97,11 +104,6 @@ const AiChatUserMessageText = ({
   meta,
 }: AiChatUserMessageTextProps) => {
   const sentMessageHandOffRef = useAiChatSentMessageHandOff(messageId);
-  const content = (
-    <AiChatUserMessageCollapsibleContent>
-      {children}
-    </AiChatUserMessageCollapsibleContent>
-  );
 
   return (
     <StyledChatMessageBubble
@@ -109,14 +111,11 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      {isDefined(meta) ? (
-        <StyledChatMessageBubbleContent>
-          <StyledUserMessageContent>{content}</StyledUserMessageContent>
-          {meta}
-        </StyledChatMessageBubbleContent>
-      ) : (
-        content
-      )}
+      <ChatMessageBubbleContent meta={meta} isSpacerReservedByContent>
+        <AiChatUserMessageCollapsibleContent>
+          {children}
+        </AiChatUserMessageCollapsibleContent>
+      </ChatMessageBubbleContent>
     </StyledChatMessageBubble>
   );
 };
@@ -142,7 +141,7 @@ export const AiChatMessage = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const agentChatMessage = useAtomFamilySelectorValue(
+  const aiChatMessage = useAtomFamilySelectorValue(
     aiChatThreadMessageFamilySelector,
     { threadId, messageId },
   );
@@ -159,81 +158,100 @@ export const AiChatMessage = ({
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
-  const aiChatThreadReadPositions = useAtomFamilyStateValue(
-    aiChatThreadReadPositionsFamilyState,
-    { threadId },
-  );
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
-  const isDirectMessage = useAtomFamilySelectorValue(
-    aiChatThreadIsDirectMessageFamilySelector,
-    threadId,
-  );
 
-  const setAiChatQuotedMessageId = useSetAtomFamilyState(
-    aiChatQuotedMessageIdFamilyState,
-    { threadId },
+  const aiChatMessageGroupPosition = useAtomFamilySelectorValue(
+    aiChatMessageGroupPositionFamilySelector,
+    { threadId, messageId },
   );
-
-  const setShouldFocusChatEditor = useSetAtomState(shouldFocusChatEditorState);
+  const aiChatMessageReactions = useAtomFamilyStateValue(
+    aiChatMessageReactionsFamilyState,
+    { messageId },
+  );
 
   if (
-    !isDefined(agentChatMessage) ||
-    (isSilentAiChatMessage(agentChatMessage) && !isDefined(error))
+    !isDefined(aiChatMessage) ||
+    (isSilentAiChatMessage(aiChatMessage) && !isDefined(error))
   ) {
     return null;
   }
 
-  const senderId = agentChatMessage.metadata?.senderWorkspaceMemberId;
+  const senderId = aiChatMessage.metadata?.senderWorkspaceMemberId;
   const sender = currentWorkspaceMembers.find(
     (member) => isDefined(senderId) && member.id === senderId,
   );
   const isOwnMessage = isAiChatMessageOwn({
-    message: agentChatMessage,
+    message: aiChatMessage,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
-  const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const isUser = aiChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const { isGroupedWithPrevious, isGroupedWithNext, isTimeSharedWithNext } =
+    isAiChatInboxEnabled
+      ? aiChatMessageGroupPosition
+      : AI_CHAT_UNGROUPED_MESSAGE_POSITION;
   const canReply = isAiChatInboxEnabled && !isReadOnly;
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const canManageMessage = isUser && isOwnMessage && !isReadOnly;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
-  const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
-  const hasHeader = isAiChatInboxEnabled && !isOwnMessage;
-  const hasOwnReceipt =
-    isAiChatInboxEnabled &&
-    isOwnMessage &&
-    isUser &&
-    isDefined(aiChatThreadReadPositions);
+  const createdAt = aiChatMessage.metadata?.createdAt ?? new Date();
+  const isOtherMemberMessage = isAiChatInboxEnabled && !isOwnMessage;
+  const hasHeader = isOtherMemberMessage && !isGroupedWithPrevious;
+  const hasTimeInBubble = isAiChatInboxEnabled && isOwnMessage && isUser;
+  const hasVisibleTimeInBubble = hasTimeInBubble && !isTimeSharedWithNext;
+  const hasFooterTimestamp = !isOtherMemberMessage && !hasTimeInBubble;
+  const hasReactions =
+    isAiChatInboxEnabled && isNonEmptyArray(aiChatMessageReactions);
+  const hasContent = isNonEmptyArray(aiChatMessage.parts);
+  const hasSideActions = isAiChatInboxEnabled && isUser;
+  const hasFooter = hasContent && (!hasSideActions || hasReactions);
+  const isTightlyGroupedWithNext =
+    isGroupedWithNext && !hasVisibleTimeInBubble && !hasFooter;
   const shouldShowError =
-    isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
+    isDefined(error) && aiChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
-  const attachments = agentChatMessage.parts
+  const attachments = aiChatMessage.parts
     .filter(isExtendedFileUIPart)
     .map(getFieldFilesValueFromFilePart);
-  const messageText =
-    agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
+  const messageText = getAiChatMessageText(aiChatMessage);
   const messageQuote =
     isAiChatInboxEnabled && isUser
       ? parseAiChatMessageQuote(messageText)
       : null;
   const messageParts = !isDefined(messageQuote)
-    ? agentChatMessage.parts
-    : agentChatMessage.parts.map((part) =>
+    ? aiChatMessage.parts
+    : aiChatMessage.parts.map((part) =>
         part.type === 'text' && part.text === messageText
           ? { ...part, text: messageQuote.replyText }
           : part,
       );
   const messageContent = (
-    <AiChatAssistantMessageRenderer
+    <AiChatMessagePartsRenderer
       isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={messageParts}
       hasError={shouldShowError}
       shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
       workDurationMs={getAiChatMessageWorkDurationMs({
-        metadata: agentChatMessage.metadata,
+        metadata: aiChatMessage.metadata,
         isStreaming: isLastMessageStreaming,
       })}
+    />
+  );
+
+  const bubbleTime = hasVisibleTimeInBubble ? (
+    <ChatMessageTime date={createdAt} />
+  ) : undefined;
+
+  const messageActions = (
+    <AiChatMessageActions
+      messageId={messageId}
+      messageText={messageText}
+      isRightAligned={shouldMirrorMessageActions}
+      canReact={isAiChatInboxEnabled && !isLastMessageStreaming}
+      canReply={canReply}
+      onEdit={canManageMessage ? onEdit : undefined}
+      onDelete={canManageMessage ? onDelete : undefined}
     />
   );
 
@@ -246,15 +264,16 @@ export const AiChatMessage = ({
           hasStartMarker
         >{t`New`}</LabeledSeparator>
       )}
-      <StyledChatMessageRow
+      <StyledMessageRow
         isRightAligned={isRightAligned}
+        isTightlyGroupedWithNext={isTightlyGroupedWithNext}
         data-agent-chat-message-id={messageId}
       >
         {hasHeader && (
           <AiChatMessageAuthorHeader
             messageId={messageId}
-            role={agentChatMessage.role}
-            metadata={agentChatMessage.metadata}
+            role={aiChatMessage.role}
+            metadata={aiChatMessage.metadata}
             createdAt={createdAt}
           />
         )}
@@ -266,93 +285,55 @@ export const AiChatMessage = ({
             })}
           </StyledSender>
         )}
-        <StyledMessageContainer isUser={isUser} isRightAligned={isRightAligned}>
-          {isDefined(messageQuote) && (
-            <AiChatMessageReplyQuote
-              replyMessageId={messageId}
-              quote={messageQuote}
-            />
-          )}
-          {isUser ? (
-            <AiChatUserMessageText
-              messageId={messageId}
-              isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
-              meta={
-                hasOwnReceipt ? (
-                  <StyledChatMessageMeta>
-                    <ChatMessageTime date={createdAt} />
-                    <AiChatMessageReceipt messageId={messageId} />
-                  </StyledChatMessageMeta>
-                ) : undefined
-              }
-            >
-              {messageContent}
-            </AiChatUserMessageText>
-          ) : (
-            <StyledChatMessageBubble>{messageContent}</StyledChatMessageBubble>
-          )}
-          {isNonEmptyArray(attachments) && (
-            <ChatMessageAttachments
-              files={attachments}
-              isRightAligned={isRightAligned}
-            />
-          )}
-          {shouldShowError && <AiChatErrorRenderer error={error} />}
-        </StyledMessageContainer>
-        {isNonEmptyArray(agentChatMessage.parts) && (
+        <StyledMessageLine isRightAligned={isRightAligned}>
+          <StyledMessageContainer
+            isUser={isUser}
+            isRightAligned={isRightAligned}
+          >
+            {isDefined(messageQuote) && (
+              <AiChatMessageReplyQuote
+                replyMessageId={messageId}
+                quote={messageQuote}
+              />
+            )}
+            {isUser ? (
+              <AiChatUserMessageText
+                messageId={messageId}
+                isOtherMember={isOtherMemberMessage}
+                meta={bubbleTime}
+              >
+                {messageContent}
+              </AiChatUserMessageText>
+            ) : (
+              <StyledChatMessageBubble>
+                {messageContent}
+              </StyledChatMessageBubble>
+            )}
+            {isNonEmptyArray(attachments) && (
+              <ChatMessageAttachments
+                files={attachments}
+                isRightAligned={isRightAligned}
+              />
+            )}
+            {shouldShowError && <AiChatErrorRenderer error={error} />}
+          </StyledMessageContainer>
+          {hasContent && hasSideActions && messageActions}
+        </StyledMessageLine>
+        {hasFooter && (
           <StyledChatMessageFooter
             isSpreadOut={!isAiChatInboxEnabled}
             isRightAligned={shouldMirrorMessageActions}
           >
-            {isAiChatInboxEnabled && !isDirectMessage && (
+            {isAiChatInboxEnabled && (
               <AiChatMessageReactions messageId={messageId} />
             )}
-            {!hasHeader && !hasOwnReceipt && (
+            {hasFooterTimestamp && (
               <ChatMessageTimestamp createdAt={createdAt} />
             )}
-            <StyledChatMessageActions
-              className="message-actions"
-              isRightAligned={shouldMirrorMessageActions}
-            >
-              {isAiChatInboxEnabled &&
-                !isDirectMessage &&
-                !isLastMessageStreaming && (
-                  <AiChatMessageReactionPicker messageId={messageId} />
-                )}
-              {canReply && (
-                <LightIconButton
-                  aria-label={t`Reply`}
-                  onClick={() => {
-                    setAiChatQuotedMessageId(messageId);
-                    setShouldFocusChatEditor(true);
-                  }}
-                >
-                  <IconArrowBackUp />
-                </LightIconButton>
-              )}
-              <LightCopyIconButton copyText={messageText} />
-              {canManageMessage && isDefined(onEdit) && (
-                <LightIconButton
-                  aria-label={t`Edit message`}
-                  tooltip={t`Edit message`}
-                  onClick={() => onEdit(messageId)}
-                >
-                  <IconEdit />
-                </LightIconButton>
-              )}
-              {canManageMessage && isDefined(onDelete) && (
-                <LightIconButton
-                  aria-label={t`Delete message`}
-                  tooltip={t`Delete message`}
-                  onClick={() => onDelete(messageId)}
-                >
-                  <IconTrash />
-                </LightIconButton>
-              )}
-            </StyledChatMessageActions>
+            {!hasSideActions && messageActions}
           </StyledChatMessageFooter>
         )}
-      </StyledChatMessageRow>
+      </StyledMessageRow>
     </>
   );
 };

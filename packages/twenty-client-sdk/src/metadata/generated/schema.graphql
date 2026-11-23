@@ -27,6 +27,7 @@ type Agent {
   id: UUID!
   isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -573,6 +574,7 @@ type Application {
 
 type ApplicationAuthorization {
   applicationId: UUID!
+  applicationLogoUrl: String
   applicationName: String!
   applicationUniversalIdentifier: String
   createdAt: DateTime!
@@ -613,6 +615,11 @@ type ApplicationConnectedAccountDTO {
   visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
+type ApplicationConnectedMemberCount {
+  applicationId: UUID!
+  connectedMemberCount: Int!
+}
+
 type ApplicationConnectionProvider {
   applicationId: String!
   displayName: String!
@@ -637,6 +644,7 @@ type ApplicationContent {
   frontComponents: [ApplicationContentItem!]!
   indexes: [ApplicationContentItem!]!
   logicFunctions: [ApplicationContentItem!]!
+  mcpServers: [ApplicationContentItem!]!
   navigationMenuItems: [ApplicationContentItem!]!
   objects: [ApplicationContentItem!]!
   pageLayoutTabs: [ApplicationContentItem!]!
@@ -847,6 +855,7 @@ type ApplicationRegistration {
 }
 
 enum ApplicationRegistrationSourceType {
+  BUNDLED
   LOCAL
   NPM
   OAUTH_ONLY
@@ -1472,6 +1481,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -1597,6 +1607,7 @@ input CreateAgentInput {
   avatarShape: String
   description: String
   icon: String
+  isPrivate: Boolean
   label: String!
   modelConfiguration: JSON
   modelId: String!
@@ -1844,6 +1855,7 @@ input CreatePageLayoutTabInput {
 }
 
 input CreatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   configuration: JSON!
   objectMetadataId: UUID
   pageLayoutTabId: UUID!
@@ -1937,7 +1949,9 @@ input CreateViewFieldInput {
   id: UUID
   isCanonical: Boolean = true
   isVisible: Boolean = true
+  label: String
   position: Float = 0
+  relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float = 0
   viewFieldGroupId: UUID
@@ -2482,9 +2496,12 @@ enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
+  IS_APPLICATION_PRICE_BILLING_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
@@ -2493,7 +2510,6 @@ enum FeatureFlagKey {
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
-  IS_PERMISSION_TABLES_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -3186,6 +3202,7 @@ type MarketplaceApp {
   category: String!
   connectUrl: String
   description: String!
+  hasMcpServers: Boolean!
   id: String!
   isListed: Boolean!
   logoUrl: String
@@ -3761,6 +3778,7 @@ type Mutation {
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -3783,6 +3801,7 @@ type Mutation {
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
   updateSkill(input: UpdateSkillInput!): Skill!
+  updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
@@ -3814,6 +3833,7 @@ type Mutation {
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
   upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -3836,6 +3856,7 @@ type NavigationMenuItem {
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
+  isActive: Boolean!
   link: String
   name: String
   nativePageKey: String
@@ -3846,6 +3867,7 @@ type NavigationMenuItem {
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
   type: NavigationMenuItemType!
+  universalIdentifier: UUID
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
@@ -4040,6 +4062,7 @@ type ObjectRecordsPermissions {
   canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
+  canReadSomeRecords: Boolean!
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
@@ -4144,8 +4167,9 @@ type PageLayoutWidget {
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
   applicationName: String
-  conditionalAvailabilityExpression: String
-  conditionalDisplay: JSON
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use conditionalAvailability instead")
+  conditionalDisplay: JSON @deprecated(reason: "Use conditionalAvailability instead")
   configuration: WidgetConfiguration!
   createdAt: DateTime!
   deletedAt: DateTime
@@ -4450,7 +4474,7 @@ type Query {
   findUninstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findUpgradeApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
-  findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  findWorkspaceFromInviteHash(inviteHash: String!): WorkspaceFromInviteHash!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   frontComponent(id: UUID!): FrontComponent
   frontComponents: [FrontComponent!]!
@@ -4528,6 +4552,7 @@ type Query {
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
   ): ObjectConnection!
+  onlineWorkspaceMemberIds: [UUID!]!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
@@ -4551,7 +4576,8 @@ type Query {
   validationRulesReadingField(fieldMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
-  workspaceApplicationAuthorizations: [ApplicationAuthorization!]!
+  workspaceApplicationAuthorizations(applicationId: UUID): [ApplicationAuthorization!]!
+  workspaceApplicationConnectedMemberCounts: [ApplicationConnectedMemberCount!]!
 }
 
 type RatioAggregateConfig {
@@ -4749,6 +4775,7 @@ type RowLevelPermissionPredicate {
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: String
   workspaceMemberSubFieldName: String
 }
 
@@ -4828,6 +4855,7 @@ input RowLevelPermissionRulePredicateInput {
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: UUID
   workspaceMemberSubFieldName: String
 }
 
@@ -5179,6 +5207,11 @@ input SyncAppMessageFoldersInput {
   messageChannelId: UUID!
 }
 
+enum TabPresenceStatus {
+  FOCUSED
+  OPEN
+}
+
 type TasksConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -5368,6 +5401,7 @@ input UpdateAgentInput {
   icon: String
   id: UUID!
   isActive: Boolean
+  isPrivate: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String
@@ -5496,6 +5530,11 @@ input UpdateGettingStartedInput {
   snoozedUntil: String
 }
 
+input UpdateInboxNotificationSettingsInput {
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
+}
+
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
@@ -5570,6 +5609,7 @@ input UpdateNavigationMenuItemInput {
   color: String
   folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
+  isActive: Boolean
   link: String
   name: String
   pageLayoutId: UUID
@@ -5640,6 +5680,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
 }
 
 input UpdatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5652,6 +5693,7 @@ input UpdatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetWithIdInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5701,6 +5743,11 @@ input UpdateSkillInput {
   isActive: Boolean
   label: String
   name: String
+}
+
+input UpdateTabPresenceInput {
+  status: TabPresenceStatus!
+  tabId: String!
 }
 
 input UpdateTimelineActivityTypeInput {
@@ -5764,7 +5811,9 @@ input UpdateViewFieldInput {
 input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
+  label: String
   position: Float
+  relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float
   viewFieldGroupId: UUID
@@ -6067,6 +6116,13 @@ input UpsertViewWidgetViewSortInput {
   id: UUID
 }
 
+input UpsertWebPushSubscriptionInput {
+  browserAuthSecret: String!
+  browserPublicKey: String!
+  endpoint: String!
+  vapidPublicKey: String!
+}
+
 type UsageAnalytics {
   periodEnd: DateTime!
   periodStart: DateTime!
@@ -6291,7 +6347,9 @@ type UserWorkspace {
   createdAt: DateTime!
   deletedAt: DateTime
   id: UUID!
+  inboxNotificationLevel: String
   isImpersonating: Boolean
+  isInboxNotificationPreviewEnabled: Boolean
   locale: String!
   objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]
@@ -6409,7 +6467,9 @@ type ViewField {
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
+  label: String
   position: Float!
+  relationScope: ViewFieldRelationScope
   relationTargetFieldMetadataId: UUID
   size: Float!
   universalIdentifier: UUID!
@@ -6432,6 +6492,68 @@ type ViewFieldGroup {
   viewFields: [ViewField!]!
   viewId: UUID!
   workspaceId: UUID!
+}
+
+type ViewFieldRelationScope {
+  aggregateOperation: AggregateOperations
+  filterGroups: [ViewFieldRelationScopeFilterGroup!]!
+  filters: [ViewFieldRelationScopeFilter!]!
+  limit: Int
+  sorts: [ViewFieldRelationScopeSort!]!
+}
+
+type ViewFieldRelationScopeFilter {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+type ViewFieldRelationScopeFilterGroup {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterGroupInput {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterInput {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+input ViewFieldRelationScopeInput {
+  aggregateOperation: AggregateOperations
+  filterGroups: [ViewFieldRelationScopeFilterGroupInput!]! = []
+  filters: [ViewFieldRelationScopeFilterInput!]! = []
+  limit: Int
+  sorts: [ViewFieldRelationScopeSortInput!]! = []
+}
+
+type ViewFieldRelationScopeSort {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+}
+
+input ViewFieldRelationScopeSortInput {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
 }
 
 type ViewFilter {
@@ -6761,6 +6883,13 @@ enum WorkspaceDiscoverability {
   HIDDEN
   MEMBERS_AND_INVITEES
   PUBLIC
+}
+
+type WorkspaceFromInviteHash {
+  allowImpersonation: Boolean!
+  displayName: String
+  id: UUID!
+  logo: String
 }
 
 type WorkspaceInvitation {

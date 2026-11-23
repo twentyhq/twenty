@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import gql from 'graphql-tag';
 import request from 'supertest';
+import { clearOAuthRateLimits } from 'test/integration/oauth/utils/clear-oauth-rate-limits.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { assertIsDefinedOrThrow, base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -141,6 +142,8 @@ describe('OAuth (integration)', () => {
     tokens: string[];
     applications: string[];
   } = { registrations: [], tokens: [], applications: [] };
+
+  beforeEach(clearOAuthRateLimits);
 
   beforeAll(async () => {
     ds = global.testDataSource;
@@ -1398,6 +1401,33 @@ describe('OAuth (integration)', () => {
       expect(await findListedAuthorization()).toBeUndefined();
     });
 
+    it('should stop the access token being accepted when revoked from the list', async () => {
+      const { accessToken } = await exchangeForTokens();
+
+      const requestWithAccessToken = () =>
+        request(baseUrl)
+          .get('/rest/people?limit=1')
+          .set('Authorization', `Bearer ${accessToken}`);
+
+      const introspectAccessToken = () =>
+        request(baseUrl).post('/oauth/introspect').send({
+          token: accessToken,
+          client_id: testRegistration.oAuthClientId,
+          client_secret: testClientSecret,
+        });
+
+      // The test application has no role, so an accepted token is forbidden rather than served
+      await requestWithAccessToken().expect(403);
+      expect((await introspectAccessToken()).body.active).toBe(true);
+
+      const { id } = await findListedAuthorization();
+
+      await revokeListedAuthorization(id, APPLE_JANE_ADMIN_ACCESS_TOKEN);
+
+      await requestWithAccessToken().expect(401);
+      expect((await introspectAccessToken()).body.active).toBe(false);
+    });
+
     it('should report a repeated revocation as a no-op', async () => {
       await exchangeForTokens();
 
@@ -1481,6 +1511,71 @@ describe('OAuth (integration)', () => {
         marketplaceAppUniversalIdentifier: null,
       });
       expect(await findListedAuthorization()).toBeUndefined();
+    });
+
+    it('should list only the requested application when filtered', async () => {
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
+
+      const filtered = await makeMetadataApiRequest(
+        {
+          query: gql`
+            query WorkspaceApplicationAuthorizations($applicationId: UUID) {
+              workspaceApplicationAuthorizations(
+                applicationId: $applicationId
+              ) {
+                applicationId
+                userId
+              }
+            }
+          `,
+          variables: { applicationId: testApplication.id },
+        },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(filtered.body.errors).toBeUndefined();
+      expect(filtered.body.data.workspaceApplicationAuthorizations).toEqual([
+        { applicationId: testApplication.id, userId: OTHER_MEMBER_USER_ID },
+      ]);
+    });
+
+    it('should count the active authorizations of each application', async () => {
+      const countConnectedMembers = async () => {
+        const response = await makeMetadataApiRequest(
+          {
+            query: gql`
+              query WorkspaceApplicationConnectedMemberCounts {
+                workspaceApplicationConnectedMemberCounts {
+                  applicationId
+                  connectedMemberCount
+                }
+              }
+            `,
+          },
+          APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        );
+
+        expect(response.body.errors).toBeUndefined();
+
+        return response.body.data.workspaceApplicationConnectedMemberCounts.find(
+          ({ applicationId }: { applicationId: string }) =>
+            applicationId === testApplication.id,
+        )?.connectedMemberCount;
+      };
+
+      await exchangeForTokens({ userId: OTHER_MEMBER_USER_ID });
+      await exchangeForTokens();
+
+      expect(await countConnectedMembers()).toBe(2);
+
+      const { id } = await findOtherMemberAuthorization();
+
+      await makeMetadataApiRequest(
+        revokeWorkspaceAuthorizationOperation(id),
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(await countConnectedMembers()).toBe(1);
     });
 
     it('should let a user who manages applications revoke another member authorization', async () => {

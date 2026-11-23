@@ -93,6 +93,9 @@ const BASE_FLAT_VIEW_FIELD: FlatViewField = {
   aggregateOperation: null,
   relationTargetFieldMetadataId: null,
   relationTargetFieldMetadataUniversalIdentifier: null,
+  relationScope: null,
+  universalRelationScope: null,
+  label: null,
   isActive: true,
   isSystemSideEffect: false,
   isCanonical: true,
@@ -143,6 +146,7 @@ const buildApplicationContentFlatEntityMaps = ({
   flatPermissionFlagMaps: createEmptyFlatEntityMaps(),
   flatRolePermissionFlagMaps: createEmptyFlatEntityMaps(),
   flatConnectionProviderMaps: createEmptyFlatEntityMaps(),
+  flatMcpServerMaps: createEmptyFlatEntityMaps(),
 });
 
 describe('buildApplicationContentFromFlatEntityMaps', () => {

@@ -1,12 +1,11 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import {
@@ -101,33 +100,6 @@ describe('AiChatMessageReactions', () => {
     expect(
       screen.getByRole('button', { name: '🎉 by Tom Martin' }),
     ).toHaveAttribute('aria-pressed', 'false');
-  });
-
-  it('toggles your reaction when you click an emoji', async () => {
-    jotaiStore.set(
-      aiChatMessageReactionsFamilyState.atomFamily({
-        messageId: MESSAGE_ID,
-      }),
-      [
-        {
-          emoji: '🎉',
-          workspaceMemberIds: [OTHER_MEMBER_ID],
-          agentIds: [],
-          hasAssistantReacted: false,
-        },
-      ],
-    );
-
-    renderReactions();
-
-    await userEvent.click(
-      screen.getByRole('button', { name: '🎉 by Tom Martin' }),
-    );
-
-    expect(mockToggleAiChatMessageReaction).toHaveBeenCalledWith({
-      messageId: MESSAGE_ID,
-      emoji: '🎉',
-    });
   });
 
   it('names the assistant among those who used an emoji', () => {

@@ -55,4 +55,5 @@ export type ClientConfig = {
   allowRequestsToTwentyIcons: boolean;
   maintenance?: ClientConfigMaintenanceMode;
   enterpriseInstanceType?: EnterpriseInstanceType;
+  webPushVapidPublicKey?: string | null;
 };
