@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   buildDeviceConditionalAvailability,
+  CONDITIONAL_AVAILABILITY_DEVICES,
   type ConditionalAvailabilityDevice,
   type ConditionalAvailabilityNode,
   parseConditionalAvailabilityExpression,
@@ -16,11 +17,6 @@ type LegacyPageLayoutWidgetRuleConversion =
 const buildLegacyDeviceJsonLogic = (device: ConditionalAvailabilityDevice) => ({
   and: [{ '===': [{ var: 'device' }, device] }],
 });
-
-const LEGACY_JSON_LOGIC_DEVICES: ConditionalAvailabilityDevice[] = [
-  'MOBILE',
-  'DESKTOP',
-];
 
 export const fromLegacyPageLayoutWidgetRuleToConditionalAvailability = ({
   conditionalAvailabilityExpression,
@@ -40,11 +36,8 @@ export const fromLegacyPageLayoutWidgetRuleToConditionalAvailability = ({
     return { isValid: true, node: null };
   }
 
-  const device = LEGACY_JSON_LOGIC_DEVICES.find((legacyJsonLogicDevice) =>
-    fastDeepEqual(
-      conditionalDisplay,
-      buildLegacyDeviceJsonLogic(legacyJsonLogicDevice),
-    ),
+  const device = CONDITIONAL_AVAILABILITY_DEVICES.find((legacyDevice) =>
+    fastDeepEqual(conditionalDisplay, buildLegacyDeviceJsonLogic(legacyDevice)),
   );
 
   if (!isDefined(device)) {
