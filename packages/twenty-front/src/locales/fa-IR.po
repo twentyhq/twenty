@@ -3604,12 +3604,12 @@ msgstr "اجازه دادن"
 #. js-lingui-id: rgjDVZ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow {settingsEntryLabel} in macOS settings"
-msgstr ""
+msgstr "اجازه دادن به {settingsEntryLabel} در تنظیمات macOS"
 
 #. js-lingui-id: CzjC6l
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow {settingsEntryLabel} in Windows settings"
-msgstr ""
+msgstr "اجازه دادن به {settingsEntryLabel} در تنظیمات Windows"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3665,12 +3665,12 @@ msgstr "ورود مبتنی بر Microsoft را برای کاربران دارا
 #. js-lingui-id: iN398g
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Allow notifications"
-msgstr ""
+msgstr "اجازه دادن به اعلان‌ها"
 
 #. js-lingui-id: kDJaGH
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow notifications in your browser"
-msgstr ""
+msgstr "اعلان‌ها را در مرورگر خود مجاز کنید"
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -6381,7 +6381,7 @@ msgstr "برای تأیید نشانی ایمیل جدیدتان، صندوق و
 #. js-lingui-id: iY9Tuz
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Check your system notification settings"
-msgstr ""
+msgstr "تنظیمات اعلان‌های سیستم خود را بررسی کنید"
 
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10613,12 +10613,12 @@ msgstr "دیکته در این مرورگر پشتیبانی نمی‌شود."
 #. js-lingui-id: rgWPME
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Did you see a test notification?"
-msgstr ""
+msgstr "آیا اعلان آزمایشی را دیدید؟"
 
 #. js-lingui-id: kd/w8u
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Did you see it this time?"
-msgstr ""
+msgstr "آیا این بار آن را دیدید؟"
 
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10813,7 +10813,7 @@ msgstr "رکوردهای DNS:"
 #. js-lingui-id: 5bBKM2
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Do not disturb"
-msgstr ""
+msgstr "مزاحم نشوید"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -18474,7 +18474,7 @@ msgstr "میلیون"
 #. js-lingui-id: PcJKDa
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
-msgstr ""
+msgstr "macOS حتی زمانی که {browserLabel} به Twenty اجازه می‌دهد، می‌تواند اعلان‌ها را مسدود کند. اعلان‌ها را باز کنید، {settingsEntryLabel} را انتخاب کرده و «اجازه دادن به اعلان‌ها» را فعال کنید. اگر Focus روشن است، آن را خاموش کنید. سپس یک آزمایش ارسال کنید."
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -20083,7 +20083,7 @@ msgstr "پیام‌های جدید صندوق ورودی هنگام اجرای �
 #. js-lingui-id: Wi5Riu
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "New inbox messages will show up like the test notification while your browser is running."
-msgstr ""
+msgstr "تا زمانی که مرورگر شما در حال اجرا است، پیام‌های جدید صندوق ورودی مانند اعلان آزمایشی نمایش داده می‌شوند."
 
 #. js-lingui-id: ynuJvo
 #: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
@@ -21439,7 +21439,7 @@ msgstr "هیچ فضای کاری با این جستجو مطابقت ندارد"
 #. js-lingui-id: LayLjZ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "No, read the guide"
-msgstr ""
+msgstr "خیر، راهنما را بخوانید"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -21686,7 +21686,7 @@ msgstr "اعلان‌ها"
 #. js-lingui-id: sdfGbU
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Notifications › {settingsEntryName}"
-msgstr ""
+msgstr "اعلان‌ها › {settingsEntryName}"
 
 #. js-lingui-id: A09awi
 #: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
@@ -21696,7 +21696,7 @@ msgstr "اعلان‌ها روشن هستند"
 #. js-lingui-id: +j76n0
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Notifications are set up"
-msgstr ""
+msgstr "اعلان‌ها تنظیم شده‌اند"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -22394,7 +22394,7 @@ msgstr "باز کردن پنل کناری"
 #. js-lingui-id: TgKqjz
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Open system settings"
-msgstr ""
+msgstr "باز کردن تنظیمات سیستم"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -24288,7 +24288,7 @@ msgstr "خواندن آدرس، مالک و وضعیت حساب کانال‌ه�
 #. js-lingui-id: 4X88Wc
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Read the guide"
-msgstr ""
+msgstr "راهنما را بخوانید"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -29483,7 +29483,7 @@ msgstr "سیستم"
 #. js-lingui-id: q2LSdK
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "System › Notifications"
-msgstr ""
+msgstr "سیستم › اعلان‌ها"
 
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
@@ -31579,7 +31579,7 @@ msgstr "تبدیل به"
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
-msgstr ""
+msgstr "اعلان‌ها را روشن کنید"
 
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -33668,12 +33668,12 @@ msgstr "در تأیید کردن این مورد با مشکلی مواجه شد
 #. js-lingui-id: zXOO0X
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "We just sent another test notification."
-msgstr ""
+msgstr "همین حالا یک اعلان آزمایشی دیگر ارسال کردیم."
 
 #. js-lingui-id: Ik3LPq
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "We just sent one. It shows up in a corner of your screen."
-msgstr ""
+msgstr "همین حالا یکی ارسال کردیم. در گوشه‌ای از صفحه‌نمایش شما نمایش داده می‌شود."
 
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
@@ -34127,7 +34127,7 @@ msgstr "این ایمیل را دریافت خواهد کرد"
 #. js-lingui-id: BQiUZ6
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
-msgstr ""
+msgstr "Windows حتی زمانی که Twenty مجاز است، می‌تواند {browserLabel} را مسدود کند. اعلان‌ها را باز کنید، {settingsEntryLabel} را روشن و «مزاحم نشوید» را خاموش کنید. سپس یک آزمایش ارسال کنید."
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -34683,7 +34683,7 @@ msgstr "بله"
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Yes, I saw it"
-msgstr ""
+msgstr "بله، آن را دیدم"
 
 #. js-lingui-id: y/0uwd
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
@@ -34872,17 +34872,17 @@ msgstr "صورت‌حساب شما در {0}، در پایان دوره صورت�
 #. js-lingui-id: AUurzR
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "your browser"
-msgstr ""
+msgstr "مرورگر شما"
 
 #. js-lingui-id: TzFYej
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
-msgstr ""
+msgstr "مرورگر شما درخواست را بست یا آن را به‌صورت یک نماد در نوار آدرس نشان داد. روی آن نماد کلیک کنید و Allow را انتخاب کنید، سپس ادامه دهید."
 
 #. js-lingui-id: o3PWYJ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
-msgstr ""
+msgstr "مرورگر شما برای نمایش اعلان‌ها از Twenty درخواست می‌کند. Allow را انتخاب کنید."
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -35074,7 +35074,7 @@ msgstr "وضعیت اشتراک شما: {statusLabel}"
 #. js-lingui-id: nH1nrf
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
-msgstr ""
+msgstr "سیستم شما حتی زمانی که Twenty مجاز است، می‌تواند {browserLabel} را مسدود کند. در تنظیمات سیستم خود اعلان‌ها را برای {browserLabel} مجاز کنید، سپس یک آزمایش ارسال کنید."
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
