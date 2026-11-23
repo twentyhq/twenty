@@ -1,4 +1,4 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
 
 import { WHATSAPP_SETTINGS_ROUTE_PATHS } from 'src/constants/whatsapp-settings-route-paths.constant';
@@ -8,7 +8,7 @@ import { findOwnWhatsappConnection } from 'src/logic-functions/utils/find-own-wh
 import { type WhatsappSettingsView } from 'src/types/whatsapp-settings-view.type';
 
 export const whatsappGetSettingsHandler = async (
-  _routePayload: RoutePayload,
+  _routePayload: unknown,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<WhatsappSettingsView> =>
   buildWhatsappSettingsView(await findOwnWhatsappConnection(context));

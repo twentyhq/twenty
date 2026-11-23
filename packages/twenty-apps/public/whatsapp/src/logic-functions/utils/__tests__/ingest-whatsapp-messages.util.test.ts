@@ -70,10 +70,13 @@ const HIDDEN_NUMBER_USER: UnipileUser = {
   display_name: 'Lee',
 };
 
-const buildMessage = (
-  isSender: boolean,
-  sender: UnipileUser = PRIYA,
-): UnipileMessage => ({
+const buildMessage = ({
+  isSender,
+  sender = PRIYA,
+}: {
+  isSender: boolean;
+  sender?: UnipileUser;
+}): UnipileMessage => ({
   id: `message-${isSender ? 'sent' : 'received'}`,
   chat_id: 'chat-1',
   sender_id: isSender ? '33611111111@s.whatsapp.net' : sender.id,
@@ -107,7 +110,7 @@ const GROUP_CHAT = {
 
 const ingest = ({
   settings = DEFAULT_WHATSAPP_SETTINGS,
-  messages = [buildMessage(true)],
+  messages = [buildMessage({ isSender: true })],
   chat = ONE_TO_ONE_CHAT,
   counterparts = [PRIYA],
 }: {
@@ -192,7 +195,7 @@ describe('ingestWhatsappMessages', () => {
 
   it('creates nobody for a number that only wrote to the member, with the default policy', async () => {
     await expect(
-      ingest({ messages: [buildMessage(false)] }),
+      ingest({ messages: [buildMessage({ isSender: false })] }),
     ).resolves.toMatchObject({
       ingestedMessageCount: 1,
       createdPersonCount: 0,
@@ -281,7 +284,7 @@ describe('ingestWhatsappMessages', () => {
     await ingest({
       chat: GROUP_CHAT,
       counterparts: [PRIYA, SAM],
-      messages: [buildMessage(false, PRIYA)],
+      messages: [buildMessage({ isSender: false, sender: PRIYA })],
       settings: {
         ...DEFAULT_WHATSAPP_SETTINGS,
         contactAutoCreationPolicy: 'SENT_AND_RECEIVED',
@@ -365,7 +368,10 @@ describe('ingestWhatsappMessages', () => {
     await expect(
       ingest({
         counterparts: [HIDDEN_NUMBER_USER],
-        messages: [buildMessage(true), buildMessage(false, HIDDEN_NUMBER_USER)],
+        messages: [
+          buildMessage({ isSender: true }),
+          buildMessage({ isSender: false, sender: HIDDEN_NUMBER_USER }),
+        ],
       }),
     ).resolves.toMatchObject({
       ingestedMessageCount: 0,
@@ -391,7 +397,9 @@ describe('ingestWhatsappMessages', () => {
 
   it('reads no person for a page with no message to import', async () => {
     await expect(
-      ingest({ messages: [{ ...buildMessage(true), is_event: true }] }),
+      ingest({
+        messages: [{ ...buildMessage({ isSender: true }), is_event: true }],
+      }),
     ).resolves.toMatchObject({ skippedReason: 'NO_MESSAGES' });
     expect(mocks.findPersonIdsByWhatsappPhone).not.toHaveBeenCalled();
   });
@@ -416,7 +424,7 @@ describe('ingestWhatsappMessages', () => {
 
   it('re-ingests a message with its uploaded attachments', async () => {
     const message = {
-      ...buildMessage(true),
+      ...buildMessage({ isSender: true }),
       attachments: [
         { id: 'attachment-1', type: 'img' as const, mimetype: 'image/png' },
       ],

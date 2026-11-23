@@ -31,9 +31,12 @@ const { whatsappUpdateSettingsHandler } =
 const HISTORY_KEY = 'whatsapp-history-import:connection-id';
 
 const updateSettings = (body: Record<string, unknown>) =>
-  whatsappUpdateSettingsHandler({ body } as never, {
-    userWorkspaceId: 'member-user-workspace-id',
-  });
+  whatsappUpdateSettingsHandler(
+    { body },
+    {
+      userWorkspaceId: 'member-user-workspace-id',
+    },
+  );
 
 const setHistoryImport = (importPolicy: 'ALL' | 'CONTACTS_ONLY') =>
   mocks.kvStore.set(HISTORY_KEY, {

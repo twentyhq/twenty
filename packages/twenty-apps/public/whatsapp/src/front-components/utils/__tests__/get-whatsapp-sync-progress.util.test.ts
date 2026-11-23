@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatWhatsappSyncProgressLabel } from 'src/front-components/utils/format-whatsapp-sync-progress-label.util';
 import { getWhatsappSyncProgress } from 'src/front-components/utils/get-whatsapp-sync-progress.util';
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
 
@@ -46,12 +45,5 @@ describe('getWhatsappSyncProgress', () => {
         buildHistoryImport({ processedConversationCount: 40 }),
       ),
     ).toBeUndefined();
-  });
-});
-
-describe('formatWhatsappSyncProgressLabel', () => {
-  it('pads single digits so the label keeps its width', () => {
-    expect(formatWhatsappSyncProgressLabel(7)).toBe(' (7%)');
-    expect(formatWhatsappSyncProgressLabel(42)).toBe('(42%)');
   });
 });

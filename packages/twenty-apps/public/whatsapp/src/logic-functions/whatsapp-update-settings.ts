@@ -17,7 +17,7 @@ import { parseWhatsappSettingsUpdate } from 'src/logic-functions/utils/parse-wha
 import { type WhatsappSettingsView } from 'src/types/whatsapp-settings-view.type';
 
 export const whatsappUpdateSettingsHandler = async (
-  routePayload: RoutePayload<Record<string, unknown>>,
+  routePayload: Pick<RoutePayload<Record<string, unknown>>, 'body'>,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<WhatsappSettingsView> => {
   const connection = await findOwnWhatsappConnection(context);

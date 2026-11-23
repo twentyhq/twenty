@@ -4,7 +4,13 @@ import { buildWhatsappChatSubject } from 'src/logic-functions/utils/build-whatsa
 
 const buildUser = (name: string) => ({ id: name, display_name: name });
 
-const buildGroup = (names: string[], name = '') => ({
+const buildGroup = ({
+  names,
+  name = '',
+}: {
+  names: string[];
+  name?: string;
+}) => ({
   id: 'chat',
   name,
   is_group: true,
@@ -30,16 +36,20 @@ describe('buildWhatsappChatSubject', () => {
 
   it('uses the name WhatsApp gives a group', () => {
     expect(
-      buildWhatsappChatSubject(buildGroup(['Ada', 'Bob'], ' Q4 hiring ')),
+      buildWhatsappChatSubject(
+        buildGroup({ names: ['Ada', 'Bob'], name: ' Q4 hiring ' }),
+      ),
     ).toBe('Q4 hiring');
   });
 
   it('lists the members of an unnamed group', () => {
-    expect(buildWhatsappChatSubject(buildGroup(['Ada', 'Bob']))).toBe(
-      'Ada, Bob',
-    );
     expect(
-      buildWhatsappChatSubject(buildGroup(['Ada', 'Bob', 'Cleo', 'Dan'])),
+      buildWhatsappChatSubject(buildGroup({ names: ['Ada', 'Bob'] })),
+    ).toBe('Ada, Bob');
+    expect(
+      buildWhatsappChatSubject(
+        buildGroup({ names: ['Ada', 'Bob', 'Cleo', 'Dan'] }),
+      ),
     ).toBe('Ada, Bob +2');
   });
 });

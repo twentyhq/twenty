@@ -1,4 +1,4 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { type LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -11,7 +11,7 @@ import { finishWhatsappHistoryImport } from 'src/logic-functions/utils/refresh-w
 import { type WhatsappSettingsView } from 'src/types/whatsapp-settings-view.type';
 
 export const whatsappCancelHistoryImportHandler = async (
-  _routePayload: RoutePayload,
+  _routePayload: unknown,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<WhatsappSettingsView> => {
   const connection = await findOwnWhatsappConnection(context);

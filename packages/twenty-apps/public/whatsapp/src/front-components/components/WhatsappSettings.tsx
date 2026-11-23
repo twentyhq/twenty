@@ -181,7 +181,7 @@ export const WhatsappSettings = () => {
 
   const view = state.step === 'ready' ? state.view : undefined;
   const isImportingHistory =
-    view?.isConnected === true && view.historyImport?.status === 'IMPORTING';
+    view?.isConnected && view.historyImport?.status === 'IMPORTING';
 
   return (
     <ThemeProvider
@@ -221,7 +221,7 @@ export const WhatsappSettings = () => {
             />
           </Section.Root>
         )}
-        {view?.isConnected === true && (
+        {view?.isConnected && (
           <>
             <WhatsappAccountField
               name={view.connection.name}

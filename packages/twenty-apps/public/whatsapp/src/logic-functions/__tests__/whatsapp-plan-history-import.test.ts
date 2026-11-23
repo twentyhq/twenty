@@ -1,3 +1,4 @@
+import { isArray, isObject } from '@sniptt/guards';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
@@ -76,12 +77,15 @@ const getEnqueuedJobIds = (): string[] =>
     input.jobs.map((job: { jobId: string }) => job.jobId),
   );
 
-const getStoredChatIds = (chunkIndex: number) =>
-  (
-    mocks.kvStore.get(
-      `whatsapp-history-import-chats:connection-id:run-1:${chunkIndex}`,
-    ) as { id: string }[] | undefined
-  )?.map((chat) => chat.id);
+const getStoredChatIds = (chunkIndex: number) => {
+  const chats = mocks.kvStore.get(
+    `whatsapp-history-import-chats:connection-id:run-1:${chunkIndex}`,
+  );
+
+  return isArray(chats)
+    ? chats.map((chat) => (isObject(chat) && 'id' in chat ? chat.id : chat))
+    : undefined;
+};
 
 describe('whatsappPlanHistoryImportHandler', () => {
   beforeEach(() => {

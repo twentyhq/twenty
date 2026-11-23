@@ -54,15 +54,19 @@ export const WhatsappSyncButton = ({
     !isDefined(historyImport.chunkCount) &&
     !isDefined(historyImport.totalConversationCount);
 
-  const label = isRunning
-    ? isDefined(progress)
-      ? t('Syncing {progress}', {
-          progress: formatWhatsappSyncProgressLabel(progress),
-        })
-      : t('Syncing…')
-    : hasFailed
-      ? t('Retry')
-      : t('Sync now');
+  const getLabel = (): string => {
+    if (isRunning && isDefined(progress)) {
+      return t('Syncing {progress}', {
+        progress: formatWhatsappSyncProgressLabel(progress),
+      });
+    }
+
+    if (isRunning) {
+      return t('Syncing…');
+    }
+
+    return hasFailed ? t('Retry') : t('Sync now');
+  };
 
   return (
     <StyledContainer>
@@ -93,7 +97,7 @@ export const WhatsappSyncButton = ({
           loading={isRunning || isStarting}
           loadingPosition="end"
         >
-          {label}
+          {getLabel()}
         </Button>
       </StyledRow>
       {isRunning && isDefined(historyImport.resumeAt) ? (

@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
   query: vi.fn(),
   mutation: vi.fn(),
   metadataMutation: vi.fn(),
-  clientOptions: [] as { fetch?: unknown }[],
+  clientOptions: new Array<{ fetch?: unknown }>(),
   fetch: vi.fn(),
 }));
 

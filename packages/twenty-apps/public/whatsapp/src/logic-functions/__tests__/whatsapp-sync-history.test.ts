@@ -32,9 +32,12 @@ const { whatsappSyncHistoryHandler } =
 const HISTORY_KEY = 'whatsapp-history-import:connection-id';
 
 const syncHistory = () =>
-  whatsappSyncHistoryHandler({} as never, {
-    userWorkspaceId: 'member-user-workspace-id',
-  });
+  whatsappSyncHistoryHandler(
+    {},
+    {
+      userWorkspaceId: 'member-user-workspace-id',
+    },
+  );
 
 const setHistoryImport = (
   status: 'IMPORTING' | 'COMPLETED' | 'FAILED' | 'CANCELLED',
