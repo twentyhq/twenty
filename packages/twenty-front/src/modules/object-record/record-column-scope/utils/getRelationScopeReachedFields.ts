@@ -8,7 +8,6 @@ type RelationScopeReachedField = {
   fieldMetadataId: string;
 };
 
-// A filter or sort reads a field of the related records, and through a related record field one of the record they point to
 export const getRelationScopeReachedFields = ({
   relationScope,
   relationObjectMetadataItem,

@@ -51,7 +51,7 @@ export const RecordTableCellFieldContextWrapper = ({
 
   // A summary of a field the user cannot read resolves to no alias at all
   const isScopedRelationRestricted =
-    scopedRelationAlias?.isRestricted === true ||
+    scopedRelationAlias?.isRestricted ||
     (isDefined(recordField.relationScope?.aggregateOperation) &&
       !isDefined(scopedRelationAlias?.summary));
 
