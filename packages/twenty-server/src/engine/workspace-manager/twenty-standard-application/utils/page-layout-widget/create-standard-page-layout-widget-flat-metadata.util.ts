@@ -1,3 +1,4 @@
+import { parseConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
 import {
   PageLayoutType,
   type PageLayoutWidgetConditionalDisplay,
@@ -88,6 +89,18 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
   const tabIds = layoutIds.tabs[tabTitle];
   const widgetIds = tabIds.widgets[widgetName];
 
+  const conditionalAvailabilityParseResult =
+    parseConditionalAvailabilityExpression({
+      expression: conditionalAvailabilityExpression,
+      metadataName: 'pageLayoutWidget',
+    });
+
+  if (!conditionalAvailabilityParseResult.isValid) {
+    throw new Error(
+      `Invalid conditional availability expression ${layoutName} ${tabTitle} ${widgetName}: ${conditionalAvailabilityParseResult.errorMessage}`,
+    );
+  }
+
   return {
     id: widgetIds.id,
     universalIdentifier: widgetDef.universalIdentifier,
@@ -109,10 +122,11 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
+    // TODO(@neo773): the two legacy rule columns are still filled so the runtime can read them; stop one release after stored rules are copied to trees
     conditionalDisplay: conditionalDisplay ?? null,
     conditionalAvailabilityExpression:
       conditionalAvailabilityExpression ?? null,
-    conditionalAvailability: null,
+    conditionalAvailability: conditionalAvailabilityParseResult.node,
     overrides: null,
     universalOverrides: null,
   };
