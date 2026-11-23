@@ -7,7 +7,6 @@ import { useIcons } from 'twenty-ui/icon/provider';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
-import { getNavigationMenuBuiltInSectionLabel } from '@/navigation-menu-item/common/utils/getNavigationMenuBuiltInSectionLabel';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
@@ -86,10 +85,7 @@ export const NavigationMenuAddSectionHiddenItems = ({
 
     if (isDefined(builtInSection)) {
       return {
-        label: getNavigationMenuBuiltInSectionLabel({
-          name: navigationMenuItem.name,
-          defaultLabel: t(builtInSection.label),
-        }),
+        label: t(builtInSection.label),
         icon: (
           <ColoredIcon
             Icon={builtInSection.Icon}

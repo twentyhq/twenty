@@ -5,13 +5,7 @@ import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hoo
 import { FavoritesSection } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-type FavoritesSectionDispatcherProps = {
-  label?: string;
-};
-
-export const FavoritesSectionDispatcher = ({
-  label,
-}: FavoritesSectionDispatcherProps) => {
+export const FavoritesSectionDispatcher = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -25,7 +19,7 @@ export const FavoritesSectionDispatcher = ({
 
   return (
     <NavigationMenuItemDndKitProvider section={NavigationSections.FAVORITES}>
-      <FavoritesSection label={label} />
+      <FavoritesSection />
     </NavigationMenuItemDndKitProvider>
   );
 };

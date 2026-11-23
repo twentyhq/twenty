@@ -41,11 +41,7 @@ const StyledListItemRow = styled.div`
 const ORPHAN_DROPPABLE_ID =
   NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
-type FavoritesSectionProps = {
-  label?: string;
-};
-
-export const FavoritesSection = ({ label }: FavoritesSectionProps) => {
+export const FavoritesSection = () => {
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
@@ -109,7 +105,7 @@ export const FavoritesSection = ({ label }: FavoritesSectionProps) => {
 
   return (
     <NavigationMenuItemSection
-      title={label ?? t`Favorites`}
+      title={t`Favorites`}
       isOpen={isNavigationSectionOpen}
       onToggle={toggleNavigationSection}
       rightIcon={

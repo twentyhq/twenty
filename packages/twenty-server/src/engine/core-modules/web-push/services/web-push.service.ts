@@ -2,15 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import groupBy from 'lodash.groupby';
-import { FOCUSED_TAB_HEARTBEAT_INTERVAL_MS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, MoreThan, Not } from 'typeorm';
 import { generateRequestDetails } from 'web-push';
 
-import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
@@ -26,12 +21,8 @@ import {
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const FOCUSED_TAB_TTL_MS = FOCUSED_TAB_HEARTBEAT_INTERVAL_MS * 2;
 const WEB_PUSH_SERVICE_MESSAGE_TTL_SECONDS = 3600;
 const EXPIRED_WEB_PUSH_SUBSCRIPTION_STATUS_CODES = [404, 410];
-
-const getFocusedTabKey = (workspaceId: string, workspaceMemberId: string) =>
-  `focused-tab:${workspaceId}:${workspaceMemberId}`;
 
 @Injectable()
 export class WebPushService {
@@ -40,8 +31,6 @@ export class WebPushService {
   constructor(
     @InjectWorkspaceScopedRepository(WebPushSubscriptionEntity)
     private readonly webPushSubscriptionRepository: WorkspaceScopedRepository<WebPushSubscriptionEntity>,
-    @InjectCacheStorage(CacheStorageNamespace.EngineWebPush)
-    private readonly cacheStorageService: CacheStorageService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly userSessionService: UserSessionService,
@@ -102,58 +91,6 @@ export class WebPushService {
         userSessionId: session.id,
       },
       ['workspaceId', 'endpoint'],
-    );
-  }
-
-  async updateFocusedTab({
-    workspaceId,
-    workspaceMemberId,
-    tabId,
-    isFocused,
-  }: {
-    workspaceId: string;
-    workspaceMemberId: string;
-    tabId: string;
-    isFocused: boolean;
-  }): Promise<void> {
-    const focusedTabKey = getFocusedTabKey(workspaceId, workspaceMemberId);
-
-    if (isFocused) {
-      await this.cacheStorageService.set(
-        focusedTabKey,
-        tabId,
-        FOCUSED_TAB_TTL_MS,
-      );
-
-      return;
-    }
-
-    await this.cacheStorageService.runScript<number>({
-      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
-      keys: [focusedTabKey],
-      args: [JSON.stringify(tabId), '0'],
-    });
-  }
-
-  async findWorkspaceMemberIdsWithFocusedTab({
-    workspaceId,
-    workspaceMemberIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberIds: string[];
-  }): Promise<Set<string>> {
-    if (workspaceMemberIds.length === 0) {
-      return new Set();
-    }
-
-    const focusedTabIds = await this.cacheStorageService.mget<string>(
-      workspaceMemberIds.map((workspaceMemberId) =>
-        getFocusedTabKey(workspaceId, workspaceMemberId),
-      ),
-    );
-
-    return new Set(
-      workspaceMemberIds.filter((_, index) => isDefined(focusedTabIds[index])),
     );
   }
 

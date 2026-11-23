@@ -21,12 +21,10 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 const INBOX_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 type NavigationDrawerInboxChannelsSectionProps = {
-  label?: string;
   headerAction?: ReactNode;
 };
 
 export const NavigationDrawerInboxChannelsSection = ({
-  label,
   headerAction,
 }: NavigationDrawerInboxChannelsSectionProps) => {
   const { t } = useLingui();
@@ -77,7 +75,7 @@ export const NavigationDrawerInboxChannelsSection = ({
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_CHANNELS_NAVIGATION_SECTION_ID}
-      label={label ?? t`Channels`}
+      label={t`Channels`}
       alwaysShowRightIcon={
         isDefined(headerAction) || aiChatAccessibleChannels.length === 0
       }

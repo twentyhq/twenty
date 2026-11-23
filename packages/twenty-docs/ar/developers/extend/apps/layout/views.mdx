@@ -40,8 +40,11 @@ export default defineView({
 * إن عرض القائمة الرئيسي للكائن مملوك من قبل الخادم: تم إهمال `key` ويتم تجاهله، لذا لا يمكن لعرض البيان المطالبة به مطلقًا. أضف عنصر تنقل `VIEW` إذا كنت تريد أن يكون عرضك على بعد نقرة واحدة في الشريط الجانبي.
 * يتحكّم `fields` في الأعمدة التي تظهر وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`. للإشارة إلى حقل نظام يتم إنشاؤه تلقائيًا مثل `createdAt`، راجع قسم [استهداف بيانات النظام الوصفية](/ar/developers/extend/apps/data/system-fields).
 * عيّن `isCanonical: false` في حقل لإضافة عمود إضافي لحقل يعرضه العرض بالفعل. يحتوي العرض على عمود أساسي واحد على الأكثر لكل حقل، ولكن يمكن أن يحتوي على أي عدد من الأعمدة غير الأساسية. لا يُسمح بها في حقل معرّف تسمية الكائن أو في عروض عناصر واجهة المستخدم، ويُعيَّن `isCanonical` عند إنشاء العمود: لا يؤثر تغييره لاحقًا.
-* يمكن لعمود غير أساسي في حقل علاقة متعدد إلى واحد تعيين `relationTargetFieldMetadataUniversalIdentifier` لعرض حقل من السجل ذي الصلة بدلاً من السجل نفسه. يجب أن يكون الهدف حقلاً غير علائقي للكائن ذي الصلة.
+* يمكن لعمود غير أساسي في حقل علاقة متعدد-إلى-واحد، أو في حقل علاقة واحد-إلى-متعدد ذي `relationScope`، تعيين `relationTargetFieldMetadataUniversalIdentifier` لعرض حقل من السجلات المرتبطة بدلاً من السجلات نفسها. يجب أن يكون الهدف حقلاً غير علائقي للكائن ذي الصلة.
 * يمكن لفرز حقل علاقة متعدد إلى واحد تعيين `relationTargetFieldMetadataUniversalIdentifier` لترتيب السجلات حسب حقل في السجل ذي الصلة، مثل ترتيب الأشخاص حسب موظفي شركتهم. يجب أن يكون الهدف حقلاً غير علائقي للكائن ذي الصلة.
+* يمكن لعمود غير أساسي في حقل علاقة واحد-إلى-متعدد تعيين `relationScope` لتصفية السجلات المرتبطة التي يعرضها وفرزها وتحديد عددها. راجع [نطاق العلاقة](#relation-scope).
+* يمكن لعمود غير أساسي في حقل علاقة واحد إلى متعدد يتضمن `relationScope` ضبط `aggregateOperation` داخل `relationScope` الخاص به لعرض، لكل صف، ملخص للسجلات ذات الصلة التي يحتفظ بها النطاق بدلًا من السجلات، مثل عدد المهام المفتوحة أو مجموع مبالغ الفرص المفتوحة. لا يتطلب `COUNT` هدفًا، بينما تحتاج `SUM` و`AVG` و`MIN` و`MAX` إلى تعيين `relationTargetFieldMetadataUniversalIdentifier` إلى حقل في الكائن المرتبط يدعم العملية (حقل رقم أو عملة، أو تاريخ لـ `MIN` و`MAX`). يحتفظ نطاقه بالمرشحات فقط: تُرفض عمليات الفرز والحد. هذه الأعمدة للعرض فقط. هذا منفصل عن `aggregateOperation` الخاص بحقل العرض، الذي يحدد الإجمالي المعروض في تذييل العمود.
+* عيّن `label` على حقل لاستبدال رأس العمود الافتراضي. يُقتطع ليصبح بحد أقصى 63 حرفًا، وتُظهر التسمية الفارغة الرأس الافتراضي. يمكن لمساحة عمل إعادة تسمية عمود تملكه تطبيقك دون تغيير ملف البيان الخاص بك.
 * يمكنك أيضًا تعريف `filters` و`filterGroups` و`sorts` و`groups` و`fieldGroups` لتكوينات أكثر تقدمًا.
 * يتحكّم `position` في الترتيب عند وجود عدة عروض لنفس الكائن.
 
@@ -127,6 +130,50 @@ filters: [
 | `IS`, `IS_BEFORE`, `IS_AFTER` على `DATE` / `DATE_TIME`  | سلسلة نصية بتنسيق ISO 8601             | `'2025-01-01T00:00:00Z'` |
 | `IS_EMPTY`, `IS_NOT_EMPTY`                              | سلسلة فارغة                            | `''`                     |
 | `IS` على `BOOLEAN`                                      | `'true'` أو `'false'`                  | `'true'`                 |
+
+## نطاق العلاقة
+
+يؤدي `relationScope` في عمود واحد إلى متعدد غير أساسي، مثل "المهام المفتوحة" في الشركات، إلى تضييق السجلات ذات الصلة التي يعرضها العمود. تتبع عوامل التصفية والفرز بُنى تصفية العرض وفرزه أعلاه، مع مراجع الحقول بوصفها معرّفات عامة:
+
+```ts
+fields: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: COMPANY_TASK_TARGETS_FIELD_UNIVERSAL_IDENTIFIER,
+    isCanonical: false,
+    position: 5,
+    relationScope: {
+      filters: [
+        {
+          id: '0f7d3a52-4d1e-4c38-9a59-0a3c2e1b8f11',
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+          operand: ViewFilterOperand.IS_NOT,
+          value: ['DONE'],
+        },
+      ],
+      filterGroups: [],
+      sorts: [
+        {
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_DUE_AT_FIELD_UNIVERSAL_IDENTIFIER,
+          direction: ViewSortDirection.ASC,
+        },
+      ],
+      limit: 1,
+    },
+  },
+],
+```
+
+| الخاصية        | الوصف                                                                                                                                                                                                                                                            |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `الفلاتر`      | يحتوي كل عامل تصفية على `id` محلي (UUID)، و`fieldMetadataUniversalIdentifier` للكائن ذي الصلة، و`operand`، و`value`، واختياريًا `subFieldName` و`relationTargetFieldMetadataUniversalIdentifier` (حقل من السجل تشير إليه علاقة متعدد إلى واحد) و`filterGroupId`. |
+| `filterGroups` | تحتوي كل مجموعة على `id` محلي، و`logicalOperator` من `AND` أو `OR` أو `NOT`، و`parentFilterGroupId` اختياري. تُدمج عوامل التصفية التي لا تنتمي إلى مجموعة باستخدام `AND`.                                                                                        |
+| `sorts`        | يحتوي كل فرز على `fieldMetadataUniversalIdentifier` و`direction`، واختياريًا `subFieldName` و`relationTargetFieldMetadataUniversalIdentifier`.                                                                                                                   |
+| `الحد`         | عدد السجلات ذات الصلة المطلوب عرضها، من 1 إلى 60.                                                                                                                                                                                                                |
+
+يؤدي حذف أو إلغاء تنشيط حقل يستخدمه نطاق إلى إزالة العمود، بدلًا من إسقاط الشرط وعرض المزيد من السجلات.
 
 ## كيفية ظهور العروض في واجهة المستخدم
 
