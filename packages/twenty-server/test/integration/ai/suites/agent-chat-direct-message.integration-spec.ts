@@ -31,6 +31,27 @@ const READ_DIRECT_MESSAGE = gql`
   }
 `;
 
+const READ_DIRECT_MESSAGE_REACTIONS = gql`
+  query ReadDirectMessageReactions($threadId: UUID!) {
+    chatMessages(threadId: $threadId) {
+      id
+      reactions {
+        emoji
+        workspaceMemberIds
+      }
+    }
+  }
+`;
+
+const ADD_REACTION = gql`
+  mutation AddReaction($messageId: UUID!, $emoji: String!) {
+    addAgentChatMessageReaction(messageId: $messageId, emoji: $emoji) {
+      emoji
+      workspaceMemberIds
+    }
+  }
+`;
+
 describe('Private text direct messages', () => {
   let context: Awaited<ReturnType<typeof createChatParticipationTestContext>>;
   let conversationWriter: AgentConversationWriterService;
@@ -330,6 +351,57 @@ describe('Private text direct messages', () => {
       ErrorCode.NOT_FOUND,
     );
     expect(response.body.data?.chatMessages).toBeFalsy();
+  });
+
+  it('lets the pair react to its messages but not an outside administrator', async () => {
+    const threadId = await openDirectMessage({
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+    const sent = await sendChatParticipationMessage({
+      threadId,
+      text: 'React to this',
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(sent.body.errors).toBeUndefined();
+
+    const history = await makeMetadataApiRequest(
+      { query: READ_DIRECT_MESSAGE_REACTIONS, variables: { threadId } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    const [{ id: messageId }] = history.body.data.chatMessages;
+
+    const added = await makeMetadataApiRequest(
+      { query: ADD_REACTION, variables: { messageId, emoji: '👍' } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(added.body.errors).toBeUndefined();
+    expect(added.body.data.addAgentChatMessageReaction).toEqual([
+      {
+        emoji: '👍',
+        workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+      },
+    ]);
+
+    const refused = await makeMetadataApiRequest({
+      query: ADD_REACTION,
+      variables: { messageId, emoji: '👀' },
+    });
+
+    expect(refused.body.errors?.[0]?.extensions?.code).toBe(
+      ErrorCode.NOT_FOUND,
+    );
+
+    const reread = await makeMetadataApiRequest(
+      { query: READ_DIRECT_MESSAGE_REACTIONS, variables: { threadId } },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(reread.body.data.chatMessages[0].reactions).toEqual(
+      added.body.data.addAgentChatMessageReaction,
+    );
   });
 
   it('rejects unsupported file payloads before creating a message', async () => {
