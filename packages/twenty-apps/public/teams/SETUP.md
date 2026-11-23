@@ -95,9 +95,14 @@ and DoD tenants are not supported.
    settings page shows an error banner until that workspace disconnects and
    this one reconnects.
 
-The route verifies the Bot Framework token on every activity and ignores
-activities from tenants no workspace has claimed. The bot answers direct
-messages, and channel or group messages that mention it. It answers as the
+The route verifies the Bot Framework token on every activity. When no workspace
+has claimed the sender's tenant, the bot says so in that conversation, at most
+once an hour, and does nothing else; it does the same when the claiming
+workspace has turned **Enable chat** off. The bot answers direct messages, and
+channel or group messages that mention it. It posts a short welcome when it is
+installed, once per conversation, and answers `help`, `hi`, `hello` or a bare
+mention with the same text, without running the assistant or needing a linked
+account. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
 member matches. Members who can manage roles can remove a link there, link a

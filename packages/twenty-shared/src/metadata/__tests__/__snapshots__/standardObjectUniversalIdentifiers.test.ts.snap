@@ -782,6 +782,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "calendarChannelEventAssociation": {
     "fields": {
+      "accountOwner": {
+        "universalIdentifier": "c87b6c5a-d761-4d8f-b62e-af459a11ba1f",
+      },
       "calendarChannelId": {
         "universalIdentifier": "20202020-93ee-4da4-8d58-0282c4a9cb7d",
       },
@@ -799,6 +802,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "eventExternalId": {
         "universalIdentifier": "20202020-9ec8-48bb-b279-21d0734a75a1",
+      },
+      "handle": {
+        "universalIdentifier": "f3a2e285-abb7-44c5-a4bf-06a44101a33f",
       },
       "id": {
         "universalIdentifier": "091cefe6-349d-57a5-8a88-1e1d8bf99937",
@@ -820,6 +826,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "accountOwnerIdIndex": {
+        "universalIdentifier": "740776d1-fe14-41b9-80b9-11c610765f0c",
+      },
       "calendarChannelIdIndex": {
         "universalIdentifier": "ff6b86c1-3112-4dfa-b734-c4789111a716",
       },
@@ -2060,6 +2069,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "messageChannelMessageAssociation": {
     "fields": {
+      "accountOwner": {
+        "universalIdentifier": "a54a940b-d839-4c47-a02c-5bab7e300841",
+      },
       "createdAt": {
         "universalIdentifier": "044a7327-5d2a-5d40-b23b-79342304ff26",
       },
@@ -2071,6 +2083,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "direction": {
         "universalIdentifier": "75c9b0f7-9e76-44d4-a2f9-47051e61eec7",
+      },
+      "handle": {
+        "universalIdentifier": "ff274ea7-69e0-4d54-9389-8ec8f14c7073",
       },
       "id": {
         "universalIdentifier": "a433efbf-d423-5a5a-9615-143b0abd53ed",
@@ -2107,6 +2122,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
     },
     "indexes": {
+      "accountOwnerIdIndex": {
+        "universalIdentifier": "0797b417-8f87-4df1-b838-d85fbb663110",
+      },
       "messageChannelIdIndex": {
         "universalIdentifier": "9894f9a3-0225-4e7b-9f6a-23d4e2576784",
       },
@@ -3994,8 +4012,14 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "workspaceMember": {
     "fields": {
+      "accountOwnerForCalendarChannelEventAssociations": {
+        "universalIdentifier": "56aec2c7-5ae1-413c-81e8-880623b8f8b2",
+      },
       "accountOwnerForCompanies": {
         "universalIdentifier": "20202020-dc29-4bd4-a3c1-29eafa324bee",
+      },
+      "accountOwnerForMessageChannelMessageAssociations": {
+        "universalIdentifier": "cfe10518-02e1-456f-a41a-0cc99b1686fe",
       },
       "agentChatThreadParticipants": {
         "universalIdentifier": "d1de909f-a0eb-4e94-8903-abec012864c9",

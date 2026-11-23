@@ -610,7 +610,6 @@ export class CoreWorkflowMutationWorkspaceService {
       id: coreWorkflow.id,
       name: coreWorkflow.name,
       statuses: [WorkflowStatus.DRAFT],
-      lastPublishedVersionId: null,
       applicationId,
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,

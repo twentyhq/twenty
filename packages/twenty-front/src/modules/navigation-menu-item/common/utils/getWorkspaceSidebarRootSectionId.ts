@@ -1,23 +1,19 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
+import { STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 // TODO(@thomtrp): remove once IS_CUSTOMIZABLE_SIDEBAR_ENABLED is on for every workspace
-export const getWorkspaceSidebarRootSectionId = ({
-  navigationMenuItems,
-  standardApplicationId,
-}: {
+export const getWorkspaceSidebarRootSectionId = (
   navigationMenuItems: Pick<
     NavigationMenuItem,
-    'id' | 'type' | 'parentId' | 'applicationId'
-  >[];
-  standardApplicationId: string | undefined;
-}): string | null =>
+    'id' | 'parentId' | 'universalIdentifier'
+  >[],
+): string | null =>
   navigationMenuItems.find(
     (item) =>
-      isDefined(standardApplicationId) &&
-      item.type === NavigationMenuItemType.SECTION &&
       !isDefined(item.parentId) &&
-      item.applicationId === standardApplicationId,
+      item.universalIdentifier ===
+        STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.workspaceSection
+          .universalIdentifier,
   )?.id ?? null;
