@@ -4,7 +4,9 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCanTestCoreAgents } from '@/object-core/agents/hooks/useCanTestCoreAgents';
 import { useSelectedCoreAgentIds } from '@/object-core/agents/hooks/useSelectedCoreAgentIds';
+import { CORE_AGENT_TEST_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentTestCommandId';
 import { CORE_AGENTS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsDeleteCommandId';
 import { CORE_AGENTS_SEE_TURNS_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsSeeTurnsCommandId';
 import { isMatchingSidePanelSearch } from '@/object-core/commands/utils/isMatchingSidePanelSearch';
@@ -26,6 +28,15 @@ export const useCoreAgentsSelectionCommands = () => {
   );
   const selectedCoreAgentIds = useSelectedCoreAgentIds();
 
+  const canTestCoreAgents = useCanTestCoreAgents();
+
+  const testCommandLabel = t`Test Agent`;
+  const shouldDisplayTestCommand =
+    selectedCoreAgentIds.length === 1 &&
+    canTestCoreAgents &&
+    !isInPreviewMode &&
+    isMatchingSidePanelSearch({ label: testCommandLabel, sidePanelSearch });
+
   const seeTurnsCommandLabel = t`See Turns`;
   const shouldDisplaySeeTurnsCommand =
     selectedCoreAgentIds.length === 1 &&
@@ -43,11 +54,14 @@ export const useCoreAgentsSelectionCommands = () => {
 
   return {
     selectedCoreAgentIds,
+    testCommandLabel,
+    shouldDisplayTestCommand,
     seeTurnsCommandLabel,
     shouldDisplaySeeTurnsCommand,
     deleteCommandLabel,
     shouldDisplayDeleteCommand,
     coreAgentsSelectionCommandIds: [
+      ...(shouldDisplayTestCommand ? [CORE_AGENT_TEST_COMMAND_ID] : []),
       ...(shouldDisplaySeeTurnsCommand
         ? [CORE_AGENTS_SEE_TURNS_COMMAND_ID]
         : []),

@@ -5,6 +5,7 @@ import {
   IconCancel,
   IconDeviceFloppy,
   IconLayoutDashboard,
+  IconPlayerPlay,
   IconSettings,
   IconTerminal,
   IconTrash,
@@ -36,9 +37,12 @@ import { CoreAgentNewRoleDraftEffect } from '@/object-core/agents/components/Cor
 import { CoreAgentRoleDraftSyncEffect } from '@/object-core/agents/components/CoreAgentRoleDraftSyncEffect';
 import { CORE_AGENT_CANCEL_EDITION_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentCancelEditionCommandId';
 import { CORE_AGENT_SAVE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentSaveCommandId';
+import { CORE_AGENT_TEST_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentTestCommandId';
 import { CoreAgentRunsContent } from '@/object-core/agents/components/CoreAgentRunsContent';
 import { CoreAgentSettingsContent } from '@/object-core/agents/components/CoreAgentSettingsContent';
 import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
+import { useCanTestCoreAgents } from '@/object-core/agents/hooks/useCanTestCoreAgents';
+import { useOpenCoreAgentTestSidePanel } from '@/object-core/agents/hooks/useOpenCoreAgentTestSidePanel';
 import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
@@ -75,6 +79,8 @@ export const CoreAgentFormContent = ({
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
   const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
+  const canTestCoreAgents = useCanTestCoreAgents();
+  const { openCoreAgentTestSidePanel } = useOpenCoreAgentTestSidePanel();
   const activeTabId = useCoreAgentShowPageActiveTab({
     agentId: agent.id,
     hasRuns,
@@ -101,6 +107,9 @@ export const CoreAgentFormContent = ({
     }),
     [agent.id, agent.label, agent.createdAt],
   );
+
+  const canTest = canTestCoreAgents && agent.isActive && !isDirty;
+  const handleTest = () => openCoreAgentTestSidePanel(agent.id);
 
   const title = isNonEmptyString(agent.label) ? agent.label : t`Untitled`;
 
@@ -149,6 +158,17 @@ export const CoreAgentFormContent = ({
                       onClick={discardCoreAgentChanges}
                     />
                   </>
+                )}
+                {canTest && (
+                  <CommandMenuButton
+                    command={{
+                      key: CORE_AGENT_TEST_COMMAND_ID,
+                      label: t`Test Agent`,
+                      shortLabel: t`Test`,
+                      Icon: IconPlayerPlay,
+                    }}
+                    onClick={handleTest}
+                  />
                 )}
                 {!isReadOnly && (
                   <Button
@@ -219,7 +239,10 @@ export const CoreAgentFormContent = ({
           />
         )}
         {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS && (
-          <CoreAgentRunsContent agentId={agent.id} />
+          <CoreAgentRunsContent
+            agentId={agent.id}
+            onTest={canTest ? handleTest : undefined}
+          />
         )}
         {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS && (
           <SettingsPageContainer>

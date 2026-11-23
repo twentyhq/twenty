@@ -6,11 +6,13 @@ import {
   IconBolt,
   IconCalendarTime,
   IconCoins,
+  IconPlayerPlay,
   IconStatusChange,
   IconSum,
   IconTextSize,
   IconTimeDuration30,
 } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
@@ -55,10 +57,12 @@ const toggleId = (ids: Set<string>, id: string): Set<string> => {
 
 type CoreAgentRunsContentProps = {
   agentId: string;
+  onTest?: () => void;
 };
 
 export const CoreAgentRunsContent = ({
   agentId,
+  onTest,
 }: CoreAgentRunsContentProps) => {
   const { t } = useLingui();
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
@@ -141,9 +145,18 @@ export const CoreAgentRunsContent = ({
           <EmptyState.Content>
             <EmptyState.Title>{t`No turns yet`}</EmptyState.Title>
             <EmptyState.Description>
-              {t`Turns appear here once a workflow or an app uses this agent`}
+              {t`Turns appear here once you test this agent, or a workflow or an app uses it`}
             </EmptyState.Description>
           </EmptyState.Content>
+          {isDefined(onTest) && (
+            <EmptyState.Actions>
+              <Button
+                startIcon={<IconPlayerPlay />}
+                onClick={onTest}
+                variant="outline"
+              >{t`Test agent`}</Button>
+            </EmptyState.Actions>
+          )}
         </EmptyState.Root>
       </StyledEmptyStateContainer>
     );
