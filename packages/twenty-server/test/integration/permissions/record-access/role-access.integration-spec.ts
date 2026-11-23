@@ -362,14 +362,16 @@ describePermissionTestWorkspace({
         role: PermissionTestRoleGrant,
       ) => {
         const workspace = findWorkspace();
-        const [{ noteTargetObjectMetadataId, joinColumnName }] =
-          await global.testDataSource.query(
-            `SELECT "field"."objectMetadataId" AS "noteTargetObjectMetadataId", COALESCE("field"."settings"->>'joinColumnName', "field"."name" || 'Id') AS "joinColumnName"
+        const [{ noteTargetObjectMetadataId, joinColumnName }]: {
+          noteTargetObjectMetadataId: string;
+          joinColumnName: string;
+        }[] = await global.testDataSource.query(
+          `SELECT "field"."objectMetadataId" AS "noteTargetObjectMetadataId", COALESCE("field"."settings"->>'joinColumnName', "field"."name" || 'Id') AS "joinColumnName"
              FROM core."fieldMetadata" "field"
              JOIN core."objectMetadata" "object" ON "object"."id" = "field"."objectMetadataId"
              WHERE "object"."workspaceId" = $1 AND "object"."nameSingular" = 'noteTarget' AND "field"."relationTargetObjectMetadataId" = $2`,
-            [workspace.workspaceId, workspace.objectMetadataId],
-          );
+          [workspace.workspaceId, workspace.objectMetadataId],
+        );
 
         return {
           recordPermissionsReadService:
@@ -389,8 +391,8 @@ describePermissionTestWorkspace({
                 workspace,
               }),
             }),
-          objectMetadataId: noteTargetObjectMetadataId as string,
-          joinColumnName: joinColumnName as string,
+          objectMetadataId: noteTargetObjectMetadataId,
+          joinColumnName,
           recordIds: workspace.recordIds,
           transactionScope: {
             workspaceId: workspace.workspaceId,
