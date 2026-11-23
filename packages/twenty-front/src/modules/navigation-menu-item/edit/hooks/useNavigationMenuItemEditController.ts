@@ -1,6 +1,7 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
 import {
+  type BuiltInSectionKey,
   type NavigationMenuItemType,
   type NativePageKey,
 } from 'twenty-shared/types';
@@ -31,6 +32,7 @@ export type NewNavigationMenuItemInput = {
   name?: string | null;
   link?: string | null;
   nativePageKey?: NativePageKey | null;
+  builtInSectionKey?: BuiltInSectionKey | null;
   color?: string | null;
 };
 
@@ -100,8 +102,10 @@ export const useNavigationMenuItemEditController = (
       name: input.name ?? undefined,
       link: input.link ?? undefined,
       nativePageKey: input.nativePageKey ?? undefined,
+      builtInSectionKey: input.builtInSectionKey ?? undefined,
       color: input.color ?? undefined,
       applicationId: undefined,
+      isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

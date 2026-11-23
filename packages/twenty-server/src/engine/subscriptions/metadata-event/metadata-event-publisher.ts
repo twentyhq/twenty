@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -11,21 +12,28 @@ import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-m
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
+import { computeRecipientsWhoLostAccess } from 'src/engine/subscriptions/metadata-event/utils/compute-recipients-who-lost-access.util';
 import { enrichFieldMetadataEventRecord } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-record.util';
 import { filterMorphRelationDuplicateFieldMetadataEvents } from 'src/engine/subscriptions/metadata-event/utils/filter-morph-relation-duplicate-field-metadata-events.util';
 import { getRequiredPermissionFlagForBroadcastEntityName } from 'src/engine/subscriptions/constants/required-permission-flag-by-broadcast-entity-name.constant';
 import { pickBroadcastEventProperties } from 'src/engine/subscriptions/utils/pick-broadcast-event-properties.util';
+import { type WorkspaceBroadcastEvent } from 'src/engine/subscriptions/workspace-event-broadcaster/types/workspace-broadcast-event.type';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 type BroadcastEventRecord = {
   userWorkspaceId?: string | null;
-  visibility?: WorkflowVisibility | ViewVisibility | null;
+  visibility?: ViewVisibility | null;
+  isPrivate?: boolean | null;
   createdByUserWorkspaceId?: string | null;
   coreWorkflowId?: string | null;
   viewId?: string | null;
   overrides?: FlatView['overrides'];
   applicationUniversalIdentifier?: string;
 };
+
+type RecipientParentFlatEntityMaps = Partial<
+  Pick<AllFlatEntityMaps, 'flatWorkflowMaps' | 'flatViewMaps'>
+>;
 
 const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
   (event.type === 'deleted'
@@ -35,15 +43,27 @@ const getBroadcastEventRecord = (event: MetadataEventBatch['events'][number]) =>
 const getWorkflowRecipientUserWorkspaceIds = (
   workflow: Pick<
     BroadcastEventRecord,
-    'visibility' | 'createdByUserWorkspaceId'
+    'isPrivate' | 'createdByUserWorkspaceId'
   >,
 ): string[] | undefined => {
-  if (workflow.visibility !== WorkflowVisibility.PRIVATE) {
+  if (!workflow.isPrivate) {
     return undefined;
   }
 
   return isNonEmptyString(workflow.createdByUserWorkspaceId)
     ? [workflow.createdByUserWorkspaceId]
+    : [];
+};
+
+const getAgentRecipientUserWorkspaceIds = (
+  agent: Pick<BroadcastEventRecord, 'isPrivate' | 'createdByUserWorkspaceId'>,
+): string[] | undefined => {
+  if (!agent.isPrivate) {
+    return undefined;
+  }
+
+  return isNonEmptyString(agent.createdByUserWorkspaceId)
+    ? [agent.createdByUserWorkspaceId]
     : [];
 };
 
@@ -72,6 +92,66 @@ const getViewRecipientUserWorkspaceIds = (
     : [];
 };
 
+const resolveRecipientUserWorkspaceIds = ({
+  metadataName,
+  record,
+  flatWorkflowMaps,
+  flatViewMaps,
+}: RecipientParentFlatEntityMaps & {
+  metadataName: MetadataEventBatch['metadataName'];
+  record: BroadcastEventRecord | undefined;
+}): string[] | undefined => {
+  if (isDefined(flatViewMaps)) {
+    const parentFlatView = isNonEmptyString(record?.viewId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityMaps: flatViewMaps,
+          flatEntityId: record.viewId,
+        })
+      : undefined;
+
+    return isDefined(parentFlatView)
+      ? getViewRecipientUserWorkspaceIds(parentFlatView)
+      : [];
+  }
+
+  switch (metadataName) {
+    case 'view':
+      return isDefined(record) ? getViewRecipientUserWorkspaceIds(record) : [];
+    case 'navigationMenuItem':
+      return isNonEmptyString(record?.userWorkspaceId)
+        ? [record.userWorkspaceId]
+        : undefined;
+    case 'workflow':
+      return isDefined(record)
+        ? getWorkflowRecipientUserWorkspaceIds(record)
+        : undefined;
+    case 'agent':
+      return isDefined(record)
+        ? getAgentRecipientUserWorkspaceIds(record)
+        : undefined;
+    case 'workflowVersion': {
+      const coreWorkflowId = record?.coreWorkflowId;
+
+      if (!isNonEmptyString(coreWorkflowId) || !isDefined(flatWorkflowMaps)) {
+        return undefined;
+      }
+
+      const parentFlatWorkflow = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: flatWorkflowMaps,
+        flatEntityId: coreWorkflowId,
+      });
+
+      if (!isDefined(parentFlatWorkflow)) {
+        return [];
+      }
+
+      return getWorkflowRecipientUserWorkspaceIds(parentFlatWorkflow);
+    }
+    default:
+      return undefined;
+  }
+};
+
 @Injectable()
 export class MetadataEventPublisher {
   constructor(
@@ -88,127 +168,83 @@ export class MetadataEventPublisher {
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
-    const recipientUserWorkspaceIdsByRecordId =
-      await this.resolveRecipientUserWorkspaceIdsByRecordId(enrichedBatch);
+    const recipientParentFlatEntityMaps =
+      await this.loadRecipientParentFlatEntityMaps(enrichedBatch);
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: enrichedBatch.workspaceId,
       updatedCollectionHash: enrichedBatch.updatedCollectionHash,
-      events: enrichedBatch.events.map((event) => {
-        const recipientUserWorkspaceIds =
-          recipientUserWorkspaceIdsByRecordId.get(event.recordId);
+      events: enrichedBatch.events.flatMap((event) => {
+        const properties = pickBroadcastEventProperties({
+          entityName: event.metadataName,
+          properties: event.properties as Record<string, unknown>,
+        });
+        const requiredPermissionFlag =
+          getRequiredPermissionFlagForBroadcastEntityName(event.metadataName);
+        const recipientUserWorkspaceIds = resolveRecipientUserWorkspaceIds({
+          ...recipientParentFlatEntityMaps,
+          metadataName: event.metadataName,
+          record: getBroadcastEventRecord(event),
+        });
 
-        return {
+        const broadcastEvent: WorkspaceBroadcastEvent = {
           type: event.type,
           entityName: event.metadataName,
           recordId: event.recordId,
-          properties: pickBroadcastEventProperties({
-            entityName: event.metadataName,
-            properties: event.properties as Record<string, unknown>,
-          }),
+          properties,
           recipientUserWorkspaceIds,
-          requiredPermissionFlag:
-            getRequiredPermissionFlagForBroadcastEntityName(event.metadataName),
+          requiredPermissionFlag,
         };
+
+        if (event.type !== 'updated') {
+          return [broadcastEvent];
+        }
+
+        const recipientsWhoLostAccess = computeRecipientsWhoLostAccess({
+          recipientUserWorkspaceIdsBefore: resolveRecipientUserWorkspaceIds({
+            ...recipientParentFlatEntityMaps,
+            metadataName: event.metadataName,
+            record: event.properties.before as BroadcastEventRecord,
+          }),
+          recipientUserWorkspaceIdsAfter: recipientUserWorkspaceIds,
+        });
+
+        if (!isDefined(recipientsWhoLostAccess)) {
+          return [broadcastEvent];
+        }
+
+        return [
+          broadcastEvent,
+          {
+            type: 'deleted',
+            entityName: event.metadataName,
+            recordId: event.recordId,
+            properties: { before: properties.before },
+            ...recipientsWhoLostAccess,
+            requiredPermissionFlag,
+          },
+        ];
       }),
     });
   }
 
-  // Unowned private workflows stay workspace-wide on purpose, as the read path opens them once the creator leaves;
-  // versions whose parent is gone fail closed, since a parent is deleted before its versions are published
-  private async resolveRecipientUserWorkspaceIdsByRecordId({
+  private async loadRecipientParentFlatEntityMaps({
     metadataName,
     workspaceId,
-    events,
-  }: MetadataEventBatch): Promise<Map<string, string[]>> {
-    const flatWorkflowMaps =
-      metadataName === 'workflowVersion'
-        ? (
-            await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-              { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
-            )
-          ).flatWorkflowMaps
-        : undefined;
-
-    const flatViewMaps = VIEW_CHILD_METADATA_NAMES.includes(metadataName)
-      ? (
-          await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-            { workspaceId, flatMapsKeys: ['flatViewMaps'] },
-          )
-        ).flatViewMaps
-      : undefined;
-
-    const resolveRecipients = (
-      record: BroadcastEventRecord | undefined,
-    ): string[] | undefined => {
-      if (isDefined(flatViewMaps)) {
-        const parentFlatView = isNonEmptyString(record?.viewId)
-          ? findFlatEntityByIdInFlatEntityMaps({
-              flatEntityMaps: flatViewMaps,
-              flatEntityId: record.viewId,
-            })
-          : undefined;
-
-        return isDefined(parentFlatView)
-          ? getViewRecipientUserWorkspaceIds(parentFlatView)
-          : [];
-      }
-
-      switch (metadataName) {
-        case 'view':
-          return isDefined(record)
-            ? getViewRecipientUserWorkspaceIds(record)
-            : [];
-        case 'navigationMenuItem':
-          return isNonEmptyString(record?.userWorkspaceId)
-            ? [record.userWorkspaceId]
-            : undefined;
-        case 'workflow':
-          return isDefined(record)
-            ? getWorkflowRecipientUserWorkspaceIds(record)
-            : undefined;
-        case 'workflowVersion': {
-          const coreWorkflowId = record?.coreWorkflowId;
-
-          if (
-            !isNonEmptyString(coreWorkflowId) ||
-            !isDefined(flatWorkflowMaps)
-          ) {
-            return undefined;
-          }
-
-          const parentFlatWorkflow = findFlatEntityByIdInFlatEntityMaps({
-            flatEntityMaps: flatWorkflowMaps,
-            flatEntityId: coreWorkflowId,
-          });
-
-          if (!isDefined(parentFlatWorkflow)) {
-            return [];
-          }
-
-          return getWorkflowRecipientUserWorkspaceIds(parentFlatWorkflow);
-        }
-        default:
-          return undefined;
-      }
-    };
-
-    const recipientUserWorkspaceIdsByRecordId = new Map<string, string[]>();
-
-    for (const event of events) {
-      const recipientUserWorkspaceIds = resolveRecipients(
-        getBroadcastEventRecord(event),
+  }: MetadataEventBatch): Promise<RecipientParentFlatEntityMaps> {
+    if (metadataName === 'workflowVersion') {
+      return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatWorkflowMaps'] },
       );
-
-      if (isDefined(recipientUserWorkspaceIds)) {
-        recipientUserWorkspaceIdsByRecordId.set(
-          event.recordId,
-          recipientUserWorkspaceIds,
-        );
-      }
     }
 
-    return recipientUserWorkspaceIdsByRecordId;
+    if (VIEW_CHILD_METADATA_NAMES.includes(metadataName)) {
+      return this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatViewMaps'] },
+      );
+    }
+
+    return {};
   }
 
   private async enrichMetadataEventBatch(

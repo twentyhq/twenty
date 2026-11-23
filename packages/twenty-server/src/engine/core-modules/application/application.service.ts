@@ -30,6 +30,8 @@ import {
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { APPLICATION_INSTALLATION_CHANGED_EVENT } from 'src/engine/core-modules/application/constants/application-installation-changed.constant';
+import { type ApplicationInstallationChangedEvent } from 'src/engine/core-modules/application/types/application-installation-changed.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { buildApplicationIframeMediaPermissionGrantQuery } from 'src/engine/core-modules/application/utils/build-application-iframe-media-permission-grant-query.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
@@ -49,6 +51,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApplicationService {
@@ -81,6 +84,7 @@ export class ApplicationService {
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly applicationLookupService: ApplicationLookupService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findApplicationRoleId(
@@ -1002,5 +1006,21 @@ export class ApplicationService {
       type: 'deleted',
       application,
     });
+
+    this.emitInstallationChanged({ universalIdentifier, workspaceId });
+  }
+
+  emitInstallationChanged({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): void {
+    this.workspaceEventEmitter.emitCustomBatchEvent<ApplicationInstallationChangedEvent>(
+      APPLICATION_INSTALLATION_CHANGED_EVENT,
+      [{ applicationUniversalIdentifier: universalIdentifier }],
+      workspaceId,
+    );
   }
 }

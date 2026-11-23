@@ -18,6 +18,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "overrides",
       "isSystem",
+      "isPrivate",
+      "createdByUserWorkspaceId",
     ],
     "propertiesToStringify": [
       "responseFormat",
@@ -245,8 +247,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "builtInSectionKey",
       "icon",
       "color",
+      "isActive",
+      "overrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "objectMetadata": {
     "propertiesToCompare": [
@@ -401,6 +407,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "relationFieldMetadataUniversalIdentifier",
       "workspaceMemberFieldMetadataUniversalIdentifier",
       "workspaceMemberSubFieldName",
+      "workspaceMemberRelationFieldMetadataUniversalIdentifier",
       "deletedAt",
       "rowLevelPermissionRuleUniversalIdentifier",
     ],
@@ -622,7 +629,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "versionDefinitionHash",
       "name",
       "isSystem",
-      "visibility",
+      "isPrivate",
       "createdByUserWorkspaceId",
       "lastPublishedVersionId",
       "lastPublishedCoreWorkflowVersionId",

@@ -2,10 +2,10 @@ import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatC
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatErrorRenderer } from '@/ai-chat/components/AiChatErrorRenderer';
-import { aiChatErrorFamilyState } from '@/ai-chat/states/aiChatErrorFamilyState';
+import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
+import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
-import { aiChatIsLoadingFamilySelector } from '@/ai-chat/states/selectors/aiChatIsLoadingFamilySelector';
+import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,14 +20,17 @@ const StyledErrorContainer = styled(StyledAiChatContentContainer)`
 
 export const AiChatStandaloneError = () => {
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatIsLoading = useAtomFamilySelectorValue(
-    aiChatIsLoadingFamilySelector,
-    threadId,
+  const aiChatThreadIsFetchingMessages = useAtomFamilyStateValue(
+    aiChatThreadIsFetchingMessagesFamilyState,
+    { threadId },
   );
 
-  const aiChatError = useAtomFamilyStateValue(aiChatErrorFamilyState, {
-    threadId,
-  });
+  const aiChatThreadReplyError = useAtomFamilyStateValue(
+    aiChatThreadReplyErrorFamilyState,
+    {
+      threadId,
+    },
+  );
 
   const aiChatHasMessage = useAtomFamilySelectorValue(
     aiChatHasMessageFamilySelector,
@@ -35,7 +38,9 @@ export const AiChatStandaloneError = () => {
   );
 
   const shouldRender =
-    !aiChatHasMessage && isDefined(aiChatError) && !aiChatIsLoading;
+    !aiChatHasMessage &&
+    isDefined(aiChatThreadReplyError) &&
+    !aiChatThreadIsFetchingMessages;
 
   if (!shouldRender) {
     return null;
@@ -43,7 +48,7 @@ export const AiChatStandaloneError = () => {
 
   return (
     <StyledErrorContainer>
-      <AiChatErrorRenderer error={aiChatError} />
+      <AiChatErrorRenderer error={aiChatThreadReplyError} />
     </StyledErrorContainer>
   );
 };

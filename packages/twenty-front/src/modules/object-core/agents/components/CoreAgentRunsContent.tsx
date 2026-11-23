@@ -12,7 +12,7 @@ import {
   IconTimeDuration30,
 } from 'twenty-ui/icon';
 
-import { useOpenAskAiThread } from '@/ai-chat/hooks/useOpenAskAiThread';
+import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';

@@ -47,7 +47,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
@@ -78,7 +78,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
@@ -96,12 +96,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
   async runStepCreationSideEffectsAndBuildStep({
     type,
     workspaceId,
+    userWorkspaceId,
     position,
     id,
     defaultSettings,
   }: {
     type: WorkflowActionType;
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     position?: WorkflowStepPositionInput;
     id?: string;
     defaultSettings?: Record<string, unknown>;
@@ -537,7 +539,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         if (isNonEmptyString(defaultAgentId)) {
           const agent =
             await this.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow(
-              { agentId: defaultAgentId, workspaceId },
+              { agentId: defaultAgentId, workspaceId, userWorkspaceId },
             );
 
           return {
@@ -792,7 +794,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             }
 
             const { flatObjectMetadata, flatFieldMetadataMaps } =
-              await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
+              await this.workflowMetadataReadService.getObjectMetadataInfo(
                 field.settings.objectName,
                 workspaceId,
               );

@@ -1,10 +1,12 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { isRecallBotJoinWithinSettingsUpdateCutoff } from 'src/logic-functions/domain/is-recall-bot-join-within-settings-update-cutoff.util';
 import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
@@ -18,7 +20,10 @@ export const rescheduleCallRecordingBot = async (
 ): Promise<void> => {
   const externalBotId = callRecording.externalBotId;
 
-  if (isUndefined(externalBotId)) {
+  if (
+    isUndefined(externalBotId) ||
+    callRecording.status !== CallRecordingStatus.SCHEDULED
+  ) {
     return;
   }
 
@@ -30,6 +35,10 @@ export const rescheduleCallRecordingBot = async (
   }
 
   const joinAt = computeRecallBotJoinAt(meetingStartsAt);
+
+  if (isRecallBotJoinWithinSettingsUpdateCutoff({ joinAt, now: new Date() })) {
+    return;
+  }
 
   const workspaceId = getCurrentWorkspaceId();
 

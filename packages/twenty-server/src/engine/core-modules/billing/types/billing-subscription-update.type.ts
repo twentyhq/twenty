@@ -4,7 +4,8 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 export enum SubscriptionUpdateType {
   PLAN = 'PLAN',
   RESOURCE_CREDIT_PRICE = 'RESOURCE_CREDIT_PRICE',
-  SEATS = 'SEATS',
+  QUANTITIES = 'QUANTITIES',
+  APPLICATIONS = 'APPLICATIONS',
   INTERVAL = 'INTERVAL',
 }
 
@@ -18,8 +19,11 @@ export type SubscriptionUpdate =
       newResourceCreditPriceId: string;
     }
   | {
-      type: SubscriptionUpdateType.SEATS;
+      type: SubscriptionUpdateType.QUANTITIES;
       newSeats: number;
+    }
+  | {
+      type: SubscriptionUpdateType.APPLICATIONS;
     }
   | {
       type: SubscriptionUpdateType.INTERVAL;

@@ -48,6 +48,7 @@ export const createListWorkflowRunsTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'list_workflow_runs' as const,
+  isReadOnly: true,
   description:
     'List workflow runs, optionally filtered by core workflow and/or status, ordered from most to least recent. Use this to find the relevant run (for example the latest failed run of a workflow) before inspecting it in detail with get_workflow_run.',
   inputSchema: listWorkflowRunsSchema,

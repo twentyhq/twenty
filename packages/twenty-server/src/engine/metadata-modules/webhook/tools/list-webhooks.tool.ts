@@ -12,6 +12,7 @@ const listWebhooksInputSchema = z.object({});
 
 @DefineTool({
   name: 'list_webhooks',
+  isReadOnly: true,
   category: ToolCategory.WEBHOOK,
   accessPolicy: WEBHOOK_READ_ACCESS_POLICY,
   description: `List every webhook registered in the workspace. Returns id, targetUrl, operations (e.g. ['person.created','company.updated']), description and timestamps.`,

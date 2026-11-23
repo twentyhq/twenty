@@ -1,7 +1,6 @@
 import { type WebSpeechRecognitionErrorEvent } from '@/ai-chat/dictation/types/WebSpeechRecognitionErrorEvent';
 import { type WebSpeechRecognitionEvent } from '@/ai-chat/dictation/types/WebSpeechRecognitionEvent';
 
-// The Web Speech API isn't in TypeScript's DOM lib, so it's declared structurally.
 export type WebSpeechRecognitionInstance = {
   continuous: boolean;
   interimResults: boolean;

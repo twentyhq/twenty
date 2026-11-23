@@ -179,7 +179,7 @@ export class ApplicationDevelopmentService {
         workspaceCustomApplicationId,
       });
 
-    if (dryRun === true) {
+    if (dryRun) {
       const { workspaceMigration, cascadeDeletionParentByUniversalIdentifier } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,

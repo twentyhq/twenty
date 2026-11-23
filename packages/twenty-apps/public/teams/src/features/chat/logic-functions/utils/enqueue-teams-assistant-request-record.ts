@@ -12,12 +12,16 @@ import { isTeamsAssistantRequestResumable } from 'src/features/chat/logic-functi
 
 const ALREADY_QUEUED_SKIP_REASON = 'Teams activity is already queued';
 
-const resolveExistingRequest = (
-  existingRequest: TeamsAssistantRequestRecord | undefined,
-): TeamsActivitiesEnqueueResult =>
+const resolveExistingRequest = ({
+  existingRequest,
+  requestText,
+}: {
+  existingRequest: TeamsAssistantRequestRecord | undefined;
+  requestText: string;
+}): TeamsActivitiesEnqueueResult =>
   isDefined(existingRequest) &&
   isTeamsAssistantRequestResumable(existingRequest)
-    ? { ok: true, request: existingRequest }
+    ? { ok: true, request: { ...existingRequest, requestText } }
     : { ok: true, skipped: ALREADY_QUEUED_SKIP_REASON };
 
 export const enqueueTeamsAssistantRequestRecord = async (
@@ -33,14 +37,16 @@ export const enqueueTeamsAssistantRequestRecord = async (
   const existingRequest =
     await findTeamsAssistantRequestByTeamsActivity(teamsActivityLookup);
 
+  const { requestText, ...draftWithoutText } = request;
+
   if (isDefined(existingRequest)) {
-    return resolveExistingRequest(existingRequest);
+    return resolveExistingRequest({ existingRequest, requestText });
   }
 
   try {
     const requestId = await createTeamsAssistantRequest({
       client,
-      draft: request,
+      draft: draftWithoutText,
     });
 
     return {
@@ -53,9 +59,11 @@ export const enqueueTeamsAssistantRequestRecord = async (
     };
   } catch (error) {
     if (isDuplicateRecordError(error)) {
-      return resolveExistingRequest(
-        await findTeamsAssistantRequestByTeamsActivity(teamsActivityLookup),
-      );
+      return resolveExistingRequest({
+        existingRequest:
+          await findTeamsAssistantRequestByTeamsActivity(teamsActivityLookup),
+        requestText,
+      });
     }
 
     throw error;

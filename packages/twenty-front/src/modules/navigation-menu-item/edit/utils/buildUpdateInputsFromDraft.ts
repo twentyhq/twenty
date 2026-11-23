@@ -47,6 +47,8 @@ export const buildUpdateInputsFromDraft = ({
     const colorChanged =
       isNavigationMenuItemFolder(draftItem) &&
       (original.color ?? null) !== (draftItem.color ?? null);
+    const isActiveChanged =
+      (original.isActive !== false) !== (draftItem.isActive !== false);
 
     if (
       !positionChanged &&
@@ -54,7 +56,8 @@ export const buildUpdateInputsFromDraft = ({
       !nameChanged &&
       !linkChanged &&
       !iconChanged &&
-      !colorChanged
+      !colorChanged &&
+      !isActiveChanged
     ) {
       continue;
     }
@@ -83,6 +86,9 @@ export const buildUpdateInputsFromDraft = ({
     }
     if (colorChanged) {
       updatePayload.color = draftItem.color ?? null;
+    }
+    if (isActiveChanged) {
+      updatePayload.isActive = draftItem.isActive !== false;
     }
 
     updateInputs.push({

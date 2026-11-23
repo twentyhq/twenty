@@ -40,3 +40,22 @@ test('multiline deprecated', () => {
     '\n/**\n * @deprecated deprecation reason\n * multiline\n * text\n */\n',
   );
 });
+
+// From @genql/cli 6.3.4 (remorses/genql@2dbc80f, GHSA-w757-xvvv-vgfw).
+test('escapes */ in single line text to prevent code injection', () => {
+  expect(comment({ text: 'before */ after' })).toBe(
+    '\n/** before *\\/ after */\n',
+  );
+});
+
+test('escapes */ in multiline text to prevent code injection', () => {
+  expect(comment({ text: 'line one\n*/;malicious();/*\nline three' })).toBe(
+    '\n/**\n * line one\n * *\\/;malicious();/*\n * line three\n */\n',
+  );
+});
+
+test('escapes */ in deprecated reason to prevent code injection', () => {
+  expect(comment({ deprecated: 'use */ something' })).toBe(
+    '\n/** @deprecated use *\\/ something */\n',
+  );
+});

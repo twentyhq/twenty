@@ -200,6 +200,7 @@ describe('omitRestrictedFieldsFromTimelineActivityEvent', () => {
       properties: { diff: {} },
     };
     const event: ObjectRecordUpdateEvent<TimelineActivityRecord> = {
+      eventId: 'event-1',
       recordId: 'activity-id',
       properties: {
         updatedFields: ['properties'],

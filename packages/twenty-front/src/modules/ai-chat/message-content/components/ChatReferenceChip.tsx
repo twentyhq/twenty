@@ -1,3 +1,4 @@
+import { type ChatReferenceMatch } from 'twenty-shared/ai';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useContext } from 'react';
@@ -7,7 +8,6 @@ import { Chip } from 'twenty-ui/primitives/data-display';
 import { StyledChatReferenceChipContainer } from '@/ai-chat/message-content/components/StyledChatReferenceChipContainer';
 import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content/contexts/ChatReferenceNavigationEnabledContext';
 import { useChatReferenceTarget } from '@/ai-chat/message-content/hooks/useChatReferenceTarget';
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
 
 type ChatReferenceChipProps = {
   reference: ChatReferenceMatch;

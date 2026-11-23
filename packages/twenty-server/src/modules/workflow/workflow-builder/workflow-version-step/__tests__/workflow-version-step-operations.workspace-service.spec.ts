@@ -11,7 +11,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
@@ -96,7 +96,7 @@ const buildService = async ({
         provide: getWorkspaceScopedRepositoryToken(ObjectMetadataEntity),
         useValue: {},
       },
-      { provide: WorkflowCommonWorkspaceService, useValue: {} },
+      { provide: WorkflowMetadataReadService, useValue: {} },
       { provide: WorkspaceCacheService, useValue: {} },
       {
         provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -119,6 +119,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService code steps', () => {
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.CODE,
       workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
     });
 
     expect(builtStep.type).toBe(WorkflowActionType.CODE);
@@ -134,6 +135,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService code steps', () => {
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.CODE,
       workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
       defaultSettings: {
         input: {
           code: 'export const main = async () => ({});',
@@ -197,6 +199,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService MCP tool steps', () => {
     const { builtStep } = await service.runStepCreationSideEffectsAndBuildStep({
       type: WorkflowActionType.MCP_TOOL,
       workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
       defaultSettings: {
         input: { mcpServerId: MCP_SERVER_ID, toolName: 'search_docs' },
       },

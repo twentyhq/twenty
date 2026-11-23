@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconMessage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { useOpenAskAiThread } from '@/ai-chat/hooks/useOpenAskAiThread';
+import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { useWorkflowRunStepInfo } from '@/workflow/workflow-steps/hooks/useWorkflowRunStepInfo';
 
 type WorkflowRunStepAiAgentConversationButtonProps = {

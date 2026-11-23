@@ -116,6 +116,11 @@ msgstr "{hostnameCount} gasheername gevind vir domein \"{domainName}\". Verwag 1
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} van {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr "{senderName} in {threadLabel}"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -134,6 +139,12 @@ msgstr "24-uur"
 msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
 msgstr "'n {type}-navigasiekieslysitem kan nie binne-in 'n {parentType} geplaas word nie"
 
+#. js-lingui-id: /y6iPL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a built-in section"
+msgstr "'n {type}-navigasiekieslysitem kan nie binne 'n ingeboude afdeling geplaas word nie"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -143,6 +154,12 @@ msgstr "’n Rugsteunkode is gebruik om by jou rekening aan te meld"
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
 msgstr "’n Ingeboude verskaffer gebruik reeds hierdie naam. Kies ’n ander etiket."
+
+#. js-lingui-id: paqbMF
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A builtInSectionKey is only allowed on SECTION type"
+msgstr "'n builtInSectionKey word slegs op die SECTION-tipe toegelaat"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -553,6 +570,12 @@ msgstr "’n Geldige agentChatChannelUniversalIdentifier word vereis vir AGENT_C
 msgid "A valid agentUniversalIdentifier is required for AGENT type"
 msgstr "’n Geldige agentUniversalIdentifier word vereis vir AGENT-tipe"
 
+#. js-lingui-id: s59CSo
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid builtInSectionKey is required for a built-in SECTION"
+msgstr "'n Geldige builtInSectionKey word vir 'n ingeboude SECTION vereis"
+
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -672,6 +695,11 @@ msgstr "'n Werksvloei-uitvoering"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "'n Werksruimtelid"
+
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "’n Werkruimtelid-verhouding benodig die veld om op sy verwante rekords te lees"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -2108,6 +2136,11 @@ msgstr "Bring jou maatskappye, kontakte en transaksies vanaf enige CRM-uitvoer."
 msgid "Bring your team into Twenty."
 msgstr "Bring jou span na Twenty."
 
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr "Blaaierkennisgewings is met 'n verouderde sleutel opgestel. Herlaai die bladsy om dit weer op te stel."
+
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3041,6 +3074,11 @@ msgstr "Kies ’n bestaande tydlynaktiwiteitstipe om te oorskryf"
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Kies een persoon of een rol om mee te deel."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Kies die veld om op die verwante rekords te lees"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5571,6 +5609,11 @@ msgstr "Veld \"{relationFieldName}\" is nie 'n relasie nie"
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Veld \"{workspaceMemberFieldName}\" is nie 'n veld van die workspaceMember-voorwerp nie; die predikaat sal nooit toegepas word nie"
 
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "Veld \"{workspaceMemberRelationFieldName}\" is nie ’n een-tot-baie-verhouding van die workspaceMember-objek nie"
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6056,6 +6099,11 @@ msgstr "Eerste direkteboodskap-lid-ID"
 msgid "First friendly message"
 msgstr "Eerste vriendelike boodskap"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Voornaam mag hoogstens {WORKSPACE_MEMBER_NAME_MAX_LENGTH} karakters lank wees."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6105,6 +6153,11 @@ msgstr "Vormaksie velde moet unieke name hê"
 #: src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util.ts
 msgid "Form action must have at least one field"
 msgstr "Vormaksie moet ten minste een veld hê"
+
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr "Voormalige lid"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -8116,6 +8169,11 @@ msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "Afsender van laaste boodskap"
 
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "Van mag hoogstens {WORKSPACE_MEMBER_NAME_MAX_LENGTH} karakters lank wees."
+
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9393,6 +9451,11 @@ msgstr "Nuut"
 msgid "New backup codes were generated for your account"
 msgstr "Nuwe rugsteunkodes is vir jou rekening gegenereer"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr "Nuwe geselsie"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9409,6 +9472,11 @@ msgstr "Nuwe geselsie"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr ""
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
+msgstr "Nuwe boodskap"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9596,12 +9664,6 @@ msgstr "Nie opgeneem nie"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
 msgstr "Nie ingestel nie"
-
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "Nie begin nie"
 
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -10069,6 +10131,11 @@ msgstr "Slegs ’n bedieneradministrateur kan herstelkodes vir hierdie lid bestu
 msgid "Only a workspace member can change who sees a workflow"
 msgstr "Slegs ’n werkspasielid kan verander wie ’n workflow sien"
 
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "Slegs ’n werkruimtelid kan ’n privaat agent skep."
+
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only added columns can show a field of the related record"
@@ -10119,6 +10186,12 @@ msgstr "Slegs een legstuk met volle hoogte word per oortjie toegelaat"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers-caller-application.util.ts
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Slegs die toepassing wat hierdie agent besit, kan sy snellers verander"
+
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "Slegs die lid wat ’n agent besit, kan verander wie dit sien."
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
@@ -11068,6 +11141,11 @@ msgstr "Predikaatwaarde is nie geldig vir hierdie operand nie."
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Predikate wat 'n veld deur 'n relasie bereik, is nie vir hierdie werksruimte geaktiveer nie"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Predikate wat die huidige lid deur ’n verhouding lees, is nie vir hierdie werkruimte geaktiveer nie"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11825,10 +11903,10 @@ msgstr "Aangevra"
 msgid "Requested file range cannot be served."
 msgstr "Versoekte lêerreeks kan nie bedien word nie."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Verpligte velde en verwantskappe kan nie op 'n toestemmingreël op ryvlak beperk word nie."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Vereiste velde en morf-verhoudings kan nie op 'n toestemmingreël op ryvlak beperk word nie."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12293,6 +12371,7 @@ msgid "Rule"
 msgstr "Reël"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Reëls deur 'n relasie is nie vir hierdie werksruimte geaktiveer nie"
@@ -14719,6 +14798,11 @@ msgstr "Hierdie app vereis 'n nuwer weergawe van die Twenty-bediener. Gradeer as
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "Hierdie toep vereis ’n nuwer weergawe as dié waarna hierdie werkruimte reeds opgegradeer het. Probeer asseblief weer sodra die werkruimte-opgradering voltooi is."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "Hierdie toepassing verklaar ongeldige pryse"
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
@@ -14763,6 +14847,11 @@ msgstr "Hierdie toepassingsveranderlike-omvang word nie ondersteun nie."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This billing arrangement has invalid settings."
 msgstr "Hierdie faktureringsreëling het ongeldige instellings."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr "Hierdie blaaier se stootdiens word nie ondersteun nie."
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14975,6 +15064,11 @@ msgstr "Hierdie veld behoort nie aan die werksruimtelid-voorwerp nie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Hierdie veld het geen databasis-kolom om te indekseer nie."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Hierdie veld is nie 'n een-tot-baie-verhouding van die werkruimtelid-objek nie"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17742,6 +17836,12 @@ msgctxt "fieldMetadata.label"
 msgid "Workspace"
 msgstr "Werkruimte"
 
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Workspace"
+msgstr "Werkruimte"
+
 #. js-lingui-id: bK8AyJ
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
 #: src/engine/core-modules/billing-webhook/services/billing-webhook-subscription.service.ts
@@ -17883,6 +17983,12 @@ msgstr "Werkruimte lid posisie"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Werkruimte-lidrekordbladsyvelde"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Werkruimtelid-verhoudingsveldmetadata nie gevind nie"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -18196,6 +18302,11 @@ msgstr "Jy het nie toestemming om toegang tot hierdie funksie te kry nie. Kontak
 msgid "You do not have permission to access this workflow."
 msgstr "Jy het nie toestemming om toegang tot hierdie werkvloei te kry nie."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "U het nie toestemming om hierdie rekord te verander nie."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18391,6 +18502,11 @@ msgstr "Jou rol kan sommige van hierdie rekords nie uitvee nie, dus kan hulle ni
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Jou rol in hierdie werkruimte kon nie gevind word nie. Kontak asseblief jou werkruimte administrateur."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr "Jou sessie het verval. Meld weer aan om blaaierkennisgewings aan te skakel."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

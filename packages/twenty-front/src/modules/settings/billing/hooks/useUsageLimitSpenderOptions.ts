@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   FindManyAgentsDocument,
   FindManyApplicationsDocument,
