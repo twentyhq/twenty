@@ -15865,6 +15865,11 @@ msgstr "Questo flusso di lavoro esiste già"
 msgid "This workflow already exists."
 msgstr "Questo flusso di lavoro esiste già."
 
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr ""
+
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "This workflow is managed by an application and is read-only"
