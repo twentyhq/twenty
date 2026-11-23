@@ -492,15 +492,19 @@ export class RecordPermissionsReadService {
           return undefined;
         }
 
+        if (fieldReadableSQLCondition === false) {
+          return {
+            fieldMetadataIds: [fieldMetadataId],
+            sqlCondition: { sql: 'TRUE', parameters: {} },
+          };
+        }
+
         return {
           fieldMetadataIds: [fieldMetadataId],
-          sqlCondition:
-            fieldReadableSQLCondition === false
-              ? { sql: 'TRUE', parameters: {} }
-              : {
-                  sql: `NOT (${fieldReadableSQLCondition.sql})`,
-                  parameters: fieldReadableSQLCondition.parameters,
-                },
+          sqlCondition: {
+            sql: `NOT (${fieldReadableSQLCondition.sql})`,
+            parameters: fieldReadableSQLCondition.parameters,
+          },
         };
       },
     );
