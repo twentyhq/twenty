@@ -22,13 +22,11 @@ const SUM_OF_AMOUNT: RecordFieldSummary = {
     fieldName: 'amount',
   }),
   aggregateGqlFieldName: 'sumAmountAmountMicros',
-  isAggregatedFieldReadable: true,
 };
 
 const COUNT: RecordFieldSummary = {
   aggregateOperation: AggregateOperations.COUNT,
   aggregateGqlFieldName: 'totalCount',
-  isAggregatedFieldReadable: true,
 };
 
 const setCompanyAggregateValues = (aggregateValues: Record<string, unknown>) =>

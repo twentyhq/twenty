@@ -27,7 +27,6 @@ export const useUpdateRecordField = (
           | 'relationScope'
           | 'relationTargetFieldMetadataId'
           | 'label'
-          | 'relationAggregateOperation'
         >
       >,
     ) => {

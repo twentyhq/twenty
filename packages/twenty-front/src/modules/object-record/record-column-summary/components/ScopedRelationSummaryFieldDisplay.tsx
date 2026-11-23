@@ -4,7 +4,6 @@ import { getRelationAggregateRecordKey } from '@/object-record/cache/utils/getRe
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { type RecordFieldSummary } from '@/object-record/record-column-summary/types/RecordFieldSummary';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -34,10 +33,6 @@ export const ScopedRelationSummaryFieldDisplay = ({
     }),
     fieldDefinition,
   );
-
-  if (!summary.isAggregatedFieldReadable) {
-    return <ForbiddenFieldDisplay />;
-  }
 
   // A sum or an average over no related records has no value to show
   if (!isDefined(aggregateRawValue)) {

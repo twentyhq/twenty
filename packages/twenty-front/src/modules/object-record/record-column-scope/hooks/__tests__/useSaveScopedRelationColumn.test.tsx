@@ -1,4 +1,3 @@
-import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -75,7 +74,6 @@ describe('useSaveScopedRelationColumn', () => {
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -104,7 +102,6 @@ describe('useSaveScopedRelationColumn', () => {
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
         label: null,
-        relationAggregateOperation: null,
       },
     ]);
   });
@@ -121,7 +118,6 @@ describe('useSaveScopedRelationColumn', () => {
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -143,7 +139,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -164,7 +159,6 @@ describe('useSaveScopedRelationColumn', () => {
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
         label: null,
-        relationAggregateOperation: null,
       },
     ]);
   });
@@ -181,7 +175,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: EMAILS_FIELD_METADATA_ITEM_ID,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -202,7 +195,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -231,7 +223,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -255,7 +246,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -277,7 +267,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: 'Main contacts',
       }),
     );
@@ -295,7 +284,6 @@ describe('useSaveScopedRelationColumn', () => {
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
         relationTargetFieldMetadataId: null,
-        relationAggregateOperation: null,
         label: null,
       }),
     );
@@ -305,34 +293,6 @@ describe('useSaveScopedRelationColumn', () => {
     ]);
     expect(store.get(currentRecordFieldsAtom)[1]).toMatchObject({
       label: null,
-    });
-  });
-
-  it('saves a summary of the related records', async () => {
-    const store = createStore();
-    store.set(currentRecordFieldsAtom, [nameColumn]);
-
-    const { result } = renderSaveHook(store);
-
-    await act(() =>
-      result.current.saveScopedRelationColumn({
-        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
-        relationScope: { filters: [], filterGroups: [], sorts: [] },
-        relationTargetFieldMetadataId: null,
-        relationAggregateOperation: AggregateOperations.COUNT,
-        label: null,
-      }),
-    );
-
-    expect(saveViewFieldsMock).toHaveBeenCalledWith([
-      expect.objectContaining({
-        isCanonical: false,
-        relationAggregateOperation: AggregateOperations.COUNT,
-        relationTargetFieldMetadataId: null,
-      }),
-    ]);
-    expect(store.get(currentRecordFieldsAtom)[1]).toMatchObject({
-      relationAggregateOperation: AggregateOperations.COUNT,
     });
   });
 });

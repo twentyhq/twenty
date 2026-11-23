@@ -1,7 +1,6 @@
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { buildAddedRecordField } from '@/object-record/record-field/utils/buildAddedRecordField';
-import { type AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
@@ -22,14 +21,12 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
     recordFieldId,
     relationScope,
     relationTargetFieldMetadataId,
-    relationAggregateOperation,
     label,
   }: {
     fieldMetadataItemId: string;
     recordFieldId?: string;
     relationScope: ViewFieldRelationScope;
     relationTargetFieldMetadataId: string | null;
-    relationAggregateOperation: AggregateOperations | null;
     label: string | null;
   }): Promise<boolean> => {
     const recordFieldToSave = isDefined(recordFieldId)
@@ -44,7 +41,6 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       ...recordFieldToSave,
       relationScope,
       relationTargetFieldMetadataId,
-      relationAggregateOperation,
       label,
     };
 

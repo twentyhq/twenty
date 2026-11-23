@@ -84,8 +84,8 @@ export const getReadableRelationsWithArguments = ({
         filter,
         orderBy,
         first,
-        recordGqlFields,
         aggregateGqlFieldNames = [],
+        recordGqlFields,
       } = relationWithArguments;
       const typeName = capitalize(relationObjectMetadataItem.nameSingular);
       const filterVariableName = doNotTranslate(`${responseKey}Filter`);
@@ -99,13 +99,7 @@ export const getReadableRelationsWithArguments = ({
           selectionHead: doNotTranslate(
             `${responseKey}: ${relationFieldName}(filter: $${filterVariableName}, orderBy: $${orderByVariableName}, first: $${firstVariableName})`,
           ),
-          // Only a limit can leave matching records out of the loaded ones
-          connectionGqlFieldNames: [
-            ...new Set([
-              ...(isDefined(first) ? ['totalCount'] : []),
-              ...aggregateGqlFieldNames,
-            ]),
-          ],
+          connectionGqlFieldNames: aggregateGqlFieldNames,
           // Arguments go in as variables because some filter values are enums, which inline JSON cannot express
           variableDefinitions: doNotTranslate(
             `, $${filterVariableName}: ${typeName}FilterInput, $${orderByVariableName}: [${typeName}OrderByInput], $${firstVariableName}: Int`,

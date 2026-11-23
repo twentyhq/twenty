@@ -325,7 +325,6 @@ import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/
 import { AddAcceptedBillingPricesToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795183195168-add-accepted-billing-prices-to-application';
 import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795270400632-add-view-field-relation-scope';
 import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795270401632-add-view-field-label';
-import { AddViewFieldRelationAggregateOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795270402632-add-view-field-relation-aggregate-operation';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -653,5 +652,4 @@ export const INSTANCE_COMMANDS = [
   AddAcceptedBillingPricesToApplicationFastInstanceCommand,
   AddViewFieldRelationScopeFastInstanceCommand,
   AddViewFieldLabelFastInstanceCommand,
-  AddViewFieldRelationAggregateOperationFastInstanceCommand,
 ];

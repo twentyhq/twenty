@@ -11,14 +11,12 @@ type RecordTableScopedRelationColumnSelectMenuProps = {
   // Absent once the plain column of the relation is shown
   onPlainColumnSelect?: () => void;
   onScopedColumnSelect: () => void;
-  onSummaryColumnSelect: () => void;
 };
 
 export const RecordTableScopedRelationColumnSelectMenu = ({
   relationFieldMetadataItem,
   onPlainColumnSelect,
   onScopedColumnSelect,
-  onSummaryColumnSelect,
 }: RecordTableScopedRelationColumnSelectMenuProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -56,12 +54,6 @@ export const RecordTableScopedRelationColumnSelectMenu = ({
               customLabel: undefined,
             }).label
           }
-        </Dropdown.ActionItem>
-        <Dropdown.ActionItem
-          onClick={onSummaryColumnSelect}
-          startIcon={startIcon}
-        >
-          {`${relationFieldMetadataItem.label} · ${t`Summary`}`}
         </Dropdown.ActionItem>
       </Dropdown.Section>
     </>

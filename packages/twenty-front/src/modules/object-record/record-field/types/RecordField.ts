@@ -12,5 +12,4 @@ export type RecordField = {
   relationTargetFieldMetadataId?: string | null;
   relationScope?: ViewFieldRelationScope | null;
   label?: string | null;
-  relationAggregateOperation?: AggregateOperations | null;
 };

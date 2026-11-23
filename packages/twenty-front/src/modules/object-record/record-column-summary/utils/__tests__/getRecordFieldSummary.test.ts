@@ -14,62 +14,50 @@ const closeDateField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: opportunityObjectMetadataItem,
   fieldName: 'closeDate',
 });
-const nameField = getMockFieldMetadataItemOrThrow({
-  objectMetadataItem: opportunityObjectMetadataItem,
-  fieldName: 'name',
-});
 
-describe('getRecordFieldSummary', () => {
-  it('reads nothing from a column without an aggregate operation', () => {
-    expect(
-      getRecordFieldSummary({
-        recordField: {
-          relationAggregateOperation: null,
-          relationTargetFieldMetadataId: amountField.id,
-        },
-        relationObjectMetadataItem: opportunityObjectMetadataItem,
-      }),
-    ).toBeUndefined();
+const getSummary = ({
+  aggregateOperation,
+  relationTargetFieldMetadataId,
+  relationObjectMetadataItem = opportunityObjectMetadataItem,
+}: {
+  aggregateOperation: AggregateOperations;
+  relationTargetFieldMetadataId?: string;
+  relationObjectMetadataItem?: typeof opportunityObjectMetadataItem;
+}) =>
+  getRecordFieldSummary({
+    aggregateOperation,
+    relationTargetFieldMetadataId,
+    relationObjectMetadataItem,
   });
 
+describe('getRecordFieldSummary', () => {
   it('counts the related records with their total count', () => {
     expect(
-      getRecordFieldSummary({
-        recordField: { relationAggregateOperation: AggregateOperations.COUNT },
-        relationObjectMetadataItem: opportunityObjectMetadataItem,
-      }),
+      getSummary({ aggregateOperation: AggregateOperations.COUNT }),
     ).toEqual({
       aggregateOperation: AggregateOperations.COUNT,
       aggregateGqlFieldName: 'totalCount',
-      isAggregatedFieldReadable: true,
     });
   });
 
   it('sums the amount of the related records', () => {
     expect(
-      getRecordFieldSummary({
-        recordField: {
-          relationAggregateOperation: AggregateOperations.SUM,
-          relationTargetFieldMetadataId: amountField.id,
-        },
-        relationObjectMetadataItem: opportunityObjectMetadataItem,
+      getSummary({
+        aggregateOperation: AggregateOperations.SUM,
+        relationTargetFieldMetadataId: amountField.id,
       }),
     ).toEqual({
       aggregateOperation: AggregateOperations.SUM,
       aggregatedFieldMetadataItem: amountField,
       aggregateGqlFieldName: 'sumAmountAmountMicros',
-      isAggregatedFieldReadable: true,
     });
   });
 
   it('reads the minimum of a date as its earliest value', () => {
     expect(
-      getRecordFieldSummary({
-        recordField: {
-          relationAggregateOperation: AggregateOperations.MIN,
-          relationTargetFieldMetadataId: closeDateField.id,
-        },
-        relationObjectMetadataItem: opportunityObjectMetadataItem,
+      getSummary({
+        aggregateOperation: AggregateOperations.MIN,
+        relationTargetFieldMetadataId: closeDateField.id,
       }),
     ).toMatchObject({
       aggregateOperation: DateAggregateOperations.EARLIEST,
@@ -77,25 +65,11 @@ describe('getRecordFieldSummary', () => {
     });
   });
 
-  it('reads nothing from an operation the field does not support', () => {
+  it('leaves no summary of a field the user cannot read', () => {
     expect(
-      getRecordFieldSummary({
-        recordField: {
-          relationAggregateOperation: AggregateOperations.SUM,
-          relationTargetFieldMetadataId: nameField.id,
-        },
-        relationObjectMetadataItem: opportunityObjectMetadataItem,
-      }),
-    ).toBeUndefined();
-  });
-
-  it('keeps a summary of a field the user cannot read, marked unreadable', () => {
-    expect(
-      getRecordFieldSummary({
-        recordField: {
-          relationAggregateOperation: AggregateOperations.SUM,
-          relationTargetFieldMetadataId: amountField.id,
-        },
+      getSummary({
+        aggregateOperation: AggregateOperations.SUM,
+        relationTargetFieldMetadataId: amountField.id,
         relationObjectMetadataItem: {
           ...opportunityObjectMetadataItem,
           readableFields: opportunityObjectMetadataItem.readableFields.filter(
@@ -103,6 +77,6 @@ describe('getRecordFieldSummary', () => {
           ),
         },
       }),
-    ).toMatchObject({ isAggregatedFieldReadable: false });
+    ).toBeUndefined();
   });
 });

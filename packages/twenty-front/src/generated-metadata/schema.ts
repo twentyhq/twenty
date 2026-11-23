@@ -2066,7 +2066,6 @@ export type CreateViewFieldInput = {
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
-  relationAggregateOperation?: InputMaybe<AggregateOperations>;
   relationScope?: InputMaybe<ViewFieldRelationScopeInput>;
   relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -8225,7 +8224,6 @@ export type UpdateViewFieldInputUpdates = {
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
-  relationAggregateOperation?: InputMaybe<AggregateOperations>;
   relationScope?: InputMaybe<ViewFieldRelationScopeInput>;
   relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
@@ -8874,7 +8872,6 @@ export type ViewField = {
   isVisible: Scalars['Boolean']['output'];
   label?: Maybe<Scalars['String']['output']>;
   position: Scalars['Float']['output'];
-  relationAggregateOperation?: Maybe<AggregateOperations>;
   relationScope?: Maybe<ViewFieldRelationScope>;
   relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   size: Scalars['Float']['output'];
@@ -8904,6 +8901,7 @@ export type ViewFieldGroup = {
 
 export type ViewFieldRelationScope = {
   __typename?: 'ViewFieldRelationScope';
+  aggregateOperation?: Maybe<AggregateOperations>;
   filterGroups: Array<ViewFieldRelationScopeFilterGroup>;
   filters: Array<ViewFieldRelationScopeFilter>;
   limit?: Maybe<Scalars['Int']['output']>;
@@ -8945,6 +8943,7 @@ export type ViewFieldRelationScopeFilterInput = {
 };
 
 export type ViewFieldRelationScopeInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
   filterGroups?: Array<ViewFieldRelationScopeFilterGroupInput>;
   filters?: Array<ViewFieldRelationScopeFilterInput>;
   limit?: InputMaybe<Scalars['Int']['input']>;

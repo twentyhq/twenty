@@ -5,5 +5,4 @@ export type RecordFieldSummary = {
   aggregateOperation: ExtendedAggregateOperations;
   aggregatedFieldMetadataItem?: FieldMetadataItem;
   aggregateGqlFieldName: string;
-  isAggregatedFieldReadable: boolean;
 };

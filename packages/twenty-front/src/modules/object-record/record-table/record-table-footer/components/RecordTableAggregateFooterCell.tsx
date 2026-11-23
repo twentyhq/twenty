@@ -106,22 +106,20 @@ export const RecordTableAggregateFooterCell = ({
 
   const recordField = visibleRecordFields.find(findById(viewFieldId));
 
-  // A total over a lookup counts a related record once per row that links to it
-  const isLookup = isDefined(
-    useRecordFieldLookupTarget({
-      fieldMetadataItemId: fieldMetadataId,
-      relationTargetFieldMetadataId: recordField?.relationTargetFieldMetadataId,
-    }),
-  );
+  const lookupTarget = useRecordFieldLookupTarget({
+    fieldMetadataItemId: fieldMetadataId,
+    relationTargetFieldMetadataId: recordField?.relationTargetFieldMetadataId,
+  });
 
-  // A total of the relation field would count its related records, not add up the summaries
-  const isSummary = isDefined(recordField?.relationAggregateOperation);
+  // A total over a lookup or a summary would count related records, not add up what the cells show
+  const isComputedColumn =
+    isDefined(lookupTarget) ||
+    isDefined(recordField?.relationScope?.aggregateOperation);
 
   const isFooterReadOnly =
     (useIsRecordTableWidgetAggregateNonInteractive() ??
       !isRecordTableColumnResizable) ||
-    isLookup ||
-    isSummary;
+    isComputedColumn;
 
   const isFirstCell = columnIndex === 0;
 
@@ -143,7 +141,7 @@ export const RecordTableAggregateFooterCell = ({
         className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       >
         {isFooterReadOnly ? (
-          hasAggregateOperationForViewField && !isLookup && !isSummary ? (
+          hasAggregateOperationForViewField && !isComputedColumn ? (
             <RecordTableColumnAggregateFooterValue
               fieldMetadataId={fieldMetadataId}
               dropdownId={`${viewFieldId}-footer-readonly`}

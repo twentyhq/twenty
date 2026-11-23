@@ -52,9 +52,12 @@ export const RecordTableCellFieldContextWrapper = ({
   const isLabelIdentifier =
     labelIdentifierFieldMetadataItem?.id === recordField.fieldMetadataItemId;
 
-  const isScopedRelationLookupTargetRestricted =
-    isDefined(scopedRelationAlias?.lookupTarget) &&
-    !isLookupTargetFieldReadable(scopedRelationAlias.lookupTarget);
+  // A summary of a field the user cannot read resolves to no summary
+  const isScopedRelationTargetRestricted =
+    (isDefined(scopedRelationAlias?.lookupTarget) &&
+      !isLookupTargetFieldReadable(scopedRelationAlias.lookupTarget)) ||
+    (isDefined(recordField.relationScope?.aggregateOperation) &&
+      !isDefined(scopedRelationAlias?.summary));
 
   if (isDefined(lookupTarget)) {
     return (
@@ -90,7 +93,7 @@ export const RecordTableCellFieldContextWrapper = ({
             isRecordReadOnly:
               (isRecordReadOnly ?? false) ||
               isDefined(scopedRelationAlias?.summary),
-            restrictedFieldNames: isScopedRelationLookupTargetRestricted
+            restrictedFieldNames: isScopedRelationTargetRestricted
               ? [...restrictedFieldNames, fieldMetadataItem.name]
               : restrictedFieldNames,
             fieldValueKey: scopedRelationAlias?.responseKey,

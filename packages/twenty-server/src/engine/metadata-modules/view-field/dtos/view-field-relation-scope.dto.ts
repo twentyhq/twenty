@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 import {
+  AggregateOperations,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   type ViewFilterValue,
@@ -74,4 +75,7 @@ export class ViewFieldRelationScopeDTO {
 
   @Field(() => Int, { nullable: true })
   limit?: number | null;
+
+  @Field(() => AggregateOperations, { nullable: true })
+  aggregateOperation?: AggregateOperations | null;
 }

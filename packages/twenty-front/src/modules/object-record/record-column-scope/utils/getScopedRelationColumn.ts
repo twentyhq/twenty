@@ -18,10 +18,7 @@ export const getScopedRelationColumn = ({
 }: {
   recordField: Pick<
     RecordField,
-    | 'isCanonical'
-    | 'relationScope'
-    | 'relationTargetFieldMetadataId'
-    | 'relationAggregateOperation'
+    'isCanonical' | 'relationScope' | 'relationTargetFieldMetadataId'
   >;
   fieldMetadataItem: FieldMetadataItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -62,9 +59,10 @@ export const getScopedRelationColumn = ({
     return undefined;
   }
 
-  if (isDefined(recordField.relationAggregateOperation)) {
+  if (isDefined(recordField.relationScope.aggregateOperation)) {
     const summary = getRecordFieldSummary({
-      recordField,
+      aggregateOperation: recordField.relationScope.aggregateOperation,
+      relationTargetFieldMetadataId: recordField.relationTargetFieldMetadataId,
       relationObjectMetadataItem,
     });
 

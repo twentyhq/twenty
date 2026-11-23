@@ -13,7 +13,6 @@ export const mapViewFieldToRecordField = (viewField: ViewField) => {
     relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
     relationScope: viewField.relationScope,
     label: viewField.label,
-    relationAggregateOperation: viewField.relationAggregateOperation,
   };
 
   return recordField;

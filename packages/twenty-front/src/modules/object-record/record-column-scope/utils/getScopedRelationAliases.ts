@@ -15,6 +15,7 @@ import {
 import {
   computeRelationWithArgumentsResponseKey,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 const getRelatedRecordGqlFields = ({
@@ -61,7 +62,6 @@ export const getScopedRelationAliases = ({
     | 'isCanonical'
     | 'relationScope'
     | 'relationTargetFieldMetadataId'
-    | 'relationAggregateOperation'
   >[];
   fieldMetadataItemByFieldMetadataItemId: Record<string, FieldMetadataItem>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -108,16 +108,20 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
+    const aggregateGqlFieldNames = [
+      // Only a limit can leave matching records out of the loaded ones
+      ...(isDefined(relationScope.limit) ? ['totalCount'] : []),
+      ...(isDefined(summary) ? [summary.aggregateGqlFieldName] : []),
+    ];
+
     const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
       relationFieldName: fieldMetadataItem.name,
       filter,
       orderBy,
       first: relationScope.limit ?? undefined,
-      // Selecting an aggregate of a field the user cannot read would fail the whole query
-      ...(isDefined(summary) &&
-        summary.isAggregatedFieldReadable && {
-          aggregateGqlFieldNames: [summary.aggregateGqlFieldName],
-        }),
+      ...(isNonEmptyArray(aggregateGqlFieldNames) && {
+        aggregateGqlFieldNames,
+      }),
       recordGqlFields: {
         ...getRelatedRecordGqlFields({
           scopedRelationColumn,

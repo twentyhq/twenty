@@ -62,36 +62,22 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     });
   });
 
-  it('selects the total count of the relation only when it is limited', () => {
-    const peopleInParisUnlimited = { ...peopleInParis, first: undefined };
+  it('selects the aggregates of the relation beside its edges', () => {
+    const peopleInParisWithTotalCount: RecordGqlFieldsRelationWithArguments = {
+      ...peopleInParis,
+      aggregateGqlFieldNames: ['totalCount'],
+    };
 
+    expect(generateQuery().query).not.toMatch(/totalCount\s+edges/);
     expect(
       generateQuery({
         extraRecordGqlFields: {
-          [computeRelationWithArgumentsResponseKey(peopleInParisUnlimited)]:
-            peopleInParisUnlimited,
+          [computeRelationWithArgumentsResponseKey(
+            peopleInParisWithTotalCount,
+          )]: peopleInParisWithTotalCount,
         },
       }).query,
-    ).not.toMatch(/totalCount\s+edges/);
-    expect(generateQuery().query).toMatch(/totalCount\s+edges/);
-  });
-
-  it('selects the aggregates of the relation beside its edges, the total count once', () => {
-    const peopleInParisWithAggregates: RecordGqlFieldsRelationWithArguments = {
-      ...peopleInParis,
-      aggregateGqlFieldNames: ['totalCount', 'countUniqueValuesCity'],
-    };
-    const { query } = generateQuery({
-      extraRecordGqlFields: {
-        [computeRelationWithArgumentsResponseKey(peopleInParisWithAggregates)]:
-          peopleInParisWithAggregates,
-      },
-    });
-
-    expect(query).toMatch(/totalCount\s+countUniqueValuesCity\s+edges/);
-    expect(query.match(/totalCount/g)).toEqual(
-      generateQuery().query.match(/totalCount/g),
-    );
+    ).toMatch(/totalCount\s+edges/);
   });
 
   it('selects a composite field of the related records with its sub-fields', () => {

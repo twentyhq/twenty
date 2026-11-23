@@ -114,7 +114,7 @@ describe('getRecordFieldColumnHeader', () => {
         summary: { aggregateOperation: AggregateOperations.COUNT },
         customLabel: undefined,
       }).label,
-    ).toBe(`${employeesField.label} · Count`);
+    ).toBe(`${employeesField.label} · Count all`);
   });
 
   it('names a summary column after the field it summarizes', () => {

@@ -114,7 +114,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const isSummaryColumn = isDefined(recordField.relationAggregateOperation);
+  const isSummaryColumn = isDefined(
+    recordField.relationScope?.aggregateOperation,
+  );
 
   const { isFilterable: isFieldFilterable, isSortable: isFieldSortable } =
     useAtomFamilySelectorValue(
