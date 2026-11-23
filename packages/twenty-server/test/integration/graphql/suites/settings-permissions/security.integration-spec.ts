@@ -85,7 +85,7 @@ describe('Security permissions', () => {
           updateWorkspace(data: {
             displayName: "${originalWorkspaceState.displayName}",
             subdomain: "${originalWorkspaceState.subdomain}",
-            logo: ${isNonEmptyString(originalWorkspaceState.logo) ? `"${originalWorkspaceState.logo}"` : null},
+            logo: ${isNonEmptyString(originalWorkspaceState.logo) ? `"${originalWorkspaceState.logo}"` : 'null'},
             isGoogleAuthEnabled: ${originalWorkspaceState.isGoogleAuthEnabled},
             isMicrosoftAuthEnabled: ${originalWorkspaceState.isMicrosoftAuthEnabled},
             isPasswordAuthEnabled: ${originalWorkspaceState.isPasswordAuthEnabled}
