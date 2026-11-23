@@ -9,7 +9,10 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/channel-visibility/utils/is-api-key-exempt-from-channel-visibility.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/internal/principal/utils/can-auth-context-hold-roles.util';
@@ -102,6 +105,9 @@ export class PrincipalPermissionsReadService {
         flatWorkspaceMemberMaps:
           await this.findFlatWorkspaceMemberMaps(authContext),
         flatRoleTargetMaps: await this.findFlatRoleTargetMaps(authContext),
+        // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+        apiKeysIndividualRoleId:
+          await this.findApiKeysIndividualRoleId(authContext),
       },
     });
   }
@@ -120,6 +126,45 @@ export class PrincipalPermissionsReadService {
       );
 
     return flatWorkspaceMemberMaps;
+  }
+
+  private async findApiKeysIndividualRoleId(
+    authContext: PermissionsAuthContext,
+  ): Promise<string | undefined> {
+    if (authContext.type !== 'apiKey') {
+      return undefined;
+    }
+
+    const { featureFlagsMap, flatRoleMaps, apiKeyRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        ['featureFlagsMap', 'flatRoleMaps', 'apiKeyRoleMap'],
+      );
+
+    if (!isApiKeyExemptFromChannelVisibility(featureFlagsMap)) {
+      return undefined;
+    }
+
+    const apiKeyRoleId = apiKeyRoleMap[authContext.apiKey.id];
+    const apiKeyFlatRole = isDefined(apiKeyRoleId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: apiKeyRoleId,
+          flatEntityMaps: flatRoleMaps,
+        })
+      : undefined;
+
+    if (
+      !apiKeyFlatRole?.canBeAssignedToUsers ||
+      !apiKeyFlatRole.canReadAllObjectRecords
+    ) {
+      return undefined;
+    }
+
+    return flatRoleMaps.byUniversalIdentifier[
+      getWorkspaceMemberIndividualRoleUniversalIdentifier({
+        holder: { type: 'apiKeys' },
+      })
+    ]?.id;
   }
 
   private async findFlatRoleTargetMaps(authContext: PermissionsAuthContext) {

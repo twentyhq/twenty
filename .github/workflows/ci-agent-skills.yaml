@@ -1,22 +1,12 @@
 name: CI Agent Skills
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - package.json
-      - packages/twenty-agent-skills/**
-      - .github/workflows/ci-agent-skills.yaml
+  workflow_call:
 
   pull_request:
 
 permissions:
   contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   changed-files-check:
@@ -27,9 +17,14 @@ jobs:
         packages/twenty-agent-skills/**
         .github/workflows/ci-agent-skills.yaml
 
+  # Concurrency sits on the gated jobs so a run with no relevant change never
+  # replaces a pending relevant one on main.
   agent-skills-validate:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
+    concurrency:
+      group: ci-agent-skills-${{ github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
@@ -109,6 +104,9 @@ jobs:
   agent-skills-publish:
     needs: agent-skills-validate
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'twentyhq/twenty'
+    concurrency:
+      group: ci-agent-skills-publish-${{ github.ref }}
+      cancel-in-progress: false
     timeout-minutes: 5
     runs-on: ubuntu-latest
     permissions:
