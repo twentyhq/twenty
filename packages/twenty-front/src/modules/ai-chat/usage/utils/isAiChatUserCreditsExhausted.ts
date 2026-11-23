@@ -5,5 +5,5 @@ import { type AiChatUserCreditsUsage } from '@/ai-chat/usage/types/AiChatUserCre
 export const isAiChatUserCreditsExhausted = ({
   limitValue,
   consumedValue,
-}: AiChatUserCreditsUsage): boolean =>
+}: Pick<AiChatUserCreditsUsage, 'limitValue' | 'consumedValue'>): boolean =>
   isDefined(consumedValue) && consumedValue >= limitValue;

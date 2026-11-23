@@ -1,11 +1,7 @@
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { type CoreWorkflowRunSummary } from '@/object-core/workflows/types/CoreWorkflowRunSummary';
 import { buildCoreWorkflowTableRows } from '@/object-core/workflows/utils/buildCoreWorkflowTableRows';
-import {
-  CoreWorkflowStatus,
-  CoreWorkflowRunStatus,
-  WorkflowVisibility,
-} from '~/generated/graphql';
+import { CoreWorkflowStatus, CoreWorkflowRunStatus } from '~/generated/graphql';
 
 const buildCoreWorkflow = (id: string): CoreWorkflow => ({
   __typename: 'CoreWorkflowDTO',
@@ -14,7 +10,7 @@ const buildCoreWorkflow = (id: string): CoreWorkflow => ({
   statuses: [CoreWorkflowStatus.ACTIVE],
   workspaceWorkflowId: null,
   isSystem: false,
-  visibility: WorkflowVisibility.WORKSPACE,
+  isPrivate: false,
   canChangeVisibility: true,
   updatedAt: '2026-11-01T00:00:00.000Z',
 });

@@ -1,4 +1,5 @@
 import { type QueryConfig, types } from 'pg';
+import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray, pascalCase } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
@@ -47,9 +48,11 @@ import {
   type OrderByClause,
   type SelectClause,
   type UnreadableColumnConditions,
+  type UnreadableColumnPlaceholders,
   type UnreadableRelationConditions,
   type SelectStatementState,
   type WhereClause,
+  UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -105,6 +108,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
   private readonly aliasesWithUnreadableColumnsApplied = new Set<string>();
   private readonly unreadableColumnConditions: UnreadableColumnConditions = {};
+  private readonly unreadableColumnPlaceholders: UnreadableColumnPlaceholders =
+    {};
   private readonly unreadableRelationConditions: UnreadableRelationConditions =
     {};
 
@@ -759,10 +764,12 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     alias,
     columnNames,
     condition,
+    placeholderColumnNames = [],
   }: {
     alias: string;
     columnNames: string[];
     condition: SQLCondition;
+    placeholderColumnNames?: string[];
   }): this {
     const unreadableColumnConditionsOfAlias = (this.unreadableColumnConditions[
       alias
@@ -771,6 +778,16 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     for (const columnName of columnNames) {
       (unreadableColumnConditionsOfAlias[columnName] ??= []).push(
         condition.sql,
+      );
+    }
+
+    if (isNonEmptyArray(placeholderColumnNames)) {
+      (this.unreadableColumnPlaceholders[alias] ??= []).push(
+        ...placeholderColumnNames,
+      );
+      this.setParameter(
+        UNREADABLE_COLUMN_PLACEHOLDER_PARAMETER_NAME,
+        FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
       );
     }
 
@@ -1349,6 +1366,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       columnSelections: this.resolveColumnSelections(),
       unreadableColumnConditions: this.unreadableColumnConditions,
+      unreadableColumnPlaceholders: this.unreadableColumnPlaceholders,
       unreadableRelationConditions: this.unreadableRelationConditions,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,

@@ -44,7 +44,6 @@ jest.mock(
   () => ({ INLINE_EMAIL_BODY_EDITOR_PROFILE: {} }),
 );
 
-// the rich editor is replaced by a textarea that writes its text as a one-paragraph document
 jest.mock(
   '@/advanced-text-editor/components/FormAdvancedTextFieldInput',
   () => ({
@@ -116,7 +115,6 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
 
 describe('AiChatToolCallApprovalCard for an email', () => {
   beforeAll(() => {
-    // jsdom has no PointerEvent, which the recipients' drag sensor checks on click
     window.PointerEvent ??= MouseEvent as typeof PointerEvent;
   });
 

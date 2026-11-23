@@ -4,22 +4,24 @@ import { createHash } from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AccessGroupType } from 'src/engine/permissions/internal/access-group/types/access-group-type.type';
-import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
+import { type AccessGroupSplitValue } from 'src/engine/permissions/internal/access-group/types/access-group-split-value.type';
+import { findAccessGroupTypeHandler } from 'src/engine/permissions/internal/access-group/utils/find-access-group-type-handler.util';
 
 export const computeAccessGroupHash = ({
-  type,
   ruleShapeHash,
-  splitValue,
+  accessGroupSplitValue,
 }: {
-  type: AccessGroupType;
   ruleShapeHash: string;
-  splitValue: RlsMemberFieldValues | string | null;
-}): string =>
-  createHash('sha256')
+  accessGroupSplitValue: AccessGroupSplitValue;
+}): string => {
+  const splitValue = findAccessGroupTypeHandler(
+    accessGroupSplitValue.type,
+  ).findSplitValue(accessGroupSplitValue);
+
+  return createHash('sha256')
     .update(
       JSON.stringify([
-        type,
+        accessGroupSplitValue.type,
         ruleShapeHash,
         typeof splitValue === 'string' || !isDefined(splitValue)
           ? splitValue
@@ -29,3 +31,4 @@ export const computeAccessGroupHash = ({
       ]),
     )
     .digest('hex');
+};

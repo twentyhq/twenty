@@ -7,7 +7,6 @@ export type SuggestedPrompt = {
   id: string;
   label: MessageDescriptor;
   Icon: IconComponent;
-  // PREFILL lets the user complete the prompt; SEND is for prompts needing nothing more.
   mode?: AiChatPrepromptMode;
   prompts: MessageDescriptor[];
 };

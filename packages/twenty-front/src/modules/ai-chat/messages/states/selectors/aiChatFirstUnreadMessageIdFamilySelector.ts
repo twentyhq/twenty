@@ -9,7 +9,6 @@ import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMe
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
-// A senderless user message predates multiplayer chats, when every user message was the owner's
 export const aiChatFirstUnreadMessageIdFamilySelector =
   createAtomFamilySelector<string | null, string>({
     key: 'aiChatFirstUnreadMessageIdFamilySelector',
