@@ -27,10 +27,16 @@ import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
 const createPersonOrWarn = async ({
-  user,
-  handle,
-}: WhatsappCounterpart): Promise<string | undefined> => {
-  const name = splitWhatsappUserName(user);
+  counterpart: { user, handle },
+  isGroupChat,
+}: {
+  counterpart: WhatsappCounterpart;
+  isGroupChat: boolean;
+}): Promise<string | undefined> => {
+  // Group members are all imported, so one WhatsApp only knows by number is named after it
+  const name =
+    splitWhatsappUserName(user) ??
+    (isGroupChat ? { firstName: handle, lastName: '' } : undefined);
 
   if (!isDefined(name)) {
     return undefined;
@@ -100,7 +106,7 @@ const resolvePersonIdByHandle = async ({
   let createdPersonCount = 0;
 
   for (const counterpart of unmatchedCounterparts) {
-    const personId = await createPersonOrWarn(counterpart);
+    const personId = await createPersonOrWarn({ counterpart, isGroupChat });
 
     if (isDefined(personId)) {
       personIdByHandle.set(counterpart.handle, personId);

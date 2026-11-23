@@ -306,6 +306,22 @@ describe('ingestWhatsappMessages', () => {
     ]);
   });
 
+  it('creates a group member WhatsApp only knows by their number, named after that number', async () => {
+    setPeopleInTwenty({ [PRIYA_HANDLE]: 'priya-person-id' });
+
+    await expect(
+      ingest({
+        chat: GROUP_CHAT,
+        counterparts: [PRIYA, { ...SAM, display_name: '+33 6 33 33 33 33' }],
+      }),
+    ).resolves.toMatchObject({ createdPersonCount: 1 });
+    expect(mocks.createWhatsappPerson).toHaveBeenCalledExactlyOnceWith({
+      firstName: SAM_HANDLE,
+      lastName: '',
+      handle: SAM_HANDLE,
+    });
+  });
+
   it('skips a group chat where nobody is in Twenty, even with All chats', async () => {
     await expect(
       ingest({ chat: GROUP_CHAT, counterparts: [PRIYA, SAM] }),
