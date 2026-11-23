@@ -60,8 +60,7 @@ const MANIFEST_MOCK_MODULES = [
   'twenty-client-sdk/metadata',
 ];
 
-// esbuild turns named imports into reads of a copy that inherits from the module's prototype,
-// so the mock is its own prototype and answers any name, at any depth, called or constructed
+// Its own prototype, since esbuild resolves named imports through a copy inheriting from it
 const MANIFEST_MOCK_MODULE_SOURCE = `
 const mock = new Proxy(function () {}, {
   get: (_target, key) => (key === Symbol.toPrimitive ? () => '' : mock),
