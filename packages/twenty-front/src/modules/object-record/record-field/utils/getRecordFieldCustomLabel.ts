@@ -1,5 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { trimAndRemoveDuplicatedWhitespacesFromString } from 'twenty-shared/utils';
+import { normalizeViewFieldLabel } from 'twenty-shared/utils';
 
 // Storing the default header would pin it, so a later rename of the field would not show
 export const getRecordFieldCustomLabel = ({
@@ -9,10 +8,7 @@ export const getRecordFieldCustomLabel = ({
   editedLabel: string;
   defaultLabel: string;
 }): string | null => {
-  const normalizedLabel =
-    trimAndRemoveDuplicatedWhitespacesFromString(editedLabel);
+  const normalizedLabel = normalizeViewFieldLabel(editedLabel);
 
-  return isNonEmptyString(normalizedLabel) && normalizedLabel !== defaultLabel
-    ? normalizedLabel
-    : null;
+  return normalizedLabel !== defaultLabel ? normalizedLabel : null;
 };

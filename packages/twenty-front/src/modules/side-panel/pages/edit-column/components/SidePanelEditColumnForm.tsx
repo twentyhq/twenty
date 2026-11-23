@@ -5,7 +5,7 @@ import { getLookupTargetFieldMetadataItems } from '@/object-record/record-column
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
 import { getRecordFieldSummary } from '@/object-record/record-column-summary/utils/getRecordFieldSummary';
 import { getRecordFieldSummaryLabel } from '@/object-record/record-column-summary/utils/getRecordFieldSummaryLabel';
-import { getSummaryFieldMetadataItemsByOperation } from '@/object-record/record-column-summary/utils/getSummaryFieldMetadataItemsByOperation';
+import { getSummaryShowOptionValue } from '@/object-record/record-column-summary/utils/getSummaryShowOptionValue';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
 import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
 import { getRelationScopeFieldMetadataItems } from '@/object-record/record-column-scope/utils/getRelationScopeFieldMetadataItems';
@@ -37,7 +37,7 @@ import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ViewFieldRelationScope } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidRelationScopeLimit } from 'twenty-shared/utils';
 import { IconCheck } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { Button, Field } from 'twenty-ui/primitives/input';
@@ -123,11 +123,7 @@ export const SidePanelEditColumnForm = ({
 
   const trimmedLimitInput = limitInput.trim();
   const limit = trimmedLimitInput === '' ? null : Number(trimmedLimitInput);
-  const isLimitValid =
-    !isDefined(limit) ||
-    (Number.isInteger(limit) &&
-      limit >= 1 &&
-      limit <= QUERY_MAX_RECORDS_FROM_RELATION);
+  const isLimitValid = isValidRelationScopeLimit(limit);
 
   const lookupTargetFieldMetadataItems = getLookupTargetFieldMetadataItems(
     relationObjectMetadataItem,
@@ -158,12 +154,7 @@ export const SidePanelEditColumnForm = ({
         : undefined,
     isScopedRelationColumn: true,
     summary,
-    customLabel: undefined,
   });
-
-  const summaryFieldMetadataItemsByOperation = isJunctionRelation
-    ? {}
-    : getSummaryFieldMetadataItemsByOperation(relationObjectMetadataItem);
 
   // A join object's fields are not what its column lists, so it can only count its records
   const summaryShowOptions = [
@@ -171,15 +162,15 @@ export const SidePanelEditColumnForm = ({
       aggregateOperation: AggregateOperations.COUNT,
       relationTargetFieldMetadataId: null,
     },
-    ...NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.flatMap(
-      (summaryAggregateOperation) =>
-        (
-          summaryFieldMetadataItemsByOperation[summaryAggregateOperation] ?? []
-        ).map(({ id }) => ({
-          aggregateOperation: summaryAggregateOperation,
-          relationTargetFieldMetadataId: id,
-        })),
-    ),
+    ...(isJunctionRelation
+      ? []
+      : NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.flatMap(
+          (summaryAggregateOperation) =>
+            lookupTargetFieldMetadataItems.map(({ id }) => ({
+              aggregateOperation: summaryAggregateOperation,
+              relationTargetFieldMetadataId: id,
+            })),
+        )),
   ].flatMap((summaryColumnContent) => {
     const optionSummary = getRecordFieldSummary({
       ...summaryColumnContent,
@@ -194,14 +185,17 @@ export const SidePanelEditColumnForm = ({
               ? getIcon(optionSummary.aggregatedFieldMetadataItem.icon)
               : undefined,
             label: getRecordFieldSummaryLabel(optionSummary),
-            value: `${summaryColumnContent.aggregateOperation}:${summaryColumnContent.relationTargetFieldMetadataId ?? ''}`,
+            value: getSummaryShowOptionValue(summaryColumnContent),
           },
         ]
       : [];
   });
 
-  const selectedShowValue = isSummary
-    ? `${aggregateOperation}:${relationTargetFieldMetadataId ?? ''}`
+  const selectedShowValue = isDefined(aggregateOperation)
+    ? getSummaryShowOptionValue({
+        aggregateOperation,
+        relationTargetFieldMetadataId,
+      })
     : relationTargetFieldMetadataId;
 
   const canSave = isSummary || isLimitValid;
@@ -322,12 +316,10 @@ export const SidePanelEditColumnForm = ({
             <FormFieldInputContainer>
               <Field.Label>{t`Sort`}</Field.Label>
               <RecordTableSettingsSortsContent
-                objectMetadataItem={{
-                  fields: getRelationScopeFieldMetadataItems({
-                    relationObjectMetadataItem,
-                    scopedRelationJunction,
-                  }),
-                }}
+                fieldMetadataItems={getRelationScopeFieldMetadataItems({
+                  relationObjectMetadataItem,
+                  scopedRelationJunction,
+                })}
               />
             </FormFieldInputContainer>
             <TextInput

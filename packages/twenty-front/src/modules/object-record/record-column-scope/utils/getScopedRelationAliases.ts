@@ -1,3 +1,4 @@
+import { TOTAL_COUNT_GQL_FIELD_NAME } from '@/object-record/constants/TotalCountGqlFieldName';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -110,7 +111,7 @@ export const getScopedRelationAliases = ({
 
     const aggregateGqlFieldNames = [
       // Only a limit can leave matching records out of the loaded ones
-      ...(isDefined(relationScope.limit) ? ['totalCount'] : []),
+      ...(isDefined(relationScope.limit) ? [TOTAL_COUNT_GQL_FIELD_NAME] : []),
       ...(isDefined(summary) ? [summary.aggregateGqlFieldName] : []),
     ];
 

@@ -8,7 +8,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { getRelationTotalCountRecordKey } from '@/object-record/cache/utils/getRelationTotalCountRecordKey';
+import { getRelationAggregateRecordKey } from '@/object-record/cache/utils/getRelationAggregateRecordKey';
+import { TOTAL_COUNT_GQL_FIELD_NAME } from '@/object-record/constants/TotalCountGqlFieldName';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -50,7 +51,10 @@ export const useRelationFromManyFieldDisplay = () => {
 
   const totalCount = useRecordFieldValue<number>(
     recordId,
-    getRelationTotalCountRecordKey(relationRecordKey),
+    getRelationAggregateRecordKey({
+      relationRecordKey,
+      aggregateGqlFieldName: TOTAL_COUNT_GQL_FIELD_NAME,
+    }),
     fieldDefinition,
   );
 

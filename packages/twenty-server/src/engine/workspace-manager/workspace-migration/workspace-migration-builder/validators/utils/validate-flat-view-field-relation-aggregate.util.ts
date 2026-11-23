@@ -3,8 +3,8 @@ import { AggregateOperations } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import { getInvalidFlatViewFieldRelationScopeError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-flat-view-field-relation-scope-error.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
@@ -16,18 +16,6 @@ const RELATION_AGGREGATE_OPERATIONS_ON_A_FIELD: AggregateOperations[] = [
   AggregateOperations.MAX,
 ];
 
-const buildRelationAggregateError = ({
-  message,
-  userFriendlyMessage,
-}: Pick<
-  FlatEntityValidationError<ViewExceptionCode>,
-  'message' | 'userFriendlyMessage'
->): FlatEntityValidationError<ViewExceptionCode> => ({
-  code: ViewExceptionCode.INVALID_VIEW_DATA,
-  message,
-  userFriendlyMessage,
-});
-
 // The relation target validator checks the field itself; this checks the field can take the operation
 const validateRelationAggregateTarget = ({
   aggregateOperation,
@@ -37,21 +25,26 @@ const validateRelationAggregateTarget = ({
   aggregateOperation: AggregateOperations;
   relationTargetFieldMetadataUniversalIdentifier: string | null;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
-}): FlatEntityValidationError<ViewExceptionCode>[] => {
+}): FlatEntityValidationError[] => {
+  if (
+    aggregateOperation === AggregateOperations.COUNT &&
+    isDefined(relationTargetFieldMetadataUniversalIdentifier)
+  ) {
+    return [
+      getInvalidFlatViewFieldRelationScopeError({
+        message: t`A count of related records cannot have a related record field`,
+        userFriendlyMessage: msg`A count of related records cannot use a field`,
+      }),
+    ];
+  }
+
   if (aggregateOperation === AggregateOperations.COUNT) {
-    return isDefined(relationTargetFieldMetadataUniversalIdentifier)
-      ? [
-          buildRelationAggregateError({
-            message: t`A count of related records cannot have a related record field`,
-            userFriendlyMessage: msg`A count of related records cannot use a field`,
-          }),
-        ]
-      : [];
+    return [];
   }
 
   if (!RELATION_AGGREGATE_OPERATIONS_ON_A_FIELD.includes(aggregateOperation)) {
     return [
-      buildRelationAggregateError({
+      getInvalidFlatViewFieldRelationScopeError({
         message: t`Only count, sum, average, min and max can aggregate related records`,
         userFriendlyMessage: msg`This calculation is not available on related records`,
       }),
@@ -60,7 +53,7 @@ const validateRelationAggregateTarget = ({
 
   if (!isDefined(relationTargetFieldMetadataUniversalIdentifier)) {
     return [
-      buildRelationAggregateError({
+      getInvalidFlatViewFieldRelationScopeError({
         message: t`This aggregate operation requires a related record field`,
         userFriendlyMessage: msg`Pick a field of the related records to calculate on`,
       }),
@@ -88,7 +81,7 @@ const validateRelationAggregateTarget = ({
   return isAggregateOperationAvailable
     ? []
     : [
-        buildRelationAggregateError({
+        getInvalidFlatViewFieldRelationScopeError({
           message: t`The related record field does not support this aggregate operation`,
           userFriendlyMessage: msg`This calculation is not available for this field`,
         }),
@@ -107,7 +100,7 @@ export const validateFlatViewFieldRelationAggregate = ({
     'relationTargetFieldMetadataUniversalIdentifier' | 'universalRelationScope'
   >;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
-}): FlatEntityValidationError<ViewExceptionCode>[] => {
+}): FlatEntityValidationError[] => {
   if (
     !isDefined(universalRelationScope) ||
     !isDefined(universalRelationScope.aggregateOperation)
@@ -121,7 +114,7 @@ export const validateFlatViewFieldRelationAggregate = ({
     isDefined(universalRelationScope.limit)
   ) {
     return [
-      buildRelationAggregateError({
+      getInvalidFlatViewFieldRelationScopeError({
         message: t`The relation scope of an aggregate cannot have sorts or a limit`,
         userFriendlyMessage: msg`A calculation on related records cannot be sorted or limited`,
       }),

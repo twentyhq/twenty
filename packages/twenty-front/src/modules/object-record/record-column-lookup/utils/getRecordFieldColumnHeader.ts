@@ -18,10 +18,8 @@ const getDefaultRecordFieldColumnHeader = ({
   summary,
 }: {
   fieldMetadataItem: ColumnHeaderFieldMetadataItem;
-  lookupTarget:
-    | Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>
-    | undefined;
-  isScopedRelationColumn: boolean;
+  lookupTarget?: Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>;
+  isScopedRelationColumn?: boolean;
   summary?: Pick<
     RecordFieldSummary,
     'aggregateOperation' | 'aggregatedFieldMetadataItem'
@@ -58,7 +56,7 @@ export const getRecordFieldColumnHeader = ({
   customLabel,
   ...defaultColumnHeaderArgs
 }: Parameters<typeof getDefaultRecordFieldColumnHeader>[0] & {
-  customLabel: string | null | undefined;
+  customLabel?: string | null;
 }): ColumnHeaderFieldMetadataItem => {
   const defaultColumnHeader = getDefaultRecordFieldColumnHeader(
     defaultColumnHeaderArgs,

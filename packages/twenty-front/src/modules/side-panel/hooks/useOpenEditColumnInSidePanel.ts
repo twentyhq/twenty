@@ -4,7 +4,7 @@ import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/fl
 import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { getRelationScopeRecordFiltersAndSorts } from '@/object-record/record-column-scope/utils/getRelationScopeRecordFiltersAndSorts';
 import { getRelationScopeToEdit } from '@/object-record/record-column-scope/utils/getRelationScopeToEdit';
-import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
+import { resolveScopableRelation } from '@/object-record/record-column-scope/utils/resolveScopableRelation';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { attachUngroupedRecordFiltersToRootRecordFilterGroup } from '@/object-record/record-filter-group/utils/attachUngroupedRecordFiltersToRootRecordFilterGroup';
@@ -72,12 +72,12 @@ export const useOpenEditColumnInSidePanel = (recordTableId: string) => {
         .find(({ id }) => id === recordFieldId);
       const relationScope = recordField?.relationScope;
 
-      const { scopedRelationJunction } = resolveScopedRelationJunction({
+      const scopedRelationJunction = resolveScopableRelation({
         fieldMetadataItem,
         objectMetadataItems: store.get(
           objectMetadataItemsWithFieldsSelector.atom,
         ),
-      });
+      })?.scopedRelationJunction;
 
       const { recordSorts, ...recordFiltersAndRecordFilterGroups } =
         getRelationScopeRecordFiltersAndSorts({

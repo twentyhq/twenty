@@ -1,3 +1,4 @@
+import { TOTAL_COUNT_GQL_FIELD_NAME } from '@/object-record/constants/TotalCountGqlFieldName';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFieldSummary } from '@/object-record/record-column-summary/types/RecordFieldSummary';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
@@ -19,7 +20,10 @@ export const getRecordFieldSummary = ({
   >;
 }): RecordFieldSummary | undefined => {
   if (aggregateOperation === AggregateOperations.COUNT) {
-    return { aggregateOperation, aggregateGqlFieldName: 'totalCount' };
+    return {
+      aggregateOperation,
+      aggregateGqlFieldName: TOTAL_COUNT_GQL_FIELD_NAME,
+    };
   }
 
   const aggregatedFieldMetadataItem = isDefined(relationTargetFieldMetadataId)
