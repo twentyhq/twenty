@@ -2,7 +2,6 @@ import { Injectable, type OnModuleInit } from '@nestjs/common';
 
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
 
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
@@ -85,8 +84,7 @@ export class ApplyMessageThreadsVisibilityRestrictionsService
       if (
         isDefined(messageThreadId) &&
         isDefined(subject) &&
-        subject !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED &&
-        !readableSubjectByMessageThreadId.has(messageThreadId)
+        subject !== FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED
       ) {
         readableSubjectByMessageThreadId.set(messageThreadId, subject);
       }
@@ -107,11 +105,20 @@ export class ApplyMessageThreadsVisibilityRestrictionsService
         () =>
           this.workspaceOrmManager
             .getRepository<MessageWorkspaceEntity>('message')
-            .find({
-              select: ['messageThreadId', 'subject'],
-              where: { messageThreadId: In(messageThreadIds) },
-              order: { receivedAt: 'DESC' },
-            }),
+            .createQueryBuilder('message')
+            .select(['message.messageThreadId', 'message.subject'])
+            .where('message.messageThreadId IN (:...messageThreadIds)', {
+              messageThreadIds,
+            })
+            .andWhereReadingUnreadableColumnsAsNull({
+              condition: 'message.subject IS NOT NULL',
+            })
+            .distinctOn(['message.messageThreadId'])
+            .orderBy('message.messageThreadId')
+            .addOrderBy('message.receivedAt', 'DESC', 'NULLS LAST')
+            .getMany<
+              Pick<MessageWorkspaceEntity, 'messageThreadId' | 'subject'>
+            >(),
         authContext,
       );
     } catch (error) {
