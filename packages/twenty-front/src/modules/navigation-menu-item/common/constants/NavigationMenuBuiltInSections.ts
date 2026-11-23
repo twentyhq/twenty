@@ -4,6 +4,7 @@ import {
   IconHeart,
   IconHistory,
   IconInbox,
+  IconLego,
   IconMessage,
 } from 'twenty-ui/icon';
 
@@ -52,5 +53,13 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     color: 'orange',
     isAi: true,
     navigationSectionId: null,
+  },
+  {
+    key: 'aiAgents',
+    label: msg`Agents`,
+    Icon: IconLego,
+    color: 'purple',
+    isAi: false,
+    isAiPermissionRequired: true,
   },
 ] as const;
