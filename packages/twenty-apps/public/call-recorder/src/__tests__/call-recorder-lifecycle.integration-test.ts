@@ -1522,7 +1522,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
         for (const { node } of calendarEvents) {
           expect(node.callRecorderPreference).toBe(
-            failedCalendarEventIds.has(node.id) ? null : 'ON',
+            failedCalendarEventIds.has(node.id) ? null : 'AUTO',
           );
         }
       } finally {
@@ -1838,10 +1838,10 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(canceledRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toEqual([canceled.botId]);
       expect(await fetchCallRecorderPreference(createdCalendarEventId)).toBe(
-        'ON',
+        'AUTO',
       );
       expect(await fetchCallRecorderPreference(updated.calendarEventId)).toBe(
-        'ON',
+        'AUTO',
       );
       expect(await fetchCallRecorderPreference(canceled.calendarEventId)).toBe(
         'OFF',
@@ -3847,7 +3847,7 @@ describe('call recorder app lifecycle (integration)', () => {
       applicationClient = new CoreApiClient();
     });
 
-    it('marks a blank preference On when it schedules a bot', async () => {
+    it('marks a blank preference Auto when it schedules a bot', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
@@ -3857,7 +3857,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       const callRecording = (
         await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
@@ -3905,7 +3905,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('marks every blank copy of the same meeting On, past the update batch size in one go', async () => {
+    it('marks every blank copy of the same meeting Auto, past the update batch size in one go', async () => {
       const requiredCalendarEventFixtureCount =
         CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
       const availableCalendarEventFixtureCount =
@@ -3952,13 +3952,13 @@ describe('call recorder app lifecycle (integration)', () => {
         ),
       );
 
-      expect(preferences.every((preference) => preference === 'ON')).toBe(true);
+      expect(preferences.every((preference) => preference === 'AUTO')).toBe(true);
       expect(
         await findCallRecordings({ calendarEventId: { in: calendarEventIds } }),
       ).toHaveLength(1);
     });
 
-    it('marks a blank preference On again when it updates an existing scheduled recording', async () => {
+    it('marks a blank preference Auto again when it updates an existing scheduled recording', async () => {
       const { calendarEventId } =
         await scheduleRecordingThroughCalendarReconciliation(applicationClient);
 
@@ -3976,7 +3976,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
@@ -4007,7 +4007,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('does not reconcile again on the echo of its own On write', async () => {
+    it('does not reconcile again on the echo of its own Auto write', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
@@ -4021,7 +4021,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
-        after: { callRecorderPreference: 'ON' },
+        after: { callRecorderPreference: 'AUTO' },
       });
 
       expect(result).toEqual({
@@ -4030,7 +4030,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
-    it('reconciles every change of a batch except the echo of its own On write', async () => {
+    it('reconciles every change of a batch except the echo of its own Auto write', async () => {
       const echoedCalendarEventId = await createCalendarEvent({
         callRecorderPreference: null,
       });
@@ -4049,7 +4049,7 @@ describe('call recorder app lifecycle (integration)', () => {
           calendarEventId: echoedCalendarEventId,
           updatedFields: ['callRecorderPreference', 'updatedBy'],
           before: { callRecorderPreference: null },
-          after: { callRecorderPreference: 'ON' },
+          after: { callRecorderPreference: 'AUTO' },
         },
         {
           calendarEventId: newlyOnCalendarEventId,
@@ -4202,7 +4202,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('schedules a bot and marks the event On when a user clears an Off', async () => {
+    it('schedules a bot and marks the event Auto when a user clears an Off', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: 'OFF',
       });
@@ -4225,7 +4225,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(result).toEqual(expect.objectContaining({ reconciled: true }));
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       const callRecording = (
         await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
