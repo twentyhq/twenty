@@ -220,7 +220,7 @@ describe('useMobileNavigationBarItems', () => {
     expect(store.get(salesFolderIdAtom)).toBeNull();
   });
 
-  it('keeps the open folder on its own tab when leaving the AI drawer', () => {
+  it('keeps each open folder on its own tab when leaving the AI drawer', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([SALES_TAB]);
@@ -228,7 +228,11 @@ describe('useMobileNavigationBarItems', () => {
     const { result, store } = renderMobileNavigationBarItems('/objects/people');
     const salesFolderIdAtom =
       currentNavigationMenuItemFolderIdFamilyState.atomFamily('sales-tab');
+    const homeFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('home');
 
+    act(() => tapItem(result, 'home'));
+    act(() => store.set(homeFolderIdAtom, 'home-folder'));
     act(() => tapItem(result, 'tab-sales-tab'));
     act(() => store.set(salesFolderIdAtom, 'deals'));
     act(() =>
@@ -239,11 +243,7 @@ describe('useMobileNavigationBarItems', () => {
     );
 
     act(() => tapItem(result, 'home'));
-    expect(
-      store.get(
-        currentNavigationMenuItemFolderIdFamilyState.atomFamily('home'),
-      ),
-    ).toBeNull();
+    expect(store.get(homeFolderIdAtom)).toBe('home-folder');
 
     act(() => tapItem(result, 'tab-sales-tab'));
     expect(store.get(salesFolderIdAtom)).toBe('deals');

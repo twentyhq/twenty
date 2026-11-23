@@ -105,13 +105,17 @@ export const useMobileNavigationBarItems = (): {
   const openHomePageOnTab = (tabId: string | null) => {
     closeSidePanelMenu();
     closeSettingsDrawer();
+
+    const isReopeningCurrentTab =
+      pathname === AppPath.Home &&
+      store.get(navigationDrawerActiveTabState.atom) ===
+        NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
+      store.get(currentNavigationMenuTabIdState.atom) === tabId;
+
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
 
-    if (
-      pathname === AppPath.Home &&
-      (activeNavigationMenuTab?.id ?? null) === tabId
-    ) {
+    if (isReopeningCurrentTab) {
       store.set(
         currentNavigationMenuItemFolderIdFamilyState.atomFamily(
           getNavigationMenuTabFolderKey(tabId),
