@@ -1,4 +1,3 @@
-import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -11,6 +10,7 @@ import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
+  isFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -74,7 +74,7 @@ export const sanitizeRecordInput = ({
 
         if (
           isDefined(fieldMetadataItem) &&
-          isFormulaFieldMetadataItem(fieldMetadataItem)
+          isFormulaFieldMetadata(fieldMetadataItem)
         ) {
           return undefined;
         }

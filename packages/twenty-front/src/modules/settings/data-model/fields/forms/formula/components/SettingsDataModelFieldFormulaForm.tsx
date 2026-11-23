@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { compileFormulaExpression } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -30,11 +31,16 @@ export const SettingsDataModelFieldFormulaForm = ({
   const { control } = useFormContext<SettingsDataModelFieldFormulaFormValues>();
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const { fields, editorFields } = buildFormulaFieldEditorInputs({
-    objectMetadataItem,
-    objectMetadataItems,
-    fieldMetadataId: existingFieldMetadataId,
-  });
+  // Rebuilding walks every field of the workspace, and the form re-renders on each keystroke
+  const { fields, editorFields } = useMemo(
+    () =>
+      buildFormulaFieldEditorInputs({
+        objectMetadataItem,
+        objectMetadataItems,
+        fieldMetadataId: existingFieldMetadataId,
+      }),
+    [objectMetadataItem, objectMetadataItems, existingFieldMetadataId],
+  );
 
   return (
     <Controller

@@ -1,4 +1,3 @@
-import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type ObjectPermissionsByObjectMetadataId } from '@/object-metadata/types/ObjectPermissionsByObjectMetadataId';
 import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
@@ -9,6 +8,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
+  isFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 
 type IsRecordFieldReadOnlyParams = {
@@ -30,7 +30,7 @@ export const isRecordFieldReadOnly = ({
   if (
     isRecordReadOnly ||
     !(fieldMetadataItem.isUIEditable ?? true) ||
-    isFormulaFieldMetadataItem(fieldMetadataItem)
+    isFormulaFieldMetadata(fieldMetadataItem)
   ) {
     return true;
   }

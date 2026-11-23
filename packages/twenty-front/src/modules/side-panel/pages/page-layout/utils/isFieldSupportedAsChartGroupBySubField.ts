@@ -1,4 +1,3 @@
-import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
@@ -10,7 +9,6 @@ export const isFieldSupportedAsChartGroupBySubField = (
 ): boolean => {
   if (
     isHiddenSystemField(field) ||
-    isFormulaFieldMetadataItem(field) ||
     isFieldRelation(field) ||
     isFieldMorphRelation(field)
   ) {
@@ -22,5 +20,6 @@ export const isFieldSupportedAsChartGroupBySubField = (
     name: field.name,
     isSystem: field.isSystem ?? false,
     relationType: field.settings?.relationType ?? null,
+    settings: field.settings,
   });
 };

@@ -1,4 +1,4 @@
-import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
+import { isFormulaFieldMetadata } from 'twenty-shared/utils';
 import { SORTABLE_FIELD_METADATA_TYPES } from '@/object-metadata/constants/SortableFieldMetadataTypes';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
@@ -26,7 +26,7 @@ export const filterSortableFieldMetadataItems = (field: SortableFieldInput) => {
   return (
     !isHiddenSystemField(field) &&
     isFieldActive &&
-    !isFormulaFieldMetadataItem(field) &&
+    !isFormulaFieldMetadata(field) &&
     (isFieldTypeSortable || isManyToOneRelationField(field))
   );
 };

@@ -8,10 +8,7 @@ import { Placeholder } from '@tiptap/extensions/placeholder';
 import { UndoRedo } from '@tiptap/extensions/undo-redo';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { useState } from 'react';
-import {
-  type ValidationRuleCompilationResult,
-  type ValidationRuleFieldDescriptor,
-} from 'twenty-shared/types';
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
@@ -113,10 +110,7 @@ type ValidationRuleExpressionEditorProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
-  compileExpression?: (args: {
-    expression: string;
-    fields: ValidationRuleFieldDescriptor[];
-  }) => ValidationRuleCompilationResult;
+  compileExpression?: typeof compileValidationRuleExpression;
   ariaLabel?: string;
 };
 

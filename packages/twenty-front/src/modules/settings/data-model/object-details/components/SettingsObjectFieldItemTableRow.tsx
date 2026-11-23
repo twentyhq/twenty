@@ -1,4 +1,3 @@
-import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -22,7 +21,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getSettingsPath,
+  isDefined,
+  isFormulaFieldMetadata,
+} from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconChevronRight, IconMinus, IconPlus } from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -220,7 +223,7 @@ export const SettingsObjectFieldItemTableRow = ({
           Icon={RelationIcon}
           label={label}
           labelDetail={
-            isFormulaFieldMetadataItem(fieldMetadataItem)
+            isFormulaFieldMetadata(fieldMetadataItem)
               ? t`Formula`
               : fieldMetadataItem.settings?.type === 'percentage'
                 ? '%'

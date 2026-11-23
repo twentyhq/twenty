@@ -1,8 +1,10 @@
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
-import { isValidationRulePreviousValuePath } from 'twenty-shared/utils';
+import {
+  isValidationRulePreviousValuePath,
+  isFormulaFieldMetadata,
+} from 'twenty-shared/utils';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { isFormulaFieldMetadataItem } from '@/object-metadata/utils/isFormulaFieldMetadataItem';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { buildValidationRuleEditorFields } from '@/validation-rules/utils/buildValidationRuleEditorFields';
 import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
@@ -31,7 +33,7 @@ export const buildFormulaFieldEditorInputs = ({
     fields: object.fields.filter(
       (fieldMetadataItem) =>
         fieldMetadataItem.id !== fieldMetadataId &&
-        !isFormulaFieldMetadataItem(fieldMetadataItem),
+        !isFormulaFieldMetadata(fieldMetadataItem),
     ),
   });
 
