@@ -1,4 +1,3 @@
-import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -42,15 +41,15 @@ import {
   type AutomatedTriggerSettings,
   type BaseDatabaseEventTriggerSettings,
 } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
-import { type CoreDispatchIds } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
 import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger-dispatch.workspace-service';
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
   legacyWorkflowId?: string;
+  coreWorkflowVersionId: string;
   applicationId: string;
   settings: AutomatedTriggerSettings;
-} & CoreDispatchIds;
+};
 
 type TriggerEvaluationArgs = {
   eventPayload: ObjectRecordEvent;
@@ -413,7 +412,7 @@ export class WorkflowDatabaseEventTriggerListener {
                 workspaceId,
                 workflowId:
                   eventListener.legacyWorkflowId ?? eventListener.workflowId,
-                ...buildCoreDispatchIds(eventListener),
+                coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
                 payload: eventPayload,
               },
               jobOptions: {

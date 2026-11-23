@@ -18,14 +18,18 @@ import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/toke
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
+import { VERIFICATION_EMAIL_SENDING_THROTTLE } from 'src/engine/core-modules/email-verification/constants/verification-email-sending-throttle.constant';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import {
   EmailVerificationException,
   EmailVerificationExceptionCode,
 } from 'src/engine/core-modules/email-verification/email-verification.exception';
 import { buildEmailVerificationLinkSearchParams } from 'src/engine/core-modules/email-verification/utils/build-email-verification-link-search-params.util';
+import { buildVerificationEmailSendingThrottleKey } from 'src/engine/core-modules/email-verification/utils/build-verification-email-sending-throttle-key.util';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
@@ -42,6 +46,7 @@ export class EmailVerificationService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailVerificationTokenService: EmailVerificationTokenService,
     private readonly i18nService: I18nService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   async sendVerificationEmail({
@@ -155,7 +160,16 @@ export class EmailVerificationService {
       );
     }
 
-    await this.deleteExistingTokensAfterCooldownOrThrow({ userId: user.id });
+    await this.assertVerificationEmailCooldownElapsedOrThrow({
+      userId: user.id,
+    });
+
+    await this.throttleVerificationEmailSendingOrThrow({
+      key: email.toLowerCase(),
+      limit: VERIFICATION_EMAIL_SENDING_THROTTLE.byRecipientLimit,
+    });
+
+    await this.deleteExistingVerificationTokens({ userId: user.id });
 
     await this.sendVerificationEmail({
       userId: user.id,
@@ -169,7 +183,7 @@ export class EmailVerificationService {
     return { success: true };
   }
 
-  async deleteExistingTokensAfterCooldownOrThrow({
+  async assertVerificationEmailCooldownElapsedOrThrow({
     userId,
   }: {
     userId: string;
@@ -198,10 +212,38 @@ export class EmailVerificationService {
         EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
       );
     }
+  }
 
+  async deleteExistingVerificationTokens({ userId }: { userId: string }) {
     await this.appTokenRepository.delete({
       userId,
       type: AppTokenType.EmailVerificationToken,
     });
+  }
+
+  async throttleVerificationEmailSendingOrThrow({
+    key,
+    limit,
+  }: {
+    key: string;
+    limit: number;
+  }) {
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        buildVerificationEmailSendingThrottleKey(key),
+        1,
+        limit,
+        VERIFICATION_EMAIL_SENDING_THROTTLE.ttlInMs,
+      );
+    } catch (error) {
+      if (!(error instanceof ThrottlerException)) {
+        throw error;
+      }
+
+      throw new EmailVerificationException(
+        'Verification email sending rate limit exceeded',
+        EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED,
+      );
+    }
   }
 }

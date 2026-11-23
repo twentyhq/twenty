@@ -21,7 +21,6 @@ import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
 
 import { type ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { type AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
-import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-delay-ms.constant';
 import { SyncSubscriptionApplicationsJob } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -95,13 +94,11 @@ describe('Application price per connected account (integration)', () => {
   const findApplicationItem = () =>
     stripeItems.find(({ price }) => price.id === applicationMonthPriceId);
 
-  const runDelayedApplicationsSync = async () => {
+  const runApplicationsSync = async () => {
     expect(billingQueueAddSpy).toHaveBeenCalledWith(
       SyncSubscriptionApplicationsJob.name,
       { workspaceId },
-      expect.objectContaining({
-        delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
-      }),
+      expect.not.objectContaining({ delay: expect.anything() }),
     );
     billingQueueAddSpy.mockClear();
 
@@ -433,14 +430,14 @@ describe('Application price per connected account (integration)', () => {
     const firstConnectedAccountId = await connectAccount({
       handle: 'first-linkedin@apple.dev',
     });
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(1);
 
     const secondConnectedAccountId = await connectAccount({
       handle: 'second-linkedin@apple.dev',
     });
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(2);
 
@@ -450,7 +447,7 @@ describe('Application price per connected account (integration)', () => {
       handle: 'first-linkedin@apple.dev',
       reconnectingConnectedAccountId: firstConnectedAccountId,
     });
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(2);
     expect(updateSubscriptionSpy).toHaveBeenCalledTimes(updateCallCount);
@@ -478,7 +475,7 @@ describe('Application price per connected account (integration)', () => {
 
     await disconnectConnectedAccount(firstConnectedAccountId);
     await waitForAllJobsToFinish();
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(1);
 
@@ -494,7 +491,7 @@ describe('Application price per connected account (integration)', () => {
 
     await deleteConnectedAccount(secondConnectedAccountId);
     await waitForAllJobsToFinish();
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()).toBeUndefined();
     expect(updateSubscriptionSpy).toHaveBeenLastCalledWith(
