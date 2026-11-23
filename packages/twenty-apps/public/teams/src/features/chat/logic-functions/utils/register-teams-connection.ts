@@ -5,6 +5,7 @@ import {
   kv,
 } from 'twenty-sdk/logic-function';
 
+import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { type TeamsTenantClaimConflict } from 'src/features/chat/logic-functions/types/teams-tenant-claim-conflict.type';
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
 import { buildTeamsTenantClaimConflictKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-claim-conflict-kv-key';
@@ -44,18 +45,20 @@ const matchTeamsDirectoryOnConnect = async ({
   }
 };
 
+// Claimed whatever the Enable chat setting: nothing runs when it changes, so a claim tied to it would go stale.
 export const registerTeamsConnection = async ({
   connectedAccountId,
   workspaceId,
+  shouldMatchDirectory = true,
 }: {
   connectedAccountId: string;
   workspaceId: string;
+  shouldMatchDirectory?: boolean;
 }): Promise<{
   claimedTenantId: string | null;
   conflictingTenantId?: string;
 }> => {
-  const isChatEnabled = isTeamsChatEnabled();
-  const connection = isChatEnabled
+  const connection = RELEASE_FLAGS.IS_CHAT_ASSISTANT_RELEASED
     ? await getConnection(connectedAccountId)
     : undefined;
 
@@ -92,7 +95,9 @@ export const registerTeamsConnection = async ({
 
   await deleteTeamsTenantClaimConflict({ connectedAccountId });
 
-  await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
+  if (shouldMatchDirectory && isTeamsChatEnabled()) {
+    await matchTeamsDirectoryOnConnect({ connection, accessToken, tenantId });
+  }
 
   return { claimedTenantId: tenantId };
 };

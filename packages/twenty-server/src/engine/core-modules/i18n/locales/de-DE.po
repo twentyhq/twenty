@@ -42,6 +42,11 @@ msgstr "\"{0}\" ist kein gültiges Unterfeld von \"{1}\"."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "\"{fieldName}\" hat einen ungültigen Wert erhalten."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "„{name}“ kann in dieser Sichtbarkeitsbeschränkung nicht verwendet werden"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -406,6 +411,16 @@ msgstr "Eine Notiz"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Ein Notiz-Ziel"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Eine Eins-zu-viele-Morph-Beziehung kann nicht direkt verglichen werden, gehen Sie über die Beziehung, um ein Feld ihrer Datensätze zu vergleichen"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Eine Eins-zu-viele-Beziehung unterstützt nur die Operanden IS_EMPTY und IS_NOT_EMPTY, gehen Sie über die Beziehung, um ein Feld ihrer Datensätze zu vergleichen"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3118,6 +3133,11 @@ msgstr "Mit dem Kontakt verbundene Chats"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Mit der Opportunity verbundene Chats"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Die Überprüfung, ob eine Eins-zu-viele-Beziehung leer ist, erfordert Beziehungssprünge in Berechtigungsprädikaten auf Zeilenebene"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7866,6 +7886,11 @@ msgstr "Ungültige viewUniversalIdentifier für Felder-Widget"
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "Ungültige viewUniversalIdentifier für Felder-Widget \"{widgetTitle}\". Erwartet wurde eine gültige UUID"
+
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "Ungültige Sichtbarkeitsbeschränkung: {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15558,6 +15583,13 @@ msgstr "Diese Objektberechtigung ist für die Rolle bereits festgelegt"
 msgid "This operand is not supported for this field"
 msgstr "Dieser Operand wird für dieses Feld nicht unterstützt"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Dieser Operand wird für diese Beziehung nicht unterstützt"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15832,6 +15864,11 @@ msgstr "Dieser Workflow existiert bereits"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Dieser Workflow existiert bereits."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Diese Workflow-Kennung stimmt mit mehr als einem Workflow überein."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17476,6 +17513,16 @@ msgstr "ViewId ist erforderlich, um eine Ansichtsgruppe zu erstellen."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId ist erforderlich, um eine Ansichtsordnung zu erstellen."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "Sichtbarkeitsbeschränkung kann nicht gelesen werden"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "Sichtbarkeitsbeschränkung hat zu viele Bedingungen"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -17556,6 +17603,16 @@ msgstr "Die Verbindung konnte nicht gestartet werden. Bitte versuchen Sie es ern
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Wir konnten diesen Schlüssel nicht überprüfen. Überprüfen Sie ihn oder versuchen Sie es später erneut, falls der Dienst nicht verfügbar ist."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Diese App konnte nicht abgerechnet werden. Aktualisieren Sie Ihre Zahlungsmethode und versuchen Sie es erneut."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Diese Verbindung konnte nicht abgerechnet werden. Aktualisieren Sie Ihre Zahlungsmethode und versuchen Sie es erneut."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

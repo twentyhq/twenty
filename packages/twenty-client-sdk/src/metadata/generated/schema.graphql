@@ -574,6 +574,7 @@ type Application {
 
 type ApplicationAuthorization {
   applicationId: UUID!
+  applicationLogoUrl: String
   applicationName: String!
   applicationUniversalIdentifier: String
   createdAt: DateTime!
@@ -2499,6 +2500,7 @@ enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
   IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
@@ -3798,6 +3800,7 @@ type Mutation {
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
+  updateRelatedRecordPath(input: UpdateRelatedRecordPathInput!): RelatedRecordPath!
   updateSkill(input: UpdateSkillInput!): Skill!
   updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
@@ -4676,6 +4679,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isActive: Boolean!
   isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
@@ -5709,6 +5713,12 @@ input UpdatePageLayoutWithTabsInput {
   objectMetadataId: UUID
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
   type: PageLayoutType!
+}
+
+input UpdateRelatedRecordPathInput {
+  id: UUID!
+  isActive: Boolean
+  isInherent: Boolean
 }
 
 input UpdateRoleInput {
