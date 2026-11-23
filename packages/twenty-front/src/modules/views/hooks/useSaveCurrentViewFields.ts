@@ -13,6 +13,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from 'twenty-shared/utils';
+import { removeTypenames } from '~/utils/removeTypenames';
 
 export const useSaveCurrentViewFields = () => {
   const { canPersistChanges } = useCanPersistViewChanges();
@@ -64,6 +65,9 @@ export const useSaveCurrentViewFields = () => {
               isCanonical: viewFieldToCreateOrUpdate.isCanonical,
               relationTargetFieldMetadataId:
                 viewFieldToCreateOrUpdate.relationTargetFieldMetadataId,
+              relationScope: removeTypenames(
+                viewFieldToCreateOrUpdate.relationScope,
+              ),
               size: viewFieldToCreateOrUpdate.size,
               aggregateOperation: viewFieldToCreateOrUpdate.aggregateOperation,
               viewId: currentViewId,

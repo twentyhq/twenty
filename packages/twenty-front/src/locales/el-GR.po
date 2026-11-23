@@ -3604,12 +3604,12 @@ msgstr "Να επιτρέπεται"
 #. js-lingui-id: rgjDVZ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow {settingsEntryLabel} in macOS settings"
-msgstr ""
+msgstr "Να επιτρέπεται το {settingsEntryLabel} στις ρυθμίσεις του macOS"
 
 #. js-lingui-id: CzjC6l
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow {settingsEntryLabel} in Windows settings"
-msgstr ""
+msgstr "Να επιτρέπεται το {settingsEntryLabel} στις ρυθμίσεις των Windows"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3665,12 +3665,12 @@ msgstr "Επιτρέψτε τη σύνδεση μέσω Microsoft για χρή�
 #. js-lingui-id: iN398g
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Allow notifications"
-msgstr ""
+msgstr "Να επιτρέπονται οι ειδοποιήσεις"
 
 #. js-lingui-id: kDJaGH
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow notifications in your browser"
-msgstr ""
+msgstr "Να επιτρέπονται οι ειδοποιήσεις στο πρόγραμμα περιήγησής σας"
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -6381,7 +6381,7 @@ msgstr "Ελέγξτε τα εισερχόμενά σας για να επαλη
 #. js-lingui-id: iY9Tuz
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Check your system notification settings"
-msgstr ""
+msgstr "Ελέγξτε τις ρυθμίσεις ειδοποιήσεων του συστήματός σας"
 
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10613,12 +10613,12 @@ msgstr "Η υπαγόρευση δεν υποστηρίζεται σε αυτό 
 #. js-lingui-id: rgWPME
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Did you see a test notification?"
-msgstr ""
+msgstr "Είδατε μια δοκιμαστική ειδοποίηση;"
 
 #. js-lingui-id: kd/w8u
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Did you see it this time?"
-msgstr ""
+msgstr "Την είδατε αυτή τη φορά;"
 
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10813,7 +10813,7 @@ msgstr "Εγγραφές DNS:"
 #. js-lingui-id: 5bBKM2
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Do not disturb"
-msgstr ""
+msgstr "Μην ενοχλείτε"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -18474,7 +18474,7 @@ msgstr "εκ."
 #. js-lingui-id: PcJKDa
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
-msgstr ""
+msgstr "Το macOS μπορεί να αποκλείσει τις ειδοποιήσεις ακόμη και όταν το {browserLabel} επιτρέπει το Twenty. Ανοίξτε τις ειδοποιήσεις, επιλέξτε {settingsEntryLabel} και ενεργοποιήστε την επιλογή Να επιτρέπονται οι ειδοποιήσεις. Αν η Συγκέντρωση είναι ενεργή, απενεργοποιήστε την. Στη συνέχεια, στείλτε μια δοκιμή."
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -20083,7 +20083,7 @@ msgstr "Τα νέα μηνύματα εισερχομένων σας ειδοπ�
 #. js-lingui-id: Wi5Riu
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "New inbox messages will show up like the test notification while your browser is running."
-msgstr ""
+msgstr "Τα νέα μηνύματα εισερχομένων θα εμφανίζονται όπως η δοκιμαστική ειδοποίηση όσο εκτελείται το πρόγραμμα περιήγησής σας."
 
 #. js-lingui-id: ynuJvo
 #: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
@@ -21439,7 +21439,7 @@ msgstr "Κανένας χώρος εργασίας δεν αντιστοιχεί
 #. js-lingui-id: LayLjZ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "No, read the guide"
-msgstr ""
+msgstr "Όχι, διαβάστε τον οδηγό"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -21686,7 +21686,7 @@ msgstr "Ειδοποιήσεις"
 #. js-lingui-id: sdfGbU
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Notifications › {settingsEntryName}"
-msgstr ""
+msgstr "Ειδοποιήσεις › {settingsEntryName}"
 
 #. js-lingui-id: A09awi
 #: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
@@ -21696,7 +21696,7 @@ msgstr "Οι ειδοποιήσεις είναι ενεργοποιημένες"
 #. js-lingui-id: +j76n0
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Notifications are set up"
-msgstr ""
+msgstr "Οι ειδοποιήσεις έχουν ρυθμιστεί"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -22394,7 +22394,7 @@ msgstr "Άνοιγμα πλευρικού πάνελ"
 #. js-lingui-id: TgKqjz
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Open system settings"
-msgstr ""
+msgstr "Άνοιγμα ρυθμίσεων συστήματος"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -24288,7 +24288,7 @@ msgstr "Διαβάστε τη διεύθυνση, τον κάτοχο και τ�
 #. js-lingui-id: 4X88Wc
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Read the guide"
-msgstr ""
+msgstr "Διαβάστε τον οδηγό"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -29483,7 +29483,7 @@ msgstr "Σύστημα"
 #. js-lingui-id: q2LSdK
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "System › Notifications"
-msgstr ""
+msgstr "Σύστημα › Ειδοποιήσεις"
 
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
@@ -31581,7 +31581,7 @@ msgstr "Μετατροπή σε"
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
-msgstr ""
+msgstr "Ενεργοποίηση ειδοποιήσεων"
 
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -33670,12 +33670,12 @@ msgstr "Συναντήσαμε πρόβλημα κατά την επαλήθευ
 #. js-lingui-id: zXOO0X
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "We just sent another test notification."
-msgstr ""
+msgstr "Μόλις στείλαμε άλλη μία δοκιμαστική ειδοποίηση."
 
 #. js-lingui-id: Ik3LPq
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "We just sent one. It shows up in a corner of your screen."
-msgstr ""
+msgstr "Μόλις στείλαμε μία. Εμφανίζεται σε μια γωνία της οθόνης σας."
 
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
@@ -34129,7 +34129,7 @@ msgstr "Θα λάβει αυτό το email"
 #. js-lingui-id: BQiUZ6
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
-msgstr ""
+msgstr "Τα Windows μπορούν να αποκλείσουν το {browserLabel} ακόμη και όταν επιτρέπεται το Twenty. Ανοίξτε τις Ειδοποιήσεις, ενεργοποιήστε το {settingsEntryLabel} και απενεργοποιήστε τη λειτουργία Μην ενοχλείτε. Στη συνέχεια, στείλτε μια δοκιμαστική ειδοποίηση."
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -34685,7 +34685,7 @@ msgstr "Ναι"
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Yes, I saw it"
-msgstr ""
+msgstr "Ναι, την είδα"
 
 #. js-lingui-id: y/0uwd
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
@@ -34874,17 +34874,17 @@ msgstr "Η χρέωσή σας αλλάζει σε μηνιαία στις {0}, 
 #. js-lingui-id: AUurzR
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "your browser"
-msgstr ""
+msgstr "το πρόγραμμα περιήγησής σας"
 
 #. js-lingui-id: TzFYej
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
-msgstr ""
+msgstr "Το πρόγραμμα περιήγησής σας έκλεισε το αίτημα ή το εμφάνισε ως εικονίδιο στη γραμμή διευθύνσεων. Κάντε κλικ σε αυτό το εικονίδιο και επιλέξτε Να επιτρέπεται και, στη συνέχεια, συνεχίστε."
 
 #. js-lingui-id: o3PWYJ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
-msgstr ""
+msgstr "Το πρόγραμμα περιήγησής σας θα ζητήσει να εμφανίζει ειδοποιήσεις από το Twenty. Επιλέξτε Να επιτρέπεται."
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -35076,7 +35076,7 @@ msgstr "Η κατάσταση της συνδρομής σας είναι: {stat
 #. js-lingui-id: nH1nrf
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
-msgstr ""
+msgstr "Το σύστημά σας μπορεί να αποκλείσει το {browserLabel} ακόμη και όταν επιτρέπεται το Twenty. Επιτρέψτε τις ειδοποιήσεις για το {browserLabel} στις ρυθμίσεις του συστήματός σας και, στη συνέχεια, στείλτε μια δοκιμαστική ειδοποίηση."
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts

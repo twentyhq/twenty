@@ -7,29 +7,34 @@ import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import {
+  RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON,
+  type RelationTargetFlatFieldMetadataFailureReason,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/constants/relation-target-flat-field-metadata-failure-reason.constant';
 
-export type RelationTargetFieldMetadataViolation =
-  | 'NOT_MANY_TO_ONE_RELATION'
-  | 'NOT_ON_RELATION_TARGET_OBJECT'
-  | 'INACTIVE'
-  | 'IS_RELATION';
-
-export const getRelationTargetFieldMetadataViolation = ({
+export const resolveRelationTargetFlatFieldMetadata = ({
   flatFieldMetadata,
   relationTargetFieldMetadataUniversalIdentifier,
   flatFieldMetadataMaps,
+  relationType = RelationType.MANY_TO_ONE,
 }: {
   flatFieldMetadata: UniversalFlatFieldMetadata;
   relationTargetFieldMetadataUniversalIdentifier: string;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
-}): RelationTargetFieldMetadataViolation | undefined => {
+  relationType?: RelationType;
+}):
+  | { relationTargetFlatFieldMetadata: UniversalFlatFieldMetadata }
+  | { failureReason: RelationTargetFlatFieldMetadataFailureReason } => {
   if (
     !isRelationUniversalFlatFieldMetadataOfType({
       flatFieldMetadata,
-      relationType: RelationType.MANY_TO_ONE,
+      relationType,
     })
   ) {
-    return 'NOT_MANY_TO_ONE_RELATION';
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.UNEXPECTED_RELATION_TYPE,
+    };
   }
 
   const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -42,7 +47,10 @@ export const getRelationTargetFieldMetadataViolation = ({
     relationTargetFlatFieldMetadata.objectMetadataUniversalIdentifier !==
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier
   ) {
-    return 'NOT_ON_RELATION_TARGET_OBJECT';
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.NOT_ON_RELATION_TARGET_OBJECT,
+    };
   }
 
   if (
@@ -52,14 +60,20 @@ export const getRelationTargetFieldMetadataViolation = ({
       property: 'isActive',
     })
   ) {
-    return 'INACTIVE';
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.INACTIVE,
+    };
   }
 
   if (
     isMorphOrRelationFieldMetadataType(relationTargetFlatFieldMetadata.type)
   ) {
-    return 'IS_RELATION';
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.IS_A_RELATION,
+    };
   }
 
-  return undefined;
+  return { relationTargetFlatFieldMetadata };
 };
