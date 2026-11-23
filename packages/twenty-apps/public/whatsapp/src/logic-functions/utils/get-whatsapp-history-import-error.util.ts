@@ -1,9 +1,8 @@
-import { isNumber, isObject, isString } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 import { AppConnectionAuthFailedError } from 'twenty-sdk/logic-function';
 
+import { isTransientWhatsappError } from 'src/logic-functions/utils/is-transient-whatsapp-error.util';
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
-
-const TRANSIENT_HTTP_STATUSES = [429, 500, 502, 503, 504];
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
@@ -41,11 +40,7 @@ export const getWhatsappHistoryImportError = (
     return { code: 'AUTH_FAILED', message };
   }
 
-  if (
-    (error instanceof Error &&
-      (error.name === 'TypeError' || error.name === 'AbortError')) ||
-    (isNumber(status) && TRANSIENT_HTTP_STATUSES.includes(status))
-  ) {
+  if (isTransientWhatsappError(error)) {
     return { code: 'UNREACHABLE', message };
   }
 

@@ -2,6 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   listMessageChannels,
   reportConnectionAuthFailure,
+  RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -12,6 +13,7 @@ import { findWhatsappConnectionByUnipileAccountId } from 'src/logic-functions/ut
 import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whatsapp-chat-counterparts.util';
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
 import { ingestWhatsappMessages } from 'src/logic-functions/utils/ingest-whatsapp-messages.util';
+import { isTransientWhatsappError } from 'src/logic-functions/utils/is-transient-whatsapp-error.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
@@ -40,6 +42,7 @@ const ingestUnipileMessage = async ({
   const chat = await getUnipileChat({
     accountId: unipileAccountId,
     chatId: message.chat_id,
+    deadlineAtMs: attachmentDeadlineAtMs,
   });
 
   const chatCounterparts = getWhatsappChatCounterparts(chat);
@@ -71,7 +74,7 @@ const ingestUnipileMessage = async ({
   return { handled: true };
 };
 
-export const whatsappHandleWebhookEventHandler = async (
+const handleWebhookEvent = async (
   event: UnipileWebhookEvent,
 ): Promise<WhatsappWebhookEventResult> => {
   const attachmentDeadlineAtMs =
@@ -107,6 +110,23 @@ export const whatsappHandleWebhookEventHandler = async (
       return { handled: true };
     default:
       return { handled: false, reason: `Unhandled event ${eventType}` };
+  }
+};
+
+export const whatsappHandleWebhookEventHandler = async (
+  event: UnipileWebhookEvent,
+): Promise<WhatsappWebhookEventResult> => {
+  try {
+    return await handleWebhookEvent(event);
+  } catch (error) {
+    // Unipile already got its 200 and will not redeliver: only this error type gets the job retried
+    if (isTransientWhatsappError(error)) {
+      throw new RetryableLogicFunctionError(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+
+    throw error;
   }
 };
 

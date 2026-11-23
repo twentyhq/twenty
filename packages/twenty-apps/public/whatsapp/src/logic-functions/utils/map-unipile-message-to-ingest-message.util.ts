@@ -43,7 +43,6 @@ const buildWhatsappMessageParticipants = ({
   ];
 };
 
-// Null for events, deleted messages and senders whose phone number WhatsApp hides
 export const mapUnipileMessageToIngestMessage = ({
   message,
   channelHandle,

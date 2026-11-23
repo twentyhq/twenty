@@ -22,6 +22,9 @@ vi.mock('twenty-sdk/define', () => ({
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
+  RetryableLogicFunctionError: class RetryableLogicFunctionError extends Error {
+    name = 'RetryableLogicFunctionError';
+  },
   listConnections: mocks.listConnections,
   listMessageChannels: mocks.listMessageChannels,
   ingestMessages: mocks.ingestMessages,
@@ -44,6 +47,9 @@ vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
 vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
   downloadUnipileMessageAttachment: mocks.downloadUnipileMessageAttachment,
 }));
+
+const { UnipileRateLimitError, UnipileRequestError } =
+  await import('src/unipile/utils/request-unipile.util');
 
 const { whatsappHandleWebhookEventHandler } =
   await import('src/logic-functions/whatsapp-handle-webhook-event');
@@ -276,6 +282,7 @@ describe('whatsappHandleWebhookEventHandler', () => {
     expect(mocks.getUnipileChat).toHaveBeenCalledExactlyOnceWith({
       accountId: 'acc_1',
       chatId: 'chat-1',
+      deadlineAtMs: expect.any(Number),
     });
     expect(
       mocks.ingestMessages.mock.calls[0][0].messages[0].participants,
@@ -302,6 +309,68 @@ describe('whatsappHandleWebhookEventHandler', () => {
         id: true,
       },
     });
+  });
+
+  it.each([
+    [
+      'Unipile answers 503',
+      new UnipileRequestError('Service unavailable', 503),
+    ],
+    [
+      'the rate limit outlasts the job',
+      new UnipileRateLimitError('Retry in 60 seconds.', 61),
+    ],
+    ['the network drops', new TypeError('fetch failed')],
+  ])('asks for the job to be retried when %s', async (_case, error) => {
+    mocks.getUnipileChat.mockRejectedValue(error);
+
+    await expect(
+      whatsappHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: error.message,
+    });
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it('gives Unipile no longer than the job has left to return the chat', async () => {
+    vi.useFakeTimers({ now: 0 });
+
+    await whatsappHandleWebhookEventHandler(
+      buildMessageEvent({
+        sender_id: DAPHNE.id,
+        sender: DAPHNE,
+        is_sender: false,
+      }),
+    );
+
+    expect(mocks.getUnipileChat).toHaveBeenCalledWith(
+      expect.objectContaining({ deadlineAtMs: 20_000 }),
+    );
+
+    vi.useRealTimers();
+  });
+
+  it('fails without a retry on an error another attempt would not fix', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRequestError('Chat not found', 404),
+    );
+
+    await expect(
+      whatsappHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).rejects.toMatchObject({ name: 'UnipileRequestError' });
   });
 
   it('ignores events of accounts no connection owns', async () => {
