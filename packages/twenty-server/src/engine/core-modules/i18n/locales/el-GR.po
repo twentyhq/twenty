@@ -175,7 +175,7 @@ msgstr "Παρουσιάστηκε σφάλμα κλειδώματος cache."
 #. js-lingui-id: BGPUw0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A calculation on related records cannot be sorted or limited"
-msgstr ""
+msgstr "Ένας υπολογισμός σε σχετικές εγγραφές δεν μπορεί να ταξινομηθεί ή να περιοριστεί"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -217,7 +217,7 @@ msgstr "Ένα φίλτρο γραφήματος του γραφικού στο�
 #. js-lingui-id: pSJj6s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A column name cannot be empty"
-msgstr ""
+msgstr "Το όνομα της στήλης δεν μπορεί να είναι κενό"
 
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -244,12 +244,12 @@ msgstr "Υπάρχει ήδη πάροχος σύνδεσης με αυτό το
 #. js-lingui-id: v8qK2D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A count of related records cannot have a related record field"
-msgstr ""
+msgstr "Μια καταμέτρηση σχετικών εγγραφών δεν μπορεί να έχει πεδίο σχετικής εγγραφής"
 
 #. js-lingui-id: J6ov1V
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A count of related records cannot use a field"
-msgstr ""
+msgstr "Μια καταμέτρηση σχετικών εγγραφών δεν μπορεί να χρησιμοποιεί πεδίο"
 
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -272,7 +272,7 @@ msgstr "Ένα απενεργοποιημένο πεδίο δεν μπορεί �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A deactivated field cannot be used to filter or sort related records"
-msgstr ""
+msgstr "Ένα απενεργοποιημένο πεδίο δεν μπορεί να χρησιμοποιηθεί για φιλτράρισμα ή ταξινόμηση σχετικών εγγραφών"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -474,7 +474,7 @@ msgstr "Μια ηχογράφηση μιας συνάντησης"
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
-msgstr ""
+msgstr "Ένα πεδίο σχετικής εγγραφής μπορεί να εμφανιστεί μόνο σε πεδίο σχέσης πολλά-προς-ένα ή σε πεδίο σχέσης ένα-προς-πολλά με πεδίο εφαρμογής σχέσης"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -484,17 +484,17 @@ msgstr "Η σχέση μιας σχετικής εγγραφής δεν μπορ
 #. js-lingui-id: iBsZzI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A related record's relation cannot be used to filter or sort"
-msgstr ""
+msgstr "Η σχέση μιας σχετικής εγγραφής δεν μπορεί να χρησιμοποιηθεί για φιλτράρισμα ή ταξινόμηση"
 
 #. js-lingui-id: OrK1uF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "A relation scope can only be set on a one-to-many relation field"
-msgstr ""
+msgstr "Ένα πεδίο εφαρμογής σχέσης μπορεί να οριστεί μόνο σε πεδίο σχέσης ένα-προς-πολλά"
 
 #. js-lingui-id: +RRVJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A relation scope related record field can only be used on a many-to-one relation field"
-msgstr ""
+msgstr "Ένα πεδίο σχετικής εγγραφής στο πεδίο εφαρμογής σχέσης μπορεί να χρησιμοποιηθεί μόνο σε πεδίο σχέσης πολλά-προς-ένα"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -688,12 +688,12 @@ msgstr "Παρουσιάστηκε σφάλμα ομάδας πεδίων προ
 #. js-lingui-id: Aexevl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A view field label cannot be empty, use null to show the default label"
-msgstr ""
+msgstr "Η ετικέτα πεδίου προβολής δεν μπορεί να είναι κενή, χρησιμοποιήστε null για να εμφανιστεί η προεπιλεγμένη ετικέτα"
 
 #. js-lingui-id: JmypXw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "Η ετικέτα πεδίου προβολής δεν μπορεί να έχει περισσότερους από {IDENTIFIER_MAX_CHAR_LENGTH} χαρακτήρες"
 
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
@@ -2385,7 +2385,7 @@ msgstr "Γεγονός Ημερολογίου"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event copies synced from this member's calendars"
-msgstr ""
+msgstr "Αντίγραφα συμβάντων ημερολογίου που συγχρονίστηκαν από τα ημερολόγια αυτού του μέλους"
 
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -6615,13 +6615,13 @@ msgstr "Απαιτούνται ψευδώνυμα (handle aliases)."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Handle of the calendar this event was synced from"
-msgstr ""
+msgstr "Αναγνωριστικό του ημερολογίου από το οποίο συγχρονίστηκε αυτό το συμβάν"
 
 #. js-lingui-id: fC7TD7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Handle of the mailbox this message was synced from"
-msgstr ""
+msgstr "Αναγνωριστικό του γραμματοκιβωτίου από το οποίο συγχρονίστηκε αυτό το μήνυμα"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -8922,7 +8922,7 @@ msgstr "Δεν βρέθηκε το κανάλι μηνυμάτων."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message copies synced from this member's mailboxes"
-msgstr ""
+msgstr "Αντίγραφα μηνυμάτων που συγχρονίστηκαν από τα γραμματοκιβώτια αυτού του μέλους"
 
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -10178,12 +10178,12 @@ msgstr "Ένα ή περισσότερα αιτηθέντα πεδία πρόσ�
 #. js-lingui-id: 7bNnyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
-msgstr ""
+msgstr "Μόνο μια στήλη που συνδέεται με μία εγγραφή ή μια φιλτραρισμένη στήλη σχετικών εγγραφών μπορεί να εμφανίσει ένα πεδίο των σχετικών εγγραφών"
 
 #. js-lingui-id: RryrSe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only a column listing related records can filter, sort or limit them"
-msgstr ""
+msgstr "Μόνο μια στήλη που παραθέτει σχετικές εγγραφές μπορεί να τις φιλτράρει, να τις ταξινομεί ή να τις περιορίζει"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10198,7 +10198,7 @@ msgstr "Μόνο ένα πεδίο που συνδέεται με μία εγγ�
 #. js-lingui-id: FnGPJ0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Only a field linking to one record can use a field of that record"
-msgstr ""
+msgstr "Μόνο ένα πεδίο που συνδέεται με μία εγγραφή μπορεί να χρησιμοποιεί ένα πεδίο αυτής της εγγραφής"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10228,7 +10228,7 @@ msgstr "Μόνο ένα μέλος του χώρου εργασίας μπορε
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
-msgstr ""
+msgstr "Μόνο οι προστιθέμενες στήλες μπορούν να φιλτράρουν, να ταξινομούν ή να περιορίζουν σχετικές εγγραφές"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10258,7 +10258,7 @@ msgstr "Μόνο οι εφαρμογές που έχουν συγχρονιστ�
 #. js-lingui-id: 8t36/D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "Only count, sum, average, min and max can aggregate related records"
-msgstr ""
+msgstr "Μόνο οι λειτουργίες καταμέτρησης, αθροίσματος, μέσου όρου, ελάχιστου και μέγιστου μπορούν να συγκεντρώσουν σχετικές εγγραφές"
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10273,7 +10273,7 @@ msgstr "Επιτρέπονται μόνο περιορισμοί πεδίων."
 #. js-lingui-id: KmZMUH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only non-canonical view fields can have a relation scope"
-msgstr ""
+msgstr "Μόνο μη κανονικά πεδία προβολής μπορούν να έχουν πεδίο εφαρμογής σχέσης"
 
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -11072,7 +11072,7 @@ msgstr "Τηλέφωνα"
 #. js-lingui-id: WPKlX/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "Pick a field of the related records to calculate on"
-msgstr ""
+msgstr "Επιλέξτε ένα πεδίο των σχετικών εγγραφών για τον υπολογισμό"
 
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -11823,12 +11823,12 @@ msgstr "Οι διαδρομές σχετικών εγγραφών απαιτού
 #. js-lingui-id: Kch20t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Related records can only be filtered or sorted by their own fields"
-msgstr ""
+msgstr "Οι σχετικές εγγραφές μπορούν να φιλτραριστούν ή να ταξινομηθούν μόνο βάσει των δικών τους πεδίων"
 
 #. js-lingui-id: GIT0tY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Related records cannot be filtered or sorted by a list of records"
-msgstr ""
+msgstr "Οι σχετικές εγγραφές δεν μπορούν να φιλτραριστούν ή να ταξινομηθούν βάσει λίστας εγγραφών"
 
 #. js-lingui-id: IyP1Db
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
@@ -11837,18 +11837,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Related records filter groups are invalid"
-msgstr ""
+msgstr "Οι ομάδες φίλτρων σχετικών εγγραφών δεν είναι έγκυρες"
 
 #. js-lingui-id: HbwlWt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Related records filters are invalid"
-msgstr ""
+msgstr "Τα φίλτρα σχετικών εγγραφών δεν είναι έγκυρα"
 
 #. js-lingui-id: SV7HLW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
 msgid "Related records sort direction should be ascending or descending"
-msgstr ""
+msgstr "Η κατεύθυνση ταξινόμησης σχετικών εγγραφών πρέπει να είναι αύξουσα ή φθίνουσα"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11920,62 +11920,62 @@ msgstr "Η σχέση δεν είναι ενεργοποιημένη για αυ
 #. js-lingui-id: 7ZohXD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope can only have one root filter group"
-msgstr ""
+msgstr "Το πεδίο εφαρμογής σχέσης μπορεί να έχει μόνο μία ριζική ομάδα φίλτρων"
 
 #. js-lingui-id: cvmKqs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields cannot be one-to-many relations"
-msgstr ""
+msgstr "Τα πεδία του πεδίου εφαρμογής σχέσης δεν μπορούν να είναι σχέσεις ένα-προς-πολλά"
 
 #. js-lingui-id: 9w3/Xr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields must be active"
-msgstr ""
+msgstr "Τα πεδία του πεδίου εφαρμογής σχέσης πρέπει να είναι ενεργά"
 
 #. js-lingui-id: NmTkV8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields must belong to the relation target object"
-msgstr ""
+msgstr "Τα πεδία του πεδίου εφαρμογής σχέσης πρέπει να ανήκουν στο αντικείμενο προορισμού της σχέσης"
 
 #. js-lingui-id: ZTDFle
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group has an invalid logical operator"
-msgstr ""
+msgstr "Η ομάδα φίλτρων του πεδίου εφαρμογής σχέσης έχει μη έγκυρο λογικό τελεστή"
 
 #. js-lingui-id: tY8Auj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group ids must be unique UUIDs"
-msgstr ""
+msgstr "Τα αναγνωριστικά της ομάδας φίλτρων του πεδίου εφαρμογής σχέσης πρέπει να είναι μοναδικά UUID"
 
 #. js-lingui-id: /OizQh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Relation scope filter group not found"
-msgstr ""
+msgstr "Δεν βρέθηκε η ομάδα φίλτρων του πεδίου εφαρμογής σχέσης"
 
 #. js-lingui-id: LHu9vR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group parent not found"
-msgstr ""
+msgstr "Δεν βρέθηκε η γονική ομάδα της ομάδας φίλτρων του πεδίου εφαρμογής σχέσης"
 
 #. js-lingui-id: FrK0wr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter groups can only be nested one level deep"
-msgstr ""
+msgstr "Οι ομάδες φίλτρων του πεδίου εφαρμογής σχέσης μπορούν να είναι ένθετες μόνο σε ένα επίπεδο"
 
 #. js-lingui-id: aNv4KU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Relation scope filter ids must be unique UUIDs"
-msgstr ""
+msgstr "Τα αναγνωριστικά φίλτρων του πεδίου εφαρμογής σχέσης πρέπει να είναι μοναδικά UUID"
 
 #. js-lingui-id: cc0+ro
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
-msgstr ""
+msgstr "Το όριο του πεδίου εφαρμογής σχέσης πρέπει να είναι ακέραιος αριθμός μεταξύ 1 και {QUERY_MAX_RECORDS_FROM_RELATION}"
 
 #. js-lingui-id: xeyqWP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
 msgid "Relation scope sort has an invalid direction"
-msgstr ""
+msgstr "Η ταξινόμηση του πεδίου εφαρμογής σχέσης έχει μη έγκυρη κατεύθυνση"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -13693,13 +13693,13 @@ msgstr "Κυριακή"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Synced Calendar Events"
-msgstr ""
+msgstr "Συγχρονισμένα συμβάντα ημερολογίου"
 
 #. js-lingui-id: ZgRRP1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Synced Messages"
-msgstr ""
+msgstr "Συγχρονισμένα μηνύματα"
 
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -14540,7 +14540,7 @@ msgstr "Το πεδίο ένθετης σχέσης που έχει ρυθμισ
 #. js-lingui-id: MD4f/q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "The number of related records to show is out of range"
-msgstr ""
+msgstr "Ο αριθμός των σχετικών εγγραφών προς εμφάνιση είναι εκτός ορίων"
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14665,7 +14665,7 @@ msgstr "Το πεδίο σχετικής εγγραφής δεν μπορεί ν
 #. js-lingui-id: MBEG9i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "The related record field does not support this aggregate operation"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής δεν υποστηρίζει αυτήν τη λειτουργία συγκέντρωσης"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -14687,27 +14687,27 @@ msgstr "Το πεδίο σχετικής εγγραφής μιας στήλης 
 #. js-lingui-id: uHtomZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
 msgid "The relation scope of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Το πεδίο εφαρμογής σχέσης μιας στήλης που ανήκει σε εφαρμογή δεν μπορεί να αλλάξει"
 
 #. js-lingui-id: Tl0b2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "The relation scope of an aggregate cannot have sorts or a limit"
-msgstr ""
+msgstr "Το πεδίο εφαρμογής σχέσης μιας συγκέντρωσης δεν μπορεί να έχει ταξινομήσεις ή όριο"
 
 #. js-lingui-id: c0bu85
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field cannot be a relation"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής του πεδίου εφαρμογής σχέσης δεν μπορεί να είναι σχέση"
 
 #. js-lingui-id: zJWJeQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field must be active"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής του πεδίου εφαρμογής σχέσης πρέπει να είναι ενεργό"
 
 #. js-lingui-id: WY2/RN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field must belong to the relation target object"
-msgstr ""
+msgstr "Το πεδίο σχετικής εγγραφής του πεδίου εφαρμογής σχέσης πρέπει να ανήκει στο αντικείμενο προορισμού της σχέσης"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -15007,7 +15007,7 @@ msgstr "Αυτός ο πράκτορας έχει αρχειοθετηθεί."
 #. js-lingui-id: IaSvAS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This aggregate operation requires a related record field"
-msgstr ""
+msgstr "Αυτή η λειτουργία συγκέντρωσης απαιτεί πεδίο σχετικής εγγραφής"
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -15108,12 +15108,12 @@ msgstr "Η υπηρεσία push αυτού του προγράμματος πε
 #. js-lingui-id: ohxYfe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This calculation is not available for this field"
-msgstr ""
+msgstr "Αυτός ο υπολογισμός δεν είναι διαθέσιμος για αυτό το πεδίο"
 
 #. js-lingui-id: 4x0ihe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This calculation is not available on related records"
-msgstr ""
+msgstr "Αυτός ο υπολογισμός δεν είναι διαθέσιμος για σχετικές εγγραφές"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -15200,7 +15200,7 @@ msgstr "Αυτή η στήλη προέρχεται από μια εφαρμογ
 #. js-lingui-id: mY8Iz1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
 msgid "This column comes from an application, so the related records it shows cannot be changed"
-msgstr ""
+msgstr "Αυτή η στήλη προέρχεται από μια εφαρμογή, επομένως οι σχετικές εγγραφές που εμφανίζει δεν μπορούν να αλλάξουν"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -15210,7 +15210,7 @@ msgstr "Αυτή η στήλη έχει ήδη επισημανθεί ως μο�
 #. js-lingui-id: tEKss1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "This column name is too long"
-msgstr ""
+msgstr "Αυτό το όνομα στήλης είναι πολύ μεγάλο"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -16192,7 +16192,7 @@ msgstr "Πάρα πολλοί συμμετέχοντες: {attendeeCount}. Το 
 #. js-lingui-id: s/8N3l
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
 msgid "Too many domain validation emails sent. Please try again later."
-msgstr ""
+msgstr "Έχουν σταλεί πάρα πολλά email επικύρωσης τομέα. Δοκιμάστε ξανά αργότερα."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -18301,13 +18301,13 @@ msgstr "Μέλος του χώρου εργασίας που έστειλε αυ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member whose calendar this event was synced from"
-msgstr ""
+msgstr "Μέλος χώρου εργασίας του οποίου το ημερολόγιο χρησιμοποιήθηκε για τον συγχρονισμό αυτού του συμβάντος"
 
 #. js-lingui-id: 6oRXeC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member whose mailbox this message was synced from"
-msgstr ""
+msgstr "Μέλος χώρου εργασίας του οποίου το γραμματοκιβώτιο χρησιμοποιήθηκε για τον συγχρονισμό αυτού του μηνύματος"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
