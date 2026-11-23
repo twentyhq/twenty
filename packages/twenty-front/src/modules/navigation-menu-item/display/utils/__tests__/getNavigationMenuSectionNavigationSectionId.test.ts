@@ -14,14 +14,11 @@ describe('getNavigationMenuSectionNavigationSectionId', () => {
         builtInSectionKey: 'aiChatChannels',
       }),
     ).toBe('AiChatChannels');
-  });
-
-  it('falls back to the per-section id for other built-in sections', () => {
     expect(
       getNavigationMenuSectionNavigationSectionId({
-        id: 'recents-section-id',
-        builtInSectionKey: 'aiChatRecents',
+        id: 'agents-section-id',
+        builtInSectionKey: 'aiAgents',
       }),
-    ).toBe('navigation-menu-section-recents-section-id');
+    ).toBe('AiAgents');
   });
 });
