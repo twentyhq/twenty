@@ -7,6 +7,7 @@ import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-ac
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
@@ -16,6 +17,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     JwtModule,
     TypeOrmModule.forFeature([ApprovedAccessDomainEntity]),
     PermissionsModule,
+    ThrottlerModule,
   ],
   exports: [ApprovedAccessDomainService],
   providers: [
