@@ -2290,11 +2290,6 @@ msgstr "Додати картку"
 msgid "Add CC"
 msgstr "Додати копію"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Додати канал"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "Менш ніж за день"
 msgid "In progress"
 msgstr "У роботі"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "У процесі: забезпечення видимості каналів повідомлень і календаря за допомогою правил дозволів на рівні записів. Потрібні переходи зв'язків."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr ""
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

@@ -2290,11 +2290,6 @@ msgstr "添加银行卡"
 msgid "Add CC"
 msgstr "添加抄送"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "添加渠道"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "不到一天后"
 msgid "In progress"
 msgstr "进行中"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "进行中：使用记录级权限规则强制实施消息和日历频道可见性。需要关系跳转。"
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr ""
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

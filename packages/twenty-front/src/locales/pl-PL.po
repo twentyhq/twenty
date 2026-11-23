@@ -2290,11 +2290,6 @@ msgstr "Dodaj kartę"
 msgid "Add CC"
 msgstr "Dodaj DW"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Dodaj kanał"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "Za mniej niż jeden dzień"
 msgid "In progress"
 msgstr "W trakcie"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "W toku: wymuszanie widoczności kanałów wiadomości i kalendarza za pomocą reguł uprawnień na poziomie rekordu. Wymaga przejść przez relacje."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr ""
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

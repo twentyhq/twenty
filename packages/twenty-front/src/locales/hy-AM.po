@@ -2290,11 +2290,6 @@ msgstr "Ավելացնել քարտ"
 msgid "Add CC"
 msgstr "Ավելացնել CC"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Ավելացնել ալիք"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "Մեկ օրից պակաս ժամանակում"
 msgid "In progress"
 msgstr "Ընթացքում"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Ընթացքի մեջ է. կիրառել հաղորդագրությունների և օրացույցի ալիքների տեսանելիությունը գրառումների մակարդակի թույլտվության կանոններով։ Անհրաժեշտ են հարաբերությունների անցումներ։"
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr ""
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
