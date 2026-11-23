@@ -50,5 +50,6 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
     Icon: IconLego,
     color: 'purple',
     isAi: false,
+    isAiPermissionRequired: true,
   },
 ] as const;
