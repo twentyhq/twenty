@@ -88,13 +88,13 @@ export class CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand extends P
       return;
     }
 
-    await this.updatePageLayoutWidgets({
+    await this.updatePageLayoutWidgetsOrThrow({
       workspaceId,
       pageLayoutWidgetsToUpdate,
     });
   }
 
-  private async updatePageLayoutWidgets({
+  private async updatePageLayoutWidgetsOrThrow({
     workspaceId,
     pageLayoutWidgetsToUpdate,
   }: {
