@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import { NotchedCardShape, SectionShell } from '@/ui';
 
 import { TestimonialsCarousel } from './TestimonialsCarousel';
@@ -11,7 +13,10 @@ export function Testimonials() {
       rhythm="spacious"
       scheme="muted"
     >
-      <TestimonialsCarousel testimonials={TESTIMONIALS} />
+      <TestimonialsCarousel
+        eyebrow={msg`They are the real sales`}
+        testimonials={TESTIMONIALS}
+      />
     </SectionShell>
   );
 }

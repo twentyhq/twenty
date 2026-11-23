@@ -1,10 +1,7 @@
 import { msg } from '@lingui/core/macro';
 
-import { DiscordMark } from '@/icons';
-import {
-  BecomePartnerButton,
-  PartnerApplicationModalRoot,
-} from '@/partner-application';
+import { TalkToUsButton } from '@/contact-cal';
+import { PartnerApplicationModalRoot } from '@/partner-application';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -18,12 +15,16 @@ import {
   JsonLd,
 } from '@/platform/seo';
 import { BecomePartnerFaq } from '@/sections/faq';
+import { HeroBackdrop } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
-import { INTEGRATOR_HERO_STATS, PartnerHero } from '@/sections/partner-hero';
+import { ProductStepper } from '@/sections/product-stepper';
 import {
-  INTEGRATOR_STEPS,
-  PartnerLevels,
-  ProgramExplainer,
+  INTEGRATOR_STEPPER_STEPS,
+  IntegratorApplyButton,
+  IntegratorEarnings,
+  IntegratorLevelCards,
+  PARTNER_LEVELS,
+  ProgramHero,
 } from '@/sections/partner-programs';
 import { PartnerTestimonials } from '@/sections/testimonials';
 import { Button } from '@/ui';
@@ -56,17 +57,12 @@ export default async function IntegratorProgramPage({
           locale,
         )}
       />
-      <Menu communityStats={communityStats} />
+      <Menu communityStats={communityStats} scheme="muted" />
       <main>
-        <PartnerHero
-          badge={msg`Beta`}
-          heading={msg`Become a\n*Twenty integrator*`}
-          body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
-          stats={INTEGRATOR_HERO_STATS}
-          statsNote={msg`Commission on Organization and Enterprise plans`}
+        <ProgramHero
           actions={
             <>
-              <BecomePartnerButton label={msg`Apply as an integrator`} />
+              <IntegratorApplyButton />
               <Button
                 href={`#${HOW_IT_WORKS_ANCHOR_ID}`}
                 label={i18n._(msg`How it works`)}
@@ -74,33 +70,30 @@ export default async function IntegratorProgramPage({
               />
             </>
           }
+          backdrop={
+            <HeroBackdrop imageUrl="/images/partners/hero/partners-hero-soft.webp" />
+          }
+          body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
+          heading={msg`Become a\n*Twenty integrator*`}
         />
-        <ProgramExplainer
+        <IntegratorLevelCards levels={PARTNER_LEVELS} />
+        <IntegratorEarnings />
+        <ProductStepper
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
+          body={msg`Three steps, and no fee to join. You set your own rates and keep what you bill.`}
           eyebrow={msg`How it works`}
           heading={msg`From application *to clients*`}
-          body={msg`Three steps, and no fee to join. You set your own rates and keep what you bill.`}
-          steps={INTEGRATOR_STEPS}
-          closingRow={{
-            title: msg`Get help anytime`,
-            body: msg`Ask our team and partners on the partner Discord.`,
-            marker: <DiscordMark size={16} />,
-          }}
-          footer={[
-            {
-              id: 'levels',
-              node: (
-                <PartnerLevels
-                  action={
-                    <BecomePartnerButton label={msg`Apply as an integrator`} />
-                  }
-                />
-              ),
-            },
-          ]}
+          steps={INTEGRATOR_STEPPER_STEPS}
         />
         <PartnerTestimonials />
-        <BecomePartnerFaq />
+        <BecomePartnerFaq
+          actions={
+            <>
+              <IntegratorApplyButton />
+              <TalkToUsButton label={msg`Talk to us`} variant="outlined" />
+            </>
+          }
+        />
       </main>
     </PartnerApplicationModalRoot>
   );
