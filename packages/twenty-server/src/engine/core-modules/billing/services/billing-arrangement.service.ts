@@ -91,30 +91,6 @@ export class BillingArrangementService {
     });
   }
 
-  async revokeArrangement({
-    workspaceId,
-    arrangementId,
-    revokedAt,
-    revokedByUserId,
-    entityManager,
-  }: {
-    workspaceId: string;
-    arrangementId: string;
-    revokedAt: Date;
-    revokedByUserId: string | null;
-    entityManager?: EntityManager;
-  }): Promise<void> {
-    const billingArrangementRepository = isDefined(entityManager)
-      ? this.billingArrangementRepository.withManager(entityManager)
-      : this.billingArrangementRepository;
-
-    await billingArrangementRepository.update(
-      workspaceId,
-      { id: arrangementId, revokedAt: IsNull() },
-      { revokedAt, revokedByUserId },
-    );
-  }
-
   async findArrangementOrThrow({
     workspaceId,
     arrangementId,
@@ -140,25 +116,31 @@ export class BillingArrangementService {
   async endArrangement({
     arrangement,
     revokedByUserId,
+    now = new Date(),
+    entityManager,
   }: {
     arrangement: Pick<
       BillingArrangementEntity,
       'id' | 'workspaceId' | 'endsAt' | 'revokedAt'
     >;
     revokedByUserId: string | null;
+    now?: Date;
+    entityManager?: EntityManager;
   }): Promise<BillingArrangementEntity> {
-    const now = new Date();
+    const billingArrangementRepository = isDefined(entityManager)
+      ? this.billingArrangementRepository.withManager(entityManager)
+      : this.billingArrangementRepository;
     const endDate = getBillingArrangementEndDate(arrangement);
 
     if (!isDefined(endDate) || endDate > now) {
-      await this.billingArrangementRepository.update(
+      await billingArrangementRepository.update(
         arrangement.workspaceId,
         { id: arrangement.id, revokedAt: IsNull() },
         { revokedAt: now, revokedByUserId },
       );
     }
 
-    return await this.billingArrangementRepository.findOneOrFail(
+    return await billingArrangementRepository.findOneOrFail(
       arrangement.workspaceId,
       { where: { id: arrangement.id } },
     );

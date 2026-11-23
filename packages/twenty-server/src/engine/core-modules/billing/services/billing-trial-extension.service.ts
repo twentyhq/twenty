@@ -162,7 +162,7 @@ export class BillingTrialExtensionService {
         { workspaceId },
       );
 
-    await this.cacheLockService.withLock(
+    return await this.cacheLockService.withLock(
       async () => {
         const now = new Date();
         const activeTrialExtension = await this.findActiveTrialExtension({
@@ -171,7 +171,10 @@ export class BillingTrialExtensionService {
         });
 
         if (activeTrialExtension?.id !== arrangementId) {
-          return;
+          return await this.billingArrangementService.findArrangementOrThrow({
+            workspaceId,
+            arrangementId,
+          });
         }
 
         const stripeSubscription =
@@ -186,26 +189,23 @@ export class BillingTrialExtensionService {
           );
         }
 
-        await this.billingArrangementService.revokeArrangement({
-          workspaceId,
-          arrangementId,
-          revokedAt: now,
-          revokedByUserId,
-        });
+        const endedTrialExtension =
+          await this.billingArrangementService.endArrangement({
+            arrangement: activeTrialExtension,
+            revokedByUserId,
+            now,
+          });
 
         await this.billingSubscriptionService.syncSubscriptionToDatabase({
           workspaceId,
           stripeSubscriptionId: subscription.stripeSubscriptionId,
         });
+
+        return endedTrialExtension;
       },
       buildBillingSubscriptionStateLockKey(subscription.stripeCustomerId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
     );
-
-    return await this.billingArrangementService.findArrangementOrThrow({
-      workspaceId,
-      arrangementId,
-    });
   }
 
   // Runs under the subscription state lock held by the webhook
@@ -238,11 +238,10 @@ export class BillingTrialExtensionService {
         return;
       case 'END':
         if (isDefined(activeTrialExtension)) {
-          await this.billingArrangementService.revokeArrangement({
-            workspaceId,
-            arrangementId: activeTrialExtension.id,
-            revokedAt: now,
+          await this.billingArrangementService.endArrangement({
+            arrangement: activeTrialExtension,
             revokedByUserId: null,
+            now,
           });
         }
 
@@ -301,11 +300,10 @@ export class BillingTrialExtensionService {
   }): Promise<BillingArrangementEntity> {
     return await this.dataSource.transaction(async (entityManager) => {
       if (isDefined(activeTrialExtension)) {
-        await this.billingArrangementService.revokeArrangement({
-          workspaceId,
-          arrangementId: activeTrialExtension.id,
-          revokedAt: now,
+        await this.billingArrangementService.endArrangement({
+          arrangement: activeTrialExtension,
           revokedByUserId: actorUserId,
+          now,
           entityManager,
         });
       }
