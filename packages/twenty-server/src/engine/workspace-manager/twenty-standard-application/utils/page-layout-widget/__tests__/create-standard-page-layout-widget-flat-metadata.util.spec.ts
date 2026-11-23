@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
-describe('standard page layout widget conditional availability', () => {
+describe('createStandardPageLayoutWidgetFlatMetadata', () => {
   it('should store a tree for every built-in widget that declares a text rule', () => {
     const {
       allFlatEntityMaps: { flatPageLayoutWidgetMaps },
