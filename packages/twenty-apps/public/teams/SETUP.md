@@ -75,12 +75,15 @@ and a future chat release.
 Chat lets workspace members message the Teams Assistant bot from Microsoft
 Teams. It needs the [bot server variables](#bot-server-variables), the
 `IS_CHAT_ASSISTANT_RELEASED` release flag, and the workspace's **Enable chat**
-setting.
+setting. Chat supports Microsoft 365 commercial tenants. GCC tenants should
+work according to Microsoft's documentation but have not been tested. GCC High
+and DoD tenants are not supported.
 
 1. In the Azure Bot resource, set the messaging endpoint to
-   `https://<your-twenty-host>/webhooks/server/c78db1b1-a0ec-4183-9edd-63299ab5a477`
-   and enable the Microsoft Teams channel. The Twenty server must be reachable
-   from the internet over HTTPS.
+   `https://<your-twenty-host>/webhooks/server/<application-registration-id>/c78db1b1-a0ec-4183-9edd-63299ab5a477`
+   and enable the Microsoft Teams channel. See [where to find the application
+   registration id](#application-registration-id). The Twenty server must be
+   reachable from the internet over HTTPS.
 2. Add the bot to a Teams app (for example in the Teams Developer Portal, using
    `TEAMS_BOT_APP_ID` as the bot ID) and install it for your users.
 3. Turn on **Enable chat**, then add a **workspace-shared** Microsoft connection.
@@ -92,15 +95,23 @@ setting.
    settings page shows an error banner until that workspace disconnects and
    this one reconnects.
 
-The route verifies the Bot Framework token on every activity and ignores
-activities from tenants no workspace has claimed. The bot answers direct
-messages, and channel or group messages that mention it. It answers as the
+The route verifies the Bot Framework token on every activity. When no workspace
+has claimed the sender's tenant, the bot says so in that conversation, at most
+once an hour, and does nothing else; it does the same when the claiming
+workspace has turned **Enable chat** off. The bot answers direct messages, and
+channel or group messages that mention it. It posts a short welcome when it is
+installed, once per conversation, and answers `help`, `hi`, `hello` or a bare
+mention with the same text, without running the assistant or needing a linked
+account. It answers as the
 workspace member whose email matches the sender's Microsoft account, links that
 account under **Linked Teams accounts**, and replies with a short notice when no
 member matches. Members who can manage roles can remove a link there, link a
 directory user by hand, or press **Auto-link by email** to match the whole
 directory again; an account matched on email is linked again on its next
-message or on the next auto-link run.
+message or on the next auto-link run. A message's text is saved on its Teams
+Assistant Request only once the sender is matched to a workspace member, so
+messages from unlinked accounts are not stored. Requests recorded before this
+behavior shipped keep their text.
 
 ## Twenty registration and shared webhook
 
@@ -128,6 +139,18 @@ An unclaimed app, or one not installed in its owner workspace, returns `404`
 has installed it. See [server-route
 setup](https://docs.twenty.com/developers/extend/apps/operations/publishing#setting-up-server-routes).
 
+### Application registration id
+
+Server route URLs have the form
+`https://<your-twenty-host>/webhooks/server/<application-registration-id>/<logic-function-id>`.
+The application registration id is specific to each Twenty instance. To find
+it, open the registration under **Settings → Developers → Apps → My apps**: it
+is the last segment of that page's URL,
+`/settings/developers/apps/<application-registration-id>`.
+
+URLs without the registration id are deprecated and will stop resolving. If an
+endpoint was registered in that form, update it to the form above.
+
 ## Connect
 
 Open **Settings > Applications > Teams > Settings**, select
@@ -143,8 +166,9 @@ the organization. Personal connections do not claim a tenant for chat.
 Transcript imports are on by default. Connecting an account creates a Microsoft
 Graph subscription to the transcripts of the meetings that account organizes.
 Graph delivers its notifications to
-`https://<your-twenty-host>/webhooks/server/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
-so the Twenty server must be reachable from the internet over HTTPS. New
+`https://<your-twenty-host>/webhooks/server/<application-registration-id>/d62e36e1-82bb-4f78-b2ab-54a31faaafab`,
+a URL the app builds itself, so the Twenty server must be reachable from the
+internet over HTTPS. New
 transcripts then import automatically into Call Recordings as Microsoft
 publishes them. If upgrading from a development build with transcript imports
 disabled, reconnect existing accounts to start their subscription and initial

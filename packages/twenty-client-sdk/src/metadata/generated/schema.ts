@@ -498,6 +498,12 @@ export interface ApplicationConnectedAccountDTO {
     __typename: 'ApplicationConnectedAccountDTO'
 }
 
+export interface ApplicationConnectedMemberCount {
+    applicationId: Scalars['UUID']
+    connectedMemberCount: Scalars['Int']
+    __typename: 'ApplicationConnectedMemberCount'
+}
+
 export interface ApplicationConnectionProvider {
     applicationId: Scalars['String']
     displayName: Scalars['String']
@@ -524,6 +530,7 @@ export interface ApplicationContent {
     frontComponents: ApplicationContentItem[]
     indexes: ApplicationContentItem[]
     logicFunctions: ApplicationContentItem[]
+    mcpServers: ApplicationContentItem[]
     navigationMenuItems: ApplicationContentItem[]
     objects: ApplicationContentItem[]
     pageLayoutTabs: ApplicationContentItem[]
@@ -731,7 +738,7 @@ export interface ApplicationRegistration {
     __typename: 'ApplicationRegistration'
 }
 
-export type ApplicationRegistrationSourceType = 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
+export type ApplicationRegistrationSourceType = 'BUNDLED' | 'LOCAL' | 'NPM' | 'OAUTH_ONLY' | 'TARBALL'
 
 export interface ApplicationRegistrationStats {
     activeInstalls: Scalars['Int']
@@ -1644,7 +1651,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PERMISSION_TABLES_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2163,6 +2170,7 @@ export interface MarketplaceApp {
     category: Scalars['String']
     connectUrl?: Scalars['String']
     description: Scalars['String']
+    hasMcpServers: Scalars['Boolean']
     id: Scalars['String']
     isListed: Scalars['Boolean']
     logoUrl?: Scalars['String']
@@ -2927,6 +2935,7 @@ export interface ObjectRecordsPermissions {
     canCreateAllRecords: Scalars['Boolean']
     canDestroyAllRecords: Scalars['Boolean']
     canReadAllRecords: Scalars['Boolean']
+    canReadSomeRecords: Scalars['Boolean']
     canSoftDeleteAllRecords: Scalars['Boolean']
     canUpdateAllRecords: Scalars['Boolean']
     objectMetadataId: Scalars['UUID']
@@ -3283,7 +3292,7 @@ export interface Query {
     findUninstallApplicationJobStatus?: JobStatus
     findUpgradeApplicationJobStatus?: JobStatus
     findWorkspaceAiStats: WorkspaceAiStats
-    findWorkspaceFromInviteHash: Workspace
+    findWorkspaceFromInviteHash: WorkspaceFromInviteHash
     findWorkspaceInvitations: WorkspaceInvitation[]
     frontComponent?: FrontComponent
     frontComponents: FrontComponent[]
@@ -3377,6 +3386,7 @@ export interface Query {
     webhook?: Webhook
     webhooks: Webhook[]
     workspaceApplicationAuthorizations: ApplicationAuthorization[]
+    workspaceApplicationConnectedMemberCounts: ApplicationConnectedMemberCount[]
     __typename: 'Query'
 }
 
@@ -3552,6 +3562,7 @@ export interface RowLevelPermissionPredicate {
     subFieldName?: Scalars['String']
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
+    workspaceMemberRelationFieldMetadataId?: Scalars['String']
     workspaceMemberSubFieldName?: Scalars['String']
     __typename: 'RowLevelPermissionPredicate'
 }
@@ -4482,6 +4493,14 @@ export interface WorkspaceCreationDefaultsDTO {
 
 export type WorkspaceDiscoverability = 'HIDDEN' | 'MEMBERS_AND_INVITEES' | 'PUBLIC'
 
+export interface WorkspaceFromInviteHash {
+    allowImpersonation: Scalars['Boolean']
+    displayName?: Scalars['String']
+    id: Scalars['UUID']
+    logo?: Scalars['String']
+    __typename: 'WorkspaceFromInviteHash'
+}
+
 export interface WorkspaceInvitation {
     email: Scalars['String']
     expiresAt: Scalars['DateTime']
@@ -5081,6 +5100,13 @@ export interface ApplicationConnectedAccountDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationConnectedMemberCountGenqlSelection{
+    applicationId?: boolean | number
+    connectedMemberCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationConnectionProviderGenqlSelection{
     applicationId?: boolean | number
     displayName?: boolean | number
@@ -5109,6 +5135,7 @@ export interface ApplicationContentGenqlSelection{
     frontComponents?: ApplicationContentItemGenqlSelection
     indexes?: ApplicationContentItemGenqlSelection
     logicFunctions?: ApplicationContentItemGenqlSelection
+    mcpServers?: ApplicationContentItemGenqlSelection
     navigationMenuItems?: ApplicationContentItemGenqlSelection
     objects?: ApplicationContentItemGenqlSelection
     pageLayoutTabs?: ApplicationContentItemGenqlSelection
@@ -7040,6 +7067,7 @@ export interface MarketplaceAppGenqlSelection{
     category?: boolean | number
     connectUrl?: boolean | number
     description?: boolean | number
+    hasMcpServers?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
     logoUrl?: boolean | number
@@ -7815,6 +7843,7 @@ export interface ObjectRecordsPermissionsGenqlSelection{
     canCreateAllRecords?: boolean | number
     canDestroyAllRecords?: boolean | number
     canReadAllRecords?: boolean | number
+    canReadSomeRecords?: boolean | number
     canSoftDeleteAllRecords?: boolean | number
     canUpdateAllRecords?: boolean | number
     objectMetadataId?: boolean | number
@@ -8202,7 +8231,7 @@ export interface QueryGenqlSelection{
     findUninstallApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
     findUpgradeApplicationJobStatus?: (JobStatusGenqlSelection & { __args: {jobId?: (Scalars['String'] | null), universalIdentifier: Scalars['String']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
-    findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
+    findWorkspaceFromInviteHash?: (WorkspaceFromInviteHashGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     frontComponents?: FrontComponentGenqlSelection
@@ -8301,7 +8330,8 @@ export interface QueryGenqlSelection{
     validationRulesReadingField?: (ValidationRuleGenqlSelection & { __args: {fieldMetadataId: Scalars['UUID']} })
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     webhooks?: WebhookGenqlSelection
-    workspaceApplicationAuthorizations?: ApplicationAuthorizationGenqlSelection
+    workspaceApplicationAuthorizations?: (ApplicationAuthorizationGenqlSelection & { __args?: {applicationId?: (Scalars['UUID'] | null)} })
+    workspaceApplicationConnectedMemberCounts?: ApplicationConnectedMemberCountGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8494,6 +8524,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     subFieldName?: boolean | number
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
+    workspaceMemberRelationFieldMetadataId?: boolean | number
     workspaceMemberSubFieldName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8531,7 +8562,7 @@ export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boole
 
 export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
 
-export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
+export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberRelationFieldMetadataId?: (Scalars['UUID'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
@@ -9784,6 +9815,15 @@ export interface WorkspaceCreationDefaultsDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WorkspaceFromInviteHashGenqlSelection{
+    allowImpersonation?: boolean | number
+    displayName?: boolean | number
+    id?: boolean | number
+    logo?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface WorkspaceInvitationGenqlSelection{
     email?: boolean | number
     expiresAt?: boolean | number
@@ -10149,6 +10189,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectedAccountDTO = (obj?: { __typename?: any } | null): obj is ApplicationConnectedAccountDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedAccountDTO"')
       return ApplicationConnectedAccountDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationConnectedMemberCount_possibleTypes: string[] = ['ApplicationConnectedMemberCount']
+    export const isApplicationConnectedMemberCount = (obj?: { __typename?: any } | null): obj is ApplicationConnectedMemberCount => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedMemberCount"')
+      return ApplicationConnectedMemberCount_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12777,6 +12825,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const WorkspaceFromInviteHash_possibleTypes: string[] = ['WorkspaceFromInviteHash']
+    export const isWorkspaceFromInviteHash = (obj?: { __typename?: any } | null): obj is WorkspaceFromInviteHash => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceFromInviteHash"')
+      return WorkspaceFromInviteHash_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const WorkspaceInvitation_possibleTypes: string[] = ['WorkspaceInvitation']
     export const isWorkspaceInvitation = (obj?: { __typename?: any } | null): obj is WorkspaceInvitation => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInvitation"')
@@ -12981,6 +13037,7 @@ export const enumApplicationHealthStatus = {
 }
 
 export const enumApplicationRegistrationSourceType = {
+   BUNDLED: 'BUNDLED' as const,
    LOCAL: 'LOCAL' as const,
    NPM: 'NPM' as const,
    OAUTH_ONLY: 'OAUTH_ONLY' as const,
@@ -13233,9 +13290,11 @@ export const enumFeatureFlagKey = {
    IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_AI_DATA_POLICY_ENABLED: 'IS_AI_DATA_POLICY_ENABLED' as const,
+   IS_APPLICATION_PRICE_BILLING_ENABLED: 'IS_APPLICATION_PRICE_BILLING_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED: 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' as const,
    IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED: 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' as const,
+   IS_CHANNEL_VISIBILITY_RLS_ENABLED: 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
@@ -13244,7 +13303,6 @@ export const enumFeatureFlagKey = {
    IS_LOOKUP_COLUMNS_ENABLED: 'IS_LOOKUP_COLUMNS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
    IS_MESSAGE_ATTACHMENT_ENABLED: 'IS_MESSAGE_ATTACHMENT_ENABLED' as const,
-   IS_PERMISSION_TABLES_ENABLED: 'IS_PERMISSION_TABLES_ENABLED' as const,
    IS_PRIVATE_RECORDS_ENABLED: 'IS_PRIVATE_RECORDS_ENABLED' as const,
    IS_RECORD_GROUP_TABS_ENABLED: 'IS_RECORD_GROUP_TABS_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,

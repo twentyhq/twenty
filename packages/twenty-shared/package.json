@@ -48,6 +48,7 @@
     "ai": "7.0.126",
     "cjs-module-lexer": "^2.2.0",
     "class-validator": "^0.14.0",
+    "date-fns": "^4.4.0",
     "entities": "^4.5.0",
     "esbuild": "^0.28.1",
     "expr-eval-fork": "3.0.3",
@@ -96,6 +97,14 @@
         "default": "./dist/application-runtime/index.mjs"
       },
       "require": "./dist/application-runtime/index.cjs"
+    },
+    "./conditional-availability": {
+      "types": "./dist/conditional-availability/index.d.ts",
+      "import": {
+        "development": "./dist/dev/conditional-availability/index.mjs",
+        "default": "./dist/conditional-availability/index.mjs"
+      },
+      "require": "./dist/conditional-availability/index.cjs"
     },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
@@ -231,6 +240,7 @@
     "ai",
     "application",
     "application-runtime",
+    "conditional-availability",
     "constants",
     "database-events",
     "front-component-build",
@@ -258,6 +268,9 @@
       ],
       "application-runtime": [
         "dist/application-runtime/index.d.ts"
+      ],
+      "conditional-availability": [
+        "dist/conditional-availability/index.d.ts"
       ],
       "constants": [
         "dist/constants/index.d.ts"

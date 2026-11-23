@@ -2,7 +2,7 @@ import { MarkdownRenderer } from '@/ai-chat/message-content/components/MarkdownR
 import { StyledAiChatContentContainer } from '@/ai-chat/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
-import { AiChatSuggestedPrompts } from '@/ai-chat/suggested-prompts/components/AiChatSuggestedPrompts';
+import { AiChatSuggestedPrompts } from '@/ai-chat/composer/components/AiChatSuggestedPrompts';
 import { useShouldShowAiChatEmptyState } from '@/ai-chat/hooks/useShouldShowAiChatEmptyState';
 
 const StyledEmptyState = styled(StyledAiChatContentContainer)`

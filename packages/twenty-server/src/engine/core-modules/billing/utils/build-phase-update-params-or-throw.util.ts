@@ -56,25 +56,23 @@ export const buildPhaseUpdateParamsOrThrow = ({
     start_date: startDate,
     ...(isDefined(endDate) ? { end_date: endDate } : {}),
     proration_behavior: 'none',
-    items: currentItems.map((item, index) => {
-      const managedPrice = resolveManagedItemPrice({
-        productKey: resolvedProductKeys[index],
-        toUpdatePrices,
-      });
+    items: [
+      ...currentItems.flatMap((item, index) => {
+        if (resolvedProductKeys[index] === BillingProductKey.APPLICATION) {
+          return [];
+        }
 
-      if (isDefined(managedPrice)) {
-        return managedPrice;
-      }
-
-      const applicationPriceId = isDefined(item.price)
-        ? toUpdatePrices.targetApplicationPriceIdByCurrentPriceId?.get(
-            item.price,
-          )
-        : undefined;
-
-      return isDefined(applicationPriceId)
-        ? { ...item, price: applicationPriceId }
-        : item;
-    }),
+        return [
+          resolveManagedItemPrice({
+            productKey: resolvedProductKeys[index],
+            toUpdatePrices,
+          }) ?? item,
+        ];
+      }),
+      ...toUpdatePrices.applicationItems.map(({ stripePriceId, quantity }) => ({
+        price: stripePriceId,
+        quantity,
+      })),
+    ],
   };
 };

@@ -6,7 +6,7 @@ import { MarkAgentChatThreadAsDoneInChannelDocument } from '~/generated-metadata
 export const useMarkAiChatThreadAsDoneInChannel = () => {
   const { updateAiChatThreadChannelCopy } = useUpdateAiChatThreadChannelCopy();
 
-  const markAgentChatThreadAsDoneInChannel = useCallback(
+  const markAiChatThreadAsDoneInChannel = useCallback(
     (threadId: string) =>
       updateAiChatThreadChannelCopy({
         mutation: MarkAgentChatThreadAsDoneInChannelDocument,
@@ -19,5 +19,5 @@ export const useMarkAiChatThreadAsDoneInChannel = () => {
     [updateAiChatThreadChannelCopy],
   );
 
-  return { markAgentChatThreadAsDoneInChannel };
+  return { markAiChatThreadAsDoneInChannel };
 };

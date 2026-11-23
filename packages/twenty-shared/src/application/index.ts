@@ -218,6 +218,7 @@ export type {
 export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
+export { isApplicationBillingPrice } from './isApplicationBillingPrice';
 export { isApplicationBillingPriceAmount } from './isApplicationBillingPriceAmount';
 export { isApplicationBillingPriceCurrency } from './isApplicationBillingPriceCurrency';
 export { isApplicationBillingPricePeriod } from './isApplicationBillingPricePeriod';
@@ -275,8 +276,8 @@ export type {
   LegacyObjectPermissionManifest,
   LegacyFieldPermissionManifest,
   LegacyRowLevelPermissionPredicateGroupManifest,
-  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateManifest,
+  LegacyRowLevelPermissionPredicateManifest,
   RowLevelPermissionRulePredicateGroupManifest,
   FieldRestrictionsManifest,
   RowLevelRecordsPermissionsManifest,
@@ -357,6 +358,8 @@ export { computeDependencyFileChecksum } from './utils/computeDependencyFileChec
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type {
   RowLevelPermissionRuleLink,
+  FlattenedRowLevelPermissionPredicateGroupManifest,
+  FlattenedRowLevelPermissionPredicateManifest,
   FlattenedRowLevelPermissionRuleManifests,
 } from './utils/flattenRowLevelPermissionRuleManifests';
 export { flattenRowLevelPermissionRuleManifests } from './utils/flattenRowLevelPermissionRuleManifests';

@@ -11,6 +11,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 
 type SettingsRolePermissionsObjectOperationsSelectProps = {
@@ -18,6 +19,9 @@ type SettingsRolePermissionsObjectOperationsSelectProps = {
   selectedOperations: SettingsRoleObjectPermissionKey[];
   onChange: (selectedOperations: SettingsRoleObjectPermissionKey[]) => void;
   disabled?: boolean;
+  disabledOperationReasons?: Partial<
+    Record<SettingsRoleObjectPermissionKey, string>
+  >;
 };
 
 export const SettingsRolePermissionsObjectOperationsSelect = ({
@@ -25,12 +29,21 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
   selectedOperations,
   onChange,
   disabled = false,
+  disabledOperationReasons = {},
 }: SettingsRolePermissionsObjectOperationsSelectProps) => {
   const { t } = useLingui();
 
+  const disabledOperations = SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
+    (operation) => isDefined(disabledOperationReasons[operation]),
+  );
+
+  const enabledSelectedOperations = selectedOperations.filter(
+    (operation) => !disabledOperations.includes(operation),
+  );
+
   const { label, Icon } = getObjectOperationsSummary({
-    operations: selectedOperations,
-    isAdvanced: selectedOperations.length > 1,
+    operations: enabledSelectedOperations,
+    isAdvanced: enabledSelectedOperations.length > 1,
   });
 
   const selectControl = (
@@ -53,18 +66,19 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
         {selectControl}
       </Dropdown.Trigger>
       <DropdownContent
-        width={GenericDropdownContentWidth.Medium}
+        width={GenericDropdownContentWidth.ExtraLarge}
         align="end"
         aria-label={t`Allowed actions`}
       >
         <Dropdown.SelectionGroup
           aria-label={t`Allowed actions`}
           multiple
-          value={selectedOperations}
+          value={enabledSelectedOperations}
           onValueChange={(nextSelectedValues) =>
             onChange(
               getObjectOperationsWithReadDependency({
-                previousOperations: selectedOperations,
+                previousOperations: enabledSelectedOperations,
+                disabledOperations,
                 nextOperations: SETTINGS_ROLE_OBJECT_PERMISSION_KEYS.filter(
                   (key) => nextSelectedValues.includes(key),
                 ),
@@ -77,6 +91,8 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
               <Dropdown.OptionItem
                 key={key}
                 value={key}
+                disabled={disabledOperations.includes(key)}
+                description={disabledOperationReasons[key]}
                 startIcon={
                   <SelectOptionIcon
                     Icon={SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[key].Icon}

@@ -318,6 +318,11 @@ export const buildApplicationContentFromManifest = (
         tag: connectionProvider.type,
       }),
     ),
+    mcpServers: (manifest.mcpServers ?? []).map((mcpServer) => ({
+      universalIdentifier: mcpServer.universalIdentifier,
+      label: mcpServer.label,
+      description: mcpServer.url,
+    })),
     publicAssets: (manifest.publicAssets ?? []).map(
       buildPublicAssetContentItem,
     ),

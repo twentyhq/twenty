@@ -30,7 +30,6 @@ export const useAnswerToolCallApproval = ({
     const isAnswered = await answerAiChatToolCall({
       toolCallId,
       response,
-      // Only a rejection is certain before the server answers: the approved call can still fail.
       optimisticToolOutput:
         response.decision === 'reject'
           ? buildRejectedToolCallOutput({
@@ -48,14 +47,12 @@ export const useAnswerToolCallApproval = ({
       await refreshFrontComponents();
     }
 
-    // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
       setPendingResponse(null);
     }
   };
 
   const trimmedFeedback = feedback.trim();
-  // feedback goes with either answer, so the agent hears it whatever the person decides
   const feedbackFields =
     trimmedFeedback.length > 0 ? { feedback: trimmedFeedback } : {};
 
