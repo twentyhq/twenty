@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { IconLock, IconUsers } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -13,7 +14,6 @@ import { getRecordShareRoleAccessNote } from '@/object-record/record-sharing/uti
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import {
   RecordSharePrincipalType,
   RecordShareRowCause,

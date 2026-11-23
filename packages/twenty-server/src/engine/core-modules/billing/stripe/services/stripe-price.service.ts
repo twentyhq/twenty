@@ -45,4 +45,8 @@ export class StripePriceService {
 
     return prices;
   }
+
+  async createPrice(params: Stripe.PriceCreateParams): Promise<Stripe.Price> {
+    return await this.stripe.prices.create(params);
+  }
 }

@@ -21,6 +21,7 @@ const updateManyFieldMetadataInputSchema = z.object({
 
 @DefineTool({
   name: 'update_many_field_metadata',
+  isDestructive: true,
   category: ToolCategory.METADATA,
   accessPolicy: FIELD_METADATA_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',

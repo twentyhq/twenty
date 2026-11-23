@@ -13,11 +13,21 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 const COMPANY_ID = '20202020-0000-4000-8000-000000000002';
 const NEW_CHAT_ID = '20202020-0000-4000-8000-0000000000dd';
 
-const switchToNewChat = jest.fn(() => NEW_CHAT_ID);
+const switchToNewAiChat = jest.fn(() => NEW_CHAT_ID);
 const mockHasPermissionFlag = jest.fn(() => true);
 
-jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat', () => ({
-  useSwitchToNewAiChat: () => ({ switchToNewChat }),
+jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
+  useSwitchToNewAiChat: () => ({ switchToNewAiChat }),
+}));
+
+jest.mock('@/ai-chat/composer/hooks/useSendAiChatMessage', () => ({
+  useSendAiChatMessage: () => ({ sendAiChatMessage: jest.fn() }),
+}));
+
+jest.mock('@/ai-chat/hooks/useSelectAiChatThreadFromNewChat', () => ({
+  useSelectAiChatThreadFromNewChat: () => ({
+    selectAiChatThreadFromNewChat: jest.fn(),
+  }),
 }));
 
 jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
@@ -69,7 +79,7 @@ describe('WidgetActionChatThreadCreate', () => {
 
     await user.click(screen.getByRole('button', { name: 'New conversation' }));
 
-    expect(switchToNewChat).toHaveBeenCalledTimes(1);
+    expect(switchToNewAiChat).toHaveBeenCalledTimes(1);
     expect(
       getConversationTargetsFromSerializedDocument(readPersistedNewChatDraft()),
     ).toEqual([{ objectNameSingular: 'company', recordId: COMPANY_ID }]);

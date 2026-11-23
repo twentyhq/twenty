@@ -1,0 +1,104 @@
+---
+title: Inbox Notifications
+description: Get notified of new inbox messages, and fix notifications that don't show up.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<Warning>
+Inbox is a Lab feature: it is still in Early Access, so it may change and have rough edges. To try it, go to **Settings → Community**, open the **Features** section and turn on **Inbox**. See [Community Settings](/user-guide/settings/capabilities/community-settings).
+</Warning>
+
+Twenty can show new inbox messages as notifications on your computer, even when no Twenty tab is open.
+
+## Turn on notifications
+
+1. Go to **Settings → Experience** and find the **Notifications** section.
+2. Click **Allow**, then accept your browser's prompt.
+3. Twenty sends a test notification right away. If you see it, you're done.
+4. Choose which messages notify you: **All chats you follow**, **Direct messages and mentions**, or **Off**.
+5. Turn on **Show message preview** to see the sender and the message text in notifications. Leave it off on shared screens.
+
+Good to know:
+- Notifications are turned on per browser and per workspace: click **Allow** in each browser and each workspace you use.
+- Your notification level and preview choices apply to every device.
+- The section only shows when Inbox is on and your role has access to AI.
+- Use **Send test** after each change below to check that notifications show up.
+
+## Why you don't see notifications
+
+### Twenty is open in front of you
+
+Twenty doesn't send a notification while you are looking at one of its tabs: you already see the message. When you test with a teammate, switch to another app or tab first.
+
+### The message doesn't match your notification level
+
+With **Direct messages and mentions**, other messages in chats you follow don't notify you. With **Off**, nothing does. Change it in **Settings → Experience**.
+
+### Your browser blocks Twenty
+
+If no prompt appeared when you clicked **Allow**, look for a bell icon in the address bar: Chrome and Edge sometimes show a quiet prompt there instead of a popup.
+
+If the card says notifications are blocked, allow them again, then reload Twenty:
+
+<Tabs>
+  <Tab title="Chrome, Brave, Opera, Arc">
+    Click the site information icon on the left of the address bar, then set **Notifications** to **Allow**.
+  </Tab>
+  <Tab title="Edge">
+    Click the lock icon on the left of the address bar, open **Permissions for this site**, then set **Notifications** to **Allow**.
+  </Tab>
+  <Tab title="Firefox">
+    Click the permissions icon or the padlock in the address bar and clear **Send notifications: Blocked**. You can also go to **Settings → Privacy & Security → Permissions → Notifications**.
+  </Tab>
+  <Tab title="Safari">
+    Go to **Safari → Settings → Websites → Notifications** and set Twenty to **Allow**.
+  </Tab>
+</Tabs>
+
+Private and incognito windows can't receive notifications.
+
+### Your computer blocks your browser's notifications
+
+Your browser can allow Twenty while your computer still hides everything your browser sends. Twenty can't detect this, so check these settings:
+
+<Tabs>
+  <Tab title="macOS">
+    1. Open **System Settings → Notifications** and select your browser (Google Chrome, Microsoft Edge, Brave Browser or Firefox). Turn on **Allow notifications**. Chrome, Edge and Brave may also list a "Helper (Alerts)" entry: turn it on too. With Safari, each website has its own entry: select the Twenty one.
+
+       Chrome asks macOS for this permission only once, the first time it starts. If the prompt was missed, notifications stay off until you turn them on here.
+    2. Set the alert style to **Banners** or **Alerts**. On macOS 26, check **Desktop**. With **None**, notifications only go to Notification Center.
+    3. Turn off **Focus** or **Do Not Disturb** (Control Center in the menu bar), or add your browser to the allowed apps of your Focus in **System Settings → Focus**. A Focus turned on on your iPhone also applies to your Mac when **Share across devices** is on.
+    4. macOS hides notifications while you share or mirror your screen, for example during a video call. You can change this with **Allow notifications when mirroring or sharing the display** in **System Settings → Notifications**.
+  </Tab>
+  <Tab title="Windows">
+    1. Open **Settings → System → Notifications** (Windows 10: **Notifications & actions**). Turn on **Notifications**, then your browser (Google Chrome, Microsoft Edge or Firefox), then **Show notification banners** for that browser.
+    2. Turn off **Do not disturb** (Windows 11) or **Focus assist** (Windows 10), or add your browser to your priority notifications. Check the automatic rules too: Windows can turn it on during full-screen apps, games, or when you duplicate your display. Focus sessions also turn on Do not disturb.
+    3. Notification banners disappear after 5 seconds by default. Missed ones stay in the notification center.
+  </Tab>
+</Tabs>
+
+### Your browser was closed
+
+Chrome, Edge, Brave and Firefox only receive notifications while they are running. Safari receives them even when it's closed.
+
+- **On Mac**, closing all windows is fine, but quitting the browser (Cmd+Q) stops notifications until you open it again.
+- **On Windows**, Chrome and Edge stop when you close their last window, unless you turn on:
+  - Chrome: **Settings → System → Continue running background apps when Google Chrome is closed**
+  - Edge: **Settings → System and performance → Continue running background extensions and apps when Microsoft Edge is closed**
+
+Notifications for messages sent while your browser was closed for more than an hour are skipped. You'll still find the messages in your inbox.
+
+### You use Brave
+
+Brave turns off the service browsers use to deliver notifications. If Twenty says "This browser could not turn on notifications", open `brave://settings/privacy`, turn on **Use Google services for push messaging**, restart Brave, then click **Send test** again.
+
+### Your organization blocks notifications
+
+On a work computer, your IT team may block notifications or the service that delivers them. Your browser menu then shows "Managed by your organization". Ask your IT team to allow notifications for Twenty.
+
+## Still not working?
+
+If **Send test** shows a notification but new messages don't, check your notification level and that Twenty wasn't in front of you. Otherwise, reach out on the [community Discord](https://discord.gg/cx5n4Jzs57) or contact support.
+
+<PageBanner illustration="card-page-messaging-channels" />

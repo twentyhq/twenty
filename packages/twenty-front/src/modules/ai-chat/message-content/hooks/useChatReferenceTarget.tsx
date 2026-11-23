@@ -1,3 +1,4 @@
+import { type ChatReferenceMatch } from 'twenty-shared/ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -14,7 +15,6 @@ import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai-chat/message-content/constants/ChatReferencePermissionFlagByKind';
 import { useIsAiChatArtifactSurface } from '@/ai-chat/hooks/useIsAiChatArtifactSurface';
-import { type ChatReferenceMatch } from '@/ai-chat/message-content/types/ChatReferenceMatch';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
@@ -224,7 +224,6 @@ export const useChatReferenceTarget = (
             recordId: reference.recordId,
             objectNameSingular: reference.objectNameSingular,
           });
-      // Application settings aren't routed in the side panel, so the chip navigates like a plain link.
       case 'app':
         return undefined;
       default:

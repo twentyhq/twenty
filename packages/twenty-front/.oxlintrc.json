@@ -140,20 +140,114 @@
       {
         "directions": [
           {
+            "sourcePath": "/src/pages/inbox/",
+            "forbiddenImportPrefixes": ["~/pages/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "a page only composes modules, so it must not import another page. Move the shared piece into the module that owns it."
+          },
+          {
+            "sourcePath": "/src/pages/legacy-ai-chat/",
+            "forbiddenImportPrefixes": ["~/pages/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "a page only composes modules, so it must not import another page. Move the shared piece into the module that owns it."
+          },
+          {
+            "sourcePath": "/src/pages/object-record/",
+            "forbiddenImportPrefixes": ["~/pages/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "a page only composes modules, so it must not import another page. Move the shared piece into the module that owns it."
+          },
+          {
             "sourcePath": "/src/modules/ai-chat/",
-            "forbiddenImportPrefixes": ["@/inbox/"],
+            "forbiddenImportPrefixes": ["@/inbox/", "@/legacy-ai-chat/"],
             "ignoredSourcePaths": [
               "/__tests__/",
               "/__stories__/",
               "/src/modules/ai-chat/testing/"
             ],
-            "reason": "the AI chat must not depend on the inbox. Move the code to modules/inbox, or have the inbox react to what the AI chat exposes."
+            "reason": "the AI chat must not depend on the inbox or the legacy AI chat. Move the code to modules/inbox, or have the inbox react to what the AI chat exposes."
+          },
+          {
+            "sourcePath": "/src/modules/inbox/",
+            "forbiddenImportPrefixes": ["@/legacy-ai-chat/"],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "the legacy AI chat builds on the inbox, not the other way around. Move the code to modules/inbox."
+          },
+          {
+            "sourcePath": "/src/modules/chat/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/",
+              "@/inbox/",
+              "@/legacy-ai-chat/"
+            ],
+            "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
+            "reason": "modules/chat holds the chat UI shared by email threads and the AI chat, so it must not depend on either. Move the code to the module that uses it."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/",
+            "forbiddenImportPrefixes": ["@/onboarding/"],
+            "ignoredSourcePaths": [
+              "/src/modules/ai-chat/instance/",
+              "/__tests__/",
+              "/__stories__/",
+              "/src/modules/ai-chat/testing/"
+            ],
+            "reason": "onboarding builds on the AI chat, so only ai-chat/instance may mount its effects. Move chat code that onboarding owns into ai-chat/workspace-setup."
           },
           {
             "sourcePath": "/src/modules/ai/",
-            "forbiddenImportPrefixes": ["@/ai-chat/"],
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/",
+              "@/inbox/",
+              "@/legacy-ai-chat/"
+            ],
             "ignoredSourcePaths": ["/__tests__/", "/__stories__/"],
             "reason": "modules/ai holds the AI code used outside the chat, so it must not depend on the chat. Move the code to modules/ai-chat."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/",
+            "forbiddenImportPrefixes": ["@/ai-chat/instance/"],
+            "ignoredSourcePaths": [
+              "/src/modules/ai-chat/instance/",
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/",
+              "/src/modules/ai-chat/testing/"
+            ],
+            "reason": "ai-chat/instance mounts a chat and wires the features together, so nothing else in ai-chat may import it. Move the shared code down into a feature or the ai-chat core."
+          },
+          {
+            "sourcePath": "/src/modules/ai-chat/",
+            "forbiddenImportPrefixes": [
+              "@/ai-chat/composer/",
+              "@/ai-chat/messages/",
+              "@/ai-chat/tool-calls/",
+              "@/ai-chat/thinking-steps/",
+              "@/ai-chat/usage/",
+              "@/ai-chat/threads/",
+              "@/ai-chat/message-content/",
+              "@/ai-chat/workspace-setup/",
+              "@/ai-chat/suggested-prompts/",
+              "@/ai-chat/dictation/"
+            ],
+            "ignoredSourcePaths": [
+              "/src/modules/ai-chat/instance/",
+              "/src/modules/ai-chat/composer/",
+              "/src/modules/ai-chat/messages/",
+              "/src/modules/ai-chat/tool-calls/",
+              "/src/modules/ai-chat/thinking-steps/",
+              "/src/modules/ai-chat/usage/",
+              "/src/modules/ai-chat/threads/",
+              "/src/modules/ai-chat/message-content/",
+              "/src/modules/ai-chat/workspace-setup/",
+              "/src/modules/ai-chat/suggested-prompts/",
+              "/src/modules/ai-chat/dictation/",
+              "/__tests__/",
+              "/__stories__/",
+              "/__mocks__/",
+              "/src/modules/ai-chat/testing/"
+            ],
+            "reason": "the ai-chat core is the base every AI chat feature builds on, so it must not import a feature. Move the code into the feature, or into ai-chat/instance if it wires features together."
           },
           {
             "sourcePath": "/src/modules/ai-chat/messages/",

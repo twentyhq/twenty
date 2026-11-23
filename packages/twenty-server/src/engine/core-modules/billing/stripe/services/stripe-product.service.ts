@@ -34,4 +34,21 @@ export class StripeProductService {
 
     return products;
   }
+
+  async getOrCreateProduct(
+    params: Stripe.ProductCreateParams & { id: string },
+  ): Promise<Stripe.Product> {
+    try {
+      return await this.stripe.products.retrieve(params.id);
+    } catch (error) {
+      if (
+        !(error instanceof this.stripe.errors.StripeInvalidRequestError) ||
+        error.code !== 'resource_missing'
+      ) {
+        throw error;
+      }
+
+      return await this.stripe.products.create(params);
+    }
+  }
 }

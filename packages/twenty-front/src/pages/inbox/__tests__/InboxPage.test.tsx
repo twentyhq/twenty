@@ -75,6 +75,17 @@ jest.mock('@/object-metadata/states/objectMetadataItemFamilySelector', () => ({
   },
 }));
 
+jest.mock(
+  '@/ai-chat/threads/states/selectors/aiChatThreadObjectMetadataItemSelector',
+  () => ({
+    aiChatThreadObjectMetadataItemSelector: {
+      get atom() {
+        return chatObjectMetadataItemAtom;
+      },
+    },
+  }),
+);
+
 jest.mock('@/inbox/components/InboxThreadList', () => ({
   InboxThreadList: ({
     threads,
@@ -125,10 +136,6 @@ jest.mock('@/inbox/components/InboxThreadListFetchMoreTrigger', () => ({
   InboxThreadListFetchMoreTrigger: () => null,
 }));
 
-jest.mock('@/inbox/components/InboxThreadListLoadEffect', () => ({
-  InboxThreadListLoadEffect: () => null,
-}));
-
 jest.mock('@/inbox/hooks/useLoadInboxThreadList', () => ({
   useLoadInboxThreadList: () => ({
     loadInboxThreadList: jest.fn(),
@@ -150,20 +157,24 @@ jest.mock('@/inbox/hooks/useInboxOpenThreadsSummary', () => ({
   }),
 }));
 
-jest.mock('@/ai-chat/hooks/useSwitchToNewAiChat', () => ({
-  useSwitchToNewAiChat: () => ({ switchToNewChat: jest.fn() }),
+jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat', () => ({
+  useSwitchToNewAiChat: () => ({ switchToNewAiChat: jest.fn() }),
 }));
 
-jest.mock('~/pages/ai-chat/AiChatPageEffects', () => ({
-  AiChatPageEffects: () => null,
+jest.mock('@/ai-chat/instance/components/AiChatInstanceEffect', () => ({
+  AiChatInstanceEffect: () => null,
 }));
 
-jest.mock('@/ai-chat/components/AiChatTab', () => ({
+jest.mock('@/ai-chat/instance/components/AiChatTab', () => ({
   AiChatTab: () => <div>New conversation composer</div>,
 }));
 
-jest.mock('@/ai-chat/components/AiChatPageHeader', () => ({
-  AiChatPageHeader: ({ actionButton }: { actionButton?: ReactNode }) => (
+jest.mock('@/ai-chat/instance/components/AiChatNewThreadPageHeader', () => ({
+  AiChatNewThreadPageHeader: ({
+    actionButton,
+  }: {
+    actionButton?: ReactNode;
+  }) => (
     <div>
       New chat header
       {actionButton}
@@ -171,9 +182,8 @@ jest.mock('@/ai-chat/components/AiChatPageHeader', () => ({
   ),
 }));
 
-// Sending stands in for the composer with what a send applies right away
-jest.mock('~/pages/ai-chat/AiChatThreadPageContent', () => ({
-  AiChatThreadPageContent: ({
+jest.mock('@/inbox/components/InboxThreadPageContent', () => ({
+  InboxThreadPageContent: ({
     threadId,
     headerTitlePrefix,
     headerActions,
@@ -215,8 +225,6 @@ jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
   InformationBannerWrapper: () => null,
 }));
 
-// Command menu items throw without the context store and command menu
-// instances, so the stand-in requires them too
 jest.mock('@/command-menu-item/contexts/CommandMenuContextProvider', () => ({
   CommandMenuContextProvider: ({ children }: { children: ReactNode }) => {
     useAvailableComponentInstanceIdOrThrow(
@@ -284,7 +292,6 @@ describe('InboxPage', () => {
   });
 
   beforeEach(() => {
-    // The list filter is kept in local storage
     localStorage.clear();
     resetJotaiStore();
     THREADS.forEach((thread) =>
@@ -301,10 +308,9 @@ describe('InboxPage', () => {
         lastLoadedActivityAt: null,
       },
     );
-    // The member's own chats, which they follow
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id, updatedAt }) => [
           id,
           {
@@ -321,7 +327,7 @@ describe('InboxPage', () => {
           },
         ]),
       ),
-    );
+    });
     isMobile = false;
     mockIsInboxEnabled = true;
   });
@@ -341,9 +347,6 @@ describe('InboxPage', () => {
       screen.getByRole('region', { name: 'Conversation list' }),
     ).toBeInTheDocument();
     expect(screen.queryByText(/^Chat page /)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText('No conversation selected'),
-    ).not.toBeInTheDocument();
   });
 
   it('shows a new chat beside the list without opening the first saved chat', () => {
@@ -372,9 +375,9 @@ describe('InboxPage', () => {
       type: 'presetFilter',
       presetFilter: AGENT_CHAT_THREAD_PRESET_FILTER.DONE,
     });
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         THREADS.map(({ id }) => [
           id,
           {
@@ -391,7 +394,7 @@ describe('InboxPage', () => {
           },
         ]),
       ),
-    );
+    });
 
     renderInbox(`/inbox/${secondThread.id}`);
 
@@ -648,9 +651,6 @@ describe('InboxPage', () => {
       renderInbox('/inbox');
 
       expect(screen.queryByText(/Chat page/)).not.toBeInTheDocument();
-      expect(
-        screen.queryByText('No conversation selected'),
-      ).not.toBeInTheDocument();
 
       fireEvent.click(screen.getByRole('button', { name: 'Second chat' }));
 

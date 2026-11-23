@@ -1,5 +1,5 @@
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { useOpenAskAiThread } from '@/ai-chat/hooks/useOpenAskAiThread';
+import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { buildAskAiThreadRedirectPath } from '@/ai-chat/utils/buildAskAiThreadRedirectPath';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';

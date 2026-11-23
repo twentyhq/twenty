@@ -10,7 +10,6 @@ import { findMatchingCalendarEventOrThrow } from 'src/logic-functions/utils/find
 import { formatGranolaSummary } from 'src/logic-functions/utils/format-granola-summary.util';
 import { getGranolaNoteTimeRange } from 'src/logic-functions/utils/get-granola-note-time-range.util';
 import { getGranolaNoteTitle } from 'src/logic-functions/utils/get-granola-note-title.util';
-import { isGranolaPersonalSyncEnabled } from 'src/logic-functions/utils/is-granola-personal-sync-enabled.util';
 import { mapGranolaTranscriptToEntries } from 'src/logic-functions/utils/map-granola-transcript-to-entries.util';
 import { upsertCallRecordingOrThrow } from 'src/logic-functions/utils/upsert-call-recording-or-throw.util';
 
@@ -60,9 +59,7 @@ export const syncGranolaNoteToCallRecordingOrThrow = async ({
       status: hasContent ? 'COMPLETED' : 'PROCESSING',
       recordingRequestStatus: 'REQUESTED',
       externalRecordingId: note.id,
-      ...(isGranolaPersonalSyncEnabled()
-        ? { granolaPersonalNoteUpdatedAt: personalNoteUpdatedAt }
-        : {}),
+      granolaPersonalNoteUpdatedAt: personalNoteUpdatedAt,
       startedAt,
       endedAt,
       ...(isNonEmptyArray(transcript) ? { transcript } : {}),

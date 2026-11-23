@@ -9,7 +9,7 @@ export const GET_CORE_WORKFLOW = gql`
       lastPublishedCoreWorkflowVersionId
       applicationId
       workspaceWorkflowId
-      visibility
+      isPrivate
       canChangeVisibility
       createdAt
       updatedAt

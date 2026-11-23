@@ -8,6 +8,8 @@ type Properties<T> = {
 };
 
 export class ObjectRecordBaseEvent<T = object> {
+  // Assigned once when the event is emitted and kept by every consumer and retry, so receivers can deduplicate
+  eventId: string;
   recordId: string;
   userId?: string;
   userWorkspaceId?: string;

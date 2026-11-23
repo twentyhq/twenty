@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpandedAiChat';
-import { useSwitchToNewAiChat } from '@/ai-chat/hooks/useSwitchToNewAiChat';
+import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
@@ -54,7 +54,7 @@ export const useSwitchNavigationDrawerTab = () => {
   );
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const { switchToNewChat } = useSwitchToNewAiChat({
+  const { switchToNewAiChat } = useSwitchToNewAiChatInInboxChannel({
     shouldOpenInFullPage: true,
   });
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
@@ -91,7 +91,7 @@ export const useSwitchNavigationDrawerTab = () => {
   const switchToAiChat = () => {
     setCurrentMobileNavigationDrawer('main');
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    switchToNewChat();
+    switchToNewAiChat();
   };
 
   // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.

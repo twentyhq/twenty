@@ -68,6 +68,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
   agent: {
     workspace: null,
     application: null,
+    createdBy: null,
   },
   skill: {
     workspace: null,
@@ -518,6 +519,14 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       inverseOneToManyProperty: 'workspaceMemberRowLevelPermissionPredicates',
       isNullable: true,
       universalForeignKey: 'workspaceMemberFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'workspaceMemberRelationFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey:
+        'workspaceMemberRelationFieldMetadataUniversalIdentifier',
     },
     objectMetadata: {
       metadataName: 'objectMetadata',

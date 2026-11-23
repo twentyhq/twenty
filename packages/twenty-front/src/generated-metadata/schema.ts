@@ -46,6 +46,7 @@ export type Agent = {
   isActive: Scalars['Boolean']['output'];
   /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   modelConfiguration?: Maybe<Scalars['JSON']['output']>;
@@ -658,6 +659,12 @@ export type ApplicationConnectedAccountDto = {
   visibility: Scalars['String']['output'];
 };
 
+export type ApplicationConnectedMemberCount = {
+  __typename?: 'ApplicationConnectedMemberCount';
+  applicationId: Scalars['UUID']['output'];
+  connectedMemberCount: Scalars['Int']['output'];
+};
+
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
@@ -685,6 +692,7 @@ export type ApplicationContent = {
   frontComponents: Array<ApplicationContentItem>;
   indexes: Array<ApplicationContentItem>;
   logicFunctions: Array<ApplicationContentItem>;
+  mcpServers: Array<ApplicationContentItem>;
   navigationMenuItems: Array<ApplicationContentItem>;
   objects: Array<ApplicationContentItem>;
   pageLayoutTabs: Array<ApplicationContentItem>;
@@ -912,6 +920,7 @@ export type ApplicationRegistration = {
 };
 
 export enum ApplicationRegistrationSourceType {
+  BUNDLED = 'BUNDLED',
   LOCAL = 'LOCAL',
   NPM = 'NPM',
   OAUTH_ONLY = 'OAUTH_ONLY',
@@ -1186,22 +1195,13 @@ export enum BillingEntitlementKey {
   VALIDATION_RULES = 'VALIDATION_RULES'
 }
 
-export type BillingLicensedProduct = BillingProductDto & {
+export type BillingLicensedProduct = {
   __typename?: 'BillingLicensedProduct';
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
   name: Scalars['String']['output'];
   prices?: Maybe<Array<BillingPriceLicensed>>;
-};
-
-export type BillingMeteredProduct = BillingProductDto & {
-  __typename?: 'BillingMeteredProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
-  metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
-  prices?: Maybe<Array<BillingPriceMetered>>;
 };
 
 export type BillingPartnerCode = {
@@ -1222,7 +1222,6 @@ export type BillingPlan = {
   downgradePlanKeys: Array<BillingPlanKey>;
   isCheckoutDefault: Scalars['Boolean']['output'];
   isSellable: Scalars['Boolean']['output'];
-  meteredProducts: Array<BillingMeteredProduct>;
   planKey: BillingPlanKey;
   resourceCreditProducts: Array<BillingLicensedProduct>;
   upgradePlanKeys: Array<BillingPlanKey>;
@@ -1240,36 +1239,13 @@ export type BillingPriceLicensed = {
   __typename?: 'BillingPriceLicensed';
   creditAmount?: Maybe<Scalars['Float']['output']>;
   isSellable: Scalars['Boolean']['output'];
-  priceUsageType: BillingUsageType;
   recurringInterval: SubscriptionInterval;
   stripePriceId: Scalars['String']['output'];
   unitAmount: Scalars['Float']['output'];
 };
 
-export type BillingPriceMetered = {
-  __typename?: 'BillingPriceMetered';
-  priceUsageType: BillingUsageType;
-  recurringInterval: SubscriptionInterval;
-  stripePriceId: Scalars['String']['output'];
-  tiers: Array<BillingPriceTier>;
-};
-
-export type BillingPriceTier = {
-  __typename?: 'BillingPriceTier';
-  flatAmount?: Maybe<Scalars['Float']['output']>;
-  unitAmount?: Maybe<Scalars['Float']['output']>;
-  upTo?: Maybe<Scalars['Float']['output']>;
-};
-
 export type BillingProduct = {
   __typename?: 'BillingProduct';
-  description: Scalars['String']['output'];
-  images?: Maybe<Array<Scalars['String']['output']>>;
-  metadata: BillingProductMetadata;
-  name: Scalars['String']['output'];
-};
-
-export type BillingProductDto = {
   description: Scalars['String']['output'];
   images?: Maybe<Array<Scalars['String']['output']>>;
   metadata: BillingProductMetadata;
@@ -1287,7 +1263,6 @@ export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
   isLegacy?: Maybe<Scalars['String']['output']>;
   planKey?: Maybe<BillingPlanKey>;
-  priceUsageBased: BillingUsageType;
   productKey: BillingProductKey;
 };
 
@@ -1332,7 +1307,7 @@ export enum BillingSubscriptionCollectionMethod {
 
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
-  billingProduct: BillingProductDto;
+  billingProduct: BillingProduct;
   creditAmount?: Maybe<Scalars['Float']['output']>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
@@ -1367,11 +1342,6 @@ export type BillingUpdate = {
   /** Current billing subscription */
   currentBillingSubscription: BillingSubscription;
 };
-
-export enum BillingUsageType {
-  LICENSED = 'LICENSED',
-  METERED = 'METERED'
-}
 
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1620,6 +1590,7 @@ export type ClientConfig = {
   serverUrl: Scalars['String']['output'];
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
+  webPushVapidPublicKey: Scalars['String']['output'];
 };
 
 export type ClientConfigMaintenanceMode = {
@@ -1749,6 +1720,7 @@ export type CreateAgentInput = {
   avatarShape?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   label: Scalars['String']['input'];
   modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
   modelId: Scalars['String']['input'];
@@ -2648,9 +2620,11 @@ export enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_AI_DATA_POLICY_ENABLED = 'IS_AI_DATA_POLICY_ENABLED',
+  IS_APPLICATION_PRICE_BILLING_ENABLED = 'IS_APPLICATION_PRICE_BILLING_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED = 'IS_CHANNEL_VISIBILITY_RLS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
@@ -2659,7 +2633,6 @@ export enum FeatureFlagKey {
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
   IS_MESSAGE_ATTACHMENT_ENABLED = 'IS_MESSAGE_ATTACHMENT_ENABLED',
-  IS_PERMISSION_TABLES_ENABLED = 'IS_PERMISSION_TABLES_ENABLED',
   IS_PRIVATE_RECORDS_ENABLED = 'IS_PRIVATE_RECORDS_ENABLED',
   IS_RECORD_GROUP_TABS_ENABLED = 'IS_RECORD_GROUP_TABS_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
@@ -3387,6 +3360,7 @@ export type MarketplaceApp = {
   category: Scalars['String']['output'];
   connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
+  hasMcpServers: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -3984,8 +3958,10 @@ export type Mutation = {
   updateCalendarChannel: CalendarChannel;
   updateCommandMenuItem: CommandMenuItem;
   updateEmailGroupChannel: MessageChannel;
+  updateFocusedTab: Scalars['Boolean']['output'];
   updateFrontComponent: FrontComponent;
   updateGettingStarted: GettingStartedProgress;
+  updateInboxNotificationSettings: UserWorkspace;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
   updateManyObjects: Array<Object>;
@@ -4045,6 +4021,7 @@ export type Mutation = {
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionRules: UpsertRowLevelPermissionRulesResult;
   upsertViewWidget: View;
+  upsertWebPushSubscription: Scalars['Boolean']['output'];
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
@@ -5289,6 +5266,11 @@ export type MutationUpdateEmailGroupChannelArgs = {
 };
 
 
+export type MutationUpdateFocusedTabArgs = {
+  input: UpdateFocusedTabInput;
+};
+
+
 export type MutationUpdateFrontComponentArgs = {
   input: UpdateFrontComponentInput;
 };
@@ -5296,6 +5278,11 @@ export type MutationUpdateFrontComponentArgs = {
 
 export type MutationUpdateGettingStartedArgs = {
   input: UpdateGettingStartedInput;
+};
+
+
+export type MutationUpdateInboxNotificationSettingsArgs = {
+  input: UpdateInboxNotificationSettingsInput;
 };
 
 
@@ -5582,6 +5569,11 @@ export type MutationUpsertViewWidgetArgs = {
 };
 
 
+export type MutationUpsertWebPushSubscriptionArgs = {
+  input: UpsertWebPushSubscriptionInput;
+};
+
+
 export type MutationValidateApprovedAccessDomainArgs = {
   input: ValidateApprovedAccessDomainInput;
 };
@@ -5629,6 +5621,7 @@ export type NavigationMenuItem = {
   folderId?: Maybe<Scalars['UUID']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   link?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   nativePageKey?: Maybe<Scalars['String']['output']>;
@@ -5843,6 +5836,7 @@ export type ObjectRecordsPermissions = {
   canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
+  canReadSomeRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
   canUpdateAllRecords: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
@@ -6266,7 +6260,7 @@ export type Query = {
   findUninstallApplicationJobStatus?: Maybe<JobStatus>;
   findUpgradeApplicationJobStatus?: Maybe<JobStatus>;
   findWorkspaceAiStats: WorkspaceAiStats;
-  findWorkspaceFromInviteHash: Workspace;
+  findWorkspaceFromInviteHash: WorkspaceFromInviteHash;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
@@ -6360,6 +6354,7 @@ export type Query = {
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
   workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
+  workspaceApplicationConnectedMemberCounts: Array<ApplicationConnectedMemberCount>;
 };
 
 
@@ -6918,6 +6913,11 @@ export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
 };
 
+
+export type QueryWorkspaceApplicationAuthorizationsArgs = {
+  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type RatioAggregateConfig = {
   __typename?: 'RatioAggregateConfig';
   fieldMetadataId: Scalars['UUID']['output'];
@@ -7131,6 +7131,7 @@ export type RowLevelPermissionPredicate = {
   subFieldName?: Maybe<Scalars['String']['output']>;
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7212,6 +7213,7 @@ export type RowLevelPermissionRulePredicateInput = {
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberRelationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -7822,6 +7824,7 @@ export type UpdateAgentInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['UUID']['input'];
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   modelConfiguration?: InputMaybe<Scalars['JSON']['input']>;
   modelId?: InputMaybe<Scalars['String']['input']>;
@@ -7929,6 +7932,11 @@ export type UpdateFieldInput = {
   universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type UpdateFocusedTabInput = {
+  isFocused: Scalars['Boolean']['input'];
+  tabId: Scalars['String']['input'];
+};
+
 export type UpdateFrontComponentInput = {
   /** The id of the front component to update */
   id: Scalars['UUID']['input'];
@@ -7947,6 +7955,11 @@ export type UpdateGettingStartedInput = {
   isHidden?: InputMaybe<Scalars['Boolean']['input']>;
   selectedStepActionKey?: InputMaybe<GettingStartedStepActionKey>;
   snoozedUntil?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateInboxNotificationSettingsInput = {
+  inboxNotificationLevel: Scalars['String']['input'];
+  isInboxNotificationPreviewEnabled: Scalars['Boolean']['input'];
 };
 
 export type UpdateLabPublicFeatureFlagInput = {
@@ -8021,6 +8034,7 @@ export type UpdateMessageFoldersInput = {
 export type UpdateNavigationMenuItemInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   pageLayoutId?: InputMaybe<Scalars['UUID']['input']>;
@@ -8478,6 +8492,13 @@ export type UpsertViewWidgetViewSortInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type UpsertWebPushSubscriptionInput = {
+  browserAuthSecret: Scalars['String']['input'];
+  browserPublicKey: Scalars['String']['input'];
+  endpoint: Scalars['String']['input'];
+  vapidPublicKey: Scalars['String']['input'];
+};
+
 export type UsageAnalytics = {
   __typename?: 'UsageAnalytics';
   periodEnd: Scalars['DateTime']['output'];
@@ -8717,7 +8738,9 @@ export type UserWorkspace = {
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
+  inboxNotificationLevel?: Maybe<Scalars['String']['output']>;
   isImpersonating?: Maybe<Scalars['Boolean']['output']>;
+  isInboxNotificationPreviewEnabled?: Maybe<Scalars['Boolean']['output']>;
   locale: Scalars['String']['output'];
   objectRecordsPermissions?: Maybe<Array<ObjectRecordsPermissions>>;
   permissionFlags?: Maybe<Array<PermissionFlagType>>;
@@ -9216,6 +9239,14 @@ export enum WorkspaceDiscoverability {
   MEMBERS_AND_INVITEES = 'MEMBERS_AND_INVITEES',
   PUBLIC = 'PUBLIC'
 }
+
+export type WorkspaceFromInviteHash = {
+  __typename?: 'WorkspaceFromInviteHash';
+  allowImpersonation: Scalars['Boolean']['output'];
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+};
 
 export type WorkspaceInvitation = {
   __typename?: 'WorkspaceInvitation';

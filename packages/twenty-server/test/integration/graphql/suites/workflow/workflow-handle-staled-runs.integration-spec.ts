@@ -30,21 +30,18 @@ describe('workflow stale-run recovery', () => {
     ).handleStaledRunsForWorkspace(workspaceId);
 
   const insertRun = async ({
-    status,
     enqueuedAt,
   }: {
-    status: 'ENQUEUED' | 'NOT_STARTED';
     enqueuedAt: Date | null;
   }): Promise<string> => {
     const workflowRunId = randomUUID();
 
     await global.testDataSource.query(
-      `INSERT INTO "${schema}"."workflowRun" (id, name, "coreWorkflowId", "coreWorkflowVersionId", status, "enqueuedAt", position, state) VALUES ($1, 'Stale-run recovery', $2, $3, $4, $5, 0, $6)`,
+      `INSERT INTO "${schema}"."workflowRun" (id, name, "coreWorkflowId", "coreWorkflowVersionId", status, "enqueuedAt", position, state) VALUES ($1, 'Stale-run recovery', $2, $3, 'ENQUEUED', $4, 0, $5)`,
       [
         workflowRunId,
         coreWorkflowId,
         coreWorkflowVersionId,
-        status,
         enqueuedAt,
         JSON.stringify({
           flow: { trigger, steps: [] },
@@ -133,19 +130,12 @@ describe('workflow stale-run recovery', () => {
     jest.useFakeTimers();
   });
 
-  it('gives a new job to a lost ENQUEUED run and to a leftover NOT_STARTED run, leaving a fresh one alone', async () => {
+  it('gives a new job to a lost run and to one never enqueued, leaving a fresh one alone', async () => {
     const lostRunId = await insertRun({
-      status: 'ENQUEUED',
       enqueuedAt: new Date(Date.now() - 2 * ONE_HOUR_MS),
     });
-    const leftoverRunId = await insertRun({
-      status: 'NOT_STARTED',
-      enqueuedAt: null,
-    });
-    const freshRunId = await insertRun({
-      status: 'ENQUEUED',
-      enqueuedAt: new Date(),
-    });
+    const leftoverRunId = await insertRun({ enqueuedAt: null });
+    const freshRunId = await insertRun({ enqueuedAt: new Date() });
 
     await handleStaledRuns();
 
@@ -156,7 +146,6 @@ describe('workflow stale-run recovery', () => {
 
   it('lets overlapping sweeps give a lost run a single job', async () => {
     const lostRunId = await insertRun({
-      status: 'ENQUEUED',
       enqueuedAt: new Date(Date.now() - 2 * ONE_HOUR_MS),
     });
     const addJob = jest.spyOn(

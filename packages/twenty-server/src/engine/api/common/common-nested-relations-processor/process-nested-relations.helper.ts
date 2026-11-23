@@ -240,10 +240,14 @@ export class ProcessNestedRelationsHelper {
       name: relationFieldName,
     });
 
-    const relationIds = getUniqueRelationIds({
-      records: parentObjectRecords,
-      idField:
-        relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
+    const relationIds = await this.findRelationIds({
+      parentObjectMetadataItem,
+      parentObjectRecords,
+      relationType,
+      joinColumnName,
+      sourceFieldName: relationFieldName,
+      repository,
+      useReplica,
     });
 
     if (
@@ -283,11 +287,11 @@ export class ProcessNestedRelationsHelper {
           parentRecordsCount: parentObjectRecords.length,
           targetObjectNameSingular,
           relationSelection,
-          relationQueryParser: new CommonQueryParser(
-            targetObjectMetadata,
+          relationQueryParser: new CommonQueryParser({
+            flatObjectMetadata: targetObjectMetadata,
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
-          ),
+          }),
           perParentLimit: Math.min(relationSelection.first ?? limit, limit),
         }),
       );
@@ -326,6 +330,46 @@ export class ProcessNestedRelationsHelper {
       valuesByParentRecordId,
       relations: nestedRelationsAggregatedValues,
     };
+  }
+
+  private async findRelationIds({
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    relationType,
+    joinColumnName,
+    sourceFieldName,
+    repository,
+    useReplica,
+  }: {
+    parentObjectMetadataItem: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
+    parentObjectRecords: ObjectRecord[];
+    relationType: RelationType;
+    joinColumnName: string;
+    sourceFieldName: string;
+    repository?: WorkspaceRepository;
+    useReplica: boolean;
+  }): Promise<string[]> {
+    if (relationType !== RelationType.ONE_TO_MANY) {
+      return getUniqueRelationIds({
+        records: parentObjectRecords,
+        idField: joinColumnName,
+      });
+    }
+
+    const parentObjectRepository = isDefined(repository)
+      ? repository.getRepositoryForObjectMetadataId(parentObjectMetadataItem.id)
+      : this.workspaceOrmManager.getRepository(
+          parentObjectMetadataItem.nameSingular,
+          { useReplica },
+        );
+
+    return parentObjectRepository.filterRecordIdsWithReadableRelation({
+      recordIds: getUniqueRelationIds({
+        records: parentObjectRecords,
+        idField: 'id',
+      }),
+      relationFieldName: sourceFieldName,
+    });
   }
 
   private getTargetObjectMetadata({
@@ -495,18 +539,18 @@ export class ProcessNestedRelationsHelper {
 
     // The id query may have kept soft-deleted records the filter asked for
     if (isDefined(relationSelection.filter)) {
-      relationQueryParser.applyDeletedAtToBuilder(
-        hydrationQueryBuilder,
-        relationSelection.filter,
-      );
+      relationQueryParser.applyDeletedAtToBuilder({
+        queryBuilder: hydrationQueryBuilder,
+        recordFilter: relationSelection.filter,
+      });
     }
 
     if (isDefined(relationSelection.orderBy)) {
-      relationQueryParser.applyOrderToBuilder(
-        hydrationQueryBuilder,
-        relationSelection.orderBy,
-        targetObjectNameSingular,
-      );
+      relationQueryParser.applyOrderToBuilder({
+        queryBuilder: hydrationQueryBuilder,
+        orderBy: relationSelection.orderBy,
+        objectNameSingular: targetObjectNameSingular,
+      });
     }
 
     const result = await hydrationQueryBuilder.getMany();
@@ -553,11 +597,11 @@ export class ProcessNestedRelationsHelper {
     );
 
     if (isDefined(relationSelection.orderBy)) {
-      relationQueryParser.applyOrderToBuilder(
-        perParentRecordIdsQueryBuilder,
-        relationSelection.orderBy,
-        targetObjectNameSingular,
-      );
+      relationQueryParser.applyOrderToBuilder({
+        queryBuilder: perParentRecordIdsQueryBuilder,
+        orderBy: relationSelection.orderBy,
+        objectNameSingular: targetObjectNameSingular,
+      });
     }
 
     await perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
@@ -595,15 +639,15 @@ export class ProcessNestedRelationsHelper {
       return;
     }
 
-    relationQueryParser.applyFilterToBuilder(
+    relationQueryParser.applyFilterToBuilder({
       queryBuilder,
-      targetObjectNameSingular,
-      relationSelection.filter,
-    );
-    relationQueryParser.applyDeletedAtToBuilder(
+      objectNameSingular: targetObjectNameSingular,
+      recordFilter: relationSelection.filter,
+    });
+    relationQueryParser.applyDeletedAtToBuilder({
       queryBuilder,
-      relationSelection.filter,
-    );
+      recordFilter: relationSelection.filter,
+    });
   }
 
   private assignRelationResults({

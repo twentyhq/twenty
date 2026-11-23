@@ -294,7 +294,7 @@ export class CoreWorkflowAccessService {
       where: { id: In(coreWorkflowIds) },
       select: {
         id: true,
-        visibility: true,
+        isPrivate: true,
         createdByUserWorkspaceId: true,
       },
     });
@@ -303,7 +303,7 @@ export class CoreWorkflowAccessService {
     return coreWorkflows.filter(
       (coreWorkflow) =>
         !isCoreWorkflowVisibleToUser({
-          visibility: coreWorkflow.visibility,
+          isPrivate: coreWorkflow.isPrivate,
           createdByUserWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
           userWorkspaceId,
         }),

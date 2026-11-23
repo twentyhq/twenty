@@ -42,12 +42,6 @@ jest.mock('@/domain-manager/hooks/useOrigin', () => ({
   })),
 }));
 
-jest.mock('@/captcha/hooks/useRequestFreshCaptchaToken', () => ({
-  useRequestFreshCaptchaToken: jest.fn().mockImplementation(() => ({
-    requestFreshCaptchaToken: jest.fn(),
-  })),
-}));
-
 jest.mock('@/auth/sign-in-up/hooks/useSignUpInNewWorkspace', () => ({
   useSignUpInNewWorkspace: jest.fn().mockImplementation(() => ({
     createWorkspace: jest.fn(),

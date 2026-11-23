@@ -3,8 +3,8 @@ import { LightIconButton } from 'twenty-ui/components/input';
 import { IconHeartOff } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/constants/NavigationMenuItemDroppableIds';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
+import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
@@ -38,7 +38,10 @@ export const NavigationMenuItemFolderContent = ({
   );
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const folderDroppableId = `${NavigationMenuItemDroppableIds.FAVORITE_FOLDER_PREFIX}${folderId}`;
+  const folderDroppableId = getNavigationMenuItemListDroppableId({
+    parentId: folderId,
+    navigationMenuItemSection: 'favorite',
+  });
 
   return (
     <>

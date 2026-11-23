@@ -25,18 +25,20 @@
       }
     },
     "start": {
-      "executor": "@nx/vite:dev-server",
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["^build"],
       "options": {
-        "buildTarget": "twenty-front:build",
-        "hmr": true
+        "cwd": "{projectRoot}",
+        "command": "vite"
       }
     },
     "preview": {
-      "executor": "@nx/vite:preview-server",
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
-        "buildTarget": "twenty-front:build",
-        "port": 3001,
-        "open": true
+        "cwd": "{projectRoot}",
+        "command": "vite preview --port 3001 --open"
       }
     },
     "reset:env": {
@@ -131,8 +133,7 @@
     "test": {
       "configurations": {
         "ci": {
-          "maxWorkers": 3,
-          "coverage": false
+          "command": "jest --config ./jest.config.mjs --silent --coverageReporters=text-summary --cacheDirectory=../../.cache/jest/{projectRoot} --ci --maxWorkers=3"
         }
       }
     },
