@@ -21,8 +21,8 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-is-canonical-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-relation-target-field-metadata-id-upgrade-command-name.constant';
-import { ADD_VIEW_FIELD_RELATION_SCOPE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-view-field-relation-scope-upgrade-command-name.constant';
-import { ADD_VIEW_FIELD_LABEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-view-field-label-upgrade-command-name.constant';
+import { ADD_VIEW_FIELD_RELATION_SCOPE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-62/add-view-field-relation-scope-upgrade-command-name.constant';
+import { ADD_VIEW_FIELD_LABEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-62/add-view-field-label-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';

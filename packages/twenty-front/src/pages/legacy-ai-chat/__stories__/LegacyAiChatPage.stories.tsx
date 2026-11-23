@@ -25,13 +25,14 @@ import { recordPermissionsFamilyState } from '@/object-record/record-sharing/sta
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { LegacyAiChatPage } from '~/pages/legacy-ai-chat/LegacyAiChatPage';
 import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
+import { TEST_CHAT_OBJECT_METADATA_ID } from '~/testing/constants/TestChatObjectMetadataId';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const NEXT_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000bb';
 const RETURNED_DRAFT_THREAD_ID = '20202020-0000-4000-8000-0000000000dd';
-const CHAT_OBJECT_METADATA_ID = '20202020-0000-4000-8000-0000000000cc';
 const DRAFT_TEXT = 'Draft for the new conversation';
 const NEXT_DRAFT_TEXT = 'Draft selected when opening the new chat route';
 const RETURNED_DRAFT_TEXT = 'Draft selected when returning through history';
@@ -94,46 +95,17 @@ const allowSelectedConversationUpdates = () => {
   const workspace = jotaiStore.get(currentWorkspaceState.atom);
   const workspaceMember = jotaiStore.get(currentWorkspaceMemberState.atom);
   const threadId = jotaiStore.get(newAiChatThreadIdState.atom);
-  const objectMetadataTemplate = jotaiStore
-    .get(flatObjectMetadataItemsSelector.atom)
-    .find(
-      ({ nameSingular }) => nameSingular === StandardObjectNameSingular.Note,
-    );
-
   if (
     !isDefined(workspace) ||
     !isDefined(workspaceMember) ||
-    !isDefined(threadId) ||
-    !isDefined(objectMetadataTemplate)
+    !isDefined(threadId)
   ) {
     throw new Error('The conversation metadata must be loaded.');
   }
 
-  const chatObjectMetadataItem = {
-    ...objectMetadataTemplate,
-    id: CHAT_OBJECT_METADATA_ID,
-    universalIdentifier: CHAT_OBJECT_METADATA_ID,
-    nameSingular: StandardObjectNameSingular.AgentChatThread,
-    namePlural: 'agentChatThreads',
-    labelSingular: 'Chat',
-    labelPlural: 'Chats',
-    labelIdentifierFieldMetadataId: '',
-    isSystem: true,
-    isSearchable: false,
-    searchFieldMetadatas: [],
-  };
-
-  jotaiStore.set(
-    metadataStoreState.atomFamily('objectMetadataItems'),
-    (metadataStore) => ({
-      ...metadataStore,
-      current: [...metadataStore.current, chatObjectMetadataItem],
-    }),
-  );
-
   jotaiStore.set(
     recordPermissionsFamilyState.atomFamily({
-      objectMetadataId: CHAT_OBJECT_METADATA_ID,
+      objectMetadataId: TEST_CHAT_OBJECT_METADATA_ID,
       recordId: threadId,
       workspaceId: workspace.id,
       workspaceMemberId: workspaceMember.id,
@@ -156,6 +128,7 @@ const meta = {
   component: LegacyAiChatPage,
   decorators: [
     ComponentDecorator,
+    ChatObjectMetadataDecorator,
     ObjectMetadataItemsDecorator,
     RootDecorator,
     ToastDecorator,

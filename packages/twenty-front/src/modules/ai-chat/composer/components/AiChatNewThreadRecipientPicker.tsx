@@ -10,7 +10,7 @@ import { AiChatChannelIcon } from '@/ai-chat/threads/components/AiChatChannelIco
 import { AiChatAssistantAvatar } from '@/ai-chat/components/AiChatAssistantAvatar';
 import { AI_CHAT_ASSISTANT_RECIPIENT_SUGGESTION_ID } from '@/ai-chat/composer/constants/AiChatAssistantRecipientSuggestionId';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
-import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';

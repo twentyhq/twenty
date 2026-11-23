@@ -17,15 +17,16 @@ import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
-import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { initializeNewAiChatStory } from '@/inbox/testing/initializeNewAiChatStory';
 import { hasRequestedWorkspaceSetupChatState } from '@/onboarding/states/hasRequestedWorkspaceSetupChatState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/ai-chat/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { AiChatNewThreadPageContent } from '@/ai-chat/instance/components/AiChatNewThreadPageContent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { ChatObjectMetadataDecorator } from '~/testing/decorators/ChatObjectMetadataDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -50,12 +51,12 @@ const WorkspaceSetupChatStory = () => {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
+    store.set(isWorkspaceSetupChatActiveState.atom, true);
     store.set(hasRequestedWorkspaceSetupChatState.atom, true);
     setIsReady(true);
 
     return () => {
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(isWorkspaceSetupChatActiveState.atom, false);
       store.set(hasRequestedWorkspaceSetupChatState.atom, false);
     };
   }, [store]);
@@ -127,7 +128,7 @@ const expectNewChatWelcome = async (canvasElement: HTMLElement) => {
 };
 
 export const FullPageNewChat: Story = {
-  decorators: [ObjectMetadataItemsDecorator],
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   beforeEach: () => initializeNewAiChatStory({ isInboxEnabled: false }),
   parameters: {
     ...newChatParameters,
@@ -308,6 +309,7 @@ export const NewChatSuggestedPrompt: Story = {
 };
 
 export const WorkspaceSetup: Story = {
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   render: () => <WorkspaceSetupChatStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -319,6 +321,7 @@ export const WorkspaceSetup: Story = {
 };
 
 export const WorkspaceSetupCompletion: Story = {
+  decorators: [ChatObjectMetadataDecorator, ObjectMetadataItemsDecorator],
   render: () => <WorkspaceSetupChatStory />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -327,7 +330,7 @@ export const WorkspaceSetupCompletion: Story = {
     ).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
 
-    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+    jotaiStore.set(isWorkspaceSetupChatActiveState.atom, false);
 
     await waitFor(() =>
       expect(
