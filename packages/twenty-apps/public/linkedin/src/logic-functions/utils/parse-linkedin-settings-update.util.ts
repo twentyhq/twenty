@@ -1,9 +1,18 @@
-import { isArray, isBoolean, isNonEmptyString } from '@sniptt/guards';
+import {
+  isArray,
+  isBoolean,
+  isNonEmptyString,
+  isObject,
+  isString,
+} from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { LINKEDIN_HISTORY_CONVERSATION_LIMITS } from 'src/constants/linkedin-history-conversation-limits.constant';
+import { LINKEDIN_SELECTED_CHAT_NAME_MAX_LENGTH } from 'src/constants/linkedin-selected-chat-name-max-length.constant';
 import { LINKEDIN_SELECTED_CHATS_MAX_COUNT } from 'src/constants/linkedin-selected-chats-max-count.constant';
 import { type LinkedinContactAutoCreationPolicy } from 'src/types/linkedin-contact-auto-creation-policy.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
+import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
 import { type LinkedinVisibility } from 'src/types/linkedin-visibility.type';
 
@@ -26,6 +35,35 @@ const isOneOf = <TValue extends string | number>(
   value: unknown,
 ): value is TValue => values.some((candidate) => candidate === value);
 
+const parseSelectedChats = (
+  value: unknown,
+): LinkedinSelectedChat[] | undefined => {
+  if (!isArray(value) || value.length > LINKEDIN_SELECTED_CHATS_MAX_COUNT) {
+    return undefined;
+  }
+
+  const selectedChatById = new Map<string, LinkedinSelectedChat>();
+
+  for (const chat of value) {
+    const { id, name } = isObject(chat)
+      ? (chat as { id?: unknown; name?: unknown })
+      : {};
+
+    if (!isNonEmptyString(id)) {
+      return undefined;
+    }
+
+    selectedChatById.set(id, {
+      id,
+      name: isString(name)
+        ? name.slice(0, LINKEDIN_SELECTED_CHAT_NAME_MAX_LENGTH)
+        : '',
+    });
+  }
+
+  return [...selectedChatById.values()];
+};
+
 export const parseLinkedinSettingsUpdate = (
   body: Record<string, unknown> | null | undefined,
 ): Partial<LinkedinSettings> & { visibility?: LinkedinVisibility } => {
@@ -37,12 +75,10 @@ export const parseLinkedinSettingsUpdate = (
     update.importPolicy = body.importPolicy;
   }
 
-  if (
-    isArray(body?.selectedChatIds) &&
-    body.selectedChatIds.every(isNonEmptyString) &&
-    body.selectedChatIds.length <= LINKEDIN_SELECTED_CHATS_MAX_COUNT
-  ) {
-    update.selectedChatIds = [...new Set(body.selectedChatIds)];
+  const selectedChats = parseSelectedChats(body?.selectedChats);
+
+  if (isDefined(selectedChats)) {
+    update.selectedChats = selectedChats;
   }
 
   if (

@@ -80,7 +80,7 @@ describe('linkedinUpdateSettingsHandler', () => {
         isConnected: true,
         settings: {
           importPolicy: 'ALL',
-          selectedChatIds: [],
+          selectedChats: [],
           areGroupChatsImported: true,
           historyConversationLimit: 20,
           contactAutoCreationPolicy: 'NONE',

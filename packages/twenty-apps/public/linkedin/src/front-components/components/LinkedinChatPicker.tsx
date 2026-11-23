@@ -6,19 +6,19 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton, SearchInput } from 'twenty-ui/components/input';
 import { ListItemButton } from 'twenty-ui/components/navigation';
 import { IconMessage, IconUser, IconUsers } from 'twenty-ui/icon';
-import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LINKEDIN_CHAT_OPTIONS_PAGE_SIZE } from 'src/constants/linkedin-chat-options-page-size.constant';
 import { LINKEDIN_SELECTED_CHATS_MAX_COUNT } from 'src/constants/linkedin-selected-chats-max-count.constant';
+import { LinkedinChatPickerSkeleton } from 'src/front-components/components/LinkedinChatPickerSkeleton';
 import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { fetchLinkedinChatOptions } from 'src/front-components/utils/fetch-linkedin-chat-options.util';
-import { getUnlistedSelectedLinkedinChatIds } from 'src/front-components/utils/get-unlisted-selected-linkedin-chat-ids.util';
+import { getUnlistedSelectedLinkedinChats } from 'src/front-components/utils/get-unlisted-selected-linkedin-chats.util';
 import { toggleLinkedinChatSelection } from 'src/front-components/utils/toggle-linkedin-chat-selection.util';
+import { type LinkedinChatOption } from 'src/types/linkedin-chat-option.type';
 import { type LinkedinChatOptionsPage } from 'src/types/linkedin-chat-options-page.type';
-
-const SKELETON_ROW_COUNT = 4;
+import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -47,13 +47,17 @@ type LinkedinChatPickerState =
   | { step: 'unavailable' }
   | { step: 'ready'; page: LinkedinChatOptionsPage };
 
+const toSelectedChats = (chat: LinkedinChatOption): LinkedinSelectedChat[] => [
+  { id: chat.id, name: chat.name },
+];
+
 type LinkedinChatPickerProps = {
-  selectedChatIds: string[];
-  onChange: (selectedChatIds: string[]) => void;
+  selectedChats: LinkedinSelectedChat[];
+  onChange: (selectedChats: LinkedinSelectedChat[]) => void;
 };
 
 export const LinkedinChatPicker = ({
-  selectedChatIds,
+  selectedChats,
   onChange,
 }: LinkedinChatPickerProps) => {
   const [state, setState] = useState<LinkedinChatPickerState>({
@@ -94,15 +98,25 @@ export const LinkedinChatPicker = ({
           chat.name.toLowerCase().includes(normalizedSearch),
         )
       : [];
-  const unlistedSelectedChatIds =
-    state.step === 'ready' && normalizedSearch === ''
-      ? getUnlistedSelectedLinkedinChatIds({
-          selectedChatIds,
-          chats: state.page.chats,
+  const selectedChatIds = new Set(selectedChats.map((chat) => chat.id));
+  const isChatSelected = (chat: LinkedinChatOption): boolean =>
+    toSelectedChats(chat).some(({ id }) => selectedChatIds.has(id));
+  const unlistedSelectedChats =
+    state.step === 'ready'
+      ? getUnlistedSelectedLinkedinChats({
+          selectedChats,
+          listedChatIds: state.page.chats.map((chat) => chat.id),
         })
       : [];
+  const selectedConversationCount =
+    state.step === 'ready'
+      ? state.page.chats.filter(isChatSelected).length +
+        unlistedSelectedChats.length
+      : selectedChats.length;
+  const visibleUnlistedSelectedChats =
+    normalizedSearch === '' ? unlistedSelectedChats : [];
   const isSelectionFull =
-    selectedChatIds.length >= LINKEDIN_SELECTED_CHATS_MAX_COUNT;
+    selectedChats.length >= LINKEDIN_SELECTED_CHATS_MAX_COUNT;
 
   return (
     <StyledContainer>
@@ -113,17 +127,7 @@ export const LinkedinChatPicker = ({
         value={search}
         onChange={(event) => setSearch(event.target.value)}
       />
-      {state.step === 'loading' && (
-        <StyledList aria-busy="true" aria-label={t('Loading')}>
-          {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-            <Skeleton
-              key={index}
-              layout="block"
-              height={SKELETON_HEIGHT_SIZES.m}
-            />
-          ))}
-        </StyledList>
-      )}
+      {state.step === 'loading' && <LinkedinChatPickerSkeleton />}
       {state.step === 'unavailable' && (
         <InlineBanner
           layout="compact"
@@ -140,14 +144,15 @@ export const LinkedinChatPicker = ({
       )}
       {state.step === 'ready' && (
         <>
-          {visibleChats.length === 0 && unlistedSelectedChatIds.length === 0 ? (
+          {visibleChats.length === 0 &&
+          visibleUnlistedSelectedChats.length === 0 ? (
             <Text size="sm" color="tertiary">
               {t('No conversation found.')}
             </Text>
           ) : (
             <StyledList role="group" aria-label={t('Conversations')}>
               {visibleChats.map((chat) => {
-                const isSelected = selectedChatIds.includes(chat.id);
+                const isSelected = isChatSelected(chat);
 
                 return (
                   <ListItemButton
@@ -170,8 +175,8 @@ export const LinkedinChatPicker = ({
                     onClick={() =>
                       onChange(
                         toggleLinkedinChatSelection({
-                          selectedChatIds,
-                          chatId: chat.id,
+                          selectedChats,
+                          chats: toSelectedChats(chat),
                         }),
                       )
                     }
@@ -180,21 +185,28 @@ export const LinkedinChatPicker = ({
                   </ListItemButton>
                 );
               })}
-              {unlistedSelectedChatIds.map((chatId) => (
+              {visibleUnlistedSelectedChats.map((chat) => (
                 <ListItemButton
-                  key={chatId}
+                  key={chat.id}
                   role="checkbox"
                   aria-checked
                   indicator="checkbox"
                   selected
                   startIcon={<IconMessage />}
+                  description={t('Older conversation')}
+                  descriptionPlacement="end"
                   onClick={() =>
                     onChange(
-                      toggleLinkedinChatSelection({ selectedChatIds, chatId }),
+                      toggleLinkedinChatSelection({
+                        selectedChats,
+                        chats: [chat],
+                      }),
                     )
                   }
                 >
-                  {t('Conversation not listed above')}
+                  {chat.name === ''
+                    ? t('Conversation not listed above')
+                    : chat.name}
                 </ListItemButton>
               ))}
             </StyledList>
@@ -203,9 +215,9 @@ export const LinkedinChatPicker = ({
             <Text size="sm" color="tertiary" aria-live="polite">
               {isSelectionFull
                 ? t('{count} selected, the most that can be imported', {
-                    count: selectedChatIds.length,
+                    count: selectedConversationCount,
                   })
-                : t('{count} selected', { count: selectedChatIds.length })}
+                : t('{count} selected', { count: selectedConversationCount })}
             </Text>
             {state.page.hasMore && (
               <LightButton

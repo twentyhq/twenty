@@ -293,7 +293,10 @@ describe('linkedinHandleWebhookEventHandler', () => {
   it('leaves out a message of a conversation the member did not select, without reading it', async () => {
     mocks.kvGet.mockImplementation(async (key: string) =>
       key === 'linkedin-settings:connection-id'
-        ? { importPolicy: 'SELECTED', selectedChatIds: ['chat-2'] }
+        ? {
+            importPolicy: 'SELECTED',
+            selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
+          }
         : null,
     );
 

@@ -28,7 +28,7 @@ export const linkedinSyncHistoryHandler = async (
 
     if (
       settings.importPolicy === 'SELECTED'
-        ? settings.selectedChatIds.length > 0
+        ? settings.selectedChats.length > 0
         : settings.historyConversationLimit > 0
     ) {
       await startLinkedinHistoryImport({

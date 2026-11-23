@@ -16,6 +16,7 @@ import { StyledSettingsCard } from 'src/front-components/components/StyledSettin
 import { type LinkedinHistoryConversationLimit } from 'src/types/linkedin-history-conversation-limit.type';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
+import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
 
 const StyledStack = styled.div`
   display: flex;
@@ -25,7 +26,7 @@ const StyledStack = styled.div`
 
 type LinkedinImportSectionProps = {
   importPolicy: LinkedinImportPolicy;
-  selectedChatIds: string[];
+  selectedChats: LinkedinSelectedChat[];
   areGroupChatsImported: boolean;
   historyConversationLimit: LinkedinHistoryConversationLimit;
   historyImport: LinkedinHistoryImportState | null;
@@ -33,7 +34,7 @@ type LinkedinImportSectionProps = {
   isSyncStarting: boolean;
   isSyncCancelling: boolean;
   onChange: (importPolicy: LinkedinImportPolicy) => void;
-  onSelectedChatIdsChange: (selectedChatIds: string[]) => void;
+  onSelectedChatsChange: (selectedChats: LinkedinSelectedChat[]) => void;
   onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onHistoryConversationLimitChange: (
     historyConversationLimit: LinkedinHistoryConversationLimit,
@@ -44,7 +45,7 @@ type LinkedinImportSectionProps = {
 
 export const LinkedinImportSection = ({
   importPolicy,
-  selectedChatIds,
+  selectedChats,
   areGroupChatsImported,
   historyConversationLimit,
   historyImport,
@@ -52,7 +53,7 @@ export const LinkedinImportSection = ({
   isSyncStarting,
   isSyncCancelling,
   onChange,
-  onSelectedChatIdsChange,
+  onSelectedChatsChange,
   onGroupChatsImportChange,
   onHistoryConversationLimitChange,
   onSync,
@@ -91,8 +92,8 @@ export const LinkedinImportSection = ({
             description: t('Import only the conversations you pick'),
             cardContentExpanded: (
               <LinkedinChatPicker
-                selectedChatIds={selectedChatIds}
-                onChange={onSelectedChatIdsChange}
+                selectedChats={selectedChats}
+                onChange={onSelectedChatsChange}
               />
             ),
           },
@@ -130,7 +131,7 @@ export const LinkedinImportSection = ({
         </StyledSettingsCard>
       )}
       {((importPolicy === 'SELECTED'
-        ? selectedChatIds.length > 0
+        ? selectedChats.length > 0
         : historyConversationLimit > 0) ||
         historyImport?.status === 'IMPORTING') && (
         <LinkedinSyncButton

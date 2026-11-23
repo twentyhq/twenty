@@ -126,7 +126,7 @@ describe('linkedinSyncHistoryHandler', () => {
   it('imports the selected conversations, whatever the number of past conversations', async () => {
     mocks.kvStore.set('linkedin-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChatIds: ['chat-1'],
+      selectedChats: [{ id: 'chat-1', name: 'chat-1' }],
       historyConversationLimit: 0,
     });
 
@@ -144,7 +144,7 @@ describe('linkedinSyncHistoryHandler', () => {
   it('imports nothing while no conversation is selected', async () => {
     mocks.kvStore.set('linkedin-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChatIds: [],
+      selectedChats: [],
     });
 
     await syncHistory();

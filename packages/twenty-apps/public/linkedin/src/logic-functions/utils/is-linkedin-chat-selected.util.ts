@@ -4,8 +4,8 @@ export const isLinkedinChatSelected = ({
   settings,
   chatId,
 }: {
-  settings: Pick<LinkedinSettings, 'importPolicy' | 'selectedChatIds'>;
+  settings: Pick<LinkedinSettings, 'importPolicy' | 'selectedChats'>;
   chatId: string;
 }): boolean =>
   settings.importPolicy !== 'SELECTED' ||
-  settings.selectedChatIds.includes(chatId);
+  settings.selectedChats.some((chat) => chat.id === chatId);

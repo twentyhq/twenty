@@ -263,14 +263,14 @@ const planHistoryImport = async ({
   };
 
   if (importPolicy === 'SELECTED') {
-    const { selectedChatIds } = await getLinkedinSettings(connectedAccountId);
+    const { selectedChats } = await getLinkedinSettings(connectedAccountId);
 
     // The import job reads each conversation itself, so none is read here
     return planLimitedHistoryImport({
       payload,
-      chats: selectedChatIds.map((id) => ({
+      chats: selectedChats.map(({ id, name }) => ({
         id,
-        name: '',
+        name,
         is_group: false,
         is_1to1: false,
       })),
