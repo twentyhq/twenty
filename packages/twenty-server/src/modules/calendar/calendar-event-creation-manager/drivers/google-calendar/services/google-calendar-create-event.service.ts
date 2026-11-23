@@ -44,12 +44,12 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         requestBody: toGoogleEventInput(input),
       });
 
-      return formatGoogleCalendarEvents([
-        (await this.findFirstOccurrenceAsListedBySync(
-          googleCalendarClient,
-          data,
-        )) ?? data,
-      ])[0];
+      const firstOccurrence = await this.findFirstOccurrenceAsListedBySync(
+        googleCalendarClient,
+        data,
+      );
+
+      return formatGoogleCalendarEvents([firstOccurrence ?? data])[0];
     } catch (error) {
       throw new CalendarEventCreationException(
         `Failed to create Google calendar event: ${error instanceof Error ? error.message : 'unknown error'}`,

@@ -74,28 +74,31 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         prodId: '//Twenty//Calendar//EN',
         timezone: { name: null, generator: () => vTimezoneBlock },
       });
+      const start = toCalendarEventTemporalDateTime(
+        input.startsAt,
+        input.isFullDay,
+        timeZoneId,
+      );
+      const end = toCalendarEventTemporalDateTime(
+        input.endsAt,
+        input.isFullDay,
+        timeZoneId,
+      );
+      const recurrenceRule = isDefined(input.recurrence)
+        ? toICalRecurrenceRule({
+            recurrence: input.recurrence,
+            isFullDay: input.isFullDay,
+            timeZone: timeZoneId,
+          })
+        : null;
 
       calendar.createEvent({
         id: uid,
-        start: toCalendarEventTemporalDateTime(
-          input.startsAt,
-          input.isFullDay,
-          timeZoneId,
-        ),
-        end: toCalendarEventTemporalDateTime(
-          input.endsAt,
-          input.isFullDay,
-          timeZoneId,
-        ),
+        start,
+        end,
         allDay: input.isFullDay,
         timezone: input.isFullDay ? null : timeZoneId,
-        repeating: isDefined(input.recurrence)
-          ? toICalRecurrenceRule({
-              recurrence: input.recurrence,
-              isFullDay: input.isFullDay,
-              timeZone: timeZoneId,
-            })
-          : null,
+        repeating: recurrenceRule,
         summary: input.title,
         description: input.description,
         location: input.location,

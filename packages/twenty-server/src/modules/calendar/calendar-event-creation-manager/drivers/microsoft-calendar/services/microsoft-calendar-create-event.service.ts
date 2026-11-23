@@ -41,11 +41,15 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
         .header('Prefer', 'outlook.timezone="UTC"')
         .post(toMicrosoftEventInput(input));
 
-      return (
-        (await this.findCreatedEventAsListedBySync(
+      const createdEventAsListedBySync =
+        await this.findCreatedEventAsListedBySync(
           connectedAccount,
           createdEvent,
-        )) ?? formatMicrosoftCalendarEvents([createdEvent])[0]
+        );
+
+      return (
+        createdEventAsListedBySync ??
+        formatMicrosoftCalendarEvents([createdEvent])[0]
       );
     } catch (error) {
       throw new CalendarEventCreationException(

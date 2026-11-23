@@ -276,11 +276,13 @@ export const useCalendarEventComposer = ({
   const updateRecurrence = (
     recurrenceUpdate: Partial<CalendarEventComposerRecurrence>,
   ) => {
-    setRecurrence((currentRecurrence) =>
-      isDefined(currentRecurrence)
-        ? { ...currentRecurrence, ...recurrenceUpdate }
-        : currentRecurrence,
-    );
+    setRecurrence((currentRecurrence) => {
+      if (!isDefined(currentRecurrence)) {
+        return currentRecurrence;
+      }
+
+      return { ...currentRecurrence, ...recurrenceUpdate };
+    });
   };
 
   const handleRecurrenceEndConditionChange = (
@@ -290,17 +292,22 @@ export const useCalendarEventComposer = ({
       return;
     }
 
-    updateRecurrence({
-      endCondition,
-      endDate:
-        endCondition === 'ON_DATE' && !isNonEmptyString(recurrence.endDate)
-          ? getCalendarEventRecurrenceDefaultEndDate({
-              frequency: recurrence.frequency,
-              interval: recurrence.interval,
-              startDateInTimeZone,
-            })
-          : recurrence.endDate,
+    const shouldPrefillEndDate =
+      endCondition === 'ON_DATE' && !isNonEmptyString(recurrence.endDate);
+
+    if (!shouldPrefillEndDate) {
+      updateRecurrence({ endCondition });
+
+      return;
+    }
+
+    const defaultEndDate = getCalendarEventRecurrenceDefaultEndDate({
+      frequency: recurrence.frequency,
+      interval: recurrence.interval,
+      startDateInTimeZone,
     });
+
+    updateRecurrence({ endCondition, endDate: defaultEndDate });
   };
 
   const handleCreate = useCallback(async () => {
@@ -323,9 +330,7 @@ export const useCalendarEventComposer = ({
         attendees: serializeEmailRecipients(attendees),
         sendInvitations,
         addConferencing,
-        recurrence: isDefined(recurrence)
-          ? getCalendarEventRecurrenceInput(recurrence)
-          : undefined,
+        recurrence: getCalendarEventRecurrenceInput(recurrence),
       });
 
       if (!success) {

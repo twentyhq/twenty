@@ -14,7 +14,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { NumberStepper } from 'twenty-ui/components/input';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { CalendarEventRecurrenceFrequency } from '~/generated-metadata/graphql';
+import {
+  CalendarEventRecurrenceFrequency,
+  type CalendarEventRecurrenceWeekday,
+} from '~/generated-metadata/graphql';
 
 const StyledInlineControls = styled.div`
   align-items: center;
@@ -40,7 +43,13 @@ export const CalendarEventComposerRecurrenceFields = ({
   composerState,
 }: CalendarEventComposerRecurrenceFieldsProps) => {
   const { t, i18n } = useLingui();
-  const { recurrence, startDateInTimeZone, updateRecurrence } = composerState;
+  const {
+    recurrence,
+    startDateInTimeZone,
+    updateRecurrence,
+    handleRecurrenceFrequencyChange,
+    handleRecurrenceEndConditionChange,
+  } = composerState;
 
   const startDayOfMonth = Temporal.PlainDate.from(startDateInTimeZone).day;
   const startMonthAndDay = new Intl.DateTimeFormat(i18n.locale, {
@@ -71,98 +80,116 @@ export const CalendarEventComposerRecurrenceFields = ({
       { label: t`After`, value: 'AFTER_OCCURRENCE_COUNT' },
     ];
 
+  const handleIntervalChange = (interval: number | null) => {
+    if (isDefined(interval) && interval >= 1) {
+      updateRecurrence({ interval });
+    }
+  };
+
+  const handleAdditionalDaysOfWeekChange = (
+    additionalDaysOfWeek: CalendarEventRecurrenceWeekday[],
+  ) => {
+    updateRecurrence({ additionalDaysOfWeek });
+  };
+
+  const handleEndDateChange = (endDate: string | null) => {
+    if (isDefined(endDate)) {
+      updateRecurrence({ endDate: endDate.slice(0, 10) });
+    }
+  };
+
+  const handleOccurrenceCountChange = (occurrenceCount: number | null) => {
+    if (isDefined(occurrenceCount) && occurrenceCount >= 1) {
+      updateRecurrence({ occurrenceCount });
+    }
+  };
+
+  const frequencyFieldRow = (
+    <ComposerFieldRow label={t`Repeat`}>
+      <Select
+        dropdownId="calendar-event-composer-recurrence-frequency"
+        fullWidth
+        variant="transparent"
+        value={recurrence?.frequency ?? null}
+        options={frequencyOptions}
+        onChange={handleRecurrenceFrequencyChange}
+      />
+    </ComposerFieldRow>
+  );
+
+  if (!isDefined(recurrence)) {
+    return frequencyFieldRow;
+  }
+
+  const intervalUnitLabel = getCalendarEventRecurrenceIntervalUnitLabel(
+    recurrence.frequency,
+    recurrence.interval,
+  );
+  const occurrenceCountUnitLabel = plural(recurrence.occurrenceCount, {
+    one: 'occurrence',
+    other: 'occurrences',
+  });
+  const isWeekly =
+    recurrence.frequency === CalendarEventRecurrenceFrequency.WEEKLY;
+  const endsOnDate = recurrence.endCondition === 'ON_DATE';
+  const endsAfterOccurrenceCount =
+    recurrence.endCondition === 'AFTER_OCCURRENCE_COUNT';
+
   return (
     <>
-      <ComposerFieldRow label={t`Repeat`}>
-        <Select
-          dropdownId="calendar-event-composer-recurrence-frequency"
-          fullWidth
-          variant="transparent"
-          value={recurrence?.frequency ?? null}
-          options={frequencyOptions}
-          onChange={composerState.handleRecurrenceFrequencyChange}
-        />
+      {frequencyFieldRow}
+      <ComposerFieldRow label={t`Every`}>
+        <StyledInlineControls>
+          <NumberStepper
+            aria-label={t`Repeat interval`}
+            min={1}
+            value={recurrence.interval}
+            onValueChange={handleIntervalChange}
+          />
+          <StyledUnitLabel>{intervalUnitLabel}</StyledUnitLabel>
+        </StyledInlineControls>
       </ComposerFieldRow>
-      {isDefined(recurrence) && (
-        <>
-          <ComposerFieldRow label={t`Every`}>
-            <StyledInlineControls>
-              <NumberStepper
-                aria-label={t`Repeat interval`}
-                min={1}
-                value={recurrence.interval}
-                onValueChange={(interval) => {
-                  if (isDefined(interval) && interval >= 1) {
-                    updateRecurrence({ interval });
-                  }
-                }}
-              />
-              <StyledUnitLabel>
-                {getCalendarEventRecurrenceIntervalUnitLabel(
-                  recurrence.frequency,
-                  recurrence.interval,
-                )}
-              </StyledUnitLabel>
-            </StyledInlineControls>
-          </ComposerFieldRow>
-          {recurrence.frequency === CalendarEventRecurrenceFrequency.WEEKLY && (
-            <ComposerFieldRow label={t`On`}>
-              <CalendarEventRecurrenceDaysOfWeekInput
-                additionalDaysOfWeek={recurrence.additionalDaysOfWeek}
-                startDateInTimeZone={startDateInTimeZone}
-                onAdditionalDaysOfWeekChange={(additionalDaysOfWeek) =>
-                  updateRecurrence({ additionalDaysOfWeek })
-                }
-              />
-            </ComposerFieldRow>
-          )}
-          <ComposerFieldRow label={t`Ends`}>
-            <StyledInlineControls>
-              <StyledNonShrinkingContainer>
-                <Select
-                  dropdownId="calendar-event-composer-recurrence-end-condition"
-                  variant="transparent"
-                  value={recurrence.endCondition}
-                  options={endConditionOptions}
-                  onChange={composerState.handleRecurrenceEndConditionChange}
-                />
-              </StyledNonShrinkingContainer>
-              {recurrence.endCondition === 'ON_DATE' && (
-                <FormDateFieldInput
-                  key={recurrence.endDate}
-                  variant="transparent"
-                  defaultValue={recurrence.endDate}
-                  onChange={(endDate) => {
-                    if (isDefined(endDate)) {
-                      updateRecurrence({ endDate: endDate.slice(0, 10) });
-                    }
-                  }}
-                />
-              )}
-              {recurrence.endCondition === 'AFTER_OCCURRENCE_COUNT' && (
-                <>
-                  <NumberStepper
-                    aria-label={t`Number of occurrences`}
-                    min={1}
-                    value={recurrence.occurrenceCount}
-                    onValueChange={(occurrenceCount) => {
-                      if (isDefined(occurrenceCount) && occurrenceCount >= 1) {
-                        updateRecurrence({ occurrenceCount });
-                      }
-                    }}
-                  />
-                  <StyledUnitLabel>
-                    {plural(recurrence.occurrenceCount, {
-                      one: 'occurrence',
-                      other: 'occurrences',
-                    })}
-                  </StyledUnitLabel>
-                </>
-              )}
-            </StyledInlineControls>
-          </ComposerFieldRow>
-        </>
+      {isWeekly && (
+        <ComposerFieldRow label={t`On`}>
+          <CalendarEventRecurrenceDaysOfWeekInput
+            additionalDaysOfWeek={recurrence.additionalDaysOfWeek}
+            startDateInTimeZone={startDateInTimeZone}
+            onAdditionalDaysOfWeekChange={handleAdditionalDaysOfWeekChange}
+          />
+        </ComposerFieldRow>
       )}
+      <ComposerFieldRow label={t`Ends`}>
+        <StyledInlineControls>
+          <StyledNonShrinkingContainer>
+            <Select
+              dropdownId="calendar-event-composer-recurrence-end-condition"
+              variant="transparent"
+              value={recurrence.endCondition}
+              options={endConditionOptions}
+              onChange={handleRecurrenceEndConditionChange}
+            />
+          </StyledNonShrinkingContainer>
+          {endsOnDate && (
+            <FormDateFieldInput
+              key={recurrence.endDate}
+              variant="transparent"
+              defaultValue={recurrence.endDate}
+              onChange={handleEndDateChange}
+            />
+          )}
+          {endsAfterOccurrenceCount && (
+            <>
+              <NumberStepper
+                aria-label={t`Number of occurrences`}
+                min={1}
+                value={recurrence.occurrenceCount}
+                onValueChange={handleOccurrenceCountChange}
+              />
+              <StyledUnitLabel>{occurrenceCountUnitLabel}</StyledUnitLabel>
+            </>
+          )}
+        </StyledInlineControls>
+      </ComposerFieldRow>
     </>
   );
 };

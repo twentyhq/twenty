@@ -60,18 +60,18 @@ export const normalizeCalendarEventRecurrence = ({
     isoOrderedWeekdays[
       Temporal.PlainDate.from(firstOccurrenceDate).dayOfWeek - 1
     ];
+  const requestedDaysOfWeek = recurrence.daysOfWeek ?? [];
+  const weeklyDaysOfWeek = isoOrderedWeekdays.filter(
+    (weekday) =>
+      weekday === firstOccurrenceWeekday ||
+      requestedDaysOfWeek.includes(weekday),
+  );
+  const isWeekly = recurrence.frequency === 'WEEKLY';
 
   return {
     frequency: recurrence.frequency,
     interval,
-    daysOfWeek:
-      recurrence.frequency === 'WEEKLY'
-        ? isoOrderedWeekdays.filter(
-            (weekday) =>
-              weekday === firstOccurrenceWeekday ||
-              (recurrence.daysOfWeek ?? []).includes(weekday),
-          )
-        : [],
+    daysOfWeek: isWeekly ? weeklyDaysOfWeek : [],
     firstOccurrenceDate,
     endDate,
     occurrenceCount,

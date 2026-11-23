@@ -43,18 +43,29 @@ export const CalendarEventRecurrenceDaysOfWeekInput = ({
     (dayOffset) => (weekStartIndexFromSunday + dayOffset) % 7,
   );
 
+  const selectedWeekdayIndexes = weekdayIndexesFromWeekStart.filter(
+    (weekdayIndex) =>
+      selectedDaysOfWeek.includes(
+        CALENDAR_EVENT_RECURRENCE_WEEKDAYS_FROM_SUNDAY[weekdayIndex],
+      ),
+  );
+  const selectedWeekdayLabels = selectedWeekdayIndexes.map(
+    (weekdayIndex) => weekdayLabelsFromSunday[weekdayIndex],
+  );
   const selectedDaysOfWeekLabel = new Intl.ListFormat(i18n.locale, {
     style: 'short',
     type: 'unit',
-  }).format(
-    weekdayIndexesFromWeekStart
-      .filter((weekdayIndex) =>
-        selectedDaysOfWeek.includes(
-          CALENDAR_EVENT_RECURRENCE_WEEKDAYS_FROM_SUNDAY[weekdayIndex],
-        ),
-      )
-      .map((weekdayIndex) => weekdayLabelsFromSunday[weekdayIndex]),
-  );
+  }).format(selectedWeekdayLabels);
+
+  const handleSelectedDaysOfWeekChange = (nextSelectedDaysOfWeek: string[]) => {
+    const nextAdditionalDaysOfWeek =
+      CALENDAR_EVENT_RECURRENCE_WEEKDAYS_FROM_SUNDAY.filter(
+        (weekday) =>
+          weekday !== startWeekday && nextSelectedDaysOfWeek.includes(weekday),
+      );
+
+    onAdditionalDaysOfWeekChange(nextAdditionalDaysOfWeek);
+  };
 
   return (
     <StyledFullWidthContainer>
@@ -78,29 +89,20 @@ export const CalendarEventRecurrenceDaysOfWeekInput = ({
             aria-label={t`Repeat on`}
             multiple
             value={selectedDaysOfWeek}
-            onValueChange={(nextSelectedDaysOfWeek) =>
-              onAdditionalDaysOfWeekChange(
-                CALENDAR_EVENT_RECURRENCE_WEEKDAYS_FROM_SUNDAY.filter(
-                  (weekday) =>
-                    weekday !== startWeekday &&
-                    nextSelectedDaysOfWeek.includes(weekday),
-                ),
-              )
-            }
+            onValueChange={handleSelectedDaysOfWeekChange}
           >
             <Dropdown.Section>
               {weekdayIndexesFromWeekStart.map((weekdayIndex) => {
                 const weekday =
                   CALENDAR_EVENT_RECURRENCE_WEEKDAYS_FROM_SUNDAY[weekdayIndex];
+                const isStartWeekday = weekday === startWeekday;
 
                 return (
                   <Dropdown.OptionItem
                     key={weekday}
                     value={weekday}
-                    disabled={weekday === startWeekday}
-                    description={
-                      weekday === startWeekday ? t`First event` : undefined
-                    }
+                    disabled={isStartWeekday}
+                    description={isStartWeekday ? t`First event` : undefined}
                   >
                     {weekdayLabelsFromSunday[weekdayIndex]}
                   </Dropdown.OptionItem>

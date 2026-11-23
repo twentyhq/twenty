@@ -8,10 +8,13 @@ export const getCalendarEventStartDateInTimeZone = ({
   startsAt: string;
   isFullDay: boolean;
   timeZone: string;
-}) =>
-  isFullDay
-    ? startsAt.slice(0, 10)
-    : Temporal.Instant.from(startsAt)
-        .toZonedDateTimeISO(timeZone)
-        .toPlainDate()
-        .toString();
+}) => {
+  if (isFullDay) {
+    return startsAt.slice(0, 10);
+  }
+
+  const startsAtInTimeZone =
+    Temporal.Instant.from(startsAt).toZonedDateTimeISO(timeZone);
+
+  return startsAtInTimeZone.toPlainDate().toString();
+};
