@@ -7,14 +7,20 @@ type SelectOptionWithOptionalColor<TColor extends string> = Omit<
   'color'
 > & { color?: TColor | null };
 
-export const sanitizeSelectOptionColors = <TColor extends string>(
+export const sanitizeSelectOptions = <TColor extends string>(
   options: SelectOptionWithOptionalColor<TColor>[],
 ) =>
   options.map((option) => {
-    const { color } = extractAndSanitizeObjectStringFields(option, ['color']);
+    const { color, description } = extractAndSanitizeObjectStringFields(
+      option,
+      ['color', 'description'],
+    );
 
     return {
       ...option,
       color: color ?? DEFAULT_SELECT_OPTION_COLOR,
+      ...(description === undefined
+        ? {}
+        : { description: description === '' ? null : description }),
     };
   });

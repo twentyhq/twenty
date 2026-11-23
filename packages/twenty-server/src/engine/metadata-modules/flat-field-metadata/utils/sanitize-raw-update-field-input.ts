@@ -21,7 +21,7 @@ import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-mo
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { normalizeUpdatedFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/normalize-updated-field-metadata-options.util';
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
-import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
+import { sanitizeSelectOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-options.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
 import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
@@ -101,7 +101,7 @@ export const sanitizeRawUpdateFieldInput = ({
     updatedEditableFieldProperties.options = isFieldMetadataSelectKind(
       existingFlatFieldMetadata.type,
     )
-      ? sanitizeSelectOptionColors(normalizedOptions)
+      ? sanitizeSelectOptions(normalizedOptions)
       : normalizedOptions;
   }
 
