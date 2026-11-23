@@ -28,6 +28,7 @@ const buildEvent = ({
   before?: CalendarEventForDatabaseEvent;
   after?: CalendarEventForDatabaseEvent;
 } = {}) => ({
+  eventId: 'database-event-1',
   recordId: after.id,
   properties: { updatedFields, before, after },
 });

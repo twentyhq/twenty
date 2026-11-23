@@ -10,6 +10,14 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   enqueueJobs: enqueueJobsMock,
 }));
 
+const metadataQueryMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = metadataQueryMock;
+  },
+}));
+
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -61,6 +69,9 @@ type CalendarEventNode = {
   iCalUid?: string | null;
   conferenceLink?: { primaryLinkUrl?: string | null } | null;
   callRecorderPreference?: string | null;
+  calendarChannelEventAssociations?: {
+    edges: { node: { calendarChannelId: string } }[];
+  };
 };
 
 type CallRecordingNode = {
@@ -286,6 +297,9 @@ const buildCalendarEvent = (
     primaryLinkUrl: 'https://meet.google.com/customer-sync',
   },
   callRecorderPreference: 'ON',
+  calendarChannelEventAssociations: {
+    edges: [{ node: { calendarChannelId: 'calendar-channel-1' } }],
+  },
   ...overrides,
 });
 
@@ -308,6 +322,14 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_STYLE', 'NONE');
     enqueueJobsMock.mockReset();
+    metadataQueryMock.mockReset().mockResolvedValue({
+      calendarChannels: [
+        {
+          id: 'calendar-channel-1',
+          connectedAccount: { userWorkspaceId: 'user-workspace-1' },
+        },
+      ],
+    });
     fetchMock.mockReset();
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
@@ -423,6 +445,46 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
+    expect(recallBotCreateCalls()).toHaveLength(1);
+  });
+
+  it('books no bot for a meeting with no preference that is on no member calendar', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          callRecorderPreference: null,
+          calendarChannelEventAssociations: { edges: [] },
+        }),
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([expect.objectContaining({ action: 'SKIPPED' })]);
+    expect(recallBotCreateCalls()).toEqual([]);
+    expect(client.callRecordings).toEqual([]);
+  });
+
+  it('books a bot for a meeting on no member calendar once its preference is ON', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          calendarChannelEventAssociations: { edges: [] },
+        }),
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([expect.objectContaining({ action: 'CREATED' })]);
     expect(recallBotCreateCalls()).toHaveLength(1);
   });
 

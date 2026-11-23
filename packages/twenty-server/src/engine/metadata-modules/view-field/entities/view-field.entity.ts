@@ -13,6 +13,7 @@ import {
 import {
   AggregateOperations,
   type SerializedRelation,
+  type ViewFieldRelationScope,
 } from 'twenty-shared/types';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -20,9 +21,12 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { ADD_VIEW_FIELD_IS_CANONICAL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-is-canonical-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_VIEW_FIELD_RELATION_TARGET_FIELD_METADATA_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-59/add-view-field-relation-target-field-metadata-id-upgrade-command-name.constant';
+import { ADD_VIEW_FIELD_RELATION_SCOPE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-view-field-relation-scope-upgrade-command-name.constant';
+import { ADD_VIEW_FIELD_LABEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-view-field-label-upgrade-command-name.constant';
 import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 export type ViewFieldOverrides = {
   isActive?: boolean;
@@ -31,6 +35,7 @@ export type ViewFieldOverrides = {
   position?: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: SerializedRelation | null;
+  label?: string | null;
 };
 
 @Entity({ name: 'viewField', schema: 'core' })
@@ -117,6 +122,18 @@ export class ViewFieldEntity
   })
   @JoinColumn({ name: 'relationTargetFieldMetadataId' })
   relationTargetFieldMetadata: Relation<FieldMetadataEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_FIELD_RELATION_SCOPE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'jsonb', default: null })
+  relationScope: JsonbProperty<ViewFieldRelationScope> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_FIELD_LABEL_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'text', default: null })
+  label: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
