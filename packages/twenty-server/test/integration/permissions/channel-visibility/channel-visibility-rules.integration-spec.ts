@@ -324,6 +324,73 @@ describe('channel visibility through row level rules (integration)', () => {
     });
   });
 
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+  it('lets an API key on a role assignable to users read each channel as a member who does not own it, until channel visibility is enforced on API keys', async () => {
+    const findJonyMessagesAsApiKey = async () => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'message',
+          objectMetadataPluralName: 'messages',
+          gqlFields: 'id subject text',
+          filter: {
+            messageChannelMessageAssociations: {
+              messageChannelId: { eq: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY },
+            },
+          },
+        }),
+        API_KEY_ACCESS_TOKEN,
+      );
+
+      return (response.body.data?.messages?.edges ?? []).map(
+        ({ node }: { node: { subject: string; text: string } }) => node,
+      );
+    };
+
+    await setJonyChannelVisibility('SHARE_EVERYTHING');
+
+    const sharedMessages = await findJonyMessagesAsApiKey();
+
+    expect(sharedMessages.length).toBeGreaterThan(0);
+    expect(
+      sharedMessages.some(
+        ({ subject }: { subject: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(false);
+
+    await setJonyChannelVisibility('METADATA');
+
+    const metadataMessages = await findJonyMessagesAsApiKey();
+
+    expect(metadataMessages.length).toBeGreaterThan(0);
+    expect(
+      metadataMessages.every(
+        ({ subject, text }: { subject: string; text: string }) =>
+          subject === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED &&
+          text === FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+      ),
+    ).toBe(true);
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      await waitForAllJobsToFinish();
+
+      expect(await findJonyMessagesAsApiKey()).toEqual([]);
+    } finally {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS,
+        value: false,
+        expectToFail: false,
+      });
+      await waitForAllJobsToFinish();
+    }
+  });
+
   it('cannot read the title of an event of a metadata calendar of another member', async () => {
     const response = await makeGraphqlApiRequest(
       findManyOperationFactory({
