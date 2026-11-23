@@ -1,15 +1,14 @@
 import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNewAiChatInInboxChannel';
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
-import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
+import { currentNavigationMenuItemFolderIdFamilyState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdFamilyState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { navigationMenuItemFolderIdByTabIdState } from '@/navigation-menu-item/common/states/navigationMenuItemFolderIdByTabIdState';
+import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
-import { getMobileNavigationMenuTabFolderSwitch } from '@/navigation/utils/getMobileNavigationMenuTabFolderSwitch';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -20,9 +19,9 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath, NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -73,19 +72,13 @@ export const useMobileNavigationBarItems = (): {
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
     useNavigationMenuTabIdsWithUnreadChats();
-  const [currentNavigationMenuTabId, setCurrentNavigationMenuTabId] =
-    useAtomState(currentNavigationMenuTabIdState);
+  const setCurrentNavigationMenuTabId = useSetAtomState(
+    currentNavigationMenuTabIdState,
+  );
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const [
-    currentNavigationMenuItemFolderId,
-    setCurrentNavigationMenuItemFolderId,
-  ] = useAtomState(currentNavigationMenuItemFolderIdState);
-  const [
-    navigationMenuItemFolderIdByTabId,
-    setNavigationMenuItemFolderIdByTabId,
-  ] = useAtomState(navigationMenuItemFolderIdByTabIdState);
+  const store = useStore();
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -115,19 +108,18 @@ export const useMobileNavigationBarItems = (): {
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
     setCurrentNavigationMenuTabId(tabId);
 
-    const { folderIdByTabId, nextFolderId } =
-      getMobileNavigationMenuTabFolderSwitch({
-        folderIdByTabId: navigationMenuItemFolderIdByTabId,
-        currentTabId: currentNavigationMenuTabId,
-        currentFolderId: currentNavigationMenuItemFolderId,
-        nextTabId: tabId,
-        isReopeningCurrentTab:
-          pathname === AppPath.Home &&
-          (activeNavigationMenuTab?.id ?? null) === tabId,
-      });
+    if (
+      pathname === AppPath.Home &&
+      (activeNavigationMenuTab?.id ?? null) === tabId
+    ) {
+      store.set(
+        currentNavigationMenuItemFolderIdFamilyState.atomFamily(
+          getNavigationMenuTabFolderKey(tabId),
+        ),
+        null,
+      );
+    }
 
-    setNavigationMenuItemFolderIdByTabId(folderIdByTabId);
-    setCurrentNavigationMenuItemFolderId(nextFolderId);
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 

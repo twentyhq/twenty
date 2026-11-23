@@ -1,7 +1,7 @@
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
-import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
+import { currentNavigationMenuItemFolderIdFamilyState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdFamilyState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
@@ -202,31 +202,35 @@ describe('useMobileNavigationBarItems', () => {
       .mockReturnValue([SALES_TAB]);
 
     const { result, store } = renderMobileNavigationBarItems('/objects/people');
+    const salesFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('sales-tab');
+    const homeFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('home');
 
     act(() => tapItem(result, 'tab-sales-tab'));
-    act(() => store.set(currentNavigationMenuItemFolderIdState.atom, 'deals'));
+    act(() => store.set(salesFolderIdAtom, 'deals'));
 
     act(() => tapItem(result, 'home'));
-    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
+    expect(store.get(homeFolderIdAtom)).toBeNull();
 
     act(() => tapItem(result, 'tab-sales-tab'));
-    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBe(
-      'deals',
-    );
+    expect(store.get(salesFolderIdAtom)).toBe('deals');
 
     act(() => tapItem(result, 'tab-sales-tab'));
-    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
+    expect(store.get(salesFolderIdAtom)).toBeNull();
   });
 
-  it('files the open folder under its own tab when leaving the AI drawer', () => {
+  it('keeps the open folder on its own tab when leaving the AI drawer', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
       .mockReturnValue([SALES_TAB]);
 
     const { result, store } = renderMobileNavigationBarItems('/objects/people');
+    const salesFolderIdAtom =
+      currentNavigationMenuItemFolderIdFamilyState.atomFamily('sales-tab');
 
     act(() => tapItem(result, 'tab-sales-tab'));
-    act(() => store.set(currentNavigationMenuItemFolderIdState.atom, 'deals'));
+    act(() => store.set(salesFolderIdAtom, 'deals'));
     act(() =>
       store.set(
         navigationDrawerActiveTabState.atom,
@@ -235,11 +239,13 @@ describe('useMobileNavigationBarItems', () => {
     );
 
     act(() => tapItem(result, 'home'));
-    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBeNull();
+    expect(
+      store.get(
+        currentNavigationMenuItemFolderIdFamilyState.atomFamily('home'),
+      ),
+    ).toBeNull();
 
     act(() => tapItem(result, 'tab-sales-tab'));
-    expect(store.get(currentNavigationMenuItemFolderIdState.atom)).toBe(
-      'deals',
-    );
+    expect(store.get(salesFolderIdAtom)).toBe('deals');
   });
 });
