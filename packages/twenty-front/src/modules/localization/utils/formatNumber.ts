@@ -84,6 +84,18 @@ const getLocaleForFormat = (format?: NumberFormat): string => {
   );
 };
 
+// Callers may pass `decimals: undefined`, which overrides the default
+const getMinimumFractionDigits = ({
+  minimumDecimals,
+  decimals,
+}: FormatNumberOptions) => {
+  const minimumFractionDigits = minimumDecimals ?? 0;
+
+  return isDefined(decimals)
+    ? Math.min(minimumFractionDigits, decimals)
+    : minimumFractionDigits;
+};
+
 const numberFormatterByKey = new Map<string, Intl.NumberFormat>();
 
 const getNumberFormatter = ({
@@ -146,7 +158,7 @@ export const formatNumber = (
 
   return getNumberFormatter({
     locale,
-    minimumFractionDigits: Math.min(options.minimumDecimals, options.decimals),
+    minimumFractionDigits: getMinimumFractionDigits(options),
     maximumFractionDigits: options.decimals,
   }).format(value);
 };

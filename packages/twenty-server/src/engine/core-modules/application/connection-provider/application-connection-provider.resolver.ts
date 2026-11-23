@@ -80,7 +80,6 @@ export class ApplicationConnectionProviderResolver {
     });
   }
 
-  // Lets the front ask for consent before a new connection adds a billed unit
   @ResolveField(() => [ApplicationBillingPriceDTO])
   async connectedAccountPrices(
     @Parent()
