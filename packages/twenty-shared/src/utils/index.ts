@@ -96,6 +96,8 @@ export {
   computeRelationGqlFieldJoinColumnName,
   computeMorphRelationGqlFieldJoinColumnName,
 } from './fieldMetadata/compute-relation-gql-field-join-column-name';
+export type { FieldMetadataValueType } from './fieldMetadata/getFieldMetadataValueType';
+export { getFieldMetadataValueType } from './fieldMetadata/getFieldMetadataValueType';
 export { isCompositePropertySupportedInGroupBy } from './fieldMetadata/isCompositePropertySupportedInGroupBy';
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
@@ -272,6 +274,7 @@ export { parseJson } from './parseJson';
 export { isValidRelationScopeLimit } from './relation-scope/isValidRelationScopeLimit';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
+export { computeRollupResultType } from './rollup/computeRollupResultType';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';

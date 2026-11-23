@@ -13,6 +13,10 @@ export const isFieldMetadataSettingsOfType = <
   settings: AllFieldMetadataSettings | null,
   fieldMetadataType: T,
 ): settings is FieldMetadataSettingsMapping[T] => {
+  if (fieldMetadataType === FieldMetadataType.ROLLUP) {
+    return isDefined(settings) && 'aggregateOperation' in settings;
+  }
+
   // Settings don't have a discriminator - the type is determined by fieldMetadataType
   if (
     fieldMetadataType === FieldMetadataType.RELATION ||
@@ -31,6 +35,10 @@ export const isUniversalFieldMetadataSettingsOftype = <
   settings: UniversalFlatFieldMetadata['universalSettings'],
   fieldMetadataType: T,
 ): settings is UniversalFlatFieldMetadata<T>['universalSettings'] => {
+  if (fieldMetadataType === FieldMetadataType.ROLLUP) {
+    return isDefined(settings) && 'aggregateOperation' in settings;
+  }
+
   // Settings don't have a discriminator - the type is determined by fieldMetadataType
   if (
     fieldMetadataType === FieldMetadataType.RELATION ||

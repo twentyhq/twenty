@@ -3,7 +3,11 @@ import { GraphQLISODateTime } from '@nestjs/graphql';
 import { GraphQLFloat, GraphQLInt, type GraphQLScalarType } from 'graphql';
 import { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from 'twenty-shared/constants';
 import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isFieldMetadataDateKind } from 'twenty-shared/utils';
+import {
+  capitalize,
+  getFieldMetadataValueType,
+  isFieldMetadataDateKind,
+} from 'twenty-shared/utils';
 
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { getSubfieldsForAggregateOperation } from 'src/engine/twenty-orm/utils/get-subfields-for-aggregate-operation.util';
@@ -19,7 +23,9 @@ export type AggregationField = {
 };
 
 export const getAvailableAggregationsFromObjectFields = (
-  fields: Pick<OrmFlatFieldMetadata, 'name' | 'type'>[],
+  fields: (Pick<OrmFlatFieldMetadata, 'name' | 'type'> & {
+    settings?: object | null;
+  })[],
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {
@@ -27,13 +33,15 @@ export const getAvailableAggregationsFromObjectFields = (
         return acc;
       }
 
-      const fromSubFields = getSubfieldsForAggregateOperation(field.type);
+      const fieldType = getFieldMetadataValueType(field);
+
+      const fromSubFields = getSubfieldsForAggregateOperation(fieldType);
 
       acc[`countUniqueValues${capitalize(field.name)}`] = {
         type: GraphQLInt,
         description: `Number of unique values for ${field.name}`,
         fromField: field.name,
-        fromFieldType: field.type,
+        fromFieldType: fieldType,
         fromSubFields,
         aggregateOperation: AggregateOperations.COUNT_UNIQUE_VALUES,
       };
@@ -42,7 +50,7 @@ export const getAvailableAggregationsFromObjectFields = (
         type: GraphQLInt,
         description: `Number of empty values for ${field.name}`,
         fromField: field.name,
-        fromFieldType: field.type,
+        fromFieldType: fieldType,
         fromSubFields,
         aggregateOperation: AggregateOperations.COUNT_EMPTY,
       };
@@ -51,7 +59,7 @@ export const getAvailableAggregationsFromObjectFields = (
         type: GraphQLInt,
         description: `Number of non-empty values for ${field.name}`,
         fromField: field.name,
-        fromFieldType: field.type,
+        fromFieldType: fieldType,
         fromSubFields,
         aggregateOperation: AggregateOperations.COUNT_NOT_EMPTY,
       };
@@ -60,7 +68,7 @@ export const getAvailableAggregationsFromObjectFields = (
         type: GraphQLFloat,
         description: `Percentage of empty values for ${field.name}`,
         fromField: field.name,
-        fromFieldType: field.type,
+        fromFieldType: fieldType,
         fromSubFields,
         aggregateOperation: AggregateOperations.PERCENTAGE_EMPTY,
       };
@@ -69,17 +77,17 @@ export const getAvailableAggregationsFromObjectFields = (
         type: GraphQLFloat,
         description: `Percentage of non-empty values for ${field.name}`,
         fromField: field.name,
-        fromFieldType: field.type,
+        fromFieldType: fieldType,
         fromSubFields,
         aggregateOperation: AggregateOperations.PERCENTAGE_NOT_EMPTY,
       };
 
-      if (isFieldMetadataDateKind(field.type)) {
+      if (isFieldMetadataDateKind(fieldType)) {
         acc[`min${capitalize(field.name)}`] = {
           type: GraphQLISODateTime,
           description: `Earliest date contained in the field ${field.name}`,
           fromField: field.name,
-          fromFieldType: field.type,
+          fromFieldType: fieldType,
           aggregateOperation: AggregateOperations.MIN,
         };
 
@@ -87,18 +95,18 @@ export const getAvailableAggregationsFromObjectFields = (
           type: GraphQLISODateTime,
           description: `Latest date contained in the field ${field.name}`,
           fromField: field.name,
-          fromFieldType: field.type,
+          fromFieldType: fieldType,
           aggregateOperation: AggregateOperations.MAX,
         };
       }
 
-      switch (field.type) {
+      switch (fieldType) {
         case FieldMetadataType.BOOLEAN:
           acc[`countTrue${capitalize(field.name)}`] = {
             type: GraphQLInt,
             description: `Count of true values in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.COUNT_TRUE,
           };
 
@@ -106,7 +114,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLInt,
             description: `Count of false values in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.COUNT_FALSE,
           };
           break;
@@ -116,7 +124,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Minimum amount contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.MIN,
           };
 
@@ -124,7 +132,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Maximum amount contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.MAX,
           };
 
@@ -132,7 +140,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Average amount contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.AVG,
           };
 
@@ -140,7 +148,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Sum of amounts contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.SUM,
           };
           break;
@@ -149,7 +157,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Minimum rating contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.MIN,
           };
 
@@ -157,7 +165,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Maximum rating contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.MAX,
           };
 
@@ -165,7 +173,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Average rating contained in the field ${field.name}`,
             fromField: field.name,
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.AVG,
           };
           break;
@@ -174,9 +182,9 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Minimum amount contained in the field ${field.name}`,
             fromField: field.name,
-            fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            fromSubFields: getSubfieldsForAggregateOperation(fieldType),
             subFieldForNumericOperation: 'amountMicros',
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.MIN,
           };
 
@@ -184,9 +192,9 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Maximal amount contained in the field ${field.name}`,
             fromField: field.name,
-            fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            fromSubFields: getSubfieldsForAggregateOperation(fieldType),
             subFieldForNumericOperation: 'amountMicros',
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.MAX,
           };
 
@@ -194,9 +202,9 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Sum of amounts contained in the field ${field.name}`,
             fromField: field.name,
-            fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            fromSubFields: getSubfieldsForAggregateOperation(fieldType),
             subFieldForNumericOperation: 'amountMicros',
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.SUM,
           };
 
@@ -204,9 +212,9 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLFloat,
             description: `Average amount contained in the field ${field.name}`,
             fromField: field.name,
-            fromSubFields: getSubfieldsForAggregateOperation(field.type),
+            fromSubFields: getSubfieldsForAggregateOperation(fieldType),
             subFieldForNumericOperation: 'amountMicros',
-            fromFieldType: field.type,
+            fromFieldType: fieldType,
             aggregateOperation: AggregateOperations.AVG,
           };
           break;

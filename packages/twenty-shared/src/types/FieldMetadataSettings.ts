@@ -4,7 +4,13 @@ import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
 import { type RelationOnDeleteAction } from '@/types/RelationOnDeleteAction';
 import { type RelationType } from '@/types/RelationType';
+import { type RollupAggregateOperation } from '@/types/RollupAggregateOperation';
+import { type RollupResultFieldMetadataType } from '@/types/RollupResultFieldMetadataType';
 import { type SerializedRelation } from '@/types/SerializedRelation';
+import {
+  type ViewFieldRelationScopeFilter,
+  type ViewFieldRelationScopeFilterGroup,
+} from '@/types/ViewFieldRelationScope';
 
 export enum NumberDataType {
   FLOAT = 'float',
@@ -70,6 +76,16 @@ type FieldMetadataFilesSettings = {
   maxNumberOfValues: number;
 };
 
+export type FieldMetadataRollupSettings = {
+  relationFieldMetadataId: SerializedRelation;
+  aggregateOperation: RollupAggregateOperation;
+  aggregatedFieldMetadataId: SerializedRelation | null;
+  filters: ViewFieldRelationScopeFilter[];
+  filterGroups: ViewFieldRelationScopeFilterGroup[];
+  resultType: RollupResultFieldMetadataType;
+  decimals?: number;
+};
+
 export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
   [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
@@ -85,6 +101,7 @@ export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.LINKS]: FieldMetadataLinksSettings | null;
   [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.FILES]: FieldMetadataFilesSettings;
+  [FieldMetadataType.ROLLUP]: FieldMetadataRollupSettings;
 };
 
 export type AllFieldMetadataSettings =

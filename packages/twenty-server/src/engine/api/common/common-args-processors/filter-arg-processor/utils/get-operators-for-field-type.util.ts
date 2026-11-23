@@ -1,5 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { assertUnreachable } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  type FieldMetadataValueType,
+} from 'twenty-shared/utils';
 
 import {
   ARRAY_FILTER_OPERATORS,
@@ -16,7 +19,7 @@ import {
 import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
 
 export const getOperatorsForFieldType = (
-  fieldType: FieldMetadataType,
+  fieldType: FieldMetadataValueType,
 ): FilterOperator[] => {
   switch (fieldType) {
     case FieldMetadataType.TEXT:

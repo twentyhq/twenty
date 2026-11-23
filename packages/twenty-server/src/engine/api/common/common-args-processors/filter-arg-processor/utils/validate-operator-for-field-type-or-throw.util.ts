@@ -1,3 +1,4 @@
+import { getFieldMetadataValueType } from 'twenty-shared/utils';
 import { msg } from '@lingui/core/macro';
 
 import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
@@ -13,7 +14,9 @@ export const validateOperatorForFieldTypeOrThrow = (
   fieldMetadata: OrmFlatFieldMetadata,
   fieldName: string,
 ): void => {
-  const allowedOperators = getOperatorsForFieldType(fieldMetadata.type);
+  const allowedOperators = getOperatorsForFieldType(
+    getFieldMetadataValueType(fieldMetadata),
+  );
 
   if (!allowedOperators.includes(operator)) {
     const fieldType = fieldMetadata.type;

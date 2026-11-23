@@ -170,6 +170,7 @@ export const generateRecordPropertiesJsonSchema = ({
     if (
       SYSTEM_MANAGED_FIELD_NAMES.has(field.name) ||
       field.type === FieldMetadataType.TS_VECTOR ||
+      field.type === FieldMetadataType.ROLLUP ||
       nonUpdatableFieldMetadataIds?.has(field.id)
     ) {
       continue;

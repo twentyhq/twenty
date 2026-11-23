@@ -148,6 +148,12 @@ export const SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS: SettingsNonCompositeFiel
       category: 'Advanced',
       exampleValues: doNotTranslate([['value1', 'value2'], ['value3'], []]),
     } as const satisfies SettingsFieldTypeConfig<FieldArrayValue>,
+    [FieldMetadataType.ROLLUP]: {
+      label: msg({ message: `Rollup`, context: 'Field type' }),
+      Icon: IllustrationIconNumbers,
+      exampleValues: doNotTranslate([3, 12, 48]),
+      category: 'Relation',
+    } as const satisfies SettingsFieldTypeConfig<FieldNumberValue>,
     [FieldMetadataType.FILES]: {
       label: msg({ message: `Files`, context: 'Field type' }),
       Icon: IllustrationIconFile,

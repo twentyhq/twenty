@@ -138,6 +138,7 @@ export type {
   FieldNumberVariant,
   FieldCurrencyFormat,
   FieldLinksVariant,
+  FieldMetadataRollupSettings,
   FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
@@ -328,6 +329,8 @@ export { RelationOnDeleteAction } from './RelationOnDeleteAction';
 export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
 export type { RemoveSuffix } from './RemoveSuffix';
+export type { RollupAggregateOperation } from './RollupAggregateOperation';
+export type { RollupResultFieldMetadataType } from './RollupResultFieldMetadataType';
 export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
 export type { RowLevelPermissionPredicateGroup } from './RowLevelPermissionPredicateGroup';
 export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermissionPredicateGroupLogicalOperator';

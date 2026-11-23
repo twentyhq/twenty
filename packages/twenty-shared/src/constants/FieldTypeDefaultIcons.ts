@@ -22,6 +22,7 @@ export const FIELD_TYPE_DEFAULT_ICONS: Record<FieldMetadataType, string> = {
   [FieldMetadataType.RAW_JSON]: 'IconJson',
   [FieldMetadataType.RELATION]: 'IconRelationOneToMany',
   [FieldMetadataType.RICH_TEXT]: 'IconBlockquote',
+  [FieldMetadataType.ROLLUP]: 'IconSum',
   [FieldMetadataType.SELECT]: 'IconTag',
   [FieldMetadataType.TEXT]: 'IconAbc',
   [FieldMetadataType.TS_VECTOR]: 'IconSearch',

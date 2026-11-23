@@ -3,7 +3,11 @@ import {
   FieldMetadataType,
   type FieldReferenceFilterOperator,
 } from 'twenty-shared/types';
-import { isDefined, parseFieldReferenceFilterValue } from 'twenty-shared/utils';
+import {
+  getFieldMetadataValueType,
+  isDefined,
+  parseFieldReferenceFilterValue,
+} from 'twenty-shared/utils';
 
 import {
   CommonQueryRunnerException,
@@ -107,12 +111,14 @@ export const validateFieldReferenceFilterValueOrThrow = ({
     );
   }
 
-  const comparisonFamily = COMPARISON_FAMILY_BY_FIELD_TYPE[fieldMetadata.type];
+  const comparisonFamily =
+    COMPARISON_FAMILY_BY_FIELD_TYPE[getFieldMetadataValueType(fieldMetadata)];
 
   if (
     !isDefined(comparisonFamily) ||
-    COMPARISON_FAMILY_BY_FIELD_TYPE[referencedFieldMetadata.type] !==
-      comparisonFamily
+    COMPARISON_FAMILY_BY_FIELD_TYPE[
+      getFieldMetadataValueType(referencedFieldMetadata)
+    ] !== comparisonFamily
   ) {
     const fieldType = fieldMetadata.type;
     const referencedFieldType = referencedFieldMetadata.type;

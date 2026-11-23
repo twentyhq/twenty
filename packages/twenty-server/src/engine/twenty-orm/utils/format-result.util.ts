@@ -6,7 +6,11 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined, stringifySafely } from 'twenty-shared/utils';
+import {
+  isDefined,
+  stringifySafely,
+  getFieldMetadataValueType,
+} from 'twenty-shared/utils';
 
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
@@ -277,7 +281,9 @@ function getOrCreateFormatResultObjectCache({
         };
       }),
     dateTimeFieldMetadataItems: flatFieldMetadataItems.filter(
-      (fieldMetadata) => fieldMetadata.type === FieldMetadataType.DATE_TIME,
+      (fieldMetadata) =>
+        getFieldMetadataValueType(fieldMetadata) ===
+        FieldMetadataType.DATE_TIME,
     ),
   } satisfies FormatResultObjectCache;
 

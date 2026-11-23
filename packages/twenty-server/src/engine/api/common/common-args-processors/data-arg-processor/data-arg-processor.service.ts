@@ -382,6 +382,7 @@ export class DataArgProcessorService {
         return transformLinksValue({ input: validatedValue, settings });
       }
       case FieldMetadataType.TS_VECTOR:
+      case FieldMetadataType.ROLLUP:
         throw new CommonQueryRunnerException(
           `${key} ${fieldMetadata.type}-typed field does not support write operations`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,

@@ -5,6 +5,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { isUniversalFieldMetadataSettingsOftype } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
+import { fromUniversalRollupSettingsToRollupSettingsOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-universal-rollup-settings-to-rollup-settings-or-throw.util';
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { findFieldMetadataIdInCreateFieldContext } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/find-field-metadata-id-in-create-field-context.util';
@@ -24,6 +25,23 @@ export const fromUniversalSettingsToFlatFieldMetadataSettings = ({
 }): FieldMetadataSettings => {
   if (!isDefined(universalSettings)) {
     return null;
+  }
+
+  if (
+    isUniversalFieldMetadataSettingsOftype(
+      universalSettings,
+      FieldMetadataType.ROLLUP,
+    )
+  ) {
+    return fromUniversalRollupSettingsToRollupSettingsOrThrow({
+      universalSettings,
+      findFieldMetadataIdByUniversalIdentifier: (universalIdentifier) =>
+        findFieldMetadataIdInCreateFieldContext({
+          universalIdentifier,
+          allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
+          flatFieldMetadataMaps,
+        }),
+    });
   }
 
   if (

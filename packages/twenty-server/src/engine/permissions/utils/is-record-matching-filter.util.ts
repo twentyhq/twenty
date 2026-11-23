@@ -41,6 +41,7 @@ import {
   isMatchingStringFilter,
   isMatchingTSVectorFilter,
   isMatchingUUIDFilter,
+  getFieldMetadataValueType,
 } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -291,7 +292,7 @@ const evaluateRecordFilter = ({
       return isDefined(nullCheck) ? nullCheck === 'NULL' : null;
     }
 
-    switch (objectMetadataField.type) {
+    switch (getFieldMetadataValueType(objectMetadataField)) {
       case FieldMetadataType.RATING:
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,

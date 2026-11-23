@@ -52,6 +52,7 @@ export const getEmptinessColumnNamesForField = (
     case FieldMetadataType.ARRAY:
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.FILES:
+    case FieldMetadataType.ROLLUP:
       return [flatFieldMetadata.name];
     case FieldMetadataType.CURRENCY:
     case FieldMetadataType.PHONES:

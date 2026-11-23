@@ -32,7 +32,7 @@ describe('getOperatorsForFieldType', () => {
     expect(result).toContain('isEmptyArray');
   });
 
-  it.each([FieldMetadataType.SELECT, FieldMetadataType.RATING])(
+  it.each([FieldMetadataType.SELECT, FieldMetadataType.RATING] as const)(
     'should allow enum operators and ordering operators for %s',
     (fieldType) => {
       const result = getOperatorsForFieldType(fieldType);

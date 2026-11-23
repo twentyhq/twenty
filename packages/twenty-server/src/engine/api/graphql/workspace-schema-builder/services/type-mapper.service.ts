@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { getFieldMetadataValueType } from 'twenty-shared/utils';
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import {
@@ -89,15 +90,20 @@ export class TypeMapperService {
       return GraphQLID;
     }
 
-    if (fieldMetadataType === FieldMetadataType.NUMBER) {
+    const valueType = getFieldMetadataValueType({
+      type: fieldMetadataType,
+      settings: typeOptions?.settings,
+    });
+
+    if (valueType === FieldMetadataType.NUMBER) {
       return this.getNumberScalarTypeFromOptions(typeOptions);
     }
 
-    if (fieldMetadataType === FieldMetadataType.FILES) {
+    if (valueType === FieldMetadataType.FILES) {
       return FilesObjectType;
     }
 
-    return this.baseTypeScalarMapping.get(fieldMetadataType);
+    return this.baseTypeScalarMapping.get(valueType);
   }
 
   mapToPreBuiltGraphQLInputType({
@@ -115,15 +121,20 @@ export class TypeMapperService {
       return GraphQLID;
     }
 
-    if (fieldMetadataType === FieldMetadataType.NUMBER) {
+    const valueType = getFieldMetadataValueType({
+      type: fieldMetadataType,
+      settings: typeOptions?.settings,
+    });
+
+    if (valueType === FieldMetadataType.NUMBER) {
       return this.getNumberScalarTypeFromOptions(typeOptions);
     }
 
-    if (fieldMetadataType === FieldMetadataType.FILES) {
+    if (valueType === FieldMetadataType.FILES) {
       return FilesInputType;
     }
 
-    return this.baseTypeScalarMapping.get(fieldMetadataType);
+    return this.baseTypeScalarMapping.get(valueType);
   }
 
   private isIdOrRelationType(
@@ -186,7 +197,12 @@ export class TypeMapperService {
       [FieldMetadataType.TS_VECTOR, TSVectorFilterType],
     ]);
 
-    return typeFilterMapping.get(fieldMetadataType);
+    return typeFilterMapping.get(
+      getFieldMetadataValueType({
+        type: fieldMetadataType,
+        settings: typeOptions?.settings,
+      }),
+    );
   }
 
   mapToOrderByType(
@@ -203,6 +219,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMBER, OrderByDirectionType],
       [FieldMetadataType.NUMERIC, OrderByDirectionType],
       [FieldMetadataType.RATING, OrderByDirectionType],
+      [FieldMetadataType.ROLLUP, OrderByDirectionType],
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],

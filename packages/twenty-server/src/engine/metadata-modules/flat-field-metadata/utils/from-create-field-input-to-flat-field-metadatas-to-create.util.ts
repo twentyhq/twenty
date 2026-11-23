@@ -18,6 +18,8 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FieldInputTranspilationResult } from 'src/engine/metadata-modules/flat-field-metadata/types/field-input-transpilation-result.type';
 import { fromMorphRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-morph-relation-create-field-input-to-flat-field-metadatas.util';
+import { fromRollupSettingsInputToRollupSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-rollup-settings-input-to-rollup-settings.util';
+import { fromRollupSettingsToUniversalRollupSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-rollup-settings-to-universal-rollup-settings.util';
 import { fromRelationCreateFieldInputToFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
 import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
@@ -152,6 +154,41 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
               options,
               defaultValue: commonFlatFieldMetadata.defaultValue as string, // Could this be improved ?
               universalSettings: null,
+            } satisfies UniversalFlatFieldMetadata<
+              typeof createFieldInput.type
+            >,
+          ],
+          indexMetadatas: [],
+        },
+      };
+    }
+    case FieldMetadataType.ROLLUP: {
+      const rollupSettingsResult = fromRollupSettingsInputToRollupSettings({
+        settingsInput: createFieldInput.settings,
+        flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
+      });
+
+      if (rollupSettingsResult.status === 'fail') {
+        return rollupSettingsResult;
+      }
+
+      return {
+        status: 'success',
+        result: {
+          flatFieldMetadatas: [
+            {
+              ...commonFlatFieldMetadata,
+              type: createFieldInput.type,
+              defaultValue: null,
+              options: null,
+              isNullable: true,
+              isUnique: false,
+              isUIEditable: false,
+              universalSettings: fromRollupSettingsToUniversalRollupSettings({
+                settings: rollupSettingsResult.result,
+                fieldMetadataUniversalIdentifierById:
+                  existingFlatFieldMetadataMaps.universalIdentifierById,
+              }),
             } satisfies UniversalFlatFieldMetadata<
               typeof createFieldInput.type
             >,

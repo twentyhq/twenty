@@ -1,4 +1,5 @@
 import { type JSONSchema7 } from 'json-schema';
+import { getFieldMetadataValueType } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { SHARED_FILTER_JSON_SCHEMAS } from 'src/engine/core-modules/record-crud/json-schemas/shared-filter-definitions.json-schema';
@@ -121,6 +122,8 @@ export const generateFieldFilterJsonSchema = ({
 
   return referenceSharedFilter({
     definitions,
-    name: SHARED_FILTER_NAME_BY_FIELD_TYPE[field.type] ?? 'DefaultFilter',
+    name:
+      SHARED_FILTER_NAME_BY_FIELD_TYPE[getFieldMetadataValueType(field)] ??
+      'DefaultFilter',
   });
 };

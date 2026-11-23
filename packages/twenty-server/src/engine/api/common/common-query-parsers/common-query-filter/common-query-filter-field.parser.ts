@@ -11,6 +11,7 @@ import {
   isDefined,
   isFieldReferenceFilterOperator,
   parseFieldReferenceFilterValue,
+  getFieldMetadataValueType,
 } from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
@@ -178,7 +179,7 @@ export class CommonQueryFilterFieldParser {
       objectNameSingular,
       key,
       value,
-      fieldMetadataType: fieldMetadata.type,
+      fieldMetadataType: getFieldMetadataValueType(fieldMetadata),
       useDirectTableReference,
     });
 
@@ -468,7 +469,7 @@ export class CommonQueryFilterFieldParser {
         key: fullFieldName,
         subFieldKey,
         value,
-        fieldMetadataType: fieldMetadata.type,
+        fieldMetadataType: getFieldMetadataValueType(fieldMetadata),
         useDirectTableReference,
       });
 

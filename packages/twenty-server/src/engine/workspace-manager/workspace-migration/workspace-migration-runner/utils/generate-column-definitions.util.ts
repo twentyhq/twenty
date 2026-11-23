@@ -3,7 +3,10 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  getFieldMetadataValueType,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 
 import { type ColumnType } from 'typeorm';
 
@@ -150,7 +153,7 @@ const generateColumnDefinition = ({
 }): WorkspaceSchemaColumnDefinition => {
   const columnName = computeColumnName(flatFieldMetadata.name);
   const columnType = fieldMetadataTypeToColumnType(
-    flatFieldMetadata.type,
+    getFieldMetadataValueType(flatFieldMetadata),
   ) as ColumnType;
   const serializedDefaultValue = serializeDefaultValue({
     columnName,

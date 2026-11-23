@@ -511,6 +511,20 @@ export default defineField({
 "
 `;
 
+exports[`app add templates > preserves the ROLLUP field template 1`] = `
+"import { defineField, FieldType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: 'UUID_0',
+  name: 'value',
+  label: 'Value',
+  type: FieldType.ROLLUP,
+  objectUniversalIdentifier: 'UUID_1',
+  description: 'A value',
+});
+"
+`;
+
 exports[`app add templates > preserves the SELECT field template 1`] = `
 "import { defineField, FieldType } from 'twenty-sdk/define';
 

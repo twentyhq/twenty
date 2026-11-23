@@ -7,6 +7,7 @@ import {
   isInputObjectType,
   isObjectType,
 } from 'graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
@@ -66,6 +67,10 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of fields) {
+      if (fieldMetadata.type === FieldMetadataType.ROLLUP) {
+        continue;
+      }
+
       const typeOptions = computeFieldInputTypeOptions(
         fieldMetadata,
         GqlInputTypeDefinitionKind.Create,

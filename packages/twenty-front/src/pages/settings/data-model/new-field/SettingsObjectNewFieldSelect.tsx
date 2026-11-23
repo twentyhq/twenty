@@ -40,6 +40,7 @@ export const SettingsObjectNewFieldSelect = () => {
       FieldMetadataType.NUMERIC,
       FieldMetadataType.ACTOR,
       FieldMetadataType.UUID,
+      FieldMetadataType.ROLLUP,
     ] as const
   ).filter(isDefined);
 

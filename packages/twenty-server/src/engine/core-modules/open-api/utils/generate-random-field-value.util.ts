@@ -163,7 +163,8 @@ export const generateRandomFieldValue = ({
       return [];
     }
 
-    case FieldMetadataType.FILES: {
+    case FieldMetadataType.FILES:
+    case FieldMetadataType.ROLLUP: {
       return null;
     }
 

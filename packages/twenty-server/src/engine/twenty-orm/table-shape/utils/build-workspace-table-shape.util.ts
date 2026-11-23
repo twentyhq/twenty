@@ -1,5 +1,5 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getFieldMetadataValueType, isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -111,7 +111,7 @@ export const buildWorkspaceTableShape = ({
       columnName: flatFieldMetadata.name,
       fieldMetadataId: flatFieldMetadata.id,
       fieldName: flatFieldMetadata.name,
-      fieldMetadataType: flatFieldMetadata.type,
+      fieldMetadataType: getFieldMetadataValueType(flatFieldMetadata),
     };
   }
 

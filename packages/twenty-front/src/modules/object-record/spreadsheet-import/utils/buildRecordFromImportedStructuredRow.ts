@@ -423,6 +423,7 @@ export const buildRecordFromImportedStructuredRow = ({
       case FieldMetadataType.MORPH_RELATION:
       case FieldMetadataType.POSITION:
       case FieldMetadataType.TS_VECTOR:
+      case FieldMetadataType.ROLLUP:
         break;
       default:
         assertUnreachable(field.type);

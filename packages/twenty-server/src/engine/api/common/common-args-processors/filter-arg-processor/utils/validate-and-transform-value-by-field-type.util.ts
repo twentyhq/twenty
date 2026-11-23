@@ -1,3 +1,4 @@
+import { getFieldMetadataValueType } from 'twenty-shared/utils';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
@@ -15,7 +16,7 @@ export const validateAndTransformValueByFieldType = (
   fieldMetadata: OrmFlatFieldMetadata,
   fieldName: string,
 ): unknown => {
-  const fieldType = fieldMetadata.type;
+  const fieldType = getFieldMetadataValueType(fieldMetadata);
 
   switch (fieldType) {
     case FieldMetadataType.NUMBER:

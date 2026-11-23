@@ -15,6 +15,9 @@ import { FLAT_FIELD_METADATA_RELATION_EDITABLE_PROPERTIES_ON_SIBLING_MORPH_OR_RE
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { findFlatFieldMetadatasRelatedToMorphRelationOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadatas-related-to-morph-relation-or-throw.util';
 import { findRelationFlatFieldMetadataTargetFlatFieldMetadataOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-relation-flat-field-metadatas-target-flat-field-metadata-or-throw.util';
+import { fromRollupSettingsInputToRollupSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-rollup-settings-input-to-rollup-settings.util';
+import { fromRollupSettingsToUniversalRollupSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-rollup-settings-to-universal-rollup-settings.util';
+import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { sanitizeRawUpdateFieldInput } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-raw-update-field-input';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -87,7 +90,32 @@ export const computeFlatFieldToUpdateAndRelatedFlatFieldToUpdate = ({
     overrides,
   };
 
-  if (updatedEditableFieldProperties.settings !== undefined) {
+  if (
+    updatedEditableFieldProperties.settings !== undefined &&
+    isFlatFieldMetadataOfType(toFlatFieldMetadata, FieldMetadataType.ROLLUP)
+  ) {
+    const rollupSettingsResults = [
+      fromRollupSettingsInputToRollupSettings({
+        settingsInput: updatedEditableFieldProperties.settings,
+        flatFieldMetadataMaps,
+      }),
+    ];
+
+    throwOnFieldInputTranspilationsError(
+      rollupSettingsResults,
+      'Invalid rollup settings',
+    );
+
+    const [{ result: rollupSettings }] = rollupSettingsResults;
+
+    toFlatFieldMetadata.settings = rollupSettings;
+    toFlatFieldMetadata.universalSettings =
+      fromRollupSettingsToUniversalRollupSettings({
+        settings: rollupSettings,
+        fieldMetadataUniversalIdentifierById:
+          flatFieldMetadataMaps.universalIdentifierById,
+      });
+  } else if (updatedEditableFieldProperties.settings !== undefined) {
     const updatedSettings = toFlatFieldMetadata.settings;
 
     const isRelationSettings =

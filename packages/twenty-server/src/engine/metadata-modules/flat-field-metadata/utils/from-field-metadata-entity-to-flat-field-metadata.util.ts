@@ -6,6 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { fromEntityToScalarEntity } from 'src/engine/metadata-modules/flat-entity/utils/from-entity-to-scalar-entity.util';
+import { fromRollupSettingsToUniversalRollupSettings } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-rollup-settings-to-universal-rollup-settings.util';
+import { getRollupSettingsFieldMetadataIds } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-rollup-settings-field-metadata-ids.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FromEntityToFlatEntityArgs } from 'src/engine/workspace-cache/types/from-entity-to-flat-entity-args.type';
 import { resolveManyToOneRelationIdsToUniversalIdentifiers } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-many-to-one-relation-ids-to-universal-identifiers.util';
@@ -30,6 +32,37 @@ const toRelationUniversalSettings = ({
   };
 };
 
+const toUniversalSettings = ({
+  settings,
+  fieldMetadataIdToUniversalIdentifierMap,
+}: {
+  settings: FieldMetadataSettings;
+  fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
+}): FlatFieldMetadata['universalSettings'] => {
+  if (isFieldMetadataSettingsOfType(settings, FieldMetadataType.ROLLUP)) {
+    return fromRollupSettingsToUniversalRollupSettings({
+      settings,
+      fieldMetadataUniversalIdentifierById: Object.fromEntries(
+        getRollupSettingsFieldMetadataIds(settings).map((fieldMetadataId) => [
+          fieldMetadataId,
+          fieldMetadataIdToUniversalIdentifierMap.get(fieldMetadataId),
+        ]),
+      ),
+    });
+  }
+
+  const isRelationSettings =
+    isFieldMetadataSettingsOfType(settings, FieldMetadataType.RELATION) ||
+    isFieldMetadataSettingsOfType(settings, FieldMetadataType.MORPH_RELATION);
+
+  return isRelationSettings
+    ? toRelationUniversalSettings({
+        settings,
+        fieldMetadataIdToUniversalIdentifierMap,
+      })
+    : settings;
+};
+
 export const fromFieldMetadataEntityToFlatFieldMetadata = (
   args: FromEntityToFlatEntityArgs<'fieldMetadata'>,
 ): FlatFieldMetadata => {
@@ -49,17 +82,10 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       ...args,
     });
 
-  const settings = fieldMetadataEntity.settings;
-  const isRelationSettings =
-    isFieldMetadataSettingsOfType(settings, FieldMetadataType.RELATION) ||
-    isFieldMetadataSettingsOfType(settings, FieldMetadataType.MORPH_RELATION);
-
-  const settingsWithUniversalIdentifiers = isRelationSettings
-    ? toRelationUniversalSettings({
-        settings,
-        fieldMetadataIdToUniversalIdentifierMap,
-      })
-    : settings;
+  const settingsWithUniversalIdentifiers = toUniversalSettings({
+    settings: fieldMetadataEntity.settings,
+    fieldMetadataIdToUniversalIdentifierMap,
+  });
 
   return {
     ...fieldMetadataScalarEntity,

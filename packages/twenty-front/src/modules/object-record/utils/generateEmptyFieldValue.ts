@@ -121,7 +121,8 @@ export const generateEmptyFieldValue = ({
     case FieldMetadataType.TS_VECTOR: {
       return null;
     }
-    case FieldMetadataType.FILES: {
+    case FieldMetadataType.FILES:
+    case FieldMetadataType.ROLLUP: {
       return null;
     }
     default: {
