@@ -6,6 +6,7 @@ import { AccessGroupReadModule } from 'src/engine/permissions/internal/access-gr
 import { AccessGroupComputationModule } from 'src/engine/permissions/internal/access-group/access-group-computation.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationGrantRoleLookupModule } from 'src/engine/core-modules/application/application-grant-role-lookup/application-grant-role-lookup.module';
+import { ApiKeyChannelVisibilityExemptionService } from 'src/engine/permissions/channel-visibility/services/api-key-channel-visibility-exemption.service';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { RecordEventPermissionsReadService } from 'src/engine/permissions/record-event-permissions-read.service';
 import { RecordAccessGroupWriteService } from 'src/engine/permissions/record-access-group-write.service';
@@ -42,6 +43,7 @@ import { PermissionsMetricsModule } from 'src/engine/permissions/internal/metric
     AccessGroupPropagationProgressReadService,
     SettingPermissionsService,
     PermissionsMetadataMapsService,
+    ApiKeyChannelVisibilityExemptionService,
     PrincipalPermissionsReadService,
     RecordAccessGroupWriteService,
     RecordEventPermissionsReadService,

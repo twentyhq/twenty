@@ -72,6 +72,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Channel visibility through rules`,
     description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
   },
+  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
+    label: msg`Channel visibility on API keys`,
+    description: msg`Apply channel visibility to API keys too. While off, API keys keep the message and calendar access their role had before channel visibility.`,
+  },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,

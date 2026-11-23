@@ -13,6 +13,7 @@ import {
   ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
+import { ApiKeyChannelVisibilityExemptionService } from 'src/engine/permissions/channel-visibility/services/api-key-channel-visibility-exemption.service';
 import { ACCESS_GROUP_TYPES } from 'src/engine/permissions/internal/access-group/constants/access-group-types.constant';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
@@ -33,6 +34,7 @@ export class AccessGroupSyncService {
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
     private readonly accessGroupPropagationPlanService: AccessGroupPropagationPlanService,
     private readonly metricsService: MetricsService,
+    private readonly apiKeyChannelVisibilityExemptionService: ApiKeyChannelVisibilityExemptionService,
   ) {}
 
   async syncAccessGroups({
@@ -71,7 +73,13 @@ export class AccessGroupSyncService {
       ],
     );
     const { accessGroups: newAccessGroups, hasFailures } =
-      buildWorkspaceAccessGroups(workspaceCache);
+      buildWorkspaceAccessGroups({
+        ...workspaceCache,
+        rolesPermissions:
+          await this.apiKeyChannelVisibilityExemptionService.findRolesPermissionsWithApiKeyEntries(
+            { workspaceId, ...workspaceCache },
+          ),
+      });
 
     const existingAccessGroups =
       await this.accessGroupRepository.findAccessGroups(workspaceId);

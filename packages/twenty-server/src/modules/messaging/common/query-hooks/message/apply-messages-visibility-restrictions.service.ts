@@ -15,7 +15,7 @@ import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
+import { isChannelVisibilityEnforcedThroughRules } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-through-rules.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -54,7 +54,9 @@ export class ApplyMessagesVisibilityRestrictionsService
       ['featureFlagsMap'],
     );
 
-    if (isChannelVisibilityRlsEnabled(featureFlagsMap)) {
+    if (
+      isChannelVisibilityEnforcedThroughRules({ featureFlagsMap, authContext })
+    ) {
       return;
     }
 
