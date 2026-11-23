@@ -2290,11 +2290,6 @@ msgstr "הוסף כרטיס"
 msgid "Add CC"
 msgstr "הוסף עותק (CC)"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "הוסף ערוץ"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
