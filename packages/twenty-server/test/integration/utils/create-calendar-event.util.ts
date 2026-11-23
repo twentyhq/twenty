@@ -14,6 +14,13 @@ type CreateCalendarEventInput = {
   attendees?: string;
   sendInvitations?: boolean;
   addConferencing?: boolean;
+  recurrence?: {
+    frequency: string;
+    interval?: number;
+    daysOfWeek?: string[];
+    endDate?: string;
+    occurrenceCount?: number;
+  };
 };
 
 type CreateCalendarEventResult = {

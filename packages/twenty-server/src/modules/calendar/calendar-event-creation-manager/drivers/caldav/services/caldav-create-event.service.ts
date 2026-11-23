@@ -74,16 +74,16 @@ export class CalDavCreateEventService implements CalendarEventCreationDriver {
         prodId: '//Twenty//Calendar//EN',
         timezone: { name: null, generator: () => vTimezoneBlock },
       });
-      const start = toCalendarEventTemporalDateTime(
-        input.startsAt,
-        input.isFullDay,
-        timeZoneId,
-      );
-      const end = toCalendarEventTemporalDateTime(
-        input.endsAt,
-        input.isFullDay,
-        timeZoneId,
-      );
+      const start = toCalendarEventTemporalDateTime({
+        isoDateTime: input.startsAt,
+        isFullDay: input.isFullDay,
+        timeZone: timeZoneId,
+      });
+      const end = toCalendarEventTemporalDateTime({
+        isoDateTime: input.endsAt,
+        isFullDay: input.isFullDay,
+        timeZone: timeZoneId,
+      });
       const recurrenceRule = isDefined(input.recurrence)
         ? toICalRecurrenceRule({
             recurrence: input.recurrence,

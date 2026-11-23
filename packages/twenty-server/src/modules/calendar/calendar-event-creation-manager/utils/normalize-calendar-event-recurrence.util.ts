@@ -26,9 +26,13 @@ export const normalizeCalendarEventRecurrence = ({
   const interval = recurrence.interval ?? 1;
   const endDate = recurrence.endDate ?? undefined;
   const occurrenceCount = recurrence.occurrenceCount ?? undefined;
-  const firstOccurrenceDate = Temporal.PlainDate.from(
-    toCalendarEventTemporalDateTime(startsAt, isFullDay, timeZone),
-  ).toString();
+  const startsAtInTimeZone = toCalendarEventTemporalDateTime({
+    isoDateTime: startsAt,
+    isFullDay,
+    timeZone,
+  });
+  const firstOccurrenceDate =
+    Temporal.PlainDate.from(startsAtInTimeZone).toString();
 
   if (
     !isPositiveWholeNumber(interval) ||

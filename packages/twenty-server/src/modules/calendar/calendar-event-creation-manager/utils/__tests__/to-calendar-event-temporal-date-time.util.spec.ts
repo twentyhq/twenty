@@ -7,11 +7,11 @@ describe('toCalendarEventTemporalDateTime', () => {
     const calendar = ical();
 
     calendar.createEvent({
-      start: toCalendarEventTemporalDateTime(
-        '2026-10-20T08:00:00Z',
-        false,
-        'Europe/Paris',
-      ),
+      start: toCalendarEventTemporalDateTime({
+        isoDateTime: '2026-10-20T08:00:00Z',
+        isFullDay: false,
+        timeZone: 'Europe/Paris',
+      }),
       timezone: 'Europe/Paris',
     });
 

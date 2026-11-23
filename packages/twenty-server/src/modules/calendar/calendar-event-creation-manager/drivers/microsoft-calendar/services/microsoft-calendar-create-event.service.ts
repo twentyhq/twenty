@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type Event } from '@microsoft/microsoft-graph-types';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MicrosoftCalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-import-events.service';
 import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
@@ -21,6 +22,7 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
   constructor(
     private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
     private readonly microsoftCalendarImportEventsService: MicrosoftCalendarImportEventsService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async createCalendarEvent(
@@ -42,10 +44,10 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
         .post(toMicrosoftEventInput(input));
 
       const createdEventAsListedBySync =
-        await this.findCreatedEventAsListedBySync(
+        await this.findCreatedEventAsListedBySync({
           connectedAccount,
           createdEvent,
-        );
+        });
 
       return (
         createdEventAsListedBySync ??
@@ -59,19 +61,29 @@ export class MicrosoftCalendarCreateEventService implements CalendarEventCreatio
     }
   }
 
-  private async findCreatedEventAsListedBySync(
-    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>,
-    createdEvent: Event,
-  ): Promise<FetchedCalendarEvent | undefined> {
+  private async findCreatedEventAsListedBySync({
+    connectedAccount,
+    createdEvent,
+  }: {
+    connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'provider'>;
+    createdEvent: Event;
+  }): Promise<FetchedCalendarEvent | undefined> {
     if (!isNonEmptyString(createdEvent.id)) {
       return undefined;
     }
 
-    const [createdEventAsListedBySync] =
-      await this.microsoftCalendarImportEventsService
-        .getCalendarEvents(connectedAccount, [createdEvent.id])
-        .catch(() => []);
+    try {
+      const [createdEventAsListedBySync] =
+        await this.microsoftCalendarImportEventsService.getCalendarEvents(
+          connectedAccount,
+          [createdEvent.id],
+        );
 
-    return createdEventAsListedBySync;
+      return createdEventAsListedBySync;
+    } catch (error) {
+      this.exceptionHandlerService.captureExceptions([error]);
+
+      return undefined;
+    }
   }
 }

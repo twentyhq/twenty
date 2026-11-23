@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type calendar_v3 as calendarV3, google } from 'googleapis';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { formatGoogleCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/utils/format-google-calendar-event.util';
 import { toGoogleEventInput } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-google-event-input.util';
@@ -21,6 +22,7 @@ const GOOGLE_CALENDAR_ID = 'primary';
 export class GoogleCalendarCreateEventService implements CalendarEventCreationDriver {
   constructor(
     private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async createCalendarEvent(
@@ -44,10 +46,10 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         requestBody: toGoogleEventInput(input),
       });
 
-      const firstOccurrence = await this.findFirstOccurrenceAsListedBySync(
+      const firstOccurrence = await this.findFirstOccurrenceAsListedBySync({
         googleCalendarClient,
-        data,
-      );
+        createdEvent: data,
+      });
 
       return formatGoogleCalendarEvents([firstOccurrence ?? data])[0];
     } catch (error) {
@@ -58,10 +60,13 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
     }
   }
 
-  private async findFirstOccurrenceAsListedBySync(
-    googleCalendarClient: calendarV3.Calendar,
-    createdEvent: calendarV3.Schema$Event,
-  ): Promise<calendarV3.Schema$Event | undefined> {
+  private async findFirstOccurrenceAsListedBySync({
+    googleCalendarClient,
+    createdEvent,
+  }: {
+    googleCalendarClient: calendarV3.Calendar;
+    createdEvent: calendarV3.Schema$Event;
+  }): Promise<calendarV3.Schema$Event | undefined> {
     if (
       !isNonEmptyArray(createdEvent.recurrence) ||
       !isNonEmptyString(createdEvent.id)
@@ -76,6 +81,10 @@ export class GoogleCalendarCreateEventService implements CalendarEventCreationDr
         maxResults: 1,
       })
       .then(({ data }) => data.items?.[0])
-      .catch(() => undefined);
+      .catch((error: unknown) => {
+        this.exceptionHandlerService.captureExceptions([error]);
+
+        return undefined;
+      });
   }
 }

@@ -75,10 +75,10 @@ export const toMicrosoftEventInput = (input: CalendarEventToCreate): Event => {
   }
 
   if (isDefined(input.recurrence)) {
-    event.recurrence = toMicrosoftEventRecurrence(
-      input.recurrence,
-      input.timeZone,
-    );
+    event.recurrence = toMicrosoftEventRecurrence({
+      recurrence: input.recurrence,
+      timeZone: input.timeZone,
+    });
   }
 
   return event;

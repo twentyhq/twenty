@@ -14,16 +14,16 @@ export const getCalendarEventRecurrenceInput = (
 
   const isWeekly =
     recurrence.frequency === CalendarEventRecurrenceFrequency.WEEKLY;
-  const endsOnDate = recurrence.endCondition === 'ON_DATE';
-  const endsAfterOccurrenceCount =
+  const isEndingOnDate = recurrence.endCondition === 'ON_DATE';
+  const isEndingAfterOccurrenceCount =
     recurrence.endCondition === 'AFTER_OCCURRENCE_COUNT';
 
   return {
     frequency: recurrence.frequency,
     interval: recurrence.interval,
     daysOfWeek: isWeekly ? recurrence.additionalDaysOfWeek : undefined,
-    endDate: endsOnDate ? recurrence.endDate : undefined,
-    occurrenceCount: endsAfterOccurrenceCount
+    endDate: isEndingOnDate ? recurrence.endDate : undefined,
+    occurrenceCount: isEndingAfterOccurrenceCount
       ? recurrence.occurrenceCount
       : undefined,
   };

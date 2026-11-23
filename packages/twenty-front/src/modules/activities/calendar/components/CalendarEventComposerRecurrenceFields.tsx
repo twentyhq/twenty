@@ -131,8 +131,8 @@ export const CalendarEventComposerRecurrenceFields = ({
   });
   const isWeekly =
     recurrence.frequency === CalendarEventRecurrenceFrequency.WEEKLY;
-  const endsOnDate = recurrence.endCondition === 'ON_DATE';
-  const endsAfterOccurrenceCount =
+  const isEndingOnDate = recurrence.endCondition === 'ON_DATE';
+  const isEndingAfterOccurrenceCount =
     recurrence.endCondition === 'AFTER_OCCURRENCE_COUNT';
 
   return (
@@ -169,7 +169,7 @@ export const CalendarEventComposerRecurrenceFields = ({
               onChange={handleRecurrenceEndConditionChange}
             />
           </StyledNonShrinkingContainer>
-          {endsOnDate && (
+          {isEndingOnDate && (
             <FormDateFieldInput
               key={recurrence.endDate}
               variant="transparent"
@@ -177,7 +177,7 @@ export const CalendarEventComposerRecurrenceFields = ({
               onChange={handleEndDateChange}
             />
           )}
-          {endsAfterOccurrenceCount && (
+          {isEndingAfterOccurrenceCount && (
             <>
               <NumberStepper
                 aria-label={t`Number of occurrences`}

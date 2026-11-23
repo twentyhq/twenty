@@ -1,17 +1,20 @@
 import {
-  type DayOfWeek,
   type PatternedRecurrence,
   type RecurrenceRange,
 } from '@microsoft/microsoft-graph-types';
 import { isDefined } from 'twenty-shared/utils';
 import { Temporal } from 'temporal-polyfill';
 
+import { toMicrosoftDayOfWeek } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-microsoft-day-of-week.util';
 import { type CalendarEventRecurrence } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-recurrence.type';
 
-export const toMicrosoftEventRecurrence = (
-  recurrence: CalendarEventRecurrence,
-  timeZone: string,
-): PatternedRecurrence => {
+export const toMicrosoftEventRecurrence = ({
+  recurrence,
+  timeZone,
+}: {
+  recurrence: CalendarEventRecurrence;
+  timeZone: string;
+}): PatternedRecurrence => {
   const { day, month } = Temporal.PlainDate.from(
     recurrence.firstOccurrenceDate,
   );
@@ -41,9 +44,7 @@ export const toMicrosoftEventRecurrence = (
         pattern: {
           type: 'weekly',
           interval,
-          daysOfWeek: recurrence.daysOfWeek.map(
-            (weekday) => weekday.toLowerCase() as DayOfWeek,
-          ),
+          daysOfWeek: recurrence.daysOfWeek.map(toMicrosoftDayOfWeek),
           firstDayOfWeek: 'monday',
         },
         range,

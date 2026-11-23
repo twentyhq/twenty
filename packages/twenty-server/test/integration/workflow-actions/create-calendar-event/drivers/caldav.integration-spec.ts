@@ -10,6 +10,7 @@ import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import {
@@ -324,30 +325,28 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
   it('stores a weekly series under the canonical time zone of an alias zone', async () => {
     const title = `CalDAV weekly series ${randomUUID()}`;
 
-    const workflowRun = await runWorkflowActionStep({
-      name: 'CalDAV create recurring calendar event workflow',
-      stepType: 'CREATE_CALENDAR_EVENT',
-      input: {
-        connectedAccountId,
-        title,
-        startsAt: '2026-11-30T03:30:00Z',
-        endsAt: '2026-11-30T04:30:00Z',
-        isFullDay: false,
-        timeZone: 'Asia/Calcutta',
-        sendInvitations: false,
-        addConferencing: false,
-        recurrence: {
-          frequency: 'WEEKLY',
-          interval: 2,
-          daysOfWeek: ['THURSDAY'],
-          occurrenceCount: 5,
-        },
+    const createdEvent = await createCalendarEvent({
+      connectedAccountId,
+      title,
+      startsAt: '2026-11-30T03:30:00Z',
+      endsAt: '2026-11-30T04:30:00Z',
+      isFullDay: false,
+      timeZone: 'Asia/Calcutta',
+      sendInvitations: false,
+      addConferencing: false,
+      recurrence: {
+        frequency: 'WEEKLY',
+        interval: 2,
+        daysOfWeek: ['THURSDAY'],
+        occurrenceCount: 5,
       },
     });
 
-    expect(workflowRun.stepStatus).toBe('SUCCESS');
+    expect(createdEvent.success).toBe(true);
 
-    const storedICalendar = await fetchStoredICalendar(workflowRun.stepResult);
+    const storedICalendar = await fetchStoredICalendar({
+      iCalUid: createdEvent.iCalUid,
+    });
 
     expect(storedICalendar).toContain(
       'DTSTART;TZID=Asia/Kolkata:20261130T090000',
