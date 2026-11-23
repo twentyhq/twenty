@@ -1,11 +1,11 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import { LOGIC_FUNCTION_MAX_RETRY_LIMIT } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { getDatabaseEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-database-event-trigger-settings-errors';
 import { getRecordEventTriggerSettingsErrors } from '@/sdk/define/common/utils/get-record-event-trigger-settings-errors';
-import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import type { DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 
 export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
@@ -45,19 +45,22 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     );
   }
 
-  if (isDefined(config.onFailureLogicFunction)) {
-    const { universalIdentifier: onFailureUniversalIdentifier } =
-      config.onFailureLogicFunction;
+  if (
+    isDefined(config.onJobFailure) &&
+    typeof config.onJobFailure !== 'function'
+  ) {
+    errors.push('Logic function onJobFailure must be a function');
+  }
 
-    if (!isValidPostgresUuid(onFailureUniversalIdentifier)) {
-      errors.push(
-        `Logic function onFailureLogicFunction.universalIdentifier "${onFailureUniversalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
-      );
-    } else if (onFailureUniversalIdentifier === config.universalIdentifier) {
-      errors.push(
-        'Logic function onFailureLogicFunction must point at another logic function, not itself',
-      );
-    }
+  if (
+    isDefined(config.retryLimit) &&
+    (!Number.isInteger(config.retryLimit) ||
+      config.retryLimit < 0 ||
+      config.retryLimit > LOGIC_FUNCTION_MAX_RETRY_LIMIT)
+  ) {
+    errors.push(
+      `Logic function retryLimit must be an integer between 0 and ${LOGIC_FUNCTION_MAX_RETRY_LIMIT}`,
+    );
   }
 
   if (config.cronTriggerSettings) {

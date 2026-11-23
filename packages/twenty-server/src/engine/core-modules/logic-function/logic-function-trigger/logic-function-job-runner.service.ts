@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
-  type LogicFunctionFailureHandlerPayload,
+  type LogicFunctionJobFailure,
   RetryableLogicFunctionError,
 } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
-import { extractJobIdFromQueueJobId } from 'src/engine/core-modules/application/application-job/utils/extract-job-id-from-queue-job-id.util';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
   LogicFunctionExecutionException,
@@ -15,10 +14,9 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
-import { type LogicFunctionFailureHandlerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/types/logic-function-failure-handler-job.type';
-import { buildLogicFunctionFailureHandlerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-logic-function-failure-handler-job.util';
+import { type LogicFunctionJobFailureHandlerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/types/logic-function-job-failure-handler-job.type';
+import { buildLogicFunctionJobFailureHandlerJob } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-logic-function-job-failure-handler-job.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -36,12 +34,13 @@ export type LogicFunctionJobPayload = {
   userId?: string;
   userWorkspaceId?: string;
   applicationRetryCount?: number;
-  isFailureHandlerRun?: boolean;
+  // Set on the run of a function's onJobFailure handler: the export to call instead of the main handler.
+  jobFailureHandlerName?: string;
 };
 
-type EnqueueFailureHandler = (
-  failureHandlerJob: LogicFunctionFailureHandlerJob,
-) => Promise<string | undefined>;
+type EnqueueJobFailureHandler = (
+  jobFailureHandlerJob: LogicFunctionJobFailureHandlerJob,
+) => Promise<unknown>;
 
 @Injectable()
 export class LogicFunctionJobRunnerService {
@@ -60,14 +59,14 @@ export class LogicFunctionJobRunnerService {
     retryLimit,
     attemptsMade,
     persistRetryCount,
-    enqueueFailureHandler,
+    enqueueJobFailureHandler,
   }: {
     logicFunctionPayload: LogicFunctionJobPayload;
     jobId: string;
     retryLimit: number;
     attemptsMade: number;
     persistRetryCount: (applicationRetryCount: number) => Promise<void>;
-    enqueueFailureHandler: EnqueueFailureHandler;
+    enqueueJobFailureHandler: EnqueueJobFailureHandler;
   }): Promise<void> {
     try {
       const retryCount = logicFunctionPayload.applicationRetryCount ?? 0;
@@ -87,6 +86,7 @@ export class LogicFunctionJobRunnerService {
           userId: logicFunctionPayload.userId,
           userWorkspaceId: logicFunctionPayload.userWorkspaceId,
           retry,
+          handlerName: logicFunctionPayload.jobFailureHandlerName,
         });
 
       const { error: executionError } = logicFunctionExecutionResult;
@@ -96,15 +96,15 @@ export class LogicFunctionJobRunnerService {
       }
 
       if (!isLogicFunctionRetryScheduled({ error: executionError, retry })) {
-        await this.enqueueFailureHandlerIfDeclared({
+        await this.enqueueJobFailureHandlerIfDeclared({
           logicFunctionPayload,
-          jobId,
+          queueJobId: jobId,
           attemptsMade: attemptsMade + 1,
-          failure: {
-            errorType: executionError.errorType,
-            errorMessage: executionError.errorMessage,
+          error: {
+            type: executionError.errorType,
+            message: executionError.errorMessage,
           },
-          enqueueFailureHandler,
+          enqueueJobFailureHandler,
         });
 
         return;
@@ -168,20 +168,22 @@ export class LogicFunctionJobRunnerService {
     }
   }
 
-  async enqueueFailureHandlerIfDeclared({
+  // Never throws: a throw would make the queue retry the run that already failed.
+  async enqueueJobFailureHandlerIfDeclared({
     logicFunctionPayload,
-    jobId,
+    queueJobId,
     attemptsMade,
-    failure,
-    enqueueFailureHandler,
+    error,
+    enqueueJobFailureHandler,
   }: {
     logicFunctionPayload: LogicFunctionJobPayload;
-    jobId: string;
+    queueJobId: string;
     attemptsMade: number;
-    failure: LogicFunctionFailureHandlerPayload['error'];
-    enqueueFailureHandler: EnqueueFailureHandler;
+    error: LogicFunctionJobFailure['error'];
+    enqueueJobFailureHandler: EnqueueJobFailureHandler;
   }): Promise<void> {
-    if (logicFunctionPayload.isFailureHandlerRun) {
+    // A failing onJobFailure run is final, otherwise a broken handler would loop.
+    if (isDefined(logicFunctionPayload.jobFailureHandlerName)) {
       return;
     }
 
@@ -198,40 +200,27 @@ export class LogicFunctionJobRunnerService {
         flatEntityMaps: flatLogicFunctionMaps,
       });
 
-      const failureHandlerUniversalIdentifier =
-        failedFlatLogicFunction?.onFailureLogicFunctionUniversalIdentifier;
-
       if (
         !isDefined(failedFlatLogicFunction) ||
-        !isDefined(failureHandlerUniversalIdentifier)
+        !isDefined(failedFlatLogicFunction.jobFailureHandlerName)
       ) {
         return;
       }
 
-      const failureHandlerJob = buildLogicFunctionFailureHandlerJob({
-        failedLogicFunctionPayload: logicFunctionPayload,
-        failedFlatLogicFunction,
-        failureHandler: findFlatEntityByUniversalIdentifier({
-          flatEntityMaps: flatLogicFunctionMaps,
-          universalIdentifier: failureHandlerUniversalIdentifier,
+      await enqueueJobFailureHandler(
+        buildLogicFunctionJobFailureHandlerJob({
+          failedLogicFunctionPayload: logicFunctionPayload,
+          jobFailureHandlerName: failedFlatLogicFunction.jobFailureHandlerName,
+          applicationUniversalIdentifier:
+            failedFlatLogicFunction.applicationUniversalIdentifier,
+          queueJobId,
+          attemptsMade,
+          error,
         }),
-        jobId: extractJobIdFromQueueJobId({ workspaceId, queueJobId: jobId }),
-        attemptsMade,
-        error: failure,
-      });
-
-      if (!isDefined(failureHandlerJob)) {
-        this.logger.warn(
-          `Skipping failure handler ${failureHandlerUniversalIdentifier} of function ${logicFunctionId} (workspace ${workspaceId}): not a logic function of the same application`,
-        );
-
-        return;
-      }
-
-      await enqueueFailureHandler(failureHandlerJob);
-    } catch (error) {
+      );
+    } catch (enqueueError) {
       this.logger.error(
-        `Could not enqueue the failure handler of function ${logicFunctionId} (workspace ${workspaceId}): ${error instanceof Error ? error.message : String(error)}`,
+        `Could not enqueue the onJobFailure handler of function ${logicFunctionId} (workspace ${workspaceId}): ${enqueueError instanceof Error ? enqueueError.message : String(enqueueError)}`,
       );
     }
   }

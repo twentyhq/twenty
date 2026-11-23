@@ -10,7 +10,7 @@ import {
   LogicFunctionJobRunnerService,
   type LogicFunctionJobPayload,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-job-runner.service';
-import { buildLogicFunctionFailureHandlerJobOptions } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-logic-function-failure-handler-job-options.util';
+import { LOGIC_FUNCTION_JOB_FAILURE_HANDLER_QUEUE_OPTIONS } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-job-failure-handler-queue-options.constant';
 import { QUEUE_JOB_FAILED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-failed-event.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -43,18 +43,20 @@ export class LogicFunctionFailedJobListener {
       : [job.data];
 
     for (const logicFunctionPayload of logicFunctionPayloads) {
-      await this.logicFunctionJobRunnerService.enqueueFailureHandlerIfDeclared({
-        logicFunctionPayload,
-        jobId: job.id,
-        attemptsMade: job.attemptsMade,
-        failure: { errorType: error.name, errorMessage: error.message },
-        enqueueFailureHandler: (failureHandlerJob) =>
-          this.messageQueueService.add<LogicFunctionTriggerJobData>(
-            LogicFunctionTriggerJob.name,
-            failureHandlerJob.jobData,
-            buildLogicFunctionFailureHandlerJobOptions(failureHandlerJob),
-          ),
-      });
+      await this.logicFunctionJobRunnerService.enqueueJobFailureHandlerIfDeclared(
+        {
+          logicFunctionPayload,
+          queueJobId: job.id,
+          attemptsMade: job.attemptsMade,
+          error: { type: error.name, message: error.message },
+          enqueueJobFailureHandler: (jobFailureHandlerJob) =>
+            this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
+              LogicFunctionTriggerJob.name,
+              [jobFailureHandlerJob],
+              LOGIC_FUNCTION_JOB_FAILURE_HANDLER_QUEUE_OPTIONS,
+            ),
+        },
+      );
     }
   }
 }

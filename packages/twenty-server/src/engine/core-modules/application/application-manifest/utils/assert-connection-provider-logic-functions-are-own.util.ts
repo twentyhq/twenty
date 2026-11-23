@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ApplicationException,
@@ -6,7 +7,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
-import { isOwnManifestLogicFunction } from 'src/engine/core-modules/application/application-manifest/utils/is-own-manifest-logic-function.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 
 export const assertConnectionProviderLogicFunctionsAreOwn = ({
@@ -27,12 +28,21 @@ export const assertConnectionProviderLogicFunctionsAreOwn = ({
     } of getConnectionProviderManifestLogicFunctionReferences(
       connectionProvider,
     )) {
-      const isOwnLogicFunction = isOwnManifestLogicFunction({
-        universalIdentifier,
-        fromFlatLogicFunctionMaps,
-        toFlatLogicFunctionMaps,
-        inferDeletionFromMissingEntities,
-      });
+      // fromFlatLogicFunctionMaps only holds this application's functions, which a partial sync keeps.
+      const isOwnLogicFunction =
+        isDefined(
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: toFlatLogicFunctionMaps,
+            universalIdentifier,
+          }),
+        ) ||
+        (!inferDeletionFromMissingEntities &&
+          isDefined(
+            findFlatEntityByUniversalIdentifier({
+              flatEntityMaps: fromFlatLogicFunctionMaps,
+              universalIdentifier,
+            }),
+          ));
 
       if (!isOwnLogicFunction) {
         throw new ApplicationException(

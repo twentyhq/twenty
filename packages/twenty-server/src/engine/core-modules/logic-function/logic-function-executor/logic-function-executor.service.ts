@@ -178,6 +178,7 @@ export class LogicFunctionExecutorService {
   async execute({
     logicFunctionId,
     workspaceId,
+    handlerName,
     ...executionArgs
   }: {
     logicFunctionId: string;
@@ -188,6 +189,8 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
+    // Calls another export of the function's bundle, such as its onJobFailure handler.
+    handlerName?: string;
   } & ExecutionAdmissionOptions): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -199,7 +202,9 @@ export class LogicFunctionExecutorService {
       ...executionArgs,
       workspaceId,
       flatApplication,
-      flatLogicFunction,
+      flatLogicFunction: isDefined(handlerName)
+        ? { ...flatLogicFunction, handlerName }
+        : flatLogicFunction,
       flatApplicationVariableMaps,
       spenders: {
         logicFunctionId: flatLogicFunction.id,

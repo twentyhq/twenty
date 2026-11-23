@@ -8,7 +8,7 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { buildLogicFunctionFailureHandlerJobOptions } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-logic-function-failure-handler-job-options.util';
+import { LOGIC_FUNCTION_JOB_FAILURE_HANDLER_QUEUE_OPTIONS } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-job-failure-handler-queue-options.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -41,11 +41,11 @@ export class ApplicationLifecycleHookJob {
       attemptsMade: jobContext.attemptsMade,
       persistRetryCount: (applicationRetryCount) =>
         jobContext.updateData({ ...jobData, applicationRetryCount }),
-      enqueueFailureHandler: (failureHandlerJob) =>
-        this.messageQueueService.add<LogicFunctionTriggerJobData>(
+      enqueueJobFailureHandler: (jobFailureHandlerJob) =>
+        this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
           LogicFunctionTriggerJob.name,
-          failureHandlerJob.jobData,
-          buildLogicFunctionFailureHandlerJobOptions(failureHandlerJob),
+          [jobFailureHandlerJob],
+          LOGIC_FUNCTION_JOB_FAILURE_HANDLER_QUEUE_OPTIONS,
         ),
     });
   }

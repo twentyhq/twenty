@@ -23,81 +23,41 @@ const APP_UNIVERSAL_IDENTIFIER = '1da3273d-32a2-442f-a4cd-7baad9f5c212';
 const ROLE_UNIVERSAL_IDENTIFIER = 'd6fb8a36-73c4-4b01-8972-45d8ee5719a3';
 const FAILING_FUNCTION_UNIVERSAL_IDENTIFIER =
   'ab753ffb-f248-4484-bcca-361bbcea4f20';
-const FAILURE_HANDLER_UNIVERSAL_IDENTIFIER =
-  '6bde7857-4021-41e5-bf75-d473c8bfcf4f';
-const UNKNOWN_FUNCTION_UNIVERSAL_IDENTIFIER =
-  'b1a95f51-73fa-4842-ab54-1e4e419b053c';
 
+const JOB_FAILURE_HANDLER_NAME = 'onJobFailure';
 const BULLMQ_STALLED_JOB_FAILURE_REASON_FIELD = 'defa';
 
-const FAILING_HANDLER_CODE = `export const main = async () => {
+const FUNCTION_CODE = `export const main = async () => {
   throw new Error('Agent run crashed');
 };
-`;
 
-const FAILURE_HANDLER_CODE = `export const main = async (payload) => ({
-  handledFailureOf: payload.failedLogicFunctionUniversalIdentifier,
+export const onJobFailure = async (failure) => ({
+  handledRequestId: failure.payload.requestId,
 });
 `;
 
-const buildFunctionManifest = ({
-  universalIdentifier,
-  name,
-  onFailureUniversalIdentifier,
-}: {
-  universalIdentifier: string;
-  name: string;
-  onFailureUniversalIdentifier?: string;
-}): LogicFunctionManifest => ({
-  universalIdentifier,
-  name,
+const failingFunctionManifest: LogicFunctionManifest = {
+  universalIdentifier: FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'answer-request',
   handlerName: 'main',
-  sourceHandlerPath: `src/${name}.ts`,
-  builtHandlerPath: `dist/${name}.mjs`,
-  builtHandlerChecksum: `checksum-${name}`,
-  ...(isDefined(onFailureUniversalIdentifier)
-    ? {
-        onFailureLogicFunction: {
-          universalIdentifier: onFailureUniversalIdentifier,
-        },
-      }
-    : {}),
-});
+  jobFailureHandlerName: JOB_FAILURE_HANDLER_NAME,
+  sourceHandlerPath: 'src/answer-request.ts',
+  builtHandlerPath: 'dist/answer-request.mjs',
+  builtHandlerChecksum: 'checksum-answer-request',
+};
 
-const failureHandlerManifest = buildFunctionManifest({
-  universalIdentifier: FAILURE_HANDLER_UNIVERSAL_IDENTIFIER,
-  name: 'fail-request',
-});
-
-const buildManifest = (onFailureUniversalIdentifier: string) =>
-  buildBaseManifest({
-    appId: APP_UNIVERSAL_IDENTIFIER,
-    roleId: ROLE_UNIVERSAL_IDENTIFIER,
-    overrides: {
-      logicFunctions: [
-        buildFunctionManifest({
-          universalIdentifier: FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
-          name: 'answer-request',
-          onFailureUniversalIdentifier,
-        }),
-        failureHandlerManifest,
-      ],
-    },
-  });
-
-describe('Logic function failure handler (integration)', () => {
+describe('Logic function job failure handler (integration)', () => {
   let redisConnection: IORedis;
   let logicFunctionInspectionQueue: Queue<LogicFunctionTriggerJobData>;
   let failingFunctionId: string;
-  let failureHandlerId: string;
 
   const enqueueFailingFunctionRun = ({
     payload,
-    isFailureHandlerRun,
+    jobFailureHandlerName,
     delay,
   }: {
     payload: object;
-    isFailureHandlerRun?: boolean;
+    jobFailureHandlerName?: string;
     delay?: number;
   }) =>
     global.app
@@ -111,7 +71,9 @@ describe('Logic function failure handler (integration)', () => {
           logicFunctionId: failingFunctionId,
           workspaceId: SEED_APPLE_WORKSPACE_ID,
           payload,
-          ...(isDefined(isFailureHandlerRun) ? { isFailureHandlerRun } : {}),
+          ...(isDefined(jobFailureHandlerName)
+            ? { jobFailureHandlerName }
+            : {}),
         },
         {
           retryLimit: 0,
@@ -121,10 +83,12 @@ describe('Logic function failure handler (integration)', () => {
         },
       );
 
-  const getFailureHandlerJobs = async () =>
+  const getJobFailureHandlerJobs = async () =>
     (
       await logicFunctionInspectionQueue.getJobs(['completed', 'failed'])
-    ).filter((job) => job.data.logicFunctionId === failureHandlerId);
+    ).filter(
+      (job) => job.data.jobFailureHandlerName === JOB_FAILURE_HANDLER_NAME,
+    );
 
   beforeAll(async () => {
     redisConnection = new IORedis(
@@ -141,40 +105,34 @@ describe('Logic function failure handler (integration)', () => {
 
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-      name: 'Logic Function Failure Handler Test App',
-      description: 'App for testing the onFailureLogicFunction hook',
-      sourcePath: 'logic-function-failure-handler-test-app',
+      name: 'Logic Function Job Failure Handler Test App',
+      description: 'App for testing the onJobFailure handler',
+      sourcePath: 'logic-function-job-failure-handler-test-app',
     });
 
     jest.useRealTimers();
 
-    for (const [name, code] of [
-      ['answer-request', FAILING_HANDLER_CODE],
-      ['fail-request', FAILURE_HANDLER_CODE],
-    ]) {
-      await uploadApplicationFile({
-        applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        fileFolder: 'BuiltLogicFunction',
-        filePath: `dist/${name}.mjs`,
-        fileBuffer: Buffer.from(code),
-        filename: `${name}.mjs`,
-        contentType: 'application/javascript',
-        expectToFail: false,
-      });
-    }
+    await uploadApplicationFile({
+      applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+      fileFolder: 'BuiltLogicFunction',
+      filePath: 'dist/answer-request.mjs',
+      fileBuffer: Buffer.from(FUNCTION_CODE),
+      filename: 'answer-request.mjs',
+      contentType: 'application/javascript',
+      expectToFail: false,
+    });
 
     await syncApplication({
-      manifest: buildManifest(FAILURE_HANDLER_UNIVERSAL_IDENTIFIER),
+      manifest: buildBaseManifest({
+        appId: APP_UNIVERSAL_IDENTIFIER,
+        roleId: ROLE_UNIVERSAL_IDENTIFIER,
+        overrides: { logicFunctions: [failingFunctionManifest] },
+      }),
       expectToFail: false,
     });
 
     failingFunctionId = await findLogicFunctionId({
       universalIdentifier: FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
-
-    failureHandlerId = await findLogicFunctionId({
-      universalIdentifier: FAILURE_HANDLER_UNIVERSAL_IDENTIFIER,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
   }, 60000);
@@ -188,31 +146,32 @@ describe('Logic function failure handler (integration)', () => {
     });
   }, 60000);
 
-  it('runs the failure handler with the original payload when a queued run fails', async () => {
+  it('runs onJobFailure with the original payload when a queued run fails', async () => {
     const originalPayload = { requestId: 'request-1' };
 
-    await enqueueFailingFunctionRun({ payload: originalPayload });
+    const queueJobId = await enqueueFailingFunctionRun({
+      payload: originalPayload,
+    });
 
     await waitForAllJobsToFinish();
 
-    const failureHandlerJobs = await getFailureHandlerJobs();
+    const jobFailureHandlerJob = await logicFunctionInspectionQueue.getJob(
+      `${queueJobId}.on-failure`,
+    );
 
-    expect(failureHandlerJobs).toHaveLength(1);
-    expect(await failureHandlerJobs[0].getState()).toBe('completed');
-    expect(failureHandlerJobs[0].data).toMatchObject({
-      isFailureHandlerRun: true,
+    expect(await jobFailureHandlerJob?.getState()).toBe('completed');
+    expect(jobFailureHandlerJob?.data).toMatchObject({
+      logicFunctionId: failingFunctionId,
+      jobFailureHandlerName: JOB_FAILURE_HANDLER_NAME,
       payload: {
-        failedLogicFunctionUniversalIdentifier:
-          FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
-        jobId: expect.any(String),
-        attemptsMade: 1,
         payload: originalPayload,
-        error: { errorType: 'Error', errorMessage: 'Agent run crashed' },
+        error: { type: 'Error', message: 'Agent run crashed' },
+        job: { id: queueJobId, attemptsMade: 1 },
       },
     });
   }, 120000);
 
-  it('runs the failure handler when the queue fails a job whose workers kept crashing', async () => {
+  it('runs onJobFailure when the queue fails a job whose workers kept crashing', async () => {
     const queueJobId = await enqueueFailingFunctionRun({
       payload: { requestId: 'request-crashed' },
       delay: 60_000,
@@ -230,42 +189,34 @@ describe('Logic function failure handler (integration)', () => {
 
     await waitForAllJobsToFinish();
 
-    const crashedRunHandlerJobs = (await getFailureHandlerJobs()).filter(
-      (job) =>
-        isDefined(job.data.payload) &&
-        'jobId' in job.data.payload &&
-        job.data.payload.jobId === queueJobId,
+    const jobFailureHandlerJob = await logicFunctionInspectionQueue.getJob(
+      `${queueJobId}.on-failure`,
     );
 
-    expect(crashedRunHandlerJobs).toHaveLength(1);
-    expect(crashedRunHandlerJobs[0].data.payload).toMatchObject({
-      jobId: queueJobId,
+    expect(await jobFailureHandlerJob?.getState()).toBe('completed');
+    expect(jobFailureHandlerJob?.data.payload).toMatchObject({
+      job: { id: queueJobId },
       error: {
-        errorType: 'UnrecoverableError',
-        errorMessage: 'job stalled more than allowable limit',
+        type: 'UnrecoverableError',
+        message: 'job stalled more than allowable limit',
       },
     });
   }, 120000);
 
-  it('does not run a failure handler when a failure handler run fails', async () => {
-    const failureHandlerJobCountBefore = (await getFailureHandlerJobs()).length;
+  it('does not run onJobFailure again when the onJobFailure run itself fails', async () => {
+    const jobFailureHandlerJobCountBefore = (await getJobFailureHandlerJobs())
+      .length;
 
+    // 'main' always throws, so this stands in for a failing onJobFailure run.
     await enqueueFailingFunctionRun({
       payload: { requestId: 'request-2' },
-      isFailureHandlerRun: true,
+      jobFailureHandlerName: 'main',
     });
 
     await waitForAllJobsToFinish();
 
-    expect((await getFailureHandlerJobs()).length).toBe(
-      failureHandlerJobCountBefore,
+    expect((await getJobFailureHandlerJobs()).length).toBe(
+      jobFailureHandlerJobCountBefore,
     );
   }, 120000);
-
-  it('rejects a failure handler that is not a logic function of the application', async () => {
-    await syncApplication({
-      manifest: buildManifest(UNKNOWN_FUNCTION_UNIVERSAL_IDENTIFIER),
-      expectToFail: true,
-    });
-  }, 60000);
 });
