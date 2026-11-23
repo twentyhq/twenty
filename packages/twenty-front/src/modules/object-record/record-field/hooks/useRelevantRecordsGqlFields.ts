@@ -123,10 +123,12 @@ export const useRelevantRecordsGqlFields = ({
     ...allDepthOneGqlFields,
     ...coreRecordReferenceFieldsRecordGqlFields,
     ...Object.fromEntries(
-      scopedRelationAliases.map(({ responseKey, relationWithArguments }) => [
-        responseKey,
-        relationWithArguments,
-      ]),
+      scopedRelationAliases
+        .filter(({ isRestricted }) => !isRestricted)
+        .map(({ responseKey, relationWithArguments }) => [
+          responseKey,
+          relationWithArguments,
+        ]),
     ),
     createdAt: true,
     updatedAt: true,

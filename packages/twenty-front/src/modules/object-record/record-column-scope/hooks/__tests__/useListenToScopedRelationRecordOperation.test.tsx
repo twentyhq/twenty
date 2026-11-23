@@ -28,6 +28,8 @@ const peopleAlias: ScopedRelationAlias = {
     relationFieldName: 'people',
     recordGqlFields: { id: true },
   },
+  reachedObjectMetadataItemIds: [personObjectMetadataItem.id],
+  isRestricted: false,
 };
 
 const CONNECTION_SELECTION = `
@@ -230,6 +232,11 @@ describe('useListenToScopedRelationRecordOperation', () => {
           recordGqlFields: { id: true },
         },
         scopedRelationJunction,
+        reachedObjectMetadataItemIds: [
+          getMockObjectMetadataItemOrThrow('taskTarget').id,
+          taskObjectMetadataItem.id,
+        ],
+        isRestricted: false,
       },
     ]);
 
