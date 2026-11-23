@@ -74,7 +74,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
     label: msg`Channel visibility on API keys`,
-    description: msg`Apply channel visibility to API keys too. While off, API keys keep the message and calendar access their role had before channel visibility.`,
+    description: msg`Apply channel visibility to API keys too. While off, API keys keep the message and calendar access of roles that relied on role-wide access; a role with its own message or calendar permission before channel visibility isn't covered.`,
   },
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,

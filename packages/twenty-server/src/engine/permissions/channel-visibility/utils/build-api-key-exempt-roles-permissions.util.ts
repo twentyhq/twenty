@@ -40,7 +40,15 @@ const buildApiKeyExemptRoleRecordsPermissions = ({
   flatObjectPermissionMaps,
 }: Omit<ApiKeyExemptionMetadataMaps, 'flatRoleMaps'> & {
   roleRecordsPermissions: RoleRecordsPermissions;
-  flatRole: FlatRole;
+  flatRole: Pick<
+    FlatRole,
+    | 'universalIdentifier'
+    | 'canCreateAllObjectRecords'
+    | 'canReadAllObjectRecords'
+    | 'canUpdateAllObjectRecords'
+    | 'canSoftDeleteAllObjectRecords'
+    | 'canDestroyAllObjectRecords'
+  >;
 }): RoleRecordsPermissions => {
   const isRevokedByCommand = (flatObjectMetadata: FlatObjectMetadata) =>
     isDefined(
