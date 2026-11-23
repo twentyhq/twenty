@@ -120,7 +120,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
     await this.viewAccessService.canUserCreateView({
-      visibility: input.visibility,
+      isPrivate: input.visibility === ViewVisibility.UNLISTED,
       accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 

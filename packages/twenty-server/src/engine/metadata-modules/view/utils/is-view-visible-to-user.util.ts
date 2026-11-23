@@ -1,4 +1,3 @@
-import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -8,23 +7,22 @@ import {
 
 export const isViewVisibleToUser = (
   view: OverridableFlatEntity & {
-    visibility: ViewVisibility;
+    isPrivate: boolean;
     createdByUserWorkspaceId?: string | null;
   },
   userWorkspaceId?: string,
 ): boolean => {
-  const visibility = resolveEffectiveFlatEntityProperty({
+  const isPrivate = resolveEffectiveFlatEntityProperty({
     metadataName: 'view',
     flatEntity: view,
-    property: 'visibility',
+    property: 'isPrivate',
   });
 
-  if (visibility === ViewVisibility.WORKSPACE) {
+  if (!isPrivate) {
     return true;
   }
 
   return (
-    visibility === ViewVisibility.UNLISTED &&
     isDefined(userWorkspaceId) &&
     view.createdByUserWorkspaceId === userWorkspaceId
   );

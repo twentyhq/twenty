@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import {
   hasObjectMetadataLabelPlaceholder,
   type MetadataLabelPlaceholderValues,
@@ -191,10 +191,6 @@ export class ViewResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
-
-    input.visibility = visibility;
-
     return await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,

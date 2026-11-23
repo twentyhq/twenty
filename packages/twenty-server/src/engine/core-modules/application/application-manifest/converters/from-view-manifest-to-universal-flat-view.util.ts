@@ -56,7 +56,7 @@ export const fromViewManifestToUniversalFlatView = ({
     icon: viewManifest.icon ?? 'IconList',
     position: viewManifest.position ?? 0,
     isCompact: viewManifest.isCompact ?? false,
-    visibility: viewManifest.visibility ?? ViewVisibility.WORKSPACE,
+    isPrivate: viewManifest.visibility === ViewVisibility.UNLISTED,
     openRecordIn: viewManifest.openRecordIn ?? ViewOpenRecordIn.SIDE_PANEL,
     key: null,
     kanbanAggregateOperation: viewManifest.kanbanAggregateOperation ?? null,

@@ -24,10 +24,7 @@ import {
   IconCopy,
 } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import {
-  ViewVisibility,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
@@ -45,17 +42,14 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
     dropdownId,
   );
 
-  const selectableItemIdArray = [
-    ViewVisibility.WORKSPACE,
-    ViewVisibility.UNLISTED,
-  ];
+  const selectableItemIdArray = ['Workspace', 'Unlisted'];
 
-  const handleVisibilityChange = (visibility: ViewVisibility) => {
+  const handleIsPrivateChange = (isPrivate: boolean) => {
     if (!canPersistChanges || !currentView) {
       return;
     }
     updateCurrentView({
-      visibility,
+      isPrivate,
     });
     resetContent();
   };
@@ -68,7 +62,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
     await copyToClipboard(canonicalViewUrl, t`Link copied to clipboard`);
   };
 
-  const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
+  const isPrivate = currentView?.isPrivate ?? false;
 
   return (
     <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
@@ -89,11 +83,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem
-            itemId={ViewVisibility.WORKSPACE}
+            itemId="Workspace"
             onEnter={() =>
               hasViewsPermission &&
               canPersistChanges &&
-              handleVisibilityChange(ViewVisibility.WORKSPACE)
+              handleIsPrivateChange(false)
             }
           >
             <Tooltip
@@ -104,14 +98,12 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             >
               <div id="workspace-visibility-option">
                 <ListItemButton
-                  focused={selectedItemId === ViewVisibility.WORKSPACE}
-                  onClick={() =>
-                    handleVisibilityChange(ViewVisibility.WORKSPACE)
-                  }
+                  focused={selectedItemId === 'Workspace'}
+                  onClick={() => handleIsPrivateChange(false)}
                   disabled={!hasViewsPermission || !canPersistChanges}
                   role="option"
-                  aria-selected={currentVisibility === ViewVisibility.WORKSPACE}
-                  selected={currentVisibility === ViewVisibility.WORKSPACE}
+                  aria-selected={!isPrivate}
+                  selected={!isPrivate}
                   indicator="check"
                   description={t`Everyone`}
                   startIcon={<IconCircle />}
@@ -120,25 +112,22 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             </Tooltip>
           </SelectableListItem>
           <SelectableListItem
-            itemId={ViewVisibility.UNLISTED}
-            onEnter={() =>
-              canPersistChanges &&
-              handleVisibilityChange(ViewVisibility.UNLISTED)
-            }
+            itemId="Unlisted"
+            onEnter={() => canPersistChanges && handleIsPrivateChange(true)}
           >
             <ListItemButton
-              focused={selectedItemId === ViewVisibility.UNLISTED}
-              onClick={() => handleVisibilityChange(ViewVisibility.UNLISTED)}
+              focused={selectedItemId === 'Unlisted'}
+              onClick={() => handleIsPrivateChange(true)}
               disabled={!canPersistChanges}
               role="option"
-              aria-selected={currentVisibility === ViewVisibility.UNLISTED}
-              selected={currentVisibility === ViewVisibility.UNLISTED}
+              aria-selected={isPrivate}
+              selected={isPrivate}
               indicator="check"
               description={t`Visible to you`}
               startIcon={<IconCircleDashed />}
             >{t`Unlisted`}</ListItemButton>
           </SelectableListItem>
-          {currentVisibility === ViewVisibility.WORKSPACE && (
+          {!isPrivate && (
             <>
               <DropdownMenuSeparator />
               <SelectableListItem

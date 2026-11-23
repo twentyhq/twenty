@@ -210,7 +210,7 @@ export class UpsertCompleteViewTool extends BaseTool<
 
     if (!isDefined(existingView)) {
       await this.viewAccessService.canUserCreateView({
-        visibility: input.visibility ?? ViewVisibility.WORKSPACE,
+        isPrivate: input.visibility === ViewVisibility.UNLISTED,
         accessContext: { workspaceId, userWorkspaceId, authContext },
       });
     }
