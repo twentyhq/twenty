@@ -20,6 +20,7 @@ import {
   handleFlatFieldMetadataUpdateSideEffect,
 } from 'src/engine/metadata-modules/flat-field-metadata/utils/handle-flat-field-metadata-update-side-effect.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { recomputeRollupFiltersOnFlatFieldMetadataOptionsUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/recompute-rollup-filters-on-flat-field-metadata-options-update.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type FromUpdateFieldInputToFlatFieldMetadataArgs = {
@@ -256,6 +257,16 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
 
   return {
     status: 'success',
-    result: sideEffectFlatEntityOperations,
+    result: {
+      ...sideEffectFlatEntityOperations,
+      flatFieldMetadatasToUpdate: [
+        ...sideEffectFlatEntityOperations.flatFieldMetadatasToUpdate,
+        ...recomputeRollupFiltersOnFlatFieldMetadataOptionsUpdate({
+          ...flatFieldMetadataFromTo,
+          flatFieldMetadataMaps,
+          flatFieldMetadataOptionMaps,
+        }),
+      ],
+    },
   };
 };

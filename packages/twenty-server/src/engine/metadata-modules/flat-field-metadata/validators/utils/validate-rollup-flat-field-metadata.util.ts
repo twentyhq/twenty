@@ -14,9 +14,12 @@ import {
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { ROLLUP_MAX_FIELDS_PER_OBJECT } from 'src/engine/metadata-modules/flat-field-metadata/constants/rollup-max-fields-per-object.constant';
 import { ROLLUP_MAX_DECIMALS } from 'src/engine/metadata-modules/flat-field-metadata/schemas/rollup-settings-input.schema';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
+import { findRollupFlatFieldMetadatasDependingOnFields } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-rollup-flat-field-metadatas-depending-on-fields.util';
+import { getUniversalRollupSettingsFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-universal-rollup-settings-field-metadata-universal-identifiers.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
 import { validateRollupFlatFieldMetadataFilters } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-rollup-flat-field-metadata-filters.util';
@@ -127,6 +130,56 @@ export const validateRollupFlatFieldMetadata = ({
       message:
         'The field a rollup calculates on must belong to the related object',
       userFriendlyMessage: msg`Pick a field of the related records to calculate on`,
+    });
+  }
+
+  const otherRollupFlatFieldMetadatas = Object.values(
+    flatFieldMetadataMaps.byUniversalIdentifier,
+  )
+    .filter(isDefined)
+    .filter(
+      (flatFieldMetadata) =>
+        flatFieldMetadata.universalIdentifier !==
+        flatEntityToValidate.universalIdentifier,
+    )
+    .filter((flatFieldMetadata) =>
+      isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.ROLLUP),
+    );
+
+  if (
+    !isDefined(update) &&
+    otherRollupFlatFieldMetadatas.filter(
+      ({ objectMetadataUniversalIdentifier }) =>
+        objectMetadataUniversalIdentifier ===
+        flatEntityToValidate.objectMetadataUniversalIdentifier,
+    ).length >= ROLLUP_MAX_FIELDS_PER_OBJECT
+  ) {
+    return invalidRollup({
+      message: `An object cannot have more than ${ROLLUP_MAX_FIELDS_PER_OBJECT} rollup fields`,
+      userFriendlyMessage: msg`This object has reached its maximum number of rollups`,
+    });
+  }
+
+  const dependentUniversalIdentifiers = new Set([
+    flatEntityToValidate.universalIdentifier,
+    ...findRollupFlatFieldMetadatasDependingOnFields({
+      fieldMetadataUniversalIdentifiers: [
+        flatEntityToValidate.universalIdentifier,
+      ],
+      rollupFlatFieldMetadatas: otherRollupFlatFieldMetadatas,
+    }).map(({ universalIdentifier }) => universalIdentifier),
+  ]);
+
+  if (
+    getUniversalRollupSettingsFieldMetadataUniversalIdentifiers(
+      universalSettings,
+    ).some((universalIdentifier) =>
+      dependentUniversalIdentifiers.has(universalIdentifier),
+    )
+  ) {
+    return invalidRollup({
+      message: 'A rollup cannot depend on itself, directly or through rollups',
+      userFriendlyMessage: msg`A rollup cannot be calculated from itself`,
     });
   }
 

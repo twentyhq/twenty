@@ -1,0 +1,1 @@
+export const ROLLUP_MAX_FIELDS_PER_OBJECT = 10;
