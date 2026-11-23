@@ -46,7 +46,7 @@ describe('resolveScopedRelationJunction', () => {
         }),
         objectMetadataItems,
       }),
-    ).toEqual({ status: 'not-a-junction' });
+    ).toEqual({});
   });
 
   it('supports a junction resolved from the other side of the join object', () => {
@@ -59,7 +59,6 @@ describe('resolveScopedRelationJunction', () => {
         objectMetadataItems,
       }),
     ).toMatchObject({
-      status: 'supported',
       scopedRelationJunction: {
         junctionConfig: {
           direction: 'reverse',
@@ -81,7 +80,6 @@ describe('resolveScopedRelationJunction', () => {
         objectMetadataItems,
       }),
     ).toMatchObject({
-      status: 'supported',
       scopedRelationJunction: {
         junctionConfig: {
           direction: 'forward',
@@ -102,7 +100,7 @@ describe('resolveScopedRelationJunction', () => {
         }),
         objectMetadataItems,
       }),
-    ).toEqual({ status: 'unsupported' });
+    ).toBeUndefined();
   });
 
   it('does not support a junction whose configuration is invalid', () => {
@@ -122,7 +120,7 @@ describe('resolveScopedRelationJunction', () => {
         },
         objectMetadataItems,
       }),
-    ).toEqual({ status: 'unsupported' });
+    ).toBeUndefined();
   });
 
   it('does not support a junction whose target relation cannot be read', () => {
@@ -137,6 +135,6 @@ describe('resolveScopedRelationJunction', () => {
           fieldName: 'task',
         }),
       }),
-    ).toEqual({ status: 'unsupported' });
+    ).toBeUndefined();
   });
 });

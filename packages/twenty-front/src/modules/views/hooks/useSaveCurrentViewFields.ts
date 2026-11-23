@@ -11,6 +11,7 @@ import {
   type CreateViewFieldInput,
   type UpdateViewFieldMutationVariables,
 } from '~/generated-metadata/graphql';
+import isEmpty from 'lodash.isempty';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from 'twenty-shared/utils';
 import { removeTypenames } from '~/utils/removeTypenames';
@@ -90,38 +91,42 @@ export const useSaveCurrentViewFields = () => {
               };
             }
 
-            const hasRelationScopeChanged = !isDeeplyEqual(
-              removeTypenames(existingField.relationScope) ?? null,
-              createViewFieldInput.relationScope ?? null,
-            );
+            const updatedProperties = {
+              position: createViewFieldInput.position,
+              size: createViewFieldInput.size,
+              isVisible: createViewFieldInput.isVisible,
+              aggregateOperation: createViewFieldInput.aggregateOperation,
+              relationScope: createViewFieldInput.relationScope ?? null,
+              relationTargetFieldMetadataId:
+                createViewFieldInput.relationTargetFieldMetadataId ?? null,
+              label: createViewFieldInput.label ?? null,
+            };
 
-            const hasRelationTargetChanged =
-              (existingField.relationTargetFieldMetadataId ?? null) !==
-              (createViewFieldInput.relationTargetFieldMetadataId ?? null);
+            const existingProperties: typeof updatedProperties = {
+              position: existingField.position,
+              size: existingField.size,
+              isVisible: existingField.isVisible,
+              aggregateOperation: existingField.aggregateOperation,
+              relationScope:
+                removeTypenames(existingField.relationScope) ?? null,
+              relationTargetFieldMetadataId:
+                existingField.relationTargetFieldMetadataId ?? null,
+              label: existingField.label ?? null,
+            };
 
-            const hasLabelChanged =
-              (existingField.label ?? null) !==
-              (createViewFieldInput.label ?? null);
+            const changedProperties = Object.fromEntries(
+              Object.entries(updatedProperties).filter(
+                ([propertyName, value]) =>
+                  !isDeeplyEqual(
+                    value,
+                    existingProperties[
+                      propertyName as keyof typeof updatedProperties
+                    ],
+                  ),
+              ),
+            ) as Partial<typeof updatedProperties>;
 
-            if (
-              !hasRelationScopeChanged &&
-              !hasRelationTargetChanged &&
-              !hasLabelChanged &&
-              isDeeplyEqual(
-                {
-                  position: existingField.position,
-                  size: existingField.size,
-                  isVisible: existingField.isVisible,
-                  aggregateOperation: existingField.aggregateOperation,
-                },
-                {
-                  position: createViewFieldInput.position,
-                  size: createViewFieldInput.size,
-                  isVisible: createViewFieldInput.isVisible,
-                  aggregateOperation: createViewFieldInput.aggregateOperation,
-                },
-              )
-            ) {
+            if (isEmpty(changedProperties)) {
               return {
                 viewFieldsToCreate,
                 viewFieldsToUpdate,
@@ -135,23 +140,14 @@ export const useSaveCurrentViewFields = () => {
                 {
                   input: {
                     id: existingField.id,
+                    // Column settings are sent only when changed, so a resize never rewrites them
                     update: {
                       aggregateOperation:
                         createViewFieldInput.aggregateOperation,
                       isVisible: createViewFieldInput.isVisible,
                       position: createViewFieldInput.position,
                       size: createViewFieldInput.size,
-                      ...(hasRelationScopeChanged && {
-                        relationScope: createViewFieldInput.relationScope,
-                      }),
-                      ...(hasRelationTargetChanged && {
-                        relationTargetFieldMetadataId:
-                          createViewFieldInput.relationTargetFieldMetadataId ??
-                          null,
-                      }),
-                      ...(hasLabelChanged && {
-                        label: createViewFieldInput.label ?? null,
-                      }),
+                      ...changedProperties,
                     },
                   },
                 },

@@ -19,15 +19,7 @@ export const useUpdateRecordField = (
     (
       recordFieldId: string,
       partialRecordField: Partial<
-        Pick<
-          RecordField,
-          | 'isVisible'
-          | 'size'
-          | 'position'
-          | 'relationScope'
-          | 'relationTargetFieldMetadataId'
-          | 'label'
-        >
+        Pick<RecordField, 'isVisible' | 'size' | 'position'>
       >,
     ) => {
       const existingRecordFields = store.get(currentRecordFields);

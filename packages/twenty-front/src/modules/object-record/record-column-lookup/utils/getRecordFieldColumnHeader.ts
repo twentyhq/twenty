@@ -15,10 +15,8 @@ const getDefaultRecordFieldColumnHeader = ({
   isScopedRelationColumn,
 }: {
   fieldMetadataItem: ColumnHeaderFieldMetadataItem;
-  lookupTarget:
-    | Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>
-    | undefined;
-  isScopedRelationColumn: boolean;
+  lookupTarget?: Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>;
+  isScopedRelationColumn?: boolean;
 }): ColumnHeaderFieldMetadataItem => {
   const label = isScopedRelationColumn
     ? `${fieldMetadataItem.label} · ${t`Filtered`}`

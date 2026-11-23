@@ -7,19 +7,16 @@ import { findRelationTargetObjectMetadataItem } from '@/related-record-paths/uti
 import { FieldMetadataType } from 'twenty-shared/types';
 import { findById, isDefined } from 'twenty-shared/utils';
 
-type ScopedRelationJunctionResolution =
-  | { status: 'not-a-junction' | 'unsupported'; scopedRelationJunction?: never }
-  | { status: 'supported'; scopedRelationJunction: ScopedRelationJunction };
-
+// Undefined for a join object a scope cannot reach through, no junction for a plain relation
 export const resolveScopedRelationJunction = ({
   fieldMetadataItem: { settings, relation },
   objectMetadataItems,
 }: {
   fieldMetadataItem: Pick<FieldMetadataItem, 'settings' | 'relation'>;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-}): ScopedRelationJunctionResolution => {
+}): { scopedRelationJunction?: ScopedRelationJunction } | undefined => {
   if (!isDefined(relation)) {
-    return { status: 'not-a-junction' };
+    return {};
   }
 
   const junctionConfig = resolveJunctionConfig({
@@ -31,11 +28,11 @@ export const resolveScopedRelationJunction = ({
   });
 
   if (!isDefined(junctionConfig)) {
-    return { status: 'not-a-junction' };
+    return {};
   }
 
   if (!isUsableJunctionConfig(junctionConfig)) {
-    return { status: 'unsupported' };
+    return undefined;
   }
 
   const { targetFields, junctionObjectMetadata } = junctionConfig;
@@ -49,7 +46,7 @@ export const resolveScopedRelationJunction = ({
       findById(targetFieldMetadataItem.id),
     )
   ) {
-    return { status: 'unsupported' };
+    return undefined;
   }
 
   const targetObjectMetadataItem = findRelationTargetObjectMetadataItem({
@@ -58,11 +55,10 @@ export const resolveScopedRelationJunction = ({
   });
 
   if (!isDefined(targetObjectMetadataItem)) {
-    return { status: 'unsupported' };
+    return undefined;
   }
 
   return {
-    status: 'supported',
     scopedRelationJunction: {
       junctionConfig,
       targetFieldMetadataItem,

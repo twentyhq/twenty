@@ -1,4 +1,4 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -25,25 +25,24 @@ const StyledAddButtonContainer = styled.div`
 `;
 
 type RecordTableSettingsSortsContentProps = {
-  objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
+  fieldMetadataItems: FieldMetadataItem[];
   onUpdate?: () => void;
 };
 
 export const RecordTableSettingsSortsContent = ({
-  objectMetadataItem,
+  fieldMetadataItems,
   onUpdate,
 }: RecordTableSettingsSortsContentProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
-  const sortableFieldOptions: Array<SelectOption<string>> =
-    objectMetadataItem.fields
-      .filter(filterSortableFieldMetadataItems)
-      .map((field) => ({
-        Icon: getIcon(field.icon),
-        label: field.label,
-        value: field.id,
-      }));
+  const sortableFieldOptions: Array<SelectOption<string>> = fieldMetadataItems
+    .filter(filterSortableFieldMetadataItems)
+    .map((field) => ({
+      Icon: getIcon(field.icon),
+      label: field.label,
+      value: field.id,
+    }));
 
   const directionOptions: Array<SelectOption<ViewSortDirection>> = [
     { label: t`Ascending`, value: ViewSortDirection.ASC },
