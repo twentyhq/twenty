@@ -9,6 +9,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
+import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/channel-visibility/utils/is-api-key-exempt-from-channel-visibility.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
@@ -133,11 +134,16 @@ export class PrincipalPermissionsReadService {
       return undefined;
     }
 
-    const { flatRoleMaps, apiKeyRoleMap } =
+    const { featureFlagsMap, flatRoleMaps, apiKeyRoleMap } =
       await this.workspaceCacheService.getOrRecompute(
         authContext.workspace.id,
-        ['flatRoleMaps', 'apiKeyRoleMap'],
+        ['featureFlagsMap', 'flatRoleMaps', 'apiKeyRoleMap'],
       );
+
+    if (!isApiKeyExemptFromChannelVisibility(featureFlagsMap)) {
+      return undefined;
+    }
+
     const apiKeyRoleId = apiKeyRoleMap[authContext.apiKey.id];
     const apiKeyFlatRole = isDefined(apiKeyRoleId)
       ? findFlatEntityByIdInFlatEntityMaps({
