@@ -31,7 +31,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
 
   if (
     !isDefined(recordPageFlatView) ||
-    recordPageFlatView.isSystemSideEffect !== true ||
+    !recordPageFlatView.isSystemSideEffect ||
     isDefined(recordPageFlatView.deletedAt)
   ) {
     return undefined;
