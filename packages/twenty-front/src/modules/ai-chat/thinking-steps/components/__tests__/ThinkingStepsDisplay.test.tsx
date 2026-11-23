@@ -19,28 +19,11 @@ jest.mock('@/ai/hooks/useGetToolIndex', () => ({
   }),
 }));
 
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue',
-  () => ({
-    useAtomComponentSelectorValue: () => 'output',
-  }),
-);
-
 jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
-  TabList: ({
-    tabs,
-    onTabChange,
-  }: {
-    tabs: Array<{ id: string; title: string }>;
-    onTabChange?: (tabId: string) => void;
-  }) => (
+  TabList: ({ tabs }: { tabs: Array<{ id: string; title: string }> }) => (
     <div>
       {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          type="button"
-          onClick={() => onTabChange?.(tab.id)}
-        >
+        <button key={tab.id} type="button">
           {tab.title}
         </button>
       ))}

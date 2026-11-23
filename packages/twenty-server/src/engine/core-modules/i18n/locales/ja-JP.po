@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "ワークスペースメンバー"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "ワークスペースメンバーのリレーションには、関連レコードで読み取るフィールドが必要です"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "上書きする既存のタイムラインアクティビティタイプ
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "共有するユーザーまたはロールを選択してください。"
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "関連レコードで読み取るフィールドを選択してください"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "フィールド \"{relationFieldName}\" はリレーションではあ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "フィールド \"{workspaceMemberFieldName}\" は workspaceMember オブジェクトのフィールドではないため、この条件は適用されません"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "フィールド \"{workspaceMemberRelationFieldName}\" は、workspaceMember オブジェクトの一対多リレーションではありません"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11126,6 +11141,11 @@ msgstr "述語の値がこのオペランドに対して無効です"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "リレーションを通じてフィールドに到達する述語は、このワークスペースでは有効になっていません"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "リレーションを介して現在のメンバーを読み取る述語は、このワークスペースでは有効になっていません"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11883,10 +11903,10 @@ msgstr "リクエスト済み"
 msgid "Requested file range cannot be served."
 msgstr "要求されたファイル範囲を提供できません。"
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "必須フィールドおよびリレーションは、行レベルの権限ルールで制限できません。"
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "必須フィールドおよびモーフ関係は、行レベルの権限ルールで制限できません。"
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12351,6 +12371,7 @@ msgid "Rule"
 msgstr "ルール"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "リレーションを通じたルールは、このワークスペースでは有効になっていません"
@@ -15043,6 +15064,11 @@ msgstr "このフィールドは workspaceMember オブジェクトに属して�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "このフィールドにはインデックスを作成するデータベース列がありません。"
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "このフィールドはワークスペースメンバーオブジェクトの一対多リレーションではありません"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17957,6 +17983,12 @@ msgstr "ワークスペースメンバーの役職"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "ワークスペースメンバーレコードページフィールド"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "ワークスペースメンバーリレーションフィールドのメタデータが見つかりません"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

@@ -11,16 +11,10 @@ import {
   type GrantRoleApplications,
   setupGrantRoleApplications,
 } from 'test/integration/metadata/suites/application-grant-role/utils/setup-grant-role-applications.util';
-import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import {
-  RecordShareAccessLevel,
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -32,7 +26,6 @@ type TestSetup = {
   applications: GrantRoleApplications;
   companyId: string;
   invoiceId: string;
-  personObjectMetadataId: string;
 };
 
 type TestContext = {
@@ -135,20 +128,12 @@ const testCases: EachTestingContext<TestContext>[] = [
   },
   {
     title:
-      'twenty-standard acting for an Admin member creating a record share, where creating is disabled',
+      'twenty-standard acting for an Admin member creating an agent turn, where creating is disabled',
     context: {
-      attempt: ({ applications, personObjectMetadataId }) =>
+      attempt: ({ applications }) =>
         createOneOperation({
-          objectMetadataSingularName: 'recordShare',
-          input: {
-            recordId: randomUUID(),
-            objectMetadataId: personObjectMetadataId,
-            principalId: randomUUID(),
-            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-            accessLevel: RecordShareAccessLevel.READ,
-            rowCause: RecordShareRowCause.MANUAL,
-            sourceId: randomUUID(),
-          },
+          objectMetadataSingularName: 'agentTurn',
+          input: { id: randomUUID() },
           token: applications.tokens.twentyStandardForAdminMember,
           expectToFail: true,
         }),
@@ -196,7 +181,6 @@ describe('Applications acting with their grant role should fail', () => {
       applications,
       companyId: companyData.createOneResponse.id,
       invoiceId: invoiceData.createOneResponse.id,
-      personObjectMetadataId: await findObjectMetadataIdByName('person'),
     };
   });
 

@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Un membre de l'espace de travail"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "Une relation de membre de l’espace de travail nécessite le champ à lire dans ses enregistrements associés"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "Choisissez un type d'activité de chronologie existant à remplacer."
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Choisissez une personne ou un rôle avec qui partager."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Choisissez le champ à lire dans les enregistrements associés"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "Le champ \"{relationFieldName}\" n'est pas une relation"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Le champ \"{workspaceMemberFieldName}\" n'est pas un champ de l'objet workspaceMember, le prédicat ne s'appliquerait jamais"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "Le champ \"{workspaceMemberRelationFieldName}\" n’est pas une relation un-à-plusieurs de l’objet workspaceMember"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11126,6 +11141,11 @@ msgstr "La valeur du prédicat n’est pas valide pour cet opérande"
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Les prédicats atteignant un champ via une relation ne sont pas activés pour cet espace de travail"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Les prédicats lisant le membre actuel via une relation ne sont pas activés pour cet espace de travail"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11883,10 +11903,10 @@ msgstr "Demandé"
 msgid "Requested file range cannot be served."
 msgstr "La plage de fichiers demandée ne peut pas être servie."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Les champs et relations obligatoires ne peuvent pas être restreints dans une règle d'autorisation au niveau des lignes."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Les champs obligatoires et les relations morph ne peuvent pas être restreints dans une règle d'autorisation au niveau des lignes."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12351,6 +12371,7 @@ msgid "Rule"
 msgstr "Règle"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Les règles via une relation ne sont pas activées pour cet espace de travail"
@@ -15043,6 +15064,11 @@ msgstr "Ce champ n'appartient pas à l'objet membre de l'espace de travail"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Ce champ ne possède aucune colonne de base de données à indexer."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Ce champ n'est pas une relation un-à-plusieurs de l'objet membre de l'espace de travail"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17957,6 +17983,12 @@ msgstr "Position du membre de l'espace de travail"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Champs de la page d'enregistrement des membres de l'espace de travail"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Métadonnées du champ de relation du membre de l'espace de travail introuvables"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

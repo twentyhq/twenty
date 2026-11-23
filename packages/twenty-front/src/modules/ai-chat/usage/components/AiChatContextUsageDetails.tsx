@@ -13,9 +13,9 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
+import { aiChatThreadUsageFamilySelector } from '@/ai-chat/usage/states/selectors/aiChatThreadUsageFamilySelector';
 import { formatNumber } from '@/localization/utils/formatNumber';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const StyledSection = styled.div`
   display: flex;
@@ -36,8 +36,8 @@ export const AiChatContextUsageDetails = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { threadId } = useAiChatInstanceOrThrow();
-  const aiChatThreadUsage = useAtomFamilyStateValue(
-    aiChatThreadUsageFamilyState,
+  const aiChatThreadUsage = useAtomFamilySelectorValue(
+    aiChatThreadUsageFamilySelector,
     {
       threadId,
     },

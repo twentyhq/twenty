@@ -6,7 +6,6 @@ import { type ReactNode } from 'react';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCanRetryCurrentAiChatTurn } from '@/ai-chat/messages/hooks/useCanRetryCurrentAiChatTurn';
-import { useCurrentAiChatThreadAccess } from '@/ai-chat/threads/hooks/useCurrentAiChatThreadAccess';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -18,7 +17,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
   </Provider>
 );
 
-describe('Shared chat execution controls', () => {
+describe('useCanRetryCurrentAiChatTurn', () => {
   beforeEach(() => {
     resetJotaiStore();
     jotaiStore.set(currentWorkspaceMemberState.atom, {
@@ -71,17 +70,10 @@ describe('Shared chat execution controls', () => {
           },
         ],
       );
-      const { result } = renderHook(
-        () => ({
-          canRetry: useCanRetryCurrentAiChatTurn(),
-          access: useCurrentAiChatThreadAccess(),
-        }),
-        { wrapper },
-      );
-      expect(result.current).toEqual({
-        canRetry: expected,
-        access: canUpdate ? 'writer' : 'viewer',
+      const { result } = renderHook(() => useCanRetryCurrentAiChatTurn(), {
+        wrapper,
       });
+      expect(result.current).toBe(expected);
     },
   );
 });

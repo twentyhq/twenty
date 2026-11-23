@@ -696,6 +696,11 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Աշխատանքային տարածքի անդամ"
 
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "Աշխատանքային տարածքի անդամի կապի համար անհրաժեշտ է դաշտ՝ կապված գրառումներում կարդալու համար"
+
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
@@ -3069,6 +3074,11 @@ msgstr "Ընտրեք վերասահմանման համար գոյություն 
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Ընտրեք մեկ անձի կամ մեկ դերի, որի հետ կկիսվեք։"
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "Ընտրեք դաշտը՝ կապված գրառումներում կարդալու համար"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5598,6 +5608,11 @@ msgstr "«{relationFieldName}» դաշտը հարաբերություն չէ"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "\"{workspaceMemberFieldName}\" դաշտը workspaceMember օբյեկտի դաշտ չէ, նախադրյալը երբեք չի կիրառվի"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "\"{workspaceMemberRelationFieldName}\" դաշտը workspaceMember օբյեկտի մեկ-շատ կապ չէ"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -11126,6 +11141,11 @@ msgstr "Պրեդիկատի արժեքը վավեր չէ այս օպերանդի 
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "Հարաբերության միջոցով դաշտ հասնող պայմաններն այս աշխատանքային տարածքի համար միացված չեն"
 
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "Ընթացիկ անդամին կապի միջոցով կարդացող պրեդիկատները միացված չեն այս աշխատանքային տարածքի համար"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11883,10 +11903,10 @@ msgstr "Հարցված"
 msgid "Requested file range cannot be served."
 msgstr "Հայցված ֆայլի տիրույթը չի կարող սպասարկվել։"
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "Պարտադիր դաշտերն ու կապերը չեն կարող սահմանափակվել տողի մակարդակի թույլտվության կանոնում."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "Պարտադիր դաշտերը և մորֆային կապերը չեն կարող սահմանափակվել տողի մակարդակի թույլտվության կանոնով:"
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -12351,6 +12371,7 @@ msgid "Rule"
 msgstr "Կանոն"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "Հարաբերության միջոցով կանոններն այս աշխատանքային տարածքի համար միացված չեն"
@@ -15043,6 +15064,11 @@ msgstr "Այս դաշտը չի պատկանում workspace-ի անդամի օբ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "Այս դաշտը չունի ինդեքսավորման համար նախատեսված տվյալների բազայի սյունակ։"
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "Այս դաշտը աշխատանքային տարածքի անդամի օբյեկտի մեկ-շատ կապ չէ"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -17957,6 +17983,12 @@ msgstr "Աշխատանքային տարածքի անդամի պաշտոնը"
 msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "Աշխատանքային տարածքի անդամի գրառման էջի դաշտեր"
+
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "Աշխատանքային տարածքի անդամի կապի դաշտի մետատվյալները չեն գտնվել"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

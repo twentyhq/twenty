@@ -1,14 +1,5 @@
 /* @license Enterprise */
 
-import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
+import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 
-export type AccessGroup = {
-  compactId: number;
-  groupHash: string;
-  roleId: string;
-  objectMetadataId: string;
-  rowLevelPermissionPredicateGroupId: string | null;
-  memberFieldValues: RlsMemberFieldValues | null;
-};
-
-export type AccessGroupWithoutCompactId = Omit<AccessGroup, 'compactId'>;
+export type AccessGroup = AccessGroupWithoutCompactId & { compactId: number };

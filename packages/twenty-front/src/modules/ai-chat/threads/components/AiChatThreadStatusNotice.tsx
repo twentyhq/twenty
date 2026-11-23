@@ -20,7 +20,6 @@ const StyledNotice = styled.div`
   justify-content: center;
 `;
 
-// Ends the conversation with where the chat stands in the member's inbox
 export const AiChatThreadStatusNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
