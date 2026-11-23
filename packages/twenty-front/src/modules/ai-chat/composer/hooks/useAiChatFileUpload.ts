@@ -1,5 +1,5 @@
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useLingui } from '@lingui/react/macro';
@@ -12,12 +12,12 @@ import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { FileFolder } from '~/generated-metadata/graphql';
 
 export const useAiChatFileUpload = () => {
-  const { uploadFile: directUploadFile } = useDirectFileUpload();
+  const { uploadFile } = useDirectFileUpload();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const store = useStore();
 
-  const sendFile = async ({
+  const uploadComposerFile = async ({
     file,
     threadId,
   }: {
@@ -36,7 +36,7 @@ export const useAiChatFileUpload = () => {
     });
 
     try {
-      const uploadedFile = await directUploadFile(file, {
+      const uploadedFile = await uploadFile(file, {
         fileFolder: FileFolder.AgentChat,
         signal: abortController.signal,
       });
@@ -95,7 +95,9 @@ export const useAiChatFileUpload = () => {
     );
 
     const successfulUploads = (
-      await Promise.all(files.map((file) => sendFile({ file, threadId })))
+      await Promise.all(
+        files.map((file) => uploadComposerFile({ file, threadId })),
+      )
     ).filter(isDefined);
 
     if (isNonEmptyArray(successfulUploads)) {

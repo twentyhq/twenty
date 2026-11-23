@@ -1,10 +1,10 @@
 import { randomUUID } from 'crypto';
 
-import { restoreLegacyNotStartedWorkflowRunStatus } from 'test/integration/upgrade/utils/restore-legacy-not-started-workflow-run-status.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type ConvertNotStartedWorkflowRunsCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795088158840-convert-not-started-workflow-runs.command';
-import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795095338141-drop-not-started-workflow-run-status.command';
+import { type RestoreNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-workspace-command-1795287331295-restore-not-started-workflow-run-status.command';
+import { type DropNotStartedWorkflowRunStatusCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-workspace-command-1795369199914-drop-not-started-workflow-run-status.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -45,12 +45,13 @@ describe('2-61 workspace command - convert not started workflow runs (integratio
     );
   };
 
-  // The status is dropped by a later 2.61 command, so it is brought back for these runs and dropped again after
   beforeAll(async () => {
     command = getAppProviderByClassName<ConvertNotStartedWorkflowRunsCommand>(
       'ConvertNotStartedWorkflowRunsCommand',
     );
-    await restoreLegacyNotStartedWorkflowRunStatus(SEED_APPLE_WORKSPACE_ID);
+    await getAppProviderByClassName<RestoreNotStartedWorkflowRunStatusCommand>(
+      'RestoreNotStartedWorkflowRunStatusCommand',
+    ).runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
   });
 
   afterAll(async () => {

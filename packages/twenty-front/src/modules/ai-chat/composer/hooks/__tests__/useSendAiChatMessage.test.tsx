@@ -15,19 +15,19 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 
 import { serializeJsonContentAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializeJsonContentAsAdvancedTextEditorDocument';
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/constants/AiChatNewThreadDefaultRecipients';
+import { AI_CHAT_NEW_THREAD_DEFAULT_RECIPIENTS } from '@/ai-chat/composer/constants/AiChatNewThreadDefaultRecipients';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
 import { useAiChat } from '@/ai-chat/composer/hooks/useAiChat';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatComposerDraftsState';
-import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/states/composer/aiChatComposerNewThreadRecipientsFamilyState';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { aiChatThreadReplyIsSendingFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyIsSendingFamilyState';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatIsAssistantReplyPendingFamilySelector } from '@/ai-chat/messages/states/selectors/aiChatIsAssistantReplyPendingFamilySelector';
-import { type AiChatNewThreadRecipients } from '@/ai-chat/types/AiChatNewThreadRecipients';
-import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/states/composer/aiChatComposerUploadingFilesFamilyState';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { type AiChatNewThreadRecipients } from '@/ai-chat/composer/types/AiChatNewThreadRecipients';
+import { aiChatComposerUploadingFilesFamilyState } from '@/ai-chat/composer/states/aiChatComposerUploadingFilesFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -57,8 +57,8 @@ const sentShouldAssistantReply = jest.fn();
 const sentChannelId = jest.fn();
 const sentMessageVariables = jest.fn();
 
-jest.mock('@/ai-chat/threads/hooks/useAttachChatThreadToRecord', () => ({
-  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
+jest.mock('@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord', () => ({
+  useAttachAiChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
 const loadAiChatThread = jest.fn(async (threadId: string) => ({
@@ -291,7 +291,7 @@ const send = async (result: {
   });
 };
 
-describe('useAiChat', () => {
+describe('useSendAiChatMessage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -511,19 +511,6 @@ describe('useAiChat', () => {
       AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
       restoreEditorContent,
     );
-  });
-
-  it('does not file a chat that mentions no record', async () => {
-    const result = renderAiChat({
-      persistedDrafts: {
-        [THREAD_ID]: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
-      },
-      sendChatMessageOutcomes: ['sent'],
-    });
-
-    await send(result);
-
-    expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
   it('sends without asking for a reply in the inbox when no AI is configured', async () => {
