@@ -1,51 +1,15 @@
 import styled from '@emotion/styled';
-import { useId } from 'react';
 import { t } from 'twenty-sdk/front-component';
-import { InlineBanner } from 'twenty-ui/components/feedback';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { getPublicAssetUrl } from 'twenty-sdk/utils';
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
-  border-bottom: 1px solid ${() => themeCssVariables.border.color.light};
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[1]};
-  padding-bottom: ${() => themeCssVariables.spacing[6]};
-`;
-
-const StyledLabel = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.xs};
-  font-weight: ${() => themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledValue = styled.div`
-  align-items: center;
-  background-color: ${() => themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.sm};
-  color: ${() => themeCssVariables.font.color.primary};
-  display: flex;
   gap: ${() => themeCssVariables.spacing[2]};
-  height: ${() => themeCssVariables.spacing[8]};
-  min-width: 0;
-  padding: 0 ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledLogo = styled.img`
-  flex-shrink: 0;
-  height: ${() => themeCssVariables.spacing[4]};
-  width: ${() => themeCssVariables.spacing[4]};
-`;
-
-const StyledText = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledHandle = styled.span`
-  color: ${() => themeCssVariables.font.color.tertiary};
 `;
 
 type WhatsappAccountFieldProps = {
@@ -58,25 +22,29 @@ export const WhatsappAccountField = ({
   name,
   handle,
   isAuthFailed,
-}: WhatsappAccountFieldProps) => {
-  const labelId = useId();
-
-  return (
-    <StyledContainer>
-      <StyledLabel id={labelId}>{t('Account')}</StyledLabel>
-      <StyledValue aria-labelledby={labelId}>
-        <StyledLogo src={getPublicAssetUrl('whatsapp-logomark.svg')} alt="" />
-        <StyledText>
-          {name} <StyledHandle>· {handle}</StyledHandle>
-        </StyledText>
-      </StyledValue>
-      {isAuthFailed && (
-        <InlineBanner layout="compact" status="warning">
-          {t(
-            'This connection was unlinked from your phone. Reconnect your account to keep syncing.',
-          )}
-        </InlineBanner>
-      )}
-    </StyledContainer>
-  );
-};
+}: WhatsappAccountFieldProps) => (
+  <StyledContainer>
+    <Field.Root>
+      <Field.Label>{t('Account')}</Field.Label>
+      <InputGroup
+        startElement={
+          <Avatar
+            src={getPublicAssetUrl('whatsapp-logomark.svg')}
+            name="WhatsApp"
+            size="sm"
+            shape="rounded-square"
+          />
+        }
+      >
+        <Input readOnly value={`${name} · ${handle}`} />
+      </InputGroup>
+    </Field.Root>
+    {isAuthFailed && (
+      <InlineBanner layout="compact" status="warning" fullWidth>
+        {t(
+          'This connection was unlinked from your phone. Reconnect your account to keep syncing.',
+        )}
+      </InlineBanner>
+    )}
+  </StyledContainer>
+);

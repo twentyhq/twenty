@@ -2,7 +2,9 @@ import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { IconRefresh } from 'twenty-ui/icon';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AnimatedCount } from 'src/front-components/components/AnimatedCount';
@@ -16,13 +18,6 @@ const StyledContainer = styled.div`
   gap: ${() => themeCssVariables.spacing[2]};
 `;
 
-const StyledCaption = styled.p`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  margin: 0;
-  text-align: right;
-`;
-
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
@@ -30,16 +25,8 @@ const StyledRow = styled.div`
   justify-content: flex-end;
 `;
 
-const StyledError = styled.p`
-  color: ${() => themeCssVariables.color.red};
-  flex: 1;
-  font-size: ${() => themeCssVariables.font.size.sm};
-  margin: 0;
-  min-width: 0;
-`;
-
-const StyledErrorTitle = styled.span`
-  font-weight: ${() => themeCssVariables.font.weight.medium};
+const StyledCaption = styled.div`
+  text-align: right;
 `;
 
 type WhatsappSyncButtonProps = {
@@ -79,15 +66,13 @@ export const WhatsappSyncButton = ({
 
   return (
     <StyledContainer>
+      {hasFailed && (
+        <InlineBanner layout="compact" status="error" role="alert" fullWidth>
+          {t('The import stopped before finishing.')}{' '}
+          {getWhatsappHistoryImportErrorReason(historyImport.error)}
+        </InlineBanner>
+      )}
       <StyledRow>
-        {hasFailed && (
-          <StyledError role="alert">
-            <StyledErrorTitle>
-              {t('The import stopped before finishing.')}
-            </StyledErrorTitle>{' '}
-            {getWhatsappHistoryImportErrorReason(historyImport.error)}
-          </StyledError>
-        )}
         {isRunning && (
           <Button
             variant="outline"
@@ -112,7 +97,12 @@ export const WhatsappSyncButton = ({
         </Button>
       </StyledRow>
       {isRunning && isDefined(historyImport.resumeAt) ? (
-        <StyledCaption aria-live="polite">
+        <Text
+          size="sm"
+          color="tertiary"
+          aria-live="polite"
+          render={<StyledCaption />}
+        >
           {t(
             'WhatsApp limits how fast conversations can be imported. The sync resumes {resumeAt}.',
             {
@@ -122,16 +112,21 @@ export const WhatsappSyncButton = ({
               ),
             },
           )}
-        </StyledCaption>
+        </Text>
       ) : (
         isListing && (
-          <StyledCaption aria-live="polite">
+          <Text
+            size="sm"
+            color="tertiary"
+            aria-live="polite"
+            render={<StyledCaption />}
+          >
             {t('Listing conversations')} (
             <AnimatedCount
               count={historyImport.plannedConversationCount ?? 0}
             />
             )
-          </StyledCaption>
+          </Text>
         )
       )}
     </StyledContainer>

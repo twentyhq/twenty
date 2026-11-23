@@ -1,9 +1,9 @@
 import { t } from 'twenty-sdk/front-component';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCheck } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 
-import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
+import { SettingsOptionCardContentSwitch } from 'src/front-components/components/SettingsOptionCardContentSwitch';
 
 type WhatsappReadStatusSectionProps = {
   areChatsMarkedAsRead: boolean;
@@ -19,8 +19,8 @@ export const WhatsappReadStatusSection = ({
       title={t('Read status')}
       description={t('Keep WhatsApp and Twenty in sync')}
     />
-    <StyledSettingsCard>
-      <SettingsOptionCardContentToggle
+    <Card.Root fullWidth>
+      <SettingsOptionCardContentSwitch
         Icon={IconCheck}
         title={t('Mark chats as read on WhatsApp')}
         description={t(
@@ -29,6 +29,6 @@ export const WhatsappReadStatusSection = ({
         checked={areChatsMarkedAsRead}
         onChange={onChange}
       />
-    </StyledSettingsCard>
+    </Card.Root>
   </Section.Root>
 );

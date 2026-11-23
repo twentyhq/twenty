@@ -1,41 +1,25 @@
 import styled from '@emotion/styled';
 import { Fragment, type ReactNode, useId } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { Radio } from 'src/front-components/components/Radio';
-import { Separator } from 'src/front-components/components/Separator';
-import { StyledSettingsCardTextContainer } from 'src/front-components/components/SettingsCardContentBase';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
+import { SettingsCardSeparator } from 'src/front-components/components/SettingsCardSeparator';
+import { StyledSettingsCardControlContainer } from 'src/front-components/components/SettingsCardContentBase';
 
 const StyledOptionRow = styled.div`
   align-items: center;
-  background-color: ${() => themeCssVariables.background.secondary};
-  cursor: pointer;
   display: flex;
   gap: ${() => themeCssVariables.spacing[4]};
-  padding: ${() => themeCssVariables.spacing[4]};
-
-  &:hover {
-    background: ${() => themeCssVariables.background.transparent.lighter};
-  }
 `;
 
-const StyledOptionTitle = styled.div`
-  color: ${() => themeCssVariables.font.color.primary};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
-  margin-bottom: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledOptionDescription = styled.div`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-`;
-
-const StyledRadioContainer = styled.span`
-  align-items: center;
+const StyledOptionTextContainer = styled.div`
   display: flex;
-  flex-shrink: 0;
-  margin-left: auto;
+  flex: 1;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[2]};
+  min-width: 0;
 `;
 
 export type SettingsRadioCardOption<TValue extends string> = {
@@ -59,36 +43,56 @@ export const SettingsRadioCard = <TValue extends string>({
   const groupId = useId();
 
   return (
-    <StyledSettingsCard role="radiogroup">
-      {options.map((option, index) => {
-        const titleId = `${groupId}-${index}-title`;
-        const descriptionId = `${groupId}-${index}-description`;
+    <RadioGroup
+      value={value}
+      onValueChange={onChange}
+      onKeyDown={(event) => {
+        // Arrow keys pressed elsewhere in a row would otherwise move the selection
+        if (
+          !(event.target instanceof HTMLElement) ||
+          event.target.getAttribute('role') !== 'radio'
+        ) {
+          event.preventBaseUIHandler();
+        }
+      }}
+    >
+      <Card.Root fullWidth>
+        {options.map((option, index) => {
+          const radioId = `${groupId}-${index}`;
+          const titleId = `${radioId}-title`;
+          const descriptionId = `${radioId}-description`;
 
-        return (
-          <Fragment key={option.value}>
-            <StyledOptionRow onClick={() => onChange(option.value)}>
-              {option.cardMedia}
-              <StyledSettingsCardTextContainer>
-                <StyledOptionTitle id={titleId}>
-                  {option.title}
-                </StyledOptionTitle>
-                <StyledOptionDescription id={descriptionId}>
-                  {option.description}
-                </StyledOptionDescription>
-              </StyledSettingsCardTextContainer>
-              <StyledRadioContainer>
-                <Radio
-                  checked={option.value === value}
-                  aria-labelledby={titleId}
-                  aria-describedby={descriptionId}
-                  onSelect={() => onChange(option.value)}
+          return (
+            <Fragment key={option.value}>
+              <Card.Content>
+                <Card.Action
+                  render={<label htmlFor={radioId} aria-labelledby={titleId} />}
                 />
-              </StyledRadioContainer>
-            </StyledOptionRow>
-            {index < options.length - 1 && <Separator />}
-          </Fragment>
-        );
-      })}
-    </StyledSettingsCard>
+                <StyledOptionRow>
+                  {option.cardMedia}
+                  <StyledOptionTextContainer>
+                    <Text id={titleId} weight="medium" color="primary">
+                      {option.title}
+                    </Text>
+                    <Text id={descriptionId} size="sm" color="tertiary">
+                      {option.description}
+                    </Text>
+                  </StyledOptionTextContainer>
+                  <Card.Control render={<StyledSettingsCardControlContainer />}>
+                    <Radio
+                      id={radioId}
+                      value={option.value}
+                      aria-labelledby={titleId}
+                      aria-describedby={descriptionId}
+                    />
+                  </Card.Control>
+                </StyledOptionRow>
+              </Card.Content>
+              {index < options.length - 1 && <SettingsCardSeparator />}
+            </Fragment>
+          );
+        })}
+      </Card.Root>
+    </RadioGroup>
   );
 };

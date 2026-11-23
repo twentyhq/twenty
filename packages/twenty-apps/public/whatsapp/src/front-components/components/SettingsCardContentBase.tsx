@@ -1,12 +1,10 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledSettingsCardContent = styled.div`
+export const StyledSettingsCardRow = styled.div`
   align-items: center;
-  background-color: ${() => themeCssVariables.background.secondary};
   display: flex;
   gap: ${() => themeCssVariables.spacing[3]};
-  padding: ${() => themeCssVariables.spacing[4]};
 `;
 
 export const StyledSettingsCardIcon = styled.div`
@@ -22,20 +20,17 @@ export const StyledSettingsCardIcon = styled.div`
   width: ${() => themeCssVariables.spacing[8]};
 `;
 
-export const StyledSettingsCardTitle = styled.div`
-  color: ${() => themeCssVariables.font.color.primary};
-  font-weight: ${() => themeCssVariables.font.weight.medium};
-  margin-bottom: ${() => themeCssVariables.spacing[1]};
-`;
-
 export const StyledSettingsCardTextContainer = styled.div`
+  display: flex;
   flex: 1;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[1]};
   min-width: 0;
 `;
 
-export const StyledSettingsCardDescription = styled.div`
-  color: ${() => themeCssVariables.font.color.secondary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  line-height: ${() => themeCssVariables.text.lineHeight.lg};
-  overflow: hidden;
+export const StyledSettingsCardControlContainer = styled.span`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
 `;

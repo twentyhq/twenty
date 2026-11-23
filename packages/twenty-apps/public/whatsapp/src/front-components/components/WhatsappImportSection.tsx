@@ -3,15 +3,15 @@ import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconHistory, IconUsers } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { WHATSAPP_HISTORY_CONVERSATION_LIMITS } from 'src/constants/whatsapp-history-conversation-limits.constant';
 import { WhatsappImportPolicyIcon } from 'src/front-components/components/WhatsappImportPolicyIcon';
 import { WhatsappSyncButton } from 'src/front-components/components/WhatsappSyncButton';
 import { SettingsOptionCardContentSegmentedControl } from 'src/front-components/components/SettingsOptionCardContentSegmentedControl';
-import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from 'src/front-components/components/SettingsOptionCardContentSwitch';
 import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { type WhatsappHistoryConversationLimit } from 'src/types/whatsapp-history-conversation-limit.type';
 import { type WhatsappHistoryImportState } from 'src/types/whatsapp-history-import-state.type';
 import { type WhatsappImportPolicy } from 'src/types/whatsapp-import-policy.type';
@@ -81,8 +81,8 @@ export const WhatsappImportSection = ({
           },
         ]}
       />
-      <StyledSettingsCard>
-        <SettingsOptionCardContentToggle
+      <Card.Root fullWidth>
+        <SettingsOptionCardContentSwitch
           Icon={IconUsers}
           title={t('Import group chats')}
           description={t('Groups where at least one member is a contact')}
@@ -109,7 +109,7 @@ export const WhatsappImportSection = ({
             }
           }}
         />
-      </StyledSettingsCard>
+      </Card.Root>
       {(historyConversationLimit > 0 ||
         historyImport?.status === 'IMPORTING') && (
         <WhatsappSyncButton
