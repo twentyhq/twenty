@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -21,7 +21,7 @@ import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/typ
 export class WorkflowRunInboxSenderWorkspaceService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -46,10 +46,10 @@ export class WorkflowRunInboxSenderWorkspaceService {
       );
 
     const workflow = isDefined(workflowRun?.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
+      ? await this.coreWorkflowTriggerService.findCoreWorkflowById({
           workspaceId,
-          workflowRun.coreWorkflowId,
-        )
+          coreWorkflowId: workflowRun.coreWorkflowId,
+        })
       : null;
 
     if (!isDefined(workflow)) {
@@ -77,10 +77,10 @@ export class WorkflowRunInboxSenderWorkspaceService {
     coreWorkflowId: string;
   }): Promise<string | null> {
     const coreWorkflow =
-      await this.workflowCoreSyncService.findCoreWorkflowById(
+      await this.coreWorkflowTriggerService.findCoreWorkflowById({
         workspaceId,
         coreWorkflowId,
-      );
+      });
 
     if (!isDefined(coreWorkflow?.createdByUserWorkspaceId)) {
       return null;
