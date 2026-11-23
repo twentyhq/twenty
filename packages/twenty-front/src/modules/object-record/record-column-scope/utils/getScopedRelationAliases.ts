@@ -22,15 +22,24 @@ import {
 } from 'twenty-shared/utils';
 
 const getRelatedRecordGqlFields = ({
-  scopedRelationColumn: { relationObjectMetadataItem, scopedRelationJunction },
+  scopedRelationColumn: {
+    relationObjectMetadataItem,
+    scopedRelationJunction,
+    summary,
+  },
   objectMetadataItems,
 }: {
   scopedRelationColumn: Pick<
     ScopedRelationAlias,
-    'relationObjectMetadataItem' | 'scopedRelationJunction'
+    'relationObjectMetadataItem' | 'scopedRelationJunction' | 'summary'
   >;
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): RecordGqlFields => {
+  // A summary reads its aggregate, so it only needs the ids of the related records
+  if (isDefined(summary)) {
+    return { id: true };
+  }
+
   if (isDefined(scopedRelationJunction)) {
     return generateJunctionRelationGqlFields({
       junctionConfig: scopedRelationJunction.junctionConfig,
@@ -84,8 +93,12 @@ export const getScopedRelationAliases = ({
       return [];
     }
 
-    const { relationObjectMetadataItem, lookupTarget, scopedRelationJunction } =
-      scopedRelationColumn;
+    const {
+      relationObjectMetadataItem,
+      lookupTarget,
+      scopedRelationJunction,
+      summary,
+    } = scopedRelationColumn;
 
     const { filter, orderBy } = getQueryVariablesFromFiltersAndSorts({
       ...getRelationScopeRecordFiltersAndSorts({
@@ -102,9 +115,15 @@ export const getScopedRelationAliases = ({
       relationFieldName: fieldMetadataItem.name,
       filter,
       orderBy,
-      first: relationScope.limit ?? undefined,
+      // A summary only reads its aggregate; a first of 0 would lift the server's cap instead
+      first: isDefined(summary) ? 1 : (relationScope.limit ?? undefined),
       // The server caps the related records even without a limit, so the count of the left out ones is always needed
-      aggregateGqlFieldNames: [TOTAL_COUNT_GQL_FIELD_NAME],
+      aggregateGqlFieldNames: [
+        ...new Set([
+          TOTAL_COUNT_GQL_FIELD_NAME,
+          ...(isDefined(summary) ? [summary.aggregateGqlFieldName] : []),
+        ]),
+      ],
       recordGqlFields: {
         ...getRelatedRecordGqlFields({
           scopedRelationColumn,
@@ -131,6 +150,7 @@ export const getScopedRelationAliases = ({
         relationObjectMetadataItem,
         relationWithArguments,
         lookupTarget,
+        summary,
         scopedRelationJunction,
         reachedObjectMetadataItemIds: [
           ...new Set([
@@ -145,6 +165,7 @@ export const getScopedRelationAliases = ({
           ]),
         ],
         isRestricted:
+          scopedRelationColumn.isRestricted ||
           (isDefined(lookupTarget) &&
             !isLookupTargetFieldReadable(lookupTarget)) ||
           !reachedFields.every(

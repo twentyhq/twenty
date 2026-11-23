@@ -135,6 +135,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
                         fieldMetadataItem,
                       }) ?? scopedRelationAlias?.lookupTarget,
                     isScopedRelationColumn: isDefined(scopedRelationAlias),
+                    summary: scopedRelationAlias?.summary,
                     customLabel: recordField.label,
                   });
 

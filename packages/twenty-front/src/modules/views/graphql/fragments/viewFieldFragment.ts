@@ -31,6 +31,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
         relationTargetFieldMetadataId
       }
       limit
+      aggregateOperation
     }
     position
     size
