@@ -131,9 +131,8 @@ describe('2-63 workspace command - copy page layout widget rules to conditional 
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
-    featureFlagService = getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    );
+    featureFlagService =
+      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
 
     seededRules = await readPlantedWidgetRules();
   });
