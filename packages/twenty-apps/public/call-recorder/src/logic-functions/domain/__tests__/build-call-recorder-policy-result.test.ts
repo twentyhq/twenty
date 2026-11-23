@@ -27,13 +27,25 @@ const OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID = new Map([
 
 const buildPolicyResult = (
   overrides: Partial<CallRecorderPolicyCalendarEventInput>,
-  memberRecordingPreferenceByUserWorkspaceId = new Map<
-    string,
-    MemberRecordingPreference
-  >([['user-workspace-1', 'ALL']]),
 ) =>
   buildCallRecorderPolicyResult({
     calendarEvent: buildCalendarEventInput(overrides),
+    ownerUserWorkspaceIdByCalendarChannelId:
+      OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
+    memberRecordingPreferenceByUserWorkspaceId: new Map([
+      ['user-workspace-1', 'ALL'],
+    ]),
+    now: NOW,
+  });
+
+const buildPolicyResultForMemberRecordingPreferences = (
+  memberRecordingPreferenceByUserWorkspaceId: Map<
+    string,
+    MemberRecordingPreference
+  >,
+) =>
+  buildCallRecorderPolicyResult({
+    calendarEvent: buildCalendarEventInput({}),
     ownerUserWorkspaceIdByCalendarChannelId:
       OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
     memberRecordingPreferenceByUserWorkspaceId,
@@ -87,8 +99,7 @@ describe('buildCallRecorderPolicyResult', () => {
   });
 
   it('does not request a bot when the member who has the meeting chose to record none', () => {
-    const policyResult = buildPolicyResult(
-      {},
+    const policyResult = buildPolicyResultForMemberRecordingPreferences(
       new Map([['user-workspace-1', 'NONE']]),
     );
 
@@ -97,7 +108,9 @@ describe('buildCallRecorderPolicyResult', () => {
   });
 
   it('does not request a bot when the choice of the member who has the meeting cannot be read', () => {
-    const policyResult = buildPolicyResult({}, new Map());
+    const policyResult = buildPolicyResultForMemberRecordingPreferences(
+      new Map(),
+    );
 
     expect(policyResult.shouldRequestBot).toBe(false);
     expect(policyResult.reason).toBe('OWNERS_OPTED_OUT');

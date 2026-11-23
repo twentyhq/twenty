@@ -15,7 +15,13 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   },
 }));
 
-const buildMemberVariables = (userWorkspaceId: string, value: string) => ({
+const buildMemberVariables = ({
+  userWorkspaceId,
+  value,
+}: {
+  userWorkspaceId: string;
+  value: string;
+}) => ({
   userWorkspaceId,
   variables: [
     { key: 'ANOTHER_MEMBER_VARIABLE', value: 'ALL' },
@@ -31,8 +37,14 @@ describe('fetchMemberRecordingPreferenceByUserWorkspaceId', () => {
   it('maps each member to the meetings they chose to record', async () => {
     metadataQueryMock.mockResolvedValue({
       myUserApplicationVariables: [
-        buildMemberVariables('user-workspace-1', 'ALL'),
-        buildMemberVariables('user-workspace-2', 'NONE'),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-1',
+          value: 'ALL',
+        }),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-2',
+          value: 'NONE',
+        }),
       ],
     });
 
@@ -47,7 +59,10 @@ describe('fetchMemberRecordingPreferenceByUserWorkspaceId', () => {
   it('reads a saved value outside the options as recording none', async () => {
     metadataQueryMock.mockResolvedValue({
       myUserApplicationVariables: [
-        buildMemberVariables('user-workspace-1', 'EVERYTHING'),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-1',
+          value: 'EVERYTHING',
+        }),
       ],
     });
 

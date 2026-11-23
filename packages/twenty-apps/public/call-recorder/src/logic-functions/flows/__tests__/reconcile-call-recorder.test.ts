@@ -304,7 +304,13 @@ const buildCalendarEvent = (
   ...overrides,
 });
 
-const buildMemberVariables = (userWorkspaceId: string, value: string) => ({
+const buildMemberVariables = ({
+  userWorkspaceId,
+  value,
+}: {
+  userWorkspaceId: string;
+  value: string;
+}) => ({
   userWorkspaceId,
   variables: [{ key: 'CALL_RECORDER_MEMBER_RECORDING_PREFERENCE', value }],
 });
@@ -336,7 +342,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       ],
       myUserApplicationVariables: [
-        buildMemberVariables('user-workspace-1', 'ALL'),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-1',
+          value: 'ALL',
+        }),
       ],
     });
     fetchMock.mockReset();
@@ -543,7 +552,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         },
       ],
       myUserApplicationVariables: [
-        buildMemberVariables('user-workspace-1', 'NONE'),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-1',
+          value: 'NONE',
+        }),
       ],
     });
     const client = buildFakeCoreApiClient({
