@@ -15,7 +15,7 @@ import { useOpenAiChatParticipantsInSidePanel } from '@/side-panel/hooks/useOpen
 import { SidePanelAiChatParticipantsAssigneeItem } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsAssigneeItem';
 import { SidePanelAiChatParticipantsMemberAvatar } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsMemberAvatar';
 import { SidePanelAiChatParticipantsPageLayout } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPageLayout';
-import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/pages/ai-chat-participants/states/aiChatParticipantsThreadIdComponentState';
+import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/states/aiChatParticipantsThreadIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

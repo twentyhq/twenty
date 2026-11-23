@@ -13,7 +13,7 @@ import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelAddAiChatParticipantsMemberItem } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsMemberItem';
 import { SidePanelAiChatParticipantsPageLayout } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPageLayout';
 import { useAddAiChatParticipantsCandidates } from '@/side-panel/pages/ai-chat-participants/hooks/useAddAiChatParticipantsCandidates';
-import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/pages/ai-chat-participants/states/aiChatParticipantsThreadIdComponentState';
+import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/states/aiChatParticipantsThreadIdComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';

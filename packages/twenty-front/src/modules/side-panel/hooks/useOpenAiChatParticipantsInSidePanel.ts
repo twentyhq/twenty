@@ -6,7 +6,7 @@ import { type IconComponent, IconUserPlus, IconUsers } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/pages/ai-chat-participants/states/aiChatParticipantsThreadIdComponentState';
+import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/states/aiChatParticipantsThreadIdComponentState';
 
 export const useOpenAiChatParticipantsInSidePanel = () => {
   const { t } = useLingui();

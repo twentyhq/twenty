@@ -5,15 +5,15 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildMissingStandardCommandMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-39/utils/build-missing-standard-command-menu-items-to-create.util';
-import { buildLimitAssignToBulkSelectionUpdate } from 'src/database/commands/upgrade-version-command/2-61/utils/build-limit-assign-to-bulk-selection-update.util';
+import { buildLimitAssignToBulkSelectionUpdate } from 'src/database/commands/upgrade-version-command/2-62/utils/build-limit-assign-to-bulk-selection-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.61.0', 1795190173000)
+@RegisteredWorkspaceCommand('2.62.0', 1795437744357)
 @Command({
-  name: 'upgrade:2-61:add-ai-chat-participants-command-menu-item',
+  name: 'upgrade:2-62:add-ai-chat-participants-command-menu-item',
   description:
     'Add the Participants command on chats and offer Assign only on bulk selections',
 })
