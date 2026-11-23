@@ -23,11 +23,13 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
     recordFieldId,
     relationScope,
     relationTargetFieldMetadataId,
+    label,
   }: {
     fieldMetadataItemId: string;
     recordFieldId?: string;
     relationScope: ViewFieldRelationScope;
     relationTargetFieldMetadataId: string | null;
+    label: string | null;
   }): Promise<boolean> => {
     const currentRecordFields = store.get(currentRecordFieldsCallbackState);
     const recordFieldToSave = isDefined(recordFieldId)
@@ -42,6 +44,7 @@ export const useSaveScopedRelationColumn = (recordTableId: string) => {
       ...recordFieldToSave,
       relationScope,
       relationTargetFieldMetadataId,
+      label,
     };
 
     const isSaved = await saveViewFields([
