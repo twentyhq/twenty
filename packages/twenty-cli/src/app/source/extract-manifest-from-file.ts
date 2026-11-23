@@ -55,7 +55,6 @@ const getCompiledWrapper = (
 };
 
 const MANIFEST_MOCK_MODULES = [
-  'twenty-ui',
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
 ];
@@ -80,16 +79,10 @@ const manifestMockPlugin: esbuild.Plugin = {
     const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
     const filter = new RegExp(`^(${escapedModules.join('|')})(/.*)?$`);
 
-    build.onResolve({ filter }, ({ path: modulePath }) => {
-      if (modulePath.endsWith('.css')) {
-        return null;
-      }
-
-      return {
-        path: modulePath,
-        namespace: 'manifest-mock',
-      };
-    });
+    build.onResolve({ filter }, ({ path: modulePath }) => ({
+      path: modulePath,
+      namespace: 'manifest-mock',
+    }));
 
     build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
       contents: MANIFEST_MOCK_MODULE_SOURCE,
