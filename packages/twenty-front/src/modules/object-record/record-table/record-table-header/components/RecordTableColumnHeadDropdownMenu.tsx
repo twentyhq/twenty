@@ -176,6 +176,15 @@ export const RecordTableColumnHeadDropdownMenu = ({
     </>
   );
 
+  const deleteColumnItem = canDeleteColumn && (
+    <Dropdown.ActionItem
+      startIcon={<IconTrash />}
+      onClick={() => deleteRecordTableColumn(recordField.id)}
+    >
+      {isScopedRelationColumn ? t`Delete summary column` : t`Delete column`}
+    </Dropdown.ActionItem>
+  );
+
   if (isScopedRelationColumn) {
     return (
       <Dropdown.Section>
@@ -190,12 +199,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
             }
           >{t`Edit summary column…`}</Dropdown.ActionItem>
         )}
-        {canDeleteColumn && (
-          <Dropdown.ActionItem
-            startIcon={<IconTrash />}
-            onClick={() => deleteRecordTableColumn(recordField.id)}
-          >{t`Delete summary column`}</Dropdown.ActionItem>
-        )}
+        {deleteColumnItem}
         {(canEditColumn || canDeleteColumn) && hasMoveOrHideActions && (
           <Dropdown.Separator />
         )}
@@ -220,12 +224,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
       )}
       {showSeparator && <Dropdown.Separator />}
       {moveAndHideItems}
-      {canDeleteColumn && (
-        <Dropdown.ActionItem
-          startIcon={<IconTrash />}
-          onClick={() => deleteRecordTableColumn(recordField.id)}
-        >{t`Delete column`}</Dropdown.ActionItem>
-      )}
+      {deleteColumnItem}
     </Dropdown.Section>
   );
 };
