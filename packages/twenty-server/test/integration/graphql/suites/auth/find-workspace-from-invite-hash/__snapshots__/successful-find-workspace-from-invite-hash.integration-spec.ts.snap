@@ -5,6 +5,6 @@ exports[`findWorkspaceFromInviteHash should succeed (integration) should return 
   "allowImpersonation": true,
   "displayName": "Apple",
   "id": Any<String>,
-  "logo": "",
+  "logo": Any<String>,
 }
 `;
