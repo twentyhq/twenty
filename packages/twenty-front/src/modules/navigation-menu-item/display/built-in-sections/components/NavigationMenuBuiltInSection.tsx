@@ -62,12 +62,7 @@ export const NavigationMenuBuiltInSection = ({
         />
       );
     case 'aiChatRecents':
-      return (
-        <NavigationMenuAiChatRecentsSection
-          sectionId={section.id}
-          headerAction={headerAction}
-        />
-      );
+      return <NavigationMenuAiChatRecentsSection headerAction={headerAction} />;
     default:
       return null;
   }
