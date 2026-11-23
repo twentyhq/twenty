@@ -23,6 +23,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
+    key: FeatureFlagKey.IS_FORMULA_FIELD_ENABLED,
+    metadata: {
+      label: 'Formula fields',
+      description:
+        'Compute a field from other fields of the record and its related records',
+      icon: 'IconMathFunction',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
     metadata: {
       label: 'New REST Metadata API Format',
