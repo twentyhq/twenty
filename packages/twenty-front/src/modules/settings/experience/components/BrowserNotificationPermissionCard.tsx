@@ -16,6 +16,7 @@ import { openInboxNotificationsHelp } from '@/settings/experience/utils/openInbo
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { BrowserNotificationPermissionEffect } from '@/web-push/components/BrowserNotificationPermissionEffect';
 import { browserNotificationPermissionState } from '@/web-push/states/browserNotificationPermissionState';
 
 const StyledButtons = styled.div`
@@ -109,6 +110,7 @@ export const BrowserNotificationPermissionCard = () => {
           Button={buttonByPermission[browserNotificationPermission]}
         />
       </Card.Root>
+      <BrowserNotificationPermissionEffect />
       <BrowserNotificationSetupDialog />
     </>
   );

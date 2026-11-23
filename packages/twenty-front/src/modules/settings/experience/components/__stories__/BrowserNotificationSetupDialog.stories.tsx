@@ -43,7 +43,13 @@ const BrowserNotificationSetupDialogExample = ({
   );
 };
 
-const openSetupDialog = async (canvasElement: HTMLElement, title: string) => {
+const openSetupDialogInCanvas = async ({
+  canvasElement,
+  title,
+}: {
+  canvasElement: HTMLElement;
+  title: string;
+}) => {
   await userEvent.click(
     within(canvasElement).getByRole('button', { name: 'Open dialog' }),
   );
@@ -74,10 +80,10 @@ type Story = StoryObj<typeof BrowserNotificationSetupDialogExample>;
 export const Allow: Story = {
   args: { step: 'allow' },
   play: async ({ canvasElement }) => {
-    const dialog = await openSetupDialog(
+    const dialog = await openSetupDialogInCanvas({
       canvasElement,
-      'Turn on notifications',
-    );
+      title: 'Turn on notifications',
+    });
 
     await expect(
       within(dialog).getByRole('button', { name: /Continue/ }),
@@ -88,10 +94,10 @@ export const Allow: Story = {
 export const PromptNotShown: Story = {
   args: { step: 'prompt-not-shown' },
   play: async ({ canvasElement }) => {
-    const dialog = await openSetupDialog(
+    const dialog = await openSetupDialogInCanvas({
       canvasElement,
-      'Allow notifications in your browser',
-    );
+      title: 'Allow notifications in your browser',
+    });
 
     await expect(
       within(dialog).getByRole('button', { name: /Read the guide/ }),
@@ -102,10 +108,10 @@ export const PromptNotShown: Story = {
 export const ConfirmThenSystemSettingsOnMac: Story = {
   args: { step: 'confirm' },
   play: async ({ canvasElement }) => {
-    const dialog = await openSetupDialog(
+    const dialog = await openSetupDialogInCanvas({
       canvasElement,
-      'Did you see a test notification?',
-    );
+      title: 'Did you see a test notification?',
+    });
 
     await userEvent.click(within(dialog).getByRole('button', { name: /No/ }));
 
@@ -122,10 +128,10 @@ export const SystemSettingsOnMacSafari: Story = {
   args: { step: 'system-settings' },
   beforeEach: mockUserAgent(MAC_SAFARI_USER_AGENT),
   play: async ({ canvasElement }) => {
-    const dialog = await openSetupDialog(
+    const dialog = await openSetupDialogInCanvas({
       canvasElement,
-      'Allow Twenty in macOS settings',
-    );
+      title: 'Allow Twenty in macOS settings',
+    });
 
     await expect(
       within(dialog).getByText('Notifications › Twenty'),
@@ -137,10 +143,10 @@ export const SystemSettingsOnWindows: Story = {
   args: { step: 'system-settings' },
   beforeEach: mockUserAgent(WINDOWS_CHROME_USER_AGENT),
   play: async ({ canvasElement }) => {
-    const dialog = await openSetupDialog(
+    const dialog = await openSetupDialogInCanvas({
       canvasElement,
-      'Allow Google Chrome in Windows settings',
-    );
+      title: 'Allow Google Chrome in Windows settings',
+    });
 
     await expect(within(dialog).getByText('Do not disturb')).toBeVisible();
   },
@@ -149,10 +155,10 @@ export const SystemSettingsOnWindows: Story = {
 export const Success: Story = {
   args: { step: 'success' },
   play: async ({ canvasElement }) => {
-    const dialog = await openSetupDialog(
+    const dialog = await openSetupDialogInCanvas({
       canvasElement,
-      'Notifications are set up',
-    );
+      title: 'Notifications are set up',
+    });
 
     await userEvent.click(within(dialog).getByRole('button', { name: /Done/ }));
 
