@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { RecomputeRecordAccessGroupIdsCommand } from 'src/engine/permissions/internal/access-group/commands/recompute-record-access-group-ids.command';
 import { RecomputeRecordAccessGroupIdsOfRecordsJob } from 'src/engine/permissions/internal/access-group/jobs/recompute-record-access-group-ids-of-records.job';
 import { ComputeRecordAccessGroupIdsDeferredOperationHandlerService } from 'src/engine/permissions/internal/access-group/deferred-operation-handlers/compute-record-access-group-ids-deferred-operation-handler.service';
 import { SyncAccessGroupsJob } from 'src/engine/permissions/internal/access-group/jobs/sync-access-groups.job';
@@ -25,6 +27,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     RecordPermissionRepositoryModule,
     RelatedRecordPathReadModule,
     WorkspaceCacheModule,
+    WorkspaceIteratorModule,
     WorkspaceMigrationRunnerModule,
   ],
   providers: [
@@ -37,6 +40,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     AccessGroupSyncSchedulerService,
     ComputeRecordAccessGroupIdsDeferredOperationHandlerService,
     RecomputeRecordAccessGroupIdsOfRecordsJob,
+    RecomputeRecordAccessGroupIdsCommand,
     SyncAccessGroupsJob,
     RlsWorkspaceMemberRelationValueMapsCacheService,
   ],

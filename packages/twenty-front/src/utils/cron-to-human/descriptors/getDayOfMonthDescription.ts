@@ -7,6 +7,7 @@ import { isListValue } from '~/utils/validation/isListValue';
 import { isNumericRange } from '~/utils/validation/isNumericRange';
 import { isStepValue } from '~/utils/validation/isStepValue';
 import { type CronDescriptionOptions } from '~/utils/cron-to-human/types/CronDescriptionOptions';
+import { expandCronListValues } from '~/utils/cron-to-human/utils/expandCronListValues';
 
 export const getDayOfMonthDescription = (
   dayOfMonth: string,
@@ -72,7 +73,7 @@ export const getDayOfMonthDescription = (
   }
 
   if (isListValue(dayOfMonth)) {
-    const values = dayOfMonth.split(',').map((v) => v.trim());
+    const values = expandCronListValues(dayOfMonth);
     const ordinalDays = values.map((day) => {
       const dayNum = parseInt(day, 10);
       return !isNaN(dayNum) ? getOrdinalNumber(dayNum) : day;
