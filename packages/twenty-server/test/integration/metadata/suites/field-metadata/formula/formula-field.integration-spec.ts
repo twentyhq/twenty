@@ -282,6 +282,60 @@ describe('Formula fields', () => {
     });
   });
 
+  it('should compute a currency from an amount and a currency code expression', async () => {
+    const buildCurrencyFormulaInput = (
+      name: string,
+      formula: { expression: string; currencyCodeExpression?: string },
+    ) => ({
+      name,
+      label: name,
+      type: FieldMetadataType.CURRENCY,
+      objectMetadataId: gadgetObjectMetadataId,
+      isLabelSyncedWithName: false,
+      settings: { formula },
+    });
+
+    await createOneFieldMetadata({
+      expectToFail: false,
+      input: buildCurrencyFormulaInput('totalValue', {
+        expression: 'price * quantity * 1000000',
+        currencyCodeExpression: 'if(quantity > 100, "EUR", "USD")',
+      }),
+      gqlFields: 'id settings',
+    });
+    await createOneFieldMetadata({
+      expectToFail: false,
+      input: buildCurrencyFormulaInput('unknownCurrencyValue', {
+        expression: 'price * 1000000',
+        currencyCodeExpression: '"NOPE"',
+      }),
+      gqlFields: 'id',
+    });
+
+    const { errors } = await createOneFieldMetadata({
+      expectToFail: true,
+      input: buildCurrencyFormulaInput('valueWithoutCurrency', {
+        expression: 'price * 1000000',
+      }),
+      gqlFields: 'id',
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      'A currency formula needs a currency code expression',
+    );
+    expect(
+      await findGadget(
+        'totalValue { amountMicros currencyCode } unknownCurrencyValue { amountMicros currencyCode }',
+      ),
+    ).toEqual({
+      totalValue: { amountMicros: 50000000, currencyCode: 'USD' },
+      unknownCurrencyValue: null,
+    });
+    expect(await findGadget('totalValue { currencyCode }')).toEqual({
+      totalValue: { currencyCode: 'USD' },
+    });
+  });
+
   it('should compute formulas through the REST API', async () => {
     const response = await makeRestApiRequest({
       method: 'get',
@@ -437,9 +491,9 @@ describe('Formula fields', () => {
     },
     {
       reason: 'a field type that does not support formulas',
-      type: FieldMetadataType.CURRENCY,
+      type: FieldMetadataType.LINKS,
       expression: 'price',
-      message: 'Field type CURRENCY does not support formulas',
+      message: 'Field type LINKS does not support formulas',
     },
   ])(
     'should refuse a formula reading $reason',

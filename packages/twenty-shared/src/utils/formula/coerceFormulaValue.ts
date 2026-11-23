@@ -88,6 +88,10 @@ export const coerceFormulaValue = ({
       return coerceToSelectOption({ value, selectOptionValues });
     case FieldMetadataType.RATING:
       return coerceToRating(value);
+    case FieldMetadataType.CURRENCY:
+      return isNumber(value) && Number.isFinite(value)
+        ? Math.round(value)
+        : null;
     default:
       return assertUnreachable(fieldMetadataType);
   }

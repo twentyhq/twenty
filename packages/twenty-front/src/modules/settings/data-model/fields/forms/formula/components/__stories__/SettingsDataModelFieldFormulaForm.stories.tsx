@@ -31,7 +31,11 @@ const meta: Meta<typeof SettingsDataModelFieldFormulaForm> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
   ],
-  args: { objectMetadataItem: mockedOpportunityObjectMetadataItem },
+  args: {
+    objectMetadataItem: mockedOpportunityObjectMetadataItem,
+    name: 'formula',
+    ariaLabel: 'Formula',
+  },
   parameters: {
     container: { width: 512 },
     msw: graphqlMocks,

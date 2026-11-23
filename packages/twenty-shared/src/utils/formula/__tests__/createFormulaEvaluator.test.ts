@@ -181,6 +181,54 @@ describe('createFormulaEvaluator', () => {
     ).toBe(expected);
   });
 
+  it.each([
+    {
+      reason: 'the amount and the currency of another field',
+      expression: 'amount.amountMicros * probability',
+      currencyCodeExpression: 'amount.currencyCode',
+      expected: { amountMicros: 500000000, currencyCode: 'EUR' },
+    },
+    {
+      reason: 'a fixed currency',
+      expression: 'amount.amountMicros + 0.4',
+      currencyCodeExpression: '"USD"',
+      expected: { amountMicros: 2000000000, currencyCode: 'USD' },
+    },
+    {
+      reason: 'a currency code that does not exist',
+      expression: 'amount.amountMicros',
+      currencyCodeExpression: '"EURO"',
+      expected: null,
+    },
+    {
+      reason: 'an amount that is not a number',
+      expression: 'company.name',
+      currencyCodeExpression: '"USD"',
+      expected: null,
+    },
+  ])(
+    'should compute a currency from $reason',
+    ({ expression, currencyCodeExpression, expected }) => {
+      const evaluate = createFormulaEvaluator({
+        expression,
+        currencyCodeExpression,
+        fields: FIELDS,
+        fieldMetadataType: FieldMetadataType.CURRENCY,
+      });
+
+      expect(
+        evaluate({
+          record: {
+            amount: { amountMicros: 2000000000, currencyCode: 'EUR' },
+            probability: 0.25,
+            company: { name: 'Acme' },
+          },
+          now: NOW,
+        }),
+      ).toEqual(expected);
+    },
+  );
+
   it('should return null when the expression cannot be parsed', () => {
     const evaluate = createFormulaEvaluator({
       expression: 'probability *',

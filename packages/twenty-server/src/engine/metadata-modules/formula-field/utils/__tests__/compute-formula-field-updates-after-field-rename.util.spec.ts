@@ -77,6 +77,12 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
             'vendor.name || " (" || vendor.revenue.currencyCode || ")"',
         },
       },
+      'gadget-commission-uid': {
+        formula: {
+          expression: 'vendor.revenue.amountMicros * 0.1',
+          currencyCodeExpression: 'vendor.revenue.currencyCode',
+        },
+      },
     });
   });
 

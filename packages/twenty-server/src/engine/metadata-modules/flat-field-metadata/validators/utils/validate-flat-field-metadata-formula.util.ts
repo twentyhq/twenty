@@ -1,6 +1,8 @@
 import { msg } from '@lingui/core/macro';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
+  getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
   isFormulaFieldMetadataType,
@@ -102,8 +104,16 @@ export const validateFlatFieldMetadataFormula = ({
   // An existing formula stays editable when the flag is turned off
   if (
     !isFormulaFieldEnabled &&
-    expression !==
-      getFieldMetadataFormulaExpression({ settings: existingUniversalSettings })
+    (expression !==
+      getFieldMetadataFormulaExpression({
+        settings: existingUniversalSettings,
+      }) ||
+      getFieldMetadataFormulaCurrencyCodeExpression({
+        settings: universalSettings,
+      }) !==
+        getFieldMetadataFormulaCurrencyCodeExpression({
+          settings: existingUniversalSettings,
+        }))
   ) {
     return [
       {
@@ -152,27 +162,49 @@ export const validateFlatFieldMetadataFormula = ({
     });
   }
 
-  const compilation = compileFormulaExpression({
-    expression,
-    fields: buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
-      universalFlatObjectMetadata,
-      universalFlatObjectMetadataMaps,
-      universalFlatFieldMetadataMaps,
-      pendingUniversalFlatFieldMetadatas: Object.values(
-        pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier ?? {},
-      ).filter(isDefined),
-    }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name),
+  const fields = buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
+    universalFlatObjectMetadata,
+    universalFlatObjectMetadataMaps,
+    universalFlatFieldMetadataMaps,
+    pendingUniversalFlatFieldMetadatas: Object.values(
+      pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier ?? {},
+    ).filter(isDefined),
+  }).filter((formulaFieldDescriptor) => formulaFieldDescriptor.name !== name);
+  const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
+    settings: universalSettings,
   });
 
-  if (!compilation.isValid) {
-    const errorMessage = compilation.errorMessage;
-
+  if (
+    type === FieldMetadataType.CURRENCY &&
+    !isDefined(currencyCodeExpression)
+  ) {
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: `Invalid formula: ${errorMessage}`,
-      userFriendlyMessage: msg`Invalid formula: ${errorMessage}`,
-      value: expression,
+      message: 'A currency formula needs a currency code expression',
+      userFriendlyMessage: msg`A currency formula needs a currency code`,
     });
+  }
+
+  for (const formulaExpression of [expression, currencyCodeExpression]) {
+    if (!isDefined(formulaExpression)) {
+      continue;
+    }
+
+    const compilation = compileFormulaExpression({
+      expression: formulaExpression,
+      fields,
+    });
+
+    if (!compilation.isValid) {
+      const errorMessage = compilation.errorMessage;
+
+      errors.push({
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message: `Invalid formula: ${errorMessage}`,
+        userFriendlyMessage: msg`Invalid formula: ${errorMessage}`,
+        value: formulaExpression,
+      });
+    }
   }
 
   return errors;

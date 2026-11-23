@@ -8,4 +8,5 @@ export const FORMULA_FIELD_METADATA_TYPES = [
   FieldMetadataType.DATE_TIME,
   FieldMetadataType.SELECT,
   FieldMetadataType.RATING,
+  FieldMetadataType.CURRENCY,
 ] as const;

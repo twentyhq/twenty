@@ -39,6 +39,7 @@ type FieldMetadataNumberSettings = {
 };
 
 type FieldMetadataCurrencySettings = {
+  formula?: FieldMetadataFormula | null;
   format?: FieldCurrencyFormat;
   decimals?: number;
 };

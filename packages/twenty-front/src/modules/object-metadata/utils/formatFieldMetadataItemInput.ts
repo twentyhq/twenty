@@ -18,9 +18,10 @@ export const formatFieldMetadataItemInput = (
       | 'isLabelSyncedWithName'
       | 'isUnique'
     >
-  > & { formula?: string },
+  > & { formula?: string; formulaCurrencyCode?: string },
 ) => {
   const formulaExpression = input.formula?.trim();
+  const formulaCurrencyCodeExpression = input.formulaCurrencyCode?.trim();
 
   return {
     defaultValue: input.defaultValue,
@@ -33,7 +34,12 @@ export const formatFieldMetadataItemInput = (
       ? {
           ...input.settings,
           formula: isNonEmptyString(formulaExpression)
-            ? { expression: formulaExpression }
+            ? {
+                expression: formulaExpression,
+                ...(isNonEmptyString(formulaCurrencyCodeExpression)
+                  ? { currencyCodeExpression: formulaCurrencyCodeExpression }
+                  : {}),
+              }
             : null,
         }
       : input.settings,

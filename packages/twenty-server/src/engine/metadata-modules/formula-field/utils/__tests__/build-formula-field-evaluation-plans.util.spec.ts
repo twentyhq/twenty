@@ -32,6 +32,7 @@ describe('buildFormulaFieldEvaluationPlans', () => {
     expect(buildPlans().map(({ fieldName }) => fieldName)).toEqual([
       'total',
       'supplierLabel',
+      'commission',
       'broken',
     ]);
   });
@@ -96,6 +97,45 @@ describe('buildFormulaFieldEvaluationPlans', () => {
         now: NOW,
       }),
     ).toBe('Acme (USD)');
+  });
+
+  it('should plan both expressions of a currency formula', () => {
+    const plan = findPlan('commission');
+
+    expect(plan).toMatchObject({
+      columnNames: ['commissionAmountMicros', 'commissionCurrencyCode'],
+      lookups: [
+        {
+          relationFieldName: 'supplier',
+          targetFields: [
+            {
+              fieldName: 'revenue',
+              columnNames: ['revenueAmountMicros', 'revenueCurrencyCode'],
+            },
+          ],
+        },
+      ],
+    });
+    expect(
+      plan.evaluate({
+        record: {
+          supplier: {
+            revenue: { amountMicros: 5_000_000, currencyCode: 'EUR' },
+          },
+        },
+        now: NOW,
+      }),
+    ).toEqual({ amountMicros: 500_000, currencyCode: 'EUR' });
+    expect(
+      plan.evaluate({
+        record: {
+          supplier: {
+            revenue: { amountMicros: 5_000_000, currencyCode: 'nope' },
+          },
+        },
+        now: NOW,
+      }),
+    ).toBeNull();
   });
 
   it('should evaluate a formula that no longer compiles to null without reading anything', () => {

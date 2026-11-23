@@ -56,6 +56,20 @@ describe('formatFieldMetadataItemInput', () => {
     ).toEqual({ decimals: 2, formula: { expression: 'price * quantity' } });
   });
 
+  it('should store the currency code expression of a currency formula', () => {
+    expect(
+      formatFieldMetadataItemInput({
+        formula: 'amount.amountMicros * 2',
+        formulaCurrencyCode: ' amount.currencyCode ',
+      }).settings,
+    ).toEqual({
+      formula: {
+        expression: 'amount.amountMicros * 2',
+        currencyCodeExpression: 'amount.currencyCode',
+      },
+    });
+  });
+
   it('should clear the formula when it is emptied', () => {
     expect(
       formatFieldMetadataItemInput({ settings: { decimals: 2 }, formula: ' ' })

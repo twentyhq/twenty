@@ -1,4 +1,3 @@
-import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { compileFormulaExpression } from 'twenty-shared/utils';
@@ -12,6 +11,7 @@ import { ValidationRuleExpressionEditor } from '@/validation-rules/components/Va
 
 export const settingsDataModelFieldFormulaFormSchema = z.object({
   formula: z.string().optional(),
+  formulaCurrencyCode: z.string().optional(),
 });
 
 type SettingsDataModelFieldFormulaFormValues = z.infer<
@@ -21,13 +21,16 @@ type SettingsDataModelFieldFormulaFormValues = z.infer<
 type SettingsDataModelFieldFormulaFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   existingFieldMetadataId?: string;
+  name: keyof SettingsDataModelFieldFormulaFormValues;
+  ariaLabel: string;
 };
 
 export const SettingsDataModelFieldFormulaForm = ({
   objectMetadataItem,
   existingFieldMetadataId,
+  name,
+  ariaLabel,
 }: SettingsDataModelFieldFormulaFormProps) => {
-  const { t } = useLingui();
   const { control } = useFormContext<SettingsDataModelFieldFormulaFormValues>();
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -44,7 +47,7 @@ export const SettingsDataModelFieldFormulaForm = ({
 
   return (
     <Controller
-      name="formula"
+      name={name}
       control={control}
       render={({ field: { onChange, value } }) => (
         <Card.Root fullWidth>
@@ -54,7 +57,7 @@ export const SettingsDataModelFieldFormulaForm = ({
             editorFields={editorFields}
             onChange={onChange}
             compileExpression={compileFormulaExpression}
-            ariaLabel={t`Formula`}
+            ariaLabel={ariaLabel}
           />
         </Card.Root>
       )}

@@ -9,6 +9,7 @@ const TOTAL_PLAN: FormulaFieldEvaluationPlan = {
   fieldMetadataId: 'total-id',
   fieldMetadataType: FieldMetadataType.NUMBER,
   fieldName: 'total',
+  columnNames: ['total'],
   ownFields: [
     { fieldMetadataId: 'price-id', fieldName: 'price', columnNames: ['price'] },
     {
@@ -25,6 +26,7 @@ const SUPPLIER_LABEL_PLAN: FormulaFieldEvaluationPlan = {
   fieldMetadataId: 'supplier-label-id',
   fieldMetadataType: FieldMetadataType.TEXT,
   fieldName: 'supplierLabel',
+  columnNames: ['supplierLabel'],
   ownFields: [
     {
       fieldMetadataId: 'supplier-id',

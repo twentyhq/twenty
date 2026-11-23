@@ -162,6 +162,7 @@ export type {
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
+export type { FormulaCurrencyValue } from './FormulaCurrencyValue';
 export type { FormulaEvaluator } from './FormulaEvaluator';
 export type { FormulaFieldMetadataType } from './FormulaFieldMetadataType';
 export type { FormulaValue } from './FormulaValue';

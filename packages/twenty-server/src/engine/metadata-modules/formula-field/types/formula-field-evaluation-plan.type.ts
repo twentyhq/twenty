@@ -10,6 +10,7 @@ export type FormulaFieldEvaluationPlan = {
   fieldMetadataId: string;
   fieldMetadataType: FormulaFieldMetadataType;
   fieldName: string;
+  columnNames: string[];
   ownFields: FormulaFieldDependency[];
   lookups: FormulaFieldLookup[];
   evaluate: FormulaEvaluator;

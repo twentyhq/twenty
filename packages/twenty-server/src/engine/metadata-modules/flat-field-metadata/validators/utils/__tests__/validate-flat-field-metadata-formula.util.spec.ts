@@ -98,9 +98,57 @@ describe('validateFlatFieldMetadataFormula', () => {
   it('should refuse a formula on a field type that cannot hold one', () => {
     expect(
       validate({
-        flatFieldMetadataToValidate: { type: FieldMetadataType.CURRENCY },
+        flatFieldMetadataToValidate: { type: FieldMetadataType.ADDRESS },
       }),
-    ).toEqual([{ message: 'Field type CURRENCY does not support formulas' }]);
+    ).toEqual([{ message: 'Field type ADDRESS does not support formulas' }]);
+  });
+
+  it('should require a valid currency code expression on a currency formula', () => {
+    const validateCurrency = (currencyCodeExpression?: string) =>
+      validate({
+        flatFieldMetadataToValidate: {
+          type: FieldMetadataType.CURRENCY,
+          universalSettings: {
+            formula: {
+              expression: 'price * 1000000',
+              ...(currencyCodeExpression === undefined
+                ? {}
+                : { currencyCodeExpression }),
+            },
+          },
+        },
+      });
+
+    expect(validateCurrency('supplier.revenue.currencyCode')).toEqual([]);
+    expect(validateCurrency('"USD"')).toEqual([]);
+    expect(validateCurrency()).toEqual([
+      { message: 'A currency formula needs a currency code expression' },
+    ]);
+    expect(validateCurrency('missing')).toEqual([
+      { message: expect.stringContaining('Invalid formula') },
+    ]);
+  });
+
+  it('should refuse a changed currency code expression when the feature is not enabled', () => {
+    expect(
+      validate({
+        flatFieldMetadataToValidate: {
+          type: FieldMetadataType.CURRENCY,
+          universalSettings: {
+            formula: {
+              expression: 'price',
+              currencyCodeExpression: '"EUR"',
+            },
+          },
+        },
+        existingUniversalSettings: {
+          formula: { expression: 'price', currencyCodeExpression: '"USD"' },
+        },
+        isFormulaFieldEnabled: false,
+      }),
+    ).toEqual([
+      { message: 'Formula fields are not enabled for this workspace' },
+    ]);
   });
 
   it('should refuse a formula without expression', () => {

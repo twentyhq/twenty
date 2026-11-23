@@ -17,6 +17,10 @@ const getFormulaSectionDescription = (fieldType: FieldMetadataType) => {
     return t`Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand.`;
   }
 
+  if (fieldType === FieldMetadataType.CURRENCY) {
+    return t`Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand.`;
+  }
+
   return t`Compute this field from other fields. Leave empty to enter values by hand.`;
 };
 
@@ -41,15 +45,33 @@ export const SettingsDataModelFieldFormulaSection = ({
   }
 
   return (
-    <Section.Root>
-      <Section.Header
-        title={t`Formula`}
-        description={getFormulaSectionDescription(fieldType)}
-      />
-      <SettingsDataModelFieldFormulaForm
-        objectMetadataItem={objectMetadataItem}
-        existingFieldMetadataId={existingFieldMetadataId}
-      />
-    </Section.Root>
+    <>
+      <Section.Root>
+        <Section.Header
+          title={t`Formula`}
+          description={getFormulaSectionDescription(fieldType)}
+        />
+        <SettingsDataModelFieldFormulaForm
+          objectMetadataItem={objectMetadataItem}
+          existingFieldMetadataId={existingFieldMetadataId}
+          name="formula"
+          ariaLabel={t`Formula`}
+        />
+      </Section.Root>
+      {fieldType === FieldMetadataType.CURRENCY && (
+        <Section.Root>
+          <Section.Header
+            title={t`Formula currency`}
+            description={t`The currency of the computed amount: a code in quotes such as "USD", or the currency code of another field.`}
+          />
+          <SettingsDataModelFieldFormulaForm
+            objectMetadataItem={objectMetadataItem}
+            existingFieldMetadataId={existingFieldMetadataId}
+            name="formulaCurrencyCode"
+            ariaLabel={t`Formula currency`}
+          />
+        </Section.Root>
+      )}
+    </>
   );
 };

@@ -1,6 +1,7 @@
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
+  getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
   isValidationRuleReservedName,
@@ -68,9 +69,10 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier[
         universalIdentifier
       ] ?? existingUniversalFlatFieldMetadata;
-    const expression = getFieldMetadataFormulaExpression({
-      settings: universalFlatFieldMetadata.universalSettings,
-    });
+    const settings = universalFlatFieldMetadata.universalSettings;
+    const expression = getFieldMetadataFormulaExpression({ settings });
+    const currencyCodeExpression =
+      getFieldMetadataFormulaCurrencyCodeExpression({ settings });
     const universalFlatObjectMetadata =
       universalFlatObjectMetadataMaps.byUniversalIdentifier[
         objectMetadataUniversalIdentifier
@@ -78,7 +80,9 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
 
     if (
       !isDefined(expression) ||
-      !expression.includes(previousFieldName) ||
+      ![expression, currencyCodeExpression].some((formulaExpression) =>
+        formulaExpression?.includes(previousFieldName),
+      ) ||
       !isDefined(universalFlatObjectMetadata) ||
       isDefined(
         deletedUniversalFlatFieldMetadataByUniversalIdentifier[
@@ -107,13 +111,28 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       fields,
     );
 
-    const compilation = compileFormulaExpression({ expression, fields });
+    const renameExpression = (formulaExpression: string): string => {
+      const compilation = compileFormulaExpression({
+        expression: formulaExpression,
+        fields,
+      });
+
+      return compilation.isValid
+        ? renameValidationRuleExpressionFields({
+            expression: formulaExpression,
+            bindings: compilation.bindings,
+            fieldNameByUniversalIdentifier,
+          })
+        : formulaExpression;
+    };
+    const renamedExpression = renameExpression(expression);
+    const renamedCurrencyCodeExpression = isDefined(currencyCodeExpression)
+      ? renameExpression(currencyCodeExpression)
+      : undefined;
 
     if (
-      !compilation.isValid ||
-      !Object.values(compilation.bindings).includes(
-        renamedFieldUniversalIdentifier,
-      )
+      renamedExpression === expression &&
+      renamedCurrencyCodeExpression === currencyCodeExpression
     ) {
       continue;
     }
@@ -121,13 +140,12 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
     universalFlatFieldMetadataToUpdate[universalIdentifier] = {
       ...universalFlatFieldMetadata,
       universalSettings: {
-        ...universalFlatFieldMetadata.universalSettings,
+        ...settings,
         formula: {
-          expression: renameValidationRuleExpressionFields({
-            expression,
-            bindings: compilation.bindings,
-            fieldNameByUniversalIdentifier,
-          }),
+          expression: renamedExpression,
+          ...(isDefined(renamedCurrencyCodeExpression)
+            ? { currencyCodeExpression: renamedCurrencyCodeExpression }
+            : {}),
         },
       },
     };

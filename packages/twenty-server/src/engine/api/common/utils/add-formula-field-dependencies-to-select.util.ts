@@ -128,7 +128,9 @@ export const addFormulaFieldDependenciesToSelect = <
     flatFieldMetadataMaps,
   }).filter(
     (formulaFieldEvaluationPlan) =>
-      isDefined(selection.columns[formulaFieldEvaluationPlan.fieldName]) &&
+      formulaFieldEvaluationPlan.columnNames.some((columnName) =>
+        isDefined(selection.columns[columnName]),
+      ) &&
       canReadFormulaFieldDependencies({
         formulaFieldEvaluationPlan,
         relations,

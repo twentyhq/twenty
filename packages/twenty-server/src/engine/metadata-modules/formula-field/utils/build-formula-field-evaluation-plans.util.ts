@@ -2,6 +2,7 @@ import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   createFormulaEvaluator,
+  getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
   isFormulaFieldMetadataType,
@@ -88,7 +89,16 @@ export const buildFormulaFieldEvaluationPlans = ({
     const expression = getFieldMetadataFormulaExpression({ settings });
 
     return isDefined(expression) && isFormulaFieldMetadataType(type)
-      ? [{ id, name, type, expression }]
+      ? [
+          {
+            id,
+            name,
+            type,
+            expression,
+            currencyCodeExpression:
+              getFieldMetadataFormulaCurrencyCodeExpression({ settings }),
+          },
+        ]
       : [];
   });
 
@@ -102,80 +112,99 @@ export const buildFormulaFieldEvaluationPlans = ({
     flatFieldMetadataMaps,
   });
 
-  return formulaFlatFieldMetadatas.map(({ id, name, type, expression }) => {
-    const compilation = compileFormulaExpression({ expression, fields });
+  const columnNamesByFieldMetadataId = getFieldMetadataIdToColumnNamesMap(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
 
-    if (!compilation.isValid) {
-      return {
+  return formulaFlatFieldMetadatas.map(
+    ({ id, name, type, expression, currencyCodeExpression }) => {
+      const identity = {
         fieldMetadataId: id,
         fieldMetadataType: type,
         fieldName: name,
-        ownFields: [],
-        lookups: [],
-        evaluate: () => null,
+        columnNames: columnNamesByFieldMetadataId.get(id) ?? [],
       };
-    }
+      const compilations = [expression, currencyCodeExpression]
+        .filter(isDefined)
+        .map((formulaExpression) =>
+          compileFormulaExpression({ expression: formulaExpression, fields }),
+        );
+      const bindings = compilations.flatMap((compilation) =>
+        compilation.isValid ? [compilation.bindings] : [],
+      );
 
-    const paths = Object.keys(compilation.bindings);
-    const ownFields = buildDependencies({
-      fieldNames: paths,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
+      if (bindings.length !== compilations.length) {
+        return {
+          ...identity,
+          ownFields: [],
+          lookups: [],
+          evaluate: () => null,
+        };
+      }
 
-    return {
-      fieldMetadataId: id,
-      fieldMetadataType: type,
-      fieldName: name,
-      ownFields: ownFields.map(
-        ({ fieldMetadataId, fieldName, columnNames }) => ({
-          fieldMetadataId,
-          fieldName,
-          columnNames,
-        }),
-      ),
-      lookups: ownFields.flatMap(
-        ({
-          fieldName,
-          relationTargetObjectMetadataId,
-        }): FormulaFieldLookup[] => {
-          const targetFlatObjectMetadata = isDefined(
+      const paths = [
+        ...new Set(bindings.flatMap((binding) => Object.keys(binding))),
+      ];
+      const ownFields = buildDependencies({
+        fieldNames: paths,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+      return {
+        ...identity,
+        ownFields: ownFields.map(
+          ({ fieldMetadataId, fieldName, columnNames }) => ({
+            fieldMetadataId,
+            fieldName,
+            columnNames,
+          }),
+        ),
+        lookups: ownFields.flatMap(
+          ({
+            fieldName,
             relationTargetObjectMetadataId,
-          )
-            ? findFlatEntityByIdInFlatEntityMaps({
-                flatEntityId: relationTargetObjectMetadataId,
-                flatEntityMaps: flatObjectMetadataMaps,
-              })
-            : undefined;
+          }): FormulaFieldLookup[] => {
+            const targetFlatObjectMetadata = isDefined(
+              relationTargetObjectMetadataId,
+            )
+              ? findFlatEntityByIdInFlatEntityMaps({
+                  flatEntityId: relationTargetObjectMetadataId,
+                  flatEntityMaps: flatObjectMetadataMaps,
+                })
+              : undefined;
 
-          if (!isDefined(targetFlatObjectMetadata)) {
-            return [];
-          }
+            if (!isDefined(targetFlatObjectMetadata)) {
+              return [];
+            }
 
-          return [
-            {
-              relationFieldName: fieldName,
-              targetObjectMetadataId: targetFlatObjectMetadata.id,
-              targetFields: buildDependencies({
-                fieldNames: paths
-                  .filter((path) => path.startsWith(`${fieldName}.`))
-                  .map((path) => path.slice(fieldName.length + 1)),
-                flatObjectMetadata: targetFlatObjectMetadata,
-                flatFieldMetadataMaps,
-              }).map(({ fieldMetadataId, fieldName, columnNames }) => ({
-                fieldMetadataId,
-                fieldName,
-                columnNames,
-              })),
-            },
-          ];
-        },
-      ),
-      evaluate: createFormulaEvaluator({
-        expression,
-        fields: keepReadFieldDescriptors({ fields, paths }),
-        fieldMetadataType: type,
-      }),
-    };
-  });
+            return [
+              {
+                relationFieldName: fieldName,
+                targetObjectMetadataId: targetFlatObjectMetadata.id,
+                targetFields: buildDependencies({
+                  fieldNames: paths
+                    .filter((path) => path.startsWith(`${fieldName}.`))
+                    .map((path) => path.slice(fieldName.length + 1)),
+                  flatObjectMetadata: targetFlatObjectMetadata,
+                  flatFieldMetadataMaps,
+                }).map(({ fieldMetadataId, fieldName, columnNames }) => ({
+                  fieldMetadataId,
+                  fieldName,
+                  columnNames,
+                })),
+              },
+            ];
+          },
+        ),
+        evaluate: createFormulaEvaluator({
+          expression,
+          currencyCodeExpression,
+          fields: keepReadFieldDescriptors({ fields, paths }),
+          fieldMetadataType: type,
+        }),
+      };
+    },
+  );
 };

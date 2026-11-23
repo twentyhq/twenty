@@ -39,6 +39,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import {
+  getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   getSettingsPath,
   isDefined,
@@ -167,6 +168,10 @@ export const SettingsObjectFieldEdit = () => {
       formula: isDefined(fieldMetadataItem)
         ? (getFieldMetadataFormulaExpression(fieldMetadataItem) ?? '')
         : '',
+      formulaCurrencyCode: isDefined(fieldMetadataItem)
+        ? (getFieldMetadataFormulaCurrencyCodeExpression(fieldMetadataItem) ??
+          '')
+        : '',
     },
   });
 
@@ -262,7 +267,7 @@ export const SettingsObjectFieldEdit = () => {
 
     if (Object.keys(otherDirtyFields).length > 0) {
       const dirtyInputKeys = Object.keys(otherDirtyFields).map((key) =>
-        key === 'formula' ? 'settings' : key,
+        key === 'formula' || key === 'formulaCurrencyCode' ? 'settings' : key,
       );
       const formattedInput = Object.fromEntries(
         Object.entries(formatFieldMetadataItemInput(formValues)).filter(

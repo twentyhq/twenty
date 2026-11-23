@@ -21,6 +21,7 @@ const buildField = ({
   objectMetadataId,
   objectMetadataUniversalIdentifier,
   expression,
+  currencyCodeExpression,
 }: {
   id: string;
   name: string;
@@ -28,9 +29,19 @@ const buildField = ({
   objectMetadataId: string;
   objectMetadataUniversalIdentifier: string;
   expression?: string;
+  currencyCodeExpression?: string;
 }) => {
   const settings =
-    expression === undefined ? null : { formula: { expression } };
+    expression === undefined
+      ? null
+      : {
+          formula: {
+            expression,
+            ...(currencyCodeExpression === undefined
+              ? {}
+              : { currencyCodeExpression }),
+          },
+        };
 
   return getFlatFieldMetadataMock({
     id,
@@ -47,7 +58,7 @@ const buildField = ({
 const buildGadgetField = (
   field: Pick<
     Parameters<typeof buildField>[0],
-    'id' | 'name' | 'type' | 'expression'
+    'id' | 'name' | 'type' | 'expression' | 'currencyCodeExpression'
   >,
 ) =>
   buildField({
@@ -59,7 +70,7 @@ const buildGadgetField = (
 const buildSupplierField = (
   field: Pick<
     Parameters<typeof buildField>[0],
-    'id' | 'name' | 'type' | 'expression'
+    'id' | 'name' | 'type' | 'expression' | 'currencyCodeExpression'
   >,
 ) =>
   buildField({
@@ -128,6 +139,13 @@ const GADGET_FIELDS = [
     name: 'supplierLabel',
     type: FieldMetadataType.TEXT,
     expression: 'supplier.name || " (" || supplier.revenue.currencyCode || ")"',
+  }),
+  buildGadgetField({
+    id: 'gadget-commission',
+    name: 'commission',
+    type: FieldMetadataType.CURRENCY,
+    expression: 'supplier.revenue.amountMicros * 0.1',
+    currencyCodeExpression: 'supplier.revenue.currencyCode',
   }),
   buildGadgetField({
     id: 'gadget-broken',
