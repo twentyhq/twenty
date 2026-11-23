@@ -8,4 +8,8 @@ export type ScopedRelationAlias = {
   relationObjectMetadataItem: EnrichedObjectMetadataItem;
   relationWithArguments: RecordGqlFieldsRelationWithArguments;
   lookupTarget?: RecordFieldLookupTarget;
+  // The related object and every object the scope filters or sorts through, whose writes can change the result
+  reachedObjectMetadataItemIds: string[];
+  // A scope or shown field the user cannot read would make the server reject the whole query
+  isRestricted: boolean;
 };

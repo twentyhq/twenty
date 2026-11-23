@@ -24,6 +24,8 @@ const buildPeopleAlias = (
     relationFieldName: 'people',
     recordGqlFields: { id: true },
   },
+  reachedObjectMetadataItemIds: [personObjectMetadataItem.id],
+  isRestricted: false,
   ...scopedRelationAlias,
 });
 

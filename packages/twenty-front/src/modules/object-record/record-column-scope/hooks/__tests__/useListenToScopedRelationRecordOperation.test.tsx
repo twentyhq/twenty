@@ -23,6 +23,8 @@ const peopleAlias: ScopedRelationAlias = {
     relationFieldName: 'people',
     recordGqlFields: { id: true },
   },
+  reachedObjectMetadataItemIds: [personObjectMetadataItem.id],
+  isRestricted: false,
 };
 
 const PEOPLE_CONNECTION_SELECTION = `
