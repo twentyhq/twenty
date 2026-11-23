@@ -3862,6 +3862,7 @@ type NavigationMenuItem {
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
   type: NavigationMenuItemType!
+  universalIdentifier: UUID
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID

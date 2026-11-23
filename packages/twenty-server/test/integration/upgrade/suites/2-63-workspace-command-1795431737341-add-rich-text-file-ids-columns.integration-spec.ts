@@ -1,6 +1,6 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-workspace-command-1795380171758-add-rich-text-file-ids-columns.command';
+import { type AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795431737341-add-rich-text-file-ids-columns.command';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -24,7 +24,7 @@ const dropFileIdsColumn = (tableName: string) =>
     `ALTER TABLE "${SCHEMA}"."${tableName}" DROP COLUMN IF EXISTS "bodyV2_fileIds"`,
   );
 
-describe('2-62 workspace command - add rich text fileIds columns (integration)', () => {
+describe('2-63 workspace command - add rich text fileIds columns (integration)', () => {
   let command: AddRichTextFileIdsColumnsCommand;
 
   const runOnWorkspace = (options: { dryRun?: boolean } = {}) =>
