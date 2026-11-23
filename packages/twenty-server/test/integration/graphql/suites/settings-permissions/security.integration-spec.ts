@@ -10,6 +10,7 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const uploadWorkspaceLogoMutation = gql`
   mutation UploadWorkspaceLogo($file: Upload!) {
@@ -55,6 +56,7 @@ describe('Security permissions', () => {
   let originalWorkspaceState: Record<string, unknown> & {
     allowedEmbeddingOrigins?: string[];
   };
+  let originalLogoFileId: string | null;
 
   beforeAll(async () => {
     const query = gql`
@@ -76,6 +78,13 @@ describe('Security permissions', () => {
     const response = await makeMetadataApiRequest({ query });
 
     originalWorkspaceState = response.body.data.currentWorkspace;
+
+    const [workspace] = await globalThis.testDataSource.query(
+      `SELECT "logoFileId" FROM core."workspace" WHERE id = $1`,
+      [SEED_APPLE_WORKSPACE_ID],
+    );
+
+    originalLogoFileId = workspace.logoFileId;
   });
 
   afterAll(async () => {
@@ -96,6 +105,11 @@ describe('Security permissions', () => {
       `;
 
     await makeMetadataApiRequest({ query: restoreQuery });
+    // Restoring the logo URL does not unbind the uploaded file, which later specs read back
+    await globalThis.testDataSource.query(
+      `UPDATE core."workspace" SET "logoFileId" = $2 WHERE id = $1`,
+      [SEED_APPLE_WORKSPACE_ID, originalLogoFileId],
+    );
     for (const origin of await readOrigins()) {
       await editOrigin('remove', origin);
     }
