@@ -106,7 +106,7 @@ export const SettingsApplicationConnectionBillingValidationModal = ({
   }: ConnectedAccountPrice) => {
     const amount = `${getCurrencyPrefix(currency)}${formatNumber(
       amountCents / 100,
-      { decimals: 2 },
+      { decimals: 2, minimumDecimals: 2 },
     )}`;
 
     return billingPeriod === 'MONTHLY' ? t`${amount} / month` : amount;

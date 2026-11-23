@@ -141,17 +141,49 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     roles: [],
   };
 
+const LINKEDIN_CONNECTION_PROVIDER = {
+  __typename: 'ApplicationConnectionProvider',
+  id: '20202020-6a7b-4c3d-8e4f-000000000031',
+  applicationId: APPLICATION_ID,
+  type: 'custom',
+  name: 'linkedin',
+  displayName: 'LinkedIn',
+  scope: 'WORKSPACE',
+  logoUrl: null,
+  oauth: null,
+  connectedAccountPrices: [
+    {
+      __typename: 'ApplicationConnectionPrice',
+      universalIdentifier: '20202020-6a7b-4c3d-8e4f-000000000032',
+      label: 'Per connected account',
+      amountCents: 700,
+      currency: 'USD',
+      billingPeriod: 'MONTHLY',
+    },
+  ],
+};
+
 const buildApplicationHandlers = ({
   settingsMenuItems,
   healthCheckLogicFunctionId = null,
   runHealthCheckOnUserPreferences = false,
   marketplaceAppDetail,
+  connectionProviders = [],
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
   healthCheckLogicFunctionId?: string | null;
   runHealthCheckOnUserPreferences?: boolean;
   marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
+  connectionProviders?: (typeof LINKEDIN_CONNECTION_PROVIDER)[];
 }) => [
+  graphql.query('ApplicationConnectionProviders', () =>
+    HttpResponse.json({
+      data: { applicationConnectionProviders: connectionProviders },
+    }),
+  ),
+  graphql.query('ApplicationConnectedAccounts', () =>
+    HttpResponse.json({ data: { applicationConnectedAccounts: [] } }),
+  ),
   graphql.query('FindOneApplication', () =>
     HttpResponse.json({
       data: {
@@ -504,6 +536,37 @@ export const WorkspaceHealthCheckRerunsWhenItsFunctionChanges: Story = {
     await waitFor(() =>
       expect(runApplicationHealthCheck).toHaveBeenCalledTimes(2),
     );
+  },
+};
+
+export const BilledConnectionAsksForValidation: Story = {
+  parameters: {
+    msw: {
+      handlers: buildApplicationHandlers({
+        settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        connectionProviders: [LINKEDIN_CONNECTION_PROVIDER],
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole(
+        'button',
+        { name: 'Add connection' },
+        { timeout: 3000 },
+      ),
+    );
+
+    const body = within(canvasElement.ownerDocument.body);
+
+    await waitFor(() =>
+      expect(
+        body.getByText('Per connected account: $7.00 / month'),
+      ).toBeVisible(),
+    );
+    expect(body.getByRole('button', { name: 'Authorize' })).toBeVisible();
   },
 };
 

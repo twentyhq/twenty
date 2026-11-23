@@ -251,7 +251,7 @@ describe('SettingsApplicationConnectionsSection', () => {
 
     expect(mockTriggerAppOAuth).not.toHaveBeenCalled();
     expect(
-      await screen.findByText('Per connected account: $7 / month'),
+      await screen.findByText('Per connected account: $7.00 / month'),
     ).toBeVisible();
 
     await userEvent.click(screen.getByRole('button', { name: 'Authorize' }));
