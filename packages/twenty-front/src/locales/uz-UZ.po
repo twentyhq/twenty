@@ -2290,11 +2290,6 @@ msgstr "Karta qo‘shish"
 msgid "Add CC"
 msgstr "CC qo‘shish"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Kanal qo‘shish"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "Bir kundan kam vaqt ichida"
 msgid "In progress"
 msgstr "Jarayonda"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Jarayonda: xabar va taqvim kanallari ko‘rinishini yozuv darajasidagi ruxsat qoidalari bilan ta’minlash. Aloqa sakrashlari kerak."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Jarayonda: xabar va taqvim kanallari ko‘rinishini yozuv darajasidagi ruxsat qoidalari bilan majburan qo‘llash. Aloqa o‘tishlari va bog‘liq yozuv yo‘llari kerak."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
