@@ -346,7 +346,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
     "inputSchema": {
       "properties": {
         "defaultValue": {
-          "description": "Default value",
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "number",
+            },
+            {
+              "type": "boolean",
+            },
+            {
+              "items": {},
+              "type": "array",
+            },
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null",
+          ],
         },
         "description": {
           "description": "Description",
@@ -386,7 +419,53 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "string",
         },
         "options": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {},
+                "properties": {
+                  "color": {
+                    "description": "Tag color",
+                    "type": "string",
+                  },
+                  "id": {
+                    "description": "Option ID, keep it when updating",
+                    "type": "string",
+                  },
+                  "isActive": {
+                    "description": "Whether it can still be picked",
+                    "type": "boolean",
+                  },
+                  "label": {
+                    "description": "Display label",
+                    "type": "string",
+                  },
+                  "position": {
+                    "description": "Position in the list",
+                    "type": "number",
+                  },
+                  "value": {
+                    "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "label",
+                  "value",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+          "type": [
+            "array",
+            "null",
+          ],
         },
         "relationCreationPayload": {
           "description": "Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.",
@@ -421,7 +500,23 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "object",
         },
         "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "Field settings",
+          "type": [
+            "object",
+            "null",
+          ],
         },
         "type": {
           "description": "Field type",
@@ -470,7 +565,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
     "inputSchema": {
       "properties": {
         "defaultValue": {
-          "description": "Default value",
+          "anyOf": [
+            {
+              "type": "string",
+            },
+            {
+              "type": "number",
+            },
+            {
+              "type": "boolean",
+            },
+            {
+              "items": {},
+              "type": "array",
+            },
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
+          "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "array",
+            "object",
+            "null",
+          ],
         },
         "description": {
           "description": "Description",
@@ -510,10 +638,72 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "type": "string",
         },
         "options": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {},
+                "properties": {
+                  "color": {
+                    "description": "Tag color",
+                    "type": "string",
+                  },
+                  "id": {
+                    "description": "Option ID, keep it when updating",
+                    "type": "string",
+                  },
+                  "isActive": {
+                    "description": "Whether it can still be picked",
+                    "type": "boolean",
+                  },
+                  "label": {
+                    "description": "Display label",
+                    "type": "string",
+                  },
+                  "position": {
+                    "description": "Position in the list",
+                    "type": "number",
+                  },
+                  "value": {
+                    "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "label",
+                  "value",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+          "type": [
+            "array",
+            "null",
+          ],
         },
         "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            {
+              "type": "null",
+            },
+          ],
           "description": "Field settings",
+          "type": [
+            "object",
+            "null",
+          ],
         },
       },
       "required": [
@@ -549,7 +739,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "items": {
             "properties": {
               "defaultValue": {
-                "description": "Default value",
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "items": {},
+                    "type": "array",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null",
+                ],
               },
               "description": {
                 "description": "Description",
@@ -589,7 +812,53 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "type": "string",
               },
               "options": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": {},
+                      "properties": {
+                        "color": {
+                          "description": "Tag color",
+                          "type": "string",
+                        },
+                        "id": {
+                          "description": "Option ID, keep it when updating",
+                          "type": "string",
+                        },
+                        "isActive": {
+                          "description": "Whether it can still be picked",
+                          "type": "boolean",
+                        },
+                        "label": {
+                          "description": "Display label",
+                          "type": "string",
+                        },
+                        "position": {
+                          "description": "Position in the list",
+                          "type": "number",
+                        },
+                        "value": {
+                          "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+                "type": [
+                  "array",
+                  "null",
+                ],
               },
               "relationCreationPayload": {
                 "description": "Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.",
@@ -624,7 +893,23 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "type": "object",
               },
               "settings": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "Field settings",
+                "type": [
+                  "object",
+                  "null",
+                ],
               },
               "type": {
                 "description": "Field type",
@@ -687,7 +972,40 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
           "items": {
             "properties": {
               "defaultValue": {
-                "description": "Default value",
+                "anyOf": [
+                  {
+                    "type": "string",
+                  },
+                  {
+                    "type": "number",
+                  },
+                  {
+                    "type": "boolean",
+                  },
+                  {
+                    "items": {},
+                    "type": "array",
+                  },
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
+                "description": "Default value. Text and select values are quoted strings (e.g. "'OPTION_A'"), multi-select an array of them, composite fields an object of subfields.",
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null",
+                ],
               },
               "description": {
                 "description": "Description",
@@ -727,10 +1045,72 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                 "type": "string",
               },
               "options": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "additionalProperties": {},
+                      "properties": {
+                        "color": {
+                          "description": "Tag color",
+                          "type": "string",
+                        },
+                        "id": {
+                          "description": "Option ID, keep it when updating",
+                          "type": "string",
+                        },
+                        "isActive": {
+                          "description": "Whether it can still be picked",
+                          "type": "boolean",
+                        },
+                        "label": {
+                          "description": "Display label",
+                          "type": "string",
+                        },
+                        "position": {
+                          "description": "Position in the list",
+                          "type": "number",
+                        },
+                        "value": {
+                          "description": "Stored value (SCREAMING_SNAKE_CASE)",
+                          "type": "string",
+                        },
+                      },
+                      "required": [
+                        "label",
+                        "value",
+                      ],
+                      "type": "object",
+                    },
+                    "type": "array",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of red, ruby, crimson, tomato, orange, amber, yellow, lime, grass, green, jade, mint, turquoise, cyan, sky, blue, iris, violet, purple, plum, pink, bronze, gold, brown, gray; defaults to gray when omitted.",
+                "type": [
+                  "array",
+                  "null",
+                ],
               },
               "settings": {
+                "anyOf": [
+                  {
+                    "additionalProperties": {},
+                    "propertyNames": {
+                      "type": "string",
+                    },
+                    "type": "object",
+                  },
+                  {
+                    "type": "null",
+                  },
+                ],
                 "description": "Field settings",
+                "type": [
+                  "object",
+                  "null",
+                ],
               },
             },
             "required": [
