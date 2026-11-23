@@ -21,6 +21,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 
 const WORKSPACE_ID = '6f1b5d8e-1d1e-4b1a-9a43-2f4cbbd0e002';
 
@@ -95,6 +96,7 @@ describe('ApplicationInstallService failure metrics', () => {
         { provide: WorkspaceCacheService, useValue: {} },
         { provide: MetricsService, useValue: metricsService },
         { provide: EventLogEmitterService, useValue: eventLogEmitterService },
+        { provide: BillingSubscriptionUpdateService, useValue: {} },
       ],
     }).compile();
 
