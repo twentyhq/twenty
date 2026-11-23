@@ -140,6 +140,33 @@ describe('linkedinImportHistoryHandler', () => {
       .mockResolvedValueOnce(SKIPPED);
   });
 
+  it('starts the next conversation from its first page when the one it resumed was deleted meanwhile', async () => {
+    mocks.kvStore.set(PROGRESS_KEY, {
+      ...PROGRESS_BEFORE_CHUNK_2,
+      currentChatCursor: 'page-2',
+      isCurrentChatImported: true,
+    });
+    mocks.kvStore.set(getChatsKey(2), [
+      { id: 'chat-gone' },
+      LISTED_CHAT_WITH_ATTENDEE,
+    ]);
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRequestError('Chat not found', 404),
+    );
+    mocks.ingestLinkedinMessages.mockReset().mockResolvedValue(IMPORTED);
+
+    await expect(linkedinImportHistoryHandler(PAYLOAD)).resolves.toEqual({
+      status: 'COMPLETED',
+      importedConversationCount: 2,
+    });
+    expect(mocks.listUnipileChatMessagesPage).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        chatId: LISTED_CHAT_WITH_ATTENDEE.id,
+        cursor: undefined,
+      }),
+    );
+  });
+
   it('skips a conversation deleted on LinkedIn since it was selected', async () => {
     mocks.getUnipileChat.mockRejectedValue(
       new UnipileRequestError('Chat not found', 404),

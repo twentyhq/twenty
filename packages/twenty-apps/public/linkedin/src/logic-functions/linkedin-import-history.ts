@@ -191,6 +191,18 @@ export const linkedinImportHistoryHandler = async (
     return { status: 'PAUSED' };
   };
 
+  const finishChat = async (): Promise<void> => {
+    if (isChatImported) {
+      importedConversationCount += 1;
+    }
+
+    processedChatCount += 1;
+    isChatImported = false;
+    chatCursor = undefined;
+
+    await saveCurrentProgress();
+  };
+
   const importChat = async ({
     listedChat,
     unipileAccountId,
@@ -213,8 +225,7 @@ export const linkedinImportHistoryHandler = async (
           });
 
     if (!isDefined(chat)) {
-      processedChatCount += 1;
-      await saveCurrentProgress();
+      await finishChat();
 
       return;
     }
@@ -273,14 +284,7 @@ export const linkedinImportHistoryHandler = async (
       }
     } while (isDefined(chatCursor));
 
-    if (isChatImported) {
-      importedConversationCount += 1;
-    }
-
-    processedChatCount += 1;
-    isChatImported = false;
-
-    await saveCurrentProgress();
+    await finishChat();
   };
 
   try {
