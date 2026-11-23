@@ -36,6 +36,7 @@ export class ApplicationLifecycleHookJob {
   ) {
     await this.logicFunctionJobRunnerService.run({
       logicFunctionPayload: jobData,
+      jobId: jobContext.jobId,
       retryLimit: jobContext.retryLimit,
       attemptsMade: jobContext.attemptsMade,
       persistRetryCount: (applicationRetryCount) =>

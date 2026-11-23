@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
+import { extractJobIdFromQueueJobId } from 'src/engine/core-modules/application/application-job/utils/extract-job-id-from-queue-job-id.util';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import {
   LogicFunctionExecutionException,
@@ -55,12 +56,14 @@ export class LogicFunctionJobRunnerService {
 
   async run({
     logicFunctionPayload,
+    jobId,
     retryLimit,
     attemptsMade,
     persistRetryCount,
     enqueueFailureHandler,
   }: {
     logicFunctionPayload: LogicFunctionJobPayload;
+    jobId: string;
     retryLimit: number;
     attemptsMade: number;
     persistRetryCount: (applicationRetryCount: number) => Promise<void>;
@@ -95,6 +98,8 @@ export class LogicFunctionJobRunnerService {
       if (!isLogicFunctionRetryScheduled({ error: executionError, retry })) {
         await this.enqueueFailureHandlerIfDeclared({
           logicFunctionPayload,
+          jobId,
+          attemptsMade: attemptsMade + 1,
           failure: {
             errorType: executionError.errorType,
             errorMessage: executionError.errorMessage,
@@ -159,28 +164,20 @@ export class LogicFunctionJobRunnerService {
         return;
       }
 
-      if (attemptsMade >= retryLimit) {
-        await this.enqueueFailureHandlerIfDeclared({
-          logicFunctionPayload,
-          failure: {
-            errorType: error instanceof Error ? error.name : 'Error',
-            errorMessage:
-              error instanceof Error ? error.message : String(error),
-          },
-          enqueueFailureHandler,
-        });
-      }
-
       throw error;
     }
   }
 
-  private async enqueueFailureHandlerIfDeclared({
+  async enqueueFailureHandlerIfDeclared({
     logicFunctionPayload,
+    jobId,
+    attemptsMade,
     failure,
     enqueueFailureHandler,
   }: {
     logicFunctionPayload: LogicFunctionJobPayload;
+    jobId: string;
+    attemptsMade: number;
     failure: LogicFunctionFailureHandlerPayload['error'];
     enqueueFailureHandler: EnqueueFailureHandler;
   }): Promise<void> {
@@ -218,6 +215,8 @@ export class LogicFunctionJobRunnerService {
           flatEntityMaps: flatLogicFunctionMaps,
           universalIdentifier: failureHandlerUniversalIdentifier,
         }),
+        jobId: extractJobIdFromQueueJobId({ workspaceId, queueJobId: jobId }),
+        attemptsMade,
         error: failure,
       });
 

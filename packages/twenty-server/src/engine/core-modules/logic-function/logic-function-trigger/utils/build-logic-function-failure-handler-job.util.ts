@@ -9,6 +9,8 @@ export const buildLogicFunctionFailureHandlerJob = ({
   failedLogicFunctionPayload,
   failedFlatLogicFunction,
   failureHandler,
+  jobId,
+  attemptsMade,
   error,
 }: {
   failedLogicFunctionPayload: Pick<
@@ -22,6 +24,8 @@ export const buildLogicFunctionFailureHandlerJob = ({
   failureHandler:
     | Pick<FlatLogicFunction, 'id' | 'applicationId' | 'deletedAt'>
     | undefined;
+  jobId: string;
+  attemptsMade: number;
   error: LogicFunctionFailureHandlerPayload['error'];
 }): LogicFunctionFailureHandlerJob | undefined => {
   if (
@@ -35,6 +39,8 @@ export const buildLogicFunctionFailureHandlerJob = ({
   const failureHandlerPayload: LogicFunctionFailureHandlerPayload = {
     failedLogicFunctionUniversalIdentifier:
       failedFlatLogicFunction.universalIdentifier,
+    jobId,
+    attemptsMade,
     payload: failedLogicFunctionPayload.payload ?? {},
     error,
   };

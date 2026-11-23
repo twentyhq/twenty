@@ -32,6 +32,8 @@ describe('buildLogicFunctionFailureHandlerJob', () => {
         failedLogicFunctionPayload: FAILED_LOGIC_FUNCTION_PAYLOAD,
         failedFlatLogicFunction: FAILED_FLAT_LOGIC_FUNCTION,
         failureHandler: FAILURE_HANDLER,
+        jobId: 'job-id',
+        attemptsMade: 1,
         error: ERROR,
       }),
     ).toEqual({
@@ -41,6 +43,8 @@ describe('buildLogicFunctionFailureHandlerJob', () => {
         payload: {
           failedLogicFunctionUniversalIdentifier:
             FAILED_FLAT_LOGIC_FUNCTION.universalIdentifier,
+          jobId: 'job-id',
+          attemptsMade: 1,
           payload: FAILED_LOGIC_FUNCTION_PAYLOAD.payload,
           error: ERROR,
         },
@@ -62,6 +66,8 @@ describe('buildLogicFunctionFailureHandlerJob', () => {
           ...FAILURE_HANDLER,
           applicationId: 'other-application-id',
         },
+        jobId: 'job-id',
+        attemptsMade: 1,
         error: ERROR,
       }),
     ).toBeUndefined();

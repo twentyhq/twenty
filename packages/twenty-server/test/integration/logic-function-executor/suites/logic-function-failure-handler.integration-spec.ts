@@ -8,6 +8,7 @@ import { uploadApplicationFile } from 'test/integration/metadata/suites/applicat
 import { findLogicFunctionId } from 'test/integration/server-route-trigger/utils/find-logic-function-id.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type LogicFunctionManifest } from 'twenty-shared/application';
+import { type LogicFunctionFailureHandlerPayload } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -27,6 +28,8 @@ const FAILURE_HANDLER_UNIVERSAL_IDENTIFIER =
   '6bde7857-4021-41e5-bf75-d473c8bfcf4f';
 const UNKNOWN_FUNCTION_UNIVERSAL_IDENTIFIER =
   'b1a95f51-73fa-4842-ab54-1e4e419b053c';
+
+type CrashedRunPayload = { requestId: string };
 
 const FAILING_HANDLER_CODE = `export const main = async () => {
   throw new Error('Agent run crashed');
@@ -189,8 +192,58 @@ describe('Logic function failure handler (integration)', () => {
       payload: {
         failedLogicFunctionUniversalIdentifier:
           FAILING_FUNCTION_UNIVERSAL_IDENTIFIER,
+        jobId: expect.any(String),
+        attemptsMade: 1,
         payload: originalPayload,
         error: { errorType: 'Error', errorMessage: 'Agent run crashed' },
+      },
+    });
+  }, 120000);
+
+  it('runs the failure handler when the queue fails a job whose workers kept crashing', async () => {
+    const queueJobId = await global.app
+      .get<MessageQueueService>(
+        getQueueToken(MessageQueue.logicFunctionQueue),
+        { strict: false },
+      )
+      .add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        {
+          logicFunctionId: failingFunctionId,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          payload: { requestId: 'request-crashed' },
+        },
+        {
+          retryLimit: 0,
+          delay: 60_000,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+        },
+      );
+
+    // BullMQ flags a job this way once it stalled more than maxStalledCount times.
+    await redisConnection.hset(
+      logicFunctionInspectionQueue.toKey(queueJobId ?? ''),
+      'defa',
+      'job stalled more than allowable limit',
+    );
+
+    await waitForAllJobsToFinish();
+
+    const crashedRunHandlerJobs = (await getFailureHandlerJobs()).filter(
+      (job) =>
+        (
+          job.data
+            .payload as LogicFunctionFailureHandlerPayload<CrashedRunPayload>
+        ).payload.requestId === 'request-crashed',
+    );
+
+    expect(crashedRunHandlerJobs).toHaveLength(1);
+    expect(crashedRunHandlerJobs[0].data.payload).toMatchObject({
+      jobId: queueJobId,
+      error: {
+        errorType: 'UnrecoverableError',
+        errorMessage: 'job stalled more than allowable limit',
       },
     });
   }, 120000);

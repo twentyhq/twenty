@@ -210,20 +210,22 @@ The failure handler receives:
 | Field | Description |
 |-------|-------------|
 | `failedLogicFunctionUniversalIdentifier` | The function whose run failed. |
+| `jobId` | The queued job that failed. For a job you enqueued with `enqueueJobs`, the `jobId` it returned. |
+| `attemptsMade` | How many queue attempts the job made before failing for good. |
 | `payload` | The payload of the failed run. |
-| `error.errorType` | `TimeoutError` for a timeout, the error's `name` for a thrown error. |
+| `error.errorType` | `TimeoutError` for a timeout, the error's `name` for a thrown error, `UnrecoverableError` when the queue gave up on the job. |
 | `error.errorMessage` | The error message. |
 
 The handler runs after:
 
 - an error thrown by your code that is not retried, including a `RetryableLogicFunctionError` once `maxRetries` is reached;
 - a timeout;
-- a platform error once the queued job has no attempts left.
+- a platform error once the queued job has no attempts left;
+- the worker process running the job crashing twice. The queue runs the job again after the first crash, and after the second it fails the job with `job stalled more than allowable limit`. The handler then runs once a worker picks the job up, so after a full outage it runs when workers are back.
 
 It does not run:
 
-- for executions that do not go through the job queue, such as HTTP routes, tool calls and workflow steps;
-- when the worker process running the job crashes. The queue runs the job again instead;
+- for executions that do not go through the job queue, such as tool calls, workflow steps and the resolver of a server route (a target function the resolver queues is covered);
 - when the failure handler itself fails, so two handlers cannot trigger each other.
 
 <Warning>
