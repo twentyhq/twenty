@@ -65,6 +65,16 @@ jobs:
     permissions:
       contents: read
       actions: read
+  front-visual-regression:
+    needs: front
+    uses: ./.github/workflows/visual-regression-dispatch.yaml
+    with:
+      project: twenty-front
+    secrets: inherit
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
   knip:
     uses: ./.github/workflows/ci-knip.yaml
     secrets: inherit
@@ -92,6 +102,16 @@ jobs:
   ui:
     uses: ./.github/workflows/ci-ui.yaml
     secrets: inherit
+  ui-visual-regression:
+    needs: ui
+    uses: ./.github/workflows/visual-regression-dispatch.yaml
+    with:
+      project: twenty-ui
+    secrets: inherit
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
   utils-test:
     uses: ./.github/workflows/ci-utils-test.yaml
     secrets: inherit
