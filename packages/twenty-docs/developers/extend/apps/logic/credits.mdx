@@ -120,7 +120,7 @@ billing: {
 
 `CODE_EXECUTION` is where the platform meters your functions' own runs, so charges filed there are mixed with them; prefer the default.
 
-The build rejects an unknown `operationType`, an empty `label`, and a name used by both a recurring charge and an operation.
+The build rejects an unknown `operationType`, an empty `label`, and an operation name that is also declared under the removed `billing.recurring`.
 
 ## Charging
 
@@ -199,7 +199,5 @@ await chargeCredits({
 ```
 
 Where to get one: `context.userWorkspaceId` on a triggered run, or [`listConnections()`](/developers/extend/apps/logic/connections), which returns the `userWorkspaceId` of each connection's owner.
-
-Recurring charges have no triggering person, so they are reported against the app only, never against a member.
 
 <PageBanner illustration="card-page-charging-credits" />
