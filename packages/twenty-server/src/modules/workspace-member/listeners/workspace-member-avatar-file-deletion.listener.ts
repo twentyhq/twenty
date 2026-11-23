@@ -33,7 +33,7 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   ) {
     const fileIdsToDelete = this.getFileIdsToDeleteFromUpdateEvent(payload);
 
-    await this.deleteCorePictures({
+    await this.clearDefaultAvatarsAndDeleteCorePictures({
       fileIds: fileIdsToDelete,
       workspaceId: payload.workspaceId,
       userIds: payload.events.map((event) => event.properties.before.userId),
@@ -51,14 +51,14 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     const fileIdsToDelete =
       this.getFileIdsToDeleteFromDestroyOrDeleteEvent(payload);
 
-    await this.deleteCorePictures({
+    await this.clearDefaultAvatarsAndDeleteCorePictures({
       fileIds: fileIdsToDelete,
       workspaceId: payload.workspaceId,
       userIds: payload.events.map((event) => event.properties.before.userId),
     });
   }
 
-  private async deleteCorePictures({
+  private async clearDefaultAvatarsAndDeleteCorePictures({
     fileIds,
     workspaceId,
     userIds,

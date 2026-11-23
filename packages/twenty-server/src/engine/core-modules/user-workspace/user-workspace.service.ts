@@ -268,12 +268,17 @@ export class UserWorkspaceService {
     }, authContext);
   }
 
-  async addUserToWorkspaceIfUserNotInWorkspace(
-    user: UserEntity,
-    workspace: WorkspaceEntity,
-    roleId?: string | null,
-    pictureUrl?: string,
-  ) {
+  async addUserToWorkspaceIfUserNotInWorkspace({
+    user,
+    workspace,
+    roleId,
+    pictureUrl,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    roleId?: string | null;
+    pictureUrl?: string;
+  }) {
     const existingUserWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,

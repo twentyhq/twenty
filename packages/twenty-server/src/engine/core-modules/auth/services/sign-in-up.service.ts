@@ -361,12 +361,12 @@ export class SignInUpService {
     pictureUrl?: string;
   }) {
     try {
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace({
         user,
         workspace,
         roleId,
         pictureUrl,
-      );
+      });
     } catch (error) {
       if (
         error instanceof BillingException &&

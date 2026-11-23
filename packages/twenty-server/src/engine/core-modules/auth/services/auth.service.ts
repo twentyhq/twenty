@@ -229,11 +229,11 @@ export class AuthService {
 
     await this.checkIsEmailVerified(user.isEmailVerified);
 
-    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace({
       user,
       workspace,
-      workspaceInvitation.roleId,
-    );
+      roleId: workspaceInvitation.roleId,
+    });
 
     return user;
   }
@@ -255,11 +255,11 @@ export class AuthService {
       return;
     }
 
-    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace({
       user,
       workspace,
-      castAppTokenToWorkspaceInvitationUtil(invitation).roleId,
-    );
+      roleId: castAppTokenToWorkspaceInvitationUtil(invitation).roleId,
+    });
   }
 
   async checkIsEmailVerified(isEmailVerified: boolean) {

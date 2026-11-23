@@ -161,13 +161,13 @@ describe('Custom role assignment without the custom roles entitlement', () => {
       'should refuse $roleSource before saving the membership',
       async ({ isDefaultRole }) => {
         await expect(
-          userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+          userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace({
             user,
-            isDefaultRole
+            workspace: isDefaultRole
               ? { ...workspace, defaultRoleId: customRoleId }
               : workspace,
-            isDefaultRole ? undefined : customRoleId,
-          ),
+            roleId: isDefaultRole ? undefined : customRoleId,
+          }),
         ).rejects.toMatchObject({
           code: PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED,
         });
