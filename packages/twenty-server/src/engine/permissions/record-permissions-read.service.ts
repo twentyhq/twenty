@@ -72,6 +72,7 @@ import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { findLinkedRecordIdsByObjectMetadataId } from 'src/engine/permissions/internal/rls/utils/find-linked-record-ids-by-object-metadata-id.util';
 import { validateRlsPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
@@ -512,6 +513,14 @@ export class RecordPermissionsReadService {
         operationType: 'create',
       });
 
+    await this.assertLinkedRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: records,
+      transactionScope,
+    });
+
     await validateRlsPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
@@ -546,6 +555,20 @@ export class RecordPermissionsReadService {
         objectMetadataId,
         operationType: 'update',
       });
+
+    await this.assertLinkedRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: updates.map(({ rawRecordBefore, setColumns }) =>
+        Object.fromEntries(
+          Object.entries(setColumns).filter(
+            ([columnName, value]) => value !== rawRecordBefore[columnName],
+          ),
+        ),
+      ),
+      transactionScope,
+    });
 
     if (
       !isMainRoleRestrictedByRlsRule({
@@ -613,6 +636,83 @@ export class RecordPermissionsReadService {
         'Updated record does not satisfy row-level security constraints of your current role',
         PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
+    }
+  }
+
+  private async assertLinkedRecordsReadableOrThrow({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    writtenColumns,
+    transactionScope,
+  }: Pick<
+    PermissionsObjectAccessRequest,
+    'principals' | 'metadataMaps' | 'flatObjectMetadata'
+  > & {
+    writtenColumns: Record<string, unknown>[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    const linkedRecordIdsByObjectMetadataId =
+      findLinkedRecordIdsByObjectMetadataId({
+        flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        writtenColumns,
+      });
+
+    for (const [
+      linkedObjectMetadataId,
+      linkedRecordIds,
+    ] of linkedRecordIdsByObjectMetadataId) {
+      const linkedFlatObjectMetadata = this.findFlatObjectMetadata({
+        metadataMaps,
+        objectMetadataId: linkedObjectMetadataId,
+      });
+
+      if (
+        !isDefined(linkedFlatObjectMetadata) ||
+        !isMainRoleRestrictedByRlsRule({
+          principals,
+          metadataMaps,
+          objectMetadataId: linkedObjectMetadataId,
+        })
+      ) {
+        continue;
+      }
+
+      const sqlCondition = this.buildSelectableRecordsSQLCondition({
+        principals,
+        metadataMaps,
+        flatObjectMetadata: linkedFlatObjectMetadata,
+        operationType: 'read',
+      });
+
+      if (sqlCondition === true) {
+        continue;
+      }
+
+      const readableRecordIds =
+        sqlCondition === false
+          ? new Set<string>()
+          : await this.recordPermissionReadRepository.findRecordIdsMatchingSQLCondition(
+              {
+                workspaceId: principals.workspaceId,
+                flatObjectMetadata: linkedFlatObjectMetadata,
+                recordIds: [...linkedRecordIds],
+                sqlCondition,
+                transactionScope,
+              },
+            );
+
+      if (
+        [...linkedRecordIds].some(
+          (linkedRecordId) => !readableRecordIds.has(linkedRecordId),
+        )
+      ) {
+        throw new PermissionsException(
+          'Linked record is not readable by your current role',
+          PermissionsExceptionCode.RLS_VALIDATION_FAILED,
+        );
+      }
     }
   }
 
