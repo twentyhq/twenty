@@ -159,6 +159,16 @@ const fetchApplicationAccessToken = async (): Promise<string> => {
   return tokenResponse.access_token;
 };
 
+// A permission flag the app role just gained takes a few seconds to apply after install.
+const waitForCalendarChannelsAccess = async (applicationAccessToken: string) =>
+  vi.waitFor(
+    () =>
+      new MetadataApiClient({
+        headers: { Authorization: `Bearer ${applicationAccessToken}` },
+      }).query({ calendarChannels: { id: true } }),
+    { timeout: 60_000, interval: 1_000 },
+  );
+
 type CalendarEventFixture = {
   id: string;
   title: string;
@@ -940,6 +950,7 @@ describe('call recorder app lifecycle (integration)', () => {
     availableCalendarEventFixtures =
       await discoverVisibleCalendarEventFixtures();
     applicationAccessToken = await fetchApplicationAccessToken();
+    await waitForCalendarChannelsAccess(applicationAccessToken);
   });
 
   beforeEach(() => {
@@ -972,6 +983,8 @@ describe('call recorder app lifecycle (integration)', () => {
       'TWENTY_APP_ACCESS_TOKEN',
       process.env[WORKSPACE_API_KEY_ENV] ?? '',
     );
+    // The calendar channels endpoint only answers the application itself.
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
 
   afterEach(async () => {
@@ -4555,6 +4568,10 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv(
+        'TWENTY_APP_APPLICATION_ACCESS_TOKEN',
+        applicationAccessToken,
+      );
 
       await client.mutation({
         updateCalendarEvent: {
