@@ -14,7 +14,6 @@ type FormulaSqlFieldRead = {
   fieldUniversalIdentifier: string;
 };
 
-// The one place that says which columns a formula path reads, for validation and for the query alike
 export const buildFormulaSqlReferenceResolverFromDescriptors = ({
   fields,
   getLookupAlias = () => LOOKUP_ALIAS,
