@@ -92,6 +92,7 @@ export { truncateTowardZero } from './expression-date/truncateTowardZero';
 export { compileExpression } from './expression/compileExpression';
 export { createExpressionEvaluator } from './expression/createExpressionEvaluator';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
+export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
