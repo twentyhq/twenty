@@ -1,12 +1,10 @@
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
-import {
-  GetCoreWorkflowDocument,
-  GetCoreWorkflowVersionsDocument,
-} from '~/generated/graphql';
+import { GetCoreWorkflowDocument } from '~/generated/graphql';
 
 type CoreWorkflowShowPageVersion = Pick<
   WorkflowVersion,
@@ -28,35 +26,23 @@ export const useCoreWorkflowForShowPage = ({
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const shouldSkip = !isDefined(coreWorkflowId);
-
   const { data: coreWorkflowData } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
     variables: { coreWorkflowId: coreWorkflowId ?? '' },
-    skip: shouldSkip,
+    skip: !isDefined(coreWorkflowId),
   });
 
-  const { data: coreWorkflowVersionsData } = useQuery(
-    GetCoreWorkflowVersionsDocument,
-    {
-      client: apolloCoreClient,
-      fetchPolicy: 'cache-and-network',
-      variables: { coreWorkflowId: coreWorkflowId ?? '' },
-      skip: shouldSkip,
-    },
-  );
+  const { coreWorkflowVersions } = useCoreWorkflowVersions(coreWorkflowId);
 
   const coreWorkflow = coreWorkflowData?.coreWorkflow;
 
-  const versions = (coreWorkflowVersionsData?.coreWorkflowVersions ?? []).map(
-    (version) => ({
-      id: version.id,
-      name: version.label,
-      status: version.status,
-      createdAt: version.createdAt,
-    }),
-  );
+  const versions = coreWorkflowVersions.map((version) => ({
+    id: version.id,
+    name: version.label,
+    status: version.status,
+    createdAt: version.createdAt,
+  }));
 
   return {
     coreWorkflow: isDefined(coreWorkflow)
