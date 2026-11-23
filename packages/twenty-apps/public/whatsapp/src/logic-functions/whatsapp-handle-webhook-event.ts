@@ -1,5 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
+  enqueueJobs,
   listMessageChannels,
   reportConnectionAuthFailure,
   RetryableLogicFunctionError,
@@ -9,6 +10,8 @@ import { isDefined } from 'twenty-sdk/utils';
 import { WHATSAPP_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/whatsapp-attachment-deadline-margin-milliseconds.constant';
 import { WHATSAPP_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS } from 'src/constants/whatsapp-handle-webhook-event-timeout-seconds.constant';
 import { WHATSAPP_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { WHATSAPP_WEBHOOK_RATE_LIMIT_RETRY_LIMIT } from 'src/constants/whatsapp-webhook-rate-limit-retry-limit.constant';
+import { type WhatsappWebhookEventJobPayload } from 'src/logic-functions/types/whatsapp-webhook-event-job-payload.type';
 import { findWhatsappConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-whatsapp-connection-by-unipile-account-id.util';
 import { getWhatsappChatCounterparts } from 'src/logic-functions/utils/get-whatsapp-chat-counterparts.util';
 import { getWhatsappSettings } from 'src/logic-functions/utils/get-whatsapp-settings.util';
@@ -18,6 +21,7 @@ import { isWhatsappChatSelected } from 'src/logic-functions/utils/is-whatsapp-ch
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 type WhatsappWebhookEventResult = { handled: boolean; reason?: string };
 
@@ -119,11 +123,39 @@ const handleWebhookEvent = async (
 };
 
 export const whatsappHandleWebhookEventHandler = async (
-  event: UnipileWebhookEvent,
+  event: WhatsappWebhookEventJobPayload,
 ): Promise<WhatsappWebhookEventResult> => {
   try {
     return await handleWebhookEvent(event);
   } catch (error) {
+    const rateLimitRetryCount = event.rateLimitRetryCount ?? 0;
+
+    // Queue retries all fire within seconds, before the limit resets
+    if (
+      error instanceof UnipileRateLimitError &&
+      rateLimitRetryCount < WHATSAPP_WEBHOOK_RATE_LIMIT_RETRY_LIMIT
+    ) {
+      await enqueueJobs({
+        logicFunctionUniversalIdentifier:
+          WHATSAPP_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER,
+        jobs: [
+          {
+            jobId: `whatsapp-webhook-event-${event.id}-rate-limit-${rateLimitRetryCount + 1}`,
+            payload: {
+              ...event,
+              rateLimitRetryCount: rateLimitRetryCount + 1,
+            },
+          },
+        ],
+        delayMs: error.retryAfterSeconds * 1000,
+      });
+
+      return {
+        handled: false,
+        reason: `Rate limited, retried in ${error.retryAfterSeconds}s`,
+      };
+    }
+
     // Unipile already got its 200 and will not redeliver: only this error type gets the job retried
     if (isTransientWhatsappError(error)) {
       throw new RetryableLogicFunctionError(

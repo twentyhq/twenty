@@ -5,6 +5,7 @@ import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-even
 
 const mocks = vi.hoisted(() => ({
   listConnections: vi.fn(),
+  enqueueJobs: vi.fn(),
   listMessageChannels: vi.fn(),
   ingestMessages: vi.fn(),
   uploadMessageAttachment: vi.fn(),
@@ -26,6 +27,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
     name = 'RetryableLogicFunctionError';
   },
   listConnections: mocks.listConnections,
+  enqueueJobs: mocks.enqueueJobs,
   listMessageChannels: mocks.listMessageChannels,
   ingestMessages: mocks.ingestMessages,
   uploadMessageAttachment: mocks.uploadMessageAttachment,
@@ -316,10 +318,6 @@ describe('whatsappHandleWebhookEventHandler', () => {
       'Unipile answers 503',
       new UnipileRequestError('Service unavailable', 503),
     ],
-    [
-      'the rate limit outlasts the job',
-      new UnipileRateLimitError('Retry in 60 seconds.', 61),
-    ],
     ['the network drops', new TypeError('fetch failed')],
   ])('asks for the job to be retried when %s', async (_case, error) => {
     mocks.getUnipileChat.mockRejectedValue(error);
@@ -337,6 +335,51 @@ describe('whatsappHandleWebhookEventHandler', () => {
       message: error.message,
     });
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it('runs the event again once the rate limit has reset, not before', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRateLimitError('Retry in 60 seconds.', 61),
+    );
+
+    const event = buildMessageEvent({
+      sender_id: DAPHNE.id,
+      sender: DAPHNE,
+      is_sender: false,
+    });
+
+    await expect(whatsappHandleWebhookEventHandler(event)).resolves.toEqual({
+      handled: false,
+      reason: 'Rate limited, retried in 61s',
+    });
+    expect(mocks.enqueueJobs).toHaveBeenCalledExactlyOnceWith({
+      logicFunctionUniversalIdentifier: expect.any(String),
+      jobs: [
+        {
+          jobId: 'whatsapp-webhook-event-evt_1-rate-limit-1',
+          payload: { ...event, rateLimitRetryCount: 1 },
+        },
+      ],
+      delayMs: 61_000,
+    });
+  });
+
+  it('stops waiting for a rate limit that never resets and lets the queue decide', async () => {
+    mocks.getUnipileChat.mockRejectedValue(
+      new UnipileRateLimitError('Retry in 60 seconds.', 61),
+    );
+
+    await expect(
+      whatsappHandleWebhookEventHandler({
+        ...buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+        rateLimitRetryCount: 3,
+      }),
+    ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
+    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
   it('gives Unipile no longer than the job has left to return the chat', async () => {
