@@ -10,7 +10,18 @@ export const toApplicationAuthorizationDTO = ({
   serverUrl,
   frontBaseUrl,
 }: {
-  authorization: ApplicationAuthorizationEntity;
+  authorization: Pick<
+    ApplicationAuthorizationEntity,
+    | 'id'
+    | 'applicationId'
+    | 'workspaceId'
+    | 'userId'
+    | 'application'
+    | 'scopes'
+    | 'lastAuthorizedAt'
+    | 'lastUsedAt'
+    | 'createdAt'
+  >;
   serverUrl: string;
   frontBaseUrl: string;
 }): ApplicationAuthorizationDTO => {
