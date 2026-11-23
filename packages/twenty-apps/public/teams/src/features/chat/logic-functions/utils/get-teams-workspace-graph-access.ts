@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
 import { fetchTeamsTenantId } from 'src/features/chat/logic-functions/utils/fetch-teams-tenant-id';
+import { isWorkingTeamsWorkspaceConnection } from 'src/features/chat/logic-functions/utils/is-working-teams-workspace-connection';
 import { TEAMS_GRAPH_DIRECTORY_SCOPE } from 'src/features/transcripts/constants/teams-oauth-config';
 import { listTeamsConnections } from 'src/features/transcripts/logic-functions/utils/list-teams-connections';
 import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
@@ -24,8 +25,7 @@ export const getTeamsWorkspaceGraphAccess =
     try {
       const connections = await listTeamsConnections();
       const workspaceConnections = connections.filter(
-        (candidate) =>
-          candidate.scope === 'WORKSPACE' && !isDefined(candidate.authFailedAt),
+        isWorkingTeamsWorkspaceConnection,
       );
 
       if (!isNonEmptyArray(workspaceConnections)) {

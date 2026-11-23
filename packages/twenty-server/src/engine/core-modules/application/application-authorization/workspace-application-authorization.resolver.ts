@@ -9,6 +9,8 @@ import { ApplicationConnectedMemberCountDTO } from 'src/engine/core-modules/appl
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { toApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/utils/to-application-authorization-dto.util';
+import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -37,6 +39,8 @@ import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 export class WorkspaceApplicationAuthorizationResolver {
   constructor(
     private readonly applicationAuthorizationService: ApplicationAuthorizationService,
+    private readonly twentyConfigService: TwentyConfigService,
+    private readonly domainServerConfigService: DomainServerConfigService,
   ) {}
 
   @Query(() => [ApplicationAuthorizationDTO])
@@ -53,7 +57,13 @@ export class WorkspaceApplicationAuthorizationResolver {
         },
       );
 
-    return authorizations.map(toApplicationAuthorizationDTO);
+    return authorizations.map((authorization) =>
+      toApplicationAuthorizationDTO({
+        authorization,
+        serverUrl: this.twentyConfigService.get('SERVER_URL'),
+        frontBaseUrl: this.domainServerConfigService.getBaseUrl().toString(),
+      }),
+    );
   }
 
   @Query(() => [ApplicationConnectedMemberCountDTO])

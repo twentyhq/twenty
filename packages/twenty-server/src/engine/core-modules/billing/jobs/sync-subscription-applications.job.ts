@@ -2,7 +2,7 @@
 
 import { Scope } from '@nestjs/common';
 
-import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
+import { SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME } from 'src/engine/core-modules/billing/constants/sync-subscription-applications-job-name.constant';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -18,19 +18,14 @@ export type SyncSubscriptionApplicationsJobData = {
 })
 export class SyncSubscriptionApplicationsJob {
   constructor(
-    private readonly billingApplicationProductService: BillingApplicationProductService,
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
-  @Process(SyncSubscriptionApplicationsJob.name)
+  @Process(SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME)
   async handle({
     workspaceId,
   }: SyncSubscriptionApplicationsJobData): Promise<void> {
-    await this.billingApplicationProductService.createMissingProducts(
-      workspaceId,
-    );
-
-    await this.billingSubscriptionUpdateService.syncApplications({
+    await this.billingSubscriptionUpdateService.chargeApplications({
       workspaceId,
     });
   }
