@@ -43,6 +43,7 @@ const BrowserNotificationSetupDialogExample = ({
   );
 };
 
+// The dialog fades in, so its content is in the document before it is visible
 const openSetupDialogInCanvas = async ({
   canvasElement,
   title,
@@ -85,9 +86,11 @@ export const Allow: Story = {
       title: 'Turn on notifications',
     });
 
-    await expect(
-      within(dialog).getByRole('button', { name: /Continue/ }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole('button', { name: /Continue/ }),
+      ).toBeVisible(),
+    );
   },
 };
 
@@ -99,9 +102,11 @@ export const PromptNotShown: Story = {
       title: 'Allow notifications in your browser',
     });
 
-    await expect(
-      within(dialog).getByRole('button', { name: /Read the guide/ }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole('button', { name: /Read the guide/ }),
+      ).toBeVisible(),
+    );
   },
 };
 
@@ -115,12 +120,18 @@ export const ConfirmThenSystemSettingsOnMac: Story = {
 
     await userEvent.click(within(dialog).getByRole('button', { name: /No/ }));
 
-    await expect(
-      await within(dialog).findByText('Allow Google Chrome in macOS settings'),
-    ).toBeVisible();
-    await expect(
-      within(dialog).getByRole('button', { name: /Open system settings/ }),
-    ).toBeVisible();
+    await waitFor(async () =>
+      expect(
+        await within(dialog).findByText(
+          'Allow Google Chrome in macOS settings',
+        ),
+      ).toBeVisible(),
+    );
+    await waitFor(() =>
+      expect(
+        within(dialog).getByRole('button', { name: /Open system settings/ }),
+      ).toBeVisible(),
+    );
   },
 };
 
@@ -133,9 +144,9 @@ export const SystemSettingsOnMacSafari: Story = {
       title: 'Allow Twenty in macOS settings',
     });
 
-    await expect(
-      within(dialog).getByText('Notifications › Twenty'),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(within(dialog).getByText('Notifications › Twenty')).toBeVisible(),
+    );
   },
 };
 
@@ -148,7 +159,9 @@ export const SystemSettingsOnWindows: Story = {
       title: 'Allow Google Chrome in Windows settings',
     });
 
-    await expect(within(dialog).getByText('Do not disturb')).toBeVisible();
+    await waitFor(() =>
+      expect(within(dialog).getByText('Do not disturb')).toBeVisible(),
+    );
   },
 };
 
