@@ -253,6 +253,7 @@ export { isFormulaFieldMetadataType } from './formula/isFormulaFieldMetadataType
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';
+export { computeRelationWithArgumentsResponseKey } from './graphql/computeRelationWithArgumentsResponseKey';
 export {
   getNodeTypename,
   getConnectionTypename,
@@ -273,12 +274,14 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isBuiltInSectionKey } from './navigation/isBuiltInSectionKey';
 export { isNativePageKey } from './navigation/isNativePageKey';
+export { normalizeViewFieldLabel } from './normalizeViewFieldLabel';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { sortWidgetsWithViewportFillingLast } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { parseJson } from './parseJson';
+export { isValidRelationScopeLimit } from './relation-scope/isValidRelationScopeLimit';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
@@ -384,6 +387,7 @@ export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
 export { isNonEmptyString } from './typeguard/isNonEmptyString';
 export { isPlainObject } from './typeguard/isPlainObject';
+export { isRecordGqlFieldsRelationWithArguments } from './typeguard/isRecordGqlFieldsRelationWithArguments';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';

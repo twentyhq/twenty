@@ -360,6 +360,7 @@ export class FieldMetadataService {
       flatViewFiltersToDelete,
       flatViewFiltersToUpdate,
       flatViewFieldsToDelete,
+      flatViewFieldsToUpdate,
       flatViewSortsToDelete,
       flatViewsToUpdate,
       flatViewsToDelete,
@@ -423,7 +424,7 @@ export class FieldMetadataService {
             viewField: {
               flatEntityToCreate: [],
               flatEntityToDelete: flatViewFieldsToDelete,
-              flatEntityToUpdate: [],
+              flatEntityToUpdate: flatViewFieldsToUpdate,
             },
             viewSort: {
               flatEntityToCreate: [],
