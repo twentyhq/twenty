@@ -17580,12 +17580,12 @@ msgstr "Não foi possível verificar esta chave. Verifique-a ou tente novamente 
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Não foi possível cobrar este aplicativo. Atualize sua forma de pagamento e tente novamente."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Não foi possível cobrar esta conexão. Atualize sua forma de pagamento e tente novamente."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -17580,12 +17580,12 @@ msgstr "Нам не вдалося перевірити цей ключ. Пер�
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Не вдалося виставити рахунок за цей застосунок. Оновіть спосіб оплати й повторіть спробу."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Не вдалося виставити рахунок за це підключення. Оновіть спосіб оплати й повторіть спробу."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

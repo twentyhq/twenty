@@ -17580,12 +17580,12 @@ msgstr "Nem sikerült ellenőriznünk ezt a kulcsot. Ellenőrizze, vagy próbál
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Nem tudtuk kiszámlázni ezt az alkalmazást. Frissítse a fizetési módját, majd próbálja újra."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Nem tudtuk kiszámlázni ezt a kapcsolatot. Frissítse a fizetési módját, majd próbálja újra."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -17580,12 +17580,12 @@ msgstr "Emme voineet vahvistaa tätä avainta. Tarkista se tai yritä myöhemmin
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Tämän sovelluksen laskutus epäonnistui. Päivitä maksutapasi ja yritä uudelleen."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Tämän yhteyden laskutus epäonnistui. Päivitä maksutapasi ja yritä uudelleen."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

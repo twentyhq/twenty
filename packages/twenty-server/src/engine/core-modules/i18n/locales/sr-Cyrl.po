@@ -17580,12 +17580,12 @@ msgstr "Нисмо могли да потврдимо овај кључ. Про�
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Нисмо могли да наплатимо ову апликацију. Ажурирајте начин плаћања и покушајте поново."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Нисмо могли да наплатимо ову везу. Ажурирајте начин плаћања и покушајте поново."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -17580,12 +17580,12 @@ msgstr "We konden deze sleutel niet verifiëren. Controleer deze of probeer het 
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "We konden deze app niet factureren. Werk je betaalmethode bij en probeer het opnieuw."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "We konden deze verbinding niet factureren. Werk je betaalmethode bij en probeer het opnieuw."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -17580,12 +17580,12 @@ msgstr "このキーを確認できませんでした。キーを確認するか
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "このアプリに請求できませんでした。支払い方法を更新して、もう一度お試しください。"
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "この接続に請求できませんでした。支払い方法を更新して、もう一度お試しください。"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

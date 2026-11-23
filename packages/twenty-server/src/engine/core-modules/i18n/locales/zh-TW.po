@@ -17580,12 +17580,12 @@ msgstr "我們無法驗證此金鑰。請檢查金鑰，或在服務中斷時稍
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "無法向此應用程式收費。請更新您的付款方式後再試一次。"
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "無法向此連線收費。請更新您的付款方式後再試一次。"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

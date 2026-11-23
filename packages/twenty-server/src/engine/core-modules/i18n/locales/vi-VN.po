@@ -17580,12 +17580,12 @@ msgstr "Chúng tôi không thể xác minh khóa này. Hãy kiểm tra lại ho�
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Chúng tôi không thể lập hóa đơn cho ứng dụng này. Hãy cập nhật phương thức thanh toán của bạn rồi thử lại."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Chúng tôi không thể lập hóa đơn cho kết nối này. Hãy cập nhật phương thức thanh toán của bạn rồi thử lại."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

@@ -17580,12 +17580,12 @@ msgstr "تعذر علينا التحقق من هذا المفتاح. تحقّق 
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "تعذر علينا تحصيل رسوم هذا التطبيق. حدّث طريقة الدفع وحاول مرة أخرى."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "تعذر علينا تحصيل رسوم هذا الاتصال. حدّث طريقة الدفع وحاول مرة أخرى."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

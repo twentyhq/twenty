@@ -17580,12 +17580,12 @@ msgstr "Tento klíč se nepodařilo ověřit. Zkontrolujte ho, nebo to zkuste po
 #. js-lingui-id: wyJJ5n
 #: src/engine/core-modules/application/application.exception.ts
 msgid "We couldn't bill this app. Update your payment method and try again."
-msgstr ""
+msgstr "Tuto aplikaci se nám nepodařilo vyúčtovat. Aktualizujte způsob platby a zkuste to znovu."
 
 #. js-lingui-id: DDkLji
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We couldn't bill this connection. Update your payment method and try again."
-msgstr ""
+msgstr "Toto připojení se nám nepodařilo vyúčtovat. Aktualizujte způsob platby a zkuste to znovu."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
