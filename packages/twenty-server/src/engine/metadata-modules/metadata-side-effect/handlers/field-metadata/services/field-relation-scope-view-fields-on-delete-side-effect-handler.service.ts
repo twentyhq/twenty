@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
-import { getViewFieldRelationScopeFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/flat-view-field/utils/get-view-field-relation-scope-field-metadata-universal-identifiers.util';
+import { isViewFieldRelationScopeReferencingField } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-relation-scope-referencing-field.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -34,10 +34,11 @@ export class FieldRelationScopeViewFieldsOnDeleteSideEffectHandlerService extend
     )) {
       if (
         isDefined(flatViewField) &&
-        isDefined(flatViewField.universalRelationScope) &&
-        getViewFieldRelationScopeFieldMetadataUniversalIdentifiers(
-          flatViewField.universalRelationScope,
-        ).includes(flatFieldMetadata.universalIdentifier)
+        isViewFieldRelationScopeReferencingField({
+          universalRelationScope: flatViewField.universalRelationScope,
+          fieldMetadataUniversalIdentifier:
+            flatFieldMetadata.universalIdentifier,
+        })
       ) {
         viewFieldsToDelete[flatViewField.universalIdentifier] = flatViewField;
       }

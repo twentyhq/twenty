@@ -117,7 +117,12 @@ describe('getScopedRelationAliases', () => {
   it('keeps the default order and no limit for an empty scope', () => {
     const [
       {
-        relationWithArguments: { filter, orderBy, first, aggregateGqlFieldNames },
+        relationWithArguments: {
+          filter,
+          orderBy,
+          first,
+          aggregateGqlFieldNames,
+        },
       },
     ] = getAliases({
       recordFields: [getPeopleColumn({ relationScope: EMPTY_RELATION_SCOPE })],

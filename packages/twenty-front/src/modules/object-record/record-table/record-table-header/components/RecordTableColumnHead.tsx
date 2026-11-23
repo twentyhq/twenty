@@ -4,11 +4,10 @@ import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/compone
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
-import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
@@ -44,9 +43,7 @@ export const RecordTableColumnHead = ({
   );
 
   const lookupTarget = useRecordFieldLookupTarget(recordField);
-  const scopedRelationAlias = useContext(ScopedRelationAliasesContext).find(
-    ({ recordFieldId }) => recordFieldId === recordField.id,
-  );
+  const scopedRelationAlias = useScopedRelationAlias(recordField.id);
   const foundFieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
   const fieldMetadataItem = isDefined(foundFieldMetadataItem)
