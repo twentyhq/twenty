@@ -17,6 +17,7 @@ export type ViewField = {
   viewFieldGroupId?: string | null;
   relationTargetFieldMetadataId?: string | null;
   relationScope?: ViewFieldRelationScope | null;
+  label?: string | null;
   definition?:
     | ColumnDefinition<FieldMetadata>
     | RecordBoardFieldDefinition<FieldMetadata>;

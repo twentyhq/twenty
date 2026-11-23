@@ -1,4 +1,5 @@
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
+import { InboxAppBadgeEffect } from '@/inbox/components/InboxAppBadgeEffect';
 import { InboxChannelSyncEffect } from '@/inbox/components/InboxChannelSyncEffect';
 import { InboxThreadSyncEffect } from '@/inbox/components/InboxThreadSyncEffect';
 import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
@@ -35,7 +36,12 @@ export const InboxEffects = () => {
       {isInboxAvailable && isInboxTabActive && (
         <OnlineWorkspaceMemberIdsEffect />
       )}
-      {isInboxWebPushEnabled && <WebPushSubscriptionEffect />}
+      {isInboxWebPushEnabled && (
+        <>
+          <WebPushSubscriptionEffect />
+          <InboxAppBadgeEffect />
+        </>
+      )}
     </>
   );
 };

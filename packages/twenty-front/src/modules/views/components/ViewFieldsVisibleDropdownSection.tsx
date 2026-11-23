@@ -111,7 +111,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
             dragHandleVisibility="always"
             isDragDisabled
           >
-            {fieldMetadataItemLabelIdentifier.label}
+            {nonDraggableRecordField?.label ??
+              fieldMetadataItemLabelIdentifier.label}
           </DraggableListRow>
         )}
         {draggableRecordFields.length > 0 && (
@@ -123,15 +124,19 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
+                  const scopedRelationAlias = scopedRelationAliases.find(
+                    ({ recordFieldId }) => recordFieldId === recordField.id,
+                  );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
-                    lookupTarget: getRecordFieldLookupTarget({
-                      recordField,
-                      fieldMetadataItem,
-                    }),
-                    isScopedRelationColumn: scopedRelationAliases.some(
-                      ({ recordFieldId }) => recordFieldId === recordField.id,
-                    ),
+                    lookupTarget:
+                      getRecordFieldLookupTarget({
+                        recordField,
+                        fieldMetadataItem,
+                      }) ?? scopedRelationAlias?.lookupTarget,
+                    isScopedRelationColumn: isDefined(scopedRelationAlias),
+                    summary: scopedRelationAlias?.summary,
+                    customLabel: recordField.label,
                   });
 
                   return (

@@ -130,12 +130,65 @@ describe('getRelationScopeRecordFiltersAndSorts', () => {
         id: FILTER_GROUP_ID,
         parentRecordFilterGroupId: undefined,
         logicalOperator: RecordFilterGroupLogicalOperator.AND,
+        positionInRecordFilterGroup: 0,
       },
       {
         id: CHILD_FILTER_GROUP_ID,
         parentRecordFilterGroupId: FILTER_GROUP_ID,
         logicalOperator: RecordFilterGroupLogicalOperator.OR,
+        positionInRecordFilterGroup: 1,
       },
+    ]);
+  });
+
+  it('positions filters by rank and filter groups after them', () => {
+    const { recordFilters, recordFilterGroups } =
+      getRelationScopeRecordFiltersAndSorts({
+        relationScope: {
+          filters: [
+            {
+              id: JOB_TITLE_FILTER_ID,
+              fieldMetadataId: jobTitleField.id,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'cto',
+              filterGroupId: FILTER_GROUP_ID,
+            },
+            {
+              id: EMPLOYEES_FILTER_ID,
+              fieldMetadataId: jobTitleField.id,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'ceo',
+              filterGroupId: FILTER_GROUP_ID,
+            },
+          ],
+          filterGroups: [
+            {
+              id: FILTER_GROUP_ID,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+            {
+              id: CHILD_FILTER_GROUP_ID,
+              parentFilterGroupId: FILTER_GROUP_ID,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+            },
+          ],
+          sorts: [],
+        },
+        fieldMetadataItems,
+      });
+
+    expect(
+      [...recordFilters, ...recordFilterGroups].map(
+        ({ id, positionInRecordFilterGroup }) => [
+          id,
+          positionInRecordFilterGroup,
+        ],
+      ),
+    ).toEqual([
+      [JOB_TITLE_FILTER_ID, 0],
+      [EMPLOYEES_FILTER_ID, 1],
+      [FILTER_GROUP_ID, 2],
+      [CHILD_FILTER_GROUP_ID, 3],
     ]);
   });
 
