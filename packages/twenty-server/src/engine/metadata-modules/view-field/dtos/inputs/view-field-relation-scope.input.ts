@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import {
+  AggregateOperations,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   type ViewFilterValue,
@@ -116,4 +117,9 @@ export class ViewFieldRelationScopeInput {
   @IsInt()
   @Field(() => Int, { nullable: true })
   limit?: number | null;
+
+  @IsOptional()
+  @IsEnum(AggregateOperations)
+  @Field(() => AggregateOperations, { nullable: true })
+  aggregateOperation?: AggregateOperations | null;
 }

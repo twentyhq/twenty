@@ -60,9 +60,6 @@ export class ViewFieldDTO {
   @Field(() => String, { nullable: true })
   label?: string | null;
 
-  @Field(() => AggregateOperations, { nullable: true })
-  relationAggregateOperation?: AggregateOperations | null;
-
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 
