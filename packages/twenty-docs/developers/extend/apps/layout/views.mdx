@@ -40,8 +40,11 @@ export default defineView({
 - The object's main list view is server-owned: `key` is deprecated and ignored, so a manifest view can never claim it. Ship a `VIEW` navigation item if you want your view one click away in the sidebar.
 - `fields` controls which columns appear and in what order. Each field references a `fieldMetadataUniversalIdentifier`. To reference an auto-created system field such as `createdAt`, see [Targeting System Metadata](/developers/extend/apps/data/system-fields).
 - Set `isCanonical: false` on a field to add an extra column for a field the view already shows. A view has at most one canonical column per field but any number of non-canonical ones. They are not allowed on the object's label identifier field or in widget views, and `isCanonical` is set when the column is created: changing it later has no effect.
-- A non-canonical column on a many-to-one relation field can set `relationTargetFieldMetadataUniversalIdentifier` to show a field of the related record instead of the record itself. The target must be a non-relation field of the related object.
+- A non-canonical column on a many-to-one relation field, or on a one-to-many relation field with a `relationScope`, can set `relationTargetFieldMetadataUniversalIdentifier` to show a field of the related records instead of the records themselves. The target must be a non-relation field of the related object.
 - A sort on a many-to-one relation field can set `relationTargetFieldMetadataUniversalIdentifier` to order records by a field of the related record, such as people by their company's employees. The target must be a non-relation field of the related object.
+- A non-canonical column on a one-to-many relation field can set `relationScope` to filter, sort and limit the related records it shows. See [Relation scope](#relation-scope).
+- A non-canonical column on a one-to-many relation field with a `relationScope` can set `aggregateOperation` inside its `relationScope` to show, per row, a summary of the related records the scope keeps instead of the records, such as the count of open tasks or the sum of the amounts of open opportunities. `COUNT` takes no target, while `SUM`, `AVG`, `MIN` and `MAX` need `relationTargetFieldMetadataUniversalIdentifier` set to a field of the related object that supports the operation (a number or currency field, or a date for `MIN` and `MAX`). Its scope keeps filters only: sorts and a limit are rejected. These columns are display-only. This is separate from the view field's own `aggregateOperation`, which sets the total shown in the column's footer.
+- Set `label` on a field to replace its default column header. It is trimmed, at most 63 characters, and an empty label shows the default header. A workspace can rename a column your app owns without changing your manifest.
 - You can also declare `filters`, `filterGroups`, `sorts`, `groups`, and `fieldGroups` for advanced configurations.
 - `position` controls ordering when multiple views exist for the same object.
 
@@ -127,6 +130,50 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 | `IS`, `IS_BEFORE`, `IS_AFTER` on `DATE` / `DATE_TIME` | ISO 8601 string                | `'2025-01-01T00:00:00Z'` |
 | `IS_EMPTY`, `IS_NOT_EMPTY`                            | empty string                   | `''`                     |
 | `IS` on `BOOLEAN`                                     | `'true'` or `'false'`          | `'true'`                 |
+
+## Relation scope
+
+A `relationScope` on a non-canonical one-to-many column, such as "Open tasks" on companies, narrows the related records the column shows. Filters and sorts follow the view filter and sort shapes above, with field references as universal identifiers:
+
+```ts
+fields: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: COMPANY_TASK_TARGETS_FIELD_UNIVERSAL_IDENTIFIER,
+    isCanonical: false,
+    position: 5,
+    relationScope: {
+      filters: [
+        {
+          id: '0f7d3a52-4d1e-4c38-9a59-0a3c2e1b8f11',
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+          operand: ViewFilterOperand.IS_NOT,
+          value: ['DONE'],
+        },
+      ],
+      filterGroups: [],
+      sorts: [
+        {
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_DUE_AT_FIELD_UNIVERSAL_IDENTIFIER,
+          direction: ViewSortDirection.ASC,
+        },
+      ],
+      limit: 1,
+    },
+  },
+],
+```
+
+| Property       | Description                                                                                                                                                                                                                                                                                   |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filters`      | Each filter has a local `id` (a UUID), a `fieldMetadataUniversalIdentifier` of the related object, an `operand`, a `value`, and optionally `subFieldName`, `relationTargetFieldMetadataUniversalIdentifier` (a field of the record a many-to-one relation points to) and `filterGroupId`.        |
+| `filterGroups` | Each group has a local `id`, a `logicalOperator` of `AND`, `OR` or `NOT`, and an optional `parentFilterGroupId`. Filters without a group are combined with `AND`.                                                                                                                              |
+| `sorts`        | Each sort has a `fieldMetadataUniversalIdentifier`, a `direction`, and optionally `subFieldName` and `relationTargetFieldMetadataUniversalIdentifier`.                                                                                                                                       |
+| `limit`        | How many related records to show, from 1 to 60.                                                                                                                                                                                                                                              |
+
+Deleting or deactivating a field a scope uses removes the column, rather than dropping the condition and showing more records.
 
 ## How views show up in the UI
 

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode, useId } from 'react';
 
-import { AiChatPageHeader } from '@/ai-chat/components/AiChatPageHeader';
+import { AiChatNewThreadPageHeader } from '@/ai-chat/instance/components/AiChatNewThreadPageHeader';
 import { AiChatSurfaceView } from '@/ai-chat/instance/components/AiChatSurfaceView';
 import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
 import { useSelectAiChatThreadFromNewChat } from '@/ai-chat/hooks/useSelectAiChatThreadFromNewChat';
@@ -37,7 +37,10 @@ export const AiChatNewThreadPageContent = ({
   return (
     <PageCardLayout
       header={
-        <AiChatPageHeader icon={headerIcon} actionButton={headerActions} />
+        <AiChatNewThreadPageHeader
+          icon={headerIcon}
+          actionButton={headerActions}
+        />
       }
       showInformationBanner={showInformationBanner}
     >

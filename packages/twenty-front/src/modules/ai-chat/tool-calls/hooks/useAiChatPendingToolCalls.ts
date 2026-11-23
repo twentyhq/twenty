@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
+import { aiChatThreadIsStreamingFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadIsStreamingFamilySelector';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { type AiChatPendingToolCall } from '@/ai-chat/tool-calls/types/AiChatPendingToolCall';
 import { parsePendingToolCall } from '@/ai-chat/tool-calls/utils/parsePendingToolCall';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 export const useAiChatPendingToolCalls = (): AiChatPendingToolCall[] => {
   const { threadId } = useAiChatInstanceOrThrow();
@@ -16,21 +17,20 @@ export const useAiChatPendingToolCalls = (): AiChatPendingToolCall[] => {
       threadId,
     },
   );
-  const aiChatThreadReplyStatus = useAtomFamilyStateValue(
-    aiChatThreadReplyStatusFamilyState,
+  const aiChatThreadIsStreaming = useAtomFamilySelectorValue(
+    aiChatThreadIsStreamingFamilySelector,
     { threadId },
   );
-  const isAiChatStreaming = aiChatThreadReplyStatus === 'streaming';
 
   return useMemo(
     () =>
-      isAiChatStreaming
+      aiChatThreadIsStreaming
         ? []
         : aiChatThreadDisplayedMessages.flatMap((message) =>
             message.parts
               .map(parsePendingToolCall)
               .filter((pendingToolCall) => isDefined(pendingToolCall)),
           ),
-    [aiChatThreadDisplayedMessages, isAiChatStreaming],
+    [aiChatThreadDisplayedMessages, aiChatThreadIsStreaming],
   );
 };

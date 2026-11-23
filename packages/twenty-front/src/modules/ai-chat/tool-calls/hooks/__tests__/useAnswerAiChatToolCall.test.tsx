@@ -26,8 +26,8 @@ const enqueueToast = jest.fn();
 jest.mock('twenty-ui/components/feedback', () => ({
   useToast: () => ({ enqueueToast }),
 }));
-jest.mock('@/ai-chat/hooks/useAiChatModelId', () => ({
-  useAiChatModelId: () => ({ modelIdForRequest: 'model-id' }),
+jest.mock('@/ai-chat/utils/getAiChatModelIdForRequest', () => ({
+  getAiChatModelIdForRequest: () => 'model-id',
 }));
 
 const key = { threadId: 'thread-id' };

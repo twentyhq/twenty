@@ -31,20 +31,15 @@ import {
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock(
-  '@/ai-chat/messages/components/AiChatAssistantMessageRenderer',
-  () => ({
-    AiChatAssistantMessageRenderer: ({
-      messageParts,
-    }: {
-      messageParts: ExtendedUIMessage['parts'];
-    }) => (
-      <>
-        {messageParts.map((part) => (part.type === 'text' ? part.text : null))}
-      </>
-    ),
-  }),
-);
+jest.mock('@/ai-chat/messages/components/AiChatMessagePartsRenderer', () => ({
+  AiChatMessagePartsRenderer: ({
+    messageParts,
+  }: {
+    messageParts: ExtendedUIMessage['parts'];
+  }) => (
+    <>{messageParts.map((part) => (part.type === 'text' ? part.text : null))}</>
+  ),
+}));
 
 jest.mock('@/ai-chat/message-content/components/LazyMarkdownRenderer', () => ({
   LazyMarkdownRenderer: ({ text }: { text: string }) => <>{text}</>,
@@ -280,7 +275,8 @@ describe('AiChatMessage', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText('You')).not.toBeInTheDocument();
     expect(screen.queryByText('Julia Martin')).not.toBeInTheDocument();
-    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+    expect(screen.getByRole('time')).toBeInTheDocument();
+    expect(screen.queryByText(/ago$/)).not.toBeInTheDocument();
   });
 
   it('lets the current member quote their own inbox message', () => {

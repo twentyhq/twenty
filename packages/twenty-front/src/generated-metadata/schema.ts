@@ -2065,7 +2065,9 @@ export type CreateViewFieldInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   isCanonical?: InputMaybe<Scalars['Boolean']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationScope?: InputMaybe<ViewFieldRelationScopeInput>;
   relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
   viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
@@ -2625,6 +2627,7 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED = 'IS_CHANNEL_VISIBILITY_RLS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
@@ -5632,6 +5635,7 @@ export type NavigationMenuItem = {
   targetRecordId?: Maybe<Scalars['UUID']['output']>;
   targetRecordIdentifier?: Maybe<RecordIdentifier>;
   type: NavigationMenuItemType;
+  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
   viewId?: Maybe<Scalars['UUID']['output']>;
@@ -5836,6 +5840,7 @@ export type ObjectRecordsPermissions = {
   canCreateAllRecords: Scalars['Boolean']['output'];
   canDestroyAllRecords: Scalars['Boolean']['output'];
   canReadAllRecords: Scalars['Boolean']['output'];
+  canReadSomeRecords: Scalars['Boolean']['output'];
   canSoftDeleteAllRecords: Scalars['Boolean']['output'];
   canUpdateAllRecords: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
@@ -6259,7 +6264,7 @@ export type Query = {
   findUninstallApplicationJobStatus?: Maybe<JobStatus>;
   findUpgradeApplicationJobStatus?: Maybe<JobStatus>;
   findWorkspaceAiStats: WorkspaceAiStats;
-  findWorkspaceFromInviteHash: Workspace;
+  findWorkspaceFromInviteHash: WorkspaceFromInviteHash;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   frontComponent?: Maybe<FrontComponent>;
   frontComponents: Array<FrontComponent>;
@@ -7130,6 +7135,7 @@ export type RowLevelPermissionPredicate = {
   subFieldName?: Maybe<Scalars['String']['output']>;
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7211,6 +7217,7 @@ export type RowLevelPermissionRulePredicateInput = {
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
+  workspaceMemberRelationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -8221,7 +8228,9 @@ export type UpdateViewFieldInput = {
 export type UpdateViewFieldInputUpdates = {
   aggregateOperation?: InputMaybe<AggregateOperations>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  relationScope?: InputMaybe<ViewFieldRelationScopeInput>;
   relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   size?: InputMaybe<Scalars['Float']['input']>;
   viewFieldGroupId?: InputMaybe<Scalars['UUID']['input']>;
@@ -8867,7 +8876,9 @@ export type ViewField = {
   isOverridden?: Maybe<Scalars['Boolean']['output']>;
   isSystemSideEffect: Scalars['Boolean']['output'];
   isVisible: Scalars['Boolean']['output'];
+  label?: Maybe<Scalars['String']['output']>;
   position: Scalars['Float']['output'];
+  relationScope?: Maybe<ViewFieldRelationScope>;
   relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   size: Scalars['Float']['output'];
   universalIdentifier: Scalars['UUID']['output'];
@@ -8892,6 +8903,72 @@ export type ViewFieldGroup = {
   viewFields: Array<ViewField>;
   viewId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
+};
+
+export type ViewFieldRelationScope = {
+  __typename?: 'ViewFieldRelationScope';
+  aggregateOperation?: Maybe<AggregateOperations>;
+  filterGroups: Array<ViewFieldRelationScopeFilterGroup>;
+  filters: Array<ViewFieldRelationScopeFilter>;
+  limit?: Maybe<Scalars['Int']['output']>;
+  sorts: Array<ViewFieldRelationScopeSort>;
+};
+
+export type ViewFieldRelationScopeFilter = {
+  __typename?: 'ViewFieldRelationScopeFilter';
+  fieldMetadataId: Scalars['UUID']['output'];
+  filterGroupId?: Maybe<Scalars['UUID']['output']>;
+  id: Scalars['UUID']['output'];
+  operand: ViewFilterOperand;
+  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  subFieldName?: Maybe<Scalars['String']['output']>;
+  value: Scalars['JSON']['output'];
+};
+
+export type ViewFieldRelationScopeFilterGroup = {
+  __typename?: 'ViewFieldRelationScopeFilterGroup';
+  id: Scalars['UUID']['output'];
+  logicalOperator: ViewFilterGroupLogicalOperator;
+  parentFilterGroupId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type ViewFieldRelationScopeFilterGroupInput = {
+  id: Scalars['UUID']['input'];
+  logicalOperator: ViewFilterGroupLogicalOperator;
+  parentFilterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
+export type ViewFieldRelationScopeFilterInput = {
+  fieldMetadataId: Scalars['UUID']['input'];
+  filterGroupId?: InputMaybe<Scalars['UUID']['input']>;
+  id: Scalars['UUID']['input'];
+  operand: ViewFilterOperand;
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']['input']>;
+  value: Scalars['JSON']['input'];
+};
+
+export type ViewFieldRelationScopeInput = {
+  aggregateOperation?: InputMaybe<AggregateOperations>;
+  filterGroups?: Array<ViewFieldRelationScopeFilterGroupInput>;
+  filters?: Array<ViewFieldRelationScopeFilterInput>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  sorts?: Array<ViewFieldRelationScopeSortInput>;
+};
+
+export type ViewFieldRelationScopeSort = {
+  __typename?: 'ViewFieldRelationScopeSort';
+  direction: ViewSortDirection;
+  fieldMetadataId: Scalars['UUID']['output'];
+  relationTargetFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  subFieldName?: Maybe<Scalars['String']['output']>;
+};
+
+export type ViewFieldRelationScopeSortInput = {
+  direction: ViewSortDirection;
+  fieldMetadataId: Scalars['UUID']['input'];
+  relationTargetFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  subFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ViewFilter = {
@@ -9236,6 +9313,14 @@ export enum WorkspaceDiscoverability {
   MEMBERS_AND_INVITEES = 'MEMBERS_AND_INVITEES',
   PUBLIC = 'PUBLIC'
 }
+
+export type WorkspaceFromInviteHash = {
+  __typename?: 'WorkspaceFromInviteHash';
+  allowImpersonation: Scalars['Boolean']['output'];
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+};
 
 export type WorkspaceInvitation = {
   __typename?: 'WorkspaceInvitation';

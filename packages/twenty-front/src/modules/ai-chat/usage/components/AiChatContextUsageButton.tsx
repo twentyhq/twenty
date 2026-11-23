@@ -76,9 +76,8 @@ export const AiChatContextUsageButton = () => {
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
-  const modelTier = isWorkspaceSetupChat
-    ? 'fast'
-    : (aiChatUserSelectedModelTier ?? chatTier);
+  const modelTier =
+    aiChatUserSelectedModelTier ?? (isWorkspaceSetupChat ? 'fast' : chatTier);
 
   const contextWindow =
     aiChatThreadUsage?.contextWindowTokens ??
