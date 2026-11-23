@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { VERIFICATION_EMAIL_SENDING_THROTTLE } from 'src/engine/core-modules/email-verification/constants/verification-email-sending-throttle.constant';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -587,9 +588,29 @@ export class UserService {
         workspace,
       );
 
-    await this.emailVerificationService.deleteExistingTokensAfterCooldownOrThrow(
-      { userId: user.id },
+    await this.emailVerificationService.assertVerificationEmailCooldownElapsedOrThrow(
+      {
+        userId: user.id,
+      },
     );
+
+    await this.emailVerificationService.throttleVerificationEmailSendingOrThrow(
+      {
+        key: user.id,
+        limit: VERIFICATION_EMAIL_SENDING_THROTTLE.emailUpdatesByUserLimit,
+      },
+    );
+
+    await this.emailVerificationService.throttleVerificationEmailSendingOrThrow(
+      {
+        key: normalizedEmail,
+        limit: VERIFICATION_EMAIL_SENDING_THROTTLE.byRecipientLimit,
+      },
+    );
+
+    await this.emailVerificationService.deleteExistingVerificationTokens({
+      userId: user.id,
+    });
 
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,

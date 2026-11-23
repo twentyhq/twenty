@@ -45,11 +45,7 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
       : themeCssVariables.betweenSiblingsGap};
   height: ${({ isExpanded }) =>
     isExpanded ? themeCssVariables.spacing[10] : 'auto'};
-  margin: ${({ isExpanded }) =>
-    isExpanded ? `0 calc(-1 * ${themeCssVariables.spacing[2]})` : '0'};
   min-width: 0;
-  padding: ${({ isExpanded }) =>
-    isExpanded ? `0 ${themeCssVariables.spacing[2]}` : '0'};
 `;
 
 const StyledUnreadBadge = styled.span`

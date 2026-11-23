@@ -21,6 +21,9 @@ type CalendarEventNode = {
   location?: string | null;
   description?: string | null;
   callRecorderPreference?: string | null;
+  calendarChannelEventAssociations?: {
+    edges?: { node?: { calendarChannelId?: string | null } | null }[] | null;
+  } | null;
 };
 
 export const fetchCalendarEventsByFilter = async (
@@ -54,6 +57,9 @@ export const fetchCalendarEventsByFilter = async (
               location: true,
               description: true,
               callRecorderPreference: true,
+              calendarChannelEventAssociations: {
+                edges: { node: { calendarChannelId: true } },
+              },
             },
           },
         },
@@ -82,5 +88,10 @@ export const fetchCalendarEventsByFilter = async (
     callRecorderPreference: isString(calendarEvent.callRecorderPreference)
       ? calendarEvent.callRecorderPreference
       : undefined,
+    calendarChannelIds: (
+      calendarEvent.calendarChannelEventAssociations?.edges ?? []
+    )
+      .map((edge) => edge.node?.calendarChannelId)
+      .filter(isString),
   }));
 };
