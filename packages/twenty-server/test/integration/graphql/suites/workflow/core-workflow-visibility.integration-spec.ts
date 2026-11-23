@@ -134,7 +134,13 @@ const RUN_MUTATION = `
   }
 `;
 
-const setIsPrivate = (coreWorkflowId: string, isPrivate: boolean) =>
+const setIsPrivate = ({
+  coreWorkflowId,
+  isPrivate,
+}: {
+  coreWorkflowId: string;
+  isPrivate: boolean;
+}) =>
   workflowGraphqlRequest(UPDATE_CORE_WORKFLOW_MUTATION, {
     input: { coreWorkflowId, isPrivate },
   });
@@ -247,7 +253,7 @@ describe('core workflow visibility (e2e)', () => {
 
   afterAll(async () => {
     if (isDefined(coreWorkflowId)) {
-      await setIsPrivate(coreWorkflowId, false);
+      await setIsPrivate({ coreWorkflowId, isPrivate: false });
       await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
 
@@ -372,7 +378,7 @@ describe('core workflow visibility (e2e)', () => {
 
   describe('once its creator makes it private', () => {
     beforeAll(async () => {
-      const response = await setIsPrivate(coreWorkflowId, true);
+      const response = await setIsPrivate({ coreWorkflowId, isPrivate: true });
 
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.updateCoreWorkflow).toMatchObject({
@@ -540,7 +546,10 @@ describe('core workflow visibility (e2e)', () => {
 
     afterAll(async () => {
       if (isDefined(updatedCoreWorkflowId)) {
-        await setIsPrivate(updatedCoreWorkflowId, false);
+        await setIsPrivate({
+          coreWorkflowId: updatedCoreWorkflowId,
+          isPrivate: false,
+        });
         await deleteCoreWorkflows({ coreWorkflowIds: [updatedCoreWorkflowId] });
       }
     });
@@ -635,7 +644,10 @@ describe('core workflow visibility (e2e)', () => {
     });
 
     it('applies neither the name nor the visibility when another member is refused', async () => {
-      await setIsPrivate(updatedCoreWorkflowId, false);
+      await setIsPrivate({
+        coreWorkflowId: updatedCoreWorkflowId,
+        isPrivate: false,
+      });
 
       const response = await asOtherMember(UPDATE_CORE_WORKFLOW_MUTATION, {
         input: {
@@ -806,7 +818,10 @@ describe('core workflow visibility (e2e)', () => {
 
     afterAll(async () => {
       if (isDefined(manualCoreWorkflowId)) {
-        await setIsPrivate(manualCoreWorkflowId, false);
+        await setIsPrivate({
+          coreWorkflowId: manualCoreWorkflowId,
+          isPrivate: false,
+        });
         await deleteCoreWorkflows({ coreWorkflowIds: [manualCoreWorkflowId] });
       }
     });
@@ -820,7 +835,10 @@ describe('core workflow visibility (e2e)', () => {
     });
 
     it('takes the item out of the other member command menu once private, and leaves it in its creator one', async () => {
-      const response = await setIsPrivate(manualCoreWorkflowId, true);
+      const response = await setIsPrivate({
+        coreWorkflowId: manualCoreWorkflowId,
+        isPrivate: true,
+      });
 
       expect(response.body.errors).toBeUndefined();
 
@@ -928,7 +946,10 @@ describe('core workflow visibility (e2e)', () => {
 
     afterAll(async () => {
       if (isDefined(conversationCoreWorkflowId)) {
-        await setIsPrivate(conversationCoreWorkflowId, false);
+        await setIsPrivate({
+          coreWorkflowId: conversationCoreWorkflowId,
+          isPrivate: false,
+        });
         await deleteCoreWorkflows({
           coreWorkflowIds: [conversationCoreWorkflowId],
         });
