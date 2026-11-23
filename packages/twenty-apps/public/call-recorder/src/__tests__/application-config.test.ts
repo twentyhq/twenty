@@ -19,8 +19,7 @@ describe('application config', () => {
       applicationConfig.config.applicationVariables ?? {},
     )
       .filter(
-        ([, variable]) =>
-          variable.isDeprecated !== true && variable.scope !== 'USER',
+        ([, variable]) => !variable.isDeprecated && variable.scope !== 'USER',
       )
       .map(([key]) => key);
 
