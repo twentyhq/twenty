@@ -21,6 +21,7 @@ import { type ApprovedAccessDomainJwtPayload } from 'src/engine/core-modules/aut
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -54,6 +55,7 @@ export class ApprovedAccessDomainService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly i18nService: I18nService,
     private readonly throttlerService: ThrottlerService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async sendApprovedAccessDomainValidationEmail(
@@ -295,6 +297,14 @@ export class ApprovedAccessDomainService {
   }
 
   private async throttleValidationEmailSendingOrThrow(workspaceId: string) {
+    const isSelfHostedEnterprise =
+      this.enterprisePlanService.isValid() &&
+      !this.twentyConfigService.isBillingEnabled();
+
+    if (isSelfHostedEnterprise) {
+      return;
+    }
+
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
         buildApprovedAccessDomainValidationEmailThrottleKey(workspaceId),
