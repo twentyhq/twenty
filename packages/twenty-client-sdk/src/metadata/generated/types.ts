@@ -1245,6 +1245,9 @@ export default {
             "applicationId": [
                 563
             ],
+            "applicationLogoUrl": [
+                4
+            ],
             "applicationName": [
                 4
             ],
