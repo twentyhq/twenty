@@ -11,7 +11,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795447154198)
+@RegisteredWorkspaceCommand('2.63.0', 1795454974631)
 @Command({
   name: 'upgrade:2-63:add-ai-chat-participants-command-menu-item',
   description:
