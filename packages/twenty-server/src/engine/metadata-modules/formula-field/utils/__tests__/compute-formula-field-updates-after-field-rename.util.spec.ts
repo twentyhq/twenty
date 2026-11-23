@@ -1,7 +1,4 @@
-import {
-  FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
-  FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
-} from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
+import { FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
 import { computeFormulaFieldUpdatesAfterFieldRename } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-updates-after-field-rename.util';
 
 const EXISTING_FIELDS =
@@ -13,13 +10,12 @@ const computeRenamedExpressions = (
   > &
     Pick<
       Parameters<typeof computeFormulaFieldUpdatesAfterFieldRename>[0],
-      'renamedFieldUniversalIdentifier' | 'previousFieldName' | 'newFieldName'
+      'renamedFieldUniversalIdentifier' | 'newFieldName'
     >,
 ) =>
   Object.fromEntries(
     Object.entries(
       computeFormulaFieldUpdatesAfterFieldRename({
-        universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
         existingUniversalFlatFieldMetadataByUniversalIdentifier:
           EXISTING_FIELDS,
         pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier: {},
@@ -37,11 +33,18 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'gadget-price-uid',
-        previousFieldName: 'price',
         newFieldName: 'unitPrice',
       }),
     ).toEqual({
-      'gadget-total-uid': { formula: { expression: 'unitPrice * quantity' } },
+      'gadget-total-uid': {
+        formula: {
+          expression: 'unitPrice * quantity',
+          bindings: {
+            unitPrice: 'gadget-price-uid',
+            quantity: 'gadget-quantity-uid',
+          },
+        },
+      },
     });
   });
 
@@ -49,15 +52,24 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'supplier-name-uid',
-        previousFieldName: 'name',
         newFieldName: 'legalName',
       }),
     ).toEqual({
-      'supplier-shout-uid': { formula: { expression: 'legalName || "!"' } },
+      'supplier-shout-uid': {
+        formula: {
+          expression: 'legalName || "!"',
+          bindings: { legalName: 'supplier-name-uid' },
+        },
+      },
       'gadget-supplier-label-uid': {
         formula: {
           expression:
             'supplier.legalName || " (" || supplier.revenue.currencyCode || ")"',
+          bindings: {
+            supplier: 'gadget-supplier-uid',
+            'supplier.legalName': 'supplier-name-uid',
+            'supplier.revenue': 'supplier-revenue-uid',
+          },
         },
       },
     });
@@ -67,7 +79,6 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'gadget-supplier-uid',
-        previousFieldName: 'supplier',
         newFieldName: 'vendor',
       }),
     ).toEqual({
@@ -75,6 +86,11 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
         formula: {
           expression:
             'vendor.name || " (" || vendor.revenue.currencyCode || ")"',
+          bindings: {
+            vendor: 'gadget-supplier-uid',
+            'vendor.name': 'supplier-name-uid',
+            'vendor.revenue': 'supplier-revenue-uid',
+          },
         },
       },
     });
@@ -84,7 +100,6 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'gadget-price-uid',
-        previousFieldName: 'price',
         newFieldName: 'unitPrice',
         deletedUniversalFlatFieldMetadataByUniversalIdentifier: {
           'gadget-total-uid': EXISTING_FIELDS['gadget-total-uid'],
@@ -97,7 +112,6 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'gadget-price-uid',
-        previousFieldName: 'price',
         newFieldName: 'now',
       }),
     ).toEqual({});

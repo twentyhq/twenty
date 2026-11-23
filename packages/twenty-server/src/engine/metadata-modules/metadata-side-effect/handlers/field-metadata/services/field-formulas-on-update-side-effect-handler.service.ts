@@ -41,10 +41,7 @@ export class FieldFormulasOnUpdateSideEffectHandlerService extends MetadataSideE
     const flatFieldMetadataToUpdate =
       computeFormulaFieldUpdatesAfterFieldRename({
         renamedFieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-        previousFieldName: existingFlatFieldMetadata.name,
         newFieldName: flatFieldMetadata.name,
-        universalFlatObjectMetadataMaps:
-          relatedFlatEntityMaps.flatObjectMetadataMaps,
         existingUniversalFlatFieldMetadataByUniversalIdentifier:
           relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
         pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier:
