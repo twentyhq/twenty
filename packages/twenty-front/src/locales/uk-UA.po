@@ -2290,11 +2290,6 @@ msgstr "Додати картку"
 msgid "Add CC"
 msgstr "Додати копію"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Додати канал"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -3606,6 +3601,16 @@ msgstr "Усі робочі простори"
 msgid "Allow"
 msgstr "Дозволити"
 
+#. js-lingui-id: rgjDVZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in macOS settings"
+msgstr "Дозволити {settingsEntryLabel} у налаштуваннях macOS"
+
+#. js-lingui-id: CzjC6l
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in Windows settings"
+msgstr "Дозволити {settingsEntryLabel} у налаштуваннях Windows"
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3656,6 +3661,16 @@ msgstr "Дозволити доступ до медіа для {applicationName}
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Дозволити вхід через Microsoft для користувачів з дозволом обходу SSO."
+
+#. js-lingui-id: iN398g
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Allow notifications"
+msgstr "Дозволити сповіщення"
+
+#. js-lingui-id: kDJaGH
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow notifications in your browser"
+msgstr "Дозвольте сповіщення у своєму браузері"
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -6363,6 +6378,11 @@ msgstr "Перевірте свою електронну пошту"
 msgid "Check your inbox to verify your new email address."
 msgstr "Перевірте свою поштову скриньку, щоб підтвердити нову електронну адресу."
 
+#. js-lingui-id: iY9Tuz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Check your system notification settings"
+msgstr "Перевірте налаштування системних сповіщень"
+
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "checkbox"
@@ -6854,6 +6874,7 @@ msgstr "Буфер обміну вимагає захищеного з'єдна�
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -7833,6 +7854,7 @@ msgstr "Контекстне вікно має бути додатним ціл�
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
@@ -10588,6 +10610,16 @@ msgstr "Помилка диктування. Спробуйте ще раз."
 msgid "Dictation is not supported in this browser."
 msgstr "Диктування не підтримується в цьому браузері."
 
+#. js-lingui-id: rgWPME
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see a test notification?"
+msgstr "Ви бачили тестове сповіщення?"
+
+#. js-lingui-id: kd/w8u
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see it this time?"
+msgstr "Ви бачили його цього разу?"
+
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
@@ -10778,6 +10810,11 @@ msgstr "ПП"
 msgid "DNS records:"
 msgstr "DNS-записи:"
 
+#. js-lingui-id: 5bBKM2
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Do not disturb"
+msgstr "Не турбувати"
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -10880,6 +10917,7 @@ msgstr "Не імпортувати події, позначені як прив
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Done"
 msgstr "Виконано"
 
@@ -14855,7 +14893,7 @@ msgid "Germany"
 msgstr "Німеччина"
 
 #. js-lingui-id: AWtGgd
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "Get help"
 msgstr "Отримати допомогу"
 
@@ -16115,10 +16153,10 @@ msgstr "Менш ніж за день"
 msgid "In progress"
 msgstr "У роботі"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "У процесі: забезпечення видимості каналів повідомлень і календаря за допомогою правил дозволів на рівні записів. Потрібні переходи зв'язків."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "У процесі: застосування правил дозволів на рівні записів для видимості каналів повідомлень і календаря. Потребує переходів за зв’язками та шляхів до пов’язаних записів."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
@@ -18433,6 +18471,11 @@ msgstr "Найменші спочатку"
 msgid "M"
 msgstr "МЛН"
 
+#. js-lingui-id: PcJKDa
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
+msgstr "macOS може блокувати сповіщення, навіть якщо {browserLabel} дозволяє Twenty. Відкрийте «Сповіщення», виберіть {settingsEntryLabel} і ввімкніть «Дозволити сповіщення». Якщо режим «Фокусування» увімкнено, вимкніть його. Потім надішліть тестове сповіщення."
+
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
@@ -20037,8 +20080,13 @@ msgstr "Нова група"
 msgid "New inbox messages notify you while your browser is running"
 msgstr "Нові повідомлення у вхідних сповіщатимуть вас, коли ваш браузер запущено"
 
+#. js-lingui-id: Wi5Riu
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "New inbox messages will show up like the test notification while your browser is running."
+msgstr "Нові повідомлення у вхідних відображатимуться як тестове сповіщення, доки ваш браузер запущено."
+
 #. js-lingui-id: ynuJvo
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "New inbox messages will show up like this"
 msgstr "Нові повідомлення у вхідних відображатимуться так"
 
@@ -20303,6 +20351,7 @@ msgstr "Дев'ятий"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -21387,6 +21436,11 @@ msgstr "Не знайдено робочих просторів, що відпо
 msgid "No workspaces match this search"
 msgstr "Жоден робочий простір не відповідає цьому пошуку"
 
+#. js-lingui-id: LayLjZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "No, read the guide"
+msgstr "Ні, прочитати посібник"
+
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
@@ -21623,15 +21677,26 @@ msgstr "Тут немає чого пропонувати."
 #. js-lingui-id: iDNBZe
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 #: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "Сповіщення"
 
+#. js-lingui-id: sdfGbU
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Notifications › {settingsEntryName}"
+msgstr "Сповіщення › {settingsEntryName}"
+
 #. js-lingui-id: A09awi
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "Notifications are on"
 msgstr "Сповіщення ввімкнено"
+
+#. js-lingui-id: +j76n0
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Notifications are set up"
+msgstr "Сповіщення налаштовано"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -22325,6 +22390,11 @@ msgstr "Відкрити налаштування"
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
 msgstr "Відкрити бічну панель"
+
+#. js-lingui-id: TgKqjz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Open system settings"
+msgstr "Відкрити системні налаштування"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -24214,6 +24284,11 @@ msgstr "Прочитати системні інструкції"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
 msgstr "Переглядати адресу, власника та статус облікового запису приватних каналів учасників"
+
+#. js-lingui-id: 4X88Wc
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Read the guide"
+msgstr "Прочитати посібник"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -27388,6 +27463,7 @@ msgstr "Надіслати зараз"
 
 #. js-lingui-id: eus61c
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Send test"
 msgstr "Надіслати тестове"
 
@@ -29404,6 +29480,11 @@ msgstr "Синхронізацію буде припинено, а обліко�
 msgid "System"
 msgstr "Система"
 
+#. js-lingui-id: q2LSdK
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "System › Notifications"
+msgstr "Система › Сповіщення"
+
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 msgid "System fields"
@@ -30368,7 +30449,7 @@ msgid "This browser cannot show notifications"
 msgstr "Цей браузер не може показувати сповіщення"
 
 #. js-lingui-id: 47wc2N
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "This browser could not turn on notifications"
 msgstr "Не вдалося ввімкнути сповіщення в цьому браузері"
 
@@ -31496,6 +31577,11 @@ msgstr "Турецька"
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
 msgstr "Перетворити на"
+
+#. js-lingui-id: Njwcqh
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Turn on notifications"
+msgstr "Увімкнути сповіщення"
 
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -33581,6 +33667,16 @@ msgstr "Нам не вдалося завантажити плани"
 msgid "We encountered an issue verifying"
 msgstr "Ми зіткнулися з проблемою під час верифікації"
 
+#. js-lingui-id: zXOO0X
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent another test notification."
+msgstr "Ми щойно надіслали ще одне тестове сповіщення."
+
+#. js-lingui-id: Ik3LPq
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent one. It shows up in a corner of your screen."
+msgstr "Ми щойно надіслали одне. Воно з’явиться в куті екрана."
+
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
@@ -34029,6 +34125,11 @@ msgstr "Не вдасться"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Will get this email"
 msgstr "Отримає цей електронний лист"
+
+#. js-lingui-id: BQiUZ6
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
+msgstr "Windows може блокувати {browserLabel}, навіть якщо Twenty дозволено. Відкрийте «Сповіщення», увімкніть {settingsEntryLabel} та вимкніть «Не турбувати». Потім надішліть тестове сповіщення."
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -34580,6 +34681,12 @@ msgstr "так"
 msgid "Yes"
 msgstr "Так"
 
+#. js-lingui-id: F91wPm
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Yes, I saw it"
+msgstr "Так, я це бачив(-ла)"
+
 #. js-lingui-id: y/0uwd
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
@@ -34763,6 +34870,21 @@ msgstr "Ваш спосіб оплати негайно змінюється н�
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to monthly on {0}, at the end of your current billing period."
 msgstr "Ваш спосіб оплати зміниться на щомісячний {0}, наприкінці поточного розрахункового періоду."
+
+#. js-lingui-id: AUurzR
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "your browser"
+msgstr "ваш браузер"
+
+#. js-lingui-id: TzFYej
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
+msgstr "Ваш браузер закрив запит або показав його як значок в адресному рядку. Натисніть цей значок і виберіть «Дозволити», а потім продовжте."
+
+#. js-lingui-id: o3PWYJ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
+msgstr "Ваш браузер попросить дозволу на показ сповіщень від Twenty. Виберіть «Дозволити»."
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -34950,6 +35072,11 @@ msgstr "Налаштування вашої підписки не було за�
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "Статус вашої підписки: {statusLabel}"
+
+#. js-lingui-id: nH1nrf
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
+msgstr "Ваша система може блокувати {browserLabel}, навіть якщо Twenty дозволено. Дозвольте сповіщення для {browserLabel} у системних налаштуваннях, а потім надішліть тестове сповіщення."
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts

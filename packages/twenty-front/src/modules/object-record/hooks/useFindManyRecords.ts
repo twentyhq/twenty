@@ -53,11 +53,12 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
   const apolloCoreClient = useApolloCoreClient();
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-    cursorDirection: cursorFilter?.cursorDirection,
-  });
+  const { findManyRecordsQuery, relationsWithArgumentsVariables } =
+    useFindManyRecordsQuery({
+      objectNameSingular,
+      recordGqlFields,
+      cursorDirection: cursorFilter?.cursorDirection,
+    });
 
   const { handleFindManyRecordsError } = useHandleFindManyRecordsError({
     objectMetadataItem,
@@ -104,6 +105,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit,
+        ...relationsWithArgumentsVariables,
       },
       fetchPolicy: fetchPolicy,
       client: apolloCoreClient,

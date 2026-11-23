@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type OAuthDiscoveryState } from '@modelcontextprotocol/sdk/client/auth.js';
+import { type OAuthDiscoveryState } from '@modelcontextprotocol/client';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
