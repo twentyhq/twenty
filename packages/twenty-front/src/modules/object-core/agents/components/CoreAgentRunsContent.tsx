@@ -62,9 +62,7 @@ type CoreAgentRunsContentProps = {
   agent: CoreAgent;
 };
 
-export const CoreAgentRunsContent = ({
-  agent,
-}: CoreAgentRunsContentProps) => {
+export const CoreAgentRunsContent = ({ agent }: CoreAgentRunsContentProps) => {
   const { t } = useLingui();
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
   const { openAskAiThread } = useOpenAskAiThread();
