@@ -3601,6 +3601,16 @@ msgstr "すべてのワークスペース"
 msgid "Allow"
 msgstr "許可"
 
+#. js-lingui-id: rgjDVZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in macOS settings"
+msgstr ""
+
+#. js-lingui-id: CzjC6l
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow {settingsEntryLabel} in Windows settings"
+msgstr ""
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -3651,6 +3661,16 @@ msgstr "{applicationName} にメディアへのアクセスを許可しますか
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "SSOバイパス許可を持つユーザーのためにMicrosoftを使ったログインを許可します。"
+
+#. js-lingui-id: iN398g
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Allow notifications"
+msgstr ""
+
+#. js-lingui-id: kDJaGH
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Allow notifications in your browser"
+msgstr ""
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -6358,6 +6378,11 @@ msgstr "メールを確認してください"
 msgid "Check your inbox to verify your new email address."
 msgstr "新しいメールアドレスを確認するため、受信トレイを確認してください。"
 
+#. js-lingui-id: iY9Tuz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Check your system notification settings"
+msgstr ""
+
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "checkbox"
@@ -6849,6 +6874,7 @@ msgstr "クリップボードの使用にはセキュアな接続 (HTTPS) が必
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
@@ -7828,6 +7854,7 @@ msgstr "コンテキストウィンドウは正の整数である必要があり
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep.tsx
@@ -10583,6 +10610,16 @@ msgstr "音声入力に失敗しました。もう一度お試しください。
 msgid "Dictation is not supported in this browser."
 msgstr "このブラウザは音声入力に対応していません。"
 
+#. js-lingui-id: rgWPME
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see a test notification?"
+msgstr ""
+
+#. js-lingui-id: kd/w8u
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Did you see it this time?"
+msgstr ""
+
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct message pair identity"
@@ -10773,6 +10810,11 @@ msgstr "DM"
 msgid "DNS records:"
 msgstr "DNSレコード:"
 
+#. js-lingui-id: 5bBKM2
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Do not disturb"
+msgstr ""
+
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -10875,6 +10917,7 @@ msgstr "非公開としてマークされたイベントをインポートしな
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/object-core/agents/utils/getCoreAgentRunStatusLabelAndColor.ts
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Done"
 msgstr "完了"
 
@@ -14850,7 +14893,7 @@ msgid "Germany"
 msgstr "ドイツ"
 
 #. js-lingui-id: AWtGgd
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "Get help"
 msgstr "ヘルプを表示"
 
@@ -18428,6 +18471,11 @@ msgstr "低い順"
 msgid "M"
 msgstr "百万"
 
+#. js-lingui-id: PcJKDa
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
+msgstr ""
+
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
@@ -20032,8 +20080,13 @@ msgstr "新規グループ"
 msgid "New inbox messages notify you while your browser is running"
 msgstr "ブラウザの実行中に新しい受信トレイメッセージが通知されます"
 
+#. js-lingui-id: Wi5Riu
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "New inbox messages will show up like the test notification while your browser is running."
+msgstr ""
+
 #. js-lingui-id: ynuJvo
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "New inbox messages will show up like this"
 msgstr "新しい受信トレイメッセージはこのように表示されます"
 
@@ -20298,6 +20351,7 @@ msgstr "第九"
 #. js-lingui-id: 1UzENP
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -21382,6 +21436,11 @@ msgstr "検索条件に一致するワークスペースが見つかりません
 msgid "No workspaces match this search"
 msgstr "この検索に一致するワークスペースはありません"
 
+#. js-lingui-id: LayLjZ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "No, read the guide"
+msgstr ""
+
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
 msgid "Node"
@@ -21618,15 +21677,26 @@ msgstr "ここには提案できるものがありません。"
 #. js-lingui-id: iDNBZe
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
 #: src/modules/settings/experience/components/SettingsExperienceNotificationsSection.tsx
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
 msgstr "通知"
 
+#. js-lingui-id: sdfGbU
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "Notifications › {settingsEntryName}"
+msgstr ""
+
 #. js-lingui-id: A09awi
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "Notifications are on"
 msgstr "通知がオンになっています"
+
+#. js-lingui-id: +j76n0
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Notifications are set up"
+msgstr ""
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -22320,6 +22390,11 @@ msgstr "設定を開く"
 #: src/modules/sign-in-background-mock/components/BackgroundMockPage.tsx
 msgid "Open side panel"
 msgstr "サイドパネルを開く"
+
+#. js-lingui-id: TgKqjz
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Open system settings"
+msgstr ""
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -24209,6 +24284,11 @@ msgstr "システムプロンプトを確認"
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 msgid "Read the address, owner and account status of members' private channels"
 msgstr "メンバーのプライベートチャンネルの住所、所有者、アカウントステータスを読み取る"
+
+#. js-lingui-id: 4X88Wc
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Read the guide"
+msgstr ""
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -27383,6 +27463,7 @@ msgstr "今すぐ送信"
 
 #. js-lingui-id: eus61c
 #: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Send test"
 msgstr "テストを送信"
 
@@ -29399,6 +29480,11 @@ msgstr "同期が停止され、このアカウントの認証情報が削除さ
 msgid "System"
 msgstr "システム"
 
+#. js-lingui-id: q2LSdK
+#: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
+msgid "System › Notifications"
+msgstr ""
+
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
 msgid "System fields"
@@ -30361,7 +30447,7 @@ msgid "This browser cannot show notifications"
 msgstr "このブラウザでは通知を表示できません"
 
 #. js-lingui-id: 47wc2N
-#: src/modules/settings/experience/components/BrowserNotificationPermissionCard.tsx
+#: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
 msgid "This browser could not turn on notifications"
 msgstr "このブラウザで通知をオンにできませんでした"
 
@@ -31489,6 +31575,11 @@ msgstr "トルコ語"
 #: src/modules/advanced-text-editor/components/TurnIntoBlockDropdown.tsx
 msgid "Turn into"
 msgstr "変換"
+
+#. js-lingui-id: Njwcqh
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Turn on notifications"
+msgstr ""
 
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -33574,6 +33665,16 @@ msgstr "プランを読み込めませんでした"
 msgid "We encountered an issue verifying"
 msgstr "認証中に問題が発生しました"
 
+#. js-lingui-id: zXOO0X
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent another test notification."
+msgstr ""
+
+#. js-lingui-id: Ik3LPq
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "We just sent one. It shows up in a corner of your screen."
+msgstr ""
+
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpsertRecord.tsx
@@ -34022,6 +34123,11 @@ msgstr "失敗します"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "Will get this email"
 msgstr "このメールを受信します"
+
+#. js-lingui-id: BQiUZ6
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
+msgstr ""
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -34573,6 +34679,12 @@ msgstr "はい"
 msgid "Yes"
 msgstr "はい"
 
+#. js-lingui-id: F91wPm
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Yes, I saw it"
+msgstr ""
+
 #. js-lingui-id: y/0uwd
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
@@ -34756,6 +34868,21 @@ msgstr "請求はただちに年間請求に切り替わります。本日から
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Your billing switches to monthly on {0}, at the end of your current billing period."
 msgstr "現在の請求期間の終了時である {0} に、請求が月額に切り替わります。"
+
+#. js-lingui-id: AUurzR
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "your browser"
+msgstr ""
+
+#. js-lingui-id: TzFYej
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
+msgstr ""
+
+#. js-lingui-id: o3PWYJ
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
+msgstr ""
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -34943,6 +35070,11 @@ msgstr "サブスクリプションの設定が完了していません。"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "サブスクリプションのステータス: {statusLabel}"
+
+#. js-lingui-id: nH1nrf
+#: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
+msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
+msgstr ""
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts

@@ -33,11 +33,10 @@ export const fromCreateRoleTargetInputToFlatRoleTargetToCreate = ({
   const { roleId, targetId, targetMetadataForeignKey, universalIdentifier } =
     createRoleTargetInput;
 
-  const isSystemSideEffect =
-    findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: flatRoleMaps,
-      flatEntityId: roleId,
-    }).isSystemSideEffect === true;
+  const isSystemSideEffect = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    flatEntityMaps: flatRoleMaps,
+    flatEntityId: roleId,
+  }).isSystemSideEffect;
 
   const { roleUniversalIdentifier } = resolveEntityRelationUniversalIdentifiers(
     {
