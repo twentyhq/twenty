@@ -47,6 +47,7 @@ export const computePageLayoutWidgetWithCopiedConditionalAvailability = <
       flatPageLayoutWidget.applicationUniversalIdentifier,
   };
 
+  // A null override is a cleared rule, so only undefined means the property is not overridden
   const isOverridden = (property: string): boolean =>
     readAuthoredOverrideProperty({
       metadataName: 'pageLayoutWidget',
@@ -66,15 +67,16 @@ export const computePageLayoutWidgetWithCopiedConditionalAvailability = <
         )
       : undefined;
 
-  const pageLayoutWidgetWithCopiedOwnRule: TPageLayoutWidget =
-    isDefined(ownRuleConversion) &&
-    ownRuleConversion.isValid &&
-    isDefined(ownRuleConversion.node)
-      ? {
-          ...flatPageLayoutWidget,
-          conditionalAvailability: ownRuleConversion.node,
-        }
-      : flatPageLayoutWidget;
+  const copiedOwnNode =
+    isDefined(ownRuleConversion) && ownRuleConversion.isValid
+      ? ownRuleConversion.node
+      : null;
+
+  const pageLayoutWidgetWithCopiedOwnRule: TPageLayoutWidget = isDefined(
+    copiedOwnNode,
+  )
+    ? { ...flatPageLayoutWidget, conditionalAvailability: copiedOwnNode }
+    : flatPageLayoutWidget;
 
   const overriddenRuleConversion =
     LEGACY_RULE_PROPERTIES.some(isOverridden) &&
