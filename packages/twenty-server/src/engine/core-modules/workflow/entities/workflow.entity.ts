@@ -12,8 +12,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { WorkflowVisibility } from 'twenty-shared/types';
-
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
 import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
@@ -22,6 +20,7 @@ import { ADD_WORKSPACE_WORKFLOW_ID_TO_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/
 import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-core-version-pointers-upgrade-command-name.constant';
 import { ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-workflow-visibility-upgrade-command-name.constant';
 import { ADD_WORKFLOW_IS_PRIVATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-62/add-workflow-is-private-upgrade-command-name.constant';
+import { DROP_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/drop-workflow-visibility-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -36,11 +35,6 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 })
 @Index('IDX_WORKFLOW_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_WORKFLOW_APPLICATION_ID', ['applicationId'])
-@Index('IDX_WORKFLOW_VISIBILITY_CREATED_BY', [
-  'workspaceId',
-  'visibility',
-  'createdByUserWorkspaceId',
-])
 @Index('IDX_WORKFLOW_IS_PRIVATE_CREATED_BY', [
   'workspaceId',
   'isPrivate',
@@ -86,15 +80,18 @@ export class WorkflowEntity extends SyncableEntity {
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
   })
+  @WasRemovedInUpgrade({
+    upgradeCommandName: DROP_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
+  })
   @Column({
     type: 'varchar',
     nullable: false,
-    default: WorkflowVisibility.WORKSPACE,
+    default: 'WORKSPACE',
     select: false,
     insert: false,
     update: false,
   })
-  visibility: WasRemovedInUpgrade<WorkflowVisibility>;
+  visibility: WasRemovedInUpgrade<'PRIVATE' | 'WORKSPACE'>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
