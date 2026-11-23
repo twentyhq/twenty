@@ -23,6 +23,7 @@ import {
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
+import { fetchOwnerUserWorkspaceIdByCalendarChannelId } from 'src/logic-functions/data/fetch-owner-user-workspace-id-by-calendar-channel-id.util';
 import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
 import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
@@ -92,10 +93,17 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     client,
     getUniqueSortedIds(calendarEventIds),
   );
+  const ownerUserWorkspaceIdByCalendarChannelId =
+    await fetchOwnerUserWorkspaceIdByCalendarChannelId();
   const affectedMeetingKeys = new Set<string>();
   const occurrenceStartsAtAnchors = new Set<string>();
   const changedCalendarEventPolicyResults = changedCalendarEvents.map(
-    (calendarEvent) => buildCallRecorderPolicyResult(calendarEvent, now),
+    (calendarEvent) =>
+      buildCallRecorderPolicyResult({
+        calendarEvent,
+        ownerUserWorkspaceIdByCalendarChannelId,
+        now,
+      }),
   );
 
   for (const policyResult of changedCalendarEventPolicyResults) {
@@ -138,7 +146,11 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
 
     policyResultsByCalendarEventId.set(
       calendarEvent.id,
-      buildCallRecorderPolicyResult(calendarEvent, now),
+      buildCallRecorderPolicyResult({
+        calendarEvent,
+        ownerUserWorkspaceIdByCalendarChannelId,
+        now,
+      }),
     );
   }
 

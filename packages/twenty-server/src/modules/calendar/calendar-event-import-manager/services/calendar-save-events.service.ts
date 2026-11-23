@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { Any, In, Not } from 'typeorm';
 
@@ -13,6 +14,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CalendarEventSharingChannel } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-sharing-channel.type';
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
 import { getCalendarChannelHandles } from 'src/modules/calendar/calendar-event-import-manager/utils/get-calendar-channel-handles.util';
@@ -22,6 +24,7 @@ import { buildCalendarEventParticipantSaveOperations } from 'src/modules/calenda
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
+import { computeChannelAssociationSource } from 'src/modules/connected-account/utils/compute-channel-association-source.util';
 
 @Injectable()
 export class CalendarSaveEventsService {
@@ -31,6 +34,7 @@ export class CalendarSaveEventsService {
     private readonly featureFlagService: FeatureFlagService,
     @InjectWorkspaceScopedRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   public async saveCalendarEventsAndEnqueueContactCreationJob(
@@ -46,6 +50,22 @@ export class CalendarSaveEventsService {
         FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED,
         workspaceId,
       );
+
+    const { flatFieldMetadataMaps, flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const associationSource = computeChannelAssociationSource({
+      accountOwnerFieldUniversalIdentifier:
+        STANDARD_OBJECTS.calendarChannelEventAssociation.fields.accountOwner
+          .universalIdentifier,
+      channel: calendarChannel,
+      flatFieldMetadataMaps,
+      flatWorkspaceMemberMaps,
+      userWorkspaceId: connectedAccount.userWorkspaceId,
+    });
 
     const channelHandles = getCalendarChannelHandles({
       calendarChannel,
@@ -200,6 +220,7 @@ export class CalendarSaveEventsService {
           calendarEventIdToLinkByEventExternalId,
           otherChannelIdsByCalendarEventId,
           otherCalendarChannels,
+          associationSource,
         });
 
         const existingParticipants =

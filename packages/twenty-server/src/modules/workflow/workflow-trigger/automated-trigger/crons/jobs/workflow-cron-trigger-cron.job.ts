@@ -24,9 +24,7 @@ import { isApplicationInstallPending } from 'src/engine/core-modules/application
 import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
-import { type QueuedWorkflowTriggerDispatchIds } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
@@ -109,7 +107,7 @@ export class WorkflowCronTriggerCronJob {
             jobData: {
               workspaceId: trigger.workspaceId,
               workflowId: trigger.legacyWorkflowId ?? trigger.workflowId,
-              ...buildCoreDispatchIds(trigger),
+              coreWorkflowVersionId: trigger.coreWorkflowVersionId,
               payload: {},
             },
             jobOptions: { retryLimit: 3, ...jobScope },
@@ -186,7 +184,7 @@ export class WorkflowCronTriggerCronJob {
           workspaceId,
           workflowId,
           legacyWorkflowId: cronTrigger.legacyWorkflowId,
-          ...buildCoreDispatchIds(cronTrigger),
+          coreWorkflowVersionId: cronTrigger.coreWorkflowVersionId,
           pattern,
         });
 
@@ -222,7 +220,7 @@ export class WorkflowCronTriggerCronJob {
                 workspaceId,
                 workflowId:
                   cachedTrigger.legacyWorkflowId ?? cachedTrigger.workflowId,
-                ...buildCoreDispatchIds(cachedTrigger),
+                coreWorkflowVersionId: cachedTrigger.coreWorkflowVersionId,
                 payload: {},
               },
               jobOptions: { retryLimit: 3, ...jobScope },
@@ -243,13 +241,12 @@ export class WorkflowCronTriggerCronJob {
   }
 
   private async getWorkspaceCronTriggers(workspaceId: string): Promise<
-    Array<
-      {
-        workflowId: string;
-        legacyWorkflowId?: string;
-        pattern?: string;
-      } & QueuedWorkflowTriggerDispatchIds
-    >
+    Array<{
+      workflowId: string;
+      legacyWorkflowId?: string;
+      coreWorkflowVersionId: string;
+      pattern?: string;
+    }>
   > {
     const { workflowAutomatedTriggerMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -261,7 +258,7 @@ export class WorkflowCronTriggerCronJob {
       .map((trigger) => ({
         workflowId: trigger.workflowId,
         legacyWorkflowId: trigger.legacyWorkflowId,
-        ...buildCoreDispatchIds(trigger),
+        coreWorkflowVersionId: trigger.coreWorkflowVersionId,
         pattern: trigger.settings.pattern,
       }));
   }
@@ -306,10 +303,7 @@ export class WorkflowCronTriggerCronJob {
         workspaceId: trigger.workspaceId,
         workflowId: workflow.id,
         legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
-        ...buildCoreDispatchIds({
-          coreWorkflowVersionId: version.id,
-          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
-        }),
+        coreWorkflowVersionId: version.id,
         pattern: computeCronPatternFromSchedule(definition),
       },
       isApplicationInstalled: !isApplicationInstallPending(

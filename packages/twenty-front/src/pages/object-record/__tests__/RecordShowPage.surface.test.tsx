@@ -250,12 +250,30 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
-  it('preserves the canonical main page while its resource is missing', () => {
-    mockRecordResource = {
-      record: undefined,
-      loading: false,
-      error: new Error('Not found'),
-    };
+  it.each([
+    {
+      label: 'missing',
+      resource: { record: undefined, loading: false, error: undefined },
+    },
+    {
+      label: 'failed',
+      resource: {
+        record: undefined,
+        loading: false,
+        error: new Error('Not found'),
+      },
+    },
+  ])('contains a $label record resource on the main page', ({ resource }) => {
+    mockRecordResource = resource;
+
+    render(<RecordShowPage />);
+
+    expect(screen.getByTestId('route-unavailable')).toBeInTheDocument();
+    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
+  });
+
+  it('keeps the main page while its record is loading', () => {
+    mockRecordResource = { record: undefined, loading: true, error: undefined };
 
     render(<RecordShowPage />);
 

@@ -14,7 +14,6 @@ const CORE_WORKFLOW_QUERY = `
       id
       name
       statuses
-      lastPublishedVersionId
       workspaceWorkflowId
       updatedAt
     }
@@ -27,7 +26,6 @@ const CORE_WORKFLOW_BY_ID_QUERY = `
       id
       name
       statuses
-      lastPublishedVersionId
       workspaceWorkflowId
       updatedAt
     }
@@ -40,22 +38,18 @@ const CORE_WORKFLOW_VERSIONS_QUERY = `
       id
       label
       status
-      workspaceWorkflowVersionId
       createdAt
       updatedAt
     }
   }
 `;
 
-const CORE_WORKFLOW_VERSION_QUERY = `
-  query CoreWorkflowVersion($workspaceWorkflowVersionId: UUID!) {
-    coreWorkflowVersion(
-      workspaceWorkflowVersionId: $workspaceWorkflowVersionId
-    ) {
+const CORE_WORKFLOW_VERSION_BY_ID_QUERY = `
+  query CoreWorkflowVersionById($coreWorkflowVersionId: UUID!) {
+    coreWorkflowVersionById(coreWorkflowVersionId: $coreWorkflowVersionId) {
       id
       label
       status
-      workspaceWorkflowVersionId
       trigger
       steps
       createdAt
@@ -68,7 +62,6 @@ type CoreWorkflowResult = {
   id: string;
   name: string | null;
   statuses: string[];
-  lastPublishedVersionId: string | null;
   workspaceWorkflowId: string | null;
   updatedAt: string;
 };
@@ -77,7 +70,6 @@ type CoreWorkflowVersionResult = {
   id: string;
   label: string;
   status: string;
-  workspaceWorkflowVersionId: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -120,7 +112,6 @@ describe('coreWorkflow (e2e)', () => {
       id: expect.any(String),
       name: 'Core Workflow Read',
       statuses: ['DRAFT'],
-      lastPublishedVersionId: null,
       workspaceWorkflowId,
       updatedAt: expect.any(String),
     });
@@ -155,7 +146,6 @@ describe('coreWorkflow (e2e)', () => {
       id: coreWorkflow?.id,
       name: 'Core Workflow Read',
       statuses: ['DRAFT'],
-      lastPublishedVersionId: null,
       workspaceWorkflowId,
       updatedAt: expect.any(String),
     });
@@ -178,9 +168,7 @@ describe('coreWorkflow (e2e)', () => {
       query: CORE_WORKFLOW_VERSIONS_QUERY,
       variables: { workspaceWorkflowId },
       extract: (data) => data?.coreWorkflowVersions ?? [],
-      until: (polledVersions) =>
-        polledVersions.length === 1 &&
-        isDefined(polledVersions[0].workspaceWorkflowVersionId),
+      until: (polledVersions) => polledVersions.length === 1,
     });
 
     expect(versions).toEqual([
@@ -188,23 +176,20 @@ describe('coreWorkflow (e2e)', () => {
         id: expect.any(String),
         label: 'v1',
         status: 'DRAFT',
-        workspaceWorkflowVersionId: expect.any(String),
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       },
     ]);
 
     const versionResponse = await workflowGraphqlRequest(
-      CORE_WORKFLOW_VERSION_QUERY,
-      {
-        workspaceWorkflowVersionId: versions[0].workspaceWorkflowVersionId,
-      },
+      CORE_WORKFLOW_VERSION_BY_ID_QUERY,
+      { coreWorkflowVersionId: versions[0].id },
     );
 
     expect(versionResponse.body.errors).toBeUndefined();
-    expect(versionResponse.body.data.coreWorkflowVersion).toEqual(
+    expect(versionResponse.body.data.coreWorkflowVersionById).toEqual(
       expect.objectContaining({
-        workspaceWorkflowVersionId: versions[0].workspaceWorkflowVersionId,
+        id: versions[0].id,
         status: 'DRAFT',
         updatedAt: expect.any(String),
       }),

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { McpError } from '@modelcontextprotocol/sdk/types.js';
+import { ProtocolError } from '@modelcontextprotocol/client';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type FlatMcpServer } from 'src/engine/metadata-modules/flat-mcp-server/types/flat-mcp-server.type';
@@ -75,7 +75,7 @@ export class McpServerToolCallService {
           !output.success && isMcpUnknownToolMessage(output.error ?? ''),
       };
     } catch (error) {
-      if (error instanceof McpError) {
+      if (error instanceof ProtocolError) {
         return {
           output: {
             success: false,
