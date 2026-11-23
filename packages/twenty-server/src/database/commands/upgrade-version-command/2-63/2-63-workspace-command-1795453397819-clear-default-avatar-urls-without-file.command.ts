@@ -1,16 +1,15 @@
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Command } from 'nest-commander';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { FileFolder } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-
-const CORE_PICTURE_FILE_ID_PATTERN =
-  '^[a-z]+://[^/]+/file/core-picture/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})(?:[/?#]|$)';
 
 @RegisteredWorkspaceCommand('2.63.0', 1795453397819)
 @Command({
@@ -31,26 +30,40 @@ export class ClearDefaultAvatarUrlsWithoutFileCommand extends ProvisionedWorkspa
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const staleUserWorkspaces: { id: string }[] = await this.dataSource.query(
-      `SELECT "userWorkspace"."id"
-       FROM "core"."userWorkspace" "userWorkspace"
-       CROSS JOIN LATERAL (
-         SELECT substring("userWorkspace"."defaultAvatarUrl" from $2)::uuid AS "fileId"
-       ) "parsed"
-       WHERE "userWorkspace"."workspaceId" = $1
-         AND "parsed"."fileId" IS NOT NULL
-         AND NOT EXISTS (
-           SELECT 1
-           FROM "core"."file" "file"
-           WHERE "file"."id" = "parsed"."fileId"
-             AND "file"."workspaceId" = "userWorkspace"."workspaceId"
-             AND "file"."path" LIKE 'core-picture/%'
-             AND "file"."deletedAt" IS NULL
-         )`,
-      [workspaceId, CORE_PICTURE_FILE_ID_PATTERN],
+    const userWorkspaces: { id: string; defaultAvatarUrl: string }[] =
+      await this.dataSource.query(
+        `SELECT "id", "defaultAvatarUrl" FROM "core"."userWorkspace"
+         WHERE "workspaceId" = $1 AND "defaultAvatarUrl" IS NOT NULL`,
+        [workspaceId],
+      );
+
+    const avatarFiles = userWorkspaces.flatMap(({ id, defaultAvatarUrl }) => {
+      const fileId = extractFileIdFromUrl(
+        defaultAvatarUrl,
+        FileFolder.CorePicture,
+      );
+
+      return isDefined(fileId) ? [{ userWorkspaceId: id, fileId }] : [];
+    });
+
+    if (!isNonEmptyArray(avatarFiles)) {
+      return;
+    }
+
+    const existingFiles: { id: string }[] = await this.dataSource.query(
+      `SELECT "id" FROM "core"."file"
+       WHERE "workspaceId" = $1
+         AND "id" = ANY($2::uuid[])
+         AND "path" LIKE 'core-picture/%'
+         AND "deletedAt" IS NULL`,
+      [workspaceId, avatarFiles.map(({ fileId }) => fileId)],
     );
 
-    const staleUserWorkspaceIds = staleUserWorkspaces.map(({ id }) => id);
+    const existingFileIds = new Set(existingFiles.map(({ id }) => id));
+
+    const staleUserWorkspaceIds = avatarFiles
+      .filter(({ fileId }) => !existingFileIds.has(fileId))
+      .map(({ userWorkspaceId }) => userWorkspaceId);
 
     if (!isNonEmptyArray(staleUserWorkspaceIds)) {
       return;
