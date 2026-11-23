@@ -21,6 +21,8 @@ const mockUserAgent = (userAgent: string) =>
 describe('getSystemNotificationSettings', () => {
   afterEach(() => {
     jest.restoreAllMocks();
+    Reflect.deleteProperty(navigator, 'brave');
+    Reflect.deleteProperty(navigator, 'maxTouchPoints');
   });
 
   it.each([
@@ -83,5 +85,33 @@ describe('getSystemNotificationSettings', () => {
     mockUserAgent(userAgent);
 
     expect(getSystemNotificationSettings()).toEqual(expectedSettings);
+  });
+
+  it('should describe Brave on Mac', () => {
+    mockUserAgent(MAC_CHROME_USER_AGENT);
+    Object.defineProperty(navigator, 'brave', {
+      value: {},
+      configurable: true,
+    });
+
+    expect(getSystemNotificationSettings()).toEqual({
+      operatingSystem: 'mac',
+      browserName: 'Brave',
+      settingsEntryName: 'Brave Browser',
+      url: `${MAC_NOTIFICATION_SETTINGS_URL}?id=com.brave.Browser`,
+    });
+  });
+
+  it('should not link to macOS settings on an iPad', () => {
+    mockUserAgent(MAC_SAFARI_USER_AGENT);
+    Object.defineProperty(navigator, 'maxTouchPoints', {
+      value: 5,
+      configurable: true,
+    });
+
+    expect(getSystemNotificationSettings()).toEqual({
+      operatingSystem: 'other',
+      browserName: 'Safari',
+    });
   });
 });

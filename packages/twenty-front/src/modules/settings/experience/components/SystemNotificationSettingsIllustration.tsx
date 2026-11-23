@@ -2,17 +2,22 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconAppWindow } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+
+import { type SystemNotificationSettings } from '@/web-push/types/SystemNotificationSettings';
 
 type SystemNotificationSettingsIllustrationRow = {
   label: string;
   isOn: boolean;
   isHighlighted: boolean;
-  hasAppIcon?: boolean;
+  hasAppIcon: boolean;
 };
 
 type SystemNotificationSettingsIllustrationProps = {
-  operatingSystem: 'mac' | 'windows';
+  operatingSystem: Exclude<
+    SystemNotificationSettings['operatingSystem'],
+    'other'
+  >;
   settingsEntryName: string;
 };
 
@@ -43,8 +48,8 @@ const StyledTrafficLights = styled.div`
 const StyledTrafficLight = styled.span`
   background: ${themeCssVariables.border.color.strong};
   border-radius: 50%;
-  height: 8px;
-  width: 8px;
+  height: ${themeCssVariables.spacing[2]};
+  width: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledRow = styled.div<{ isHighlighted: boolean }>`
@@ -74,26 +79,41 @@ export const SystemNotificationSettingsIllustration = ({
   settingsEntryName,
 }: SystemNotificationSettingsIllustrationProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
-  const rows: SystemNotificationSettingsIllustrationRow[] =
-    operatingSystem === 'mac'
-      ? [
-          {
-            label: t`Allow notifications`,
-            isOn: true,
-            isHighlighted: true,
-          },
-        ]
-      : [
-          { label: t`Notifications`, isOn: true, isHighlighted: false },
-          { label: t`Do not disturb`, isOn: false, isHighlighted: false },
-          {
-            label: settingsEntryName,
-            isOn: true,
-            isHighlighted: true,
-            hasAppIcon: true,
-          },
-        ];
+  const rowsByOperatingSystem: Record<
+    SystemNotificationSettingsIllustrationProps['operatingSystem'],
+    SystemNotificationSettingsIllustrationRow[]
+  > = {
+    mac: [
+      {
+        label: t`Allow notifications`,
+        isOn: true,
+        isHighlighted: true,
+        hasAppIcon: false,
+      },
+    ],
+    windows: [
+      {
+        label: t`Notifications`,
+        isOn: true,
+        isHighlighted: false,
+        hasAppIcon: false,
+      },
+      {
+        label: t`Do not disturb`,
+        isOn: false,
+        isHighlighted: false,
+        hasAppIcon: false,
+      },
+      {
+        label: settingsEntryName,
+        isOn: true,
+        isHighlighted: true,
+        hasAppIcon: true,
+      },
+    ],
+  };
 
   return (
     <StyledWindow aria-hidden>
@@ -109,13 +129,15 @@ export const SystemNotificationSettingsIllustration = ({
           ? t`Notifications › ${settingsEntryName}`
           : t`System › Notifications`}
       </StyledWindowTitle>
-      {rows.map(({ label, isOn, isHighlighted, hasAppIcon }) => (
-        <StyledRow key={label} isHighlighted={isHighlighted}>
-          {hasAppIcon === true && <IconAppWindow size={16} />}
-          <StyledRowLabel>{label}</StyledRowLabel>
-          <Switch checked={isOn} readOnly size="sm" tabIndex={-1} />
-        </StyledRow>
-      ))}
+      {rowsByOperatingSystem[operatingSystem].map(
+        ({ label, isOn, isHighlighted, hasAppIcon }) => (
+          <StyledRow key={label} isHighlighted={isHighlighted}>
+            {hasAppIcon && <IconAppWindow size={theme.icon.size.md} />}
+            <StyledRowLabel>{label}</StyledRowLabel>
+            <Switch checked={isOn} readOnly size="sm" tabIndex={-1} />
+          </StyledRow>
+        ),
+      )}
     </StyledWindow>
   );
 };

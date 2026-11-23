@@ -1,6 +1,8 @@
-export type SystemNotificationSettings = {
-  operatingSystem: 'mac' | 'windows' | 'other';
-  browserName?: string;
-  settingsEntryName?: string;
-  url?: string;
-};
+export type SystemNotificationSettings =
+  | {
+      operatingSystem: 'mac' | 'windows';
+      browserName?: string;
+      settingsEntryName?: string;
+      url: string;
+    }
+  | { operatingSystem: 'other'; browserName?: string };

@@ -9,8 +9,14 @@ const MAC_NOTIFICATION_SETTINGS_URL =
 
 const WINDOWS_NOTIFICATION_SETTINGS_URL = 'ms-settings:notifications';
 
-// Order matters: Edge and Opera user agents also contain "Chrome/", and
-// Chrome's contains "Safari/"
+// Brave reports a Chrome user agent, so it is detected from navigator.brave
+const BRAVE_BROWSER = doNotTranslate({
+  name: 'Brave',
+  macBundleId: 'com.brave.Browser',
+  macSettingsEntryName: 'Brave Browser',
+});
+
+// Order matters: Edge and Opera user agents contain "Chrome/", which contains "Safari/"
 const BROWSERS = doNotTranslate([
   {
     userAgentToken: 'Edg/',
@@ -39,9 +45,14 @@ const BROWSERS = doNotTranslate([
 
 export const getSystemNotificationSettings = (): SystemNotificationSettings => {
   const device = getUserDevice();
-  const browser = BROWSERS.find(({ userAgentToken }) =>
-    navigator.userAgent.includes(userAgentToken),
-  );
+  const browser =
+    'brave' in navigator
+      ? BRAVE_BROWSER
+      : BROWSERS.find(({ userAgentToken }) =>
+          navigator.userAgent.includes(userAgentToken),
+        );
+  // iPadOS Safari reports a Mac user agent
+  const isTouchDevice = navigator.maxTouchPoints > 1;
 
   if (device === 'windows') {
     return {
@@ -52,7 +63,7 @@ export const getSystemNotificationSettings = (): SystemNotificationSettings => {
     };
   }
 
-  if (device === 'mac') {
+  if (device === 'mac' && !isTouchDevice) {
     return {
       operatingSystem: 'mac',
       browserName: browser?.name,
