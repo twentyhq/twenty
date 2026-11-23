@@ -85,9 +85,7 @@ export class MarketplaceResolver {
         workspace.id,
       ),
       shouldIncludeBillingPrices:
-        await this.applicationBillingPriceService.isApplicationPriceBillingEnabled(
-          workspace.id,
-        ),
+        this.applicationBillingPriceService.shouldShowApplicationPrices(),
     });
   }
 

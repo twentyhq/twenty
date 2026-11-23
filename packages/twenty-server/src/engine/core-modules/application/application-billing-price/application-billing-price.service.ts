@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationBillingPriceDTO } from 'src/engine/core-modules/application/dtos/application-billing-price.dto';
@@ -16,19 +15,10 @@ export class ApplicationBillingPriceService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async isApplicationPriceBillingEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return false;
-    }
-
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return featureFlagsMap[FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED];
+  // Not gated on IS_APPLICATION_PRICE_BILLING_ENABLED: prices accepted at
+  // install or connection are billed as soon as the flag is turned on
+  shouldShowApplicationPrices(): boolean {
+    return this.twentyConfigService.get('IS_BILLING_ENABLED');
   }
 
   async findConnectedAccountPrices({
@@ -38,7 +28,7 @@ export class ApplicationBillingPriceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<ApplicationBillingPriceDTO[]> {
-    if (!(await this.isApplicationPriceBillingEnabled(workspaceId))) {
+    if (!this.shouldShowApplicationPrices()) {
       return [];
     }
 
