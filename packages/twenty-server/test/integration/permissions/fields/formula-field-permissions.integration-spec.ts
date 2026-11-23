@@ -1,6 +1,7 @@
+import { createOneOperation } from 'test/integration/graphql/utils/create-one-operation.util';
+import { destroyOneOperation } from 'test/integration/graphql/utils/destroy-one-operation.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateOneOperation } from 'test/integration/graphql/utils/update-one-operation.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -45,9 +46,8 @@ describe('formula fields should not reveal values the reader cannot read (integr
   let personObjectMetadataId: string;
   let companyObjectMetadataId: string;
   let originalMemberRoleId: string;
-  let originalPeople: { id: string; jobTitle: string; avatarUrl: string }[];
-  let companyLabels: string[];
-  let originalCompanies: { id: string; employees: number | null }[];
+  let people: { id: string }[];
+  let companyIds: string[];
   const formulaFieldMetadataIds: string[] = [];
   const roleIds: string[] = [];
 
@@ -57,7 +57,7 @@ describe('formula fields should not reveal values the reader cannot read (integr
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
         gqlFields: FORMULA_GQL_FIELDS,
-        filter: { id: { in: originalPeople.map(({ id }) => id) } },
+        filter: { id: { in: people.map(({ id }) => id) } },
         orderBy: [{ id: 'AscNullsLast' }],
       }),
       token,
@@ -130,53 +130,34 @@ describe('formula fields should not reveal values the reader cannot read (integr
     ]);
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
 
-    const peopleResponse = await makeGraphqlApiRequest(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: 'id jobTitle avatarUrl company { id employees }',
-        filter: { companyId: { is: 'NOT_NULL' } },
-        orderBy: [{ id: 'AscNullsLast' }],
-        first: 2,
-      }),
-    );
-    const people: {
-      id: string;
-      jobTitle: string;
-      avatarUrl: string;
-      company: { id: string; employees: number | null };
-    }[] = peopleResponse.body.data.people.edges.map(
-      (edge: { node: unknown }) => edge.node,
-    );
+    // Other suites delete every person, so the seeded ones cannot be relied on
+    const personIds = [v4(), v4()].sort();
 
-    originalPeople = people.map(({ id, jobTitle, avatarUrl }) => ({
-      id,
-      jobTitle,
-      avatarUrl,
-    }));
-    originalCompanies = people.map(({ company }) => company);
-    companyLabels = people.map(() => 'Employees: 42');
+    companyIds = [v4(), v4()];
+    people = personIds.map((id) => ({ id }));
 
-    for (const { id } of originalCompanies) {
-      await updateOneOperation({
+    for (const [index, id] of companyIds.entries()) {
+      await createOneOperation({
         objectMetadataSingularName: 'company',
-        recordId: id,
-        input: { employees: 42 },
+        input: {
+          id,
+          name: `Formula permissions company ${index}`,
+          employees: 42,
+        },
       });
     }
 
-    await Promise.all(
-      originalPeople.map(({ id }, index) =>
-        updateOneOperation({
-          objectMetadataSingularName: 'person',
-          recordId: id,
-          input: {
-            avatarUrl: 'Secret avatar',
-            jobTitle: index === 0 ? 'Paris office' : 'London office',
-          },
-        }),
-      ),
-    );
+    for (const [index, id] of personIds.entries()) {
+      await createOneOperation({
+        objectMetadataSingularName: 'person',
+        input: {
+          id,
+          companyId: companyIds[index],
+          avatarUrl: 'Secret avatar',
+          jobTitle: index === 0 ? 'Paris office' : 'London office',
+        },
+      });
+    }
 
     for (const { name, expression } of FORMULAS) {
       const { data } = await createOneFieldMetadata({
@@ -221,37 +202,33 @@ describe('formula fields should not reveal values the reader cannot read (integr
       });
     }
 
-    for (const { id, employees } of originalCompanies) {
-      await updateOneOperation({
-        objectMetadataSingularName: 'company',
+    for (const { id } of people) {
+      await destroyOneOperation({
+        objectMetadataSingularName: 'person',
         recordId: id,
-        input: { employees },
       });
     }
 
-    await Promise.all(
-      originalPeople.map(({ id, jobTitle, avatarUrl }) =>
-        updateOneOperation({
-          objectMetadataSingularName: 'person',
-          recordId: id,
-          input: { jobTitle, avatarUrl },
-        }),
-      ),
-    );
+    for (const recordId of companyIds) {
+      await destroyOneOperation({
+        objectMetadataSingularName: 'company',
+        recordId,
+      });
+    }
   }, 120000);
 
   it('should compute every formula for a reader without restriction', async () => {
     expect(await listPeople()).toEqual([
       {
-        id: originalPeople[0].id,
+        id: people[0].id,
         formulaJobShout: 'PARIS OFFICE',
-        formulaCompanyLabel: companyLabels[0],
+        formulaCompanyLabel: 'Employees: 42',
         formulaAvatarMark: 'Secret avatar!',
       },
       {
-        id: originalPeople[1].id,
+        id: people[1].id,
         formulaJobShout: 'LONDON OFFICE',
-        formulaCompanyLabel: companyLabels[1],
+        formulaCompanyLabel: 'Employees: 42',
         formulaAvatarMark: 'Secret avatar!',
       },
     ]);
@@ -267,10 +244,10 @@ describe('formula fields should not reveal values the reader cannot read (integr
     });
 
     expect(await listPeople(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual(
-      originalPeople.map(({ id }, index) => ({
+      people.map(({ id }) => ({
         id,
         formulaJobShout: null,
-        formulaCompanyLabel: companyLabels[index],
+        formulaCompanyLabel: 'Employees: 42',
         formulaAvatarMark: 'Secret avatar!',
       })),
     );
@@ -371,9 +348,9 @@ describe('formula fields should not reveal values the reader cannot read (integr
 
     expect(people).toEqual([
       {
-        id: originalPeople[0].id,
+        id: people[0].id,
         formulaJobShout: 'PARIS OFFICE',
-        formulaCompanyLabel: companyLabels[0],
+        formulaCompanyLabel: 'Employees: 42',
         formulaAvatarMark: '!',
       },
     ]);
