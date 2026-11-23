@@ -22,7 +22,7 @@ const getHopsKey = (
   >[0],
 ) => getRelatedRecordPathFieldMetadataUniversalIdentifiers(hops).join(':');
 
-@RegisteredWorkspaceCommand('2.63.0', 1795458219287)
+@RegisteredWorkspaceCommand('2.63.0', 1795477649163)
 @Command({
   name: 'upgrade:2-63:add-call-recording-related-record-path',
   description:
