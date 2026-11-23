@@ -6,7 +6,10 @@ import {
 
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-field/utils/set-formula-field-bindings.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const SUPPLIER_OBJECT_ID = 'supplier-object';
@@ -186,8 +189,28 @@ export const FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK =
     flatEntityMaps: createEmptyFlatEntityMaps(),
   });
 
-export const FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK =
+const FIELDS_WITHOUT_BINDINGS = [...SUPPLIER_FIELDS, ...GADGET_FIELDS];
+
+// Formulas are stored with their bindings, as the field service saves them
+const FIELDS = FIELDS_WITHOUT_BINDINGS.map((field) => {
+  const { universalSettings } = setFormulaFieldBindings({
+    universalFlatFieldMetadata: field,
+    universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+    universalFlatFieldMetadataMaps: {
+      byUniversalIdentifier: Object.fromEntries(
+        FIELDS_WITHOUT_BINDINGS.map((sourceField) => [
+          sourceField.universalIdentifier,
+          sourceField,
+        ]),
+      ),
+    },
+  });
+
+  return { ...field, settings: universalSettings, universalSettings };
+});
+
+export const FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK: FlatEntityMaps<FlatFieldMetadata> =
   addAllFlatEntitiesToFlatEntityMaps({
-    flatEntities: [...SUPPLIER_FIELDS, ...GADGET_FIELDS],
+    flatEntities: FIELDS,
     flatEntityMaps: createEmptyFlatEntityMaps(),
   });

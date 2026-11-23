@@ -245,6 +245,7 @@ export { coerceFormulaCurrencyCode } from './formula/coerceFormulaCurrencyCode';
 export { coerceFormulaValue } from './formula/coerceFormulaValue';
 export { compileFormulaExpression } from './formula/compileFormulaExpression';
 export { createFormulaEvaluator } from './formula/createFormulaEvaluator';
+export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormulaBindings';
 export { getFieldMetadataFormulaCurrencyCodeExpression } from './formula/getFieldMetadataFormulaCurrencyCodeExpression';
 export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
 export { isFormulaFieldMetadata } from './formula/isFormulaFieldMetadata';

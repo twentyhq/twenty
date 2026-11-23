@@ -1,17 +1,14 @@
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
-  compileFormulaExpression,
+  getFieldMetadataFormulaBindings,
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
   isValidationRuleReservedName,
   renameValidationRuleExpressionFields,
+  renameValidationRulePath,
 } from 'twenty-shared/utils';
 
-import {
-  buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps,
-  type FormulaSourceUniversalFlatObjectMetadata,
-} from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type UniversalFlatFieldMetadataByUniversalIdentifier = Partial<
@@ -20,37 +17,20 @@ type UniversalFlatFieldMetadataByUniversalIdentifier = Partial<
 
 export const computeFormulaFieldUpdatesAfterFieldRename = ({
   renamedFieldUniversalIdentifier,
-  previousFieldName,
   newFieldName,
-  universalFlatObjectMetadataMaps,
   existingUniversalFlatFieldMetadataByUniversalIdentifier,
   pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier,
   deletedUniversalFlatFieldMetadataByUniversalIdentifier,
 }: {
   renamedFieldUniversalIdentifier: string;
-  previousFieldName: string;
   newFieldName: string;
-  universalFlatObjectMetadataMaps: {
-    byUniversalIdentifier: Partial<
-      Record<string, FormulaSourceUniversalFlatObjectMetadata>
-    >;
-  };
   existingUniversalFlatFieldMetadataByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
   pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
   deletedUniversalFlatFieldMetadataByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
 }): Record<string, UniversalFlatFieldMetadata> => {
-  // A reserved name would change what the rewritten expression means, so the formula is left to fail
-  if (isValidationRuleReservedName({ name: newFieldName, isMember: false })) {
-    return {};
-  }
-
   const fieldNameByUniversalIdentifier = new Map([
     [renamedFieldUniversalIdentifier, newFieldName],
   ]);
-  const fieldDescriptorsByObjectUniversalIdentifier = new Map<
-    string,
-    ValidationRuleFieldDescriptor[]
-  >();
   const universalFlatFieldMetadataToUpdate: Record<
     string,
     UniversalFlatFieldMetadata
@@ -63,8 +43,7 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       continue;
     }
 
-    const { universalIdentifier, objectMetadataUniversalIdentifier } =
-      existingUniversalFlatFieldMetadata;
+    const { universalIdentifier } = existingUniversalFlatFieldMetadata;
     const universalFlatFieldMetadata =
       pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier[
         universalIdentifier
@@ -73,17 +52,11 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
     const expression = getFieldMetadataFormulaExpression({ settings });
     const currencyCodeExpression =
       getFieldMetadataFormulaCurrencyCodeExpression({ settings });
-    const universalFlatObjectMetadata =
-      universalFlatObjectMetadataMaps.byUniversalIdentifier[
-        objectMetadataUniversalIdentifier
-      ];
+    const bindings = getFieldMetadataFormulaBindings({ settings });
 
     if (
       !isDefined(expression) ||
-      ![expression, currencyCodeExpression].some((formulaExpression) =>
-        formulaExpression?.includes(previousFieldName),
-      ) ||
-      !isDefined(universalFlatObjectMetadata) ||
+      !isDefined(bindings) ||
       isDefined(
         deletedUniversalFlatFieldMetadataByUniversalIdentifier[
           universalIdentifier
@@ -93,59 +66,56 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       continue;
     }
 
-    const fields =
-      fieldDescriptorsByObjectUniversalIdentifier.get(
-        objectMetadataUniversalIdentifier,
-      ) ??
-      buildFormulaFieldDescriptorsFromUniversalFlatEntityMaps({
-        universalFlatObjectMetadata,
-        universalFlatObjectMetadataMaps,
-        universalFlatFieldMetadataMaps: {
-          byUniversalIdentifier:
-            existingUniversalFlatFieldMetadataByUniversalIdentifier,
-        },
-      });
-
-    fieldDescriptorsByObjectUniversalIdentifier.set(
-      objectMetadataUniversalIdentifier,
-      fields,
+    const renamedPaths = Object.entries(bindings).filter(
+      ([, boundUniversalIdentifier]) =>
+        boundUniversalIdentifier === renamedFieldUniversalIdentifier,
     );
 
-    const renameExpression = (formulaExpression: string): string => {
-      const compilation = compileFormulaExpression({
-        expression: formulaExpression,
-        fields,
-      });
-
-      return compilation.isValid
-        ? renameValidationRuleExpressionFields({
-            expression: formulaExpression,
-            bindings: compilation.bindings,
-            fieldNameByUniversalIdentifier,
-          })
-        : formulaExpression;
-    };
-    const renamedExpression = renameExpression(expression);
-    const renamedCurrencyCodeExpression = isDefined(currencyCodeExpression)
-      ? renameExpression(currencyCodeExpression)
-      : undefined;
-
+    // A reserved name would change what the rewritten expression means, so the formula is left to fail
     if (
-      renamedExpression === expression &&
-      renamedCurrencyCodeExpression === currencyCodeExpression
+      renamedPaths.length === 0 ||
+      renamedPaths.some(([path]) =>
+        isValidationRuleReservedName({
+          name: newFieldName,
+          isMember: path.includes('.'),
+        }),
+      )
     ) {
       continue;
     }
+
+    const renamedBindings: ValidationRuleBindings = Object.fromEntries(
+      Object.entries(bindings).map(([path, boundUniversalIdentifier]) => [
+        renameValidationRulePath({
+          path,
+          bindings,
+          fieldNameByUniversalIdentifier,
+        }),
+        boundUniversalIdentifier,
+      ]),
+    );
+
+    const renameExpression = (formulaExpression: string) =>
+      renameValidationRuleExpressionFields({
+        expression: formulaExpression,
+        bindings,
+        fieldNameByUniversalIdentifier,
+      });
 
     universalFlatFieldMetadataToUpdate[universalIdentifier] = {
       ...universalFlatFieldMetadata,
       universalSettings: {
         ...settings,
         formula: {
-          expression: renamedExpression,
-          ...(isDefined(renamedCurrencyCodeExpression)
-            ? { currencyCodeExpression: renamedCurrencyCodeExpression }
+          expression: renameExpression(expression),
+          ...(isDefined(currencyCodeExpression)
+            ? {
+                currencyCodeExpression: renameExpression(
+                  currencyCodeExpression,
+                ),
+              }
             : {}),
+          bindings: renamedBindings,
         },
       },
     };
