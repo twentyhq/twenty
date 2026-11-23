@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
@@ -14,6 +15,7 @@ type NavigationMenuAiChatFavoritesSectionProps = {
 export const NavigationMenuAiChatFavoritesSection = ({
   headerAction,
 }: NavigationMenuAiChatFavoritesSectionProps) => {
+  const { t } = useLingui();
   const currentThreadId = useAiChatPageThreadId();
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
@@ -25,6 +27,7 @@ export const NavigationMenuAiChatFavoritesSection = ({
 
   return (
     <NavigationDrawerInboxFavoritesSection
+      label={t`Favorite chats`}
       channels={inboxFavoriteChannels}
       threads={inboxFavoriteThreads}
       currentThreadId={currentThreadId}
