@@ -213,7 +213,7 @@ The failure handler receives:
 | `jobId` | The queued job that failed. For a job you enqueued with `enqueueJobs`, the `jobId` it returned. |
 | `attemptsMade` | How many queue attempts the job made before failing for good. |
 | `payload` | The payload of the failed run. |
-| `error.errorType` | `TimeoutError` for a timeout, the error's `name` for a thrown error, `UnrecoverableError` when the queue gave up on the job. |
+| `error.errorType` | `TimeoutError` for a timeout, the error's `name` for a thrown error or a platform error, `UnrecoverableError` when the job stalled too many times. |
 | `error.errorMessage` | The error message. |
 
 The handler runs after:
