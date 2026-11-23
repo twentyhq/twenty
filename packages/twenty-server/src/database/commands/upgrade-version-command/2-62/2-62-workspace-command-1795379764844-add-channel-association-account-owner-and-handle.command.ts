@@ -12,7 +12,7 @@ import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/up
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -188,15 +188,11 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
       }
 
       const flatObjectMetadata =
-        findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
+        findFlatEntityByUniversalIdentifierOrThrow<FlatObjectMetadata>({
           flatEntityMaps: flatObjectMetadataMaps,
           universalIdentifier:
             channelAssociation.standardObject.universalIdentifier,
         });
-
-      if (!isDefined(flatObjectMetadata)) {
-        continue;
-      }
 
       const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
         workspaceId,
@@ -250,7 +246,10 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
     workspaceId: string;
     schemaName: string;
     tableName: string;
-    channelAssociation: ChannelAssociation;
+    channelAssociation: Pick<
+      ChannelAssociation,
+      'channelIdColumnName' | 'coreChannelTableName' | 'channelTypeColumnSql'
+    >;
   }): Promise<void> {
     // A member who left and rejoined keeps a soft-deleted row beside the live one
     const channelSources = await this.dataSource.query<
@@ -280,7 +279,6 @@ export class AddChannelAssociationAccountOwnerAndHandleCommand extends Provision
     let lastId: string | null = NIL_UUID;
     let updatedCount = 0;
 
-    // A channel whose owner left has no member to record, so the handle marks the rows already done
     while (isDefined(lastId)) {
       const [batchResult]: BackfillBatchResult[] = await this.dataSource.query(
         `WITH batch AS (

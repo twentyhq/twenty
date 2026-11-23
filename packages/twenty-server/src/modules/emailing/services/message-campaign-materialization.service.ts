@@ -18,6 +18,10 @@ import { type SendCampaignEmailBatchJobData } from 'src/engine/core-modules/emai
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -416,17 +420,22 @@ export class MessageCampaignMaterializationService {
         ]),
       ]);
 
-    const associationSource = isDefined(messageChannel)
-      ? computeChannelAssociationSource({
-          accountOwnerFieldUniversalIdentifier:
-            STANDARD_OBJECTS.messageChannelMessageAssociation.fields
-              .accountOwner.universalIdentifier,
-          channel: messageChannel,
-          flatFieldMetadataMaps,
-          flatWorkspaceMemberMaps,
-          userWorkspaceId,
-        })
-      : {};
+    if (!isDefined(messageChannel)) {
+      throw new EmailingDomainException(
+        `Campaign ${campaignId} cannot be sent: its message channel ${messageChannelId} no longer exists`,
+        EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+      );
+    }
+
+    const associationSource = computeChannelAssociationSource({
+      accountOwnerFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageChannelMessageAssociation.fields.accountOwner
+          .universalIdentifier,
+      channel: messageChannel,
+      flatFieldMetadataMaps,
+      flatWorkspaceMemberMaps,
+      userWorkspaceId,
+    });
 
     await this.insertChunk({
       campaignId,
