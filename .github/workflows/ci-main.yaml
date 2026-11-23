@@ -36,6 +36,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      statuses: write
   emails:
     uses: ./.github/workflows/ci-emails.yaml
     secrets: inherit
@@ -63,9 +64,6 @@ jobs:
       pull-requests: read
   knip:
     uses: ./.github/workflows/ci-knip.yaml
-    secrets: inherit
-  storybook-ui:
-    uses: ./.github/workflows/cd-storybook-ui.yaml
     secrets: inherit
   twenty-apps:
     uses: ./.github/workflows/ci-twenty-apps.yaml

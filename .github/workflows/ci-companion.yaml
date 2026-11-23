@@ -7,10 +7,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: ci-companion-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-
 jobs:
   changed-files-check:
     uses: ./.github/workflows/changed-files.yaml
@@ -25,9 +21,14 @@ jobs:
         yarn.lock
         .github/workflows/ci-companion.yaml
 
+  # Concurrency sits on the gated job so a run with no relevant change never
+  # replaces a pending relevant one on main.
   desktop:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
+    concurrency:
+      group: ci-companion-${{ github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

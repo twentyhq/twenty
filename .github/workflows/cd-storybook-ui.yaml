@@ -2,39 +2,27 @@ name: CD Storybook UI
 
 on:
   push:
+    branches: [main]
     tags: ['sdk/v*', 'ui/v*']
-  workflow_call:
+    paths:
+      - .github/workflows/cd-storybook-ui.yaml
+      - .github/actions/yarn-install/**
+      - package.json
+      - yarn.lock
+      - nx.json
+      - tsconfig.base.json
+      - packages/twenty-ui/**
+      - packages/twenty-shared/**
+      - packages/twenty-docs/**
 
 permissions: {}
 
 concurrency:
-  group: cd-storybook-ui-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.ref == 'refs/heads/main' }}
 
 jobs:
-  changed-files-check:
-    if: github.ref == 'refs/heads/main'
-    permissions:
-      contents: read
-    uses: ./.github/workflows/changed-files.yaml
-    with:
-      files: |
-        .github/workflows/cd-storybook-ui.yaml
-        .github/actions/yarn-install/**
-        package.json
-        yarn.lock
-        nx.json
-        tsconfig.base.json
-        packages/twenty-ui/**
-        packages/twenty-shared/**
-        packages/twenty-docs/**
-
   build:
-    needs: changed-files-check
-    if: >-
-      !cancelled() &&
-      (startsWith(github.ref, 'refs/tags/') ||
-      needs.changed-files-check.outputs.any_changed == 'true')
     permissions:
       contents: read
     runs-on: ubuntu-latest

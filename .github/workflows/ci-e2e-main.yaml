@@ -429,6 +429,34 @@ jobs:
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
 
+  # Main E2E health is tracked from this status, since the CI Main run that
+  # calls this workflow aggregates every other main workflow.
+  e2e-main-commit-status:
+    if: >-
+      !cancelled() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      contains(fromJSON('["success", "failure"]'), needs.e2e-test.result)
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [e2e-test]
+    permissions:
+      statuses: write
+    steps:
+      - name: Report the E2E result as a commit status
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          STATE: ${{ needs.e2e-test.result }}
+          TARGET_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh api "repos/$REPO/statuses/$SHA" \
+            -f state="$STATE" \
+            -f context=ci-e2e-main \
+            -f target_url="$TARGET_URL" \
+            -f description="E2E on main: $STATE"
+
   # Posts the QA Scout verdict as a comment on the merged PR. Separate job so
   # pull-requests:write never coexists with the agent step: the agent reads
   # untrusted page/log content, so the write TARGET is bound to the prepare
