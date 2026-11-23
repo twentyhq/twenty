@@ -4,7 +4,9 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCanTestCoreAgents } from '@/object-core/agents/hooks/useCanTestCoreAgents';
+import { useQuery } from '@apollo/client/react';
+
+import { useCanTestCoreAgent } from '@/object-core/agents/hooks/useCanTestCoreAgent';
 import { useSelectedCoreAgentIds } from '@/object-core/agents/hooks/useSelectedCoreAgentIds';
 import { CORE_AGENT_TEST_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentTestCommandId';
 import { CORE_AGENTS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentsDeleteCommandId';
@@ -14,7 +16,10 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  FindManyAgentsDocument,
+} from '~/generated-metadata/graphql';
 
 export const useCoreAgentsSelectionCommands = () => {
   const { t } = useLingui();
@@ -28,12 +33,19 @@ export const useCoreAgentsSelectionCommands = () => {
   );
   const selectedCoreAgentIds = useSelectedCoreAgentIds();
 
-  const canTestCoreAgents = useCanTestCoreAgents();
+  // the index already loaded its agents, and nothing is selected anywhere else
+  const { data } = useQuery(FindManyAgentsDocument, {
+    fetchPolicy: 'cache-only',
+    skip: selectedCoreAgentIds.length !== 1,
+  });
+  const canTestSelectedCoreAgent = useCanTestCoreAgent(
+    data?.findManyAgents.find(({ id }) => id === selectedCoreAgentIds[0]),
+  );
 
   const testCommandLabel = t`Test Agent`;
   const shouldDisplayTestCommand =
     selectedCoreAgentIds.length === 1 &&
-    canTestCoreAgents &&
+    canTestSelectedCoreAgent &&
     !isInPreviewMode &&
     isMatchingSidePanelSearch({ label: testCommandLabel, sidePanelSearch });
 

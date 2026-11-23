@@ -3,8 +3,7 @@ import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCanTestCoreAgents } from '@/object-core/agents/hooks/useCanTestCoreAgents';
-import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
+import { useCanTestCoreAgent } from '@/object-core/agents/hooks/useCanTestCoreAgent';
 import { useCurrentCoreAgent } from '@/object-core/agents/hooks/useCurrentCoreAgent';
 import { CORE_AGENT_DELETE_CURRENT_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentDeleteCurrentCommandId';
 import { CORE_AGENT_TEST_COMMAND_ID } from '@/object-core/commands/constants/CoreAgentTestCommandId';
@@ -19,16 +18,11 @@ export const useCoreAgentPageCommands = () => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const currentCoreAgent = useCurrentCoreAgent();
-  const canTestCoreAgents = useCanTestCoreAgents();
-  const { isDirty } = useCoreAgentDirtyState(currentCoreAgent);
+  const canTestCurrentCoreAgent = useCanTestCoreAgent(currentCoreAgent);
 
   const testCommandLabel = t`Test Agent`;
-  // a test runs the saved agent, so it waits for pending edits to be saved or discarded
   const shouldDisplayTestCommand =
-    isDefined(currentCoreAgent) &&
-    currentCoreAgent.isActive &&
-    canTestCoreAgents &&
-    !isDirty &&
+    canTestCurrentCoreAgent &&
     !isInPreviewMode &&
     isMatchingSidePanelSearch({ label: testCommandLabel, sidePanelSearch });
 

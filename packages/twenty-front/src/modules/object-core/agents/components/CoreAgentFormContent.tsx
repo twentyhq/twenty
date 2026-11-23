@@ -41,7 +41,7 @@ import { CORE_AGENT_TEST_COMMAND_ID } from '@/object-core/commands/constants/Cor
 import { CoreAgentRunsContent } from '@/object-core/agents/components/CoreAgentRunsContent';
 import { CoreAgentSettingsContent } from '@/object-core/agents/components/CoreAgentSettingsContent';
 import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/CoreAgentDeleteDialogId';
-import { useCanTestCoreAgents } from '@/object-core/agents/hooks/useCanTestCoreAgents';
+import { useCanTestCoreAgent } from '@/object-core/agents/hooks/useCanTestCoreAgent';
 import { useOpenCoreAgentTestSidePanel } from '@/object-core/agents/hooks/useOpenCoreAgentTestSidePanel';
 import { useCanReadCoreAgentRuns } from '@/object-core/agents/hooks/useCanReadCoreAgentRuns';
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
@@ -79,7 +79,7 @@ export const CoreAgentFormContent = ({
 
   const isReadOnly = useIsCoreAgentReadOnly(agent);
   const canReadCoreAgentRuns = useCanReadCoreAgentRuns();
-  const canTestCoreAgents = useCanTestCoreAgents();
+  const canTest = useCanTestCoreAgent(agent);
   const { openCoreAgentTestSidePanel } = useOpenCoreAgentTestSidePanel();
   const activeTabId = useCoreAgentShowPageActiveTab({
     agentId: agent.id,
@@ -107,9 +107,6 @@ export const CoreAgentFormContent = ({
     }),
     [agent.id, agent.label, agent.createdAt],
   );
-
-  const canTest = canTestCoreAgents && agent.isActive && !isDirty;
-  const handleTest = () => openCoreAgentTestSidePanel(agent.id);
 
   const title = isNonEmptyString(agent.label) ? agent.label : t`Untitled`;
 
@@ -167,7 +164,7 @@ export const CoreAgentFormContent = ({
                       shortLabel: t`Test`,
                       Icon: IconPlayerPlay,
                     }}
-                    onClick={handleTest}
+                    onClick={() => openCoreAgentTestSidePanel(agent.id)}
                   />
                 )}
                 {!isReadOnly && (
@@ -239,10 +236,7 @@ export const CoreAgentFormContent = ({
           />
         )}
         {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.TURNS && (
-          <CoreAgentRunsContent
-            agentId={agent.id}
-            onTest={canTest ? handleTest : undefined}
-          />
+          <CoreAgentRunsContent agent={agent} />
         )}
         {activeTabId === CORE_AGENT_SHOW_PAGE_TABS.TAB_IDS.SETTINGS && (
           <SettingsPageContainer>

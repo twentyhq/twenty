@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
@@ -36,7 +37,7 @@ export const useTestCoreAgent = (
         },
       });
 
-      if (data?.runAgent) {
+      if (isDefined(data?.runAgent)) {
         openAskAiThread(data.runAgent.threadId);
       }
     } catch (error) {
