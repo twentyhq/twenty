@@ -73,7 +73,6 @@ export type CoreWorkflowDto = {
   isPrivate: Scalars['Boolean']['output'];
   isSystem: Scalars['Boolean']['output'];
   lastPublishedCoreWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
-  lastPublishedVersionId?: Maybe<Scalars['UUID']['output']>;
   name?: Maybe<Scalars['String']['output']>;
   statuses: Array<CoreWorkflowStatus>;
   updatedAt: Scalars['String']['output'];
@@ -221,7 +220,6 @@ export type CoreWorkflowVersionDto = {
   trigger?: Maybe<Scalars['JSON']['output']>;
   updatedAt: Scalars['String']['output'];
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
-  workspaceWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
 };
 
 export enum CoreWorkflowVersionStatus {
@@ -653,7 +651,6 @@ export type Query = {
   coreWorkflow?: Maybe<CoreWorkflowDto>;
   coreWorkflowById?: Maybe<CoreWorkflowDto>;
   coreWorkflowRunInsights?: Maybe<CoreWorkflowRunInsights>;
-  coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
   coreWorkflowVersionsByCoreWorkflowId: Array<CoreWorkflowVersionDto>;
@@ -699,11 +696,6 @@ export type QueryCoreWorkflowByIdArgs = {
 export type QueryCoreWorkflowRunInsightsArgs = {
   coreWorkflowId: Scalars['UUID']['input'];
   timeZone: Scalars['String']['input'];
-};
-
-
-export type QueryCoreWorkflowVersionArgs = {
-  workspaceWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 

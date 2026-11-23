@@ -1,8 +1,12 @@
 import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { RecordTableLookupTargetFieldSelectMenu } from '@/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu';
+import { RecordTableScopedRelationColumnSelectMenu } from '@/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu';
+import { resolveScopableRelation } from '@/object-record/record-column-scope/utils/resolveScopableRelation';
 import { useCanAddRecordTableLookupColumns } from '@/object-record/record-table/hooks/useCanAddRecordTableLookupColumns';
 import { isPlainManyToOneRelationField } from '@/object-record/utils/isPlainManyToOneRelationField';
+import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColumnInSidePanel';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -55,6 +59,9 @@ export const RecordTableHeaderPlusButtonContent = () => {
   });
 
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { openEditColumnInSidePanel } =
+    useOpenEditColumnInSidePanel(recordTableId);
 
   const isFieldVisible = (fieldMetadataItem: FieldMetadataItem) =>
     isDefined(
@@ -68,13 +75,26 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const isLookupRelation = (fieldMetadataItem: FieldMetadataItem) =>
     canAddLookupColumns && isPlainManyToOneRelationField(fieldMetadataItem);
 
+  // A one-to-many relation stays listed once shown, to reach its filtered columns
+  const isScopedRelation = (fieldMetadataItem: FieldMetadataItem) =>
+    canAddLookupColumns &&
+    isDefined(
+      resolveScopableRelation({ fieldMetadataItem, objectMetadataItems }),
+    );
+
+  const hasSubPage = (fieldMetadataItem: FieldMetadataItem) =>
+    isLookupRelation(fieldMetadataItem) || isScopedRelation(fieldMetadataItem);
+
   const availableFieldMetadataItemsToShow = activeFieldMetadataItems.filter(
     (fieldMetadataItem) =>
-      !isFieldVisible(fieldMetadataItem) || isLookupRelation(fieldMetadataItem),
+      !isFieldVisible(fieldMetadataItem) || hasSubPage(fieldMetadataItem),
   );
 
   const lookupRelationFieldMetadataItems =
     availableFieldMetadataItemsToShow.filter(isLookupRelation);
+
+  const scopedRelationFieldMetadataItems =
+    availableFieldMetadataItemsToShow.filter(isScopedRelation);
 
   const filteredFieldMetadataItems = availableFieldMetadataItemsToShow.filter(
     (fieldMetadataItem) => {
@@ -115,7 +135,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
                 <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
               );
 
-              return isLookupRelation(fieldMetadataItem) ? (
+              return hasSubPage(fieldMetadataItem) ? (
                 <Dropdown.ActionItem
                   key={fieldMetadataItem.id}
                   page={fieldMetadataItem.id}
@@ -196,6 +216,29 @@ export const RecordTableHeaderPlusButtonContent = () => {
               </>
             )}
           </RecordTableLookupTargetFieldSelectMenu>
+        </Dropdown.Page>
+      ))}
+      {scopedRelationFieldMetadataItems.map((relationFieldMetadataItem) => (
+        <Dropdown.Page
+          key={relationFieldMetadataItem.id}
+          id={relationFieldMetadataItem.id}
+        >
+          <RecordTableScopedRelationColumnSelectMenu
+            relationFieldMetadataItem={relationFieldMetadataItem}
+            onPlainColumnSelect={
+              isFieldVisible(relationFieldMetadataItem)
+                ? undefined
+                : () =>
+                    handleFieldMetadataItemMenuItemClick(
+                      relationFieldMetadataItem,
+                    )
+            }
+            onScopedColumnSelect={() =>
+              openEditColumnInSidePanel({
+                fieldMetadataItemId: relationFieldMetadataItem.id,
+              })
+            }
+          />
         </Dropdown.Page>
       ))}
     </>
