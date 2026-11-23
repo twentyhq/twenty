@@ -32,4 +32,42 @@ describe('fromMessagingProviderManifestToUniversalFlatMessagingProvider', () => 
       }).conversationStyle,
     ).toBe('chat');
   });
+
+  it('reads references written as universal identifiers', () => {
+    expect(
+      fromMessagingProviderManifestToUniversalFlatMessagingProvider({
+        messagingProviderManifest: {
+          universalIdentifier: MESSAGING_PROVIDER_MANIFEST.universalIdentifier,
+          name: MESSAGING_PROVIDER_MANIFEST.name,
+          displayName: MESSAGING_PROVIDER_MANIFEST.displayName,
+          connectionProviderUniversalIdentifier:
+            '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+          sendMessageLogicFunctionUniversalIdentifier:
+            '6c1f7a4b-3d5e-4f9a-8b2c-8d7e6f5a4b3c',
+        },
+        applicationUniversalIdentifier: 'application-universal-identifier',
+        now: '2026-11-09T00:00:00.000Z',
+      }),
+    ).toMatchObject({
+      connectionProviderUniversalIdentifier:
+        '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+      sendMessageLogicFunctionUniversalIdentifier:
+        '6c1f7a4b-3d5e-4f9a-8b2c-8d7e6f5a4b3c',
+      markThreadAsReadLogicFunctionUniversalIdentifier: null,
+    });
+  });
+
+  it('rejects a messaging provider without a connection provider', () => {
+    expect(() =>
+      fromMessagingProviderManifestToUniversalFlatMessagingProvider({
+        messagingProviderManifest: {
+          universalIdentifier: MESSAGING_PROVIDER_MANIFEST.universalIdentifier,
+          name: MESSAGING_PROVIDER_MANIFEST.name,
+          displayName: MESSAGING_PROVIDER_MANIFEST.displayName,
+        },
+        applicationUniversalIdentifier: 'application-universal-identifier',
+        now: '2026-11-09T00:00:00.000Z',
+      }),
+    ).toThrow('must declare connectionProviderUniversalIdentifier');
+  });
 });

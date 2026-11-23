@@ -1,6 +1,6 @@
 import {
   type ConnectionProviderManifest,
-  type SyncableEntityOptions,
+  resolveManifestReferenceUniversalIdentifier,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,24 +24,49 @@ export const getConnectionProviderManifestLogicFunctionReferences = (
 
   const references: {
     hook: ConnectionProviderLogicFunctionHook;
-    reference: SyncableEntityOptions | undefined;
+    universalIdentifier: string | undefined;
   }[] = [
     {
       hook: 'identifyAccount',
-      reference: connectionProvider.identifyAccountLogicFunction,
+      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier:
+          connectionProvider.identifyAccountLogicFunctionUniversalIdentifier,
+        deprecatedReference: connectionProvider.identifyAccountLogicFunction,
+      }),
     },
-    { hook: 'onConnect', reference: connectionProvider.onConnectLogicFunction },
+    {
+      hook: 'onConnect',
+      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier:
+          connectionProvider.onConnectLogicFunctionUniversalIdentifier,
+        deprecatedReference: connectionProvider.onConnectLogicFunction,
+      }),
+    },
     {
       hook: 'onDisconnect',
-      reference: connectionProvider.onDisconnectLogicFunction,
+      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier:
+          connectionProvider.onDisconnectLogicFunctionUniversalIdentifier,
+        deprecatedReference: connectionProvider.onDisconnectLogicFunction,
+      }),
     },
-    { hook: 'authorize', reference: custom?.authorizeLogicFunction },
-    { hook: 'callback', reference: custom?.callbackLogicFunction },
+    {
+      hook: 'authorize',
+      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier: custom?.authorizeLogicFunctionUniversalIdentifier,
+        deprecatedReference: custom?.authorizeLogicFunction,
+      }),
+    },
+    {
+      hook: 'callback',
+      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier: custom?.callbackLogicFunctionUniversalIdentifier,
+        deprecatedReference: custom?.callbackLogicFunction,
+      }),
+    },
   ];
 
-  return references.flatMap(({ hook, reference }) =>
-    isDefined(reference)
-      ? [{ hook, universalIdentifier: reference.universalIdentifier }]
-      : [],
+  return references.flatMap(({ hook, universalIdentifier }) =>
+    isDefined(universalIdentifier) ? [{ hook, universalIdentifier }] : [],
   );
 };

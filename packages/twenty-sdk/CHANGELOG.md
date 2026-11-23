@@ -10,6 +10,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - **Date functions in rule expressions: `dateDiff`, `dateAdd`, `dateTrunc` and `datePart`.** They take a unit (`'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`) or, for `datePart`, a part (`'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`), read dates in UTC, and are available as `ruleExpression.dateDiff(...)` and so on. Minutes and hours are elapsed time; longer units count calendar days and months.
 
+### Deprecated
+
+- **References written as `{ universalIdentifier }` on connection providers, messaging providers and MCP servers.** Write them as a universal identifier instead, like every other reference in an app: `identifyAccountLogicFunctionUniversalIdentifier`, `onConnectLogicFunctionUniversalIdentifier`, `onDisconnectLogicFunctionUniversalIdentifier`, `custom.authorizeLogicFunctionUniversalIdentifier` and `custom.callbackLogicFunctionUniversalIdentifier` on `defineConnectionProvider`; `connectionProviderUniversalIdentifier`, `sendMessageLogicFunctionUniversalIdentifier` and `markThreadAsReadLogicFunctionUniversalIdentifier` on `defineMessagingProvider`; `connectionProviderUniversalIdentifier` on `defineMcpServer`. The object form (`onConnectLogicFunction: { universalIdentifier }` and so on) keeps working and is marked `@deprecated`. When both are set, the universal identifier wins. The CLI writes both forms into the built manifest, so an app using the new spelling still syncs to a server older than 2.63.
+
 ### Changed
 
 - **`INBOX_ASSISTANT_MENTION` now writes a canonical assistant reference instead of plain `@Ada` text.** The inbox keeps the saved label and assistant identity when rendering the message. Existing plain text is unchanged. This does not change assistant participation or reply selection for application messages.

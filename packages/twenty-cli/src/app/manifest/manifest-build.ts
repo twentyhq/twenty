@@ -1,3 +1,4 @@
+import { withBothManifestReferenceSpellings } from '@/app/manifest/utils/with-both-manifest-reference-spellings';
 import { fromObjectConfigToObjectManifest } from '@/app/manifest/utils/from-object-config-to-object-manifest';
 import { fromLogicFunctionConfigToLogicFunctionManifest } from '@/app/manifest/utils/from-logic-function-config-to-logic-function-manifest';
 import { fromFrontComponentConfigToFrontComponentManifest } from '@/app/manifest/utils/from-front-component-config-to-front-component-manifest';
@@ -295,7 +296,30 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        connectionProviders.push(extract.config);
+        const connectionProvider = withBothManifestReferenceSpellings({
+          entity: extract.config,
+          referenceKeys: [
+            'identifyAccountLogicFunction',
+            'onConnectLogicFunction',
+            'onDisconnectLogicFunction',
+          ],
+        });
+
+        connectionProviders.push(
+          connectionProvider.type === 'custom' &&
+            isDefined(connectionProvider.custom)
+            ? {
+                ...connectionProvider,
+                custom: withBothManifestReferenceSpellings({
+                  entity: connectionProvider.custom,
+                  referenceKeys: [
+                    'authorizeLogicFunction',
+                    'callbackLogicFunction',
+                  ],
+                }),
+              }
+            : connectionProvider,
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         connectionProvidersFilePaths.push(relativePath);
@@ -307,7 +331,16 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        messagingProviders.push(extract.config);
+        messagingProviders.push(
+          withBothManifestReferenceSpellings({
+            entity: extract.config,
+            referenceKeys: [
+              'connectionProvider',
+              'sendMessageLogicFunction',
+              'markThreadAsReadLogicFunction',
+            ],
+          }),
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         messagingProvidersFilePaths.push(relativePath);
@@ -318,7 +351,12 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        mcpServers.push(extract.config);
+        mcpServers.push(
+          withBothManifestReferenceSpellings({
+            entity: extract.config,
+            referenceKeys: ['connectionProvider'],
+          }),
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         mcpServersFilePaths.push(relativePath);

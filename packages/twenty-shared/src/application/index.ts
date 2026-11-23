@@ -394,6 +394,7 @@ export { nestRowLevelPermissionRuleManifests } from './utils/nestRowLevelPermiss
 export type { LegacyRoleObjectDefaults } from './utils/normalizeLegacyCompliantRoleManifest';
 export { normalizeLegacyCompliantRoleManifest } from './utils/normalizeLegacyCompliantRoleManifest';
 export { normalizeNavigationMenuItemManifest } from './utils/normalizeNavigationMenuItemManifest';
+export { resolveManifestReferenceUniversalIdentifier } from './utils/resolveManifestReferenceUniversalIdentifier';
 export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type { ValidationRuleManifest } from './validationRuleManifestType';
 export type {

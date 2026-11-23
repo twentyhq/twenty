@@ -1,9 +1,16 @@
 import {
   type ConnectionProviderManifest,
   DEFAULT_CONNECTION_PROVIDER_SCOPE,
+  resolveManifestReferenceUniversalIdentifier,
   type StoredCustomConnectionProviderConfig,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 
@@ -14,14 +21,32 @@ const toStoredCustomConfig = (
     return null;
   }
 
-  const { authorizeLogicFunction, callbackLogicFunction } =
-    connectionProviderManifest.custom;
+  const { custom } = connectionProviderManifest;
+
+  const authorizeLogicFunctionUniversalIdentifier =
+    resolveManifestReferenceUniversalIdentifier({
+      universalIdentifier: custom.authorizeLogicFunctionUniversalIdentifier,
+      deprecatedReference: custom.authorizeLogicFunction,
+    });
+  const callbackLogicFunctionUniversalIdentifier =
+    resolveManifestReferenceUniversalIdentifier({
+      universalIdentifier: custom.callbackLogicFunctionUniversalIdentifier,
+      deprecatedReference: custom.callbackLogicFunction,
+    });
+
+  if (
+    !isDefined(authorizeLogicFunctionUniversalIdentifier) ||
+    !isDefined(callbackLogicFunctionUniversalIdentifier)
+  ) {
+    throw new ApplicationException(
+      `Custom connection provider ${connectionProviderManifest.universalIdentifier} must declare authorizeLogicFunctionUniversalIdentifier and callbackLogicFunctionUniversalIdentifier`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
 
   return {
-    authorizeLogicFunctionUniversalIdentifier:
-      authorizeLogicFunction.universalIdentifier,
-    callbackLogicFunctionUniversalIdentifier:
-      callbackLogicFunction.universalIdentifier,
+    authorizeLogicFunctionUniversalIdentifier,
+    callbackLogicFunctionUniversalIdentifier,
   };
 };
 
@@ -75,14 +100,26 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
             }
           : null,
       identifyAccountLogicFunctionUniversalIdentifier:
-        connectionProviderManifest.identifyAccountLogicFunction
-          ?.universalIdentifier ?? null,
+        resolveManifestReferenceUniversalIdentifier({
+          universalIdentifier:
+            connectionProviderManifest.identifyAccountLogicFunctionUniversalIdentifier,
+          deprecatedReference:
+            connectionProviderManifest.identifyAccountLogicFunction,
+        }) ?? null,
       onConnectLogicFunctionUniversalIdentifier:
-        connectionProviderManifest.onConnectLogicFunction
-          ?.universalIdentifier ?? null,
+        resolveManifestReferenceUniversalIdentifier({
+          universalIdentifier:
+            connectionProviderManifest.onConnectLogicFunctionUniversalIdentifier,
+          deprecatedReference:
+            connectionProviderManifest.onConnectLogicFunction,
+        }) ?? null,
       onDisconnectLogicFunctionUniversalIdentifier:
-        connectionProviderManifest.onDisconnectLogicFunction
-          ?.universalIdentifier ?? null,
+        resolveManifestReferenceUniversalIdentifier({
+          universalIdentifier:
+            connectionProviderManifest.onDisconnectLogicFunctionUniversalIdentifier,
+          deprecatedReference:
+            connectionProviderManifest.onDisconnectLogicFunction,
+        }) ?? null,
       createdAt: now,
       updatedAt: now,
     };

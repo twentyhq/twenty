@@ -6,6 +6,7 @@ import {
   CONNECTION_PROVIDER_SCOPES,
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
+  resolveManifestReferenceUniversalIdentifier,
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
@@ -41,7 +42,7 @@ const getInvalidLogicFunctionReferenceError = ({
 }): string | null =>
   isValidPostgresUuid(universalIdentifier)
     ? null
-    : `Connection provider ${path}.universalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
+    : `Connection provider ${path}UniversalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
 
 const getCustomConfigErrors = (
   custom: CustomConnectionProviderConfig | undefined,
@@ -53,17 +54,20 @@ const getCustomConfigErrors = (
   }
 
   return CUSTOM_LOGIC_FUNCTION_KEYS.flatMap((logicFunctionKey) => {
-    const logicFunction = custom[logicFunctionKey];
+    const universalIdentifier = resolveManifestReferenceUniversalIdentifier({
+      universalIdentifier: custom[`${logicFunctionKey}UniversalIdentifier`],
+      deprecatedReference: custom[logicFunctionKey],
+    });
 
-    if (!isDefined(logicFunction)) {
+    if (!isDefined(universalIdentifier)) {
       return [
-        `Custom connection provider must declare custom.${logicFunctionKey}`,
+        `Custom connection provider must declare custom.${logicFunctionKey}UniversalIdentifier`,
       ];
     }
 
     const referenceError = getInvalidLogicFunctionReferenceError({
       path: `custom.${logicFunctionKey}`,
-      universalIdentifier: logicFunction.universalIdentifier,
+      universalIdentifier,
     });
 
     return isDefined(referenceError) ? [referenceError] : [];
@@ -96,11 +100,14 @@ export const defineConnectionProvider: DefineEntity<
   }
 
   for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
-    const logicFunction = config[logicFunctionKey];
-    const referenceError = isDefined(logicFunction)
+    const universalIdentifier = resolveManifestReferenceUniversalIdentifier({
+      universalIdentifier: config[`${logicFunctionKey}UniversalIdentifier`],
+      deprecatedReference: config[logicFunctionKey],
+    });
+    const referenceError = isDefined(universalIdentifier)
       ? getInvalidLogicFunctionReferenceError({
           path: logicFunctionKey,
-          universalIdentifier: logicFunction.universalIdentifier,
+          universalIdentifier,
         })
       : null;
 

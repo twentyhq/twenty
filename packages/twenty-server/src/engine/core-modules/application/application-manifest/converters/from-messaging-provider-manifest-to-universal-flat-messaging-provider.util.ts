@@ -1,4 +1,13 @@
-import { type MessagingProviderManifest } from 'twenty-shared/application';
+import {
+  type MessagingProviderManifest,
+  resolveManifestReferenceUniversalIdentifier,
+} from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 
 import { type UniversalFlatMessagingProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-messaging-provider.type';
 
@@ -10,20 +19,42 @@ export const fromMessagingProviderManifestToUniversalFlatMessagingProvider = ({
   messagingProviderManifest: MessagingProviderManifest;
   applicationUniversalIdentifier: string;
   now: string;
-}): UniversalFlatMessagingProvider => ({
-  universalIdentifier: messagingProviderManifest.universalIdentifier,
-  applicationUniversalIdentifier,
-  name: messagingProviderManifest.name,
-  displayName: messagingProviderManifest.displayName,
-  connectionProviderUniversalIdentifier:
-    messagingProviderManifest.connectionProvider.universalIdentifier,
-  sendMessageLogicFunctionUniversalIdentifier:
-    messagingProviderManifest.sendMessageLogicFunction?.universalIdentifier ??
-    null,
-  markThreadAsReadLogicFunctionUniversalIdentifier:
-    messagingProviderManifest.markThreadAsReadLogicFunction
-      ?.universalIdentifier ?? null,
-  conversationStyle: messagingProviderManifest.conversationStyle ?? null,
-  createdAt: now,
-  updatedAt: now,
-});
+}): UniversalFlatMessagingProvider => {
+  const connectionProviderUniversalIdentifier =
+    resolveManifestReferenceUniversalIdentifier({
+      universalIdentifier:
+        messagingProviderManifest.connectionProviderUniversalIdentifier,
+      deprecatedReference: messagingProviderManifest.connectionProvider,
+    });
+
+  if (!isDefined(connectionProviderUniversalIdentifier)) {
+    throw new ApplicationException(
+      `Messaging provider ${messagingProviderManifest.universalIdentifier} must declare connectionProviderUniversalIdentifier`,
+      ApplicationExceptionCode.INVALID_INPUT,
+    );
+  }
+
+  return {
+    universalIdentifier: messagingProviderManifest.universalIdentifier,
+    applicationUniversalIdentifier,
+    name: messagingProviderManifest.name,
+    displayName: messagingProviderManifest.displayName,
+    connectionProviderUniversalIdentifier,
+    sendMessageLogicFunctionUniversalIdentifier:
+      resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier:
+          messagingProviderManifest.sendMessageLogicFunctionUniversalIdentifier,
+        deprecatedReference: messagingProviderManifest.sendMessageLogicFunction,
+      }) ?? null,
+    markThreadAsReadLogicFunctionUniversalIdentifier:
+      resolveManifestReferenceUniversalIdentifier({
+        universalIdentifier:
+          messagingProviderManifest.markThreadAsReadLogicFunctionUniversalIdentifier,
+        deprecatedReference:
+          messagingProviderManifest.markThreadAsReadLogicFunction,
+      }) ?? null,
+    conversationStyle: messagingProviderManifest.conversationStyle ?? null,
+    createdAt: now,
+    updatedAt: now,
+  };
+};
