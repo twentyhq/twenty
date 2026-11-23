@@ -14,7 +14,7 @@ export const buildApplicationWorkflowCronTriggerCacheEntries = ({
     id: string;
     flatUniversalWorkflowVersion?: Pick<
       UniversalFlatWorkflowVersion,
-      'triggers' | 'workflowId'
+      'triggers'
     > & { id: string };
   }[];
 }): CachedCronTrigger[] =>
@@ -30,9 +30,6 @@ export const buildApplicationWorkflowCronTriggerCacheEntries = ({
       {
         workspaceId,
         workflowId: workflow.id,
-        ...(isDefined(version.workflowId)
-          ? { legacyWorkflowId: version.workflowId }
-          : {}),
         pattern: computeCronPatternFromSchedule(trigger),
         coreWorkflowVersionId: version.id,
       },
