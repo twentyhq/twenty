@@ -29,10 +29,13 @@ const EditableHeader = ({
   );
 };
 
-const renderHeader = (
-  storedLabel: string | null,
-  onLabelChange?: (label: string | null) => void,
-) =>
+const renderHeader = ({
+  storedLabel,
+  onLabelChange,
+}: {
+  storedLabel: string | null;
+  onLabelChange?: (label: string | null) => void;
+}) =>
   render(
     <JotaiProvider store={createStore()}>
       <EditableHeader storedLabel={storedLabel} onLabelChange={onLabelChange} />
@@ -41,13 +44,13 @@ const renderHeader = (
 
 describe('SidePanelEditColumnHeader', () => {
   it('shows the default label of a column without a custom label', () => {
-    renderHeader(null);
+    renderHeader({ storedLabel: null });
 
     expect(screen.getAllByText(DEFAULT_LABEL)).toHaveLength(1);
   });
 
   it('shows a custom label next to the default label', () => {
-    renderHeader('Open tasks');
+    renderHeader({ storedLabel: 'Open tasks' });
 
     expect(screen.getByText('Open tasks')).toBeInTheDocument();
     expect(screen.getByText(DEFAULT_LABEL)).toBeInTheDocument();
@@ -56,7 +59,7 @@ describe('SidePanelEditColumnHeader', () => {
   it('renames the column from its title', async () => {
     const user = userEvent.setup();
 
-    renderHeader(null);
+    renderHeader({ storedLabel: null });
 
     await user.click(screen.getByText(DEFAULT_LABEL));
     await user.clear(screen.getByRole('textbox'));
@@ -69,7 +72,7 @@ describe('SidePanelEditColumnHeader', () => {
   it('shows the default label again once the custom label is cleared', async () => {
     const user = userEvent.setup();
 
-    renderHeader('Open tasks');
+    renderHeader({ storedLabel: 'Open tasks' });
 
     await user.click(screen.getByText('Open tasks'));
     await user.clear(screen.getByRole('textbox'));
@@ -83,7 +86,7 @@ describe('SidePanelEditColumnHeader', () => {
     const user = userEvent.setup();
     const onLabelChange = jest.fn();
 
-    renderHeader(null, onLabelChange);
+    renderHeader({ storedLabel: null, onLabelChange });
 
     await user.click(screen.getByText(DEFAULT_LABEL));
     await user.clear(screen.getByRole('textbox'));
@@ -95,7 +98,7 @@ describe('SidePanelEditColumnHeader', () => {
   it('puts the previous label back on escape', async () => {
     const user = userEvent.setup();
 
-    renderHeader('Open tasks');
+    renderHeader({ storedLabel: 'Open tasks' });
 
     await user.click(screen.getByText('Open tasks'));
     await user.clear(screen.getByRole('textbox'));
