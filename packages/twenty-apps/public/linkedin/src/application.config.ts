@@ -47,7 +47,7 @@ export default defineApplication({
     },
     UNIPILE_HOSTED_AUTH_DOMAIN: {
       description:
-        'Custom domain verified in the Unipile application (for example auth.example.com), shown to members signing in to LinkedIn instead of auth.unipile.com.',
+        'Custom domain verified and enabled for the Unipile application (for example auth.example.com), shown to members signing in to LinkedIn instead of auth.unipile.com.',
       isSecret: false,
       isRequired: false,
     },
