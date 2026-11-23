@@ -3,11 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
-import {
-  assertIsDefinedOrThrow,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -31,7 +27,6 @@ import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/u
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type InboxNotificationSettings } from 'src/engine/core-modules/user-workspace/types/inbox-notification-settings.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { getUserWorkspaceIdsWithDefaultAvatarInFiles } from 'src/engine/core-modules/user-workspace/utils/get-user-workspace-ids-with-default-avatar-in-files.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -702,48 +697,6 @@ export class UserWorkspaceService {
         return undefined;
       }
       throw error;
-    }
-  }
-
-  async clearDefaultAvatarUrlsPointingToFiles({
-    workspaceId,
-    userIds,
-    fileIds,
-  }: {
-    workspaceId: string;
-    userIds: string[];
-    fileIds: string[];
-  }): Promise<void> {
-    if (!isNonEmptyArray(userIds) || !isNonEmptyArray(fileIds)) {
-      return;
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        workspaceId,
-        userId: In(userIds),
-        defaultAvatarUrl: Not(IsNull()),
-      },
-    });
-
-    const userWorkspaceIdsToClear = getUserWorkspaceIdsWithDefaultAvatarInFiles(
-      { userWorkspaces, fileIds },
-    );
-
-    if (!isNonEmptyArray(userWorkspaceIdsToClear)) {
-      return;
-    }
-
-    await this.userWorkspaceRepository.update(
-      { id: In(userWorkspaceIdsToClear) },
-      { defaultAvatarUrl: null },
-    );
-
-    for (const userWorkspaceId of userWorkspaceIdsToClear) {
-      await this.coreEntityCacheService.invalidate(
-        'userWorkspaceEntity',
-        userWorkspaceId,
-      );
     }
   }
 

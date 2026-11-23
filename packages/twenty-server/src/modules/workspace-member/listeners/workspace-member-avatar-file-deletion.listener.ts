@@ -14,7 +14,6 @@ import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorat
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -22,7 +21,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class WorkspaceMemberAvatarFileDeletionListener {
   constructor(
     private readonly fileCorePictureService: FileCorePictureService,
-    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
@@ -67,7 +65,7 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     workspaceId: string;
     userIds: string[];
   }): Promise<void> {
-    await this.userWorkspaceService.clearDefaultAvatarUrlsPointingToFiles({
+    await this.fileCorePictureService.clearDefaultAvatarUrlsPointingToFiles({
       workspaceId,
       userIds,
       fileIds,

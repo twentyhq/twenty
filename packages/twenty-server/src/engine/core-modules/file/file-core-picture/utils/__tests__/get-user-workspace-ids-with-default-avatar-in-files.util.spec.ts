@@ -1,4 +1,4 @@
-import { getUserWorkspaceIdsWithDefaultAvatarInFiles } from 'src/engine/core-modules/user-workspace/utils/get-user-workspace-ids-with-default-avatar-in-files.util';
+import { getUserWorkspaceIdsWithDefaultAvatarInFiles } from 'src/engine/core-modules/file/file-core-picture/utils/get-user-workspace-ids-with-default-avatar-in-files.util';
 
 describe('getUserWorkspaceIdsWithDefaultAvatarInFiles', () => {
   const deletedFileId = '20202020-0000-4000-8000-000000000001';
