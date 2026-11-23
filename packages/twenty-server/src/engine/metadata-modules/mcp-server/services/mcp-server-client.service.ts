@@ -1,16 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import {
-  StreamableHTTPClientTransport,
-  StreamableHTTPError,
-} from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { type FetchLike } from '@modelcontextprotocol/sdk/shared/transport.js';
 import {
   type CallToolResult,
-  CallToolResultSchema,
+  Client,
+  type FetchLike,
+  SdkHttpError,
+  StreamableHTTPClientTransport,
   type Tool,
-} from '@modelcontextprotocol/sdk/types.js';
+} from '@modelcontextprotocol/client';
 import { isDefined } from 'twenty-shared/utils';
 
 import { probeProtectedResource } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/utils/probe-protected-resource.util';
@@ -30,7 +27,7 @@ const LIST_TOOLS_MAX_PAGES = 10;
 const SIGN_IN_PROBE_TIMEOUT_MS = 5_000;
 
 const isUnauthorizedError = (error: unknown): boolean =>
-  error instanceof StreamableHTTPError && error.code === 401;
+  error instanceof SdkHttpError && error.status === 401;
 
 @Injectable()
 export class McpServerClientService {
@@ -74,7 +71,6 @@ export class McpServerClientService {
             method: 'tools/call',
             params: { name: toolName, arguments: toolArguments },
           },
-          CallToolResultSchema,
           { signal },
         ),
     });
@@ -201,7 +197,11 @@ export class McpServerClientService {
       );
     }
 
-    const page = await client.listTools({ cursor }, { signal });
+    // listTools() without a cursor would walk every page itself, past the cap above
+    const page = await client.request(
+      { method: 'tools/list', params: isDefined(cursor) ? { cursor } : {} },
+      { signal },
+    );
 
     if (!isDefined(page.nextCursor)) {
       return page.tools;

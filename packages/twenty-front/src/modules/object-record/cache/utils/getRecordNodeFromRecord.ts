@@ -9,6 +9,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
   computeRelationGqlFieldJoinColumnName,
@@ -64,6 +65,13 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           gqlField: gqlField,
         });
 
+        const currentRecordGqlFields = recordGqlFields?.[gqlField];
+        const relationRecordGqlFields = isRecordGqlFieldsNode(
+          currentRecordGqlFields,
+        )
+          ? currentRecordGqlFields
+          : undefined;
+
         if (isUndefined(field)) {
           return undefined;
         }
@@ -92,11 +100,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               objectMetadataItems,
               objectMetadataItem: oneToManyObjectMetadataItem,
               records: value as ObjectRecord[],
-              recordGqlFields:
-                recordGqlFields?.[gqlField] === true ||
-                isUndefined(recordGqlFields?.[gqlField])
-                  ? undefined
-                  : recordGqlFields?.[gqlField],
+              recordGqlFields: relationRecordGqlFields,
               withPageInfo: false,
               isRootLevel: false,
               computeReferences,
@@ -136,11 +140,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               objectMetadataItems,
               objectMetadataItem: morphRelation?.targetObjectMetadata,
               records: value as ObjectRecord[],
-              recordGqlFields:
-                recordGqlFields?.[gqlField] === true ||
-                isUndefined(recordGqlFields?.[gqlField])
-                  ? undefined
-                  : recordGqlFields?.[gqlField],
+              recordGqlFields: relationRecordGqlFields,
               withPageInfo: false,
               isRootLevel: false,
               computeReferences,

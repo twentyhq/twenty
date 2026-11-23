@@ -78,7 +78,7 @@ describe('useMountCommand', () => {
     expect(mockEnrichFn).not.toHaveBeenCalled();
   });
 
-  it('should mount with workflow enrichment when workflowVersionId and availabilityType are provided', async () => {
+  it('should mount with workflow enrichment when coreWorkflowVersionId and availabilityType are provided', async () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -98,7 +98,7 @@ describe('useMountCommand', () => {
         engineCommandId: 'cmd-1',
         contextStoreInstanceId: 'ctx-1',
         engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
-        workflowVersionId: 'wf-version-1',
+        coreWorkflowVersionId: 'wf-version-1',
         availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
       });
     });
@@ -108,7 +108,7 @@ describe('useMountCommand', () => {
     expect(map.get('cmd-1')).toEqual(enrichedState);
     expect(mockEnrichFn).toHaveBeenCalledWith({
       headlessEngineCommandContextApi: baseContextApi,
-      workflowVersionId: 'wf-version-1',
+      coreWorkflowVersionId: 'wf-version-1',
       availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
       availabilityObjectMetadataId: undefined,
     });
@@ -147,7 +147,7 @@ describe('useMountCommand', () => {
         engineCommandId: 'cmd-1',
         contextStoreInstanceId: 'ctx-1',
         engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
-        workflowVersionId: 'wf-version-1',
+        coreWorkflowVersionId: 'wf-version-1',
         availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
       });
     });
