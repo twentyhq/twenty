@@ -83,7 +83,6 @@ export const StderrOnlyAutoSwitch: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    // When only stderr exists and no stdout, should auto-switch to stderr
     expect(await canvas.findByText(/FileNotFoundError/)).toBeVisible();
     expect(canvas.getByRole('radio', { name: 'stderr' })).toBeChecked();
   },

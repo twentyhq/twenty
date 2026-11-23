@@ -437,7 +437,7 @@ describe('Record access through related record paths', () => {
   it('should store the groups of the source record on the records related to it', async () => {
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
-    ).syncAccessGroups(workspaceId);
+    ).syncAccessGroups({ workspaceId });
 
     for (const objectMetadataId of [
       projectObjectMetadataId,
@@ -683,17 +683,17 @@ describe('Record access through related record paths', () => {
 
   it('should not follow the path from a relation the reader cannot read', async () => {
     const memberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
-    const memberProjectCompactIds = await findRoleAccessGroupCompactIds({
-      workspaceId,
-      roleId: memberRoleId,
-      objectMetadataId: projectObjectMetadataId,
-    });
-
-    expect(memberProjectCompactIds).not.toEqual([]);
 
     await setProjectTasksReadability(false);
 
     try {
+      const memberProjectCompactIds = await findRoleAccessGroupCompactIds({
+        workspaceId,
+        roleId: memberRoleId,
+        objectMetadataId: projectObjectMetadataId,
+      });
+
+      expect(memberProjectCompactIds).not.toEqual([]);
       expect(await canJonyReadTask(taskOfProjectId)).toBe(false);
       expect(await findTaskIdsListedByJony()).toEqual([]);
       expect(

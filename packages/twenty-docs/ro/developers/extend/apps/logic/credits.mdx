@@ -46,7 +46,7 @@ Toate trei ajung la același contor de credite și la aceeași defalcare din **S
 ## Taxe recurente
 
 <Warning>
-  Învechit în favoarea [prețuri](#prices). Compilarea avertizează cu privire la taxele recurente, însă acestea continuă să fie percepute: prețurile nu sunt încă facturate, așa că păstrează-le pe ale tale până când vor fi.
+  Învechit în favoarea [prețuri](#prices). Compilarea avertizează cu privire la taxele recurente, dar acestea continuă să fie generate: facturarea prețurilor nu este încă disponibilă în mod general, așa că păstrează-le pe ale tale până atunci.
 </Warning>
 
 O taxă recurentă este o taxă de abonament: o sumă lunară fixă, o sumă per membru al spațiului de lucru sau ambele. Declarați suma, iar platforma o taxează. Aplicația dvs. nu apelează niciodată `chargeCredits` pentru acestea.
@@ -87,7 +87,7 @@ Cum sunt aplicate:
 ## Prețuri
 
 <Warning>
-  Doar declarație pentru moment. Compilarea validează `billing.prices`, însă platforma nu le facturează încă.
+  Facturarea prețurilor este implementată treptat și este dezactivată în mod implicit: până când este activată pentru un spațiu de lucru, compilarea validează `billing.prices`, dar spațiul de lucru nu este taxat.
 </Warning>
 
 Un preț este perceput în monedă reală în loc de credite. Este facturat ca o poziție din propriul abonament Twenty al spațiului de lucru, astfel încât spațiul de lucru păstrează o singură factură. Prețurile sunt momentan doar în dolari americani.
@@ -116,20 +116,26 @@ billing: {
 },
 ```
 
-| Câmp                  | Descriere                                                                                                                                                            |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | Un UUID care identifică prețul în toate versiunile aplicației tale. Generează-l o singură dată și nu-l modifica niciodată: un identificator nou înseamnă un preț nou |
-| `label`               | Ce citesc administratorii pentru acea poziție                                                                                                                        |
-| `description`         | Opțional. O explicație mai detaliată despre ce acoperă prețul                                                                                                        |
-| `type`                | `RECURRING`, singurul tip disponibil momentan                                                                                                                        |
-| `billingPeriod`       | `MONTHLY`, singura perioadă disponibilă momentan                                                                                                                     |
-| `amountCents`         | Preț lunar în cenți USD, un număr întreg pozitiv de până la 8.333.333                                                                                                |
-| `monedă`              | Opțional. `USD` este momentan singura monedă acceptată și cea implicită                                                                                              |
-| `per`                 | Omite pentru o taxă fixă. `WORKSPACE_MEMBER` face ca suma să fie o rată per membru al spațiului de lucru                                                             |
+| Câmp                  | Descriere                                                                                                                                                                                                                                                                                           |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Un UUID care identifică prețul în toate versiunile aplicației tale. Generează-l o singură dată și nu-l modifica niciodată: un identificator nou înseamnă un preț nou                                                                                                                                |
+| `label`               | Ce citesc administratorii pentru acea poziție                                                                                                                                                                                                                                                       |
+| `description`         | Opțional. O explicație mai detaliată despre ce acoperă prețul                                                                                                                                                                                                                                       |
+| `type`                | `RECURRING`, singurul tip disponibil momentan                                                                                                                                                                                                                                                       |
+| `billingPeriod`       | `MONTHLY`, singura perioadă disponibilă momentan                                                                                                                                                                                                                                                    |
+| `amountCents`         | Preț lunar în cenți USD, un număr întreg pozitiv de până la 8.333.333                                                                                                                                                                                                                               |
+| `monedă`              | Opțional. `USD` este momentan singura monedă acceptată și cea implicită                                                                                                                                                                                                                             |
+| `per`                 | Omite pentru o taxă fixă. `WORKSPACE_MEMBER` face ca suma să fie o rată per membru al spațiului de lucru. `CONNECTED_ACCOUNT` face ca aceasta să fie o rată per cont conectat prin intermediul unuia dintre [furnizorii de conexiuni](/ro/developers/extend/apps/logic/connections) ai aplicației tale |
 
 Un preț urmează intervalul de facturare al spațiului de lucru: un spațiu de lucru cu un plan Twenty lunar plătește suma lunară, iar un spațiu de lucru cu un plan anual plătește o dată pe an de 12 ori suma lunară.
 
-Compilarea respinge un `universalIdentifier` lipsă, duplicat sau nevalid, un `label` sau o `description` goale, un `type`, `billingPeriod` sau `per` necunoscut, un `amountCents` care nu este un număr întreg pozitiv sau depășește 8.333.333 (de 12 ori această valoare este maximul acceptat de Stripe pentru un singur preț) și o `currency` diferită de `USD`.
+Facturarea începe când instalarea este finalizată și se oprește la dezinstalare, calculată proporțional cu zilele rămase din perioada de facturare. Un preț `per: 'WORKSPACE_MEMBER'` urmărește numărul de membri ai spațiului de lucru. Un tarif `per: 'CONNECTED_ACCOUNT'` se bazează pe numărul de conturi conectate la aplicația dvs. din spațiul de lucru. Toate conturile furnizorilor de conexiune ai aplicației dvs. sunt luate împreună în calcul: cu un furnizor Google și unul Microsoft, un spațiu de lucru cu două conturi Google și un cont Microsoft plătește pentru trei. Tariful nu este facturat atâta timp cât nu este conectat niciun cont, iar un cont deconectat nu mai este facturat. Un spațiu de lucru aflat în perioada de probă nu este taxat înainte de încheierea perioadei de probă.
+
+Un spațiu de lucru păstrează tarifele cu care a instalat aplicația dvs., inclusiv după ce face upgrade. Când o versiune nouă modifică, adaugă sau elimină un tarif, numai instalările noi primesc noile tarife.
+
+Tarifele nu sunt facturate pe un server fără facturare activată și nici pentru o aplicație sincronizată dintr-o sursă locală cu `twenty app dev`.
+
+Procesul de compilare respinge un `universalIdentifier` lipsă, duplicat sau nevalid, un `label` sau o `description` goale, un `type`, `billingPeriod` sau `per` necunoscute, un `amountCents` care nu este un număr întreg pozitiv sau depășește 8.333.333 (de 12 ori această valoare este maximul pe care îl acceptă Stripe pentru un singur preț), o `currency` diferită de `USD` și un preț `per: 'CONNECTED_ACCOUNT'` într-o aplicație care nu declară niciun furnizor de conexiune.
 
 ## Operațiuni facturabile
 

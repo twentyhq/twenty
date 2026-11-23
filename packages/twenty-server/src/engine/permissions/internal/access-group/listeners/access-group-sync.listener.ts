@@ -14,13 +14,12 @@ import { FEATURE_FLAG_DISABLED_EVENT } from 'src/engine/core-modules/feature-fla
 import { FEATURE_FLAG_ENABLED_EVENT } from 'src/engine/core-modules/feature-flag/constants/feature-flag-enabled-event.constant';
 import { type FeatureFlagEnabledEvent } from 'src/engine/core-modules/feature-flag/types/feature-flag-enabled-event.type';
 import { AccessGroupSyncSchedulerService } from 'src/engine/permissions/internal/access-group/services/access-group-sync-scheduler.service';
-import { RecordAccessGroupMetadataMapsService } from 'src/engine/permissions/internal/access-group/services/record-access-group-metadata-maps.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { findWorkspaceMemberRelationFieldNamesOfObject } from 'src/engine/permissions/internal/access-group/utils/find-workspace-member-relation-field-names-of-object.util';
 import { isWorkspaceMemberUpdateAffectingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-workspace-member-update-affecting-access-groups.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 
 const FLAGS_AFFECTING_ACCESS_GROUPS = [
@@ -34,61 +33,31 @@ export class AccessGroupSyncListener {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupSyncSchedulerService: AccessGroupSyncSchedulerService,
-    private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
   ) {}
 
   @OnEvent('metadata.role.*')
   @OnEvent('metadata.roleTarget.*')
   @OnEvent('metadata.objectPermission.*')
+  @OnEvent('metadata.fieldPermission.*')
   @OnEvent('metadata.objectMetadata.*')
   @OnEvent('metadata.rowLevelPermissionPredicate.*')
   @OnEvent('metadata.rowLevelPermissionPredicateGroup.*')
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+    });
   }
 
   @OnEvent('metadata.relatedRecordPath.*')
   async handleRelatedRecordPathEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
-  }
-
-  @OnEvent('metadata.fieldPermission.*')
-  async handleFieldPermissionEvent({
-    workspaceId,
-    events,
-  }: Pick<MetadataEventBatch, 'workspaceId'> & {
-    events: MetadataEvent<'fieldPermission'>[];
-  }): Promise<void> {
-    const changedFieldMetadataIds = new Set(
-      events.flatMap((event) =>
-        [
-          'before' in event.properties ? event.properties.before : undefined,
-          'after' in event.properties ? event.properties.after : undefined,
-        ]
-          .filter(isDefined)
-          .map((fieldPermission) => fieldPermission.fieldMetadataId),
-      ),
-    );
-    const { resolvedRelatedRecordPaths } =
-      await this.recordAccessGroupMetadataMapsService.find(workspaceId);
-
-    if (
-      resolvedRelatedRecordPaths.some(({ hops }) =>
-        changedFieldMetadataIds.has(hops[0].relationFieldMetadataId),
-      )
-    ) {
-      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
-        workspaceId,
-      );
-    }
+      isRelatedRecordPathChanged: true,
+    });
   }
 
   @OnCustomBatchEvent(FEATURE_FLAG_ENABLED_EVENT)
@@ -122,12 +91,10 @@ export class AccessGroupSyncListener {
       isDefined(workspaceId) &&
       events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
-      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
         workspaceId,
-      );
-      await this.accessGroupSyncSchedulerService.scheduleRelatedRecordPathTargetsRecomputeIfEnabled(
-        workspaceId,
-      );
+        isRelatedRecordPathChanged: true,
+      });
     }
   }
 
@@ -176,6 +143,61 @@ export class AccessGroupSyncListener {
     }
   }
 
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
+  async handleRecordEventReachedByWorkspaceMemberRelation({
+    workspaceId,
+    objectMetadata,
+    events,
+  }: Pick<
+    WorkspaceEventBatch<Partial<ObjectRecordUpdateEvent>>,
+    'workspaceId' | 'objectMetadata' | 'events'
+  >): Promise<void> {
+    const { rolesPermissions, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+        'flatFieldMetadataMaps',
+      ]);
+    const fieldNames = findWorkspaceMemberRelationFieldNamesOfObject({
+      rolesPermissions,
+      flatFieldMetadataMaps,
+      objectMetadataId: objectMetadata.id,
+    });
+    const updatedFields = events.flatMap(
+      ({ properties }) => properties?.updatedFields ?? [],
+    );
+    const isUpdateEvent = events.some(({ properties }) =>
+      isDefined(properties?.updatedFields),
+    );
+
+    if (
+      fieldNames.length === 0 ||
+      (isUpdateEvent &&
+        !updatedFields.some((updatedField) =>
+          fieldNames.includes(updatedField),
+        ))
+    ) {
+      return;
+    }
+
+    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
+  }
+
+  // RLS reads these values whether or not access groups are enabled
+  private async refreshWorkspaceMemberRelationValuesAndScheduleSync(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.workspaceCacheService.flush(workspaceId, [
+      'rlsWorkspaceMemberRelationValueMaps',
+    ]);
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+      workspaceId,
+    });
+  }
+
   private async refreshMembersAndScheduleSync(
     workspaceId: string,
   ): Promise<void> {
@@ -183,8 +205,8 @@ export class AccessGroupSyncListener {
       'flatWorkspaceMemberMaps',
     ]);
 
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled(
+    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
       workspaceId,
-    );
+    });
   }
 }

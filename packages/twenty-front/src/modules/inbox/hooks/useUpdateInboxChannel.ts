@@ -9,7 +9,7 @@ import {
 export const useUpdateInboxChannel = () => {
   const { runInboxChannelMutation } = useRunInboxChannelMutation();
 
-  const updateAgentChatChannel = useCallback(
+  const updateInboxChannel = useCallback(
     ({
       channelId,
       input,
@@ -24,5 +24,5 @@ export const useUpdateInboxChannel = () => {
     [runInboxChannelMutation],
   );
 
-  return { updateAgentChatChannel };
+  return { updateInboxChannel };
 };

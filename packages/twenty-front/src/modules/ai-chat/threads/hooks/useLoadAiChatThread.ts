@@ -17,7 +17,6 @@ export const useLoadAiChatThread = () => {
   const { fetchAiChatThreadsPage } = useFetchAiChatThreadsPage();
   const { addAiChatThreadParticipants } = useAddAiChatThreadParticipants();
 
-  // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
   const loadAiChatThread = useCallback(
     async (threadId: string) => {
       const page = await fetchAiChatThreadsPage({
