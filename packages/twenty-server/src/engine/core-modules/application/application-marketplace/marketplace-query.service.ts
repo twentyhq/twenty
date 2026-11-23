@@ -7,7 +7,6 @@ import {
   type LegacyCompliantRoleManifest,
   getReachableObjectPermissionsFromRoleManifest,
   getRecordsPermissionsFromRoleManifest,
-  isApplicationBillingPrice,
   normalizeLegacyCompliantRoleManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -24,7 +23,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
-import { toApplicationBillingPriceDto } from 'src/engine/core-modules/application/utils/to-application-billing-price-dto.util';
+import { toManifestBillingPriceDtos } from 'src/engine/core-modules/application/utils/to-manifest-billing-price-dtos.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
@@ -265,9 +264,7 @@ export class MarketplaceQueryService {
       ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
       billingPrices: shouldIncludeBillingPrices
-        ? (manifest?.application?.billing?.prices ?? [])
-            .filter(isApplicationBillingPrice)
-            .map(toApplicationBillingPriceDto)
+        ? toManifestBillingPriceDtos(manifest?.application?.billing)
         : [],
       content: isDefined(manifest)
         ? buildApplicationContentFromManifest(manifest)
