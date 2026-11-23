@@ -121,6 +121,7 @@ const CTO_RELATION_WITH_ARGUMENTS: Omit<
   filter: { jobTitle: { ilike: '%cto%' } },
   orderBy: [{ createdAt: 'AscNullsLast' }, { position: 'AscNullsFirst' }],
   first: 2,
+  aggregateGqlFieldNames: ['totalCount'],
 };
 
 describe('getScopedRelationAliases', () => {
@@ -147,7 +148,12 @@ describe('getScopedRelationAliases', () => {
   it('keeps the default order and no limit for an empty scope', () => {
     const [
       {
-        relationWithArguments: { filter, orderBy, first },
+        relationWithArguments: {
+          filter,
+          orderBy,
+          first,
+          aggregateGqlFieldNames,
+        },
       },
     ] = getAliases({
       recordFields: [getPeopleColumn({ relationScope: EMPTY_RELATION_SCOPE })],
@@ -156,6 +162,7 @@ describe('getScopedRelationAliases', () => {
     expect(filter).toEqual({});
     expect(orderBy).toEqual([{ position: 'AscNullsFirst' }]);
     expect(first).toBeUndefined();
+    expect(aggregateGqlFieldNames).toBeUndefined();
   });
 
   it('carries the field of the related records a column shows', () => {
