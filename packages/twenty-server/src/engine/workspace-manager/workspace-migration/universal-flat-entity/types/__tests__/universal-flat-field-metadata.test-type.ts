@@ -4,7 +4,6 @@ import {
   type HasAllProperties,
 } from 'twenty-shared/testing';
 import {
-  type FieldMetadataFormula,
   type FieldMetadataType,
   type FieldNumberVariant,
   type NullablePartial,
@@ -114,14 +113,12 @@ type SettingsExpectedResult =
       __JsonbPropertyBrand__?: undefined;
     }
   | {
-      formula?: FieldMetadataFormula | null | undefined;
       dataType?: NumberDataType | undefined;
       decimals?: number | undefined;
       type?: FieldNumberVariant | undefined;
       __JsonbPropertyBrand__?: undefined;
     }
   | {
-      formula?: FieldMetadataFormula | null | undefined;
       displayedMaxRows?: number | undefined;
       __JsonbPropertyBrand__?: undefined;
     }
