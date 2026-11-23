@@ -80,6 +80,22 @@ describe('generateFindManyRecordsQuery with relations with arguments', () => {
     ).toMatch(/totalCount\s+edges/);
   });
 
+  it('selects a composite field of the related records with its sub-fields', () => {
+    const peopleInParisWithEmails: RecordGqlFieldsRelationWithArguments = {
+      ...peopleInParis,
+      recordGqlFields: { id: true, emails: true },
+    };
+
+    expect(
+      generateQuery({
+        extraRecordGqlFields: {
+          [computeRelationWithArgumentsResponseKey(peopleInParisWithEmails)]:
+            peopleInParisWithEmails,
+        },
+      }).query,
+    ).toMatch(/emails \{\s+primaryEmail\s+additionalEmails\s+\}/);
+  });
+
   it('selects and declares nothing for an unreadable target', () => {
     expect(generateQuery({ canReadPeople: false })).toEqual(
       generateQuery({ extraRecordGqlFields: {}, canReadPeople: false }),

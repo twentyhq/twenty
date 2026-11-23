@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
+import { isLookupTargetFieldReadable } from '@/object-record/record-column-lookup/utils/isLookupTargetFieldReadable';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -11,7 +12,7 @@ import { getRecordTableCellInputIdPrefix } from '@/object-record/record-table/ut
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { type ReactNode } from 'react';
-import { findById, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableCellLookupFieldContextProps = {
   recordFieldId: string;
@@ -50,11 +51,6 @@ export const RecordTableCellLookupFieldContext = ({
     objectMetadataId: relationObjectMetadataItem.id,
   });
 
-  const isLookupTargetFieldReadable =
-    relationObjectMetadataItem.readableFields.some(
-      findById(lookupTargetFieldMetadataItem.id),
-    );
-
   return (
     <RecordFieldComponentInstanceContext.Provider
       value={{
@@ -75,7 +71,10 @@ export const RecordTableCellLookupFieldContext = ({
             !isDefined(relatedRecord) ||
             isRowReadOnly === true ||
             isRelatedRecordReadOnly,
-          restrictedFieldNames: isLookupTargetFieldReadable
+          restrictedFieldNames: isLookupTargetFieldReadable({
+            relationObjectMetadataItem,
+            lookupTargetFieldMetadataItem,
+          })
             ? restrictedFieldNames
             : [...restrictedFieldNames, lookupTargetFieldMetadataItem.name],
         }}
