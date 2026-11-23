@@ -9,6 +9,7 @@ import { In, IsNull, Not } from 'typeorm';
 import { CommonRecordVisibilityService } from 'src/engine/api/common/common-record-visibility/common-record-visibility.service';
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -43,6 +44,15 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      ['featureFlagsMap'],
+    );
+
+    if (isChannelVisibilityRlsEnabled(featureFlagsMap)) {
+      return;
+    }
+
     const restrictableAttachments = records.filter((attachment) =>
       RESTRICTED_ATTACHMENT_FIELD_NAMES.some(
         (fieldName) => fieldName in attachment,
