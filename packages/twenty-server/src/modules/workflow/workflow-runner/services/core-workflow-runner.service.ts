@@ -8,7 +8,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueException } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { buildWorkflowRunCreatedBy } from 'src/modules/workflow/workflow-executor/utils/build-workflow-run-created-by.util';
@@ -27,7 +26,6 @@ export class CoreWorkflowRunnerService {
   private readonly logger = new Logger(CoreWorkflowRunnerService.name);
 
   constructor(
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingUsageService: BillingUsageService,
@@ -166,15 +164,11 @@ export class CoreWorkflowRunnerService {
       );
     }
 
-    const workflow = await this.workflowCoreSyncService.findCoreWorkflowById(
-      workspaceId,
-      workflowVersion.coreWorkflowId,
+    const workflow = await this.coreWorkflowTriggerService.findCoreWorkflowById(
+      { workspaceId, coreWorkflowId: workflowVersion.coreWorkflowId },
     );
 
-    if (
-      !isDefined(workflow) ||
-      workflowVersion.workflowId !== workflow.workspaceWorkflowId
-    ) {
+    if (!isDefined(workflow)) {
       throw new WorkflowRunException(
         'Core workflow not found',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
