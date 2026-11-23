@@ -18,7 +18,7 @@ export const isViewVisibleToUser = (
     property: 'isPrivate',
   });
 
-  if (!isPrivate) {
+  if (isPrivate === false) {
     return true;
   }
 
