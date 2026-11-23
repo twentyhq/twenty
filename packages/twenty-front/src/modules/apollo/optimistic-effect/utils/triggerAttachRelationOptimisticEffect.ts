@@ -1,5 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
+import { isCachedRelationCopyWithArguments } from '@/apollo/optimistic-effect/utils/isCachedRelationCopyWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -65,8 +66,12 @@ export const triggerAttachRelationOptimisticEffect = ({
         targetRecordFieldValue,
         { toReference, storeFieldName, DELETE },
       ) => {
-        // Only the server applies a relation's filter, sort and limit, so copies with arguments are dropped for refetch
-        if (storeFieldName !== fieldNameOnTargetRecord) {
+        if (
+          isCachedRelationCopyWithArguments({
+            storeFieldName,
+            relationFieldName: fieldNameOnTargetRecord,
+          })
+        ) {
           return DELETE;
         }
 
