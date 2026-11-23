@@ -52,10 +52,4 @@ export const createViewFieldInputSchema = z.object({
     .describe(
       'Column header shown instead of the default one. Leave it out to show the default header.',
     ),
-  relationAggregateOperation: z
-    .enum(AggregateOperations)
-    .optional()
-    .describe(
-      'On an extra (non-canonical) one-to-many column with a relationScope that has no sorts and no limit, show per row an aggregate of the related records the scope keeps instead of the records. COUNT takes no relationTargetFieldMetadataId; SUM, AVG, MIN and MAX need relationTargetFieldMetadataId set to a related object field that supports the operation.',
-    ),
 });

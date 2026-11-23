@@ -13,6 +13,7 @@ import {
 import {
   computeRelationWithArgumentsResponseKey,
   isDefined,
+  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 export const getScopedRelationAliases = ({
@@ -71,11 +72,19 @@ export const getScopedRelationAliases = ({
       filterValueDependencies,
     });
 
+    const aggregateGqlFieldNames = [
+      // Only a limit can leave matching records out of the loaded ones
+      ...(isDefined(relationScope.limit) ? ['totalCount'] : []),
+    ];
+
     const relationWithArguments: RecordGqlFieldsRelationWithArguments = {
       relationFieldName: fieldMetadataItem.name,
       filter,
       orderBy,
       first: relationScope.limit ?? undefined,
+      ...(isNonEmptyArray(aggregateGqlFieldNames) && {
+        aggregateGqlFieldNames,
+      }),
       recordGqlFields: {
         ...buildIdentifierGqlFields(relationObjectMetadataItem),
         ...(isDefined(lookupTarget) && {
