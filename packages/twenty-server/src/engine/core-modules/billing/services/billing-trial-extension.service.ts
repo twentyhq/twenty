@@ -6,6 +6,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
+import type Stripe from 'stripe';
+
 import {
   BillingException,
   BillingExceptionCode,
@@ -20,7 +22,7 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
-import { buildTrialExtensionSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-extension-schedule-phases.util';
+import { buildTrialEndSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-end-schedule-phases.util';
 import { getTrialExtensionMirrorAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-mirror-action.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -89,27 +91,13 @@ export class BillingTrialExtensionService {
           now,
         });
 
-        if (
-          isDefined(schedule) &&
-          isDefined(currentPhase) &&
-          isDefined(nextPhase)
-        ) {
-          await this.stripeSubscriptionScheduleService.updateSchedule(
-            schedule.id,
-            {
-              phases: buildTrialExtensionSchedulePhases({
-                currentPhase,
-                nextPhase,
-                trialEnd,
-              }),
-            },
-          );
-        } else {
-          await this.stripeSubscriptionService.updateSubscription(
-            subscription.stripeSubscriptionId,
-            { trial_end: trialEnd, proration_behavior: 'none' },
-          );
-        }
+        await this.moveStripeTrialEnd({
+          stripeSubscriptionId: subscription.stripeSubscriptionId,
+          schedule,
+          currentPhase,
+          nextPhase,
+          trialEnd,
+        });
 
         const trialExtension = await this.replaceActiveTrialExtension({
           workspaceId,
@@ -177,16 +165,23 @@ export class BillingTrialExtensionService {
           });
         }
 
-        const stripeSubscription =
-          await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-            subscription.stripeSubscriptionId,
-          );
+        const {
+          subscription: stripeSubscription,
+          schedule,
+          currentPhase,
+          nextPhase,
+        } = await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+          subscription.stripeSubscriptionId,
+        );
 
         if (stripeSubscription.status === 'trialing') {
-          await this.stripeSubscriptionService.updateSubscription(
-            subscription.stripeSubscriptionId,
-            { trial_end: 'now' },
-          );
+          await this.moveStripeTrialEnd({
+            stripeSubscriptionId: subscription.stripeSubscriptionId,
+            schedule,
+            currentPhase,
+            nextPhase,
+            trialEnd: 'now',
+          });
         }
 
         const endedTrialExtension =
@@ -261,6 +256,43 @@ export class BillingTrialExtensionService {
       default:
         assertUnreachable(action);
     }
+  }
+
+  private async moveStripeTrialEnd({
+    stripeSubscriptionId,
+    schedule,
+    currentPhase,
+    nextPhase,
+    trialEnd,
+  }: {
+    stripeSubscriptionId: string;
+    schedule: Stripe.SubscriptionSchedule | undefined;
+    currentPhase: Stripe.SubscriptionSchedule.Phase | undefined;
+    nextPhase: Stripe.SubscriptionSchedule.Phase | undefined;
+    trialEnd: number | 'now';
+  }): Promise<void> {
+    if (
+      isDefined(schedule) &&
+      isDefined(currentPhase) &&
+      isDefined(nextPhase)
+    ) {
+      await this.stripeSubscriptionScheduleService.updateSchedule(schedule.id, {
+        phases: buildTrialEndSchedulePhases({
+          currentPhase,
+          nextPhase,
+          trialEnd,
+        }),
+      });
+
+      return;
+    }
+
+    await this.stripeSubscriptionService.updateSubscription(
+      stripeSubscriptionId,
+      trialEnd === 'now'
+        ? { trial_end: 'now' }
+        : { trial_end: trialEnd, proration_behavior: 'none' },
+    );
   }
 
   private async findActiveTrialExtension({

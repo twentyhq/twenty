@@ -2,7 +2,7 @@
 
 import type Stripe from 'stripe';
 
-import { buildTrialExtensionSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-extension-schedule-phases.util';
+import { buildTrialEndSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-end-schedule-phases.util';
 
 const TRIAL_START = Date.parse('2026-11-01T00:00:00Z') / 1000;
 const TRIAL_END = Date.parse('2026-12-01T00:00:00Z') / 1000;
@@ -21,7 +21,20 @@ const buildPhase = (
 const buildItem = (price: string): Stripe.SubscriptionSchedule.Phase.Item =>
   ({ price, quantity: 1 }) as Stripe.SubscriptionSchedule.Phase.Item;
 
-describe('buildTrialExtensionSchedulePhases', () => {
+const TRIAL_PHASE = buildPhase({
+  start_date: TRIAL_START,
+  end_date: TRIAL_END,
+  trial_end: TRIAL_END,
+  items: [buildItem('price_pro_monthly')],
+});
+
+const NEXT_PHASE = buildPhase({
+  start_date: TRIAL_END,
+  end_date: NEXT_PHASE_END,
+  items: [buildItem('price_credit_pack_small')],
+});
+
+describe('buildTrialEndSchedulePhases', () => {
   beforeEach(() => {
     jest.useFakeTimers().setSystemTime(new Date('2026-11-16T00:00:00Z'));
   });
@@ -30,19 +43,10 @@ describe('buildTrialExtensionSchedulePhases', () => {
     jest.useRealTimers();
   });
 
-  it('stretches the trial phase and starts the next phase at the new trial end', () => {
-    const [trialPhase, nextPhase] = buildTrialExtensionSchedulePhases({
-      currentPhase: buildPhase({
-        start_date: TRIAL_START,
-        end_date: TRIAL_END,
-        trial_end: TRIAL_END,
-        items: [buildItem('price_pro_monthly')],
-      }),
-      nextPhase: buildPhase({
-        start_date: TRIAL_END,
-        end_date: NEXT_PHASE_END,
-        items: [buildItem('price_credit_pack_small')],
-      }),
+  it('moves the trial phase end and lets the next phase follow it', () => {
+    const [trialPhase, nextPhase] = buildTrialEndSchedulePhases({
+      currentPhase: TRIAL_PHASE,
+      nextPhase: NEXT_PHASE,
       trialEnd: EXTENDED_TRIAL_END,
     });
 
@@ -53,10 +57,25 @@ describe('buildTrialExtensionSchedulePhases', () => {
       items: [{ price: 'price_pro_monthly', quantity: 1 }],
     });
     expect(nextPhase).toMatchObject({
-      start_date: EXTENDED_TRIAL_END,
       items: [{ price: 'price_credit_pack_small', quantity: 1 }],
     });
+    expect(nextPhase.start_date).toBeUndefined();
     expect(nextPhase.end_date).toBeUndefined();
     expect(nextPhase.trial_end).toBeUndefined();
+  });
+
+  it('ends the trial phase now so the next phase starts right away', () => {
+    const [trialPhase, nextPhase] = buildTrialEndSchedulePhases({
+      currentPhase: TRIAL_PHASE,
+      nextPhase: NEXT_PHASE,
+      trialEnd: 'now',
+    });
+
+    expect(trialPhase).toMatchObject({
+      start_date: TRIAL_START,
+      end_date: 'now',
+      trial_end: 'now',
+    });
+    expect(nextPhase.start_date).toBeUndefined();
   });
 });
