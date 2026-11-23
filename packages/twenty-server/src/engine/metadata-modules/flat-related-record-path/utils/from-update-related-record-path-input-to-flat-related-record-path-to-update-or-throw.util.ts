@@ -20,7 +20,10 @@ export const fromUpdateRelatedRecordPathInputToFlatRelatedRecordPathToUpdateOrTh
     callerApplicationUniversalIdentifier,
     workspaceCustomApplicationUniversalIdentifier,
   }: {
-    updateRelatedRecordPathInput: UpdateRelatedRecordPathInput;
+    updateRelatedRecordPathInput: Pick<
+      UpdateRelatedRecordPathInput,
+      'isInherent' | 'isActive'
+    >;
     existingFlatRelatedRecordPath: FlatRelatedRecordPath | undefined;
     callerApplicationUniversalIdentifier: string;
     workspaceCustomApplicationUniversalIdentifier: string;
