@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@apollo/client": "^4.0.0",
+    "@base-ui/react": "^1.9.0",
     "@calcom/embed-react": "^1.5.3",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@dagrejs/dagre": "^1.1.8",
