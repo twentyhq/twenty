@@ -122,7 +122,9 @@ describe('useAiChatFileUpload', () => {
     expect(uploadedFiles).toEqual([]);
     expect(putFile).not.toHaveBeenCalled();
     expect(
-      await screen.findByText('File "big.pdf" exceeds 50.0 MB'),
+      await screen.findByText(
+        'Couldn\'t attach "big.pdf". Files must be 50.0 MB or smaller.',
+      ),
     ).toBeInTheDocument();
     expect(
       jotaiStore.get(

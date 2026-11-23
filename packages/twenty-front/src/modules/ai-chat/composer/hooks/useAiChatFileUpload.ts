@@ -105,7 +105,7 @@ export const useAiChatFileUpload = () => {
 
       enqueueToast({
         status: 'error',
-        children: t`File "${fileName}" exceeds ${maxUploadSize}`,
+        children: t`Couldn't attach "${fileName}". Files must be ${maxUploadSize} or smaller.`,
       });
 
       return false;
