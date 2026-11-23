@@ -62,6 +62,7 @@ import { RedisClientModule } from 'src/engine/core-modules/redis-client/redis-cl
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { WorkspaceSsoModule } from 'src/engine/core-modules/sso/sso.module';
+import { TabPresenceModule } from 'src/engine/core-modules/tab-presence/tab-presence.module';
 import { WebPushModule } from 'src/engine/core-modules/web-push/web-push.module';
 import { WellKnownModule } from 'src/engine/core-modules/well-known/well-known.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
@@ -105,6 +106,7 @@ import { FileApiModule } from './file/file-api.module';
     RowLevelPermissionModule,
     OpenApiModule,
     WebPushModule,
+    TabPresenceModule,
     WellKnownModule,
     ApplicationRegistrationModule,
     ApplicationMonitoringModule,
