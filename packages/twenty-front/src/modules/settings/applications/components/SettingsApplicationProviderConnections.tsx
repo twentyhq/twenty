@@ -42,7 +42,11 @@ export const SettingsApplicationProviderConnections = ({
         {canStartAuthorization && (
           <SettingsApplicationAddConnectionButton
             applicationId={applicationId}
-            connectionProvider={connectionProvider}
+            connectionProviderName={connectionProvider.name}
+            connectionProviderType={connectionProvider.type}
+            connectionProviderDisplayName={connectionProvider.displayName}
+            connectionProviderLogoUrl={connectionProvider.logoUrl}
+            connectedAccountPrices={connectionProvider.connectedAccountPrices}
             redirectLocation={redirectLocation}
           />
         )}

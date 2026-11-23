@@ -113,10 +113,12 @@ export class MarketplaceQueryService {
     universalIdentifier,
     shouldIncludeConnectListings = false,
     shouldIncludeMcpServerApplications = false,
+    shouldIncludeBillingPrices = false,
   }: {
     universalIdentifier: string;
     shouldIncludeConnectListings?: boolean;
     shouldIncludeMcpServerApplications?: boolean;
+    shouldIncludeBillingPrices?: boolean;
   }): Promise<MarketplaceAppDetailDTO> {
     const connectListing = shouldIncludeConnectListings
       ? findMarketplaceConnectListing(universalIdentifier)
@@ -142,7 +144,10 @@ export class MarketplaceQueryService {
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 
-    return this.toMarketplaceAppDetailDTO(registration);
+    return this.toMarketplaceAppDetailDTO({
+      registration,
+      shouldIncludeBillingPrices,
+    });
   }
 
   async findRegistrationByUniversalIdentifier(
@@ -164,9 +169,13 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private async toMarketplaceAppDetailDTO(
-    registration: ApplicationRegistrationEntity,
-  ): Promise<MarketplaceAppDetailDTO> {
+  private async toMarketplaceAppDetailDTO({
+    registration,
+    shouldIncludeBillingPrices,
+  }: {
+    registration: ApplicationRegistrationEntity;
+    shouldIncludeBillingPrices: boolean;
+  }): Promise<MarketplaceAppDetailDTO> {
     const galleryImageUrls =
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
@@ -255,9 +264,11 @@ export class MarketplaceQueryService {
         manifest?.application?.requestedIframeMediaPermissions,
       ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
-      billingPrices: (manifest?.application?.billing?.prices ?? [])
-        .filter(isApplicationBillingPrice)
-        .map(toApplicationBillingPriceDto),
+      billingPrices: shouldIncludeBillingPrices
+        ? (manifest?.application?.billing?.prices ?? [])
+            .filter(isApplicationBillingPrice)
+            .map(toApplicationBillingPriceDto)
+        : [],
       content: isDefined(manifest)
         ? buildApplicationContentFromManifest(manifest)
         : undefined,

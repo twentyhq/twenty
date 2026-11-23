@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { IconCreditCard } from 'twenty-ui/icon';
 
 import { type PermissionSummaryItem } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
-import { type ApplicationBillingPrice } from '@/marketplace/types/ApplicationBillingPrice';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 
 const getApplicationBillingPriceLabel = ({
   price,

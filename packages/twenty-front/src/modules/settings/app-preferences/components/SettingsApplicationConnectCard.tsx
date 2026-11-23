@@ -1,10 +1,8 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { SettingsApplicationConnectionBillingValidationModal } from '@/settings/applications/components/SettingsApplicationConnectionBillingValidationModal';
-import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
+import { useStartNewAppConnection } from '@/settings/applications/hooks/useStartNewAppConnection';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 
 type SettingsApplicationConnectCardProps = {
   applicationId: string;
@@ -22,28 +20,13 @@ export const SettingsApplicationConnectCard = ({
   title,
   redirectLocation,
 }: SettingsApplicationConnectCardProps) => {
-  const { startAppConnection } = useStartAppConnection();
-  const { openDialog } = useDialog();
-
-  const billingValidationModalInstanceId = `application-connect-card-billing-validation-${applicationId}-${connectionProvider.name}`;
-
-  const startConnection = () =>
-    startAppConnection({
-      applicationId,
-      connectionProviderName: connectionProvider.name,
-      connectionProviderType: connectionProvider.type,
-      redirectLocation,
-    });
-
-  const handleClick = () => {
-    if (isNonEmptyArray(connectionProvider.connectedAccountPrices)) {
-      openDialog(billingValidationModalInstanceId);
-
-      return;
-    }
-
-    startConnection();
-  };
+  const { startNewAppConnection } = useStartNewAppConnection({
+    applicationId,
+    connectionProviderName: connectionProvider.name,
+    connectionProviderType: connectionProvider.type,
+    connectedAccountPrices: connectionProvider.connectedAccountPrices,
+    redirectLocation,
+  });
 
   return (
     <>
@@ -57,14 +40,16 @@ export const SettingsApplicationConnectCard = ({
           />
         }
         title={title}
-        onClick={handleClick}
+        onClick={startNewAppConnection}
       />
       <SettingsApplicationConnectionBillingValidationModal
-        modalInstanceId={billingValidationModalInstanceId}
+        applicationId={applicationId}
+        connectionProviderName={connectionProvider.name}
+        connectionProviderType={connectionProvider.type}
         connectionProviderDisplayName={connectionProvider.displayName}
         connectionProviderLogoUrl={connectionProvider.logoUrl}
         connectedAccountPrices={connectionProvider.connectedAccountPrices}
-        onAuthorize={startConnection}
+        redirectLocation={redirectLocation}
       />
     </>
   );

@@ -3,7 +3,7 @@ import {
   type ConnectionProviderType,
 } from 'twenty-shared/application';
 
-import { type ConnectedAccountPrice } from '@/settings/applications/types/ConnectedAccountPrice';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 
 export type FrontendApplicationConnectionProviderOAuthConfig = {
   scopes: string[];
@@ -22,5 +22,5 @@ export type FrontendApplicationConnectionProvider = {
   scope: ConnectionProviderScope;
   logoUrl: string | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
-  connectedAccountPrices: ConnectedAccountPrice[];
+  connectedAccountPrices: ApplicationBillingPrice[];
 };

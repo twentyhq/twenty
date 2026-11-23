@@ -1,4 +1,4 @@
-import { type ApplicationBillingPrice } from '@/marketplace/types/ApplicationBillingPrice';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 
 const buildPrice = (

@@ -88,7 +88,7 @@ const getLocaleForFormat = (format?: NumberFormat): string => {
 const getMinimumFractionDigits = ({
   minimumDecimals,
   decimals,
-}: FormatNumberOptions) => {
+}: Pick<FormatNumberOptions, 'minimumDecimals' | 'decimals'>) => {
   const minimumFractionDigits = minimumDecimals ?? 0;
 
   return isDefined(decimals)

@@ -1,18 +1,15 @@
 import { useCallback } from 'react';
 
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
+import { formatApplicationPriceAmount as formatApplicationPriceAmountUtil } from '@/settings/applications/utils/formatApplicationPriceAmount';
 
 export const useFormatApplicationPriceAmount = () => {
-  const { formatNumber } = useNumberFormat();
+  const { numberFormat } = useNumberFormat();
 
   const formatApplicationPriceAmount = useCallback(
     ({ amountCents, currency }: { amountCents: number; currency: string }) =>
-      `${getCurrencyPrefix(currency)}${formatNumber(amountCents / 100, {
-        decimals: 2,
-        minimumDecimals: 2,
-      })}`,
-    [formatNumber],
+      formatApplicationPriceAmountUtil({ amountCents, currency, numberFormat }),
+    [numberFormat],
   );
 
   return { formatApplicationPriceAmount };

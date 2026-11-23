@@ -1,7 +1,8 @@
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useFormatApplicationPriceAmount } from '@/settings/applications/hooks/useFormatApplicationPriceAmount';
-import { type ConnectedAccountPrice } from '@/settings/applications/types/ConnectedAccountPrice';
+import { useStartAppConnection } from '@/settings/applications/hooks/useStartAppConnection';
+import { getConnectionBillingValidationModalInstanceId } from '@/settings/applications/utils/getConnectionBillingValidationModalInstanceId';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { styled } from '@linaria/react';
@@ -10,13 +11,16 @@ import { IconChevronLeft, IconCreditCard } from 'twenty-ui/icon';
 import { LightButton } from 'twenty-ui/components/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 
 type SettingsApplicationConnectionBillingValidationModalProps = {
-  modalInstanceId: string;
+  applicationId: string;
+  connectionProviderName: string;
+  connectionProviderType: string;
   connectionProviderDisplayName: string;
   connectionProviderLogoUrl?: string | null;
-  connectedAccountPrices: ConnectedAccountPrice[];
-  onAuthorize: () => void;
+  connectedAccountPrices: ApplicationBillingPrice[];
+  redirectLocation?: string;
 };
 
 const StyledFullscreenContainer = styled.div`
@@ -88,17 +92,25 @@ const StyledPriceIcon = styled.div`
 `;
 
 export const SettingsApplicationConnectionBillingValidationModal = ({
-  modalInstanceId,
+  applicationId,
+  connectionProviderName,
+  connectionProviderType,
   connectionProviderDisplayName,
   connectionProviderLogoUrl,
   connectedAccountPrices,
-  onAuthorize,
+  redirectLocation,
 }: SettingsApplicationConnectionBillingValidationModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
+  const { startAppConnection } = useStartAppConnection();
   const { formatApplicationPriceAmount } = useFormatApplicationPriceAmount();
 
-  const formatPrice = (price: ConnectedAccountPrice) => {
+  const modalInstanceId = getConnectionBillingValidationModalInstanceId({
+    applicationId,
+    connectionProviderName,
+  });
+
+  const formatPrice = (price: ApplicationBillingPrice) => {
     const amount = formatApplicationPriceAmount(price);
 
     return price.billingPeriod === 'MONTHLY' ? t`${amount} / month` : amount;
@@ -110,7 +122,12 @@ export const SettingsApplicationConnectionBillingValidationModal = ({
 
   const handleAuthorize = () => {
     closeDialog(modalInstanceId);
-    onAuthorize();
+    startAppConnection({
+      applicationId,
+      connectionProviderName,
+      connectionProviderType,
+      redirectLocation,
+    });
   };
 
   return (

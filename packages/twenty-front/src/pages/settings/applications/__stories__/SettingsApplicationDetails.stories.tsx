@@ -160,6 +160,8 @@ const LINKEDIN_CONNECTION_PROVIDER = {
       amountCents: 700,
       currency: 'USD',
       billingPeriod: 'MONTHLY',
+      type: 'RECURRING',
+      per: 'CONNECTED_ACCOUNT',
     },
   ],
 };

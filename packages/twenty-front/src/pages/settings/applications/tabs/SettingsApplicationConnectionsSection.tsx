@@ -122,7 +122,11 @@ export const SettingsApplicationConnectionsSection = ({
             {canStartAuthorization && (
               <SettingsApplicationAddConnectionButton
                 applicationId={applicationId}
-                connectionProvider={provider}
+                connectionProviderName={provider.name}
+                connectionProviderType={provider.type}
+                connectionProviderDisplayName={provider.displayName}
+                connectionProviderLogoUrl={provider.logoUrl}
+                connectedAccountPrices={provider.connectedAccountPrices}
               />
             )}
           </SettingsApplicationConnectionProviderSection>

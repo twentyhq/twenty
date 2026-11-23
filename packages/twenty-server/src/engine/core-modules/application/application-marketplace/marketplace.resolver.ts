@@ -17,6 +17,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
@@ -48,6 +49,7 @@ export class MarketplaceResolver {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Query(() => [MarketplaceAppDTO])
@@ -82,7 +84,22 @@ export class MarketplaceResolver {
       shouldIncludeMcpServerApplications: await this.isMcpServersEnabled(
         workspace.id,
       ),
+      shouldIncludeBillingPrices: await this.isApplicationPriceBillingEnabled(
+        workspace.id,
+      ),
     });
+  }
+
+  private async isApplicationPriceBillingEnabled(
+    workspaceId: string,
+  ): Promise<boolean> {
+    return (
+      this.twentyConfigService.get('IS_BILLING_ENABLED') &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED,
+        workspaceId,
+      ))
+    );
   }
 
   private isMcpServersEnabled(workspaceId: string): Promise<boolean> {

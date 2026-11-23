@@ -19,6 +19,8 @@ export const APPLICATION_CONNECTION_PROVIDER_FRAGMENT = gql`
       amountCents
       currency
       billingPeriod
+      type
+      per
     }
   }
 `;

@@ -2,7 +2,7 @@ import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { type ApplicationBillingPrice } from '@/marketplace/types/ApplicationBillingPrice';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { useFormatApplicationPriceAmount } from '@/settings/applications/hooks/useFormatApplicationPriceAmount';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
