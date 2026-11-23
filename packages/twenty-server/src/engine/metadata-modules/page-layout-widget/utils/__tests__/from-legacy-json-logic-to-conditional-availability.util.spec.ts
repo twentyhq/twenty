@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
 
-import { fromLegacyJsonLogicToConditionalAvailability } from 'src/database/commands/upgrade-version-command/2-63/utils/from-legacy-json-logic-to-conditional-availability.util';
+import { fromLegacyJsonLogicToConditionalAvailability } from 'src/engine/metadata-modules/page-layout-widget/utils/from-legacy-json-logic-to-conditional-availability.util';
 
 const recordField = (name: string) => ({ var: `selectedRecords.0.${name}` });
 

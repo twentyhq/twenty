@@ -1,5 +1,7 @@
+import { printConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
 
@@ -118,5 +120,57 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
       rowSpan: 4,
       columnSpan: 6,
     });
+  });
+
+  it('should fill the conditional availability tree from the json-logic rule of the manifest', () => {
+    const conditionalDisplay = {
+      in: [{ var: 'selectedRecords.0.stage' }, ['WON', 'LOST']],
+    };
+
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-4',
+        title: 'Rule Widget',
+        type: WidgetType.FIELDS,
+        configuration: { configurationType: 'FIELDS' },
+        conditionalDisplay,
+      },
+      pageLayoutTabUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.conditionalDisplay).toEqual(conditionalDisplay);
+    expect(
+      isDefined(result.conditionalAvailability)
+        ? printConditionalAvailabilityNode({
+            node: result.conditionalAvailability,
+          })
+        : null,
+    ).toBe(
+      'everyEquals(selectedRecords, "stage", "WON") or everyEquals(selectedRecords, "stage", "LOST")',
+    );
+  });
+
+  it('should leave the tree empty when the json-logic rule of the manifest has no tree equivalent', () => {
+    const conditionalDisplay = {
+      '<': [{ var: 'selectedRecords.0.amount' }, 5],
+    };
+
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-5',
+        title: 'Rule Widget',
+        type: WidgetType.FIELDS,
+        configuration: { configurationType: 'FIELDS' },
+        conditionalDisplay,
+      },
+      pageLayoutTabUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.conditionalDisplay).toEqual(conditionalDisplay);
+    expect(result.conditionalAvailability).toBeNull();
   });
 });
