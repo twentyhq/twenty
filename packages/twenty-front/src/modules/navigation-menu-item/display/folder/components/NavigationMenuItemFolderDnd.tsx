@@ -427,7 +427,7 @@ export const NavigationMenuItemFolderDnd = ({
                       position={navigationMenuItems.length}
                     >
                       <NavigationDrawerSubItem
-                        label={t`Add menu item`}
+                        label={t`Add item`}
                         Icon={IconPlus}
                         triggerEvent="CLICK"
                         variant="tertiary"

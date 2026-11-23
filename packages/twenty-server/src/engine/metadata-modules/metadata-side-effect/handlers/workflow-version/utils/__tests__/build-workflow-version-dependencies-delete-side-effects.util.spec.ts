@@ -20,13 +20,11 @@ const buildMaps = () => {
       id: 'draft-version-id',
       universalIdentifier: 'draft-version',
       coreWorkflowId: 'workflow-id',
-      workspaceWorkflowVersionId: 'mirror-draft-version-id',
     },
     {
       id: 'active-version-id',
       universalIdentifier: 'active-version',
       coreWorkflowId: 'workflow-id',
-      workspaceWorkflowVersionId: null,
     },
   ];
 
@@ -41,11 +39,6 @@ const buildMaps = () => {
       universalIdentifier: 'draft-item',
       coreWorkflowVersionId: 'draft-version-id',
       workflowVersionId: null,
-    },
-    {
-      universalIdentifier: 'mirror-draft-item',
-      coreWorkflowVersionId: null,
-      workflowVersionId: 'mirror-draft-version-id',
     },
     {
       universalIdentifier: 'active-item',
@@ -98,7 +91,7 @@ describe('buildWorkflowVersionDependenciesDeleteSideEffects', () => {
 
     expect(
       Object.keys(result.operations.commandMenuItem?.flatEntityToDelete ?? {}),
-    ).toEqual(['draft-item', 'mirror-draft-item']);
+    ).toEqual(['draft-item']);
   });
 
   it('leaves the cleanup to the workflow when the workflow is deleted in the same migration', () => {
