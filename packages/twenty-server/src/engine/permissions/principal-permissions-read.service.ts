@@ -10,6 +10,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
 import { type PermissionsAuthContext } from 'src/engine/permissions/principal/types/permissions-auth-context.type';
+import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { buildRolePermissionsPrincipals } from 'src/engine/permissions/internal/principal/utils/build-role-permissions-principals.util';
 import { canAuthContextHoldRoles } from 'src/engine/permissions/internal/principal/utils/can-auth-context-hold-roles.util';
@@ -102,6 +103,8 @@ export class PrincipalPermissionsReadService {
         flatWorkspaceMemberMaps:
           await this.findFlatWorkspaceMemberMaps(authContext),
         flatRoleTargetMaps: await this.findFlatRoleTargetMaps(authContext),
+        apiKeysIndividualRoleId:
+          await this.findApiKeysIndividualRoleId(authContext),
       },
     });
   }
@@ -120,6 +123,25 @@ export class PrincipalPermissionsReadService {
       );
 
     return flatWorkspaceMemberMaps;
+  }
+
+  private async findApiKeysIndividualRoleId(
+    authContext: PermissionsAuthContext,
+  ): Promise<string | undefined> {
+    if (authContext.type !== 'apiKey') {
+      return undefined;
+    }
+
+    const { flatRoleMaps } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      ['flatRoleMaps'],
+    );
+
+    return flatRoleMaps.byUniversalIdentifier[
+      getWorkspaceMemberIndividualRoleUniversalIdentifier({
+        holder: { type: 'apiKeys' },
+      })
+    ]?.id;
   }
 
   private async findFlatRoleTargetMaps(authContext: PermissionsAuthContext) {

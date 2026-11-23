@@ -1,6 +1,7 @@
 import { MessageChannelVisibility } from 'twenty-shared/types';
 
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
+import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 
 const buildChannel = ({
   id,
@@ -34,10 +35,10 @@ const channels = [
   }),
 ];
 
-const findReadableChannelIds = (userWorkspaceId: string) =>
+const findReadableChannelIds = (holder: WorkspaceMemberIndividualRoleHolder) =>
   (
     buildChannelVisibilityObjectRecordsPermissions({
-      userWorkspaceId,
+      holder,
       channels,
       objectUniversalIdentifier: 'message',
       associationRelationFieldUniversalIdentifier: 'associations',
@@ -53,14 +54,32 @@ const findReadableChannelIds = (userWorkspaceId: string) =>
 
 describe('buildChannelVisibilityObjectRecordsPermissions', () => {
   it('should give the owner everything on a channel, whatever it shares', () => {
-    expect(findReadableChannelIds('jane')).toEqual([
+    expect(
+      findReadableChannelIds({
+        type: 'userWorkspace',
+        userWorkspaceId: 'jane',
+      }),
+    ).toEqual([
       { unreadableFields: [], channelIds: ['c2'] },
       { unreadableFields: [], channelIds: ['c1', 'c3'] },
     ]);
   });
 
   it('should give another member what each channel shares, with no rule for an empty level', () => {
-    expect(findReadableChannelIds('alice')).toEqual([
+    expect(
+      findReadableChannelIds({
+        type: 'userWorkspace',
+        userWorkspaceId: 'alice',
+      }),
+    ).toEqual([
+      { unreadableFields: ['subject'], channelIds: ['c1'] },
+      { unreadableFields: [], channelIds: ['c2'] },
+      { unreadableFields: [], channelIds: ['c3'] },
+    ]);
+  });
+
+  it('should give API keys what each channel shares, since they own no channel', () => {
+    expect(findReadableChannelIds({ type: 'apiKeys' })).toEqual([
       { unreadableFields: ['subject'], channelIds: ['c1'] },
       { unreadableFields: [], channelIds: ['c2'] },
       { unreadableFields: [], channelIds: ['c3'] },

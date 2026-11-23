@@ -33,6 +33,7 @@ export class ChannelVisibilityRuleSyncListener {
       events.some(({ key }) =>
         [
           FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
+          FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS,
           FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
           FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
         ].includes(key),

@@ -9,17 +9,18 @@ import { v5 } from 'uuid';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 
 export const buildChannelVisibilityObjectRecordsPermissions = ({
-  userWorkspaceId,
+  holder,
   channels,
   objectUniversalIdentifier,
   associationRelationFieldUniversalIdentifier,
   channelIdFieldUniversalIdentifier,
   unreadableFieldUniversalIdentifiersByVisibility,
 }: {
-  userWorkspaceId: string;
+  holder: WorkspaceMemberIndividualRoleHolder;
   channels: (Pick<
     MessageChannelEntity | CalendarChannelEntity,
     'id' | 'visibility'
@@ -34,7 +35,10 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
   >;
 }): ObjectRecordsPermissionsManifest => {
   const roleUniversalIdentifier =
-    getWorkspaceMemberIndividualRoleUniversalIdentifier(userWorkspaceId);
+    getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
+  const isOwnedByHolder = (channel: (typeof channels)[number]): boolean =>
+    holder.type === 'userWorkspace' &&
+    channel.connectedAccount?.userWorkspaceId === holder.userWorkspaceId;
 
   return {
     objectUniversalIdentifier,
@@ -43,7 +47,7 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
         const channelIds = channels
           .filter(
             (channel) =>
-              (channel.connectedAccount?.userWorkspaceId === userWorkspaceId
+              (isOwnedByHolder(channel)
                 ? MessageChannelVisibility.SHARE_EVERYTHING
                 : channel.visibility) === visibility,
           )

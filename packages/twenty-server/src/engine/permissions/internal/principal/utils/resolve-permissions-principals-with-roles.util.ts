@@ -42,6 +42,7 @@ export type PermissionsPrincipalsRoleMaps = {
   };
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
+  apiKeysIndividualRoleId?: string;
   flatRoleTargetByAgentIdMaps: Partial<
     Record<string, Pick<FlatRoleTarget, 'roleId'>>
   >;
@@ -136,7 +137,10 @@ const findMainPrincipalRoleIds = ({
         roleMaps,
       });
     case 'apiKey':
-      return [roleMaps.apiKeyRoleMap[mainPrincipal.apiKeyId]].filter(isDefined);
+      return [
+        roleMaps.apiKeyRoleMap[mainPrincipal.apiKeyId],
+        roleMaps.apiKeysIndividualRoleId,
+      ].filter(isDefined);
     case 'agent':
       return [
         roleMaps.flatRoleTargetByAgentIdMaps[mainPrincipal.agentId]?.roleId,

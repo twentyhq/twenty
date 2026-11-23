@@ -1,6 +1,10 @@
 import { type RoleManifest } from 'twenty-shared/application';
 
+export type WorkspaceMemberIndividualRoleHolder =
+  | { type: 'userWorkspace'; userWorkspaceId: string }
+  | { type: 'apiKeys' };
+
 export type WorkspaceMemberIndividualRole = {
-  userWorkspaceId: string;
+  holder: WorkspaceMemberIndividualRoleHolder;
   recordsPermissions: RoleManifest['recordsPermissions'];
 };

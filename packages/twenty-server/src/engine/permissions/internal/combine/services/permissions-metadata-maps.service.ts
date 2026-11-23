@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApiKeyChannelVisibilityExemptionService } from 'src/engine/permissions/channel-visibility/services/api-key-channel-visibility-exemption.service';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { RelatedRecordPathReadService } from 'src/engine/permissions/internal/related-record-path/services/related-record-path-read.service';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
@@ -30,7 +29,6 @@ export class PermissionsMetadataMapsService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly relatedRecordPathReadService: RelatedRecordPathReadService,
-    private readonly apiKeyChannelVisibilityExemptionService: ApiKeyChannelVisibilityExemptionService,
   ) {}
 
   async load({
@@ -157,21 +155,13 @@ export class PermissionsMetadataMapsService {
 
     const loadedPermissions = this.load({
       workspaceId: principals.workspaceId,
-    })
-      .then(async (metadataMaps) => ({
-        ...metadataMaps,
-        rolesPermissions:
-          await this.apiKeyChannelVisibilityExemptionService.findPrincipalsRolesPermissions(
-            { principals, ...metadataMaps },
-          ),
-      }))
-      .then((metadataMaps) => ({
+    }).then((metadataMaps) => ({
+      metadataMaps,
+      recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
+        principals,
         metadataMaps,
-        recordsPermissions: getPermissionsPrincipalsRecordsPermissions({
-          principals,
-          metadataMaps,
-        }),
-      }));
+      }),
+    }));
 
     this.loadedPermissionsByPrincipals.set(principals, loadedPermissions);
 

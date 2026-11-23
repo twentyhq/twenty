@@ -5,7 +5,6 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecordsOperationType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { ApiKeyChannelVisibilityExemptionService } from 'src/engine/permissions/channel-visibility/services/api-key-channel-visibility-exemption.service';
 import { type AccessGroupWithoutCompactId } from 'src/engine/permissions/internal/access-group/types/access-group-without-compact-id.type';
 import { buildPrincipalsRelatedRecordPathAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-principals-related-record-path-access-groups-or-throw.util';
 import { buildRoleAccessGroupsOrThrow } from 'src/engine/permissions/internal/access-group/utils/build-role-access-groups-or-throw.util';
@@ -25,7 +24,6 @@ export class AccessGroupReadService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly accessGroupReadRepository: AccessGroupReadRepository,
-    private readonly apiKeyChannelVisibilityExemptionService: ApiKeyChannelVisibilityExemptionService,
   ) {}
 
   async findPrincipalsAccessGroupCompactIds({
@@ -41,26 +39,12 @@ export class AccessGroupReadService {
     operationType: ObjectRecordsOperationType;
   }): Promise<number[]> {
     const { workspaceId } = principals;
-    const {
-      featureFlagsMap,
-      rolesPermissions: workspaceRolesPermissions,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'featureFlagsMap',
-      'rolesPermissions',
-      'flatFieldMetadataMaps',
-      'flatObjectMetadataMaps',
-    ]);
-    const rolesPermissions =
-      await this.apiKeyChannelVisibilityExemptionService.findPrincipalsRolesPermissions(
-        {
-          principals,
-          rolesPermissions: workspaceRolesPermissions,
-          featureFlagsMap,
-          flatObjectMetadataMaps,
-        },
-      );
+    const { featureFlagsMap, rolesPermissions, flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'featureFlagsMap',
+        'rolesPermissions',
+        'flatFieldMetadataMaps',
+      ]);
 
     const workspaceMember = await this.findPrincipalWorkspaceMember(principals);
     const workspaceMembers = [workspaceMember].filter(isDefined);

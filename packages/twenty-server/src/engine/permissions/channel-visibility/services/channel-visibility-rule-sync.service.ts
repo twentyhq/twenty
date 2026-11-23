@@ -14,7 +14,9 @@ import {
 } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-rule-sync-lock.constant';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
+import { isApiKeyExemptFromChannelVisibility } from 'src/engine/permissions/channel-visibility/utils/is-api-key-exempt-from-channel-visibility.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
+import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -54,9 +56,19 @@ export class ChannelVisibilityRuleSyncService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const userWorkspaceIds = isChannelVisibilityRlsEnabled(featureFlagsMap)
-      ? Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId)
-      : [];
+    const holders: WorkspaceMemberIndividualRoleHolder[] = [
+      ...(isChannelVisibilityRlsEnabled(featureFlagsMap)
+        ? Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId).map(
+            (userWorkspaceId) => ({
+              type: 'userWorkspace' as const,
+              userWorkspaceId,
+            }),
+          )
+        : []),
+      ...(isApiKeyExemptFromChannelVisibility(featureFlagsMap)
+        ? [{ type: 'apiKeys' as const }]
+        : []),
+    ];
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
@@ -71,12 +83,12 @@ export class ChannelVisibilityRuleSyncService {
 
     await this.workspaceMemberIndividualRoleService.syncIndividualRoles({
       workspaceId,
-      individualRoles: userWorkspaceIds.map((userWorkspaceId) => ({
-        userWorkspaceId,
+      individualRoles: holders.map((holder) => ({
+        holder,
         recordsPermissions: {
           objects: [
             buildChannelVisibilityObjectRecordsPermissions({
-              userWorkspaceId,
+              holder,
               channels: messageChannels,
               objectUniversalIdentifier: message.universalIdentifier,
               associationRelationFieldUniversalIdentifier:
@@ -98,7 +110,7 @@ export class ChannelVisibilityRuleSyncService {
               },
             }),
             buildChannelVisibilityObjectRecordsPermissions({
-              userWorkspaceId,
+              holder,
               channels: calendarChannels,
               objectUniversalIdentifier: calendarEvent.universalIdentifier,
               associationRelationFieldUniversalIdentifier:

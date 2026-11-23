@@ -7,6 +7,7 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
 import {
+  API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
 } from 'src/engine/permissions/workspace-member-individual-role/constants/workspace-member-individual-role.constant';
@@ -141,13 +142,20 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   };
 
   const desiredEntities = individualRoles.map(
-    ({ userWorkspaceId, recordsPermissions }) => {
+    ({ holder, recordsPermissions }) => {
       const roleUniversalIdentifier =
-        getWorkspaceMemberIndividualRoleUniversalIdentifier(userWorkspaceId);
+        getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
       const roleManifest: RoleManifest = {
         universalIdentifier: roleUniversalIdentifier,
-        label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${userWorkspaceId}`,
-        description: 'Permissions of one workspace member',
+        label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${
+          holder.type === 'apiKeys'
+            ? API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME
+            : holder.userWorkspaceId
+        }`,
+        description:
+          holder.type === 'apiKeys'
+            ? 'Permissions of API keys'
+            : 'Permissions of one workspace member',
         icon: 'IconLock',
         canBeAssignedToUsers: false,
         canBeAssignedToAgents: false,
@@ -160,30 +168,20 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           workspaceCustomApplicationUniversalIdentifier,
         now,
       };
-      const roleTargetUniversalIdentifier =
-        existingFlatRoleTargets.find(
-          (flatRoleTarget) =>
-            flatRoleTarget.roleUniversalIdentifier ===
-              roleUniversalIdentifier &&
-            flatRoleTarget.userWorkspaceId === userWorkspaceId,
-        )?.universalIdentifier ??
-        v5(
-          `${roleUniversalIdentifier}:roleTarget`,
-          WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-        );
+      const buildRoleTarget = (userWorkspaceId: string) => {
+        const roleTargetUniversalIdentifier =
+          existingFlatRoleTargets.find(
+            (flatRoleTarget) =>
+              flatRoleTarget.roleUniversalIdentifier ===
+                roleUniversalIdentifier &&
+              flatRoleTarget.userWorkspaceId === userWorkspaceId,
+          )?.universalIdentifier ??
+          v5(
+            `${roleUniversalIdentifier}:roleTarget`,
+            WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
+          );
 
-      return {
-        role: {
-          ...fromRoleManifestToUniversalFlatRole(converterArgs),
-          isEditable: false,
-          isSystemSideEffect: true,
-          createdAt: findCreatedAt({
-            existingUniversalFlatEntities: existingFlatRoles,
-            universalIdentifier: roleUniversalIdentifier,
-            now,
-          }),
-        },
-        roleTarget: {
+        return {
           universalIdentifier: roleTargetUniversalIdentifier,
           applicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
@@ -200,7 +198,24 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
             now,
           }),
           updatedAt: now,
+        };
+      };
+
+      return {
+        role: {
+          ...fromRoleManifestToUniversalFlatRole(converterArgs),
+          isEditable: false,
+          isSystemSideEffect: true,
+          createdAt: findCreatedAt({
+            existingUniversalFlatEntities: existingFlatRoles,
+            universalIdentifier: roleUniversalIdentifier,
+            now,
+          }),
         },
+        roleTarget:
+          holder.type === 'userWorkspace'
+            ? buildRoleTarget(holder.userWorkspaceId)
+            : undefined,
         ...fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(
           converterArgs,
         ),
@@ -213,7 +228,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
       desiredEntities.map(({ role }) => role),
     ),
     flatRoleTargetMaps: buildUniversalFlatEntityMaps(
-      desiredEntities.map(({ roleTarget }) => roleTarget),
+      desiredEntities.map(({ roleTarget }) => roleTarget).filter(isDefined),
     ),
     flatObjectPermissionMaps: buildUniversalFlatEntityMaps(
       desiredEntities.flatMap(({ objectPermissions }) => objectPermissions),

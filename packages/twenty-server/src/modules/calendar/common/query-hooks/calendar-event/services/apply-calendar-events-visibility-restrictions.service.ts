@@ -14,7 +14,7 @@ import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/c
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
-import { isChannelVisibilityEnforcedThroughRules } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-through-rules.util';
+import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -53,9 +53,7 @@ export class ApplyCalendarEventsVisibilityRestrictionsService
       ['featureFlagsMap'],
     );
 
-    if (
-      isChannelVisibilityEnforcedThroughRules({ featureFlagsMap, authContext })
-    ) {
+    if (isChannelVisibilityRlsEnabled(featureFlagsMap)) {
       return;
     }
 
