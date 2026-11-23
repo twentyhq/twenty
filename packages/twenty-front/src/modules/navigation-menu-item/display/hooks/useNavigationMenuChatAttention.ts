@@ -1,27 +1,34 @@
-import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
-import { getNavigationMenuChatAttention } from '@/navigation-menu-item/display/utils/getNavigationMenuChatAttention';
-import { getNavigationMenuTabIdsWithChatSections } from '@/navigation-menu-item/display/utils/getNavigationMenuTabIdsWithChatSections';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type BuiltInSectionKey } from 'twenty-shared/types';
+import { isBuiltInSectionKey, isDefined } from 'twenty-shared/utils';
 
-export const useNavigationMenuChatAttention = () => {
-  const inboxOpenThreadsSummary = useInboxOpenThreadsSummary();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const isAiChatInboxEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+import { useInboxChatAttention } from '@/inbox/hooks/useInboxChatAttention';
+import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+
+const AI_CHAT_BUILT_IN_SECTION_KEYS: BuiltInSectionKey[] =
+  NAVIGATION_MENU_BUILT_IN_SECTIONS.filter(({ isAi }) => isAi).map(
+    ({ key }) => key,
   );
 
-  const chatAttention = isAiChatInboxEnabled
-    ? getNavigationMenuChatAttention(inboxOpenThreadsSummary)
-    : null;
-  const tabIdsWithChatSections = getNavigationMenuTabIdsWithChatSections(
-    workspaceNavigationMenuItems,
+export const useNavigationMenuChatAttention = () => {
+  const { chatAttention } = useInboxChatAttention();
+  const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+
+  const tabIdsWithChatSections = new Set(
+    workspaceNavigationMenuItems.flatMap((item) =>
+      isDefined(item.parentId) &&
+      isBuiltInSectionKey(item.builtInSectionKey) &&
+      AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
+        ? [item.parentId]
+        : [],
+    ),
   );
 
   return {
     chatAttention,
-    unreadOpenThreadCount: inboxOpenThreadsSummary.unreadOpenThreadCount,
+    unreadOpenThreadCount,
     getTabChatAttention: (tabId: string) =>
       tabIdsWithChatSections.has(tabId) ? chatAttention : null,
   };

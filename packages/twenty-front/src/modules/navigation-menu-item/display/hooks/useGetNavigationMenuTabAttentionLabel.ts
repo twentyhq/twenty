@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
-import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 
 export const useGetNavigationMenuTabAttentionLabel = () => {
   const { t } = useLingui();
@@ -10,7 +10,7 @@ export const useGetNavigationMenuTabAttentionLabel = () => {
     attention,
   }: {
     tabName: string;
-    attention: NavigationMenuChatAttention | null;
+    attention: InboxChatAttention | null;
   }) => {
     switch (attention) {
       case 'needs-input':

@@ -19,7 +19,7 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
-import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
   PermissionFlagType,
@@ -45,9 +45,9 @@ jest.mock(
 
 let mockIsInboxEnabled = true;
 let mockChatAttention: {
-  chatAttention: NavigationMenuChatAttention | null;
+  chatAttention: InboxChatAttention | null;
   unreadOpenThreadCount: number;
-  getTabChatAttention: (tabId: string) => NavigationMenuChatAttention | null;
+  getTabChatAttention: (tabId: string) => InboxChatAttention | null;
 } | null = null;
 
 jest.mock(
