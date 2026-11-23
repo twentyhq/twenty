@@ -9,7 +9,6 @@ import {
 } from 'twenty-shared/types';
 import {
   canAccessThroughAllRecordsOrRlsPermission,
-  canAccessThroughAllRecordsPermission,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -664,15 +663,27 @@ export class RecordPermissionsReadService {
       relationTargetObjectMetadataId,
       relationTargetRecordIds,
     ] of relationTargetRecordIdsByObjectMetadataId) {
-      // Private records keep their own grants, which the services writing links to them check
+      const relationTargetFlatObjectMetadata = this.findFlatObjectMetadata({
+        metadataMaps,
+        objectMetadataId: relationTargetObjectMetadataId,
+      });
+
+      if (!isDefined(relationTargetFlatObjectMetadata)) {
+        continue;
+      }
+
+      const relationTargetReadRequest: PermissionsObjectAccessRequest = {
+        principals,
+        metadataMaps,
+        flatObjectMetadata: relationTargetFlatObjectMetadata,
+        operationType: 'read',
+      };
+
+      // Private records are left to the service writing the link, e.g. AgentInboxAccessService for inbox threads
       if (
-        canAccessThroughAllRecordsPermission({
-          objectRecordsPermissions: getPermissionsPrincipalsRecordsPermissions({
-            principals,
-            metadataMaps,
-          }).objects[relationTargetObjectMetadataId],
-          operationType: 'read',
-        })
+        !isObjectOperationDisabledToPrincipals(relationTargetReadRequest) &&
+        !isObjectOperationDeniedToPrincipals(relationTargetReadRequest) &&
+        canAllRecordsAccessOperation(relationTargetReadRequest)
       ) {
         continue;
       }
