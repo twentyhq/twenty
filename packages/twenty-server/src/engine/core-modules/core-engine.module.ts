@@ -88,6 +88,7 @@ import { AiToolCallAnswerModule } from 'src/engine/metadata-modules/ai/ai-tool-c
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
 import { FileApiModule } from './file/file-api.module';
+import { RollupFieldModule } from 'src/engine/core-modules/rollup-field/rollup-field.module';
 
 @Module({
   imports: [
@@ -186,6 +187,7 @@ import { FileApiModule } from './file/file-api.module';
     EventLogsViewerModule,
     PreInstalledAppsModule,
     AppBillingModule,
+    RollupFieldModule,
   ],
   providers: [
     {

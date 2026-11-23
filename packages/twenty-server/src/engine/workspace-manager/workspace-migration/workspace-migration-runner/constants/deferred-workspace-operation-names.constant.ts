@@ -7,6 +7,7 @@ export const DEFERRED_WORKSPACE_OPERATION_NAMES = {
   delete_logicFunctionResources: 'delete_logicFunctionResources',
   delete_workflowRuns: 'delete_workflowRuns',
   compute_recordAccessGroupIds: 'compute_recordAccessGroupIds',
+  compute_rollupFields: 'compute_rollupFields',
 } as const satisfies {
   [TName in DeferredWorkspaceOperationName]: TName;
 };

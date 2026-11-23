@@ -39,6 +39,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import { computeForeignKeyOnDelete } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/compute-foreign-key-on-delete.util';
+import { getDeferredRollupFieldsComputation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-rollup-fields-computation.util';
 import { fromUniversalSettingsToFlatFieldMetadataSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-flat-field-metadata-settings.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -133,6 +134,22 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       update,
       rebuildSearchVector: action.rebuildSearchVector,
     };
+  }
+
+  override getDeferredOperation({
+    flatAction: { entityId, update },
+    allFlatEntityMaps: { flatFieldMetadataMaps },
+  }: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>) {
+    if (update.settings === undefined) {
+      return undefined;
+    }
+
+    return getDeferredRollupFieldsComputation({
+      flatFieldMetadata: findFlatEntityByIdInFlatEntityMapsOrThrow({
+        flatEntityId: entityId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      }),
+    });
   }
 
   async executeForMetadata(

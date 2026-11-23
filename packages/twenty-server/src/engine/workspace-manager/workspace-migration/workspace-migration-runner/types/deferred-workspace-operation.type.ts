@@ -9,6 +9,10 @@ type DeferredWorkspaceOperationPayloadByName = {
     coreWorkflowId: string;
     coreWorkflowVersionId?: string;
   };
+  compute_rollupFields: {
+    objectMetadataId: string;
+    rollupFieldMetadataIds: string[];
+  };
   compute_recordAccessGroupIds: {
     objectComputes: {
       objectMetadataId: string;

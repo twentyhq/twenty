@@ -6,6 +6,7 @@ import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { buildManyToOneForeignKeyDefinition } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-many-to-one-foreign-key-definition.util';
+import { getDeferredRollupFieldsComputation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-rollup-fields-computation.util';
 import { getDeferredForeignKeyValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-foreign-key-validation.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
@@ -208,7 +209,12 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   override getDeferredOperation(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateFieldAction>,
   ) {
-    return getDeferredForeignKeyValidation(context);
+    return (
+      getDeferredForeignKeyValidation(context) ??
+      getDeferredRollupFieldsComputation({
+        flatFieldMetadata: context.flatAction.flatEntity,
+      })
+    );
   }
 
   private async executeSingleFieldMetadataWorkspaceSchema({
