@@ -6,7 +6,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { getViewFieldRelationScopeFieldMetadataUniversalIdentifiers } from 'src/engine/metadata-modules/flat-view-field/utils/get-view-field-relation-scope-field-metadata-universal-identifiers.util';
+import { isViewFieldRelationScopeReferencingField } from 'src/engine/metadata-modules/flat-view-field/utils/is-view-field-relation-scope-referencing-field.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -60,10 +60,11 @@ export const handleFieldMetadataDeactivationSideEffects = ({
       isDefined(flatViewField) &&
       (flatViewField.relationTargetFieldMetadataId ===
         fromFlatFieldMetadata.id ||
-        (isDefined(flatViewField.universalRelationScope) &&
-          getViewFieldRelationScopeFieldMetadataUniversalIdentifiers(
-            flatViewField.universalRelationScope,
-          ).includes(fromFlatFieldMetadata.universalIdentifier))),
+        isViewFieldRelationScopeReferencingField({
+          universalRelationScope: flatViewField.universalRelationScope,
+          fieldMetadataUniversalIdentifier:
+            fromFlatFieldMetadata.universalIdentifier,
+        })),
   );
 
   const flatViewFieldsToDelete = [

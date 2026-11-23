@@ -52,7 +52,7 @@ export const RecordTableSettingsSorts = ({
         value={{ instanceId: recordIndexId }}
       >
         <RecordTableSettingsSortsContent
-          objectMetadataItem={objectMetadataItem}
+          fieldMetadataItems={objectMetadataItem.fields}
           onUpdate={handleSortUpdate}
         />
         <RecordTableSettingsSortsInitializeStateEffect view={view} />

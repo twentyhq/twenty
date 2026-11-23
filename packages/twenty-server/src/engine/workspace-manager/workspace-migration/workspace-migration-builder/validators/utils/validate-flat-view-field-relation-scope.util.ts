@@ -4,7 +4,7 @@ import {
   RelationType,
   type UniversalViewFieldRelationScope,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidRelationScopeLimit } from 'twenty-shared/utils';
 
 import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
@@ -20,12 +20,7 @@ import { type UniversalFlatViewField } from 'src/engine/workspace-manager/worksp
 const validateRelationScopeLimit = (
   limit: UniversalViewFieldRelationScope['limit'],
 ): FlatEntityValidationError[] => {
-  if (
-    !isDefined(limit) ||
-    (Number.isInteger(limit) &&
-      limit >= 1 &&
-      limit <= QUERY_MAX_RECORDS_FROM_RELATION)
-  ) {
+  if (isValidRelationScopeLimit(limit)) {
     return [];
   }
 
