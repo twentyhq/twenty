@@ -27,7 +27,6 @@ const buildCoreWorkflowVersion = ({
   __typename: 'CoreWorkflowVersionDTO',
   id,
   coreWorkflowId,
-  workspaceWorkflowVersionId: null,
   label: `Version ${id}`,
   status: CoreWorkflowVersionStatus.DRAFT,
   trigger: null,
