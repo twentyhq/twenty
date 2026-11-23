@@ -50,7 +50,7 @@ export const findPersonIdsByWhatsappPhone = async (
           phones: {
             primaryPhoneNumber: true,
             primaryPhoneCallingCode: true,
-            additionalPhones: true,
+            additionalPhones: { number: true, callingCode: true },
           },
         },
       },
