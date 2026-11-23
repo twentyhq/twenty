@@ -10,6 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type SyncSubscriptionApplicationsJobData = {
   workspaceId: string;
+  isRetryAfterExpiredPendingUpdate?: boolean;
 };
 
 @Processor({
@@ -25,6 +26,7 @@ export class SyncSubscriptionApplicationsJob {
   @Process(SyncSubscriptionApplicationsJob.name)
   async handle({
     workspaceId,
+    isRetryAfterExpiredPendingUpdate,
   }: SyncSubscriptionApplicationsJobData): Promise<void> {
     await this.billingApplicationProductService.createMissingProducts(
       workspaceId,
@@ -32,6 +34,7 @@ export class SyncSubscriptionApplicationsJob {
 
     await this.billingSubscriptionUpdateService.syncApplications({
       workspaceId,
+      isRetryAfterExpiredPendingUpdate,
     });
   }
 }

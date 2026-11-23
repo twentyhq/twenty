@@ -24,6 +24,7 @@ export type SubscriptionUpdate =
     }
   | {
       type: SubscriptionUpdateType.APPLICATIONS;
+      isRetryAfterExpiredPendingUpdate?: boolean;
     }
   | {
       type: SubscriptionUpdateType.INTERVAL;

@@ -272,8 +272,10 @@ export class BillingSubscriptionUpdateService {
 
   async syncApplications({
     workspaceId,
+    isRetryAfterExpiredPendingUpdate,
   }: {
     workspaceId: string;
+    isRetryAfterExpiredPendingUpdate?: boolean;
   }): Promise<void> {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -286,6 +288,7 @@ export class BillingSubscriptionUpdateService {
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.APPLICATIONS,
+      isRetryAfterExpiredPendingUpdate,
     });
   }
 

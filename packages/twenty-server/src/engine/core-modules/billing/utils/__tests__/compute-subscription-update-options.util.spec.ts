@@ -129,6 +129,18 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
+  it('invoices an applications update now without holding a declined charge once its pending update expired', () => {
+    const result = computeSubscriptionUpdateOptions(
+      {
+        type: SubscriptionUpdateType.APPLICATIONS,
+        isRetryAfterExpiredPendingUpdate: true,
+      },
+      { isQuantityIncrease: true },
+    );
+
+    expect(result).toEqual({ proration: 'always_invoice' });
+  });
+
   it('prorates an applications update with no quantity going up on the next invoice', () => {
     const result = computeSubscriptionUpdateOptions(
       { type: SubscriptionUpdateType.APPLICATIONS },

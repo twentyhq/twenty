@@ -146,13 +146,14 @@ export class BillingWebhookController {
           );
         }
 
-        // A declined application charge expired without being paid, so bill the installed apps again
+        // A declined app charge expired unpaid: bill it once more without holding it, so dunning takes over
         if (
           event.type ===
           BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED
         ) {
           await this.billingApplicationSyncService.enqueueApplicationsSync({
             workspaceId,
+            isRetryAfterExpiredPendingUpdate: true,
           });
 
           return {};

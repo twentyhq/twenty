@@ -50,8 +50,10 @@ export const computeSubscriptionUpdateOptions = (
         return { proration: 'create_prorations' };
       }
 
-      // A declined app charge leaves the subscription as it was instead of past_due
-      return subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS
+      // A declined app charge leaves the subscription as it was; once that
+      // pending update expired, bill like seats so dunning warns the admin
+      return subscriptionUpdate.type === SubscriptionUpdateType.APPLICATIONS &&
+        subscriptionUpdate.isRetryAfterExpiredPendingUpdate !== true
         ? {
             proration: 'always_invoice',
             paymentBehavior: 'pending_if_incomplete',
