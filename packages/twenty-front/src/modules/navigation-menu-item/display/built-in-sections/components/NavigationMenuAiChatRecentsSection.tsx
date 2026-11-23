@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
@@ -8,26 +8,30 @@ import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadCli
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { INBOX_RECENTS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxRecentsNavigationSectionId';
 import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
 import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
+import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuAiChatRecentsSectionProps = {
-  sectionId: string;
   headerAction?: ReactNode;
 };
 
 export const NavigationMenuAiChatRecentsSection = ({
-  sectionId,
   headerAction,
 }: NavigationMenuAiChatRecentsSectionProps) => {
   const { t } = useLingui();
-  const [isShowingAllThreads, setIsShowingAllThreads] = useState(false);
+  const [isShowingAllThreads, setIsShowingAllThreads] = useAtomFamilyState(
+    isNavigationMenuSectionShowingAllItemsFamilyState,
+    'AiChatRecents',
+  );
   const currentThreadId = useAiChatPageThreadId();
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
@@ -46,7 +50,12 @@ export const NavigationMenuAiChatRecentsSection = ({
   });
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
-    return null;
+    return (
+      <InboxThreadListFetchMoreTrigger
+        key={inboxThreadList?.endCursor ?? ''}
+        source={INBOX_RECENT_THREAD_LIST_SOURCE}
+      />
+    );
   }
 
   const hasHiddenThreads =
@@ -60,7 +69,7 @@ export const NavigationMenuAiChatRecentsSection = ({
 
   return (
     <NavigationDrawerInboxThreadSection
-      sectionId={`navigation-menu-section-${sectionId}`}
+      sectionId={INBOX_RECENTS_NAVIGATION_SECTION_ID}
       title={t`Recent chats`}
       threads={displayedThreads}
       currentThreadId={currentThreadId}

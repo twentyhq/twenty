@@ -115,6 +115,18 @@ const VIEW_FIELD_MANIFEST: ViewFieldManifest = {
   aggregateOperation: AggregateOperations.COUNT,
   viewFieldGroupUniversalIdentifier: VIEW_FIELD_GROUP_UID,
   relationTargetFieldMetadataUniversalIdentifier: FIELD_UID,
+  relationScope: {
+    filters: [],
+    filterGroups: [],
+    sorts: [
+      {
+        fieldMetadataUniversalIdentifier: FIELD_UID,
+        direction: ViewSortDirection.ASC,
+      },
+    ],
+    limit: 1,
+  },
+  label: 'Open opportunities',
 };
 
 const STANDALONE_VIEW_FIELD_MANIFEST: StandaloneViewFieldManifest = {
@@ -576,7 +588,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
         }),
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { universalRelationScope: 'relationScope' },
     workspaceLocalProperties: ['isActive', 'universalOverrides'],
     knownGaps: VIEW_KIND_GAPS,
   },
@@ -729,6 +741,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
     knownGaps: {
       ...PAGE_LAYOUT_KIND_GAPS,
       conditionalAvailabilityExpression:
+        'no manifest slot; a widget carrying one is reported as unsupported',
+      conditionalAvailability:
         'no manifest slot; a widget carrying one is reported as unsupported',
     },
   },

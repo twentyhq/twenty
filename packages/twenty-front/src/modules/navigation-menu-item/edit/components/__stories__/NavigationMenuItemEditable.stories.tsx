@@ -439,7 +439,7 @@ export const AddPickerFocusesSearch: Story = {
       keys: '[MouseRight]',
     });
     await userEvent.click(await body.findByText('Add menu item after'));
-    const picker = await body.findByRole('dialog', { name: 'Add menu item' });
+    const picker = await body.findByRole('dialog', { name: 'Add item' });
     const search = within(picker).getByPlaceholderText('Search...');
 
     await waitFor(() => expect(search).toHaveFocus());

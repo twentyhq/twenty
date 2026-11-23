@@ -40,8 +40,11 @@ export default defineView({
 * La vista principale dell'elenco dell'oggetto è di proprietà del server: `key` è deprecato e ignorato, quindi una vista del manifest non potrà mai rivendicarla. Distribuisci un elemento di navigazione `VIEW` se vuoi avere la tua vista a un clic di distanza nella barra laterale.
 * `fields` controlla quali colonne compaiono e in quale ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`. Per fare riferimento a un campo di sistema creato automaticamente come `createdAt`, vedi [Targeting System Metadata](/it/developers/extend/apps/data/system-fields).
 * Imposta `isCanonical: false` su un campo per aggiungere una colonna aggiuntiva per un campo che la vista mostra già. Una vista ha al massimo una colonna canonica per campo, ma qualsiasi numero di colonne non canoniche. Non sono consentite nel campo identificatore dell'etichetta dell'oggetto né nelle viste widget e `isCanonical` viene impostato quando viene creata la colonna: modificarlo in seguito non ha alcun effetto.
-* Una colonna non canonica in un campo di relazione molti-a-uno può impostare `relationTargetFieldMetadataUniversalIdentifier` per mostrare un campo del record correlato anziché il record stesso. La destinazione deve essere un campo non di relazione dell'oggetto correlato.
+* Una colonna non canonica in un campo di relazione molti-a-uno, o in un campo di relazione uno-a-molti con un `relationScope`, può impostare `relationTargetFieldMetadataUniversalIdentifier` per mostrare un campo dei record correlati anziché i record stessi. La destinazione deve essere un campo non di relazione dell'oggetto correlato.
 * Un ordinamento su un campo di relazione molti-a-uno può impostare `relationTargetFieldMetadataUniversalIdentifier` per ordinare i record in base a un campo del record correlato, ad esempio le persone in base ai dipendenti della loro azienda. La destinazione deve essere un campo non relazionale dell'oggetto correlato.
+* Una colonna non canonica in un campo di relazione uno-a-molti può impostare `relationScope` per filtrare, ordinare e limitare i record correlati che mostra. Vedi [Ambito della relazione](#relation-scope).
+* Una colonna non canonica in un campo di relazione uno-a-molti con un `relationScope` può impostare `aggregateOperation` all'interno del proprio `relationScope` per mostrare, per riga, un riepilogo dei record correlati mantenuti dall'ambito anziché i record stessi, ad esempio il conteggio delle attività aperte o la somma degli importi delle opportunità aperte. `COUNT` non accetta una destinazione, mentre `SUM`, `AVG`, `MIN` e `MAX` richiedono che `relationTargetFieldMetadataUniversalIdentifier` sia impostato su un campo dell'oggetto correlato che supporti l'operazione (un campo numerico o valuta, oppure una data per `MIN` e `MAX`). Il relativo ambito mantiene solo i filtri: gli ordinamenti e un limite vengono rifiutati. Queste colonne sono di sola visualizzazione. Questo è separato dall'`aggregateOperation` del campo della vista, che imposta il totale mostrato nel piè di pagina della colonna.
+* Imposta `label` su un campo per sostituire l'intestazione di colonna predefinita. Viene troncata, può contenere al massimo 63 caratteri e un'etichetta vuota mostra l'intestazione predefinita. Uno spazio di lavoro può rinominare una colonna di proprietà della tua app senza modificare il tuo manifesto.
 * Puoi anche definire `filters`, `filterGroups`, `sorts`, `groups` e `fieldGroups` per configurazioni più avanzate.
 * `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
 
@@ -127,6 +130,50 @@ Il campo `value` è sempre un valore serializzabile in JSON, ma la forma previst
 | `IS`, `IS_BEFORE`, `IS_AFTER` su `DATE` / `DATE_TIME` | stringa ISO 8601                                       | `'2025-01-01T00:00:00Z'` |
 | `IS_EMPTY`, `IS_NOT_EMPTY`                            | stringa vuota                                          | `''`                     |
 | `IS` su `BOOLEAN`                                     | `'true'` o `'false'`                                   | `'true'`                 |
+
+## Ambito della relazione
+
+Un `relationScope` in una colonna uno-a-molti non canonica, ad esempio "Attività aperte" nelle aziende, restringe i record correlati mostrati dalla colonna. I filtri e gli ordinamenti seguono le strutture di filtro e ordinamento della vista sopra, con riferimenti ai campi come identificatori universali:
+
+```ts
+fields: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: COMPANY_TASK_TARGETS_FIELD_UNIVERSAL_IDENTIFIER,
+    isCanonical: false,
+    position: 5,
+    relationScope: {
+      filters: [
+        {
+          id: '0f7d3a52-4d1e-4c38-9a59-0a3c2e1b8f11',
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+          operand: ViewFilterOperand.IS_NOT,
+          value: ['DONE'],
+        },
+      ],
+      filterGroups: [],
+      sorts: [
+        {
+          fieldMetadataUniversalIdentifier: TASK_TARGET_TASK_FIELD_UNIVERSAL_IDENTIFIER,
+          relationTargetFieldMetadataUniversalIdentifier: TASK_DUE_AT_FIELD_UNIVERSAL_IDENTIFIER,
+          direction: ViewSortDirection.ASC,
+        },
+      ],
+      limit: 1,
+    },
+  },
+],
+```
+
+| Proprietà      | Descrizione                                                                                                                                                                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `filtri`       | Ogni filtro ha un `id` locale (un UUID), un `fieldMetadataUniversalIdentifier` dell'oggetto correlato, un `operand`, un `value` e, facoltativamente, `subFieldName`, `relationTargetFieldMetadataUniversalIdentifier` (un campo del record a cui punta una relazione molti-a-uno) e `filterGroupId`. |
+| `filterGroups` | Ogni gruppo ha un `id` locale, un `logicalOperator` di `AND`, `OR` o `NOT` e un `parentFilterGroupId` facoltativo. I filtri senza un gruppo sono combinati con `AND`.                                                                                                                                |
+| `sorts`        | Ogni ordinamento ha un `fieldMetadataUniversalIdentifier`, una `direction` e, facoltativamente, `subFieldName` e `relationTargetFieldMetadataUniversalIdentifier`.                                                                                                                                   |
+| `limite`       | Il numero di record correlati da mostrare, da 1 a 60.                                                                                                                                                                                                                                                |
+
+L'eliminazione o la disattivazione di un campo utilizzato da un ambito rimuove la colonna, anziché eliminare la condizione e mostrare più record.
 
 ## Come le viste vengono visualizzate nell'interfaccia utente
 

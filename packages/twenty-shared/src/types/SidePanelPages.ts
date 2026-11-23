@@ -58,4 +58,5 @@ export enum SidePanelPages {
   AssignAiChat = 'assign-ai-chat',
   AiChatParticipants = 'ai-chat-participants',
   AddAiChatParticipants = 'add-ai-chat-participants',
+  EditColumn = 'edit-column',
 }

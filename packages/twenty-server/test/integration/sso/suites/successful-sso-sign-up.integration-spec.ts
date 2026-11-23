@@ -1,3 +1,4 @@
+import { clearApprovedAccessDomainValidationEmailThrottle } from 'test/integration/graphql/utils/clear-approved-access-domain-validation-email-throttle.util';
 import { clearInvitationSendingThrottle } from 'test/integration/graphql/utils/clear-invitation-sending-throttle.util';
 import { createApprovedAccessDomain } from 'test/integration/graphql/utils/create-approved-access-domain.util';
 import { deleteApprovedAccessDomain } from 'test/integration/graphql/utils/delete-approved-access-domain.util';
@@ -91,6 +92,10 @@ describe('SSO sign-up should succeed', () => {
           });
           approvedAccessDomainId = undefined;
         }
+
+        await clearApprovedAccessDomainValidationEmailThrottle(
+          SEED_APPLE_WORKSPACE_ID,
+        );
 
         await clearInvitationSendingThrottle({ email: newcomerEmail });
 
