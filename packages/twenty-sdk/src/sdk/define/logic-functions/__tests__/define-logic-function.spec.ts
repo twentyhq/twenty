@@ -428,15 +428,16 @@ describe('defineLogicFunction', () => {
       retryLimit: 3,
     };
 
-    expect(defineLogicFunction(config as any).config).toEqual(config);
+    expect(defineLogicFunction(config).config).toEqual(config);
   });
 
   it('should reject an onJobFailure that is not a function', () => {
     const result = defineLogicFunction({
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       handler: mockHandler,
+      // @ts-expect-error a reference is not accepted, only a function
       onJobFailure: { universalIdentifier: 'not-a-function' },
-    } as any);
+    });
 
     expect(result.errors).toContain(
       'Logic function onJobFailure must be a function',
@@ -448,7 +449,7 @@ describe('defineLogicFunction', () => {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
       handler: mockHandler,
       retryLimit,
-    } as any);
+    });
 
     expect(result.errors).toContain(
       'Logic function retryLimit must be an integer between 0 and 10',

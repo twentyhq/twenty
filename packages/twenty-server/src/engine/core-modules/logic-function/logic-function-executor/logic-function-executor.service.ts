@@ -189,7 +189,6 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
-    // Calls another export of the function's bundle, such as its onJobFailure handler.
     handlerName?: string;
   } & ExecutionAdmissionOptions): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
