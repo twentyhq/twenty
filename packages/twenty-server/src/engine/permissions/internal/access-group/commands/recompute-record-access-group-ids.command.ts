@@ -1,9 +1,12 @@
 /* @license Enterprise */
 
-import { Command } from 'nest-commander';
-import { isDefined } from 'twenty-shared/utils';
+import { Command, Option } from 'nest-commander';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
+import {
+  ProvisionedWorkspaceCommandRunner,
+  type ProvisionedWorkspaceCommandOptions,
+} from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { AccessGroupPropagationPlanService } from 'src/engine/permissions/internal/access-group/services/access-group-propagation-plan.service';
@@ -12,12 +15,17 @@ import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-gr
 import { isObjectUsingRecordAccessGroups } from 'src/engine/permissions/internal/access-group/utils/is-object-using-record-access-groups.util';
 import { planRecordAccessGroupComputes } from 'src/engine/permissions/internal/access-group/utils/plan-record-access-group-computes.util';
 
+type RecomputeRecordAccessGroupIdsCommandOptions =
+  ProvisionedWorkspaceCommandOptions & {
+    objectNameSingular?: string[];
+  };
+
 @Command({
   name: 'access-groups:recompute-record-access-group-ids',
   description:
-    'Plan a full recompute of the access group ids of every record of the objects using access groups',
+    'Plan a full recompute of the access group ids of every record of the objects using access groups, and of the objects they lead to through related record paths',
 })
-export class RecomputeRecordAccessGroupIdsCommand extends ProvisionedWorkspaceCommandRunner {
+export class RecomputeRecordAccessGroupIdsCommand extends ProvisionedWorkspaceCommandRunner<RecomputeRecordAccessGroupIdsCommandOptions> {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly recordAccessGroupMetadataMapsService: RecordAccessGroupMetadataMapsService,
@@ -26,10 +34,20 @@ export class RecomputeRecordAccessGroupIdsCommand extends ProvisionedWorkspaceCo
     super(workspaceIteratorService);
   }
 
+  @Option({
+    flags: '--object-name-singular <objectNameSingular>',
+    description:
+      'Object to recompute. Can be specified multiple times. Defaults to every object using access groups.',
+    required: false,
+  })
+  parseObjectNameSingular(value: string, previous?: string[]): string[] {
+    return [...(previous ?? []), value];
+  }
+
   override async runOnWorkspace({
     workspaceId,
     options,
-  }: RunOnWorkspaceArgs): Promise<void> {
+  }: RunOnWorkspaceArgs<RecomputeRecordAccessGroupIdsCommandOptions>): Promise<void> {
     const metadataMaps =
       await this.recordAccessGroupMetadataMapsService.find(workspaceId);
 
@@ -39,12 +57,27 @@ export class RecomputeRecordAccessGroupIdsCommand extends ProvisionedWorkspaceCo
 
     const isUsingRecordAccessGroups = (objectMetadataId: string) =>
       isObjectUsingRecordAccessGroups({ ...metadataMaps, objectMetadataId });
+    const requestedObjectNamesSingular = options.objectNameSingular ?? [];
     const objectMetadataIds = Object.values(
       metadataMaps.flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
+      .filter(
+        ({ nameSingular }) =>
+          requestedObjectNamesSingular.length === 0 ||
+          requestedObjectNamesSingular.includes(nameSingular),
+      )
       .map(({ id }) => id)
       .filter(isUsingRecordAccessGroups);
+
+    if (!isNonEmptyArray(objectMetadataIds)) {
+      this.logger.warn(
+        `Workspace ${workspaceId}: no object using access groups to recompute`,
+      );
+
+      return;
+    }
+
     const plannedObjectMetadataIds = planRecordAccessGroupComputes({
       objectMetadataIds,
       resolvedRelatedRecordPaths: metadataMaps.resolvedRelatedRecordPaths,
@@ -52,7 +85,7 @@ export class RecomputeRecordAccessGroupIdsCommand extends ProvisionedWorkspaceCo
     });
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: planning a full access group recompute of ${objectMetadataIds.length} objects`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: planning a full access group recompute of ${plannedObjectMetadataIds.length} objects`,
     );
 
     if (options.dryRun) {
