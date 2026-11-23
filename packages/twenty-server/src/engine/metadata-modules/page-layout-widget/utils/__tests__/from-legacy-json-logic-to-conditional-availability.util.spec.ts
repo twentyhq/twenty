@@ -11,7 +11,9 @@ const recordField = (name: string) => ({ var: `selectedRecords.0.${name}` });
 const printConvertedRule = (jsonLogic: unknown): string | undefined => {
   const node = fromLegacyJsonLogicToConditionalAvailability(jsonLogic);
 
-  return isDefined(node) ? printConditionalAvailabilityNode({ node }) : undefined;
+  return isDefined(node)
+    ? printConditionalAvailabilityNode({ node })
+    : undefined;
 };
 
 describe('fromLegacyJsonLogicToConditionalAvailability', () => {

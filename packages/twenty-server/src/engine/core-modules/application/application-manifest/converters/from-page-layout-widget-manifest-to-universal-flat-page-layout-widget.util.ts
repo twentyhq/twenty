@@ -16,7 +16,8 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   applicationUniversalIdentifier: string;
   now: string;
 }): UniversalFlatPageLayoutWidget => {
-  const conditionalDisplay = pageLayoutWidgetManifest.conditionalDisplay ?? null;
+  const conditionalDisplay =
+    pageLayoutWidgetManifest.conditionalDisplay ?? null;
 
   const conditionalAvailabilityFromJsonLogic =
     fromLegacyJsonLogicToConditionalAvailability(conditionalDisplay);
