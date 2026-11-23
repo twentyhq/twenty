@@ -45,7 +45,6 @@ import { WorkflowTriggerDispatchWorkspaceService } from 'src/modules/workflow/wo
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
-  legacyWorkflowId?: string;
   coreWorkflowVersionId: string;
   applicationId: string;
   settings: AutomatedTriggerSettings;
@@ -410,8 +409,7 @@ export class WorkflowDatabaseEventTriggerListener {
             {
               jobData: {
                 workspaceId,
-                workflowId:
-                  eventListener.legacyWorkflowId ?? eventListener.workflowId,
+                workflowId: eventListener.workflowId,
                 coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
                 payload: eventPayload,
               },

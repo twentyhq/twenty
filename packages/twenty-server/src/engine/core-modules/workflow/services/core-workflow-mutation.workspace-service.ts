@@ -535,9 +535,9 @@ export class CoreWorkflowMutationWorkspaceService {
     name?: string;
     isPrivate?: boolean;
   }): Promise<CoreWorkflowDTO> {
-    const applicationId =
-      await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
-        workspaceId,
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
       );
 
     const createdAt = new Date().toISOString();
@@ -556,11 +556,6 @@ export class CoreWorkflowMutationWorkspaceService {
       createdAt,
       updatedAt: createdAt,
     };
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     await this.runCoreWorkflowMigration({
       workspaceId,
@@ -610,7 +605,7 @@ export class CoreWorkflowMutationWorkspaceService {
       id: coreWorkflow.id,
       name: coreWorkflow.name,
       statuses: [WorkflowStatus.DRAFT],
-      applicationId,
+      applicationId: workspaceCustomFlatApplication.id,
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,
       isPrivate: coreWorkflow.isPrivate,
