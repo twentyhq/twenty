@@ -81,12 +81,12 @@ export class WorkflowEntity extends SyncableEntity {
   })
   @Column({
     type: 'varchar',
-    nullable: false,
+    nullable: true,
     select: false,
     insert: false,
     update: false,
   })
-  visibility: WasRemovedInUpgrade<'PRIVATE' | 'WORKSPACE'>;
+  visibility: WasRemovedInUpgrade<'PRIVATE' | 'WORKSPACE' | null>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

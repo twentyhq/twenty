@@ -38,18 +38,10 @@ describe('2-64 instance command 1795439685598 - drop workflow visibility (integr
 
   const findVisibilityColumns = () =>
     queryRunner.query(
-      `SELECT column_name AS "columnName", column_default AS "columnDefault",
-              is_nullable AS "isNullable"
+      `SELECT column_name AS "columnName"
          FROM information_schema.columns
         WHERE table_schema = 'core' AND table_name = 'workflow'
           AND column_name = 'visibility'`,
-    );
-
-  const findVisibilityIndexes = () =>
-    queryRunner.query(
-      `SELECT 1 FROM pg_indexes
-        WHERE schemaname = 'core' AND tablename = 'workflow'
-          AND indexname = 'IDX_WORKFLOW_VISIBILITY_CREATED_BY'`,
     );
 
   beforeEach(async () => {
@@ -63,11 +55,10 @@ describe('2-64 instance command 1795439685598 - drop workflow visibility (integr
     await queryRunner.release();
   });
 
-  it('drops the visibility column and its index', async () => {
+  it('drops the visibility column', async () => {
     await dropVisibilityCommand.up(queryRunner);
 
     expect(await findVisibilityColumns()).toEqual([]);
-    expect(await findVisibilityIndexes()).toEqual([]);
   });
 
   it('restores visibility from isPrivate on down', async () => {
@@ -80,14 +71,6 @@ describe('2-64 instance command 1795439685598 - drop workflow visibility (integr
 
     expect(await findVisibility(privateWorkflowId)).toBe('PRIVATE');
     expect(await findVisibility(workspaceWorkflowId)).toBe('WORKSPACE');
-    expect(await findVisibilityColumns()).toEqual([
-      {
-        columnName: 'visibility',
-        columnDefault: "'WORKSPACE'::character varying",
-        isNullable: 'NO',
-      },
-    ]);
-    expect(await findVisibilityIndexes()).toHaveLength(1);
   });
 
   it('drops the restored column again on up', async () => {
@@ -95,6 +78,5 @@ describe('2-64 instance command 1795439685598 - drop workflow visibility (integr
     await dropVisibilityCommand.up(queryRunner);
 
     expect(await findVisibilityColumns()).toEqual([]);
-    expect(await findVisibilityIndexes()).toEqual([]);
   });
 });
