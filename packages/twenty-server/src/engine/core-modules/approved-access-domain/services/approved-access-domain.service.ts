@@ -15,15 +15,20 @@ import {
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
 import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.validate';
+import { APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE } from 'src/engine/core-modules/approved-access-domain/constants/approved-access-domain-validation-email-throttle.constant';
+import { buildApprovedAccessDomainValidationEmailThrottleKey } from 'src/engine/core-modules/approved-access-domain/utils/build-approved-access-domain-validation-email-throttle-key.util';
 import { type ApprovedAccessDomainJwtPayload } from 'src/engine/core-modules/auth/types/approved-access-domain-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { decodeJwtHeader } from 'src/engine/core-modules/jwt/utils/decode-jwt-header.util';
 import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asymmetric-jwt-header.util';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -49,6 +54,8 @@ export class ApprovedAccessDomainService {
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly i18nService: I18nService,
+    private readonly throttlerService: ThrottlerService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
   async sendApprovedAccessDomainValidationEmail(
@@ -271,6 +278,8 @@ export class ApprovedAccessDomainService {
       );
     }
 
+    await this.throttleValidationEmailSendingOrThrow(inWorkspace.id);
+
     const approvedAccessDomain =
       await this.approvedAccessDomainRepository.insertAndReturnOne(
         inWorkspace.id,
@@ -285,6 +294,34 @@ export class ApprovedAccessDomainService {
     );
 
     return approvedAccessDomain;
+  }
+
+  private async throttleValidationEmailSendingOrThrow(workspaceId: string) {
+    const isSelfHostedEnterprise =
+      this.enterprisePlanService.isValid() &&
+      !this.twentyConfigService.isBillingEnabled();
+
+    if (isSelfHostedEnterprise) {
+      return;
+    }
+
+    try {
+      await this.throttlerService.tokenBucketThrottleOrThrow(
+        buildApprovedAccessDomainValidationEmailThrottleKey(workspaceId),
+        1,
+        APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.limit,
+        APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.ttlInMs,
+      );
+    } catch (error) {
+      if (!(error instanceof ThrottlerException)) {
+        throw error;
+      }
+
+      throw new ApprovedAccessDomainException(
+        'Approved access domain validation email rate limit exceeded',
+        ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_RATE_LIMIT_EXCEEDED,
+      );
+    }
   }
 
   async deleteApprovedAccessDomain(

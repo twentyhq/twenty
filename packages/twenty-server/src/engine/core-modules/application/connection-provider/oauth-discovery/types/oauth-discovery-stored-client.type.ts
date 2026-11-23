@@ -1,5 +1,7 @@
-import { type OAuthDiscoveryState } from '@modelcontextprotocol/sdk/client/auth.js';
-import { type OAuthClientInformationFull } from '@modelcontextprotocol/sdk/shared/auth.js';
+import {
+  type OAuthClientInformationFull,
+  type OAuthDiscoveryState,
+} from '@modelcontextprotocol/client';
 
 import { type OAuthDiscoveryRegistrationMethod } from 'src/engine/core-modules/application/connection-provider/oauth-discovery/types/oauth-discovery-registration-method.type';
 
