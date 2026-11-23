@@ -21,14 +21,13 @@ export const buildAiFrontComponentSdk = async () => {
     ],
     minify: true,
     write: false,
-    tsconfig: resolve(SDK_DIRECTORY, 'tsconfig.lib.json'),
     alias: Object.fromEntries(
       ['utils', 'types', 'translations', 'ai', 'application'].map(
         (entryPoint) => [
           `twenty-shared/${entryPoint}`,
           resolve(
             SDK_DIRECTORY,
-            `../twenty-shared/dist/${entryPoint}/index.mjs`,
+            `../twenty-shared/src/${entryPoint}/index.ts`,
           ),
         ],
       ),
