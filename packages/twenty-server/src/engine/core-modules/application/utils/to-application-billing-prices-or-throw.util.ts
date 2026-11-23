@@ -1,31 +1,17 @@
 import { msg } from '@lingui/core/macro';
-import { isArray } from '@sniptt/guards';
-import {
-  type ApplicationBillingPrice,
-  isApplicationBillingPrice,
-} from 'twenty-shared/application';
+import { type ApplicationBillingPrice } from 'twenty-shared/application';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { isDefined } from 'twenty-shared/utils';
 
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { areApplicationBillingPricesValid } from 'src/engine/core-modules/application/utils/are-application-billing-prices-valid.util';
 
 export const toApplicationBillingPricesOrThrow = (
   prices: unknown,
 ): ApplicationBillingPrice[] => {
-  if (!isDefined(prices)) {
-    return [];
-  }
-
-  const hasOnlyValidPrices =
-    isArray(prices) &&
-    prices.every(isApplicationBillingPrice) &&
-    new Set(prices.map(({ universalIdentifier }) => universalIdentifier))
-      .size === prices.length;
-
-  if (!hasOnlyValidPrices) {
+  if (!areApplicationBillingPricesValid(prices)) {
     throw new ApplicationException(
       doNotTranslate('Invalid or duplicated application billing prices'),
       ApplicationExceptionCode.INVALID_INPUT,
@@ -35,5 +21,5 @@ export const toApplicationBillingPricesOrThrow = (
     );
   }
 
-  return prices;
+  return prices ?? [];
 };

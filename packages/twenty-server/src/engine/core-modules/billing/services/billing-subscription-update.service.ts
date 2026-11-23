@@ -312,10 +312,6 @@ export class BillingSubscriptionUpdateService {
     workspaceId: string;
     update: () => Promise<void>;
   }): Promise<void> {
-    await this.billingApplicationProductService.createMissingProducts(
-      workspaceId,
-    );
-
     await this.cacheLockService.withLock(
       update,
       buildBillingSubscriptionUpdateLockKey(workspaceId),

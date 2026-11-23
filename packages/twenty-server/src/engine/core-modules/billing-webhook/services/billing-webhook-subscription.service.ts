@@ -289,21 +289,10 @@ export class BillingWebhookSubscriptionService {
       this.isSubscriptionStarting({
         event,
         status: incomingSubscription.status,
-      }) &&
-      (await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
-        workspaceId,
-      ))
+      })
     ) {
       // Apps installed or uninstalled while checkout was open are not in its line items
-      await this.billingMessageQueueService.add<SyncSubscriptionApplicationsJobData>(
-        SyncSubscriptionApplicationsJob.name,
-        { workspaceId },
-        {
-          ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
-          workspaceId,
-          isWorkspaceJob: true,
-        },
-      );
+      await this.enqueueApplicationsSync(workspaceId);
     }
 
     if (shouldSetPendingInvoiceItemInterval(subscriptionWithSchedule)) {
@@ -317,6 +306,26 @@ export class BillingWebhookSubscriptionService {
       stripeSubscriptionId: data.object.id,
       stripeCustomerId: data.object.customer,
     };
+  }
+
+  async enqueueApplicationsSync(workspaceId: string): Promise<void> {
+    if (
+      !(await this.billingApplicationProductService.isApplicationPriceBillingEnabled(
+        workspaceId,
+      ))
+    ) {
+      return;
+    }
+
+    await this.billingMessageQueueService.add<SyncSubscriptionApplicationsJobData>(
+      SyncSubscriptionApplicationsJob.name,
+      { workspaceId },
+      {
+        ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    );
   }
 
   private isSubscriptionStarting({

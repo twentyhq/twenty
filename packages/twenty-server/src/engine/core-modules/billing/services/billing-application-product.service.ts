@@ -8,10 +8,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { APPLICATION_PRICE_INTERVALS } from 'src/engine/core-modules/billing/constants/application-price-intervals.constant';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -92,35 +88,46 @@ export class BillingApplicationProductService {
         ],
       });
 
-    return catalogEntries.flatMap(
-      ({ declaredPrice, stripeProductId, billingProduct }) => {
-        if (!isDefined(billingProduct)) {
-          if (subscribedStripeProductIds.includes(stripeProductId)) {
-            throw new BillingException(
-              `Application product ${stripeProductId} of workspace ${workspaceId} is on the subscription but its catalog entry is incomplete`,
-              BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-            );
-          }
+    const targetApplicationProducts: TargetApplicationProduct[] = [];
 
-          this.logger.warn(
-            `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
-          );
+    for (const {
+      declaredPrice,
+      stripeProductId,
+      billingProduct,
+    } of catalogEntries) {
+      // Skipping a subscribed product would remove it from the subscription
+      const resolvedBillingProduct =
+        billingProduct ??
+        (subscribedStripeProductIds.includes(stripeProductId)
+          ? await this.createProduct(declaredPrice)
+          : undefined);
 
-          return [];
-        }
+      if (!isDefined(resolvedBillingProduct)) {
+        this.logger.warn(
+          `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
+        );
 
-        const quantity = computeApplicationPriceQuantity({
-          per: declaredPrice.price.per,
-          workspaceMemberCount,
-          connectedAccountCount:
-            connectedAccountCountByApplicationId.get(
-              declaredPrice.applicationId,
-            ) ?? 0,
+        continue;
+      }
+
+      const quantity = computeApplicationPriceQuantity({
+        per: declaredPrice.price.per,
+        workspaceMemberCount,
+        connectedAccountCount:
+          connectedAccountCountByApplicationId.get(
+            declaredPrice.applicationId,
+          ) ?? 0,
+      });
+
+      if (quantity > 0) {
+        targetApplicationProducts.push({
+          billingProduct: resolvedBillingProduct,
+          quantity,
         });
+      }
+    }
 
-        return quantity > 0 ? [{ billingProduct, quantity }] : [];
-      },
-    );
+    return targetApplicationProducts;
   }
 
   async createMissingProducts(workspaceId: string): Promise<void> {

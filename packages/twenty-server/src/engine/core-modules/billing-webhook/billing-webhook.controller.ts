@@ -148,6 +148,24 @@ export class BillingWebhookController {
         );
       }
 
+      // A declined application charge expired without being paid, so bill the installed apps again
+      case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_PENDING_UPDATE_EXPIRED: {
+        const workspaceId = event.data.object.metadata?.workspaceId;
+
+        if (!workspaceId) {
+          throw new BillingException(
+            'Workspace ID is required for subscription events',
+            BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+          );
+        }
+
+        await this.billingWebhookSubscriptionService.enqueueApplicationsSync(
+          workspaceId,
+        );
+
+        return {};
+      }
+
       default:
         return {};
     }

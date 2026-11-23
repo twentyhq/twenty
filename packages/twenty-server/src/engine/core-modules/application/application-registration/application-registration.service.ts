@@ -37,7 +37,7 @@ import {
   type CreateApplicationRegistrationVersionParams,
 } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
-import { toApplicationBillingPricesOrThrow } from 'src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util';
+import { areApplicationBillingPricesValid } from 'src/engine/core-modules/application/utils/are-application-billing-prices-valid.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { isVerifiedOAuthClientUniversalIdentifier } from 'src/engine/core-modules/application/application-oauth/verified-oauth-client/utils/is-verified-oauth-client-universal-identifier.util';
@@ -944,11 +944,11 @@ export class ApplicationRegistrationService {
       return null;
     }
 
-    try {
-      toApplicationBillingPricesOrThrow(
+    if (
+      !areApplicationBillingPricesValid(
         params.manifest.application.billing?.prices,
-      );
-    } catch {
+      )
+    ) {
       this.logger.warn(
         `Skipping catalog entry from package ${params.sourcePackage}: invalid or duplicated billing prices`,
       );
