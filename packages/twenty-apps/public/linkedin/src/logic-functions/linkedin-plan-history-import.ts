@@ -16,7 +16,6 @@ import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-lin
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { getLinkedinPlanHistoryImportJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
-import { listSelectedLinkedinChats } from 'src/logic-functions/utils/list-selected-linkedin-chats.util';
 import {
   getLinkedinHistoryImportPlanning,
   getLinkedinHistoryImportProgress,
@@ -264,17 +263,18 @@ const planHistoryImport = async ({
   };
 
   if (importPolicy === 'SELECTED') {
-    const chats = await pauseOnRateLimit(async () =>
-      listSelectedLinkedinChats({
-        unipileAccountId,
-        selectedChatIds: (await getLinkedinSettings(connectedAccountId))
-          .selectedChatIds,
-      }),
-    );
+    const { selectedChatIds } = await getLinkedinSettings(connectedAccountId);
 
-    return Array.isArray(chats)
-      ? planLimitedHistoryImport({ payload, chats })
-      : chats;
+    // The import job reads each conversation itself, so none is read here
+    return planLimitedHistoryImport({
+      payload,
+      chats: selectedChatIds.map((id) => ({
+        id,
+        name: '',
+        is_group: false,
+        is_1to1: false,
+      })),
+    });
   }
 
   const inboxIds = await pauseOnRateLimit(() =>

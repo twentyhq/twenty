@@ -8,7 +8,6 @@ const mocks = vi.hoisted(() => ({
   kvStore: new Map<string, unknown>(),
   listUnipileInboxIds: vi.fn(),
   listUnipileChats: vi.fn(),
-  getUnipileChat: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -36,11 +35,7 @@ vi.mock('src/unipile/utils/list-unipile-chats.util', () => ({
   listUnipileChats: mocks.listUnipileChats,
 }));
 
-vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
-  getUnipileChat: mocks.getUnipileChat,
-}));
-
-const { UnipileRateLimitError, UnipileRequestError } =
+const { UnipileRateLimitError } =
   await import('src/unipile/utils/request-unipile.util');
 
 const { linkedinPlanHistoryImportHandler } =
@@ -124,37 +119,23 @@ describe('linkedinPlanHistoryImportHandler', () => {
     });
   });
 
-  it('lists the conversations the member selected, most recent first, skipping one deleted since', async () => {
+  it('hands the conversations the member selected to the import jobs without reading them', async () => {
     mocks.kvStore.set(STATE_KEY, {
       ...RUNNING_STATE,
       importPolicy: 'SELECTED',
     });
     mocks.kvStore.set('linkedin-settings:connection-id', {
       importPolicy: 'SELECTED',
-      selectedChatIds: ['older', 'deleted', 'newer'],
+      selectedChatIds: buildChatIds(25),
     });
-    mocks.getUnipileChat.mockImplementation(
-      async ({ chatId }: { chatId: string }) => {
-        if (chatId === 'deleted') {
-          throw new UnipileRequestError('Chat not found', 404);
-        }
-
-        return {
-          id: chatId,
-          last_message_timestamp:
-            chatId === 'newer'
-              ? '2026-10-29T00:00:00.000Z'
-              : '2026-10-01T00:00:00.000Z',
-        };
-      },
-    );
 
     await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
       status: 'PLANNED',
-      chunkCount: 1,
+      chunkCount: 2,
     });
 
-    expect(getStoredChatIds(0)).toEqual(['newer', 'older']);
+    expect(getStoredChatIds(0)).toEqual(buildChatIds(20));
+    expect(getStoredChatIds(1)).toEqual(buildChatIds(5, 20));
     expect(mocks.listUnipileInboxIds).not.toHaveBeenCalled();
     expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
