@@ -17,6 +17,7 @@ jest.mock('@/views/hooks/useSaveCurrentViewFields', () => ({
 
 const RECORD_TABLE_ID = 'record-table-id';
 const PEOPLE_FIELD_METADATA_ITEM_ID = 'people-field';
+const EMAILS_FIELD_METADATA_ITEM_ID = 'emails-field';
 
 const nameColumn: RecordField = {
   id: 'name-column',
@@ -72,6 +73,8 @@ describe('useSaveScopedRelationColumn', () => {
       result.current.saveScopedRelationColumn({
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
       }),
     );
 
@@ -97,6 +100,8 @@ describe('useSaveScopedRelationColumn', () => {
         position: 5,
         size: 100,
         relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
       },
     ]);
   });
@@ -112,6 +117,8 @@ describe('useSaveScopedRelationColumn', () => {
       result.current.saveScopedRelationColumn({
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
       }),
     );
 
@@ -131,6 +138,8 @@ describe('useSaveScopedRelationColumn', () => {
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
       }),
     );
 
@@ -145,8 +154,60 @@ describe('useSaveScopedRelationColumn', () => {
     ]);
     expect(store.get(currentRecordFieldsAtom)).toEqual([
       nameColumn,
-      { ...scopedColumn, relationScope: RELATION_SCOPE },
+      {
+        ...scopedColumn,
+        relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
+      },
     ]);
+  });
+
+  it('saves the field of the related records a column shows, then its records again', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [nameColumn, scopedColumn]);
+
+    const { result } = renderSaveHook(store);
+
+    await act(() =>
+      result.current.saveScopedRelationColumn({
+        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
+        recordFieldId: scopedColumn.id,
+        relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: EMAILS_FIELD_METADATA_ITEM_ID,
+        label: null,
+      }),
+    );
+
+    expect(saveViewFieldsMock).toHaveBeenLastCalledWith([
+      expect.objectContaining({
+        id: scopedColumn.id,
+        relationTargetFieldMetadataId: EMAILS_FIELD_METADATA_ITEM_ID,
+      }),
+    ]);
+    expect(store.get(currentRecordFieldsAtom)[1]).toMatchObject({
+      relationTargetFieldMetadataId: EMAILS_FIELD_METADATA_ITEM_ID,
+    });
+
+    await act(() =>
+      result.current.saveScopedRelationColumn({
+        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
+        recordFieldId: scopedColumn.id,
+        relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
+      }),
+    );
+
+    expect(saveViewFieldsMock).toHaveBeenLastCalledWith([
+      expect.objectContaining({
+        id: scopedColumn.id,
+        relationTargetFieldMetadataId: null,
+      }),
+    ]);
+    expect(store.get(currentRecordFieldsAtom)[1]).toMatchObject({
+      relationTargetFieldMetadataId: null,
+    });
   });
 
   it('keeps the previous scope when an existing column fails to save', async () => {
@@ -161,6 +222,8 @@ describe('useSaveScopedRelationColumn', () => {
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
       }),
     );
 
@@ -182,11 +245,54 @@ describe('useSaveScopedRelationColumn', () => {
         fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
         recordFieldId: scopedColumn.id,
         relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
       }),
     );
 
     expect(isSaved).toBe(false);
     expect(saveViewFieldsMock).not.toHaveBeenCalled();
     expect(store.get(currentRecordFieldsAtom)).toEqual([nameColumn]);
+  });
+
+  it('renames an existing column, then shows its default label again', async () => {
+    const store = createStore();
+    store.set(currentRecordFieldsAtom, [nameColumn, scopedColumn]);
+
+    const { result } = renderSaveHook(store);
+
+    await act(() =>
+      result.current.saveScopedRelationColumn({
+        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
+        recordFieldId: scopedColumn.id,
+        relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: 'Main contacts',
+      }),
+    );
+
+    expect(saveViewFieldsMock).toHaveBeenLastCalledWith([
+      expect.objectContaining({ id: scopedColumn.id, label: 'Main contacts' }),
+    ]);
+    expect(store.get(currentRecordFieldsAtom)[1]).toMatchObject({
+      label: 'Main contacts',
+    });
+
+    await act(() =>
+      result.current.saveScopedRelationColumn({
+        fieldMetadataItemId: PEOPLE_FIELD_METADATA_ITEM_ID,
+        recordFieldId: scopedColumn.id,
+        relationScope: RELATION_SCOPE,
+        relationTargetFieldMetadataId: null,
+        label: null,
+      }),
+    );
+
+    expect(saveViewFieldsMock).toHaveBeenLastCalledWith([
+      expect.objectContaining({ id: scopedColumn.id, label: null }),
+    ]);
+    expect(store.get(currentRecordFieldsAtom)[1]).toMatchObject({
+      label: null,
+    });
   });
 });
