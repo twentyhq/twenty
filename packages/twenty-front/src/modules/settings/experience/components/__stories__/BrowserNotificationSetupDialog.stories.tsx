@@ -133,9 +133,9 @@ export const SystemSettingsOnMacSafari: Story = {
       title: 'Allow Twenty in macOS settings',
     });
 
-    await expect(
-      within(dialog).getByText('Notifications › Twenty'),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(within(dialog).getByText('Notifications › Twenty')).toBeVisible(),
+    );
   },
 };
 
