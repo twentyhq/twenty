@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-export type TrialExtensionMirrorAction =
+export type TrialExtensionSyncAction =
   | { type: 'NONE' }
   | { type: 'END' }
   | { type: 'START'; endsAt: Date };

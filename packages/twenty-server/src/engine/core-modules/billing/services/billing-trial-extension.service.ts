@@ -23,7 +23,7 @@ import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billi
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { buildTrialEndSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-end-schedule-phases.util';
-import { getTrialExtensionMirrorAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-mirror-action.util';
+import { getTrialExtensionSyncAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-sync-action.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -204,7 +204,7 @@ export class BillingTrialExtensionService {
     );
   }
 
-  async mirrorStripeTrialEnd({
+  async syncStripeTrialEnd({
     workspaceId,
     previousTrialEnd,
     status,
@@ -221,7 +221,7 @@ export class BillingTrialExtensionService {
       now,
     });
 
-    const action = getTrialExtensionMirrorAction({
+    const action = getTrialExtensionSyncAction({
       activeTrialExtensionEndsAt: activeTrialExtension?.endsAt ?? null,
       previousTrialEnd,
       isTrialing: status === SubscriptionStatus.Trialing,

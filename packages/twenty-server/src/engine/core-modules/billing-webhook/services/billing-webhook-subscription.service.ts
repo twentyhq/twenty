@@ -184,7 +184,7 @@ export class BillingWebhookSubscriptionService {
     );
 
     if (!isOtherSubscriptionLive) {
-      await this.billingTrialExtensionService.mirrorStripeTrialEnd({
+      await this.billingTrialExtensionService.syncStripeTrialEnd({
         workspaceId,
         previousTrialEnd: storedSubscription?.trialEnd ?? null,
         status: incomingSubscription.status,

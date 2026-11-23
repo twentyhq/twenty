@@ -2,9 +2,9 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type TrialExtensionMirrorAction } from 'src/engine/core-modules/billing/types/trial-extension-mirror-action.type';
+import { type TrialExtensionSyncAction } from 'src/engine/core-modules/billing/types/trial-extension-sync-action.type';
 
-export const getTrialExtensionMirrorAction = ({
+export const getTrialExtensionSyncAction = ({
   activeTrialExtensionEndsAt,
   previousTrialEnd,
   isTrialing,
@@ -14,7 +14,7 @@ export const getTrialExtensionMirrorAction = ({
   previousTrialEnd: Date | null;
   isTrialing: boolean;
   trialEnd: Date | null;
-}): TrialExtensionMirrorAction => {
+}): TrialExtensionSyncAction => {
   if (!isTrialing || !isDefined(trialEnd)) {
     return isDefined(activeTrialExtensionEndsAt)
       ? { type: 'END' }

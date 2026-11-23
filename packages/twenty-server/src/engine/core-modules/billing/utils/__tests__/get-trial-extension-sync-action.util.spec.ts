@@ -1,15 +1,15 @@
 /* @license Enterprise */
 
-import { getTrialExtensionMirrorAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-mirror-action.util';
+import { getTrialExtensionSyncAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-sync-action.util';
 
 const ORIGINAL_TRIAL_END = new Date('2026-12-01T00:00:00.000Z');
 const EXTENDED_TRIAL_END = new Date('2026-12-15T00:00:00.000Z');
 const LATER_TRIAL_END = new Date('2026-12-31T00:00:00.000Z');
 
-describe('getTrialExtensionMirrorAction', () => {
+describe('getTrialExtensionSyncAction', () => {
   it('does nothing when Stripe holds the extension date already', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: EXTENDED_TRIAL_END,
         previousTrialEnd: ORIGINAL_TRIAL_END,
         isTrialing: true,
@@ -20,7 +20,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('replaces the extension when the trial is pushed further', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: EXTENDED_TRIAL_END,
         previousTrialEnd: EXTENDED_TRIAL_END,
         isTrialing: true,
@@ -31,7 +31,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('ends the extension when the trial is moved earlier', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: LATER_TRIAL_END,
         previousTrialEnd: LATER_TRIAL_END,
         isTrialing: true,
@@ -42,7 +42,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('ends the extension when the trial stops before its end', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: EXTENDED_TRIAL_END,
         previousTrialEnd: EXTENDED_TRIAL_END,
         isTrialing: false,
@@ -53,7 +53,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('starts an extension when a plain trial is pushed later', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: null,
         previousTrialEnd: ORIGINAL_TRIAL_END,
         isTrialing: true,
@@ -64,7 +64,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('does nothing when a plain trial is moved earlier', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: null,
         previousTrialEnd: EXTENDED_TRIAL_END,
         isTrialing: true,
@@ -75,7 +75,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('does nothing on a subscription seen for the first time', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: null,
         previousTrialEnd: null,
         isTrialing: true,
@@ -86,7 +86,7 @@ describe('getTrialExtensionMirrorAction', () => {
 
   it('does nothing when a trial without extension ends', () => {
     expect(
-      getTrialExtensionMirrorAction({
+      getTrialExtensionSyncAction({
         activeTrialExtensionEndsAt: null,
         previousTrialEnd: ORIGINAL_TRIAL_END,
         isTrialing: false,
