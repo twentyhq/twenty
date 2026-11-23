@@ -16,7 +16,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795439609059)
+@RegisteredWorkspaceCommand('2.63.0', 1795470090382)
 @Command({
   name: 'upgrade:2-63:add-rich-text-file-ids-columns',
   description:

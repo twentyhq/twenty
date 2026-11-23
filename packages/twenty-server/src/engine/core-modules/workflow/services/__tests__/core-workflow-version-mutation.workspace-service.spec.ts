@@ -8,7 +8,6 @@ import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -69,7 +68,6 @@ const buildService = async ({
         useValue: coreWorkflowVersionWriteService,
       },
       { provide: CoreWorkflowVersionListService, useValue: {} },
-      { provide: WorkflowCoreSyncService, useValue: {} },
       {
         provide: WorkflowVersionStepOperationsWorkspaceService,
         useValue: workflowVersionStepOperationsWorkspaceService,
