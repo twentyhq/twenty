@@ -21,7 +21,6 @@ describe('findWorkspaceFromInviteHash should succeed (integration)', () => {
       ...extractRecordIdsAndDatesAsExpectAny({
         ...data.findWorkspaceFromInviteHash,
       }),
-      // Other specs upload an Apple logo, so its value depends on test order
       logo: expect.any(String),
     });
   });
