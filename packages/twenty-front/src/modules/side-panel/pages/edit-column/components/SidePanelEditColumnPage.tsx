@@ -83,10 +83,10 @@ const SidePanelEditColumnPageContent = ({
     return null;
   }
 
-  const { scopedRelationJunction } = resolveScopedRelationJunction({
+  const scopedRelationJunction = resolveScopedRelationJunction({
     fieldMetadataItem,
     objectMetadataItems,
-  });
+  })?.scopedRelationJunction;
 
   return (
     <ContextStoreComponentInstanceContext.Provider

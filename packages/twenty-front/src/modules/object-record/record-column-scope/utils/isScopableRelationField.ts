@@ -2,6 +2,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { resolveScopedRelationJunction } from '@/object-record/record-column-scope/utils/resolveScopedRelationJunction';
+import { isDefined } from 'twenty-shared/utils';
 
 export const isScopableRelationField = ({
   fieldMetadataItem,
@@ -11,5 +12,6 @@ export const isScopableRelationField = ({
   objectMetadataItems: EnrichedObjectMetadataItem[];
 }): boolean =>
   isOneToManyRelationField(fieldMetadataItem) &&
-  resolveScopedRelationJunction({ fieldMetadataItem, objectMetadataItems })
-    .status !== 'unsupported';
+  isDefined(
+    resolveScopedRelationJunction({ fieldMetadataItem, objectMetadataItems }),
+  );

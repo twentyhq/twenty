@@ -37,14 +37,16 @@ export const getScopedRelationColumn = ({
     return undefined;
   }
 
-  const { status, scopedRelationJunction } = resolveScopedRelationJunction({
+  const scopedRelationJunctionResolution = resolveScopedRelationJunction({
     fieldMetadataItem,
     objectMetadataItems,
   });
 
-  if (status === 'unsupported') {
+  if (!isDefined(scopedRelationJunctionResolution)) {
     return undefined;
   }
+
+  const { scopedRelationJunction } = scopedRelationJunctionResolution;
 
   const relationObjectMetadataItem = findRelationTargetObjectMetadataItem({
     fieldMetadataItem,

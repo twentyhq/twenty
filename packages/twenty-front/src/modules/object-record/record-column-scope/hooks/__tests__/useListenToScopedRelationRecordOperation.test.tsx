@@ -208,13 +208,13 @@ describe('useListenToScopedRelationRecordOperation', () => {
   });
 
   it('drops the cached scoped values and reloads when a target record of a join object column is written', () => {
-    const { scopedRelationJunction } = resolveScopedRelationJunction({
+    const scopedRelationJunction = resolveScopedRelationJunction({
       fieldMetadataItem: getMockFieldMetadataItemOrThrow({
         objectMetadataItem: companyObjectMetadataItem,
         fieldName: 'taskTargets',
       }),
       objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
-    });
+    })?.scopedRelationJunction;
     const {
       onScopedRelationRecordOperation,
       readCachedScopedTaskTargets,
