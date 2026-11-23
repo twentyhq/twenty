@@ -4,10 +4,10 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { aiChatLiveReactionRevisionsFamilyState } from '@/ai-chat/messages/states/aiChatLiveReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
-import { setAgentMessageReaction } from '@/ai-chat/messages/utils/setAgentMessageReaction';
+import { setAiChatMessageReaction } from '@/ai-chat/messages/utils/setAiChatMessageReaction';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
@@ -20,7 +20,6 @@ type ReactionRequestQueue = {
   isConfirmedReacted: boolean;
 };
 
-// Shared by every caller so one emoji's changes reach the server in the order they were made
 const reactionRequestQueues = new Map<string, ReactionRequestQueue>();
 
 export const useToggleAiChatMessageReaction = () => {
@@ -29,7 +28,6 @@ export const useToggleAiChatMessageReaction = () => {
   const { threadId: aiChatThreadId } = useAiChatInstanceOrThrow();
   const { enqueueToast } = useToast();
 
-  // Live snapshots carry the server's state, so a refused change only takes back its own reaction
   const toggleAiChatMessageReaction = useCallback(
     async ({ messageId, emoji }: { messageId: string; emoji: string }) => {
       const workspaceMemberId = store.get(currentWorkspaceMemberState.atom)?.id;
@@ -52,7 +50,7 @@ export const useToggleAiChatMessageReaction = () => {
       const setOwnReaction = (isReacted: boolean) =>
         store.set(
           reactionsAtom,
-          setAgentMessageReaction({
+          setAiChatMessageReaction({
             reactions: store.get(reactionsAtom),
             emoji,
             workspaceMemberId,
@@ -69,7 +67,7 @@ export const useToggleAiChatMessageReaction = () => {
       };
 
       const liveRevisionsAtom =
-        aiChatLiveReactionRevisionsFamilyState.atomFamily({
+        aiChatMessageReactionRevisionsFamilyState.atomFamily({
           threadId: aiChatThreadId,
         });
       const readLiveRevision = () => store.get(liveRevisionsAtom)[messageId];
@@ -86,7 +84,6 @@ export const useToggleAiChatMessageReaction = () => {
           });
           queue.isConfirmedReacted = !hasReacted;
         } catch (error) {
-          // A newer change, or a live snapshot of the server's state, settles the reaction instead
           if (
             queue.lastRequest === request &&
             readLiveRevision() === liveRevisionBeforeRequest

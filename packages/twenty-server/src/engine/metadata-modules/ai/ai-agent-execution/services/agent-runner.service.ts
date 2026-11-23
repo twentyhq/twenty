@@ -1116,6 +1116,7 @@ export class AgentRunnerService {
       responseFormat:
         spec.responseFormat ?? persona.responseFormat ?? undefined,
       workspaceId,
+      threadId: input.conversation?.threadId,
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
       toolLoadingStrategy: spec.toolLoadingStrategy,

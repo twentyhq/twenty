@@ -38,7 +38,10 @@ describe('useOptimisticallyRestoreOnSend', () => {
       lastActivityAt: LAST_ACTIVITY_AT,
     } as never);
     store.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: ARCHIVED_PARTICIPANT,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: ARCHIVED_PARTICIPANT,
+      },
     });
 
     const { result } = renderRestoreHook(store);
@@ -53,7 +56,9 @@ describe('useOptimisticallyRestoreOnSend', () => {
     expect(
       store.get(recordStoreFamilyState.atomFamily(THREAD_ID)),
     ).toMatchObject({ lastActivityAt: sentAt });
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual({
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual({
       __typename: 'AgentChatThreadParticipant' as const,
       threadId: THREAD_ID,
       lastReadAt: sentAt,
@@ -71,16 +76,19 @@ describe('useOptimisticallyRestoreOnSend', () => {
     expect(
       store.get(recordStoreFamilyState.atomFamily(THREAD_ID)),
     ).toMatchObject({ lastActivityAt: LAST_ACTIVITY_AT });
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
-      ARCHIVED_PARTICIPANT,
-    );
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual(ARCHIVED_PARTICIPANT);
   });
 
   it('preserves a newer participant event when sending fails', async () => {
     const store = createStore();
 
     store.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: ARCHIVED_PARTICIPANT,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: ARCHIVED_PARTICIPANT,
+      },
     });
 
     const { result } = renderRestoreHook(store);
@@ -98,13 +106,16 @@ describe('useOptimisticallyRestoreOnSend', () => {
     };
 
     store.set(aiChatThreadParticipantsState.atom, {
-      [THREAD_ID]: mentionedAgainParticipant,
+      isLoaded: true,
+      rowsByThreadId: {
+        [THREAD_ID]: mentionedAgainParticipant,
+      },
     });
 
     act(() => rollback());
 
-    expect(store.get(aiChatThreadParticipantsState.atom)?.[THREAD_ID]).toEqual(
-      mentionedAgainParticipant,
-    );
+    expect(
+      store.get(aiChatThreadParticipantsState.atom).rowsByThreadId[THREAD_ID],
+    ).toEqual(mentionedAgainParticipant);
   });
 });

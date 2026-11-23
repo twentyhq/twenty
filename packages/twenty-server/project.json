@@ -55,15 +55,6 @@
         "command": "jest --config ./jest.config.mjs --ci --maxWorkers=3 --workerIdleMemoryLimit=1GB --cacheDirectory=../../.cache/jest/packages/twenty-server"
       }
     },
-    "build:packageJson": {
-      "executor": "@nx/js:tsc",
-      "options": {
-        "main": "packages/twenty-server/dist/main.js",
-        "tsConfig": "packages/twenty-server/tsconfig.json",
-        "outputPath": "packages/twenty-server/dist",
-        "updateBuildableProjectDepsInPackageJson": true
-      }
-    },
     "typecheck": {
       "dependsOn": ["^build"]
     },
@@ -203,7 +194,15 @@
     },
     "test": {
       "options": {
-        "maxWorkers": "50%"
+        "command": "jest --config ./jest.config.mjs --silent --coverageReporters=text-summary --cacheDirectory=../../.cache/jest/{projectRoot} --maxWorkers=50%"
+      },
+      "configurations": {
+        "coverage": {
+          "command": "jest --config ./jest.config.mjs --silent --coverageReporters=lcov --coverageReporters=text --cacheDirectory=../../.cache/jest/{projectRoot} --maxWorkers=50% --coverage"
+        },
+        "watch": {
+          "command": "jest --config ./jest.config.mjs --silent --coverageReporters=text-summary --cacheDirectory=../../.cache/jest/{projectRoot} --maxWorkers=50% --watch"
+        }
       }
     },
     "test:debug": {

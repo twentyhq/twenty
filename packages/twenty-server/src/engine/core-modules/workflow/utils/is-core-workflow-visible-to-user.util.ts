@@ -1,14 +1,13 @@
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const isCoreWorkflowVisibleToUser = ({
-  visibility,
+  isPrivate,
   createdByUserWorkspaceId,
   userWorkspaceId,
 }: {
-  visibility: WorkflowVisibility;
+  isPrivate: boolean;
   createdByUserWorkspaceId: string | null;
   userWorkspaceId: string | undefined;
 }): boolean =>
-  visibility === WorkflowVisibility.WORKSPACE ||
+  !isPrivate ||
   (isDefined(userWorkspaceId) && createdByUserWorkspaceId === userWorkspaceId);

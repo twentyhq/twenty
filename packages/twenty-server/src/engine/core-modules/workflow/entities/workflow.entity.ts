@@ -21,6 +21,7 @@ import { CREATE_WORKFLOW_CORE_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/co
 import { ADD_WORKSPACE_WORKFLOW_ID_TO_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-workspace-workflow-id-to-workflow-upgrade-command-name.constant';
 import { ADD_CORE_VERSION_POINTERS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-core-version-pointers-upgrade-command-name.constant';
 import { ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-workflow-visibility-upgrade-command-name.constant';
+import { ADD_WORKFLOW_IS_PRIVATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-62/add-workflow-is-private-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -38,6 +39,11 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 @Index('IDX_WORKFLOW_VISIBILITY_CREATED_BY', [
   'workspaceId',
   'visibility',
+  'createdByUserWorkspaceId',
+])
+@Index('IDX_WORKFLOW_IS_PRIVATE_CREATED_BY', [
+  'workspaceId',
+  'isPrivate',
   'createdByUserWorkspaceId',
 ])
 export class WorkflowEntity extends SyncableEntity {
@@ -72,14 +78,23 @@ export class WorkflowEntity extends SyncableEntity {
 
   // Enforced where ids resolve (CoreWorkflowIdResolutionService), so a private workflow's versions and steps are unreachable too.
   @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_WORKFLOW_IS_PRIVATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', nullable: false, default: false })
+  isPrivate: boolean;
+
+  @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
   })
   @Column({
     type: 'varchar',
     nullable: false,
     default: WorkflowVisibility.WORKSPACE,
+    select: false,
+    insert: false,
+    update: false,
   })
-  visibility: WorkflowVisibility;
+  visibility: WasRemovedInUpgrade<WorkflowVisibility>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
