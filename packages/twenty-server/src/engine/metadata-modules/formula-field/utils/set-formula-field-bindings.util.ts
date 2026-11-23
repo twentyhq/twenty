@@ -14,9 +14,7 @@ import {
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// Bindings are derived from the expression, so whatever a client sent is replaced.
-// They are kept while the expression is unchanged, so a formula that no longer
-// compiles still records what it read.
+// Bindings are server-owned, and kept while the expression is unchanged so a broken formula still records what it read
 export const setFormulaFieldBindings = <
   TUniversalFlatFieldMetadata extends FormulaSourceUniversalFlatFieldMetadata &
     Pick<UniversalFlatFieldMetadata, 'universalSettings'>,
@@ -28,7 +26,7 @@ export const setFormulaFieldBindings = <
   pendingUniversalFlatFieldMetadatas = [],
 }: {
   universalFlatFieldMetadata: TUniversalFlatFieldMetadata;
-  existingUniversalSettings?: unknown;
+  existingUniversalSettings?: UniversalFlatFieldMetadata['universalSettings'];
   universalFlatObjectMetadataMaps: {
     byUniversalIdentifier: Partial<
       Record<string, FormulaSourceUniversalFlatObjectMetadata>

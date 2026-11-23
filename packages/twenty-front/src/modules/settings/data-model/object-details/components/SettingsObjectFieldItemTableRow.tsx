@@ -169,6 +169,15 @@ export const SettingsObjectFieldItemTableRow = ({
       ? relationObjectMetadataItem?.labelSingular
       : relationObjectMetadataItem?.labelPlural;
 
+  const getLabelDetail = () => {
+    if (isFormulaFieldMetadata(fieldMetadataItem)) {
+      return t`Formula`;
+    }
+
+    return fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined;
+  };
+  const labelDetail = getLabelDetail();
+
   return (
     <TableRow
       gridTemplateColumns={OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
@@ -222,13 +231,7 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={label}
-          labelDetail={
-            isFormulaFieldMetadata(fieldMetadataItem)
-              ? t`Formula`
-              : fieldMetadataItem.settings?.type === 'percentage'
-                ? '%'
-                : undefined
-          }
+          labelDetail={labelDetail}
           to={
             isRelatedObjectLinkable
               ? getSettingsPath(SettingsPath.Objects, {

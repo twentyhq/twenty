@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
   FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
@@ -20,7 +22,7 @@ const findPlan = (fieldName: string) => {
     (candidate) => candidate.fieldName === fieldName,
   );
 
-  if (plan === undefined) {
+  if (!isDefined(plan)) {
     throw new Error(`No plan for ${fieldName}`);
   }
 
