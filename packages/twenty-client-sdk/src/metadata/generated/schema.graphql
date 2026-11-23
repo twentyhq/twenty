@@ -3773,7 +3773,6 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
-  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
   updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
@@ -3799,6 +3798,7 @@ type Mutation {
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
   updateSkill(input: UpdateSkillInput!): Skill!
+  updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
@@ -4548,6 +4548,7 @@ type Query {
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
   ): ObjectConnection!
+  onlineWorkspaceMemberIds: [UUID!]!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
@@ -5202,6 +5203,11 @@ input SyncAppMessageFoldersInput {
   messageChannelId: UUID!
 }
 
+enum TabPresenceStatus {
+  FOCUSED
+  OPEN
+}
+
 type TasksConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -5499,11 +5505,6 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
-input UpdateFocusedTabInput {
-  isFocused: Boolean!
-  tabId: String!
-}
-
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -5736,6 +5737,11 @@ input UpdateSkillInput {
   isActive: Boolean
   label: String
   name: String
+}
+
+input UpdateTabPresenceInput {
+  status: TabPresenceStatus!
+  tabId: String!
 }
 
 input UpdateTimelineActivityTypeInput {
