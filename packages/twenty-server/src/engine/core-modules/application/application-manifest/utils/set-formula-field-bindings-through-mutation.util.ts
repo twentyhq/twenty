@@ -12,8 +12,7 @@ import { setFormulaFieldBindings } from 'src/engine/metadata-modules/formula-fie
 import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// A manifest only declares the expression: the bindings it is stored with are
-// derived here, against the fields the workspace has once the manifest is synced.
+// A manifest declares only the expression, so its bindings are derived against the fields present after the sync
 export const setFormulaFieldBindingsThroughMutation = ({
   existingFlatFieldMetadataMaps,
   universalFlatFieldMetadataMapsToMutate,

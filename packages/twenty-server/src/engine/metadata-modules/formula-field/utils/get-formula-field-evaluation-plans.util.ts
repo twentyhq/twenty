@@ -37,7 +37,7 @@ export const getFormulaFieldEvaluationPlans = ({
 
   const cachedPlans = cachedPlansByObjectMetadata.get(flatObjectMetadata);
 
-  if (cachedPlans) {
+  if (isDefined(cachedPlans)) {
     return cachedPlans;
   }
 
