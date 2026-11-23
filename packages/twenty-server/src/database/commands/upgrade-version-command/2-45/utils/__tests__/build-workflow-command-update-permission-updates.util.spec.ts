@@ -7,7 +7,6 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 const NOW = '2026-09-30T12:00:00.000Z';
 const RECORD_UPDATE_PERMISSION_CONDITION =
   ' and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)';
-// Frozen at 2.45: later upgrade commands keep changing the standard expressions
 const PREVIOUS_EXPRESSION_BY_UNIVERSAL_IDENTIFIER: Record<string, string> = {
   '57f21a06-a17a-47b1-a123-90d90dbdf0b7':
     'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
@@ -30,52 +29,48 @@ const { allFlatEntityMaps } = computeTwentyStandardApplicationAllFlatEntityMaps(
   },
 );
 
-const getPreviousExpression = (universalIdentifier: string): string => {
-  const expression =
-    PREVIOUS_EXPRESSION_BY_UNIVERSAL_IDENTIFIER[universalIdentifier];
-
-  if (!isDefined(expression)) {
-    throw new Error(`No previous expression for ${universalIdentifier}`);
-  }
-
-  return expression;
-};
-
-const getNextExpression = (universalIdentifier: string): string =>
-  `${getPreviousExpression(universalIdentifier)}${RECORD_UPDATE_PERMISSION_CONDITION}`;
-
 const buildItems = (
-  getExpression: (universalIdentifier: string) => string,
+  computeExpression: (previousExpression: string) => string,
 ): Record<string, FlatCommandMenuItem> =>
   Object.fromEntries(
-    WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) => {
-      const commandMenuItem =
-        allFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
-          universalIdentifier
+    Object.entries(PREVIOUS_EXPRESSION_BY_UNIVERSAL_IDENTIFIER).map(
+      ([universalIdentifier, previousExpression]) => {
+        const commandMenuItem =
+          allFlatEntityMaps.flatCommandMenuItemMaps.byUniversalIdentifier[
+            universalIdentifier
+          ];
+
+        if (!isDefined(commandMenuItem)) {
+          throw new Error(
+            `Standard command menu item ${universalIdentifier} missing`,
+          );
+        }
+
+        return [
+          universalIdentifier,
+          {
+            ...commandMenuItem,
+            conditionalAvailabilityExpression:
+              computeExpression(previousExpression),
+          },
         ];
+      },
+    ),
+  );
 
-      if (!isDefined(commandMenuItem)) {
-        throw new Error(
-          `Standard command menu item ${universalIdentifier} missing`,
-        );
-      }
+const withPreviousExpressions = () =>
+  buildItems((previousExpression) => previousExpression);
 
-      return [
-        universalIdentifier,
-        {
-          ...commandMenuItem,
-          conditionalAvailabilityExpression: getExpression(universalIdentifier),
-        },
-      ];
-    }),
+const withUpdatedExpressions = () =>
+  buildItems(
+    (previousExpression) =>
+      `${previousExpression}${RECORD_UPDATE_PERMISSION_CONDITION}`,
   );
 
 describe('buildWorkflowCommandUpdatePermissionUpdates', () => {
-  it('adds the update permission condition to the workflow commands', () => {
+  it('moves the workflow commands to the current standard expressions', () => {
     const updates = buildWorkflowCommandUpdatePermissionUpdates({
-      flatCommandMenuItemsByUniversalIdentifier: buildItems(
-        getPreviousExpression,
-      ),
+      flatCommandMenuItemsByUniversalIdentifier: withPreviousExpressions(),
       now: NOW,
       direction: 'up',
     });
@@ -83,14 +78,14 @@ describe('buildWorkflowCommandUpdatePermissionUpdates', () => {
     expect(updates).toHaveLength(WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS.length);
     for (const update of updates) {
       expect(update.conditionalAvailabilityExpression).toBe(
-        getNextExpression(update.universalIdentifier),
+        `${PREVIOUS_EXPRESSION_BY_UNIVERSAL_IDENTIFIER[update.universalIdentifier]}${RECORD_UPDATE_PERMISSION_CONDITION}`,
       );
       expect(update.updatedAt).toBe(NOW);
     }
   });
 
   it('leaves customized expressions untouched', () => {
-    const items = buildItems(getPreviousExpression);
+    const items = withPreviousExpressions();
     const [customizedUniversalIdentifier] =
       WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS;
     const customized = items[customizedUniversalIdentifier];
@@ -119,8 +114,9 @@ describe('buildWorkflowCommandUpdatePermissionUpdates', () => {
   });
 
   it('restores the previous expressions on down', () => {
+
     const updates = buildWorkflowCommandUpdatePermissionUpdates({
-      flatCommandMenuItemsByUniversalIdentifier: buildItems(getNextExpression),
+      flatCommandMenuItemsByUniversalIdentifier: withUpdatedExpressions(),
       now: NOW,
       direction: 'down',
     });
@@ -128,7 +124,7 @@ describe('buildWorkflowCommandUpdatePermissionUpdates', () => {
     expect(updates).toHaveLength(WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS.length);
     for (const update of updates) {
       expect(update.conditionalAvailabilityExpression).toBe(
-        getPreviousExpression(update.universalIdentifier),
+        PREVIOUS_EXPRESSION_BY_UNIVERSAL_IDENTIFIER[update.universalIdentifier],
       );
     }
   });
