@@ -43,7 +43,6 @@ const BrowserNotificationSetupDialogExample = ({
   );
 };
 
-// The dialog fades in, so its content is in the document before it is visible
 const openSetupDialogInCanvas = async ({
   canvasElement,
   title,
@@ -120,11 +119,9 @@ export const ConfirmThenSystemSettingsOnMac: Story = {
 
     await userEvent.click(within(dialog).getByRole('button', { name: /No/ }));
 
-    await waitFor(async () =>
+    await waitFor(() =>
       expect(
-        await within(dialog).findByText(
-          'Allow Google Chrome in macOS settings',
-        ),
+        within(dialog).getByText('Allow Google Chrome in macOS settings'),
       ).toBeVisible(),
     );
     await waitFor(() =>

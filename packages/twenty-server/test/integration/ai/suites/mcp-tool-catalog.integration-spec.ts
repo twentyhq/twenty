@@ -363,6 +363,9 @@ describe('MCP tool catalog (integration)', () => {
         delete_object_metadata: true,
         create_complete_workflow: false,
         delete_workflow: true,
+        create_draft_from_workflow_version: true,
+        save_campaign: true,
+        send_email: false,
         get_views: false,
       });
     });
@@ -495,7 +498,16 @@ describe('MCP tool catalog (integration)', () => {
 
     it('should not name workspace objects in the instructions', async () => {
       const response = await postMcp(
-        { jsonrpc: '2.0', method: 'initialize', id: '1' },
+        {
+          jsonrpc: '2.0',
+          method: 'initialize',
+          id: '1',
+          params: {
+            protocolVersion: '2025-06-18',
+            capabilities: {},
+            clientInfo: { name: 'integration-test', version: '1.0.0' },
+          },
+        },
         adminApiKeyToken,
         GENERIC_MODE_PATH,
       ).expect(200);
