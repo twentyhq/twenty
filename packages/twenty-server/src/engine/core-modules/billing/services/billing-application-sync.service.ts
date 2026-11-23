@@ -3,10 +3,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
-import {
-  SyncSubscriptionApplicationsJob,
-  type SyncSubscriptionApplicationsJobData,
-} from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
+import { SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME } from 'src/engine/core-modules/billing/constants/sync-subscription-applications-job-name.constant';
+import { type SyncSubscriptionApplicationsJobData } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
 import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -41,7 +39,7 @@ export class BillingApplicationSyncService {
     }
 
     await this.messageQueueService.add<SyncSubscriptionApplicationsJobData>(
-      SyncSubscriptionApplicationsJob.name,
+      SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME,
       { workspaceId, isRetryAfterExpiredPendingUpdate },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,

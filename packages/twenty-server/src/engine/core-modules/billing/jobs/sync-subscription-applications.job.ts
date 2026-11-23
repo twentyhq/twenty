@@ -2,6 +2,7 @@
 
 import { Scope } from '@nestjs/common';
 
+import { SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME } from 'src/engine/core-modules/billing/constants/sync-subscription-applications-job-name.constant';
 import { BillingApplicationProductService } from 'src/engine/core-modules/billing/services/billing-application-product.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -23,7 +24,7 @@ export class SyncSubscriptionApplicationsJob {
     private readonly billingSubscriptionUpdateService: BillingSubscriptionUpdateService,
   ) {}
 
-  @Process(SyncSubscriptionApplicationsJob.name)
+  @Process(SYNC_SUBSCRIPTION_APPLICATIONS_JOB_NAME)
   async handle({
     workspaceId,
     isRetryAfterExpiredPendingUpdate,

@@ -382,6 +382,34 @@ describe('Application price billing (integration)', () => {
     expect(findStripeItem(applicationMonthPriceId)).toBeUndefined();
   }, 120000);
 
+  it('adds a newly installed application through an application sync rather than a seat update', async () => {
+    await getAppProviderByClassName<BillingSubscriptionUpdateService>(
+      'BillingSubscriptionUpdateService',
+    ).syncSeats({ workspaceId });
+
+    expect(updateSubscriptionSpy).toHaveBeenNthCalledWith(
+      1,
+      TEST_STRIPE_SUBSCRIPTION_ID,
+      expect.objectContaining({
+        items: expect.not.arrayContaining([
+          expect.objectContaining({ price: applicationMonthPriceId }),
+        ]),
+      }),
+    );
+
+    await waitForAllJobsToFinish();
+
+    expect(updateSubscriptionSpy).toHaveBeenLastCalledWith(
+      TEST_STRIPE_SUBSCRIPTION_ID,
+      expect.objectContaining({
+        payment_behavior: 'pending_if_incomplete',
+        items: expect.arrayContaining([
+          { price: applicationMonthPriceId, quantity: workspaceMemberCount },
+        ]),
+      }),
+    );
+  }, 120000);
+
   it('keeps a held charge that already matches the installed applications', async () => {
     pendingUpdateInvoiceId = 'in_pending_update';
     pendingUpdateItems = [
