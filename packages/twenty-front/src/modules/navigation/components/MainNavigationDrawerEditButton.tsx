@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPaint } from 'twenty-ui/icon';
@@ -19,7 +19,7 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
-const StyledEditButton = styled(LightIconButton)`
+const editButtonClassName = css`
   opacity: 0;
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s);
 
@@ -54,7 +54,8 @@ export const MainNavigationDrawerEditButton = () => {
   }
 
   return (
-    <StyledEditButton
+    <LightIconButton
+      className={editButtonClassName}
       emphasis="standard"
       size="sm"
       onClick={() => enterLayoutCustomizationMode()}
@@ -66,6 +67,6 @@ export const MainNavigationDrawerEditButton = () => {
       tooltipOffset={5}
     >
       <IconPaint />
-    </StyledEditButton>
+    </LightIconButton>
   );
 };
