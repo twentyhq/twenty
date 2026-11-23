@@ -473,6 +473,15 @@ describePermissionTestWorkspace({
         ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
       });
 
+      it('refuses a role without a row level rule targeting a record it cannot read', async () => {
+        await expect(
+          assertNoteTargetCreated({
+            role: 'none',
+            targetRecord: 'insideEveryFilter',
+          }),
+        ).rejects.toThrow(RELATION_TARGET_NOT_READABLE);
+      });
+
       it('lets a role with all records target any record', async () => {
         await expect(
           assertNoteTargetCreated({
