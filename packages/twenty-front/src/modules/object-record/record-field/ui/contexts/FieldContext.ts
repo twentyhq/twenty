@@ -42,6 +42,7 @@ export type GenericFieldContextType = {
   triggerEvent?: TriggerEventType;
   isForbidden?: boolean;
   anchorId?: string;
+  fieldValueKey?: string;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

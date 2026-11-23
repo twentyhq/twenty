@@ -7,6 +7,7 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EmailVerificationResolver } from 'src/engine/core-modules/email-verification/email-verification.resolver';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Module({
@@ -14,6 +15,7 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
     TypeOrmModule.forFeature([AppTokenEntity, UserEntity]),
     WorkspaceDomainsModule,
     DomainServerConfigModule,
+    ThrottlerModule,
   ],
   providers: [
     EmailVerificationService,

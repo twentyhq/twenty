@@ -6,6 +6,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasObjectMetadataItemPositionField';
 import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
 import { addLookupTargetsToRecordGqlFields } from '@/object-record/record-column-lookup/utils/addLookupTargetsToRecordGqlFields';
+import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
 import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/ui/contexts/CoreRecordReferenceFieldsContext';
@@ -44,6 +45,8 @@ export const useRelevantRecordsGqlFields = ({
   const coreRecordReferenceFields = useContext(
     CoreRecordReferenceFieldsContext,
   );
+
+  const scopedRelationAliases = useContext(ScopedRelationAliasesContext);
 
   const visibleRecordFieldMetadataItems = visibleRecordFields
     .map(
@@ -119,6 +122,14 @@ export const useRelevantRecordsGqlFields = ({
     ...(hasPosition ? { position: true } : {}),
     ...allDepthOneGqlFields,
     ...coreRecordReferenceFieldsRecordGqlFields,
+    ...Object.fromEntries(
+      scopedRelationAliases
+        .filter(({ isRestricted }) => !isRestricted)
+        .map(({ responseKey, relationWithArguments }) => [
+          responseKey,
+          relationWithArguments,
+        ]),
+    ),
     createdAt: true,
     updatedAt: true,
     deletedAt: true,

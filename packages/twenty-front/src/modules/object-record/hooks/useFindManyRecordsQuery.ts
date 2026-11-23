@@ -29,7 +29,7 @@ export const useFindManyRecordsQuery = ({
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
-  const findManyRecordsQuery = useMemo(
+  const { query, variables } = useMemo(
     () =>
       generateFindManyRecordsQuery({
         objectMetadataItem,
@@ -50,6 +50,7 @@ export const useFindManyRecordsQuery = ({
   );
 
   return {
-    findManyRecordsQuery,
+    findManyRecordsQuery: query,
+    relationsWithArgumentsVariables: variables,
   };
 };

@@ -5,6 +5,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordIndexViewBar } from '@/object-record/record-index/components/RecordIndexViewBar';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { ScopedRelationAliasesProvider } from '@/object-record/record-column-scope/components/ScopedRelationAliasesProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
@@ -106,19 +107,23 @@ export const RecordIndexContainerGater = memo(() => {
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordIndexId}
         >
-          <CommandMenuComponentInstanceContext.Provider
-            value={{
-              instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
-            }}
-          >
-            <PageTitle title={objectMetadataItem.labelPlural} />
-            <PageCardLayout
-              header={<RecordIndexPageHeader />}
-              secondaryBar={hasObjectReadPermissions && <RecordIndexViewBar />}
+          <ScopedRelationAliasesProvider>
+            <CommandMenuComponentInstanceContext.Provider
+              value={{
+                instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
+              }}
             >
-              {indexContent}
-            </PageCardLayout>
-          </CommandMenuComponentInstanceContext.Provider>
+              <PageTitle title={objectMetadataItem.labelPlural} />
+              <PageCardLayout
+                header={<RecordIndexPageHeader />}
+                secondaryBar={
+                  hasObjectReadPermissions && <RecordIndexViewBar />
+                }
+              >
+                {indexContent}
+              </PageCardLayout>
+            </CommandMenuComponentInstanceContext.Provider>
+          </ScopedRelationAliasesProvider>
         </RecordComponentInstanceContextsWrapper>
         <RecordIndexLoadBaseOnContextStoreEffect />
         <RecordIndexViewFieldsSSESyncEffect />

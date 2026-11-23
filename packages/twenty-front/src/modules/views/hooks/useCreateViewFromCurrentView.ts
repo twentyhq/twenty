@@ -26,6 +26,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
+import { removeTypenames } from '~/utils/removeTypenames';
 
 export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { performViewApiCreate } = usePerformViewApiPersist();
@@ -189,6 +190,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             viewFieldGroupId: viewField.viewFieldGroupId,
             relationTargetFieldMetadataId:
               viewField.relationTargetFieldMetadataId,
+            relationScope: removeTypenames(viewField.relationScope),
+            label: viewField.label,
             viewId: newViewId,
           })),
       });
