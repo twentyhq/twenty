@@ -5,5 +5,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const isFieldMetadataUIEditable = ({
   isUIEditable,
   settings,
-}: Pick<FlatFieldMetadata, 'isUIEditable'> & { settings?: unknown }): boolean =>
+}: Pick<FlatFieldMetadata, 'isUIEditable'> &
+  Partial<Pick<FlatFieldMetadata, 'settings'>>): boolean =>
   isUIEditable && !isFormulaFieldMetadata({ settings });
