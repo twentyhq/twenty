@@ -16,6 +16,21 @@ type ExpressionEvaluator = (params: {
 const toErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
 
+const parseExpression = (
+  expression: string,
+):
+  | { isValid: true; parsedExpression: Expression }
+  | { isValid: false; errorMessage: string } => {
+  try {
+    return {
+      isValid: true,
+      parsedExpression: parseValidationRuleExpression(expression),
+    };
+  } catch (error) {
+    return { isValid: false, errorMessage: toErrorMessage(error) };
+  }
+};
+
 export const createExpressionEvaluator = ({
   expression,
   fields,
@@ -23,15 +38,15 @@ export const createExpressionEvaluator = ({
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
 }): ExpressionEvaluator => {
-  let parsedExpression: Expression;
+  const parsing = parseExpression(expression);
 
-  try {
-    parsedExpression = parseValidationRuleExpression(expression);
-  } catch (error) {
-    const errorMessage = toErrorMessage(error);
+  if (!parsing.isValid) {
+    const { errorMessage } = parsing;
 
     return () => ({ status: 'errored', errorMessage });
   }
+
+  const { parsedExpression } = parsing;
 
   const identifierPaths = parsedExpression.variables({ withMembers: true });
   const fieldByName = new Map(fields.map((field) => [field.name, field]));
