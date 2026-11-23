@@ -175,7 +175,7 @@ msgstr "Đã xảy ra lỗi khóa bộ nhớ đệm."
 #. js-lingui-id: BGPUw0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A calculation on related records cannot be sorted or limited"
-msgstr ""
+msgstr "Một phép tính trên các bản ghi liên quan không thể được sắp xếp hoặc giới hạn"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -217,7 +217,7 @@ msgstr "Bộ lọc biểu đồ của tiện ích \"{widgetTitle}\" không có �
 #. js-lingui-id: pSJj6s
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A column name cannot be empty"
-msgstr ""
+msgstr "Tên cột không thể để trống"
 
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -244,12 +244,12 @@ msgstr "Một nhà cung cấp kết nối với tên này đã tồn tại cho �
 #. js-lingui-id: v8qK2D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A count of related records cannot have a related record field"
-msgstr ""
+msgstr "Số lượng bản ghi liên quan không thể có trường bản ghi liên quan"
 
 #. js-lingui-id: J6ov1V
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "A count of related records cannot use a field"
-msgstr ""
+msgstr "Số lượng bản ghi liên quan không thể sử dụng một trường"
 
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -272,7 +272,7 @@ msgstr "Không thể hiển thị trường đã bị vô hiệu hóa trong mộ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A deactivated field cannot be used to filter or sort related records"
-msgstr ""
+msgstr "Không thể dùng trường đã vô hiệu hóa để lọc hoặc sắp xếp các bản ghi liên quan"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -474,7 +474,7 @@ msgstr "Bản ghi âm của một cuộc họp"
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
-msgstr ""
+msgstr "Trường bản ghi liên quan chỉ có thể được hiển thị trên trường quan hệ nhiều-một hoặc trên trường quan hệ một-nhiều có phạm vi quan hệ"
 
 #. js-lingui-id: OWEGoP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -484,17 +484,17 @@ msgstr "Không thể hiển thị quan hệ của bản ghi liên quan trong m�
 #. js-lingui-id: iBsZzI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A related record's relation cannot be used to filter or sort"
-msgstr ""
+msgstr "Không thể dùng quan hệ của bản ghi liên quan để lọc hoặc sắp xếp"
 
 #. js-lingui-id: OrK1uF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "A relation scope can only be set on a one-to-many relation field"
-msgstr ""
+msgstr "Phạm vi quan hệ chỉ có thể được thiết lập trên trường quan hệ một-nhiều"
 
 #. js-lingui-id: +RRVJJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "A relation scope related record field can only be used on a many-to-one relation field"
-msgstr ""
+msgstr "Trường bản ghi liên quan trong phạm vi quan hệ chỉ có thể được sử dụng trên trường quan hệ nhiều-một"
 
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -688,12 +688,12 @@ msgstr "Đã xảy ra lỗi nhóm trường chế độ xem."
 #. js-lingui-id: Aexevl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A view field label cannot be empty, use null to show the default label"
-msgstr ""
+msgstr "Nhãn trường chế độ xem không thể để trống, hãy dùng null để hiển thị nhãn mặc định"
 
 #. js-lingui-id: JmypXw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "Nhãn trường chế độ xem không thể dài hơn {IDENTIFIER_MAX_CHAR_LENGTH} ký tự"
 
 #. js-lingui-id: syBxwN
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
@@ -2385,7 +2385,7 @@ msgstr "Sự kiện Lịch"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar event copies synced from this member's calendars"
-msgstr ""
+msgstr "Các bản sao sự kiện lịch được đồng bộ từ lịch của thành viên này"
 
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -6615,13 +6615,13 @@ msgstr "Cần có bí danh handle."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Handle of the calendar this event was synced from"
-msgstr ""
+msgstr "Định danh của lịch mà sự kiện này được đồng bộ từ đó"
 
 #. js-lingui-id: fC7TD7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Handle of the mailbox this message was synced from"
-msgstr ""
+msgstr "Định danh của hộp thư mà thư này được đồng bộ từ đó"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -8922,7 +8922,7 @@ msgstr "Không tìm thấy kênh tin nhắn."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message copies synced from this member's mailboxes"
-msgstr ""
+msgstr "Các bản sao thư được đồng bộ từ hộp thư của thành viên này"
 
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -10178,12 +10178,12 @@ msgstr "Một hoặc nhiều phạm vi được yêu cầu không hợp lệ."
 #. js-lingui-id: 7bNnyv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
 msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
-msgstr ""
+msgstr "Chỉ cột liên kết đến một bản ghi hoặc cột đã lọc của các bản ghi liên quan mới có thể hiển thị một trường của các bản ghi liên quan"
 
 #. js-lingui-id: RryrSe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only a column listing related records can filter, sort or limit them"
-msgstr ""
+msgstr "Chỉ cột liệt kê các bản ghi liên quan mới có thể lọc, sắp xếp hoặc giới hạn chúng"
 
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -10198,7 +10198,7 @@ msgstr "Chỉ trường liên kết đến một bản ghi mới có thể đư�
 #. js-lingui-id: FnGPJ0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Only a field linking to one record can use a field of that record"
-msgstr ""
+msgstr "Chỉ trường liên kết đến một bản ghi mới có thể sử dụng trường của bản ghi đó"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10228,7 +10228,7 @@ msgstr "Chỉ thành viên không gian làm việc mới có thể tạo tác t�
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
-msgstr ""
+msgstr "Chỉ các cột đã thêm mới có thể lọc, sắp xếp hoặc giới hạn các bản ghi liên quan"
 
 #. js-lingui-id: VrE3y3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -10258,7 +10258,7 @@ msgstr "Chỉ các ứng dụng được đồng bộ hóa từ nguồn cục b�
 #. js-lingui-id: 8t36/D
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "Only count, sum, average, min and max can aggregate related records"
-msgstr ""
+msgstr "Chỉ count, sum, average, min và max mới có thể tổng hợp các bản ghi liên quan"
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -10273,7 +10273,7 @@ msgstr "Chỉ cho phép giới hạn trường."
 #. js-lingui-id: KmZMUH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only non-canonical view fields can have a relation scope"
-msgstr ""
+msgstr "Chỉ các trường chế độ xem không chuẩn mới có thể có phạm vi quan hệ"
 
 #. js-lingui-id: Qtc9lt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -11072,7 +11072,7 @@ msgstr "Điện thoại"
 #. js-lingui-id: WPKlX/
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "Pick a field of the related records to calculate on"
-msgstr ""
+msgstr "Chọn một trường của các bản ghi liên quan để tính toán"
 
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
@@ -11823,12 +11823,12 @@ msgstr "Đường dẫn bản ghi liên quan yêu cầu gói Tổ chức."
 #. js-lingui-id: Kch20t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Related records can only be filtered or sorted by their own fields"
-msgstr ""
+msgstr "Các bản ghi liên quan chỉ có thể được lọc hoặc sắp xếp theo các trường của chính chúng"
 
 #. js-lingui-id: GIT0tY
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Related records cannot be filtered or sorted by a list of records"
-msgstr ""
+msgstr "Không thể lọc hoặc sắp xếp các bản ghi liên quan theo một danh sách bản ghi"
 
 #. js-lingui-id: IyP1Db
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
@@ -11837,18 +11837,18 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Related records filter groups are invalid"
-msgstr ""
+msgstr "Các nhóm bộ lọc bản ghi liên quan không hợp lệ"
 
 #. js-lingui-id: HbwlWt
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Related records filters are invalid"
-msgstr ""
+msgstr "Các bộ lọc bản ghi liên quan không hợp lệ"
 
 #. js-lingui-id: SV7HLW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
 msgid "Related records sort direction should be ascending or descending"
-msgstr ""
+msgstr "Hướng sắp xếp bản ghi liên quan phải là tăng dần hoặc giảm dần"
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11920,62 +11920,62 @@ msgstr "Quan hệ không được bật cho trường này."
 #. js-lingui-id: 7ZohXD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope can only have one root filter group"
-msgstr ""
+msgstr "Phạm vi quan hệ chỉ có thể có một nhóm bộ lọc gốc"
 
 #. js-lingui-id: cvmKqs
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields cannot be one-to-many relations"
-msgstr ""
+msgstr "Các trường trong phạm vi quan hệ không thể là quan hệ một-nhiều"
 
 #. js-lingui-id: 9w3/Xr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields must be active"
-msgstr ""
+msgstr "Các trường trong phạm vi quan hệ phải đang hoạt động"
 
 #. js-lingui-id: NmTkV8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "Relation scope fields must belong to the relation target object"
-msgstr ""
+msgstr "Các trường trong phạm vi quan hệ phải thuộc về đối tượng đích của quan hệ"
 
 #. js-lingui-id: ZTDFle
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group has an invalid logical operator"
-msgstr ""
+msgstr "Nhóm bộ lọc phạm vi quan hệ có toán tử logic không hợp lệ"
 
 #. js-lingui-id: tY8Auj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group ids must be unique UUIDs"
-msgstr ""
+msgstr "ID nhóm bộ lọc phạm vi quan hệ phải là các UUID duy nhất"
 
 #. js-lingui-id: /OizQh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Relation scope filter group not found"
-msgstr ""
+msgstr "Không tìm thấy nhóm bộ lọc phạm vi quan hệ"
 
 #. js-lingui-id: LHu9vR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter group parent not found"
-msgstr ""
+msgstr "Không tìm thấy nhóm bộ lọc cha của phạm vi quan hệ"
 
 #. js-lingui-id: FrK0wr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
 msgid "Relation scope filter groups can only be nested one level deep"
-msgstr ""
+msgstr "Các nhóm bộ lọc phạm vi quan hệ chỉ có thể được lồng sâu một cấp"
 
 #. js-lingui-id: aNv4KU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
 msgid "Relation scope filter ids must be unique UUIDs"
-msgstr ""
+msgstr "ID bộ lọc phạm vi quan hệ phải là các UUID duy nhất"
 
 #. js-lingui-id: cc0+ro
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
-msgstr ""
+msgstr "Giới hạn phạm vi quan hệ phải là số nguyên từ 1 đến {QUERY_MAX_RECORDS_FROM_RELATION}"
 
 #. js-lingui-id: xeyqWP
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
 msgid "Relation scope sort has an invalid direction"
-msgstr ""
+msgstr "Sắp xếp phạm vi quan hệ có hướng không hợp lệ"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -13693,13 +13693,13 @@ msgstr "Chủ Nhật"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Synced Calendar Events"
-msgstr ""
+msgstr "Các sự kiện lịch đã đồng bộ"
 
 #. js-lingui-id: ZgRRP1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Synced Messages"
-msgstr ""
+msgstr "Các thư đã đồng bộ"
 
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -14540,7 +14540,7 @@ msgstr "Không thể tìm thấy trường quan hệ lồng nhau được cấu 
 #. js-lingui-id: MD4f/q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "The number of related records to show is out of range"
-msgstr ""
+msgstr "Số lượng bản ghi liên quan cần hiển thị nằm ngoài phạm vi"
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14665,7 +14665,7 @@ msgstr "Trường bản ghi liên quan không thể là một quan hệ"
 #. js-lingui-id: MBEG9i
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "The related record field does not support this aggregate operation"
-msgstr ""
+msgstr "Trường bản ghi liên quan không hỗ trợ thao tác tổng hợp này"
 
 #. js-lingui-id: X5MbyB
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -14687,27 +14687,27 @@ msgstr "Không thể thay đổi trường bản ghi liên quan của một cộ
 #. js-lingui-id: uHtomZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
 msgid "The relation scope of a column owned by an application cannot be changed"
-msgstr ""
+msgstr "Không thể thay đổi phạm vi quan hệ của cột thuộc sở hữu của một ứng dụng"
 
 #. js-lingui-id: Tl0b2t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "The relation scope of an aggregate cannot have sorts or a limit"
-msgstr ""
+msgstr "Phạm vi quan hệ của một phép tổng hợp không thể có sắp xếp hoặc giới hạn"
 
 #. js-lingui-id: c0bu85
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field cannot be a relation"
-msgstr ""
+msgstr "Trường bản ghi liên quan trong phạm vi quan hệ không thể là một quan hệ"
 
 #. js-lingui-id: zJWJeQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field must be active"
-msgstr ""
+msgstr "Trường bản ghi liên quan trong phạm vi quan hệ phải đang hoạt động"
 
 #. js-lingui-id: WY2/RN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
 msgid "The relation scope related record field must belong to the relation target object"
-msgstr ""
+msgstr "Trường bản ghi liên quan trong phạm vi quan hệ phải thuộc về đối tượng đích của quan hệ"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -15007,7 +15007,7 @@ msgstr "Tác nhân này đã được lưu trữ."
 #. js-lingui-id: IaSvAS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This aggregate operation requires a related record field"
-msgstr ""
+msgstr "Thao tác tổng hợp này yêu cầu một trường bản ghi liên quan"
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -15108,12 +15108,12 @@ msgstr "Dịch vụ đẩy của trình duyệt này không được hỗ trợ.
 #. js-lingui-id: ohxYfe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This calculation is not available for this field"
-msgstr ""
+msgstr "Phép tính này không khả dụng cho trường này"
 
 #. js-lingui-id: 4x0ihe
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
 msgid "This calculation is not available on related records"
-msgstr ""
+msgstr "Phép tính này không khả dụng trên các bản ghi liên quan"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -15200,7 +15200,7 @@ msgstr "Cột này đến từ một ứng dụng, vì vậy không thể thay �
 #. js-lingui-id: mY8Iz1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
 msgid "This column comes from an application, so the related records it shows cannot be changed"
-msgstr ""
+msgstr "Cột này đến từ một ứng dụng, vì vậy không thể thay đổi các bản ghi liên quan mà cột hiển thị"
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -15210,7 +15210,7 @@ msgstr "Cột này đã được đánh dấu là duy nhất. Hãy tắt \"Uniqu
 #. js-lingui-id: tEKss1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
 msgid "This column name is too long"
-msgstr ""
+msgstr "Tên cột này quá dài"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -16188,6 +16188,11 @@ msgstr "Tìm thấy quá nhiều ứng viên quản trị."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "Quá nhiều người tham dự: {attendeeCount}. Số lượng tối đa được phép là {MAX_EMAIL_RECIPIENTS}."
+
+#. js-lingui-id: s/8N3l
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Too many domain validation emails sent. Please try again later."
+msgstr "Đã gửi quá nhiều email xác thực miền. Vui lòng thử lại sau."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -18296,13 +18301,13 @@ msgstr "Thành viên không gian làm việc đã gửi tin nhắn này"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member whose calendar this event was synced from"
-msgstr ""
+msgstr "Thành viên không gian làm việc có lịch mà sự kiện này được đồng bộ từ đó"
 
 #. js-lingui-id: 6oRXeC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member whose mailbox this message was synced from"
-msgstr ""
+msgstr "Thành viên không gian làm việc có hộp thư mà thư này được đồng bộ từ đó"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
