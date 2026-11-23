@@ -72,6 +72,7 @@ import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { findRelationTargetRecordIdsByObjectMetadataId } from 'src/engine/permissions/internal/rls/utils/find-relation-target-record-ids-by-object-metadata-id.util';
 import { validateRlsPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
@@ -512,6 +513,14 @@ export class RecordPermissionsReadService {
         operationType: 'create',
       });
 
+    await this.assertRelationTargetRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: records,
+      transactionScope,
+    });
+
     await validateRlsPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
@@ -546,6 +555,20 @@ export class RecordPermissionsReadService {
         objectMetadataId,
         operationType: 'update',
       });
+
+    await this.assertRelationTargetRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: updates.map(({ rawRecordBefore, setColumns }) =>
+        Object.fromEntries(
+          Object.entries(setColumns).filter(
+            ([columnName, value]) => value !== rawRecordBefore[columnName],
+          ),
+        ),
+      ),
+      transactionScope,
+    });
 
     if (
       !isMainRoleRestrictedByRlsRule({
@@ -613,6 +636,69 @@ export class RecordPermissionsReadService {
         'Updated record does not satisfy row-level security constraints of your current role',
         PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
+    }
+  }
+
+  private async assertRelationTargetRecordsReadableOrThrow({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    writtenColumns,
+    transactionScope,
+  }: Pick<
+    PermissionsObjectAccessRequest,
+    'principals' | 'metadataMaps' | 'flatObjectMetadata'
+  > & {
+    writtenColumns: Record<string, unknown>[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    const relationTargetRecordIdsByObjectMetadataId =
+      findRelationTargetRecordIdsByObjectMetadataId({
+        flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        writtenColumns,
+      });
+
+    for (const [
+      relationTargetObjectMetadataId,
+      relationTargetRecordIds,
+    ] of relationTargetRecordIdsByObjectMetadataId) {
+      const relationTargetFlatObjectMetadata = this.findFlatObjectMetadata({
+        metadataMaps,
+        objectMetadataId: relationTargetObjectMetadataId,
+      });
+
+      if (
+        !isDefined(relationTargetFlatObjectMetadata) ||
+        this.buildSelectableRecordsSQLCondition({
+          principals,
+          metadataMaps,
+          flatObjectMetadata: relationTargetFlatObjectMetadata,
+          operationType: 'read',
+        }) === true
+      ) {
+        continue;
+      }
+
+      const readableRecordIds = await this.findAccessibleRecordIds({
+        principals,
+        objectMetadataId: relationTargetObjectMetadataId,
+        operationType: 'read',
+        recordIds: [...relationTargetRecordIds],
+        transactionScope,
+      });
+
+      if (
+        [...relationTargetRecordIds].some(
+          (relationTargetRecordId) =>
+            !readableRecordIds.has(relationTargetRecordId),
+        )
+      ) {
+        throw new PermissionsException(
+          'Relation target record is not readable by your current role',
+          PermissionsExceptionCode.RLS_VALIDATION_FAILED,
+        );
+      }
     }
   }
 

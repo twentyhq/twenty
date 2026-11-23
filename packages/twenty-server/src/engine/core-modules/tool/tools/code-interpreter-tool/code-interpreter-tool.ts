@@ -8,6 +8,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import path from 'path';
 
 import {
+  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
   type CodeExecutionData,
   type CodeExecutionFile,
   type CodeExecutionState,
@@ -23,7 +24,6 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import {
-  CODE_INTERPRETER_MAX_INPUT_FILE_SIZE_BYTES,
   CODE_INTERPRETER_MAX_OUTPUT_LENGTH,
   CODE_INTERPRETER_UPDATE_INTERVAL_MS,
 } from 'src/engine/core-modules/code-interpreter/code-interpreter.constants';

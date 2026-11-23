@@ -24,6 +24,7 @@ export type SubscriptionUpdate =
     }
   | {
       type: SubscriptionUpdateType.APPLICATIONS;
+      additionalConnectedAccountApplicationId?: string;
     }
   | {
       type: SubscriptionUpdateType.INTERVAL;

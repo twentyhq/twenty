@@ -35,6 +35,7 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ConnectedAccountTokenEncryptionModule,
     WorkspaceCacheModule,
     PermissionsModule,
+    BillingModule,
   ],
   providers: [
     provideWorkspaceScopedRepository(ConnectionProviderEntity),

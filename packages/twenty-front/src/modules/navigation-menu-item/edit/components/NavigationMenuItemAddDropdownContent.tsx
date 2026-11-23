@@ -142,7 +142,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const titles: Record<Step, string> = {
-    main: t`Add menu item`,
+    main: t`Add item`,
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
@@ -228,6 +228,8 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
 
   const emptyMessage = getEmptyMessage();
+  const isItemTypeList =
+    step === 'main' && !isSearchingAllItems && !shouldShowHiddenItems;
 
   return (
     <>
@@ -261,7 +263,7 @@ export const NavigationMenuItemAddDropdownContent = ({
           placeholder={step === 'record' ? t`Search records...` : t`Search...`}
         />
         <Dropdown.Separator />
-        <Dropdown.Section scrollable>
+        <Dropdown.Section scrollable={!isItemTypeList}>
           {groups
             .filter((group) => isNonEmptyArray(group.items))
             .map((group, index) => (

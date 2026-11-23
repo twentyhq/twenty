@@ -8,6 +8,10 @@ on:
         required: false
         default: false
         description: 'Run the whole suite instead of affected projects and upload per-spec timings'
+      runner:
+        type: string
+        required: false
+        default: ubuntu-latest
     outputs:
       timings-run-id:
         value: ${{ jobs.server-integration-test-timings.outputs.run-id }}
@@ -51,7 +55,7 @@ jobs:
   server-integration-test:
     needs: server-integration-test-timings
     timeout-minutes: 30
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner || 'ubuntu-latest' }}
     permissions:
       actions: read
       contents: read

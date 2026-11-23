@@ -173,6 +173,36 @@ describe('ChatThreadComposer', () => {
     );
   });
 
+  it('attaches files pasted into the message box', async () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <ChatThreadComposer
+          channelName="LinkedIn"
+          recipientName="Ada"
+          isDisconnected={false}
+          canAttachFiles
+          onSendMessage={mockSendAppChannelMessage}
+          onMessageSent={jest.fn()}
+        />
+      </I18nProvider>,
+    );
+
+    // jsdom has no DataTransfer; a file copied in Finder also exposes its name as text
+    const clipboardData = {
+      files: [new File(['image'], 'screenshot.png', { type: 'image/png' })],
+      types: ['text/plain', 'Files'],
+      getData: (format: string) =>
+        format === 'text/plain' || format === 'text' ? 'screenshot.png' : '',
+    } as unknown as DataTransfer;
+
+    await userEvent.click(screen.getByRole('textbox'));
+    await userEvent.paste(clipboardData);
+
+    expect(screen.getByText('screenshot.png')).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue('');
+    expect(screen.getByRole('button', { name: 'Send' })).toBeEnabled();
+  });
+
   it('explains why a message failed and only discards the local copy', async () => {
     mockSendAppChannelMessage.mockRejectedValueOnce(
       new Error('LinkedIn rejected the message'),

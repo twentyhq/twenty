@@ -1,14 +1,13 @@
 name: CI Cache Warm
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ci-cache-warm
   cancel-in-progress: true
 
 env:

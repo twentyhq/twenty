@@ -821,6 +821,74 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  accountOwnerForCalendarChannelEventAssociations:
+    createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'accountOwnerForCalendarChannelEventAssociations',
+        label: i18nLabel(
+          msg({
+            message: `Synced Calendar Events`,
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Calendar event copies synced from this member's calendars`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendar',
+        isNullable: false,
+        isUIEditable: false,
+        targetObjectName: 'calendarChannelEventAssociation',
+        targetFieldName: 'accountOwner',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
+  accountOwnerForMessageChannelMessageAssociations:
+    createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'accountOwnerForMessageChannelMessageAssociations',
+        label: i18nLabel(
+          msg({
+            message: `Synced Messages`,
+            context: 'fieldMetadata.label',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Message copies synced from this member's mailboxes`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMail',
+        isNullable: false,
+        isUIEditable: false,
+        targetObjectName: 'messageChannelMessageAssociation',
+        targetFieldName: 'accountOwner',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
