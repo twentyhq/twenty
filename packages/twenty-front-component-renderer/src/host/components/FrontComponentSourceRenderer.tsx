@@ -4,7 +4,7 @@ import { type FrontComponentSelectedObjectMetadata } from 'twenty-sdk/front-comp
 import { createMockSdkClientSources } from '@/host/component-source/utils/createMockSdkClientSources';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
+import { FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API } from '@/host/thread/constants/FrontComponentPreviewHostCommunicationApi';
 
 type FrontComponentSourceRendererProps = {
   componentId: string;
@@ -56,7 +56,7 @@ export const FrontComponentSourceRenderer = ({
       sdkClientSources={sdkClientSources}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={
-        FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP
+        FRONT_COMPONENT_PREVIEW_HOST_COMMUNICATION_API
       }
       colorScheme={colorScheme}
       onReady={onReady}

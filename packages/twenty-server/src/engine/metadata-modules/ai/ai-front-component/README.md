@@ -1,30 +1,40 @@
-# AI frontend component record context
+# AI frontend component SDK
 
-AI-created record-page widgets use `useSelectedRecordIds()` and
-`useSelectedObjectMetadata()` from `twenty-sdk/front-component`, like app-authored
-widgets. Other exports from that module are not available in the AI builder.
+AI-created widgets can import the public `twenty-sdk/front-component` API,
+including context hooks, translation helpers, components and host actions.
+The builder bundles the public SDK entry point and its declarations directly.
+There is no separate list of supported exports.
 
-- Preview selects the first fictional sample record and supplies the validated
-  query object's ID and singular/plural names. That sample needs a UUID `id`.
-- Dashboard previews have no selection.
-- Saved widgets receive the viewed record from the normal widget renderer.
-  Query by that ID and reload when it changes; never embed a sample ID in source.
-- Preview SDK reads use sample data. ID-equality filters are supported; this is
-  not a general query evaluator. Mutations remain disabled and host actions are
-  no-ops.
+## Preview behavior
 
-## Updating the bundled hooks
+- Record-page preview selects the first fictional sample record and supplies the
+  query object's ID and names. That sample needs a UUID `id`. This previews
+  widgets displaying the selected record itself, not queries for a different
+  object related to the viewed record.
+- Dashboard previews have no selection. Context hooks update when context changes;
+  unavailable context, such as the current user, remains null or unset.
+- Core API reads use sample data. Only direct ID-equality filtering is evaluated.
+  Mutations and Metadata API calls fail explicitly in preview.
+- Host actions reject with `FRONT_COMPONENT_PREVIEW_HOST_ACTION_UNAVAILABLE`.
+  Preview cannot navigate, open host panels or confirmation modals, upload files,
+  copy to the clipboard, persist storage, or change chat tool arguments.
+  Handle these rejections in interactive widgets. Saved widgets use the normal
+  host bridge and application permissions.
+- `inboxMention` and `inboxReferenceRecord` require `twenty-client-sdk/rest`,
+  which the renderer cannot load. Builds using those helpers fail with an
+  explicit diagnostic. Other inbox helpers use the Metadata API client and
+  compile, but cannot execute in preview.
 
-The Workspace app need not install `twenty-sdk`. The AI builder bundles the two
-SDK hooks and their declarations, generated from the SDK source. React still
-comes from the app's shared dependencies, so the hooks use the component's React
-instance. No additional runtime import or sandbox capability is introduced.
+## Updating the bundled SDK
 
-After changing the SDK hooks, build `twenty-shared`, then run from the repo root:
+The Workspace app need not install `twenty-sdk`. Runtime code and declarations
+come from `twenty-sdk/src/sdk/front-component/index.ts`. React comes from the
+app's shared dependencies; API clients come from the renderer.
+
+After changing the SDK, build `twenty-shared`, then run from the repo root:
 
 ```sh
-yarn tsx packages/twenty-sdk/scripts/build-ai-front-component-context.ts
-yarn oxfmt packages/twenty-server/src/engine/metadata-modules/ai/ai-front-component/constants/generated/front-component-context-module.json
+yarn tsx packages/twenty-sdk/scripts/build-ai-front-component-sdk.ts
 ```
 
-The SDK unit suite checks that the bundled code and declarations match the source.
+The SDK unit suite checks that bundled code and declarations match the source.

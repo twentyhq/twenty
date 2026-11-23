@@ -90,7 +90,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "engine/metadata-modules/ai/ai-front-component/constants/generated/front-component-context-module.json",
+        "include": "engine/metadata-modules/ai/ai-front-component/constants/generated/front-component-sdk-module.json",
         "outDir": "dist"
       }
     ]
