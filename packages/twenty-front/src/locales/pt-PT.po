@@ -16113,7 +16113,7 @@ msgstr "Em andamento"
 #. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
-msgstr ""
+msgstr "Em andamento: aplicar a visibilidade dos canais de mensagens e calendário com regras de permissão no nível do registro. Requer saltos de relação e caminhos de registros relacionados."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
