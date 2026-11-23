@@ -2,6 +2,7 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   listMessageChannels,
   reportConnectionAuthFailure,
+  RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -13,6 +14,7 @@ import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/ut
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { isTransientLinkedinError } from 'src/logic-functions/utils/is-transient-linkedin-error.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
 import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
@@ -41,6 +43,7 @@ const ingestUnipileMessage = async ({
   const chat = await getUnipileChat({
     accountId: unipileAccountId,
     chatId: message.chat_id,
+    deadlineAtMs: attachmentDeadlineAtMs,
   });
 
   const chatCounterparts = getLinkedinChatCounterparts(chat);
@@ -58,7 +61,9 @@ const ingestUnipileMessage = async ({
     settings,
     chat,
     counterparts,
-    resolveCounterpart: createLinkedinCounterpartResolver(unipileAccountId),
+    resolveCounterpart: createLinkedinCounterpartResolver(unipileAccountId, {
+      deadlineAtMs: attachmentDeadlineAtMs,
+    }),
     messages: [message],
   });
 
@@ -72,7 +77,7 @@ const ingestUnipileMessage = async ({
   return { handled: true };
 };
 
-export const linkedinHandleWebhookEventHandler = async (
+const handleWebhookEvent = async (
   event: UnipileWebhookEvent,
 ): Promise<LinkedinWebhookEventResult> => {
   const attachmentDeadlineAtMs =
@@ -108,6 +113,23 @@ export const linkedinHandleWebhookEventHandler = async (
       return { handled: true };
     default:
       return { handled: false, reason: `Unhandled event ${eventType}` };
+  }
+};
+
+export const linkedinHandleWebhookEventHandler = async (
+  event: UnipileWebhookEvent,
+): Promise<LinkedinWebhookEventResult> => {
+  try {
+    return await handleWebhookEvent(event);
+  } catch (error) {
+    // Unipile already got its 200 and will not redeliver: only this error type gets the job retried
+    if (isTransientLinkedinError(error)) {
+      throw new RetryableLogicFunctionError(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+
+    throw error;
   }
 };
 
