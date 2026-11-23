@@ -1,6 +1,5 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
-import { getNavigationMenuItemMoveDestinationContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinationContainerId';
 import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -62,7 +61,7 @@ describe('getNavigationMenuItemMoveDestinations', () => {
         tabIds: ['sales'],
       }).map((destination) => [
         destination.kind,
-        getNavigationMenuItemMoveDestinationContainerId(destination),
+        destination.containerId,
         destination.tabId,
       ]),
     ).toEqual([

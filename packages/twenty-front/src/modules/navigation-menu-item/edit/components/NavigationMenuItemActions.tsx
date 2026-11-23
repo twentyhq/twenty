@@ -24,7 +24,6 @@ import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/ty
 import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemMoveDestination';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
-import { getNavigationMenuItemMoveDestinationContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinationContainerId';
 import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -85,13 +84,11 @@ export const NavigationMenuItemActions = ({
   const toMoveOption = (
     destination: NavigationMenuItemMoveDestination,
   ): NavigationMenuItemOption => {
-    const destinationContainerId =
-      getNavigationMenuItemMoveDestinationContainerId(destination);
     const moveOption = {
-      id: destinationContainerId ?? 'home',
+      id: destination.containerId ?? 'home',
       contextualText: getTabName(destination.tabId),
-      isDisabled: (item.parentId ?? null) === destinationContainerId,
-      onClick: () => run(() => moveToFolder(item.id, destinationContainerId)),
+      isDisabled: (item.parentId ?? null) === destination.containerId,
+      onClick: () => run(() => moveToFolder(item.id, destination.containerId)),
     };
 
     switch (destination.kind) {
