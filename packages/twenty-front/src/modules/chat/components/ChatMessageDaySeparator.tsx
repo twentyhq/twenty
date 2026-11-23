@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getChatMessageDayLabel } from '@/chat/utils/getChatMessageDayLabel';
@@ -9,6 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const StyledDaySeparator = styled.div`
   display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
   justify-content: center;
   margin-block: ${themeCssVariables.spacing[4]};
 
@@ -19,51 +22,26 @@ const StyledDaySeparator = styled.div`
 
 const StyledNewDaySeparator = styled(StyledDaySeparator)`
   align-items: center;
-  display: grid;
-  gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  min-height: ${themeCssVariables.spacing[6]};
+  position: relative;
 `;
 
-const StyledNewRule = styled.span`
-  align-items: center;
+const StyledDayChip = styled.span`
   display: flex;
-  min-width: 0;
+
+  & > * {
+    --tw-chip-padding-end: ${themeCssVariables.spacing[2]};
+    --tw-chip-padding-start: ${themeCssVariables.spacing[2]};
+  }
 `;
 
-const StyledNewMarker = styled.span`
-  background: ${themeCssVariables.font.color.danger};
-  border-radius: 1px;
-  flex-shrink: 0;
-  height: ${themeCssVariables.spacing[1]};
-  width: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledNewLine = styled.span`
-  background: ${themeCssVariables.font.color.danger};
-  flex: 1;
-  height: 1.5px;
-  min-width: 0;
-`;
-
-const StyledNewLabel = styled.span`
-  color: ${themeCssVariables.tag.text.red};
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: ${themeCssVariables.spacing[4]};
-  margin-inline-start: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledDayLabel = styled.span`
-  background: ${themeCssVariables.background.transparent.light};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  color: ${themeCssVariables.font.color.secondary};
-  corner-shape: round;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: ${themeCssVariables.spacing[6]};
+const StyledCenteredDayChip = styled.span`
+  background: ${themeCssVariables.background.primary};
+  left: 50%;
   padding-inline: ${themeCssVariables.spacing[2]};
-  user-select: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 type ChatMessageDaySeparatorProps = {
@@ -84,6 +62,19 @@ export const ChatMessageDaySeparator = ({
     dateFormat,
     localeCatalog,
   });
+  const dayChip = (
+    <StyledDayChip>
+      <Chip
+        variant="soft"
+        shape="round"
+        size="md"
+        color="secondary"
+        weight="medium"
+      >
+        {dayLabel}
+      </Chip>
+    </StyledDayChip>
+  );
 
   if (isFirstUnread) {
     const newLabel = t`New`;
@@ -93,22 +84,22 @@ export const ChatMessageDaySeparator = ({
         role="separator"
         aria-label={`${dayLabel}, ${newLabel}`}
       >
-        <StyledNewRule aria-hidden>
-          <StyledNewMarker />
-          <StyledNewLine />
-        </StyledNewRule>
-        <StyledDayLabel>{dayLabel}</StyledDayLabel>
-        <StyledNewRule>
-          <StyledNewLine aria-hidden />
-          <StyledNewLabel>{newLabel}</StyledNewLabel>
-        </StyledNewRule>
+        <LabeledSeparator
+          labelPosition="end"
+          tone="danger"
+          hasStartMarker
+          aria-hidden
+        >
+          {newLabel}
+        </LabeledSeparator>
+        <StyledCenteredDayChip>{dayChip}</StyledCenteredDayChip>
       </StyledNewDaySeparator>
     );
   }
 
   return (
     <StyledDaySeparator role="separator" aria-label={dayLabel}>
-      <StyledDayLabel>{dayLabel}</StyledDayLabel>
+      {dayChip}
     </StyledDaySeparator>
   );
 };
