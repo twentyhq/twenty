@@ -3987,6 +3987,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateRelatedRecordPath: RelatedRecordPath;
   updateSkill: Skill;
   updateTabPresence: Scalars['Boolean']['output'];
   updateTimelineActivityType: TimelineActivityType;
@@ -5397,6 +5398,11 @@ export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String']['input'];
   passwordResetToken: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateRelatedRecordPathArgs = {
+  input: UpdateRelatedRecordPathInput;
 };
 
 
@@ -7036,6 +7042,7 @@ export type RelatedRecordPath = {
   __typename?: 'RelatedRecordPath';
   firstFieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   isInherent: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   secondFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -8144,6 +8151,12 @@ export type UpdatePageLayoutWithTabsInput = {
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   tabs: Array<UpdatePageLayoutTabWithWidgetsInput>;
   type: PageLayoutType;
+};
+
+export type UpdateRelatedRecordPathInput = {
+  id: Scalars['UUID']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isInherent?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type UpdateRoleInput = {
