@@ -663,12 +663,19 @@ export class RecordPermissionsReadService {
       relationTargetObjectMetadataId,
       relationTargetRecordIds,
     ] of relationTargetRecordIdsByObjectMetadataId) {
+      const relationTargetFlatObjectMetadata = this.findFlatObjectMetadata({
+        metadataMaps,
+        objectMetadataId: relationTargetObjectMetadataId,
+      });
+
       if (
-        !isMainRoleRestrictedByRlsRule({
+        !isDefined(relationTargetFlatObjectMetadata) ||
+        this.buildSelectableRecordsSQLCondition({
           principals,
           metadataMaps,
-          objectMetadataId: relationTargetObjectMetadataId,
-        })
+          flatObjectMetadata: relationTargetFlatObjectMetadata,
+          operationType: 'read',
+        }) === true
       ) {
         continue;
       }
