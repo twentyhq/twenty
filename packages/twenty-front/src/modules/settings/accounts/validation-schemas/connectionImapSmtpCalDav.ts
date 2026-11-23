@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { z } from 'zod';
 import { type ConnectionParametersInput } from '~/generated-metadata/graphql';
@@ -21,7 +22,7 @@ const getConnectionParametersSchema = () =>
     })
     .refine(
       (data) => {
-        if (Boolean(data.host?.trim())) {
+        if (isNonEmptyString(data.host?.trim())) {
           return data.port && data.port > 0;
         }
         return true;

@@ -120,7 +120,7 @@ export const SettingsObjectIndexesSection = ({
 
             return fieldMetadataItem.label;
           })
-          .filter((label): label is string => Boolean(label))
+          .filter(isNonEmptyString)
           .join(', ') ?? '',
     }));
   }, [
