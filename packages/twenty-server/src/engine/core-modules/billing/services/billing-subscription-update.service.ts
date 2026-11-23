@@ -274,49 +274,104 @@ export class BillingSubscriptionUpdateService {
 
   async chargeApplications({
     workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<{ isPaymentDeclined: boolean }> {
+    const { isPaymentDeclined } = await this.chargeApplicationsThenPersist({
+      workspaceId,
+      persist: async () => undefined,
+    });
+
+    return { isPaymentDeclined };
+  }
+
+  // Charging and persisting share the subscription update lock so concurrent connections cannot count the same account twice
+  async chargeApplicationsThenPersist<TPersisted>({
+    workspaceId,
     additionalConnectedAccountApplicationId,
+    persist,
   }: {
     workspaceId: string;
     additionalConnectedAccountApplicationId?: string;
-  }): Promise<{ isPaymentDeclined: boolean }> {
+    persist: () => Promise<TPersisted>;
+  }): Promise<
+    | { isPaymentDeclined: true }
+    | { isPaymentDeclined: false; persisted: TPersisted }
+  > {
     if (
       !(await this.billingApplicationSyncService.isApplicationBillingActive(
         workspaceId,
       ))
     ) {
-      return { isPaymentDeclined: false };
+      return { isPaymentDeclined: false, persisted: await persist() };
     }
 
     await this.billingApplicationProductService.createMissingProducts(
       workspaceId,
     );
 
-    try {
-      await this.syncApplications({
+    const billingSubscription =
+      await this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
-        additionalConnectedAccountApplicationId,
       });
-    } catch (error) {
-      if (error instanceof Stripe.errors.StripeCardError) {
-        this.logger.warn(
-          `Application charge declined for workspace ${workspaceId}: ${error.message}`,
-        );
 
-        return { isPaymentDeclined: true };
-      }
-
-      throw error;
+    if (!isDefined(billingSubscription)) {
+      return { isPaymentDeclined: false, persisted: await persist() };
     }
 
-    return { isPaymentDeclined: false };
+    const applyApplicationsUpdate = (
+      chargedConnectedAccountApplicationId?: string,
+    ) =>
+      this.applySubscriptionUpdate({
+        workspaceId,
+        subscriptionId: billingSubscription.id,
+        subscriptionUpdate: {
+          type: SubscriptionUpdateType.APPLICATIONS,
+          additionalConnectedAccountApplicationId:
+            chargedConnectedAccountApplicationId,
+        },
+      });
+
+    return await this.cacheLockService.withLock(
+      async () => {
+        try {
+          await applyApplicationsUpdate(
+            additionalConnectedAccountApplicationId,
+          );
+        } catch (error) {
+          if (error instanceof Stripe.errors.StripeCardError) {
+            this.logger.warn(
+              `Application charge declined for workspace ${workspaceId}: ${error.message}`,
+            );
+
+            return { isPaymentDeclined: true as const };
+          }
+
+          throw error;
+        }
+
+        try {
+          return {
+            isPaymentDeclined: false as const,
+            persisted: await persist(),
+          };
+        } catch (error) {
+          if (isDefined(additionalConnectedAccountApplicationId)) {
+            await applyApplicationsUpdate();
+          }
+
+          throw error;
+        }
+      },
+      buildBillingSubscriptionUpdateLockKey(workspaceId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
   }
 
   async syncApplications({
     workspaceId,
-    additionalConnectedAccountApplicationId,
   }: {
     workspaceId: string;
-    additionalConnectedAccountApplicationId?: string;
   }): Promise<void> {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
@@ -329,7 +384,6 @@ export class BillingSubscriptionUpdateService {
 
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.APPLICATIONS,
-      additionalConnectedAccountApplicationId,
     });
   }
 
