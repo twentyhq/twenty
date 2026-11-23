@@ -41,19 +41,27 @@ export class AddMissingStandardRelatedRecordPathsCommand extends ProvisionedWork
   private standardFlatRelatedRecordPaths: FlatRelatedRecordPath[] | undefined;
 
   private getStandardFlatRelatedRecordPaths(): FlatRelatedRecordPath[] {
-    this.standardFlatRelatedRecordPaths ??= Object.values(
+    if (isDefined(this.standardFlatRelatedRecordPaths)) {
+      return this.standardFlatRelatedRecordPaths;
+    }
+
+    const standardFlatRelatedRecordPathByUniversalIdentifier =
       computeTwentyStandardApplicationAllFlatEntityMaps({
         now: new Date().toISOString(),
         workspaceId: v4(),
         twentyStandardApplicationId: v4(),
-      }).allFlatEntityMaps.flatRelatedRecordPathMaps.byUniversalIdentifier,
-    ).filter(
-      (flatRelatedRecordPath): flatRelatedRecordPath is FlatRelatedRecordPath =>
-        isDefined(flatRelatedRecordPath) &&
-        Object.values(
-          MISSING_STANDARD_RELATED_RECORD_PATH_UNIVERSAL_IDENTIFIERS,
-        ).includes(flatRelatedRecordPath.universalIdentifier),
-    );
+      }).allFlatEntityMaps.flatRelatedRecordPathMaps.byUniversalIdentifier;
+
+    this.standardFlatRelatedRecordPaths = Object.values(
+      MISSING_STANDARD_RELATED_RECORD_PATH_UNIVERSAL_IDENTIFIERS,
+    )
+      .map(
+        (universalIdentifier) =>
+          standardFlatRelatedRecordPathByUniversalIdentifier[
+            universalIdentifier
+          ],
+      )
+      .filter(isDefined);
 
     return this.standardFlatRelatedRecordPaths;
   }
