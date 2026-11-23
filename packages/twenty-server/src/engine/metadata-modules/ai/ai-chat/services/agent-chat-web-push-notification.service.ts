@@ -18,6 +18,7 @@ import { WebPushService } from 'src/engine/core-modules/web-push/services/web-pu
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type SendAgentChatWebPushNotificationsJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/send-agent-chat-web-push-notifications-job.types';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { buildAgentChatWebPushNotification } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util';
 import { getAgentChatWebPushNotificationReason } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-web-push-notification-reason.util';
@@ -45,6 +46,7 @@ export class AgentChatWebPushNotificationService {
     private readonly cacheStorageService: CacheStorageService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly i18nService: I18nService,
+    private readonly participantService: AgentChatThreadParticipantService,
     private readonly sharingService: AgentChatSharingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly webPushService: WebPushService,
@@ -239,6 +241,11 @@ export class AgentChatWebPushNotificationService {
       return;
     }
 
+    const { unreadOpenThreadCount } =
+      await this.participantService.findOpenThreadsSummary({
+        workspaceId,
+        workspaceMemberId: recipient.id,
+      });
     const isOutsideRenotifyCooldown =
       await this.cacheStorageService.setIfAbsent(
         `agent-chat-renotify-cooldown:${workspaceId}:${thread.id}:${recipient.id}`,
@@ -260,6 +267,7 @@ export class AgentChatWebPushNotificationService {
           assistantDisplayName,
         }),
         renotify: isRenotifyForced || isOutsideRenotifyCooldown,
+        badgeCount: unreadOpenThreadCount,
       },
     });
   }

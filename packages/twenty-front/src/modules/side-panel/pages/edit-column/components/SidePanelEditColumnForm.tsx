@@ -3,6 +3,9 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelContainer';
 import { getLookupTargetFieldMetadataItems } from '@/object-record/record-column-lookup/utils/getLookupTargetFieldMetadataItems';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
+import { getRecordFieldSummary } from '@/object-record/record-column-summary/utils/getRecordFieldSummary';
+import { getRecordFieldSummaryLabel } from '@/object-record/record-column-summary/utils/getRecordFieldSummaryLabel';
+import { getSummaryShowOptionValue } from '@/object-record/record-column-summary/utils/getSummaryShowOptionValue';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
 import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
 import { getRelationScopeFieldMetadataItems } from '@/object-record/record-column-scope/utils/getRelationScopeFieldMetadataItems';
@@ -10,6 +13,8 @@ import { getRelationScopeFromRecordFiltersAndSorts } from '@/object-record/recor
 import { getRelationScopeToSave } from '@/object-record/record-column-scope/utils/getRelationScopeToSave';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
@@ -63,6 +68,7 @@ type SidePanelEditColumnFormProps = {
   recordFieldId?: string;
   storedRelationScope?: ViewFieldRelationScope | null;
   storedRelationTargetFieldMetadataId?: string | null;
+  storedLabel?: string | null;
 };
 
 export const SidePanelEditColumnForm = ({
@@ -73,6 +79,7 @@ export const SidePanelEditColumnForm = ({
   recordFieldId,
   storedRelationScope,
   storedRelationTargetFieldMetadataId,
+  storedLabel,
 }: SidePanelEditColumnFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -108,6 +115,10 @@ export const SidePanelEditColumnForm = ({
     useState(
       isJunctionRelation ? null : (storedRelationTargetFieldMetadataId ?? null),
     );
+  const [label, setLabel] = useState(storedLabel ?? null);
+  const [aggregateOperation, setAggregateOperation] = useState(
+    storedRelationScope?.aggregateOperation ?? null,
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   const trimmedLimitInput = limitInput.trim();
@@ -122,16 +133,88 @@ export const SidePanelEditColumnForm = ({
       ({ id }) => id === relationTargetFieldMetadataId,
     );
 
+  const isSummary = isDefined(aggregateOperation);
+
+  const summary = isSummary
+    ? getRecordFieldSummary({
+        aggregateOperation,
+        relationTargetFieldMetadataId,
+        relationObjectMetadataItem,
+      })
+    : undefined;
+
   const columnHeader = getRecordFieldColumnHeader({
     fieldMetadataItem,
-    lookupTarget: isDefined(selectedLookupTargetFieldMetadataItem)
-      ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
-      : undefined,
+    lookupTarget:
+      !isSummary && isDefined(selectedLookupTargetFieldMetadataItem)
+        ? {
+            lookupTargetFieldMetadataItem:
+              selectedLookupTargetFieldMetadataItem,
+          }
+        : undefined,
     isScopedRelationColumn: true,
+    summary,
   });
 
+  // A join object's fields are not what its column lists, so it can only count its records
+  const summaryShowOptions = [
+    {
+      aggregateOperation: AggregateOperations.COUNT,
+      relationTargetFieldMetadataId: null,
+    },
+    ...(isJunctionRelation
+      ? []
+      : NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.flatMap(
+          (summaryAggregateOperation) =>
+            lookupTargetFieldMetadataItems.map(({ id }) => ({
+              aggregateOperation: summaryAggregateOperation,
+              relationTargetFieldMetadataId: id,
+            })),
+        )),
+  ].flatMap((summaryColumnContent) => {
+    const optionSummary = getRecordFieldSummary({
+      ...summaryColumnContent,
+      relationObjectMetadataItem,
+    });
+
+    return isDefined(optionSummary)
+      ? [
+          {
+            ...summaryColumnContent,
+            Icon: isDefined(optionSummary.aggregatedFieldMetadataItem)
+              ? getIcon(optionSummary.aggregatedFieldMetadataItem.icon)
+              : undefined,
+            label: getRecordFieldSummaryLabel(optionSummary),
+            value: getSummaryShowOptionValue(summaryColumnContent),
+          },
+        ]
+      : [];
+  });
+
+  const selectedShowValue = isDefined(aggregateOperation)
+    ? getSummaryShowOptionValue({
+        aggregateOperation,
+        relationTargetFieldMetadataId,
+      })
+    : relationTargetFieldMetadataId;
+
+  const canSave = isSummary || isLimitValid;
+
+  const handleShowChange = (showValue: string | null) => {
+    const summaryShowOption = summaryShowOptions.find(
+      ({ value }) => value === showValue,
+    );
+
+    setAggregateOperation(summaryShowOption?.aggregateOperation ?? null);
+    setRelationTargetFieldMetadataId(
+      isDefined(summaryShowOption)
+        ? summaryShowOption.relationTargetFieldMetadataId
+        : showValue,
+    );
+  };
+
   const handleSaveClick = async () => {
-    if (!isLimitValid || isSaving) {
+    if (!canSave || isSaving) {
       return;
     }
 
@@ -151,8 +234,12 @@ export const SidePanelEditColumnForm = ({
     const isSaved = await saveScopedRelationColumn({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
-      relationScope,
+      relationScope: isSummary
+        ? // A summary takes no sort or limit, including one stored on the join records the editor does not list
+          { ...relationScope, sorts: [], limit: null, aggregateOperation }
+        : relationScope,
       relationTargetFieldMetadataId,
+      label,
     });
 
     if (!isSaved) {
@@ -176,36 +263,44 @@ export const SidePanelEditColumnForm = ({
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
       <SidePanelEditColumnHeader
+        instanceId={`edit-column-label-${sidePanelPageId}`}
         icon={
           <ColumnIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
         defaultLabel={columnHeader.label}
+        label={label}
+        onLabelChange={setLabel}
       />
       <StyledContent>
-        {!isJunctionRelation && (
-          <FormFieldInputContainer>
-            <Field.Label>{t`Show`}</Field.Label>
-            <Select
-              dropdownId={`edit-column-show-${sidePanelPageId}`}
-              fullWidth
-              value={relationTargetFieldMetadataId}
-              pinnedOption={{
-                Icon: getIcon(relationObjectMetadataItem.icon),
-                label: relationObjectMetadataItem.labelPlural,
-                value: null,
-              }}
-              options={lookupTargetFieldMetadataItems.map(
+        <FormFieldInputContainer>
+          <Field.Label>{t`Show`}</Field.Label>
+          <Select
+            dropdownId={`edit-column-show-${sidePanelPageId}`}
+            fullWidth
+            value={selectedShowValue}
+            pinnedOption={{
+              Icon: getIcon(relationObjectMetadataItem.icon),
+              label: relationObjectMetadataItem.labelPlural,
+              value: null,
+            }}
+            options={[
+              ...(isJunctionRelation ? [] : lookupTargetFieldMetadataItems).map(
                 (lookupTargetFieldMetadataItem) => ({
                   Icon: getIcon(lookupTargetFieldMetadataItem.icon),
                   label: lookupTargetFieldMetadataItem.label,
                   value: lookupTargetFieldMetadataItem.id,
                 }),
-              )}
-              onChange={setRelationTargetFieldMetadataId}
-              withSearchInput
-            />
-          </FormFieldInputContainer>
-        )}
+              ),
+              ...summaryShowOptions.map(({ Icon, label, value }) => ({
+                Icon,
+                label,
+                value,
+              })),
+            ]}
+            onChange={handleShowChange}
+            withSearchInput
+          />
+        </FormFieldInputContainer>
         <FormFieldInputContainer>
           <Field.Label>{t`Filter`}</Field.Label>
           <AdvancedFilterSidePanelContainer
@@ -217,28 +312,32 @@ export const SidePanelEditColumnForm = ({
             shouldHideRelationFields={isJunctionRelation}
           />
         </FormFieldInputContainer>
-        <FormFieldInputContainer>
-          <Field.Label>{t`Sort`}</Field.Label>
-          <RecordTableSettingsSortsContent
-            fieldMetadataItems={getRelationScopeFieldMetadataItems({
-              relationObjectMetadataItem,
-              scopedRelationJunction,
-            })}
-          />
-        </FormFieldInputContainer>
-        <TextInput
-          label={t`Limit`}
-          type="number"
-          value={limitInput}
-          error={
-            isLimitValid
-              ? undefined
-              : t`Enter a number between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`
-          }
-          onChange={setLimitInput}
-          placeholder={String(QUERY_MAX_RECORDS_FROM_RELATION)}
-          fullWidth
-        />
+        {!isSummary && (
+          <>
+            <FormFieldInputContainer>
+              <Field.Label>{t`Sort`}</Field.Label>
+              <RecordTableSettingsSortsContent
+                fieldMetadataItems={getRelationScopeFieldMetadataItems({
+                  relationObjectMetadataItem,
+                  scopedRelationJunction,
+                })}
+              />
+            </FormFieldInputContainer>
+            <TextInput
+              label={t`Limit`}
+              type="number"
+              value={limitInput}
+              error={
+                isLimitValid
+                  ? undefined
+                  : t`Enter a number between 1 and ${QUERY_MAX_RECORDS_FROM_RELATION}`
+              }
+              onChange={setLimitInput}
+              placeholder={String(QUERY_MAX_RECORDS_FROM_RELATION)}
+              fullWidth
+            />
+          </>
+        )}
       </StyledContent>
       <SidePanelFooter
         actions={[
@@ -252,7 +351,7 @@ export const SidePanelEditColumnForm = ({
             startIcon={<IconCheck />}
             size="sm"
             onClick={handleSaveClick}
-            disabled={!isLimitValid}
+            disabled={!canSave}
             loading={isSaving}
             shortcut={['Mod', 'Enter']}
             variant="solid"

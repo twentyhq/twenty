@@ -113,13 +113,21 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
-    isFieldMetadataItemFilterableAndSortableSelector,
-    {
-      fieldMetadataItemId:
-        lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
-    },
+  const isSummaryColumn = isDefined(
+    recordField.relationScope?.aggregateOperation,
   );
+
+  const { isFilterable: isFieldFilterable, isSortable: isFieldSortable } =
+    useAtomFamilySelectorValue(
+      isFieldMetadataItemFilterableAndSortableSelector,
+      {
+        fieldMetadataItemId:
+          lookupTargetFieldMetadataItem?.id ?? recordField.fieldMetadataItemId,
+      },
+    );
+
+  const isFilterable = isFieldFilterable && !isSummaryColumn;
+  const isSortable = isFieldSortable && !isSummaryColumn;
 
   const { canPersistChanges } = useCanPersistViewChanges();
   const isCanonical = isCanonicalRecordField(recordField);
