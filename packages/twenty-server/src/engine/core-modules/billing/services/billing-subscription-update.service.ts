@@ -493,7 +493,10 @@ export class BillingSubscriptionUpdateService {
 
   // A pending update is replayed if its open invoice gets paid later, even when its items are no longer wanted
   private async discardPendingUpdate(
-    stripeSubscription: Stripe.Subscription,
+    stripeSubscription: Pick<
+      Stripe.Subscription,
+      'pending_update' | 'latest_invoice'
+    >,
   ): Promise<void> {
     const latestInvoice = stripeSubscription.latest_invoice;
 
