@@ -7,6 +7,12 @@ import reconcileLogicFunction, {
 const queryMock = vi.hoisted(() => vi.fn());
 const mutationMock = vi.hoisted(() => vi.fn());
 
+vi.mock('twenty-client-sdk/metadata', () => ({
+  MetadataApiClient: class {
+    query = async () => ({ calendarChannels: [] });
+  },
+}));
+
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     query = queryMock;

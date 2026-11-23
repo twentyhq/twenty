@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { APPLICATION_INSTALLATION_CHANGED_EVENT } from 'src/engine/core-modules/application/constants/application-installation-changed.constant';
 import { type ApplicationInstallationChangedEvent } from 'src/engine/core-modules/application/types/application-installation-changed.type';
-import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-delay-ms.constant';
 import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-retry-options.constant';
 import {
   SyncSubscriptionApplicationsJob,
@@ -52,18 +51,13 @@ export class BillingApplicationListener {
       return;
     }
 
-    await this.enqueueApplicationsSync({
-      workspaceId,
-      delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
-    });
+    await this.enqueueApplicationsSync({ workspaceId });
   }
 
   private async enqueueApplicationsSync({
     workspaceId,
-    delay,
   }: {
     workspaceId: string | undefined;
-    delay?: number;
   }): Promise<void> {
     if (
       !isDefined(workspaceId) ||
@@ -80,7 +74,6 @@ export class BillingApplicationListener {
       { workspaceId },
       {
         ...UPDATE_SUBSCRIPTION_QUANTITY_JOB_RETRY_OPTIONS,
-        delay,
         workspaceId,
         isWorkspaceJob: true,
       },

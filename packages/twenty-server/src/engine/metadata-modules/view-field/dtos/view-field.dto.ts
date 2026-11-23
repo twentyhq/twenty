@@ -8,6 +8,7 @@ import { AggregateOperations } from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ViewFieldRelationScopeDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field-relation-scope.dto';
 import { type ViewFieldOverrides } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 
 registerEnumType(AggregateOperations, { name: 'AggregateOperations' });
@@ -52,6 +53,12 @@ export class ViewFieldDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   relationTargetFieldMetadataId?: string | null;
+
+  @Field(() => ViewFieldRelationScopeDTO, { nullable: true })
+  relationScope?: ViewFieldRelationScopeDTO | null;
+
+  @Field(() => String, { nullable: true })
+  label?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;

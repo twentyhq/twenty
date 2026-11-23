@@ -1,8 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimit';
+import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
@@ -10,6 +10,7 @@ import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-me
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 
 type NavigationMenuSectionProps = {
   section: Pick<NamedNavigationMenuItem, 'id' | 'name'>;
@@ -19,7 +20,10 @@ export const NavigationMenuSection = ({
   section,
 }: NavigationMenuSectionProps) => {
   const { t } = useLingui();
-  const [isShowingAllItems, setIsShowingAllItems] = useState(false);
+  const [isShowingAllItems, setIsShowingAllItems] = useAtomFamilyState(
+    isNavigationMenuSectionShowingAllItemsFamilyState,
+    section.id,
+  );
   const { isNavigationSectionOpen, toggleNavigationSection } =
     useNavigationSection(`navigation-menu-section-${section.id}`);
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(

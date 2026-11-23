@@ -1,7 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
-import { IconFolderSymlink, IconHome, IconTrash } from 'twenty-ui/icon';
+import {
+  IconFolderSymlink,
+  IconHome,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -22,11 +27,13 @@ type NavigationMenuSectionMenuContentProps = {
     NavigationMenuItem,
     'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
+  onAddItem?: () => void;
   onClose: () => void;
 };
 
 export const NavigationMenuSectionMenuContent = ({
   section,
+  onAddItem,
   onClose,
 }: NavigationMenuSectionMenuContentProps) => {
   const { t } = useLingui();
@@ -89,6 +96,22 @@ export const NavigationMenuSectionMenuContent = ({
               placeholder={t`Section name`}
               onSubmit={onClose}
             />
+            <Dropdown.Separator />
+          </>
+        )}
+        {isDefined(onAddItem) && (
+          <>
+            <Dropdown.Section>
+              <NavigationMenuItemSelectableItem
+                item={{
+                  id: 'add-item',
+                  label: t`Add item`,
+                  Icon: IconPlus,
+                  hasSubMenu: true,
+                  onClick: onAddItem,
+                }}
+              />
+            </Dropdown.Section>
             <Dropdown.Separator />
           </>
         )}
