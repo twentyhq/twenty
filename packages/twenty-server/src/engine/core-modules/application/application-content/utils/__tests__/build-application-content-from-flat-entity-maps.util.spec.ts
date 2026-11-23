@@ -143,6 +143,7 @@ const buildApplicationContentFlatEntityMaps = ({
   flatPermissionFlagMaps: createEmptyFlatEntityMaps(),
   flatRolePermissionFlagMaps: createEmptyFlatEntityMaps(),
   flatConnectionProviderMaps: createEmptyFlatEntityMaps(),
+  flatMcpServerMaps: createEmptyFlatEntityMaps(),
 });
 
 describe('buildApplicationContentFromFlatEntityMaps', () => {

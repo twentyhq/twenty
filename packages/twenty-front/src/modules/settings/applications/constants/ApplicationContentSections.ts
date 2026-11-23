@@ -25,9 +25,15 @@ export const APPLICATION_CONTENT_SECTIONS: ApplicationContentSection[] = [
   },
   {
     title: msg`Automation and AI`,
-    description: msg`Workflows, functions and agents that act for your team.`,
+    description: msg`Workflows, functions, agents and tools that act for your team.`,
     color: 'orange',
-    contentTypes: ['workflows', 'logicFunctions', 'agents', 'skills'],
+    contentTypes: [
+      'workflows',
+      'logicFunctions',
+      'agents',
+      'skills',
+      'mcpServers',
+    ],
   },
   {
     title: msg`Access`,

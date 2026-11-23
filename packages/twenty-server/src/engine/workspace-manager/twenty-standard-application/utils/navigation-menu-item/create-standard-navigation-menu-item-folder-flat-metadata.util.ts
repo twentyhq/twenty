@@ -61,6 +61,8 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   icon: icon ?? null,
   color,
   position,
+  isActive: true,
+  overrides: null,
   createdAt: now,
   updatedAt: now,
 });
@@ -139,6 +141,8 @@ export const createStandardNavigationMenuItemFolderItemFlatMetadata = ({
     icon: null,
     color: isDefined(nativePageKey) ? null : 'gray',
     position,
+    isActive: true,
+    overrides: null,
     createdAt: now,
     updatedAt: now,
   };

@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatSkeletonLoader } from '@/ai-chat/components/internal/AiChatSkeletonLoader';
+import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
-import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';

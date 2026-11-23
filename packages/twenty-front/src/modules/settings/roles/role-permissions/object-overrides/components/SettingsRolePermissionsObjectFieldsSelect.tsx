@@ -164,6 +164,11 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       ? fieldMetadataItems.find((field) => field.id === allowedFieldIds[0])
       : undefined;
 
+  const singleRestrictedField =
+    fieldCount - allowedFieldCount === 1
+      ? fieldMetadataItems.find((field) => !allowedFieldIds.includes(field.id))
+      : undefined;
+
   const getControlText = () => {
     if (areAllFieldsAllowed) {
       return t`All fields`;
@@ -173,6 +178,10 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
       return t`No fields`;
     }
 
+    if (isDefined(singleRestrictedField)) {
+      return singleRestrictedField.label;
+    }
+
     if (isDefined(singleAllowedField)) {
       return singleAllowedField.label;
     }
@@ -180,12 +189,15 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     return t`${allowedFieldCount} of ${fieldCount} fields`;
   };
 
+  const isControlShowingRestriction =
+    allowedFieldCount === 0 || isDefined(singleRestrictedField);
+
   const getControlIcon = () => {
     if (mode === 'read') {
-      return allowedFieldCount === 0 ? IconEyeOff : IconEye;
+      return isControlShowingRestriction ? IconEyeOff : IconEye;
     }
 
-    return allowedFieldCount === 0 ? IconPencilOff : IconPencil;
+    return isControlShowingRestriction ? IconPencilOff : IconPencil;
   };
 
   const matchingFieldMetadataItems = fieldMetadataItems.filter((field) =>

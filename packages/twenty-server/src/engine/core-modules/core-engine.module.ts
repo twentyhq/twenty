@@ -77,6 +77,7 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
@@ -138,6 +139,7 @@ import { FileApiModule } from './file/file-api.module';
     AdminPanelModule,
     LabModule,
     RoleModule,
+    ChannelVisibilityModule,
     RedisClientModule,
     WorkspaceQueryRunnerModule,
     WorkspaceResolverNameMapCacheModule,

@@ -1,9 +1,14 @@
 import { AGENT_CHAT_THREAD_PRESET_FILTER } from '@/ai/constants/agent-chat-thread-preset-filter.const';
+import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
 import { computeAgentChatThreadPresetFilterGqlFilter } from '@/ai/utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 
 const WORKSPACE_MEMBER_ID = '20202020-463f-435b-828c-107e007a2711';
+
+const NOT_DIRECT_MESSAGE = {
+  conversationType: { neq: AgentChatThreadConversationType.DIRECT_MESSAGE },
+};
 
 const OPEN_PARTICIPANT = {
   workspaceMemberId: { eq: WORKSPACE_MEMBER_ID },
@@ -56,14 +61,23 @@ describe('computeAgentChatThreadPresetFilterGqlFilter', () => {
     },
   );
 
+  it.each(Object.values(AGENT_CHAT_THREAD_PRESET_FILTER))(
+    'leaves direct messages out of %s',
+    (presetFilter) => {
+      expect(computeFilter(presetFilter)).toMatchObject(NOT_DIRECT_MESSAGE);
+    },
+  );
+
   it('keeps a filed chat open once it has newer activity', () => {
     expect(computeFilter('active')).toEqual({
+      ...NOT_DIRECT_MESSAGE,
       participants: OPEN_PARTICIPANT,
     });
   });
 
   it('counts a mention until it is resolved', () => {
     expect(computeFilter('mentions')).toEqual({
+      ...NOT_DIRECT_MESSAGE,
       participants: {
         ...OPEN_PARTICIPANT,
         lastMentionedAt: { is: 'NOT_NULL' },
@@ -87,6 +101,7 @@ describe('computeAgentChatThreadPresetFilterGqlFilter', () => {
     'filters open chats on their assignee for %s',
     (presetFilter, assigneeId) => {
       expect(computeFilter(presetFilter)).toEqual({
+        ...NOT_DIRECT_MESSAGE,
         assigneeId,
         participants: OPEN_PARTICIPANT,
       });
@@ -95,6 +110,7 @@ describe('computeAgentChatThreadPresetFilterGqlFilter', () => {
 
   it('lists snoozed chats without activity since they were filed', () => {
     expect(computeFilter('snoozed')).toEqual({
+      ...NOT_DIRECT_MESSAGE,
       or: [
         {
           lastActivityAt: { is: 'NULL' },

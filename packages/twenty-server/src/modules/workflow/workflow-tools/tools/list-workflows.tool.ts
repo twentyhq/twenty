@@ -44,6 +44,7 @@ export const createListWorkflowsTool = (
   context: WorkflowToolContext,
 ) => ({
   name: 'list_workflows' as const,
+  isReadOnly: true,
   description:
     'List all workflows in the workspace. Supports filtering by status and cursor pagination. Returns core workflow IDs (coreWorkflowId), which every other workflow tool expects. Use get_workflow_current_version to get the workflow current core version.',
   inputSchema: listWorkflowsSchema,

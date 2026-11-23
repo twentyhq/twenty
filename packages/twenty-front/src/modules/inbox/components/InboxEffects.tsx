@@ -1,11 +1,6 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
-import { InboxChannelsEffect } from '@/inbox/components/InboxChannelsEffect';
-import { InboxRecentThreadListSyncEffect } from '@/inbox/components/InboxRecentThreadListSyncEffect';
-import { InboxThreadInitializationEffect } from '@/inbox/components/InboxThreadInitializationEffect';
-import { InboxThreadRecordOperationsEffect } from '@/inbox/components/InboxThreadRecordOperationsEffect';
+import { InboxChannelSyncEffect } from '@/inbox/components/InboxChannelSyncEffect';
+import { InboxThreadSyncEffect } from '@/inbox/components/InboxThreadSyncEffect';
 import { useIsInboxWebPushEnabled } from '@/inbox/hooks/useIsInboxWebPushEnabled';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -21,7 +16,6 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const InboxEffects = () => {
-  const aiChatPageThreadId = useAiChatPageThreadId();
   const isInboxWebPushEnabled = useIsInboxWebPushEnabled();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -35,17 +29,13 @@ export const InboxEffects = () => {
 
   return (
     <>
-      <InboxThreadInitializationEffect />
-      <InboxThreadRecordOperationsEffect />
-      <InboxChannelsEffect />
+      <InboxThreadSyncEffect />
+      <InboxChannelSyncEffect />
       {isInboxAvailable && !isImpersonating && <TabPresenceEffect />}
       {isInboxAvailable && isInboxTabActive && (
         <OnlineWorkspaceMemberIdsEffect />
       )}
       {isInboxWebPushEnabled && <WebPushSubscriptionEffect />}
-      {isDefined(aiChatPageThreadId) && (
-        <InboxRecentThreadListSyncEffect threadId={aiChatPageThreadId} />
-      )}
     </>
   );
 };

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { AiChatToolCallApprovalRecordStoreEffect } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalRecordStoreEffect';
+import { UpsertRecordsInStoreEffect } from '@/object-record/record-store/components/UpsertRecordsInStoreEffect';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 const StyledRecordRow = styled.div`
@@ -46,11 +46,10 @@ export const AiChatToolCallApprovalRecord = ({
       {label}
       {isDefined(record) ? (
         <>
-          <AiChatToolCallApprovalRecordStoreEffect record={record} />
+          <UpsertRecordsInStoreEffect records={[record]} />
           <RecordChip objectNameSingular={objectNameSingular} record={record} />
         </>
       ) : (
-        // approving still runs the call, which then fails, so the person must see why
         <StyledMissingRecord>
           {isDefined(error)
             ? t`This record could not be loaded.`

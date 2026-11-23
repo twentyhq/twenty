@@ -22,6 +22,7 @@ import {
   IconPhoto,
   IconPlug,
   IconSettingsAutomation,
+  IconSparkles,
   IconTable,
 } from 'twenty-ui/icon';
 
@@ -243,8 +244,15 @@ export const APPLICATION_CONTENT_TYPE_CONFIGS: Record<
     columns: [{ label: msg`Type`, source: 'tag' }],
     tags: {
       oauth: { label: msg`OAuth`, color: 'blue' },
+      'oauth-discovery': { label: msg`OAuth (automatic)`, color: 'sky' },
       custom: { label: msg`Custom`, color: 'purple' },
     },
+  },
+  mcpServers: {
+    label: msg`MCP servers`,
+    description: msg`External tools agents and workflows can use`,
+    Icon: IconSparkles,
+    columns: [{ label: msg`URL`, source: 'description' }],
   },
   publicAssets: {
     label: msg`Public assets`,

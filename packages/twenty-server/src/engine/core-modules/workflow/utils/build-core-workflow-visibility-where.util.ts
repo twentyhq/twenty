@@ -1,4 +1,3 @@
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere } from 'typeorm';
 
@@ -11,7 +10,7 @@ export const buildCoreWorkflowVisibilityWhere = ({
 }: FindOptionsWhere<WorkflowEntity> & {
   userWorkspaceId: string | undefined;
 }): FindOptionsWhere<WorkflowEntity>[] => [
-  { ...where, visibility: WorkflowVisibility.WORKSPACE },
+  { ...where, isPrivate: false },
   ...(isDefined(userWorkspaceId)
     ? [{ ...where, createdByUserWorkspaceId: userWorkspaceId }]
     : []),

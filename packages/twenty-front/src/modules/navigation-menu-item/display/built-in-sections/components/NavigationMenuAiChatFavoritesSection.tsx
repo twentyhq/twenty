@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
-import { useAiChatThreadClick } from '@/ai-chat/hooks/useAiChatThreadClick';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';

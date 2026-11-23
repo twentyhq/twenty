@@ -1,3 +1,4 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -7,6 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
 import { SettingsRoleRuleAllowsSection } from '@/settings/roles/role-permissions/rule-page/components/SettingsRoleRuleAllowsSection';
 import { SettingsRoleRuleConditionsSection } from '@/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionsSection';
+import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
@@ -21,9 +23,9 @@ import {
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
-import { IconTrash } from 'twenty-ui/icon';
+import { IconCheck, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { useQuery } from '@apollo/client/react';
 import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import {
@@ -47,6 +49,7 @@ export const SettingsRoleRuleForm = ({
   objectMetadataId,
 }: SettingsRoleRuleFormProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const fromAgentId = searchParams.get('fromAgent');
@@ -56,6 +59,11 @@ export const SettingsRoleRuleForm = ({
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const settingsPersistedRole = useAtomFamilyStateValue(
+    settingsPersistedRoleFamilyState,
     roleId,
   );
 
@@ -78,48 +86,14 @@ export const SettingsRoleRuleForm = ({
 
   const objectMetadataItem = objectMetadata.objectMetadataItem;
 
-  const objectLabelSingular = objectMetadataItem.labelSingular;
   const objectLabelPlural = objectMetadataItem.labelPlural;
 
   const agent = agentData?.findOneAgent;
-
-  const breadcrumbLinks =
-    fromAgentId && isDefined(agent)
-      ? getCoreAgentBreadcrumbLinks([
-          { children: agent.label, href: getCoreAgentLink(agent.id) },
-          { children: t`Permissions · ${objectLabelSingular}` },
-        ])
-      : [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          {
-            children: t`Members`,
-            href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
-          },
-          {
-            children: t`Roles`,
-            href: getSettingsPath(SettingsPath.Roles),
-          },
-          {
-            children: settingsDraftRole.label,
-            href: getSettingsPath(SettingsPath.RoleDetail, {
-              roleId,
-            }),
-          },
-          {
-            children: t`Permissions · ${objectLabelSingular}`,
-          },
-        ];
 
   const finishButtonPath =
     fromAgentId && isDefined(agent)
       ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
-
-  const headerTitle =
-    fromAgentId && isDefined(agent) ? agent.label : settingsDraftRole.label;
 
   const rule = settingsDraftRole.rowLevelPermissionRules?.find(
     (draftRule) =>
@@ -130,6 +104,35 @@ export const SettingsRoleRuleForm = ({
   if (!isDefined(rule)) {
     return <Navigate to={finishButtonPath} replace />;
   }
+
+  const isRuleSaved = (
+    settingsPersistedRole?.rowLevelPermissionRules ?? []
+  ).some((persistedRule) => persistedRule.id === rule.id);
+
+  const ruleBreadcrumbLinks = [
+    { children: objectLabelPlural },
+    { children: isRuleSaved ? t`Rule` : t`New rule` },
+  ];
+
+  const breadcrumbLinks =
+    fromAgentId && isDefined(agent)
+      ? getCoreAgentBreadcrumbLinks([
+          { children: agent.label, href: getCoreAgentLink(agent.id) },
+          ...ruleBreadcrumbLinks,
+        ])
+      : [
+          {
+            children: t`Roles`,
+            href: getSettingsPath(SettingsPath.Roles),
+          },
+          {
+            children: settingsDraftRole.label,
+            href: getSettingsPath(SettingsPath.RoleDetail, {
+              roleId,
+            }),
+          },
+          ...ruleBreadcrumbLinks,
+        ];
 
   const rulePredicates =
     settingsDraftRole.rowLevelPermissionPredicates?.filter(
@@ -163,27 +166,36 @@ export const SettingsRoleRuleForm = ({
 
   return (
     <SettingsPageLayout
-      title={headerTitle}
-      titleColor={themeCssVariables.font.color.tertiary}
+      title={objectLabelPlural}
+      icon={
+        <ObjectMetadataIcon
+          objectMetadataItem={objectMetadataItem}
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+        />
+      }
       links={breadcrumbLinks}
       secondaryBar={
         <SettingsWizardStepBar
-          label={t`${objectLabelPlural} rule`}
+          label={t`Row-level permission`}
           onBack={handleBack}
           trailing={
             <StyledTrailingActions>
-              <Button
-                size="sm"
-                variant="outline"
-                startIcon={<IconTrash />}
-                onClick={handleDeleteRule}
-              >{t`Delete rule`}</Button>
+              {isRuleSaved && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  startIcon={<IconTrash />}
+                  onClick={handleDeleteRule}
+                >{t`Delete rule`}</Button>
+              )}
               <NavigationButton
                 size="sm"
                 to={finishButtonPath}
                 disabled={isFinishDisabled}
                 variant="solid"
                 color="accent"
+                startIcon={<IconCheck />}
               >{t`Finish`}</NavigationButton>
             </StyledTrailingActions>
           }

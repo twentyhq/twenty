@@ -14,9 +14,14 @@ export const granolaConnectionStatusHandler = async () => {
     return { isConnected: false, isApiKeySet: false };
   }
   const client = createWorkspaceGranolaClientOrThrow();
-  try {
-    await client.listFolders({ page_size: 1 });
-  } catch (error) {
+  const [keyCheck, endpointList] = await Promise.allSettled([
+    client.listFolders({ page_size: 1 }),
+    client.listWebhookEndpoints(),
+  ]);
+
+  if (keyCheck.status === 'rejected') {
+    const error = keyCheck.reason;
+
     if (error instanceof GranolaApiError) {
       return { isConnected: false, isApiKeySet: true, error: error.message };
     }
@@ -30,26 +35,10 @@ export const granolaConnectionStatusHandler = async () => {
     }
     throw error;
   }
-  try {
-    const { webhook_endpoints: endpoints } =
-      await client.listWebhookEndpoints();
-    const registration = await findGranolaRegistrationForCurrentKey();
-    const endpoint = endpoints.find(
-      (candidate) => candidate.id === registration?.webhookEndpointId,
-    );
-    if (!isDefined(endpoint)) {
-      return {
-        isConnected: true,
-        isApiKeySet: true,
-        needsRegistration: true,
-      };
-    }
-    return {
-      isConnected: true,
-      isApiKeySet: true,
-      registration: { scopes: endpoint.scopes, isActive: endpoint.enabled },
-    };
-  } catch (error) {
+
+  if (endpointList.status === 'rejected') {
+    const error = endpointList.reason;
+
     if (error instanceof GranolaApiError) {
       return {
         isConnected: true,
@@ -60,6 +49,25 @@ export const granolaConnectionStatusHandler = async () => {
     }
     throw error;
   }
+
+  const registration = await findGranolaRegistrationForCurrentKey();
+  const endpoint = endpointList.value.webhook_endpoints.find(
+    (candidate) => candidate.id === registration?.webhookEndpointId,
+  );
+
+  if (!isDefined(endpoint)) {
+    return {
+      isConnected: true,
+      isApiKeySet: true,
+      needsRegistration: true,
+    };
+  }
+
+  return {
+    isConnected: true,
+    isApiKeySet: true,
+    registration: { scopes: endpoint.scopes, isActive: endpoint.enabled },
+  };
 };
 
 export default defineLogicFunction({

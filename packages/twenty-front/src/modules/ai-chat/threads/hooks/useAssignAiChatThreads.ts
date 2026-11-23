@@ -1,20 +1,17 @@
 import { useApolloClient } from '@apollo/client/react';
-import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { useApplyOptimisticAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyOptimisticAiChatThreadUpdate';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { AssignAgentChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useAssignAiChatThreads = () => {
   const apolloClient = useApolloClient();
-  const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { applyOptimisticAiChatThreadUpdate } =
+    useApplyOptimisticAiChatThreadUpdate();
 
-  // The assignee shows right away, and is put back if the server refuses it
   const assignAiChatThreads = useCallback(
     async ({
       threadIds,
@@ -25,11 +22,7 @@ export const useAssignAiChatThreads = () => {
     }) => {
       await Promise.all(
         threadIds.map(async (threadId) => {
-          const previousAssigneeId =
-            store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
-              ?.assigneeId ?? null;
-
-          applyAiChatThreadUpdate({
+          const { rollback } = applyOptimisticAiChatThreadUpdate({
             id: threadId,
             assigneeId: assigneeWorkspaceMemberId,
           });
@@ -40,16 +33,13 @@ export const useAssignAiChatThreads = () => {
               variables: { threadId, assigneeWorkspaceMemberId },
             });
           } catch (error) {
-            applyAiChatThreadUpdate({
-              id: threadId,
-              assigneeId: previousAssigneeId,
-            });
+            rollback();
             enqueueToast(getToastOptionsFromError({ error }));
           }
         }),
       );
     },
-    [apolloClient, applyAiChatThreadUpdate, enqueueToast, store],
+    [apolloClient, applyOptimisticAiChatThreadUpdate, enqueueToast],
   );
 
   return { assignAiChatThreads };

@@ -21,7 +21,8 @@ const StyledFilterRow = styled.div`
 `;
 
 const StyledOperandSelectContainer = styled.div`
-  width: 50px;
+  text-transform: lowercase;
+  width: ${themeCssVariables.spacing[13]};
 `;
 
 type SettingsRoleRuleConditionFilterRowProps = {

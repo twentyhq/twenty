@@ -73,6 +73,7 @@ describe('navigation record search duplicates', () => {
       targetRecordId: record.recordId,
       parentId: 'folder',
       position: 0,
+      isActive: true,
       createdAt: '',
       updatedAt: '',
     };
