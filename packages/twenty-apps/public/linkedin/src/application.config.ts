@@ -17,7 +17,7 @@ export default defineApplication({
   termsUrl: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
   websiteUrl: 'https://www.twenty.com',
   billing: {
-    description: '$5 per month per connected LinkedIn account',
+    description: '$7 per month per connected LinkedIn account',
     prices: [
       {
         universalIdentifier:
@@ -26,7 +26,7 @@ export default defineApplication({
         description: 'Monthly price per connected LinkedIn account',
         type: 'RECURRING',
         billingPeriod: 'MONTHLY',
-        amountCents: 500,
+        amountCents: 700,
         currency: 'USD',
         per: 'CONNECTED_ACCOUNT',
       },
