@@ -24,8 +24,13 @@ type ComputedLookup = {
   targetTableShape: WorkspaceTableShape;
 };
 
-const quoteColumn = (alias: string, columnName: string): string =>
-  `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
+const quoteColumn = ({
+  alias,
+  columnName,
+}: {
+  alias: string;
+  columnName: string;
+}): string => `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
 
 const quoteTable = ({ schemaName, tableName }: WorkspaceTableShape): string =>
   `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
@@ -139,7 +144,9 @@ export const buildComputedTableSource = ({
   );
   const storedColumns = tableShape.columnNames
     .filter((columnName) => !computedColumnNames.has(columnName))
-    .map((columnName) => quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName));
+    .map((columnName) =>
+      quoteColumn({ alias: COMPUTED_COLUMN_RECORD_ALIAS, columnName }),
+    );
   const joinedLookupAliases = new Set(
     computedColumns.flatMap(({ lookupAliases }) => lookupAliases),
   );
@@ -148,9 +155,9 @@ export const buildComputedTableSource = ({
     .map(({ alias, joinColumnName, targetTableShape }) => {
       const accessCondition = permissions?.lookupAccessConditionByAlias[alias];
       const conditions = [
-        `${quoteColumn(alias, 'id')} = ${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, joinColumnName)}`,
+        `${quoteColumn({ alias, columnName: 'id' })} = ${quoteColumn({ alias: COMPUTED_COLUMN_RECORD_ALIAS, columnName: joinColumnName })}`,
         targetTableShape.hasDeletedAtColumn
-          ? `${quoteColumn(alias, 'deletedAt')} IS NULL`
+          ? `${quoteColumn({ alias, columnName: 'deletedAt' })} IS NULL`
           : undefined,
         isDefined(accessCondition) && accessCondition !== false
           ? `(${accessCondition})`

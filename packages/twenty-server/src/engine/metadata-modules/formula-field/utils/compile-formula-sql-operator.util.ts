@@ -12,7 +12,7 @@ const ARITHMETIC_OPERATORS = ['+', '-', '*', '/', '%'];
 const ORDERING_OPERATORS = ['<', '<=', '>', '>='];
 const NUMBER_FUNCTION_OPERATORS = ['abs', 'ceil', 'floor', 'trunc'];
 
-export const compileFormulaSqlUnaryOperator = ({
+export const compileFormulaSqlUnaryOperatorOrThrow = ({
   operator,
   operand,
 }: {
@@ -66,7 +66,7 @@ export const compileFormulaSqlUnaryOperator = ({
   });
 };
 
-export const compileFormulaSqlMembership = ({
+export const compileFormulaSqlMembershipOrThrow = ({
   value,
   candidates,
 }: {
@@ -94,7 +94,7 @@ export const compileFormulaSqlMembership = ({
   };
 };
 
-export const compileFormulaSqlBinaryOperator = ({
+export const compileFormulaSqlBinaryOperatorOrThrow = ({
   operator,
   left,
   right,

@@ -4,11 +4,11 @@ import { isDefined, parseExpressionInstructions } from 'twenty-shared/utils';
 
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
-import { compileFormulaSqlFunction } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-functions.util';
+import { compileFormulaSqlFunctionOrThrow } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-functions.util';
 import {
-  compileFormulaSqlBinaryOperator,
-  compileFormulaSqlMembership,
-  compileFormulaSqlUnaryOperator,
+  compileFormulaSqlBinaryOperatorOrThrow,
+  compileFormulaSqlMembershipOrThrow,
+  compileFormulaSqlUnaryOperatorOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-operator.util';
 import { buildTextLiteralValue } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
 
@@ -136,7 +136,7 @@ const compileInstructions = ({
       case 'IOP1':
         stack.push({
           kind: 'value',
-          value: compileFormulaSqlUnaryOperator({
+          value: compileFormulaSqlUnaryOperatorOrThrow({
             operator: String(value),
             operand: popValueOrThrow(),
           }),
@@ -150,11 +150,11 @@ const compileInstructions = ({
           kind: 'value',
           value:
             value === 'in' && rightEntry.kind === 'list'
-              ? compileFormulaSqlMembership({
+              ? compileFormulaSqlMembershipOrThrow({
                   value: left,
                   candidates: rightEntry.values,
                 })
-              : compileFormulaSqlBinaryOperator({
+              : compileFormulaSqlBinaryOperatorOrThrow({
                   operator: String(value),
                   left,
                   right: toValueOrThrow(rightEntry),
@@ -174,7 +174,7 @@ const compileInstructions = ({
 
         stack.push({
           kind: 'value',
-          value: compileFormulaSqlFunction({
+          value: compileFormulaSqlFunctionOrThrow({
             name: functionEntry.path,
             formulaSqlValues,
           }),
@@ -199,7 +199,6 @@ const compileInstructions = ({
   return result;
 };
 
-// Types are checked here so the generated SQL cannot fail on a row at query time
 export const compileFormulaExpressionToSql = ({
   expression,
   resolveReference,
