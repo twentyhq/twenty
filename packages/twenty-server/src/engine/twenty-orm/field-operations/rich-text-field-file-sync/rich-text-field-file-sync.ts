@@ -1,13 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, type Repository } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
@@ -15,77 +12,90 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type RawQueryExecutor } from 'src/engine/twenty-orm/field-operations/file-lifecycle/types/raw-query-executor.type';
+import { claimTemporaryFiles } from 'src/engine/twenty-orm/field-operations/file-lifecycle/utils/claim-temporary-files.util';
+import { softDeleteFiles } from 'src/engine/twenty-orm/field-operations/file-lifecycle/utils/soft-delete-files.util';
 import { type RichTextFieldRecordTable } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-record-table.type';
 import { type RichTextFieldWrittenDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-written-document.type';
-import { computeRichTextFieldFileChanges } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/compute-rich-text-field-file-changes.util';
+import { computeRichTextDocumentColumnNames } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/compute-rich-text-document-column-names.util';
 import { computeRichTextFieldWrittenDocuments } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/compute-rich-text-field-written-documents.util';
 import { computeRichTextFileIdsColumnName } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/compute-rich-text-file-ids-column-name.util';
+import { isRewritingRichTextDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/is-rewriting-rich-text-document.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type OwnedFileIdsByFieldName = Record<string, string[]>;
+type RecordFile = { recordId: string; fileId: string };
 
 // The record lists every file its rich text fields claimed, released ones included, so only that record can bring one back.
 export class RichTextFieldFileSync {
   private readonly internalContext: WorkspaceInternalContext;
-  private readonly fileRepository: Repository<FileEntity>;
 
   constructor(internalContext: WorkspaceInternalContext) {
     this.internalContext = internalContext;
-    this.fileRepository =
-      internalContext.coreDataSource.getRepository(FileEntity);
   }
 
   hasRichTextFields(objectMetadataId: string): boolean {
     return this.getRichTextFields(objectMetadataId).length > 0;
   }
 
-  computeWrittenDocuments({
+  isRewritingDocument({
     payload,
     objectMetadataId,
   }: {
     payload: Record<string, unknown>;
     objectMetadataId: string;
+  }): boolean {
+    return this.getRichTextFields(objectMetadataId).some(({ name }) =>
+      isRewritingRichTextDocument(payload[name]),
+    );
+  }
+
+  computeWrittenDocuments({
+    payload,
+    recordBeforeWrite,
+    objectMetadataId,
+  }: {
+    payload: Record<string, unknown>;
+    recordBeforeWrite: Record<string, unknown> | undefined;
+    objectMetadataId: string;
   }): RichTextFieldWrittenDocument[] {
     return computeRichTextFieldWrittenDocuments({
       payload,
+      recordBeforeWrite,
       richTextFields: this.getRichTextFields(objectMetadataId),
     });
   }
 
-  async assertReferencedUploadsAreCompleteOrThrow({
+  async assertAddedUploadsAreCompleteOrThrow({
     writtenDocuments,
-    workspaceId,
+    executeRawQuery,
   }: {
     writtenDocuments: RichTextFieldWrittenDocument[];
-    workspaceId: string;
+    executeRawQuery: RawQueryExecutor;
   }): Promise<void> {
-    const referencedFileIds = writtenDocuments.flatMap(
-      ({ referencedFileIds }) => referencedFileIds,
+    const addedFileIds = writtenDocuments.flatMap(
+      ({ addedFileIds }) => addedFileIds,
     );
 
-    if (referencedFileIds.length === 0) {
+    if (addedFileIds.length === 0) {
       return;
     }
 
-    const pendingFiles = await this.fileRepository.find({
-      where: {
-        id: In(referencedFileIds),
-        workspaceId,
-        status: FILE_STATUS.PENDING,
-      },
-      select: ['id', 'settings'],
-    });
-    const pendingUpload = pendingFiles.find(
-      ({ settings }) =>
-        settings?.isTemporaryFile === true &&
-        settings.isClaimableByRecord === true,
+    const [pendingUpload] = await executeRawQuery(
+      `SELECT "id" FROM "core"."file"
+       WHERE "id" = ANY($1::uuid[])
+         AND "workspaceId" = $2
+         AND "status" = 'PENDING'
+         AND "settings"->>'isTemporaryFile' = 'true'
+         AND "settings"->>'isClaimableByRecord' = 'true'
+       LIMIT 1`,
+      [addedFileIds, this.internalContext.workspaceId],
     );
 
     if (!isDefined(pendingUpload)) {
       return;
     }
 
-    const fileId = pendingUpload.id;
+    const fileId = String(pendingUpload.id);
 
     throw new TwentyOrmException(
       `File ${fileId} upload has not been completed`,
@@ -99,7 +109,6 @@ export class RichTextFieldFileSync {
   async syncOwnedFiles({
     recordWrites,
     recordTable,
-    workspaceId,
     isInsert,
   }: {
     recordWrites: {
@@ -107,65 +116,62 @@ export class RichTextFieldFileSync {
       writtenDocuments: RichTextFieldWrittenDocument[];
     }[];
     recordTable: RichTextFieldRecordTable;
-    workspaceId: string;
     isInsert: boolean;
   }): Promise<void> {
-    const documentWrites = recordWrites.filter(
-      ({ writtenDocuments }) => writtenDocuments.length > 0,
+    const documentWrites = recordWrites.flatMap(
+      ({ recordId, writtenDocuments }) =>
+        writtenDocuments.map((writtenDocument) => ({
+          recordId,
+          ...writtenDocument,
+        })),
     );
 
-    if (documentWrites.length === 0) {
+    await this.claimUploadedFiles({
+      claims: documentWrites.flatMap(
+        ({ recordId, fieldName, fieldUniversalIdentifier, addedFileIds }) =>
+          addedFileIds.map((fileId) => ({
+            recordId,
+            fileId,
+            fieldName,
+            pathPrefix: `${FileFolder.FilesField}/${fieldUniversalIdentifier}/`,
+          })),
+      ),
+      recordTable,
+    });
+
+    if (isInsert) {
       return;
     }
 
-    const ownedFileIdsByRecordId = isInsert
-      ? new Map<string, OwnedFileIdsByFieldName>()
-      : await this.findOwnedFileIdsByFieldNameByRecordId({
-          recordIds: documentWrites.map(({ recordId }) => recordId),
-          fieldNames: [
-            ...new Set(
-              documentWrites.flatMap(({ writtenDocuments }) =>
-                writtenDocuments.map(({ fieldName }) => fieldName),
-              ),
-            ),
-          ],
-          recordTable,
-        });
+    const fieldNames = [
+      ...new Set(documentWrites.map(({ fieldName }) => fieldName)),
+    ];
 
-    const fileIdsToRestore: string[] = [];
-    const fileIdsToRelease: string[] = [];
+    for (const fieldName of fieldNames) {
+      const fieldDocumentWrites = documentWrites.filter(
+        (documentWrite) => documentWrite.fieldName === fieldName,
+      );
 
-    for (const { recordId, writtenDocuments } of documentWrites) {
-      for (const writtenDocument of writtenDocuments) {
-        const fileChanges = computeRichTextFieldFileChanges({
-          ownedFileIds:
-            ownedFileIdsByRecordId.get(recordId)?.[writtenDocument.fieldName] ??
-            [],
-          referencedFileIds: writtenDocument.referencedFileIds,
-        });
-
-        fileIdsToRestore.push(...fileChanges.fileIdsToRestore);
-        fileIdsToRelease.push(...fileChanges.fileIdsToRelease);
-
-        await this.claimUploadedFiles({
-          fileIds: fileChanges.fileIdsToClaim,
-          recordId,
-          writtenDocument,
-          recordTable,
-          workspaceId,
-        });
-      }
-    }
-
-    if (fileIdsToRestore.length > 0) {
-      await this.fileRepository.restore({
-        id: In(fileIdsToRestore),
-        workspaceId,
-        deletedAt: Not(IsNull()),
+      // Every referenced file, not only the added ones: this save may have read the record before another one released a file.
+      await this.setOwnedFilesDeletedWhenStoredDocumentAgrees({
+        recordFiles: fieldDocumentWrites.flatMap(
+          ({ recordId, referencedFileIds }) =>
+            referencedFileIds.map((fileId) => ({ recordId, fileId })),
+        ),
+        fieldName,
+        recordTable,
+        isDeleted: false,
+      });
+      await this.setOwnedFilesDeletedWhenStoredDocumentAgrees({
+        recordFiles: fieldDocumentWrites.flatMap(
+          ({ recordId, removedFileIds }) =>
+            removedFileIds.map((fileId) => ({ recordId, fileId })),
+        ),
+        fieldName,
+        recordTable,
+        isDeleted: true,
       });
     }
-
-    await this.releaseFiles({ fileIds: fileIdsToRelease, workspaceId });
   }
 
   async findOwnedFileIdsByRecordId({
@@ -177,121 +183,16 @@ export class RichTextFieldFileSync {
     objectMetadataId: string;
     recordTable: RichTextFieldRecordTable;
   }): Promise<Map<string, string[]>> {
-    const fieldNames = this.getRichTextFields(objectMetadataId).map(
-      ({ name }) => name,
+    const fileIdsColumnNames = this.getRichTextFields(objectMetadataId).map(
+      ({ name }) => computeRichTextFileIdsColumnName(name),
     );
 
-    if (recordIds.length === 0 || fieldNames.length === 0) {
+    if (recordIds.length === 0 || fileIdsColumnNames.length === 0) {
       return new Map();
     }
 
-    const ownedFileIdsByFieldNameByRecordId =
-      await this.findOwnedFileIdsByFieldNameByRecordId({
-        recordIds,
-        fieldNames,
-        recordTable,
-      });
-
-    return new Map(
-      [...ownedFileIdsByFieldNameByRecordId].map(
-        ([recordId, ownedFileIdsByFieldName]) => [
-          recordId,
-          Object.values(ownedFileIdsByFieldName).flat(),
-        ],
-      ),
-    );
-  }
-
-  async releaseFiles({
-    fileIds,
-    workspaceId,
-  }: {
-    fileIds: string[];
-    workspaceId: string;
-  }): Promise<void> {
-    if (fileIds.length === 0) {
-      return;
-    }
-
-    await this.fileRepository.softDelete({
-      id: In(fileIds),
-      workspaceId,
-      deletedAt: IsNull(),
-    });
-  }
-
-  private async claimUploadedFiles({
-    fileIds,
-    recordId,
-    writtenDocument,
-    recordTable,
-    workspaceId,
-  }: {
-    fileIds: string[];
-    recordId: string;
-    writtenDocument: RichTextFieldWrittenDocument;
-    recordTable: RichTextFieldRecordTable;
-    workspaceId: string;
-  }): Promise<void> {
-    if (fileIds.length === 0) {
-      return;
-    }
-
-    // Only an upload made for this field and not yet claimed matches, so a file of another record stays a plain reference.
-    const claimResult = await this.fileRepository
-      .createQueryBuilder()
-      .update(FileEntity)
-      .set({ settings: { isTemporaryFile: false, toDelete: false } })
-      .where({
-        id: In(fileIds),
-        workspaceId,
-        status: Not(FILE_STATUS.PENDING),
-      })
-      .andWhere(`settings->>'isTemporaryFile' = 'true'`)
-      .andWhere(`settings->>'isClaimableByRecord' = 'true'`)
-      .andWhere(`strpos("path", :fieldUniversalIdentifier) > 0`, {
-        fieldUniversalIdentifier: writtenDocument.fieldUniversalIdentifier,
-      })
-      .returning(['id'])
-      .execute();
-
-    const claimedFileIds = (claimResult.raw as Pick<FileEntity, 'id'>[]).map(
-      ({ id }) => id,
-    );
-
-    if (claimedFileIds.length === 0) {
-      return;
-    }
-
-    const fileIdsColumn = escapeIdentifier(
-      computeRichTextFileIdsColumnName(writtenDocument.fieldName),
-    );
-
-    await recordTable.executeRawQuery(
-      `UPDATE ${recordTable.tableExpression}
-       SET ${fileIdsColumn} = COALESCE(${fileIdsColumn}, '[]'::jsonb) || $2::jsonb
-       WHERE "id" = $1`,
-      [recordId, JSON.stringify(claimedFileIds)],
-    );
-  }
-
-  private async findOwnedFileIdsByFieldNameByRecordId({
-    recordIds,
-    fieldNames,
-    recordTable,
-  }: {
-    recordIds: string[];
-    fieldNames: string[];
-    recordTable: RichTextFieldRecordTable;
-  }): Promise<Map<string, OwnedFileIdsByFieldName>> {
-    const fileIdsColumnNameByFieldName = new Map(
-      fieldNames.map((fieldName) => [
-        fieldName,
-        computeRichTextFileIdsColumnName(fieldName),
-      ]),
-    );
-    const fileIdsColumns = [...fileIdsColumnNameByFieldName.values()].map(
-      (columnName) => escapeIdentifier(columnName),
+    const fileIdsColumns = fileIdsColumnNames.map((columnName) =>
+      escapeIdentifier(columnName),
     );
 
     const rows = await recordTable.executeRawQuery(
@@ -305,15 +206,138 @@ export class RichTextFieldFileSync {
     return new Map(
       rows.map((row) => [
         String(row.id),
-        Object.fromEntries(
-          [...fileIdsColumnNameByFieldName].map(([fieldName, columnName]) => [
-            fieldName,
-            Array.isArray(row[columnName])
-              ? row[columnName].filter(isString)
-              : [],
-          ]),
+        fileIdsColumnNames.flatMap((columnName) =>
+          Array.isArray(row[columnName])
+            ? row[columnName].filter(isString)
+            : [],
         ),
       ]),
+    );
+  }
+
+  async releaseFiles({
+    fileIds,
+    executeRawQuery,
+  }: {
+    fileIds: string[];
+    executeRawQuery: RawQueryExecutor;
+  }): Promise<void> {
+    await softDeleteFiles({
+      executeRawQuery,
+      workspaceId: this.internalContext.workspaceId,
+      fileIds,
+    });
+  }
+
+  private async claimUploadedFiles({
+    claims,
+    recordTable,
+  }: {
+    claims: (RecordFile & { fieldName: string; pathPrefix: string })[];
+    recordTable: RichTextFieldRecordTable;
+  }): Promise<void> {
+    // The path prefix limits a claim to uploads made for this field, so a file of another record stays a plain reference.
+    const unassignedClaimedFileIds = new Set(
+      await claimTemporaryFiles({
+        executeRawQuery: recordTable.executeRawQuery,
+        workspaceId: this.internalContext.workspaceId,
+        claims,
+        isClaimableByRecordRequired: true,
+      }),
+    );
+    const claimedFileIdsByRecordIdByFieldName = new Map<
+      string,
+      Map<string, string[]>
+    >();
+
+    for (const { recordId, fileId, fieldName } of claims) {
+      if (!unassignedClaimedFileIds.delete(fileId)) {
+        continue;
+      }
+
+      const claimedFileIdsByRecordId =
+        claimedFileIdsByRecordIdByFieldName.get(fieldName) ??
+        new Map<string, string[]>();
+
+      claimedFileIdsByRecordId.set(recordId, [
+        ...(claimedFileIdsByRecordId.get(recordId) ?? []),
+        fileId,
+      ]);
+      claimedFileIdsByRecordIdByFieldName.set(
+        fieldName,
+        claimedFileIdsByRecordId,
+      );
+    }
+
+    for (const [
+      fieldName,
+      claimedFileIdsByRecordId,
+    ] of claimedFileIdsByRecordIdByFieldName) {
+      const fileIdsColumn = escapeIdentifier(
+        computeRichTextFileIdsColumnName(fieldName),
+      );
+
+      await recordTable.executeRawQuery(
+        `UPDATE ${recordTable.tableExpression} AS "record"
+         SET ${fileIdsColumn} = COALESCE("record".${fileIdsColumn}, '[]'::jsonb) || "claimed"."fileIds"::jsonb
+         FROM unnest($1::uuid[], $2::text[]) AS "claimed"("recordId", "fileIds")
+         WHERE "record"."id" = "claimed"."recordId"`,
+        [
+          [...claimedFileIdsByRecordId.keys()],
+          [...claimedFileIdsByRecordId.values()].map((fileIds) =>
+            JSON.stringify(fileIds),
+          ),
+        ],
+      );
+    }
+  }
+
+  // A save that finishes late must not undo a newer one, so the stored document decides, not the one this save submitted.
+  // The record stays locked meanwhile, so a concurrent save cannot rewrite the document between the check and the change.
+  private async setOwnedFilesDeletedWhenStoredDocumentAgrees({
+    recordFiles,
+    fieldName,
+    recordTable,
+    isDeleted,
+  }: {
+    recordFiles: RecordFile[];
+    fieldName: string;
+    recordTable: RichTextFieldRecordTable;
+    isDeleted: boolean;
+  }): Promise<void> {
+    if (recordFiles.length === 0) {
+      return;
+    }
+
+    const fileIdsColumn = escapeIdentifier(
+      computeRichTextFileIdsColumnName(fieldName),
+    );
+    const storedDocument = computeRichTextDocumentColumnNames(fieldName)
+      .map((columnName) => `COALESCE(${escapeIdentifier(columnName)}, '')`)
+      .join(' || ');
+
+    await recordTable.executeRawQuery(
+      `WITH "lockedRecord" AS (
+         SELECT "id", ${fileIdsColumn} AS "ownedFileIds", ${storedDocument} AS "storedDocument"
+         FROM ${recordTable.tableExpression}
+         WHERE "id" = ANY($2::uuid[])
+         ORDER BY "id"
+         FOR NO KEY UPDATE
+       )
+       UPDATE "core"."file" AS "file"
+       SET "deletedAt" = ${isDeleted ? 'now()' : 'NULL'}
+       FROM unnest($1::uuid[], $2::uuid[]) AS "change"("fileId", "recordId")
+       JOIN "lockedRecord" ON "lockedRecord"."id" = "change"."recordId"
+       WHERE "file"."id" = "change"."fileId"
+         AND "file"."workspaceId" = $3
+         AND "file"."deletedAt" IS ${isDeleted ? '' : 'NOT '}NULL
+         AND "lockedRecord"."ownedFileIds" @> to_jsonb("change"."fileId"::text)
+         AND strpos("lockedRecord"."storedDocument", "change"."fileId"::text) ${isDeleted ? '= 0' : '> 0'}`,
+      [
+        recordFiles.map(({ fileId }) => fileId),
+        recordFiles.map(({ recordId }) => recordId),
+        this.internalContext.workspaceId,
+      ],
     );
   }
 

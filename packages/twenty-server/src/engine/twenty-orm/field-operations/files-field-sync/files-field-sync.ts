@@ -22,6 +22,9 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type RawQueryExecutor } from 'src/engine/twenty-orm/field-operations/file-lifecycle/types/raw-query-executor.type';
+import { claimTemporaryFiles } from 'src/engine/twenty-orm/field-operations/file-lifecycle/utils/claim-temporary-files.util';
+import { softDeleteFiles } from 'src/engine/twenty-orm/field-operations/file-lifecycle/utils/soft-delete-files.util';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -581,44 +584,50 @@ export class FilesFieldSync {
     return allFileIds;
   }
 
-  async updateFileEntityRecords(fileIds: {
-    toAdd: Set<string>;
-    toUpdate: Set<string>;
-    toRemove: Set<string>;
+  async updateFileEntityRecords({
+    fileIds,
+    executeRawQuery,
+  }: {
+    fileIds: {
+      toAdd: Set<string>;
+      toUpdate: Set<string>;
+      toRemove: Set<string>;
+    };
+    executeRawQuery: RawQueryExecutor;
   }): Promise<void> {
-    if (fileIds.toAdd.size > 0) {
-      const claimResult = await this.fileRepository
-        .createQueryBuilder()
-        .update(FileEntity)
-        .set({ settings: { isTemporaryFile: false, toDelete: false } })
-        .where({ id: In([...fileIds.toAdd]) })
-        .andWhere(`settings->>'isTemporaryFile' = 'true'`)
-        .returning(['id'])
-        .execute();
+    const { workspaceId } = this.internalContext;
+    const claimedFileIds = new Set(
+      await claimTemporaryFiles({
+        executeRawQuery,
+        workspaceId,
+        claims: [...fileIds.toAdd].map((fileId) => ({
+          fileId,
+          pathPrefix: '',
+        })),
+        isClaimableByRecordRequired: false,
+      }),
+    );
+    const unclaimedFileIds = [...fileIds.toAdd].filter(
+      (fileId) => !claimedFileIds.has(fileId),
+    );
 
-      const claimedFileIds = new Set(
-        (claimResult.raw as Pick<FileEntity, 'id'>[]).map(({ id }) => id),
+    if (unclaimedFileIds.length > 0) {
+      const [fileId] = unclaimedFileIds;
+
+      throw new TwentyOrmException(
+        `Files ${unclaimedFileIds.join(', ')} were attached to another record first`,
+        TwentyOrmExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`File ${fileId} is already associated with a permanent files field. Please re-upload the file.`,
+        },
       );
-      const unclaimedFileIds = [...fileIds.toAdd].filter(
-        (fileId) => !claimedFileIds.has(fileId),
-      );
-
-      if (unclaimedFileIds.length > 0) {
-        const [fileId] = unclaimedFileIds;
-
-        throw new TwentyOrmException(
-          `Files ${unclaimedFileIds.join(', ')} were attached to another record first`,
-          TwentyOrmExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`File ${fileId} is already associated with a permanent files field. Please re-upload the file.`,
-          },
-        );
-      }
     }
 
-    if (fileIds.toRemove.size > 0) {
-      await this.fileRepository.softDelete([...fileIds.toRemove]);
-    }
+    await softDeleteFiles({
+      executeRawQuery,
+      workspaceId,
+      fileIds: [...fileIds.toRemove],
+    });
   }
 
   private updateEntitiesWithEnrichedFilesFieldValues<

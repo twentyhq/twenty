@@ -1,29 +1,42 @@
-import { isNull } from '@sniptt/guards';
-import { isPlainObject } from 'twenty-shared/utils';
-
 import { extractFilesFieldFileIdsFromRichTextValue } from 'src/engine/core-modules/file/files-field/utils/extract-files-field-file-ids-from-rich-text-value.util';
 import { type RichTextFieldWrittenDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-written-document.type';
+import { isRewritingRichTextDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/is-rewriting-rich-text-document.util';
 
-// A write that leaves the stored TipTap document alone, such as markdown only, says nothing about the files it references.
-const isRewritingDocument = (richTextValue: unknown): boolean =>
-  isNull(richTextValue) ||
-  (isPlainObject(richTextValue) && richTextValue.tiptap !== undefined);
-
+// A document that references no file and drops none has nothing to sync.
 export const computeRichTextFieldWrittenDocuments = ({
   payload,
+  recordBeforeWrite,
   richTextFields,
 }: {
   payload: Record<string, unknown>;
+  recordBeforeWrite: Record<string, unknown> | undefined;
   richTextFields: { name: string; universalIdentifier: string }[];
 }): RichTextFieldWrittenDocument[] =>
   richTextFields
-    .filter((richTextField) => isRewritingDocument(payload[richTextField.name]))
-    .map((richTextField) => ({
-      fieldName: richTextField.name,
-      fieldUniversalIdentifier: richTextField.universalIdentifier,
-      referencedFileIds: [
-        ...extractFilesFieldFileIdsFromRichTextValue(
-          payload[richTextField.name],
+    .filter((richTextField) =>
+      isRewritingRichTextDocument(payload[richTextField.name]),
+    )
+    .map((richTextField) => {
+      const fileIdsAfterWrite = extractFilesFieldFileIdsFromRichTextValue(
+        payload[richTextField.name],
+      );
+      const fileIdsBeforeWrite = extractFilesFieldFileIdsFromRichTextValue(
+        recordBeforeWrite?.[richTextField.name],
+      );
+
+      return {
+        fieldName: richTextField.name,
+        fieldUniversalIdentifier: richTextField.universalIdentifier,
+        referencedFileIds: [...fileIdsAfterWrite],
+        addedFileIds: [...fileIdsAfterWrite].filter(
+          (fileId) => !fileIdsBeforeWrite.has(fileId),
         ),
-      ],
-    }));
+        removedFileIds: [...fileIdsBeforeWrite].filter(
+          (fileId) => !fileIdsAfterWrite.has(fileId),
+        ),
+      };
+    })
+    .filter(
+      ({ referencedFileIds, removedFileIds }) =>
+        referencedFileIds.length > 0 || removedFileIds.length > 0,
+    );
