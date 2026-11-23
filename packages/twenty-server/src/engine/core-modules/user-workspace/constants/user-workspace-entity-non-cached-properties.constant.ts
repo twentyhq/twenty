@@ -9,4 +9,6 @@ export const USER_WORKSPACE_ENTITY_NON_CACHED_PROPERTIES = [
   'twoFactorAuthenticationMethodSummary',
   'inboxNotificationLevel',
   'isInboxNotificationPreviewEnabled',
+  'defaultAvatarFileId',
+  'defaultAvatarFile',
 ] as const satisfies ReadonlyArray<keyof UserWorkspaceEntity>;

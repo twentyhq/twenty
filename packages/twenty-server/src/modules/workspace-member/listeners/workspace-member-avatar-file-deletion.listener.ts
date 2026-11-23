@@ -31,11 +31,7 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   ) {
     const fileIdsToDelete = this.getFileIdsToDeleteFromUpdateEvent(payload);
 
-    await this.clearDefaultAvatarsAndDeleteCorePictures({
-      fileIds: fileIdsToDelete,
-      workspaceId: payload.workspaceId,
-      userIds: payload.events.map((event) => event.properties.before.userId),
-    });
+    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
   }
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
@@ -49,28 +45,13 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     const fileIdsToDelete =
       this.getFileIdsToDeleteFromDestroyOrDeleteEvent(payload);
 
-    await this.clearDefaultAvatarsAndDeleteCorePictures({
-      fileIds: fileIdsToDelete,
-      workspaceId: payload.workspaceId,
-      userIds: payload.events.map((event) => event.properties.before.userId),
-    });
+    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
   }
 
-  private async clearDefaultAvatarsAndDeleteCorePictures({
-    fileIds,
-    workspaceId,
-    userIds,
-  }: {
-    fileIds: string[];
-    workspaceId: string;
-    userIds: string[];
-  }): Promise<void> {
-    await this.fileCorePictureService.clearDefaultAvatarUrlsPointingToFiles({
-      workspaceId,
-      userIds,
-      fileIds,
-    });
-
+  private async deleteCorePictures(
+    fileIds: string[],
+    workspaceId: string,
+  ): Promise<void> {
     for (const fileId of fileIds) {
       try {
         await this.fileCorePictureService.deleteCorePicture({

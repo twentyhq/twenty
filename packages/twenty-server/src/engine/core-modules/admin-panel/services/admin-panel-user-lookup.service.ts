@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -49,7 +49,12 @@ export class AdminPanelUserLookupService {
         .filter((workspaceUser) => isDefined(workspaceUser.user))
         .map((workspaceUser) => [
           workspaceUser.user.id,
-          workspaceUser.defaultAvatarUrl ?? null,
+          isDefined(workspaceUser.defaultAvatarFileId)
+            ? this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+                fileId: workspaceUser.defaultAvatarFileId,
+                fileFolder: FileFolder.CorePicture,
+              })
+            : null,
         ]),
     );
   }

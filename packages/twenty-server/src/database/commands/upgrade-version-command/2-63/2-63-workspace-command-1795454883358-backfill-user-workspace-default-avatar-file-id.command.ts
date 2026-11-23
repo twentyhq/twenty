@@ -7,20 +7,18 @@ import { DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795453397819)
+@RegisteredWorkspaceCommand('2.63.0', 1795454883358)
 @Command({
-  name: 'upgrade:2-63:clear-default-avatar-urls-without-file',
+  name: 'upgrade:2-63:backfill-user-workspace-default-avatar-file-id',
   description:
-    'Clear userWorkspace default avatar URLs that point to a core picture file that no longer exists',
+    'Backfill userWorkspace.defaultAvatarFileId from defaultAvatarUrl, skipping URLs whose core picture file no longer exists',
 })
-export class ClearDefaultAvatarUrlsWithoutFileCommand extends ProvisionedWorkspaceCommandRunner {
+export class BackfillUserWorkspaceDefaultAvatarFileIdCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly coreEntityCacheService: CoreEntityCacheService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
@@ -33,7 +31,9 @@ export class ClearDefaultAvatarUrlsWithoutFileCommand extends ProvisionedWorkspa
     const userWorkspaces: { id: string; defaultAvatarUrl: string }[] =
       await this.dataSource.query(
         `SELECT "id", "defaultAvatarUrl" FROM "core"."userWorkspace"
-         WHERE "workspaceId" = $1 AND "defaultAvatarUrl" IS NOT NULL`,
+         WHERE "workspaceId" = $1
+           AND "defaultAvatarUrl" IS NOT NULL
+           AND "defaultAvatarFileId" IS NULL`,
         [workspaceId],
       );
 
@@ -61,33 +61,22 @@ export class ClearDefaultAvatarUrlsWithoutFileCommand extends ProvisionedWorkspa
 
     const existingFileIds = new Set(existingFiles.map(({ id }) => id));
 
-    const staleUserWorkspaceIds = avatarFiles
-      .filter(({ fileId }) => !existingFileIds.has(fileId))
-      .map(({ userWorkspaceId }) => userWorkspaceId);
-
-    if (!isNonEmptyArray(staleUserWorkspaceIds)) {
-      return;
-    }
+    const avatarFilesToBackfill = avatarFiles.filter(({ fileId }) =>
+      existingFileIds.has(fileId),
+    );
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] Would clear' : 'Clearing'} ${staleUserWorkspaceIds.length} default avatar URL(s) without file in workspace ${workspaceId}`,
+      `${options.dryRun ? '[DRY RUN] Would backfill' : 'Backfilling'} ${avatarFilesToBackfill.length} default avatar file id(s) in workspace ${workspaceId}, ${avatarFiles.length - avatarFilesToBackfill.length} pointing to a missing file`,
     );
 
     if (options.dryRun) {
       return;
     }
 
-    await this.dataSource.query(
-      `UPDATE "core"."userWorkspace"
-       SET "defaultAvatarUrl" = NULL
-       WHERE "id" = ANY($1::uuid[])`,
-      [staleUserWorkspaceIds],
-    );
-
-    for (const userWorkspaceId of staleUserWorkspaceIds) {
-      await this.coreEntityCacheService.invalidate(
-        'userWorkspaceEntity',
-        userWorkspaceId,
+    for (const { userWorkspaceId, fileId } of avatarFilesToBackfill) {
+      await this.dataSource.query(
+        `UPDATE "core"."userWorkspace" SET "defaultAvatarFileId" = $1 WHERE "id" = $2`,
+        [fileId, userWorkspaceId],
       );
     }
   }

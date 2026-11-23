@@ -6,14 +6,11 @@ import { buffer as streamToBuffer } from 'node:stream/consumers';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   type EntityManager,
-  In,
-  IsNull,
   Like,
-  Not,
   type QueryRunner,
   Repository,
 } from 'typeorm';
@@ -38,7 +35,6 @@ import {
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { getUserWorkspaceIdsWithDefaultAvatarInFiles } from 'src/engine/core-modules/file/file-core-picture/utils/get-user-workspace-ids-with-default-avatar-in-files.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -431,48 +427,6 @@ export class FileCorePictureService {
     });
   }
 
-  async clearDefaultAvatarUrlsPointingToFiles({
-    workspaceId,
-    userIds,
-    fileIds,
-  }: {
-    workspaceId: string;
-    userIds: string[];
-    fileIds: string[];
-  }): Promise<void> {
-    if (!isNonEmptyArray(userIds) || !isNonEmptyArray(fileIds)) {
-      return;
-    }
-
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: {
-        workspaceId,
-        userId: In(userIds),
-        defaultAvatarUrl: Not(IsNull()),
-      },
-    });
-
-    const userWorkspaceIdsToClear = getUserWorkspaceIdsWithDefaultAvatarInFiles(
-      { userWorkspaces, fileIds },
-    );
-
-    if (!isNonEmptyArray(userWorkspaceIdsToClear)) {
-      return;
-    }
-
-    await this.userWorkspaceRepository.update(
-      { id: In(userWorkspaceIdsToClear) },
-      { defaultAvatarUrl: null },
-    );
-
-    for (const userWorkspaceId of userWorkspaceIdsToClear) {
-      await this.coreEntityCacheService.invalidate(
-        'userWorkspaceEntity',
-        userWorkspaceId,
-      );
-    }
-  }
-
   private async fetchImageBufferFromUrl(
     imageUrl: string,
   ): Promise<{ buffer: Buffer; extension: string } | undefined> {
@@ -556,17 +510,16 @@ export class FileCorePictureService {
     targetWorkspaceId: string;
     targetApplicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
-  }): Promise<FileWithSignedUrlDTO | undefined> {
-    const sourceFile = await this.fileRepository.findOne(sourceWorkspaceId, {
-      where: {
-        id: sourceFileId,
-        path: Like(`${FileFolder.CorePicture}/%`),
+  }): Promise<FileWithSignedUrlDTO> {
+    const sourceFile = await this.fileRepository.findOneOrFail(
+      sourceWorkspaceId,
+      {
+        where: {
+          id: sourceFileId,
+          path: Like(`${FileFolder.CorePicture}/%`),
+        },
       },
-    });
-
-    if (!isDefined(sourceFile)) {
-      return undefined;
-    }
+    );
 
     const sourceApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(sourceWorkspaceId);

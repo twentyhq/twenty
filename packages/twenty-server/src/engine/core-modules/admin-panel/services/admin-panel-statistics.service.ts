@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Brackets, ILike, IsNull, Repository } from 'typeorm';
 
 import { type AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
@@ -173,7 +175,12 @@ export class AdminPanelStatisticsService {
 
         entry.fallbackAvatarUrlsByUserId.set(
           user.id,
-          userWorkspace.defaultAvatarUrl ?? null,
+          isDefined(userWorkspace.defaultAvatarFileId)
+            ? this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+                fileId: userWorkspace.defaultAvatarFileId,
+                fileFolder: FileFolder.CorePicture,
+              })
+            : null,
         );
         contextsByWorkspaceId.set(workspace.id, entry);
       }
