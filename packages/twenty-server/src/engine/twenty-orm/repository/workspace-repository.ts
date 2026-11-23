@@ -55,6 +55,7 @@ import {
   buildInsertStatement,
   type InsertRowValue,
 } from 'src/engine/twenty-orm/sql/utils/build-insert-statement.util';
+import { type ComputedTableSourcePermissions } from 'src/engine/twenty-orm/sql/utils/build-computed-table-source.util';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import {
@@ -91,6 +92,7 @@ import { compileTwentyOrmStatement } from 'src/engine/twenty-orm/utils/compile-t
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { renderReadableCondition } from 'src/engine/twenty-orm/sql/utils/render-readable-condition.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm/sql/utils/serialize-jsonb-write-value.util';
+import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
@@ -1468,7 +1470,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
-    });
+    }).withStoredColumnsOnly();
   }
 
   private buildIdsEventSnapshotQueryBuilder(
@@ -1506,7 +1508,84 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(rows.map((row) => String(row.id)));
   }
 
-  async runMutation({
+  async runMutation(args: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    rowLevelPermissionsApplied: boolean;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+    shouldWriteAtLeastOneRecord?: boolean;
+  }): Promise<ObjectRecord[]> {
+    const writtenRecords = await this.runMutationOnStoredColumns(args);
+
+    return args.kind === 'delete'
+      ? writtenRecords
+      : this.readComputedColumns({
+          records: writtenRecords,
+          columnNames: args.columnsToReturn,
+        });
+  }
+
+  // RETURNING only sees stored columns, so computed ones are read back from the written records
+  private async readComputedColumns({
+    records,
+    columnNames,
+  }: {
+    records: ObjectRecord[];
+    columnNames: string[];
+  }): Promise<ObjectRecord[]> {
+    const computedColumnNames = (
+      this.options.tableShape.computedColumnShapes ?? []
+    )
+      .map(({ columnName }) => columnName)
+      .filter((columnName) => columnNames.includes(columnName));
+
+    if (computedColumnNames.length === 0 || records.length === 0) {
+      return records;
+    }
+
+    const computedFieldNames = computedColumnNames.map(
+      (columnName) =>
+        this.options.tableShape.columnShapeByColumnName[columnName].fieldName,
+    );
+    const computedRecords = await applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      {
+        select: Object.fromEntries(
+          ['id', ...computedColumnNames].map((columnName) => [
+            columnName,
+            true,
+          ]),
+        ),
+        where: { id: In(records.map(({ id }) => id)) },
+        withDeleted: true,
+      },
+    ).getMany<ObjectRecord>();
+    const computedRecordById = new Map(
+      computedRecords.map((computedRecord) => [
+        computedRecord.id,
+        computedRecord,
+      ]),
+    );
+
+    return records.map((record) => {
+      const computedRecord = computedRecordById.get(record.id);
+
+      return isDefined(computedRecord)
+        ? {
+            ...record,
+            ...Object.fromEntries(
+              computedFieldNames.map((fieldName) => [
+                fieldName,
+                computedRecord[fieldName],
+              ]),
+            ),
+          }
+        : record;
+    });
+  }
+
+  private async runMutationOnStoredColumns({
     shouldWriteAtLeastOneRecord = false,
     ...args
   }: {
@@ -2088,6 +2167,93 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           joinedTableShape.objectMetadataId,
         ),
         operationType: 'read',
+      });
+    }
+
+    await this.applyComputedTableSourcePermissions(queryBuilder);
+  }
+
+  // A computed column reads other fields and, through lookups, other records: both stay subject to read permissions
+  private async applyComputedTableSourcePermissions(
+    queryBuilder: WorkspaceSelectQueryBuilder,
+  ): Promise<void> {
+    const principals = this.resolvePermissionsPrincipalsOrThrow();
+    const { recordPermissions, recordFieldPermissions } =
+      this.options.internalContext;
+
+    for (const tableShape of queryBuilder.getTableShapesMissingComputedTableSourcePermissions()) {
+      const permissions: ComputedTableSourcePermissions = {
+        lookupAccessConditionByAlias: {},
+        unreadableFieldConditions: [],
+      };
+      const parameters: ObjectLiteral = {};
+      const sources = [
+        {
+          alias: COMPUTED_COLUMN_RECORD_ALIAS,
+          objectMetadataId: tableShape.objectMetadataId,
+        },
+        ...(tableShape.computedLookupShapes ?? []).flatMap(
+          ({ alias, relationFieldName }) => {
+            const relationShape =
+              tableShape.relationShapeByFieldName[relationFieldName];
+
+            return isDefined(relationShape)
+              ? [
+                  {
+                    alias,
+                    objectMetadataId: relationShape.targetObjectMetadataId,
+                  },
+                ]
+              : [];
+          },
+        ),
+      ];
+
+      for (const { alias, objectMetadataId } of sources) {
+        if (alias !== COMPUTED_COLUMN_RECORD_ALIAS) {
+          const accessCondition =
+            await recordPermissions.buildReadRecordsAccessSQLCondition({
+              principals,
+              objectMetadataId,
+              tableAlias: alias,
+            });
+
+          if (accessCondition === false) {
+            permissions.lookupAccessConditionByAlias[alias] = false;
+            continue;
+          }
+
+          if (accessCondition !== true) {
+            permissions.lookupAccessConditionByAlias[alias] =
+              accessCondition.sql;
+            Object.assign(parameters, accessCondition.parameters);
+          }
+        }
+
+        const unreadableFieldsSQLConditions =
+          await recordFieldPermissions.buildUnreadableFieldsSQLConditions({
+            principals,
+            objectMetadataId,
+            tableAlias: alias,
+          });
+
+        for (const {
+          fieldMetadataIds,
+          sqlCondition,
+        } of unreadableFieldsSQLConditions) {
+          permissions.unreadableFieldConditions.push({
+            alias,
+            fieldMetadataIds,
+            condition: sqlCondition.sql,
+          });
+          Object.assign(parameters, sqlCondition.parameters);
+        }
+      }
+
+      queryBuilder.setComputedTableSourcePermissions({
+        objectMetadataId: tableShape.objectMetadataId,
+        permissions,
+        parameters,
       });
     }
   }

@@ -19,6 +19,20 @@ export type WorkspaceRelationShape = {
   joinColumnName?: string;
 };
 
+export type WorkspaceComputedLookupShape = {
+  alias: string;
+  relationFieldName: string;
+};
+
+// A column whose value is an expression over the record (COMPUTED_COLUMN_RECORD_ALIAS) and its lookups
+export type WorkspaceComputedColumnShape = {
+  columnName: string;
+  sqlType: string;
+  // Undefined when the value cannot be computed, so the column reads as NULL
+  expression?: string;
+  dependencies: { alias: string; fieldMetadataId: string }[];
+};
+
 export type WorkspaceTableShape = {
   objectMetadataId: string;
   nameSingular: string;
@@ -28,4 +42,6 @@ export type WorkspaceTableShape = {
   columnNames: string[];
   relationShapeByFieldName: Record<string, WorkspaceRelationShape>;
   hasDeletedAtColumn: boolean;
+  computedColumnShapes?: WorkspaceComputedColumnShape[];
+  computedLookupShapes?: WorkspaceComputedLookupShape[];
 };

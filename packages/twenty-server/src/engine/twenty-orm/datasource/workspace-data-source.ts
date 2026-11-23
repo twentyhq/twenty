@@ -296,7 +296,8 @@ export class WorkspaceDataSource {
   }
 
   private getTableShape(objectMetadataId: string): WorkspaceTableShape {
-    const { flatFieldMetadataMaps } = this.internalContext;
+    const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      this.internalContext;
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
     const cachedShapes =
@@ -314,6 +315,7 @@ export class WorkspaceDataSource {
     const tableShape = buildWorkspaceTableShape({
       workspaceId: this.internalContext.workspaceId,
       flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
 
