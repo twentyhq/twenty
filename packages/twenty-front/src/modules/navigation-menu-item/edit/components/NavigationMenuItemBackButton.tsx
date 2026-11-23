@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useCurrentNavigationMenuItemFolderId } from '@/navigation-menu-item/common/hooks/useCurrentNavigationMenuItemFolderId';
 
 const StyledBackButton = styled.button`
   align-items: center;
@@ -36,9 +35,8 @@ export const NavigationMenuItemBackButton = ({
   folderName,
 }: NavigationMenuItemBackButtonProps) => {
   const theme = useTheme();
-  const setCurrentNavigationMenuItemFolderId = useSetAtomState(
-    currentNavigationMenuItemFolderIdState,
-  );
+  const [, setCurrentNavigationMenuItemFolderId] =
+    useCurrentNavigationMenuItemFolderId();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

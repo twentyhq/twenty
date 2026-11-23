@@ -1372,7 +1372,7 @@ msgstr "{unlistedCount, plural, one {Nessuna applicazione elencata corrisponde. 
 #. js-lingui-id: dCxqaV
 #: src/modules/object-record/record-field/ui/meta-types/display/components/RelationWithUnloadedRecordCount.tsx
 msgid "{unloadedRecordCount, plural, one {# more related record} other {# more related records}}"
-msgstr ""
+msgstr "{unloadedRecordCount, plural, one {# altro record correlato} other {# altri record correlati}}"
 
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
@@ -11312,7 +11312,7 @@ msgstr "Modifica tutti i record"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
-msgstr ""
+msgstr "Modifica colonna"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -12071,7 +12071,7 @@ msgstr "Inserisci un numero"
 #. js-lingui-id: 14OSiZ
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "Enter a number between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
-msgstr ""
+msgstr "Inserisci un numero compreso tra 1 e {QUERY_MAX_RECORDS_FROM_RELATION}"
 
 #. js-lingui-id: LsUGyx
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -14255,7 +14255,7 @@ msgstr "Filtra i workflow"
 #. js-lingui-id: 03Qqf9
 #: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
 msgid "Filtered"
-msgstr ""
+msgstr "Filtrato"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -27956,7 +27956,7 @@ msgstr "La modifica dell'etichetta deve cambiare anche il nome API?"
 #. js-lingui-id: 8vETh9
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "Show"
-msgstr ""
+msgstr "Mostra"
 
 #. js-lingui-id: h8lzfw
 #. placeholder {0}: fieldMetadataItem.label
