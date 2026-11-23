@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { AddChannelTargetRelatedRecordPathsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795449569000-add-channel-target-related-record-paths.command';
 import { AddChannelAssociationAccountOwnerAndHandleCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795432675597-add-channel-association-account-owner-and-handle.command';
 import { AddAiChatParticipantsCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795447154198-add-ai-chat-participants-command-menu-item.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -19,6 +20,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     AddChannelAssociationAccountOwnerAndHandleCommand,
     AddAiChatParticipantsCommandMenuItemCommand,
+    AddChannelTargetRelatedRecordPathsCommand,
   ],
 })
 export class V2_63_UpgradeVersionCommandModule {}
