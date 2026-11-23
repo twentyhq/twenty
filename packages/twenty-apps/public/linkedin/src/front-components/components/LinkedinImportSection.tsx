@@ -17,6 +17,7 @@ import { type LinkedinHistoryConversationLimit } from 'src/types/linkedin-histor
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
+import { hasLinkedinHistoryToImport } from 'src/utils/has-linkedin-history-to-import.util';
 
 const StyledStack = styled.div`
   display: flex;
@@ -130,9 +131,11 @@ export const LinkedinImportSection = ({
           />
         </StyledSettingsCard>
       )}
-      {((importPolicy === 'SELECTED'
-        ? selectedChats.length > 0
-        : historyConversationLimit > 0) ||
+      {(hasLinkedinHistoryToImport({
+        importPolicy,
+        selectedChats,
+        historyConversationLimit,
+      }) ||
         historyImport?.status === 'IMPORTING') && (
         <LinkedinSyncButton
           historyImport={historyImport}

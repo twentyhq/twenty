@@ -10,6 +10,7 @@ import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-sett
 import { refreshLinkedinHistoryImportState } from 'src/logic-functions/utils/refresh-linkedin-history-import-state.util';
 import { startLinkedinHistoryImport } from 'src/logic-functions/utils/start-linkedin-history-import.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
+import { hasLinkedinHistoryToImport } from 'src/utils/has-linkedin-history-to-import.util';
 
 export const linkedinSyncHistoryHandler = async (
   _routePayload: RoutePayload,
@@ -26,11 +27,7 @@ export const linkedinSyncHistoryHandler = async (
   if (historyImport?.status !== 'IMPORTING') {
     const settings = await getLinkedinSettings(connection.id);
 
-    if (
-      settings.importPolicy === 'SELECTED'
-        ? settings.selectedChats.length > 0
-        : settings.historyConversationLimit > 0
-    ) {
+    if (hasLinkedinHistoryToImport(settings)) {
       await startLinkedinHistoryImport({
         connectedAccountId: connection.id,
         settings,

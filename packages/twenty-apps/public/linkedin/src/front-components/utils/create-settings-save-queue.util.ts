@@ -4,8 +4,7 @@ type SettingsSave<TView> = {
   onFailed: (hasPendingSave: boolean) => Promise<void>;
 };
 
-// The answer to a save is only shown once no newer save is waiting: shown
-// earlier, it would undo the changes the member made in the meantime
+// A save's answer is shown only once no newer save waits: it would undo newer edits
 export const createSettingsSaveQueue = <TView>() => {
   let queue: Promise<void> = Promise.resolve();
   let pendingSaveCount = 0;

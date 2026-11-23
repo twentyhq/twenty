@@ -23,7 +23,7 @@ const getRequestedChatCount = (limit: unknown): number =>
     : LINKEDIN_CHAT_OPTIONS_PAGE_SIZE;
 
 export const linkedinListChatsHandler = async (
-  routePayload: RoutePayload<Record<string, unknown>>,
+  routePayload: Pick<RoutePayload<Record<string, unknown>>, 'body'>,
   context: Pick<LogicFunctionExecutionContext, 'userWorkspaceId'>,
 ): Promise<LinkedinChatOptionsPage> => {
   const connection = await findOwnLinkedinConnection(context);

@@ -26,9 +26,12 @@ const { linkedinListChatsHandler } =
   await import('src/logic-functions/linkedin-list-chats');
 
 const listChats = (body: Record<string, unknown> = {}) =>
-  linkedinListChatsHandler({ body } as never, {
-    userWorkspaceId: 'member-user-workspace-id',
-  });
+  linkedinListChatsHandler(
+    { body },
+    {
+      userWorkspaceId: 'member-user-workspace-id',
+    },
+  );
 
 const buildChats = (count: number) =>
   Array.from({ length: count }, (_, index) => ({
