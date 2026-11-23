@@ -93,10 +93,9 @@ describe('SSO sign-up should succeed', () => {
           approvedAccessDomainId = undefined;
         }
 
-        await clearApprovedAccessDomainValidationEmailThrottle({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          recipientEmail: newcomerEmail,
-        });
+        await clearApprovedAccessDomainValidationEmailThrottle(
+          SEED_APPLE_WORKSPACE_ID,
+        );
 
         await clearInvitationSendingThrottle({ email: newcomerEmail });
 

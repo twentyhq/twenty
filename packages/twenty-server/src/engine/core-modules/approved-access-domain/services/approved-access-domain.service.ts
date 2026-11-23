@@ -276,10 +276,7 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    await this.throttleValidationEmailSendingOrThrow({
-      workspaceId: inWorkspace.id,
-      recipientEmail: emailToValidateDomain,
-    });
+    await this.throttleValidationEmailSendingOrThrow(inWorkspace.id);
 
     const approvedAccessDomain =
       await this.approvedAccessDomainRepository.insertAndReturnOne(
@@ -297,27 +294,12 @@ export class ApprovedAccessDomainService {
     return approvedAccessDomain;
   }
 
-  private async throttleValidationEmailSendingOrThrow({
-    workspaceId,
-    recipientEmail,
-  }: {
-    workspaceId: string;
-    recipientEmail: string;
-  }) {
+  private async throttleValidationEmailSendingOrThrow(workspaceId: string) {
     try {
-      await this.throttlerService.tokenBucketThrottleOrThrow(
-        buildApprovedAccessDomainValidationEmailThrottleKey(
-          recipientEmail.toLowerCase(),
-        ),
-        1,
-        APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.byRecipientLimit,
-        APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.ttlInMs,
-      );
-
       await this.throttlerService.tokenBucketThrottleOrThrow(
         buildApprovedAccessDomainValidationEmailThrottleKey(workspaceId),
         1,
-        APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.byWorkspaceLimit,
+        APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.limit,
         APPROVED_ACCESS_DOMAIN_VALIDATION_EMAIL_THROTTLE.ttlInMs,
       );
     } catch (error) {

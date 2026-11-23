@@ -3,23 +3,15 @@ import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 
-export const clearApprovedAccessDomainValidationEmailThrottle = ({
-  workspaceId,
-  recipientEmail,
-}: {
-  workspaceId: string;
-  recipientEmail: string;
-}) => {
+export const clearApprovedAccessDomainValidationEmailThrottle = (
+  workspaceId: string,
+) => {
   const cacheStorage = global.app.get<CacheStorageService>(
     CacheStorageNamespace.EngineWorkspace,
     { strict: false },
   );
 
-  return Promise.all(
-    [workspaceId, recipientEmail.toLowerCase()].map((workspaceIdOrEmail) =>
-      cacheStorage.del(
-        `${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${buildApprovedAccessDomainValidationEmailThrottleKey(workspaceIdOrEmail)}`,
-      ),
-    ),
+  return cacheStorage.del(
+    `${TOKEN_BUCKET_THROTTLE_KEY_PREFIX}:${buildApprovedAccessDomainValidationEmailThrottleKey(workspaceId)}`,
   );
 };
