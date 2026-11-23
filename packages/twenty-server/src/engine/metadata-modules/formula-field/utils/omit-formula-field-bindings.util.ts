@@ -14,7 +14,7 @@ export const omitFormulaFieldBindings = <
     settings: universalSettings,
   });
 
-  return isDefined(expression) && isDefined(universalSettings)
+  return isDefined(expression)
     ? { ...universalSettings, formula: { expression } }
     : universalSettings;
 };

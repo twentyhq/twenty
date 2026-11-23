@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { setFormulaFieldBindingsThroughMutation } from 'src/engine/core-modules/application/application-manifest/utils/set-formula-field-bindings-through-mutation.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -17,8 +18,9 @@ const buildManifestField = ({
     type: FieldMetadataType.NUMBER,
     objectMetadataId: 'gadget-object',
     objectMetadataUniversalIdentifier: 'gadget-object-uid',
-    universalSettings:
-      expression === undefined ? null : { formula: { expression } },
+    universalSettings: isDefined(expression)
+      ? { formula: { expression } }
+      : null,
   });
 
 describe('setFormulaFieldBindingsThroughMutation', () => {
