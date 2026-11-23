@@ -77,6 +77,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "pageLayoutTabId",
     "conditionalDisplay",
     "conditionalAvailabilityExpression",
+    "conditionalAvailability",
     "isActive",
   ],
   "permissionFlag": [],

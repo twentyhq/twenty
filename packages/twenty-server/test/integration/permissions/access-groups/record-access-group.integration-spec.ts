@@ -40,12 +40,16 @@ describe('access group ids on records (integration)', () => {
   let recordAccessGroupComputationService: RecordAccessGroupComputationService;
   let objectMetadataId: string;
   let jobTitleFieldMetadataId: string;
-  let originalPeople: Pick<PersonRow, 'id' | 'jobTitle'>[];
+  const [parisPersonId, londonPersonId] = [v4(), v4()].sort();
+  const people: Pick<PersonRow, 'id' | 'jobTitle'>[] = [
+    { id: parisPersonId, jobTitle: 'Paris office' },
+    { id: londonPersonId, jobTitle: 'London office' },
+  ];
 
   const readPeople = (): Promise<PersonRow[]> =>
     global.testDataSource.query(
       `SELECT "id", "jobTitle", "_accessGroupIds" AS "accessGroupIds" FROM ${PERSON_TABLE} WHERE "id" = ANY($1) ORDER BY "id"`,
-      [originalPeople.map(({ id }) => id)],
+      [people.map(({ id }) => id)],
     );
 
   const readCompactIds = async ({
@@ -94,23 +98,19 @@ describe('access group ids on records (integration)', () => {
       `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'jobTitle'`,
       [objectMetadataId],
     );
-    originalPeople = await global.testDataSource.query(
-      `SELECT "id", "jobTitle" FROM ${PERSON_TABLE} ORDER BY "id" LIMIT 2`,
-    );
-
-    await global.testDataSource.query(
-      `UPDATE ${PERSON_TABLE} SET "jobTitle" = CASE "id" WHEN $1 THEN 'Paris office' ELSE 'London office' END WHERE "id" = ANY($2)`,
-      [originalPeople[0].id, originalPeople.map(({ id }) => id)],
-    );
+    for (const person of people) {
+      await createOneOperation({
+        objectMetadataSingularName: 'person',
+        input: person,
+      });
+    }
   });
 
   afterAll(async () => {
-    for (const { id, jobTitle } of originalPeople) {
-      await global.testDataSource.query(
-        `UPDATE ${PERSON_TABLE} SET "jobTitle" = $1 WHERE "id" = $2`,
-        [jobTitle, id],
-      );
-    }
+    await global.testDataSource.query(
+      `DELETE FROM ${PERSON_TABLE} WHERE "id" = ANY($1)`,
+      [people.map(({ id }) => id)],
+    );
 
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL`,
@@ -121,7 +121,7 @@ describe('access group ids on records (integration)', () => {
   it('should leave records of an object without rules untouched', async () => {
     await global.testDataSource.query(
       `UPDATE ${PERSON_TABLE} SET "_accessGroupIds" = NULL WHERE "id" = ANY($1)`,
-      [originalPeople.map(({ id }) => id)],
+      [people.map(({ id }) => id)],
     );
     await syncAndRecompute();
 
