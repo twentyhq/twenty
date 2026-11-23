@@ -405,6 +405,7 @@ export class AuthService {
       userData: {
         type: 'existingUser',
         existingUser: params.userData.existingUser,
+        picture: params.userData.picture,
       },
     });
   }
@@ -979,7 +980,11 @@ export class AuthService {
   ): ExistingUserOrNewUser {
     return {
       userData: existingUser
-        ? { type: 'existingUser', existingUser }
+        ? {
+            type: 'existingUser',
+            existingUser,
+            picture: newUserPayload.picture,
+          }
         : {
             type: 'newUser',
             newUserPayload,

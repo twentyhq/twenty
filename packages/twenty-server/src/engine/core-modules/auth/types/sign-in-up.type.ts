@@ -32,7 +32,11 @@ export type PartialUserWithPicture = {
 
 export type ExistingUserOrNewUser = {
   userData:
-    | { type: 'existingUser'; existingUser: UserEntity }
+    | {
+        type: 'existingUser';
+        existingUser: UserEntity;
+        picture?: string | null;
+      }
     | {
         type: 'newUser';
         newUserPayload: SignInUpNewUserPayload;
@@ -41,7 +45,11 @@ export type ExistingUserOrNewUser = {
 
 export type ExistingUserOrPartialUserWithPicture = {
   userData:
-    | { type: 'existingUser'; existingUser: UserEntity }
+    | {
+        type: 'existingUser';
+        existingUser: UserEntity;
+        picture?: string | null;
+      }
     | {
         type: 'newUserWithPicture';
         newUserWithPicture: PartialUserWithPicture;

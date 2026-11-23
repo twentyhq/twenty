@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -27,6 +31,7 @@ import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/u
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { type InboxNotificationSettings } from 'src/engine/core-modules/user-workspace/types/inbox-notification-settings.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { getUserWorkspaceIdsWithDefaultAvatarInFiles } from 'src/engine/core-modules/user-workspace/utils/get-user-workspace-ids-with-default-avatar-in-files.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -267,6 +272,7 @@ export class UserWorkspaceService {
     user: UserEntity,
     workspace: WorkspaceEntity,
     roleId?: string | null,
+    pictureUrl?: string,
   ) {
     const existingUserWorkspace = await this.checkUserWorkspaceExists(
       user.id,
@@ -290,6 +296,7 @@ export class UserWorkspaceService {
             userId: user.id,
             workspaceId: workspace.id,
             isExistingUser: true,
+            pictureUrl,
             locale: user.locale,
           });
 
@@ -608,49 +615,15 @@ export class UserWorkspaceService {
     queryRunner?: QueryRunner,
   ) {
     if (isExistingUser) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          userId,
-          defaultAvatarUrl: Not(IsNull()),
-        },
-        order: {
-          createdAt: 'ASC',
-        },
+      const copiedAvatarUrl = await this.copyOldestDefaultAvatar({
+        userId,
+        workspaceId,
+        applicationUniversalIdentifier,
+        queryRunner,
       });
 
-      if (!isDefined(userWorkspace?.defaultAvatarUrl)) {
-        return;
-      }
-
-      const sourceFileId = extractFileIdFromUrl(
-        userWorkspace.defaultAvatarUrl,
-        FileFolder.CorePicture,
-      );
-
-      if (!isDefined(sourceFileId)) {
-        return;
-      }
-
-      try {
-        const savedFile =
-          await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
-            sourceWorkspaceId: userWorkspace.workspaceId,
-            sourceFileId,
-            targetWorkspaceId: workspaceId,
-            targetApplicationUniversalIdentifier:
-              applicationUniversalIdentifier,
-            queryRunner,
-          });
-
-        return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
-          fileId: savedFile.id,
-          fileFolder: FileFolder.CorePicture,
-        });
-      } catch (error) {
-        if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
-          return;
-        }
-        throw error;
+      if (isDefined(copiedAvatarUrl)) {
+        return copiedAvatarUrl;
       }
     }
 
@@ -676,6 +649,108 @@ export class UserWorkspaceService {
       fileId: savedFile.id,
       fileFolder: FileFolder.CorePicture,
     });
+  }
+
+  private async copyOldestDefaultAvatar({
+    userId,
+    workspaceId,
+    applicationUniversalIdentifier,
+    queryRunner,
+  }: {
+    userId: string;
+    workspaceId: string;
+    applicationUniversalIdentifier?: string;
+    queryRunner?: QueryRunner;
+  }): Promise<string | undefined> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        userId,
+        defaultAvatarUrl: Not(IsNull()),
+      },
+      order: {
+        createdAt: 'ASC',
+      },
+    });
+
+    if (!isDefined(userWorkspace?.defaultAvatarUrl)) {
+      return undefined;
+    }
+
+    const sourceFileId = extractFileIdFromUrl(
+      userWorkspace.defaultAvatarUrl,
+      FileFolder.CorePicture,
+    );
+
+    if (!isDefined(sourceFileId)) {
+      return undefined;
+    }
+
+    try {
+      const savedFile =
+        await this.fileCorePictureService.copyWorkspaceMemberProfilePicture({
+          sourceWorkspaceId: userWorkspace.workspaceId,
+          sourceFileId,
+          targetWorkspaceId: workspaceId,
+          targetApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          queryRunner,
+        });
+
+      if (!isDefined(savedFile)) {
+        return undefined;
+      }
+
+      return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+        fileId: savedFile.id,
+        fileFolder: FileFolder.CorePicture,
+      });
+    } catch (error) {
+      if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
+        return undefined;
+      }
+      throw error;
+    }
+  }
+
+  async clearDefaultAvatarUrlsPointingToFiles({
+    workspaceId,
+    userIds,
+    fileIds,
+  }: {
+    workspaceId: string;
+    userIds: string[];
+    fileIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(userIds) || !isNonEmptyArray(fileIds)) {
+      return;
+    }
+
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: {
+        workspaceId,
+        userId: In(userIds),
+        defaultAvatarUrl: Not(IsNull()),
+      },
+    });
+
+    const userWorkspaceIdsToClear = getUserWorkspaceIdsWithDefaultAvatarInFiles(
+      { userWorkspaces, fileIds },
+    );
+
+    if (!isNonEmptyArray(userWorkspaceIdsToClear)) {
+      return;
+    }
+
+    await this.userWorkspaceRepository.update(
+      { id: In(userWorkspaceIdsToClear) },
+      { defaultAvatarUrl: null },
+    );
+
+    for (const userWorkspaceId of userWorkspaceIdsToClear) {
+      await this.coreEntityCacheService.invalidate(
+        'userWorkspaceEntity',
+        userWorkspaceId,
+      );
+    }
   }
 
   async castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {

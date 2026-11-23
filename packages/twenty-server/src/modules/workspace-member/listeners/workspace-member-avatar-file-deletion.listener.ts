@@ -14,6 +14,7 @@ import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorat
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -21,6 +22,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 export class WorkspaceMemberAvatarFileDeletionListener {
   constructor(
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.UPDATED)
@@ -31,7 +33,11 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   ) {
     const fileIdsToDelete = this.getFileIdsToDeleteFromUpdateEvent(payload);
 
-    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
+    await this.deleteCorePictures({
+      fileIds: fileIdsToDelete,
+      workspaceId: payload.workspaceId,
+      userIds: payload.events.map((event) => event.properties.before.userId),
+    });
   }
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
@@ -45,13 +51,29 @@ export class WorkspaceMemberAvatarFileDeletionListener {
     const fileIdsToDelete =
       this.getFileIdsToDeleteFromDestroyOrDeleteEvent(payload);
 
-    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
+    await this.deleteCorePictures({
+      fileIds: fileIdsToDelete,
+      workspaceId: payload.workspaceId,
+      userIds: payload.events.map((event) => event.properties.before.userId),
+    });
   }
 
-  private async deleteCorePictures(
-    fileIds: string[],
-    workspaceId: string,
-  ): Promise<void> {
+  private async deleteCorePictures({
+    fileIds,
+    workspaceId,
+    userIds,
+  }: {
+    fileIds: string[];
+    workspaceId: string;
+    userIds: string[];
+  }): Promise<void> {
+    // userWorkspace.defaultAvatarUrl can share the file and is copied when the user joins another workspace
+    await this.userWorkspaceService.clearDefaultAvatarUrlsPointingToFiles({
+      workspaceId,
+      userIds,
+      fileIds,
+    });
+
     for (const fileId of fileIds) {
       try {
         await this.fileCorePictureService.deleteCorePicture({

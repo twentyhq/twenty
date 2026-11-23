@@ -68,8 +68,8 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Column()
   userId: string;
 
-  @Column({ nullable: true })
-  defaultAvatarUrl: string;
+  @Column({ nullable: true, type: 'varchar' })
+  defaultAvatarUrl: string | null;
 
   @Field(() => String, { nullable: false })
   @Column({ nullable: false, default: SOURCE_LOCALE, type: 'varchar' })

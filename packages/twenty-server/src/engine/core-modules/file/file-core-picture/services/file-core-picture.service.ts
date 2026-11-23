@@ -510,16 +510,17 @@ export class FileCorePictureService {
     targetWorkspaceId: string;
     targetApplicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
-  }): Promise<FileWithSignedUrlDTO> {
-    const sourceFile = await this.fileRepository.findOneOrFail(
-      sourceWorkspaceId,
-      {
-        where: {
-          id: sourceFileId,
-          path: Like(`${FileFolder.CorePicture}/%`),
-        },
+  }): Promise<FileWithSignedUrlDTO | undefined> {
+    const sourceFile = await this.fileRepository.findOne(sourceWorkspaceId, {
+      where: {
+        id: sourceFileId,
+        path: Like(`${FileFolder.CorePicture}/%`),
       },
-    );
+    });
+
+    if (!isDefined(sourceFile)) {
+      return undefined;
+    }
 
     const sourceApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(sourceWorkspaceId);
