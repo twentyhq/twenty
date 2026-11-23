@@ -23,7 +23,10 @@ export const findRelatedRecordPathInheritedFields = ({
 }: {
   inheritedFieldDefinitions: RelatedRecordPathInheritedFieldDefinition[];
   objectMetadataId: string;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatFieldMetadataMaps: Pick<
+    FlatEntityMaps<OrmFlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): RelatedRecordPathInheritedField[] =>
   inheritedFieldDefinitions.flatMap(
     ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) => {
