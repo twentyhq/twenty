@@ -10,7 +10,7 @@ describe('getRecordsWithLookupRelatedRecords', () => {
     expect(
       getRecordsWithLookupRelatedRecords({
         records: [firstPerson, secondPerson],
-        lookupRelationFieldNames: ['company'],
+        lookupRelationRecordKeys: ['company'],
       }),
     ).toEqual([firstPerson, secondPerson, company]);
   });
@@ -26,12 +26,34 @@ describe('getRecordsWithLookupRelatedRecords', () => {
     expect(
       getRecordsWithLookupRelatedRecords({
         records: [person],
-        lookupRelationFieldNames: ['company', 'previousCompany'],
+        lookupRelationRecordKeys: ['company', 'previousCompany'],
       }),
     ).toEqual([
       person,
       { id: 'company-1', __typename: 'Company', city: 'Paris', name: 'Acme' },
     ]);
+  });
+
+  it('adds every related record of a lookup relation listing records', () => {
+    const firstPerson = { id: 'person-1', __typename: 'Person', city: 'Paris' };
+    const secondPerson = { id: 'person-2', __typename: 'Person', city: 'Rome' };
+    const acme = {
+      id: 'company-1',
+      __typename: 'Company',
+      people_scope: [firstPerson, secondPerson],
+    };
+    const globex = {
+      id: 'company-2',
+      __typename: 'Company',
+      people_scope: [],
+    };
+
+    expect(
+      getRecordsWithLookupRelatedRecords({
+        records: [acme, globex],
+        lookupRelationRecordKeys: ['people_scope'],
+      }),
+    ).toEqual([acme, globex, firstPerson, secondPerson]);
   });
 
   it('keeps a JSON value shaped like a record inside its field', () => {
@@ -46,7 +68,7 @@ describe('getRecordsWithLookupRelatedRecords', () => {
     expect(
       getRecordsWithLookupRelatedRecords({
         records: [companyWithSnapshot],
-        lookupRelationFieldNames: [],
+        lookupRelationRecordKeys: [],
       }),
     ).toEqual([companyWithSnapshot]);
   });
@@ -57,7 +79,7 @@ describe('getRecordsWithLookupRelatedRecords', () => {
     expect(
       getRecordsWithLookupRelatedRecords({
         records: [person],
-        lookupRelationFieldNames: ['company'],
+        lookupRelationRecordKeys: ['company'],
       }),
     ).toEqual([person]);
   });

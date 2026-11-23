@@ -1,5 +1,6 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 
+import { isCachedRelationCopyWithArguments } from '@/apollo/optimistic-effect/utils/isCachedRelationCopyWithArguments';
 import { triggerUpdateRootQueriesOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRootQueriesOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
@@ -39,13 +40,27 @@ export const triggerDetachRelationOptimisticEffect = ({
     __typename: targetRecordTypeName,
   });
 
+  // Without an id, cache.modify would fall back to the root query and change its lists
+  if (!isDefined(targetRecordCacheId)) {
+    return;
+  }
+
   cache.modify<StoreObject>({
     id: targetRecordCacheId,
     fields: {
       [fieldNameOnTargetRecord]: (
         targetRecordFieldValue,
-        { isReference, readField },
+        { isReference, readField, storeFieldName, DELETE },
       ) => {
+        if (
+          isCachedRelationCopyWithArguments({
+            storeFieldName,
+            relationFieldName: fieldNameOnTargetRecord,
+          })
+        ) {
+          return DELETE;
+        }
+
         const isRecordConnection = isObjectRecordConnectionWithRefs(
           sourceObjectNameSingular,
           targetRecordFieldValue,

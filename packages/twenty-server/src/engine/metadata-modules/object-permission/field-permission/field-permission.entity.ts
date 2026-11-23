@@ -10,6 +10,7 @@ import {
   type Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ADD_ROW_LEVEL_PERMISSION_RULE_LINKS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-row-level-permission-rule-links-upgrade-command-name.constant';
 import { ADD_RLS_RULE_FIELD_PERMISSIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-57/add-rls-rule-field-permissions-upgrade-command-name.constant';
@@ -106,7 +107,8 @@ export class FieldPermissionEntity extends SyncableEntity {
   @ValidateBy({
     name: 'isFalseOrNull',
     validator: {
-      validate: (value: boolean | null) => value === false || value === null,
+      validate: (value: boolean | null) =>
+        (isDefined(value) && !value) || value === null,
       defaultMessage: () => 'value must be either false or null',
     },
   })

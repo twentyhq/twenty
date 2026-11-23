@@ -1,6 +1,8 @@
 /* @license Enterprise */
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -525,6 +527,51 @@ describePermissionTestWorkspace({
         'lowVisibilityTier',
         'mediumVisibilityTier',
       ]);
+    });
+
+    it('should revoke access when the team row is soft deleted and give it back on restore', async () => {
+      const teamRowId = await joinCompanyTeam({
+        workspaceMemberId: otherTeamMemberId,
+        record: 'mediumVisibilityTier',
+      });
+      const updateTeamRow = async (
+        operationFactory:
+          | typeof deleteOneOperationFactory
+          | typeof restoreOneOperationFactory,
+      ) => {
+        const response = await makeGraphqlApiRequest(
+          operationFactory({
+            objectMetadataSingularName: TEAM_OBJECT_NAME,
+            gqlFields: 'id',
+            recordId: teamRowId,
+          }),
+          findWorkspace().adminAccessToken,
+        );
+
+        expect(response.body.errors).toBeUndefined();
+
+        await syncAccessGroups();
+        await runPendingComputes();
+      };
+
+      await syncAccessGroups();
+      await runPendingComputes();
+
+      expect(
+        await findReadableVisibilityTierRecords(otherTeamMemberId),
+      ).toEqual(['lowVisibilityTier', 'mediumVisibilityTier']);
+
+      await updateTeamRow(deleteOneOperationFactory);
+
+      expect(
+        await findReadableVisibilityTierRecords(otherTeamMemberId),
+      ).toEqual(['lowVisibilityTier']);
+
+      await updateTeamRow(restoreOneOperationFactory);
+
+      expect(
+        await findReadableVisibilityTierRecords(otherTeamMemberId),
+      ).toEqual(['lowVisibilityTier', 'mediumVisibilityTier']);
     });
 
     it('should let a member read a record through the one-to-many team relation', async () => {

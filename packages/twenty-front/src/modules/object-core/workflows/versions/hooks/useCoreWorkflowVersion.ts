@@ -9,7 +9,7 @@ export const useCoreWorkflowVersion = (
 ) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error, refetch } = useQuery(
+  const { data, previousData, loading, error, refetch } = useQuery(
     GetCoreWorkflowVersionDocument,
     {
       client: apolloCoreClient,
@@ -21,6 +21,7 @@ export const useCoreWorkflowVersion = (
 
   return {
     coreWorkflowVersion: data?.coreWorkflowVersion ?? null,
+    previousCoreWorkflowVersion: previousData?.coreWorkflowVersion ?? null,
     loading,
     error,
     refetchCoreWorkflowVersion: refetch,
