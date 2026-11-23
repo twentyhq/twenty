@@ -30,4 +30,18 @@ describe('getWorkspaceSidebarRootSectionId', () => {
       ]),
     ).toBeNull();
   });
+
+  it('should ignore the Workspace section once it sits under a tab', () => {
+    expect(
+      getWorkspaceSidebarRootSectionId([
+        {
+          id: 'workspace-section',
+          parentId: 'tab',
+          universalIdentifier:
+            STANDARD_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIERS.workspaceSection
+              .universalIdentifier,
+        },
+      ]),
+    ).toBeNull();
+  });
 });
