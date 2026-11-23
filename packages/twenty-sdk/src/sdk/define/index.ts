@@ -257,6 +257,7 @@ export {
   ViewFilterOperand,
   ViewFilterOperandDeprecated,
   ViewOpenRecordIn,
+  ViewPresetFilter,
   ViewSortDirection,
   ViewType,
   ViewVisibility,
