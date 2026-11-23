@@ -1,24 +1,21 @@
 import { useLingui } from '@lingui/react/macro';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconCopy } from 'twenty-ui/icon';
+
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-type LightCopyIconButtonWithoutPaddingProps = {
-  copyText: string;
+type ChatMessageCopyActionProps = {
+  text: string;
 };
 
-export const LightCopyIconButtonWithoutPadding = ({
-  copyText,
-}: LightCopyIconButtonWithoutPaddingProps) => {
-  const { copyToClipboard } = useCopyToClipboard();
+export const ChatMessageCopyAction = ({ text }: ChatMessageCopyActionProps) => {
   const { t } = useLingui();
+  const { copyToClipboard } = useCopyToClipboard();
 
   return (
     <LightIconButton
-      onClick={() => {
-        copyToClipboard(copyText, t`Text copied to clipboard`);
-      }}
       aria-label={t`Copy to Clipboard`}
+      onClick={() => copyToClipboard(text, t`Text copied to clipboard`)}
     >
       <IconCopy />
     </LightIconButton>

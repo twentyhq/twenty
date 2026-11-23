@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-import { LightCopyIconButtonWithoutPadding } from '@/ui/input/components/LightCopyIconButtonWithoutPadding';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledButtonContainer = styled.div`
   padding: 0 ${themeCssVariables.spacing[1]};
@@ -11,8 +13,20 @@ export type LightCopyIconButtonProps = {
   copyText: string;
 };
 
-export const LightCopyIconButton = ({ copyText }: LightCopyIconButtonProps) => (
-  <StyledButtonContainer>
-    <LightCopyIconButtonWithoutPadding copyText={copyText} />
-  </StyledButtonContainer>
-);
+export const LightCopyIconButton = ({ copyText }: LightCopyIconButtonProps) => {
+  const { copyToClipboard } = useCopyToClipboard();
+  const { t } = useLingui();
+
+  return (
+    <StyledButtonContainer>
+      <LightIconButton
+        onClick={() => {
+          copyToClipboard(copyText, t`Text copied to clipboard`);
+        }}
+        aria-label={t`Copy to Clipboard`}
+      >
+        <IconCopy />
+      </LightIconButton>
+    </StyledButtonContainer>
+  );
+};

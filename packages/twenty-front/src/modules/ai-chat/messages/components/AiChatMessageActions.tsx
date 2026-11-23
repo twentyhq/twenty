@@ -7,9 +7,9 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
 import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { ChatMessageCopyAction } from '@/chat/components/ChatMessageCopyAction';
 import { ChatMessageFloatingActions } from '@/chat/components/ChatMessageFloatingActions';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
-import { LightCopyIconButtonWithoutPadding } from '@/ui/input/components/LightCopyIconButtonWithoutPadding';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatMessageActionsProps = {
@@ -58,7 +58,7 @@ export const AiChatMessageActions = ({
           <IconArrowBackUp />
         </LightIconButton>
       )}
-      <LightCopyIconButtonWithoutPadding copyText={messageText} />
+      <ChatMessageCopyAction text={messageText} />
       {isDefined(onEdit) && (
         <LightIconButton
           aria-label={t`Edit message`}

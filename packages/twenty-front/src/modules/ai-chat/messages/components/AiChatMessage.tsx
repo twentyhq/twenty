@@ -215,6 +215,9 @@ export const AiChatMessage = ({
     isAiChatInboxEnabled && isNonEmptyArray(aiChatMessageReactions);
   const hasContent = isNonEmptyArray(aiChatMessage.parts);
   const hasFloatingActions = isAiChatInboxEnabled && hasContent;
+  const hasDaySeparator = isAiChatInboxEnabled && isFirstOfDay;
+  const isFirstUnread =
+    isAiChatInboxEnabled && aiChatFirstUnreadMessageId === messageId;
   const hasFooter =
     hasContent && (!isAiChatInboxEnabled || hasReactions || hasFooterTimestamp);
   const isTightlyGroupedWithNext =
@@ -270,10 +273,13 @@ export const AiChatMessage = ({
 
   return (
     <>
-      {isAiChatInboxEnabled && isFirstOfDay && (
-        <ChatMessageDaySeparator date={createdAt} />
+      {hasDaySeparator && (
+        <ChatMessageDaySeparator
+          date={createdAt}
+          isFirstUnread={isFirstUnread}
+        />
       )}
-      {isAiChatInboxEnabled && aiChatFirstUnreadMessageId === messageId && (
+      {isFirstUnread && !hasDaySeparator && (
         <LabeledSeparator
           labelPosition="end"
           tone="danger"

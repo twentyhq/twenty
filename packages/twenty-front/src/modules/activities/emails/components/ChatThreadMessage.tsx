@@ -9,6 +9,7 @@ import { type ChatMessageReaction } from '@/activities/emails/types/ChatMessageR
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { ChatMessageAttachments } from '@/chat/components/ChatMessageAttachments';
 import { ChatMessageBubbleContent } from '@/chat/components/ChatMessageBubbleContent';
+import { ChatMessageCopyAction } from '@/chat/components/ChatMessageCopyAction';
 import { ChatMessageFloatingActions } from '@/chat/components/ChatMessageFloatingActions';
 import { ChatMessageReceipt } from '@/chat/components/ChatMessageReceipt';
 import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
@@ -18,7 +19,6 @@ import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { StyledChatMessageStandaloneMeta } from '@/chat/components/StyledChatMessageStandaloneMeta';
 import { CHAT_GROUPED_MESSAGE_GAP } from '@/chat/constants/ChatGroupedMessageGap';
 import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
-import { LightCopyIconButtonWithoutPadding } from '@/ui/input/components/LightCopyIconButtonWithoutPadding';
 import {
   isDefined,
   isFieldValueRestricted,
@@ -145,7 +145,7 @@ export const ChatThreadMessage = ({
       )}
       {hasText && (
         <ChatMessageFloatingActions isRightAligned={isOutgoing}>
-          <LightCopyIconButtonWithoutPadding copyText={message.text} />
+          <ChatMessageCopyAction text={message.text} />
         </ChatMessageFloatingActions>
       )}
     </StyledMessageRow>
