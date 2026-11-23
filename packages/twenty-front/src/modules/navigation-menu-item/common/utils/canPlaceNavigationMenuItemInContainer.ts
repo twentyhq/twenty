@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
-import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
+import { getNavigationMenuItemsInPlacementScope } from '@/navigation-menu-item/common/utils/getNavigationMenuItemsInPlacementScope';
 import { isNavigationMenuItemTabOrSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemTabOrSection';
 import { isSameNavigationMenuItemTarget } from '@/navigation-menu-item/common/utils/isSameNavigationMenuItemTarget';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -25,12 +25,12 @@ export const canPlaceNavigationMenuItemInContainer = ({
     return true;
   }
 
-  const targetScopeId = getNavigationMenuItemContainerId({
-    item: { parentId: containerId },
+  const itemsInTargetScope = getNavigationMenuItemsInPlacementScope({
+    parentId: containerId,
     items,
   });
 
-  if (targetScopeId === getNavigationMenuItemContainerId({ item, items })) {
+  if (itemsInTargetScope.some((candidate) => candidate.id === itemId)) {
     return true;
   }
 
@@ -39,15 +39,12 @@ export const canPlaceNavigationMenuItemInContainer = ({
     ...getNavigationMenuItemDescendantIds({ items, ancestorId: itemId }),
   ]);
   const movedItems = items.filter(({ id }) => movedIds.has(id));
-  const itemsInTargetScope = items.filter(
-    (candidate) =>
-      !movedIds.has(candidate.id) &&
-      getNavigationMenuItemContainerId({ item: candidate, items }) ===
-        targetScopeId,
+  const otherItemsInTargetScope = itemsInTargetScope.filter(
+    (candidate) => !movedIds.has(candidate.id),
   );
 
   return !movedItems.some((movedItem) =>
-    itemsInTargetScope.some((candidate) =>
+    otherItemsInTargetScope.some((candidate) =>
       isSameNavigationMenuItemTarget({
         firstItem: movedItem,
         secondItem: candidate,
