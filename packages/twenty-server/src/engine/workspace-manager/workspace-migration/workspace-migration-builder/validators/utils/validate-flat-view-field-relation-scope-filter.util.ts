@@ -66,7 +66,7 @@ export const validateFlatViewFieldRelationScopeFilter = ({
     return errors;
   }
 
-  const filterFieldArgs = {
+  const filterOperandContext = {
     operand: filter.operand,
     fieldType: flatFieldMetadata.type,
     subFieldName: filter.subFieldName,
@@ -74,7 +74,7 @@ export const validateFlatViewFieldRelationScopeFilter = ({
   };
 
   const incompatibleOperandError =
-    getIncompatibleViewFilterOperandError(filterFieldArgs);
+    getIncompatibleViewFilterOperandError(filterOperandContext);
 
   if (isDefined(incompatibleOperandError)) {
     return [...errors, incompatibleOperandError];
@@ -83,7 +83,7 @@ export const validateFlatViewFieldRelationScopeFilter = ({
   return [
     ...errors,
     ...getInvalidViewFilterValueAndSelectOptionErrors({
-      ...filterFieldArgs,
+      ...filterOperandContext,
       value: filter.value,
       selectOptionFlatFieldMetadata:
         relationTargetFlatFieldMetadata ?? flatFieldMetadata,
