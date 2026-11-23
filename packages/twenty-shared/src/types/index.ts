@@ -278,6 +278,7 @@ export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOper
 export { RecordFilterOperand } from './RecordFilterOperand';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type { RecordGqlFields } from './RecordGqlFields';
+export type { RecordGqlFieldsRelationWithArguments } from './RecordGqlFieldsRelationWithArguments';
 export type {
   UUIDFilterValue,
   IsFilter,
