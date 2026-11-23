@@ -26,7 +26,7 @@ const updateAppBadge = async (badgeCount) => {
 self.addEventListener('push', (event) => {
   const { title, body, url, tag, renotify, badgeCount } = event.data.json();
 
-  event.waitUntil(updateAppBadge(badgeCount).catch(() => undefined));
+  event.waitUntil(updateAppBadge(badgeCount).catch(console.error));
 
   event.waitUntil(
     self.registration

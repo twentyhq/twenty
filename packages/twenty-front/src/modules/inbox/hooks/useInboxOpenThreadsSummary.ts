@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -31,5 +32,8 @@ export const useInboxOpenThreadsSummary = () => {
     fetchPolicy: 'cache-and-network',
   });
 
-  return data?.agentChatOpenThreadsSummary ?? EMPTY_INBOX_OPEN_THREADS_SUMMARY;
+  return {
+    ...(data?.agentChatOpenThreadsSummary ?? EMPTY_INBOX_OPEN_THREADS_SUMMARY),
+    isOpenThreadsSummaryLoaded: isDefined(data),
+  };
 };

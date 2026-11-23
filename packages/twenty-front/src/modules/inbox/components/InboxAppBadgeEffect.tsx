@@ -1,23 +1,20 @@
-import { useQuery } from '@apollo/client/react';
 import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
+import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
 import { updateAppBadge } from '@/web-push/utils/updateAppBadge';
-import { GetAgentChatOpenThreadsSummaryDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 export const InboxAppBadgeEffect = () => {
-  const { data } = useQuery(GetAgentChatOpenThreadsSummaryDocument);
-  const unreadOpenThreadCount =
-    data?.agentChatOpenThreadsSummary.unreadOpenThreadCount;
+  const { unreadOpenThreadCount, isOpenThreadsSummaryLoaded } =
+    useInboxOpenThreadsSummary();
 
   useEffect(() => {
-    if (!isDefined(unreadOpenThreadCount)) {
+    if (!isOpenThreadsSummaryLoaded) {
       return;
     }
 
     updateAppBadge(unreadOpenThreadCount).catch(logError);
-  }, [unreadOpenThreadCount]);
+  }, [isOpenThreadsSummaryLoaded, unreadOpenThreadCount]);
 
   return null;
 };
