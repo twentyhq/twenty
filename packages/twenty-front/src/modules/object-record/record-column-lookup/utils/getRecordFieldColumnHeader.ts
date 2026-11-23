@@ -1,6 +1,9 @@
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
+import { type RecordFieldSummary } from '@/object-record/record-column-summary/types/RecordFieldSummary';
+import { getRecordFieldSummaryLabel } from '@/object-record/record-column-summary/utils/getRecordFieldSummaryLabel';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ColumnHeaderFieldMetadataItem = Pick<
@@ -8,15 +11,27 @@ type ColumnHeaderFieldMetadataItem = Pick<
   'label' | 'icon' | 'description'
 >;
 
-export const getRecordFieldColumnHeader = ({
+const getDefaultRecordFieldColumnHeader = ({
   fieldMetadataItem,
   lookupTarget,
   isScopedRelationColumn,
+  summary,
 }: {
   fieldMetadataItem: ColumnHeaderFieldMetadataItem;
   lookupTarget?: Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>;
   isScopedRelationColumn?: boolean;
+  summary?: Pick<
+    RecordFieldSummary,
+    'aggregateOperation' | 'aggregatedFieldMetadataItem'
+  >;
 }): ColumnHeaderFieldMetadataItem => {
+  if (isDefined(summary)) {
+    return {
+      ...fieldMetadataItem,
+      label: `${fieldMetadataItem.label} · ${getRecordFieldSummaryLabel(summary)}`,
+    };
+  }
+
   const label = isScopedRelationColumn
     ? `${fieldMetadataItem.label} · ${t`Filtered`}`
     : fieldMetadataItem.label;
@@ -35,4 +50,19 @@ export const getRecordFieldColumnHeader = ({
       lookupTargetFieldMetadataItem.description ??
       fieldMetadataItem.description,
   };
+};
+
+export const getRecordFieldColumnHeader = ({
+  customLabel,
+  ...defaultColumnHeaderArgs
+}: Parameters<typeof getDefaultRecordFieldColumnHeader>[0] & {
+  customLabel?: string | null;
+}): ColumnHeaderFieldMetadataItem => {
+  const defaultColumnHeader = getDefaultRecordFieldColumnHeader(
+    defaultColumnHeaderArgs,
+  );
+
+  return isNonEmptyString(customLabel)
+    ? { ...defaultColumnHeader, label: customLabel }
+    : defaultColumnHeader;
 };
