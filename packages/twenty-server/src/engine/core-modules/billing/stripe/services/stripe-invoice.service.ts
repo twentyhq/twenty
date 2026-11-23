@@ -41,8 +41,8 @@ export class StripeInvoiceService {
     return invoices.data;
   }
 
-  async voidInvoice(invoiceId: string): Promise<Stripe.Invoice> {
-    return this.stripe.invoices.voidInvoice(invoiceId);
+  async voidInvoice(invoiceId: string): Promise<void> {
+    await this.stripe.invoices.voidInvoice(invoiceId);
   }
 
   async finalizeInvoice(invoiceId: string): Promise<Stripe.Invoice> {

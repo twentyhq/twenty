@@ -265,8 +265,6 @@ describe('Application price billing (integration)', () => {
       )
       .mockImplementation(async () => {
         pendingUpdateInvoiceId = null;
-
-        return {} as Awaited<ReturnType<StripeInvoiceService['voidInvoice']>>;
       });
 
     spies = [
