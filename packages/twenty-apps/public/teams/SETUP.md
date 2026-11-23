@@ -84,9 +84,11 @@ and DoD tenants are not supported.
    and enable the Microsoft Teams channel. See [where to find the application
    registration id](#application-registration-id). The Twenty server must be
    reachable from the internet over HTTPS.
-2. Build the Teams app package and install it for your users:
+2. Build the Teams app package and install it for your users. From a checkout
+   of this directory (`packages/twenty-apps/public/teams`):
 
    ```bash
+   yarn install
    yarn teams-app:package --bot-app-id <TEAMS_BOT_APP_ID>
    ```
 
