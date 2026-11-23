@@ -4,6 +4,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export type NavigationMenuBuiltInSectionRequirements = {
+  key: string;
   requiredPermissionFlag?: PermissionFlagType;
   requiredFeatureFlag?: FeatureFlagKey;
 };
