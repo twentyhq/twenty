@@ -54,7 +54,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_AGENT_CHAT_RLS_ENABLED]: {
     label: msg`Chat access through rules`,
-    description: msg`In progress: reach chats through record-level permission rules and related record paths instead of record shares. Needs related record paths.`,
+    description: msg`In progress: reach chats through record-level permission rules and related record paths instead of record shares. Needs access groups, related record paths and the create records permission.`,
   },
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,

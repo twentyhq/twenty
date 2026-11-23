@@ -57,7 +57,9 @@ export class AgentChatThreadMemberService {
             .catch(() => false),
       ),
     );
-    const { shares, roles } = canUpdate
+    const canManageSharing =
+      canUpdate && thread.workspaceMemberId === args.workspaceMemberId;
+    const { shares, roles } = canManageSharing
       ? await this.buildSharesAndRoles({
           workspaceId: args.workspaceId,
           thread,
@@ -67,7 +69,7 @@ export class AgentChatThreadMemberService {
     return {
       isShareable: true,
       isPrivate: true,
-      canManageSharing: canUpdate,
+      canManageSharing,
       permissions: {
         canRead: true,
         canUpdate,
@@ -87,6 +89,7 @@ export class AgentChatThreadMemberService {
     memberWorkspaceMemberId: string;
   }): Promise<RecordSharingDTO> {
     await this.assertAgentChatRlsEnabledOrThrow(args.workspaceId);
+    await this.getManagedThreadOrThrow(args);
 
     const [addedWorkspaceMemberId] =
       await this.inboxDeliveryService.deliverThreadToMemberInboxes({
@@ -116,10 +119,7 @@ export class AgentChatThreadMemberService {
   }): Promise<RecordSharingDTO> {
     await this.assertAgentChatRlsEnabledOrThrow(args.workspaceId);
 
-    const thread = await this.sharingService.getThreadWithAccess({
-      ...args,
-      operationType: 'update',
-    });
+    const thread = await this.getManagedThreadOrThrow(args);
 
     if (thread.workspaceMemberId === memberWorkspaceMemberId) {
       throw new AiException(
@@ -142,6 +142,25 @@ export class AgentChatThreadMemberService {
     );
 
     return this.findMembers(args);
+  }
+
+  // Only the owner manages members, as only a FULL share could manage sharing before
+  private async getManagedThreadOrThrow(
+    args: AgentChatThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity> {
+    const thread = await this.sharingService.getThreadWithAccess({
+      ...args,
+      operationType: 'update',
+    });
+
+    if (thread.workspaceMemberId !== args.workspaceMemberId) {
+      throw new AiException(
+        'Only the owner of a chat can change its members',
+        AiExceptionCode.CHAT_THREAD_MEMBERS_MANAGED_BY_OWNER,
+      );
+    }
+
+    return thread;
   }
 
   private async assertAgentChatRlsEnabledOrThrow(

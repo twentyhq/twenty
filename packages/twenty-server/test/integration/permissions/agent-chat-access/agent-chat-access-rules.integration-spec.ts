@@ -7,6 +7,9 @@ import {
   setRoleAllChannelsAccess,
 } from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { readSharedChatThreadOperationFactory } from 'test/integration/graphql/utils/read-shared-chat-thread-operation-factory.util';
@@ -22,11 +25,13 @@ import { type RevokeRoleWideAccessToAgentChatObjectsCommand } from 'src/engine/p
 import { AGENT_CHAT_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/agent-chat-access/constants/agent-chat-object-universal-identifiers.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const FLAGS = [
   FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
   FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
+  FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED,
   FeatureFlagKey.IS_AGENT_CHAT_RLS_ENABLED,
 ];
 
@@ -256,6 +261,96 @@ describe('chat access through individual role rules (integration)', () => {
     expect(await canReadThread(threadId, APPLE_JANE_ADMIN_ACCESS_TOKEN)).toBe(
       false,
     );
+  });
+
+  it('lets only the owner change the members of a chat', async () => {
+    const threadId = await createThread({
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    await makeMetadataApiRequest(
+      {
+        query: ADD_MEMBER,
+        variables: {
+          threadId,
+          memberWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        },
+      },
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+    await waitForAllJobsToFinish();
+
+    const membersResponse = await makeMetadataApiRequest(
+      { query: CHAT_MEMBERS, variables: { threadId } },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(membersResponse.body.data.agentChatThreadMembers).toMatchObject({
+      canManageSharing: false,
+      shares: [],
+    });
+
+    for (const query of [ADD_MEMBER, REMOVE_MEMBER]) {
+      const response = await makeMetadataApiRequest(
+        {
+          query,
+          variables: {
+            threadId,
+            memberWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          },
+        },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(response.body.errors?.[0].extensions.code).toBe('FORBIDDEN');
+    }
+  });
+
+  it('shows the records a chat is linked to only to those who reach the chat', async () => {
+    const threadId = await createThread({
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const createLinkResponse = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'agentChatThreadTarget',
+        gqlFields: 'id',
+        data: { threadId, targetCompanyId: COMPANY_DATA_SEED_IDS.ID_1 },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(createLinkResponse.body.errors).toBeUndefined();
+    await waitForAllJobsToFinish();
+
+    const linkId = createLinkResponse.body.data.createAgentChatThreadTarget.id;
+    const canReadLink = async (token: string) => {
+      const response = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'agentChatThreadTarget',
+          objectMetadataPluralName: 'agentChatThreadTargets',
+          gqlFields: 'id',
+          filter: { id: { eq: linkId } },
+        }),
+        token,
+      );
+
+      return response.body.data?.agentChatThreadTargets.edges.length === 1;
+    };
+
+    expect(await canReadLink(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toBe(true);
+    expect(await canReadLink(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toBe(false);
+
+    const deleteLinkResponse = await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'agentChatThreadTarget',
+        gqlFields: 'id',
+        recordId: linkId,
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(deleteLinkResponse.body.errors).toBeUndefined();
   });
 
   it('reaches channel chats through the roles of the channel', async () => {

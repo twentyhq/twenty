@@ -63,6 +63,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
       case AiExceptionCode.CHAT_CHANNEL_IS_STANDARD:
       case AiExceptionCode.MODEL_NOT_ALLOWED_BY_DATA_POLICY:
+      case AiExceptionCode.CHAT_THREAD_MEMBERS_MANAGED_BY_OWNER:
         throw new ForbiddenError(error);
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.API_KEY_NOT_CONFIGURED:
