@@ -11,7 +11,7 @@
 
 ## 💳 Billing
 
-**$10 per month** per connected account.
+**$7 per month** per connected LinkedIn account. Billing follows the number of connected accounts, so disconnecting one stops its charge.
 
 ## 🚀 Get started
 

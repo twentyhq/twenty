@@ -33,6 +33,7 @@ export const RecordTableCellFieldContextGeneric = ({
     fieldDefinition,
     isRecordReadOnly,
     restrictedFieldNames,
+    fieldValueKey,
   },
   children,
 }: RecordTableCellFieldContextGenericProps) => {
@@ -144,6 +145,7 @@ export const RecordTableCellFieldContextGeneric = ({
             objectPermissionsByObjectMetadataId,
           }),
         isForbidden: !hasObjectReadPermissions || isFieldRestricted,
+        fieldValueKey,
       }}
     >
       {children}

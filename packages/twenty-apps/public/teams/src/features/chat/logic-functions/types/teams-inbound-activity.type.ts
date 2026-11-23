@@ -3,6 +3,7 @@ import { type TeamsChannelAccount } from 'src/features/chat/logic-functions/type
 
 export type TeamsInboundActivity = {
   type?: string;
+  action?: string;
   id?: string;
   text?: string;
   serviceUrl?: string;
