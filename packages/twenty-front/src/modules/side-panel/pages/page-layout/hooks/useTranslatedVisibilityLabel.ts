@@ -1,14 +1,16 @@
-import { getVisibilityLabel } from '@/side-panel/pages/page-layout/utils/getVisibilityLabel';
-import { useLingui } from '@lingui/react/macro';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
+import { getWidgetVisibilityDevice } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityDevice';
 
 export const useTranslatedVisibilityLabel = (
-  expression: string | null | undefined,
+  widget:
+    | Pick<
+        PageLayoutWidget,
+        'conditionalAvailabilityExpression' | 'conditionalAvailability'
+      >
+    | undefined,
 ): string => {
-  const { t } = useLingui();
+  const visibilityLabels = useVisibilityLabels();
 
-  return getVisibilityLabel(expression, {
-    anyDevice: t`Any device`,
-    mobile: t`Mobile`,
-    desktop: t`Desktop`,
-  });
+  return visibilityLabels[getWidgetVisibilityDevice(widget)];
 };
