@@ -586,6 +586,16 @@ type ApplicationAuthorization {
   workspaceId: UUID!
 }
 
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: String!
+  currency: String!
+  label: String!
+  per: String
+  type: String!
+  universalIdentifier: String!
+}
+
 type ApplicationCapabilityGrant {
   grantedCapabilities: [String!]!
   id: UUID!
@@ -619,17 +629,9 @@ type ApplicationConnectedMemberCount {
   connectedMemberCount: Int!
 }
 
-type ApplicationConnectionPrice {
-  amountCents: Int!
-  billingPeriod: String!
-  currency: String!
-  label: String!
-  universalIdentifier: String!
-}
-
 type ApplicationConnectionProvider {
   applicationId: String!
-  connectedAccountPrices: [ApplicationConnectionPrice!]!
+  connectedAccountPrices: [ApplicationBillingPrice!]!
   displayName: String!
   id: UUID!
   logoUrl: String
@@ -3219,6 +3221,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String

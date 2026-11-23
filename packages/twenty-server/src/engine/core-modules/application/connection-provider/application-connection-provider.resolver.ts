@@ -7,9 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { ApplicationConnectionPriceDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-price.dto';
+import { ApplicationBillingPriceDTO } from 'src/engine/core-modules/application/dtos/application-billing-price.dto';
 import { ApplicationConnectionProviderDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import { toApplicationBillingPriceDto } from 'src/engine/core-modules/application/utils/to-application-billing-price-dto.util';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { collectDeclaredApplicationPrices } from 'src/engine/core-modules/billing/utils/collect-declared-application-prices.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -80,12 +81,12 @@ export class ApplicationConnectionProviderResolver {
   }
 
   // Lets the front ask for consent before a new connection adds a billed unit
-  @ResolveField(() => [ApplicationConnectionPriceDTO])
+  @ResolveField(() => [ApplicationBillingPriceDTO])
   async connectedAccountPrices(
     @Parent()
     connectionProvider: Pick<ApplicationConnectionProviderDTO, 'applicationId'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ApplicationConnectionPriceDTO[]> {
+  ): Promise<ApplicationBillingPriceDTO[]> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       return [];
     }
@@ -108,12 +109,6 @@ export class ApplicationConnectionProviderResolver {
 
     return collectDeclaredApplicationPrices({ applications: [application] })
       .filter(({ price }) => price.per === 'CONNECTED_ACCOUNT')
-      .map(({ price }) => ({
-        universalIdentifier: price.universalIdentifier,
-        label: price.label,
-        amountCents: price.amountCents,
-        currency: price.currency ?? 'USD',
-        billingPeriod: price.billingPeriod,
-      }));
+      .map(({ price }) => toApplicationBillingPriceDto(price));
   }
 }

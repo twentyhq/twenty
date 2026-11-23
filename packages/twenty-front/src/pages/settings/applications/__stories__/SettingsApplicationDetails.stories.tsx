@@ -137,6 +137,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     requestedCapabilities: [],
     requestedIframeMediaPermissions: [],
     billsCredits: false,
+    billingPrices: [],
     objects: [],
     roles: [],
   };
@@ -153,7 +154,7 @@ const LINKEDIN_CONNECTION_PROVIDER = {
   oauth: null,
   connectedAccountPrices: [
     {
-      __typename: 'ApplicationConnectionPrice',
+      __typename: 'ApplicationBillingPrice',
       universalIdentifier: '20202020-6a7b-4c3d-8e4f-000000000032',
       label: 'Per connected account',
       amountCents: 700,

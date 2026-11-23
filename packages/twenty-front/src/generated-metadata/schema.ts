@@ -627,6 +627,17 @@ export type ApplicationAuthorization = {
   workspaceId: Scalars['UUID']['output'];
 };
 
+export type ApplicationBillingPrice = {
+  __typename?: 'ApplicationBillingPrice';
+  amountCents: Scalars['Int']['output'];
+  billingPeriod: Scalars['String']['output'];
+  currency: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  per?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
+  universalIdentifier: Scalars['String']['output'];
+};
+
 export type ApplicationCapabilityGrant = {
   __typename?: 'ApplicationCapabilityGrant';
   grantedCapabilities: Array<Scalars['String']['output']>;
@@ -665,19 +676,10 @@ export type ApplicationConnectedMemberCount = {
   connectedMemberCount: Scalars['Int']['output'];
 };
 
-export type ApplicationConnectionPrice = {
-  __typename?: 'ApplicationConnectionPrice';
-  amountCents: Scalars['Int']['output'];
-  billingPeriod: Scalars['String']['output'];
-  currency: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  universalIdentifier: Scalars['String']['output'];
-};
-
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
-  connectedAccountPrices: Array<ApplicationConnectionPrice>;
+  connectedAccountPrices: Array<ApplicationBillingPrice>;
   displayName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -3384,6 +3386,7 @@ export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
   aboutDescription?: Maybe<Scalars['String']['output']>;
   author?: Maybe<Scalars['String']['output']>;
+  billingPrices: Array<ApplicationBillingPrice>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
   connectUrl?: Maybe<Scalars['String']['output']>;

@@ -1278,6 +1278,32 @@ export default {
                 4
             ]
         },
+        "ApplicationBillingPrice": {
+            "amountCents": [
+                2
+            ],
+            "billingPeriod": [
+                4
+            ],
+            "currency": [
+                4
+            ],
+            "label": [
+                4
+            ],
+            "per": [
+                4
+            ],
+            "type": [
+                4
+            ],
+            "universalIdentifier": [
+                4
+            ],
+            "__typename": [
+                4
+            ]
+        },
         "ApplicationCapabilityGrant": {
             "grantedCapabilities": [
                 4
@@ -1365,32 +1391,12 @@ export default {
                 4
             ]
         },
-        "ApplicationConnectionPrice": {
-            "amountCents": [
-                2
-            ],
-            "billingPeriod": [
-                4
-            ],
-            "currency": [
-                4
-            ],
-            "label": [
-                4
-            ],
-            "universalIdentifier": [
-                4
-            ],
-            "__typename": [
-                4
-            ]
-        },
         "ApplicationConnectionProvider": {
             "applicationId": [
                 4
             ],
             "connectedAccountPrices": [
-                63
+                60
             ],
             "displayName": [
                 4
@@ -6652,6 +6658,9 @@ export default {
             "author": [
                 4
             ],
+            "billingPrices": [
+                60
+            ],
             "billsCredits": [
                 1
             ],
@@ -8732,7 +8741,7 @@ export default {
                 421
             ],
             "grantApplicationCapabilities": [
-                60,
+                61,
                 {
                     "input": [
                         318,
@@ -11582,7 +11591,7 @@ export default {
                 }
             ],
             "applicationConnectedAccounts": [
-                61,
+                62,
                 {
                     "applicationId": [
                         563,
@@ -12660,7 +12669,7 @@ export default {
                 }
             ],
             "workspaceApplicationConnectedMemberCounts": [
-                62
+                63
             ],
             "__typename": [
                 4

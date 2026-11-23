@@ -466,6 +466,17 @@ export interface ApplicationAuthorization {
     __typename: 'ApplicationAuthorization'
 }
 
+export interface ApplicationBillingPrice {
+    amountCents: Scalars['Int']
+    billingPeriod: Scalars['String']
+    currency: Scalars['String']
+    label: Scalars['String']
+    per?: Scalars['String']
+    type: Scalars['String']
+    universalIdentifier: Scalars['String']
+    __typename: 'ApplicationBillingPrice'
+}
+
 export interface ApplicationCapabilityGrant {
     grantedCapabilities: Scalars['String'][]
     id: Scalars['UUID']
@@ -504,18 +515,9 @@ export interface ApplicationConnectedMemberCount {
     __typename: 'ApplicationConnectedMemberCount'
 }
 
-export interface ApplicationConnectionPrice {
-    amountCents: Scalars['Int']
-    billingPeriod: Scalars['String']
-    currency: Scalars['String']
-    label: Scalars['String']
-    universalIdentifier: Scalars['String']
-    __typename: 'ApplicationConnectionPrice'
-}
-
 export interface ApplicationConnectionProvider {
     applicationId: Scalars['String']
-    connectedAccountPrices: ApplicationConnectionPrice[]
+    connectedAccountPrices: ApplicationBillingPrice[]
     displayName: Scalars['String']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -2192,6 +2194,7 @@ export interface MarketplaceApp {
 export interface MarketplaceAppDetail {
     aboutDescription?: Scalars['String']
     author?: Scalars['String']
+    billingPrices: ApplicationBillingPrice[]
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
     connectUrl?: Scalars['String']
@@ -5114,6 +5117,18 @@ export interface ApplicationAuthorizationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationBillingPriceGenqlSelection{
+    amountCents?: boolean | number
+    billingPeriod?: boolean | number
+    currency?: boolean | number
+    label?: boolean | number
+    per?: boolean | number
+    type?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationCapabilityGrantGenqlSelection{
     grantedCapabilities?: boolean | number
     id?: boolean | number
@@ -5155,19 +5170,9 @@ export interface ApplicationConnectedMemberCountGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationConnectionPriceGenqlSelection{
-    amountCents?: boolean | number
-    billingPeriod?: boolean | number
-    currency?: boolean | number
-    label?: boolean | number
-    universalIdentifier?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ApplicationConnectionProviderGenqlSelection{
     applicationId?: boolean | number
-    connectedAccountPrices?: ApplicationConnectionPriceGenqlSelection
+    connectedAccountPrices?: ApplicationBillingPriceGenqlSelection
     displayName?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
@@ -7139,6 +7144,7 @@ export interface MarketplaceAppGenqlSelection{
 export interface MarketplaceAppDetailGenqlSelection{
     aboutDescription?: boolean | number
     author?: boolean | number
+    billingPrices?: ApplicationBillingPriceGenqlSelection
     billsCredits?: boolean | number
     category?: boolean | number
     connectUrl?: boolean | number
@@ -10286,6 +10292,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const ApplicationBillingPrice_possibleTypes: string[] = ['ApplicationBillingPrice']
+    export const isApplicationBillingPrice = (obj?: { __typename?: any } | null): obj is ApplicationBillingPrice => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationBillingPrice"')
+      return ApplicationBillingPrice_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApplicationCapabilityGrant_possibleTypes: string[] = ['ApplicationCapabilityGrant']
     export const isApplicationCapabilityGrant = (obj?: { __typename?: any } | null): obj is ApplicationCapabilityGrant => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationCapabilityGrant"')
@@ -10306,14 +10320,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationConnectedMemberCount = (obj?: { __typename?: any } | null): obj is ApplicationConnectedMemberCount => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectedMemberCount"')
       return ApplicationConnectedMemberCount_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationConnectionPrice_possibleTypes: string[] = ['ApplicationConnectionPrice']
-    export const isApplicationConnectionPrice = (obj?: { __typename?: any } | null): obj is ApplicationConnectionPrice => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionPrice"')
-      return ApplicationConnectionPrice_possibleTypes.includes(obj.__typename)
     }
     
 

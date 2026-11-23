@@ -38,7 +38,7 @@ const DEVELOPER_LINKS: DeveloperLinks = {
 
 type RenderAboutOptions = {
   aboutDescription?: string | null;
-  billsCredits?: boolean;
+  isPaid?: boolean;
   description?: string | null;
   developerLinks?: DeveloperLinks;
   installCount?: number;
@@ -48,7 +48,7 @@ type RenderAboutOptions = {
 // null opts out of a default, undefined keeps it.
 const renderAbout = ({
   aboutDescription = ABOUT_DESCRIPTION,
-  billsCredits = false,
+  isPaid = false,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
   installCount = 7,
@@ -69,7 +69,7 @@ const renderAbout = ({
         installCount={installCount}
         category="Finance"
         pricingDescription="$0.02 per minute recorded"
-        billsCredits={billsCredits}
+        isPaid={isPaid}
         developerLinks={developerLinks}
         onShare={onShare ?? undefined}
       />
@@ -97,7 +97,7 @@ describe('SettingsApplicationDetailAbout', () => {
   });
 
   it('shows that the application is paid, with its pricing on hover', async () => {
-    renderAbout({ billsCredits: true });
+    renderAbout({ isPaid: true });
 
     await userEvent.setup().hover(screen.getByText('Paid app'));
 

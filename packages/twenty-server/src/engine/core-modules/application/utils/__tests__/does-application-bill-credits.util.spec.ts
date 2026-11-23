@@ -28,23 +28,6 @@ describe('doesApplicationBillCredits', () => {
     ).toBe(true);
   });
 
-  it('should bill when the app declares a subscription price', () => {
-    expect(
-      doesApplicationBillCredits({
-        prices: [
-          {
-            universalIdentifier: 'b1f0c6a2-3c4d-4e5f-8a9b-0c1d2e3f4a5b',
-            label: 'Per connected account',
-            type: 'RECURRING',
-            billingPeriod: 'MONTHLY',
-            amountCents: 700,
-            per: 'CONNECTED_ACCOUNT',
-          },
-        ],
-      }),
-    ).toBe(true);
-  });
-
   it('should not bill credits for a pricing line alone', () => {
     expect(
       doesApplicationBillCredits({ description: 'Free while in beta' }),
@@ -53,8 +36,8 @@ describe('doesApplicationBillCredits', () => {
 
   it('should not bill credits without a billing declaration', () => {
     expect(doesApplicationBillCredits(undefined)).toBe(false);
-    expect(
-      doesApplicationBillCredits({ operations: {}, recurring: {}, prices: [] }),
-    ).toBe(false);
+    expect(doesApplicationBillCredits({ operations: {}, recurring: {} })).toBe(
+      false,
+    );
   });
 });

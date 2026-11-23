@@ -1,7 +1,6 @@
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
+import { useFormatApplicationPriceAmount } from '@/settings/applications/hooks/useFormatApplicationPriceAmount';
 import { type ConnectedAccountPrice } from '@/settings/applications/types/ConnectedAccountPrice';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -97,19 +96,12 @@ export const SettingsApplicationConnectionBillingValidationModal = ({
 }: SettingsApplicationConnectionBillingValidationModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
-  const { formatNumber } = useNumberFormat();
+  const { formatApplicationPriceAmount } = useFormatApplicationPriceAmount();
 
-  const formatPrice = ({
-    amountCents,
-    currency,
-    billingPeriod,
-  }: ConnectedAccountPrice) => {
-    const amount = `${getCurrencyPrefix(currency)}${formatNumber(
-      amountCents / 100,
-      { decimals: 2, minimumDecimals: 2 },
-    )}`;
+  const formatPrice = (price: ConnectedAccountPrice) => {
+    const amount = formatApplicationPriceAmount(price);
 
-    return billingPeriod === 'MONTHLY' ? t`${amount} / month` : amount;
+    return price.billingPeriod === 'MONTHLY' ? t`${amount} / month` : amount;
   };
 
   const handleClose = () => {

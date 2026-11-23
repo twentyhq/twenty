@@ -47,7 +47,19 @@ const LINKEDIN_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarket
     defaultRoleUniversalIdentifier: null,
     requestedCapabilities: [],
     requestedIframeMediaPermissions: [],
-    billsCredits: true,
+    billsCredits: false,
+    billingPrices: [
+      {
+        __typename: 'ApplicationBillingPrice',
+        universalIdentifier: '20202020-7c1d-4e2f-8a3b-000000000002',
+        label: 'Per connected account',
+        type: 'RECURRING',
+        billingPeriod: 'MONTHLY',
+        amountCents: 700,
+        currency: 'USD',
+        per: 'CONNECTED_ACCOUNT',
+      },
+    ],
     objects: [],
     roles: [],
   };
@@ -135,7 +147,11 @@ export const SubscriptionAppAsksForBillingConsentOnInstall: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await waitFor(() =>
-      expect(body.getByText('Bill your workspace')).toBeVisible(),
+      expect(
+        body.getByText(
+          'Bill your workspace $7.00 for each LinkedIn connected account each month',
+        ),
+      ).toBeVisible(),
     );
   },
 };
