@@ -28,9 +28,11 @@ jest.setTimeout(120000);
 const uploadVersion = async ({
   version,
   prices,
+  expectToFail = false,
 }: {
   version: string;
   prices: ApplicationBillingPrice[];
+  expectToFail?: boolean;
 }): Promise<void> => {
   const baseManifest = buildBaseManifest({
     appId: APP_UNIVERSAL_IDENTIFIER,
@@ -51,6 +53,7 @@ const uploadVersion = async ({
   await uploadAppTarball({
     tarballBuffer,
     universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+    expectToFail,
   });
 };
 
@@ -111,13 +114,10 @@ describe('Application accepted billing prices', () => {
     });
   });
 
-  it('rejects an upgrade declaring an invalid price and keeps the accepted prices', async () => {
+  it('rejects an upload declaring an invalid price and keeps the accepted prices', async () => {
     await uploadVersion({
       version: '3.0.0',
       prices: [{ ...TEN_DOLLARS_PRICE, amountCents: -1 }],
-    });
-    await installApplication({
-      input: { universalIdentifier: APP_UNIVERSAL_IDENTIFIER },
       expectToFail: true,
     });
 
