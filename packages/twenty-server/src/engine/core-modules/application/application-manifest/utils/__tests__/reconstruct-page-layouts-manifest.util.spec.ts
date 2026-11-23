@@ -4,6 +4,7 @@ import {
   type PageLayoutWidgetManifest,
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
 } from 'twenty-shared/application';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import {
   AggregateOperations,
   FieldMetadataType,
@@ -943,6 +944,14 @@ describe('reconstructPageLayoutsManifest', () => {
             conditionalAvailabilityExpression: 'device === "mobile"',
           }),
           buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest(
+              'conditional-tree-widget',
+            ),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+            conditionalAvailability:
+              buildDeviceConditionalAvailability('MOBILE'),
+          }),
+          buildFlatPageLayoutWidget({
             pageLayoutWidgetManifest: {
               ...buildNotesWidgetManifest('missing-object-widget'),
               objectUniversalIdentifier: MISSING_UID,
@@ -1054,6 +1063,9 @@ describe('reconstructPageLayoutsManifest', () => {
     );
     expect(reasonOf(coverage, 'conditional-widget')).toBe(
       'page layout widget with a conditional availability expression',
+    );
+    expect(reasonOf(coverage, 'conditional-tree-widget')).toBe(
+      'page layout widget with a conditional availability tree',
     );
     expect(reasonOf(coverage, 'missing-object-widget')).toBe(
       'page layout widget on an object that does not exist',
