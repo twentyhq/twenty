@@ -261,6 +261,39 @@ describe('writeDefineFile', () => {
     );
   });
 
+  it('should write the enums of a view field relation scope as their members', () => {
+    const { content: file } = writeDefineFile({
+      definer: 'defineViewField',
+      config: {
+        universalIdentifier: 'view-field-uid',
+        viewUniversalIdentifier: 'view-uid',
+        fieldMetadataUniversalIdentifier: 'field-uid',
+        position: 0,
+        relationScope: {
+          filters: [
+            {
+              id: 'filter-id',
+              fieldMetadataUniversalIdentifier: 'stage-uid',
+              operand: 'IS',
+              value: ['OPEN'],
+              filterGroupId: 'group-id',
+            },
+          ],
+          filterGroups: [{ id: 'group-id', logicalOperator: 'AND' }],
+          sorts: [],
+          aggregateOperation: 'SUM',
+        },
+      },
+      enumBindings: VIEW_FIELD_ENUM_BINDINGS,
+    });
+
+    expect(file).toContain('operand: ViewFilterOperand.IS,');
+    expect(file).toContain(
+      'logicalOperator: ViewFilterGroupLogicalOperator.AND,',
+    );
+    expect(file).toContain('aggregateOperation: AggregateOperations.SUM,');
+  });
+
   it('should write every bound page layout property as its enum symbol and import each symbol on its own line', () => {
     const { content: file } = writeDefineFile({
       definer: 'definePageLayout',

@@ -5,6 +5,7 @@ import {
   type WorkflowToolContext,
   type WorkflowToolDependencies,
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
+import { type WorkflowTool } from 'src/modules/workflow/workflow-tools/types/workflow-tool.type';
 
 const createWorkflowVersionEdgeSchema = z.object({
   coreWorkflowVersionId: z
@@ -25,27 +26,28 @@ type CreateWorkflowVersionEdgeInput = z.infer<
 export const createCreateWorkflowVersionEdgeTool = (
   deps: Pick<WorkflowToolDependencies, 'coreWorkflowVersionMutationService'>,
   context: WorkflowToolContext,
-) => ({
-  name: 'create_workflow_version_edge' as const,
-  description:
-    'Create a connection (edge) between two workflow steps. This defines the flow between steps.',
-  inputSchema: createWorkflowVersionEdgeSchema,
-  execute: async (parameters: CreateWorkflowVersionEdgeInput) => {
-    try {
-      return await deps.coreWorkflowVersionMutationService.createEdge({
-        source: parameters.source,
-        target: parameters.target,
-        coreWorkflowVersionId: parameters.coreWorkflowVersionId,
-        workspaceId: context.workspaceId,
-        userWorkspaceId: context.userWorkspaceId,
-        sourceConnectionOptions: parameters.sourceConnectionOptions,
-      });
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-        message: `Failed to create workflow version edge: ${error.message}`,
-      };
-    }
-  },
-});
+) =>
+  ({
+    name: 'create_workflow_version_edge' as const,
+    description:
+      'Create a connection (edge) between two workflow steps. This defines the flow between steps.',
+    inputSchema: createWorkflowVersionEdgeSchema,
+    execute: async (parameters: CreateWorkflowVersionEdgeInput) => {
+      try {
+        return await deps.coreWorkflowVersionMutationService.createEdge({
+          source: parameters.source,
+          target: parameters.target,
+          coreWorkflowVersionId: parameters.coreWorkflowVersionId,
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          sourceConnectionOptions: parameters.sourceConnectionOptions,
+        });
+      } catch (error) {
+        return {
+          success: false,
+          error: error.message,
+          message: `Failed to create workflow version edge: ${error.message}`,
+        };
+      }
+    },
+  }) satisfies WorkflowTool;

@@ -1,4 +1,6 @@
-import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+import { SUPPORTED_PROTOCOL_VERSIONS } from '@modelcontextprotocol/server';
+
+import { MCP_MODERN_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-modern-protocol-version.constant';
 
 type BuildMcpServerCardArgs = {
   baseUrl: string;
@@ -25,7 +27,10 @@ export const buildMcpServerCard = ({
     {
       type: 'streamable-http',
       url: `${baseUrl}/mcp`,
-      supportedProtocolVersions: [MCP_PROTOCOL_VERSION],
+      supportedProtocolVersions: [
+        MCP_MODERN_PROTOCOL_VERSION,
+        ...SUPPORTED_PROTOCOL_VERSIONS,
+      ],
       headers: [
         {
           name: 'Authorization',
