@@ -3,10 +3,10 @@ import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatFieldMetadataOptionMapsForOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
-import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { getInvalidViewFilterSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util';
+import { isFlatFieldMetadataOfTypes } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-types.util';
 
 type UniversalRelationScope = NonNullable<
   UniversalFlatViewField['universalRelationScope']
@@ -39,14 +39,10 @@ const isFilterUsingMissingSelectOption = ({
 
   if (
     !isDefined(referencedFlatFieldMetadata) ||
-    (!isFieldMetadataEntityOfType(
-      referencedFlatFieldMetadata,
+    !isFlatFieldMetadataOfTypes(referencedFlatFieldMetadata, [
       FieldMetadataType.SELECT,
-    ) &&
-      !isFieldMetadataEntityOfType(
-        referencedFlatFieldMetadata,
-        FieldMetadataType.MULTI_SELECT,
-      ))
+      FieldMetadataType.MULTI_SELECT,
+    ])
   ) {
     return false;
   }
