@@ -224,8 +224,8 @@ export const SidePanelEditColumnForm = ({
       editedRelationScope: getRelationScopeFromRecordFiltersAndSorts({
         recordFilters: store.get(currentRecordFilters),
         recordFilterGroups: store.get(currentRecordFilterGroups),
-        recordSorts: isSummary ? [] : store.get(currentRecordSorts),
-        limit: isSummary ? null : limit,
+        recordSorts: store.get(currentRecordSorts),
+        limit,
       }),
       storedRelationScope,
       scopedRelationJunction,
@@ -235,7 +235,8 @@ export const SidePanelEditColumnForm = ({
       fieldMetadataItemId: fieldMetadataItem.id,
       recordFieldId,
       relationScope: isSummary
-        ? { ...relationScope, aggregateOperation }
+        ? // A summary takes no sort or limit, including one stored on the join records the editor does not list
+          { ...relationScope, sorts: [], limit: null, aggregateOperation }
         : relationScope,
       relationTargetFieldMetadataId,
       label,

@@ -20,14 +20,27 @@ export const SidePanelEditColumnHeader = ({
   label,
   onLabelChange,
 }: SidePanelEditColumnHeaderProps) => {
-  const [editedLabel, setEditedLabel] = useState<string | null>(null);
+  // Committed as typed, so the form's save shortcut reads the label in the input
+  const [labelBeforeEdit, setLabelBeforeEdit] = useState<{
+    label: string | null;
+  } | null>(null);
 
-  const saveEditedLabel = () => {
-    if (isDefined(editedLabel)) {
-      onLabelChange(getRecordFieldCustomLabel({ editedLabel, defaultLabel }));
+  const handleChange = (editedLabel: string) => {
+    if (!isDefined(labelBeforeEdit)) {
+      setLabelBeforeEdit({ label });
     }
 
-    setEditedLabel(null);
+    onLabelChange(getRecordFieldCustomLabel({ editedLabel, defaultLabel }));
+  };
+
+  const handleEditEnd = () => setLabelBeforeEdit(null);
+
+  const handleEscape = () => {
+    if (isDefined(labelBeforeEdit)) {
+      onLabelChange(labelBeforeEdit.label);
+    }
+
+    handleEditEnd();
   };
 
   return (
@@ -41,12 +54,12 @@ export const SidePanelEditColumnHeader = ({
               sizeVariant="sm"
               value={label ?? defaultLabel}
               placeholder={defaultLabel}
-              onChange={setEditedLabel}
-              onEnter={saveEditedLabel}
-              onEscape={() => setEditedLabel(null)}
-              onClickOutside={saveEditedLabel}
-              onTab={saveEditedLabel}
-              onShiftTab={saveEditedLabel}
+              onChange={handleChange}
+              onEnter={handleEditEnd}
+              onEscape={handleEscape}
+              onClickOutside={handleEditEnd}
+              onTab={handleEditEnd}
+              onShiftTab={handleEditEnd}
             />
           }
           label={isDefined(label) ? defaultLabel : undefined}
