@@ -12,6 +12,7 @@ export const getWorkspaceMemberIndividualRoleUniversalIdentifier = ({
   holder: WorkspaceMemberIndividualRoleHolder;
 }): string =>
   v5(
+    // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
     holder.type === 'apiKeys'
       ? API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME
       : holder.userWorkspaceId,

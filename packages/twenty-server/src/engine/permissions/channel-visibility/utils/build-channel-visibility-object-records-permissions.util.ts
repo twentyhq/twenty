@@ -36,6 +36,7 @@ export const buildChannelVisibilityObjectRecordsPermissions = ({
 }): ObjectRecordsPermissionsManifest => {
   const roleUniversalIdentifier =
     getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   const isOwnedByHolder = (channel: (typeof channels)[number]): boolean =>
     holder.type === 'userWorkspace' &&
     channel.connectedAccount?.userWorkspaceId === holder.userWorkspaceId;

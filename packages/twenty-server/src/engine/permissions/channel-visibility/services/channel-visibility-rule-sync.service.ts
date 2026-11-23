@@ -64,6 +64,7 @@ export class ChannelVisibilityRuleSyncService {
                 userWorkspaceId,
               }),
             ),
+            // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
             { type: 'apiKeys' as const },
           ]
         : [];

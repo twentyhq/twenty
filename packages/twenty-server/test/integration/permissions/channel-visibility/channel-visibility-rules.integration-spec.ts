@@ -324,6 +324,7 @@ describe('channel visibility through row level rules (integration)', () => {
     });
   });
 
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   it('lets an API key on a role assignable to users read each channel as a member who does not own it, until channel visibility is enforced on API keys', async () => {
     const findJonyMessagesAsApiKey = async () => {
       const response = await makeGraphqlApiRequest(

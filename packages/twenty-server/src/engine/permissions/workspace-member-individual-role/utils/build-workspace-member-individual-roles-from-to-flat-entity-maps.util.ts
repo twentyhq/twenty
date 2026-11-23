@@ -147,6 +147,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
         getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
       const roleManifest: RoleManifest = {
         universalIdentifier: roleUniversalIdentifier,
+        // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
         label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${
           holder.type === 'apiKeys'
             ? API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME
@@ -212,6 +213,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
             now,
           }),
         },
+        // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
         roleTarget:
           holder.type === 'userWorkspace'
             ? buildRoleTarget(holder.userWorkspaceId)

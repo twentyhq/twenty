@@ -105,6 +105,7 @@ export class PrincipalPermissionsReadService {
         flatWorkspaceMemberMaps:
           await this.findFlatWorkspaceMemberMaps(authContext),
         flatRoleTargetMaps: await this.findFlatRoleTargetMaps(authContext),
+        // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
         apiKeysIndividualRoleId:
           await this.findApiKeysIndividualRoleId(authContext),
       },
@@ -127,6 +128,7 @@ export class PrincipalPermissionsReadService {
     return flatWorkspaceMemberMaps;
   }
 
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   private async findApiKeysIndividualRoleId(
     authContext: PermissionsAuthContext,
   ): Promise<string | undefined> {

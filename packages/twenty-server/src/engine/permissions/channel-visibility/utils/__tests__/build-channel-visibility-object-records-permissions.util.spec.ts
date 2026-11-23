@@ -78,6 +78,7 @@ describe('buildChannelVisibilityObjectRecordsPermissions', () => {
     ]);
   });
 
+  // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   it('should give API keys what each channel shares, since they own no channel', () => {
     expect(findReadableChannelIds({ type: 'apiKeys' })).toEqual([
       { unreadableFields: ['subject'], channelIds: ['c1'] },
