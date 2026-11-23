@@ -51,7 +51,7 @@ export default async function PartnersPage({
           locale,
         )}
       />
-      <Menu communityStats={communityStats} scheme="dark" />
+      <Menu communityStats={communityStats} scheme="muted" />
       <main>
         <PartnersHero
           actions={

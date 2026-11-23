@@ -1,16 +1,18 @@
 import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 import { paletteColorNumber } from '@/tokens';
 
+import { GLOBE_VIEW } from './globe-view';
+
 // The hero globe through the site's halftone engine: the land raised on the
 // sphere, lit from the side so the density runs from full blue on the lit
-// land to sparse dashes on the far edge. Turns slowly, like the site's other
-// shapes.
+// land to sparse dots on the far edge. It turns slowly on its pole from the
+// view set in globe-view.ts, and can be dragged round.
 export const GLOBE_MODEL_SETTINGS = {
-  previewDistance: 4.5,
+  previewDistance: GLOBE_VIEW.previewDistance,
   lighting: {
-    intensity: 2.1,
-    fillIntensity: 0.18,
-    ambientIntensity: 0.12,
+    intensity: 1.3,
+    fillIntensity: 0.6,
+    ambientIntensity: 0.3,
     angleDegrees: 128,
     height: 2.2,
   },
@@ -22,9 +24,9 @@ export const GLOBE_MODEL_SETTINGS = {
   },
   halftone: {
     variant: 'band',
-    scale: 11,
-    power: 0.16,
-    width: 0.62,
+    scale: 16,
+    power: -1.8,
+    width: 1.4,
     dashColor: paletteColorNumber('blue'),
     hoverDashColor: paletteColorNumber('blue'),
   },

@@ -4,32 +4,45 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 import { type ReactNode } from 'react';
 
 import { HalftoneModel } from '@/platform/visuals/rigs/HalftoneModel';
-import { HERO_COMPOSITION, spacing } from '@/tokens';
+import { GUTTER, HERO_COMPOSITION, mediaUp, RHYTHM, spacing } from '@/tokens';
 import { Body, GuideCrosshair, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { GLOBE_MODEL_SETTINGS } from './globe-model-settings';
+import { GLOBE_VIEW } from './globe-view';
 
 // A real world in 3D (public/models/partners-globe.glb, the land raised on
 // a sphere), drawn by the site's halftone engine.
 const GLOBE_MODEL_URL = '/models/partners-globe.glb';
 
-const GlobeBox = styled.div`
-  aspect-ratio: 1;
-  margin-inline: auto;
-  max-width: 640px;
-  width: 100%;
+// A banner: the top of a large globe, cut by the hero's bottom edge and, on
+// narrow screens, by the screen's sides. Its height follows the globe, so the
+// hero ends where the visual does.
+const GlobeBanner = styled.div`
+  --partners-globe-size: clamp(560px, 100vw, 1100px);
+  height: calc(var(--partners-globe-size) * 0.36);
+  margin-bottom: calc(-1 * ${spacing(RHYTHM.hero.bottom.base)});
+  margin-inline: calc(-1 * ${spacing(GUTTER.base)});
+  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
+  overflow: hidden;
+  position: relative;
+
+  ${mediaUp('md')} {
+    margin-bottom: calc(-1 * ${spacing(RHYTHM.hero.bottom.md)});
+    margin-inline: calc(-1 * ${spacing(GUTTER.md)});
+  }
 `;
 
-// HomeHero's app-window height at every width, so every hero ends at the same line.
-const GlobeStage = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${APP_PREVIEW_STAGE.windowScene.heightPx}px;
-  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
+const GlobeBox = styled.div`
+  aspect-ratio: 1;
+  left: 50%;
+  position: absolute;
+  /* Part of the empty cap above 70°N stays above; the land starts below. */
+  top: calc(var(--partners-globe-size) * -0.03);
+  transform: translateX(-50%);
+  width: var(--partners-globe-size);
 `;
 
 // The home hero's text block: HeadingPair, the same measures, 32px to the
@@ -69,6 +82,7 @@ type PartnersHeroProps = {
 
 export function PartnersHero({ actions }: PartnersHeroProps) {
   const { i18n } = useLingui();
+
   return (
     <SectionShell
       background={
@@ -80,7 +94,7 @@ export function PartnersHero({ actions }: PartnersHeroProps) {
         />
       }
       rhythm="hero"
-      scheme="dark"
+      scheme="muted"
     >
       <Copy>
         <HeadingPair>
@@ -99,14 +113,15 @@ export function PartnersHero({ actions }: PartnersHeroProps) {
         </HeadingPair>
         <Actions>{actions}</Actions>
       </Copy>
-      <GlobeStage>
-        <GlobeBox aria-hidden>
+      <GlobeBanner aria-hidden>
+        <GlobeBox>
           <HalftoneModel
+            initialPose={GLOBE_VIEW.pose}
             modelUrl={GLOBE_MODEL_URL}
             settings={GLOBE_MODEL_SETTINGS}
           />
         </GlobeBox>
-      </GlobeStage>
+      </GlobeBanner>
     </SectionShell>
   );
 }
