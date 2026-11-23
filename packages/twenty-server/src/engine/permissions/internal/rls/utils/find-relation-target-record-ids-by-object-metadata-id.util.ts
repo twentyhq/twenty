@@ -9,7 +9,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const findLinkedRecordIdsByObjectMetadataId = ({
+export const findRelationTargetRecordIdsByObjectMetadataId = ({
   flatObjectMetadata,
   flatFieldMetadataMaps,
   writtenColumns,
@@ -22,7 +22,10 @@ export const findLinkedRecordIdsByObjectMetadataId = ({
     flatFieldMetadataMaps,
     flatObjectMetadata,
   );
-  const linkedRecordIdsByObjectMetadataId = new Map<string, Set<string>>();
+  const relationTargetRecordIdsByObjectMetadataId = new Map<
+    string,
+    Set<string>
+  >();
 
   for (const columns of writtenColumns) {
     for (const [columnName, value] of Object.entries(columns)) {
@@ -32,26 +35,29 @@ export const findLinkedRecordIdsByObjectMetadataId = ({
         continue;
       }
 
-      const linkedObjectMetadataId = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      })?.relationTargetObjectMetadataId;
+      const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps(
+        {
+          flatEntityId: fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        },
+      )?.relationTargetObjectMetadataId;
 
-      if (!isDefined(linkedObjectMetadataId)) {
+      if (!isDefined(relationTargetObjectMetadataId)) {
         continue;
       }
 
-      const linkedRecordIds =
-        linkedRecordIdsByObjectMetadataId.get(linkedObjectMetadataId) ??
-        new Set<string>();
+      const relationTargetRecordIds =
+        relationTargetRecordIdsByObjectMetadataId.get(
+          relationTargetObjectMetadataId,
+        ) ?? new Set<string>();
 
-      linkedRecordIds.add(value.toLowerCase());
-      linkedRecordIdsByObjectMetadataId.set(
-        linkedObjectMetadataId,
-        linkedRecordIds,
+      relationTargetRecordIds.add(value.toLowerCase());
+      relationTargetRecordIdsByObjectMetadataId.set(
+        relationTargetObjectMetadataId,
+        relationTargetRecordIds,
       );
     }
   }
 
-  return linkedRecordIdsByObjectMetadataId;
+  return relationTargetRecordIdsByObjectMetadataId;
 };

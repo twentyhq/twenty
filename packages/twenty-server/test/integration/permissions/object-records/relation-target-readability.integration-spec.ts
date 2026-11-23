@@ -18,7 +18,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const WORKSPACE_SCHEMA = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"`;
-const OPPORTUNITY_NAME_PREFIX = 'Linked record readability';
+const OPPORTUNITY_NAME_PREFIX = 'Relation target readability';
 
 type StoredPerson = { id: string; jobTitle: string };
 
@@ -182,17 +182,17 @@ describe('linking a record to a record the role cannot read', () => {
     }
   });
 
-  it('should create a record linked to a record the role can read', async () => {
+  it('should create a record whose relation targets a record the role can read', async () => {
     const response = await createOpportunityAsMember(parisPersonId);
 
     expect(response.body.errors).toBeUndefined();
   });
 
-  it('should refuse to create a record linked to a record the role cannot read', async () => {
+  it('should refuse to create a record whose relation targets a record the role cannot read', async () => {
     const response = await createOpportunityAsMember(londonPersonId);
 
     expect(response.body.errors[0].message).toBe(
-      'Linked record is not readable by your current role',
+      'Relation target record is not readable by your current role',
     );
 
     const [{ count }] = await global.testDataSource.query(
@@ -213,12 +213,12 @@ describe('linking a record to a record the role cannot read', () => {
     });
 
     expect(response.body.errors[0].message).toBe(
-      'Linked record is not readable by your current role',
+      'Relation target record is not readable by your current role',
     );
     expect(await findPointOfContactId(opportunityId)).toBe(parisPersonId);
   });
 
-  it('should still update other fields of a record already linked to a record the role cannot read', async () => {
+  it('should still update other fields of a record whose relation already targets a record the role cannot read', async () => {
     const createResponse = await createOpportunityAsMember(parisPersonId);
     const opportunityId = createResponse.body.data.createOpportunity.id;
 

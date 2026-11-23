@@ -72,7 +72,7 @@ import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
-import { findLinkedRecordIdsByObjectMetadataId } from 'src/engine/permissions/internal/rls/utils/find-linked-record-ids-by-object-metadata-id.util';
+import { findRelationTargetRecordIdsByObjectMetadataId } from 'src/engine/permissions/internal/rls/utils/find-relation-target-record-ids-by-object-metadata-id.util';
 import { validateRlsPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
@@ -513,7 +513,7 @@ export class RecordPermissionsReadService {
         operationType: 'create',
       });
 
-    await this.assertLinkedRecordsReadableOrThrow({
+    await this.assertRelationTargetRecordsReadableOrThrow({
       principals,
       metadataMaps,
       flatObjectMetadata,
@@ -556,7 +556,7 @@ export class RecordPermissionsReadService {
         operationType: 'update',
       });
 
-    await this.assertLinkedRecordsReadableOrThrow({
+    await this.assertRelationTargetRecordsReadableOrThrow({
       principals,
       metadataMaps,
       flatObjectMetadata,
@@ -639,7 +639,7 @@ export class RecordPermissionsReadService {
     }
   }
 
-  private async assertLinkedRecordsReadableOrThrow({
+  private async assertRelationTargetRecordsReadableOrThrow({
     principals,
     metadataMaps,
     flatObjectMetadata,
@@ -652,22 +652,22 @@ export class RecordPermissionsReadService {
     writtenColumns: Record<string, unknown>[];
     transactionScope: RecordPermissionTransactionScope;
   }): Promise<void> {
-    const linkedRecordIdsByObjectMetadataId =
-      findLinkedRecordIdsByObjectMetadataId({
+    const relationTargetRecordIdsByObjectMetadataId =
+      findRelationTargetRecordIdsByObjectMetadataId({
         flatObjectMetadata,
         flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
         writtenColumns,
       });
 
     for (const [
-      linkedObjectMetadataId,
-      linkedRecordIds,
-    ] of linkedRecordIdsByObjectMetadataId) {
+      relationTargetObjectMetadataId,
+      relationTargetRecordIds,
+    ] of relationTargetRecordIdsByObjectMetadataId) {
       if (
         !isMainRoleRestrictedByRlsRule({
           principals,
           metadataMaps,
-          objectMetadataId: linkedObjectMetadataId,
+          objectMetadataId: relationTargetObjectMetadataId,
         })
       ) {
         continue;
@@ -675,19 +675,20 @@ export class RecordPermissionsReadService {
 
       const readableRecordIds = await this.findAccessibleRecordIds({
         principals,
-        objectMetadataId: linkedObjectMetadataId,
+        objectMetadataId: relationTargetObjectMetadataId,
         operationType: 'read',
-        recordIds: [...linkedRecordIds],
+        recordIds: [...relationTargetRecordIds],
         transactionScope,
       });
 
       if (
-        [...linkedRecordIds].some(
-          (linkedRecordId) => !readableRecordIds.has(linkedRecordId),
+        [...relationTargetRecordIds].some(
+          (relationTargetRecordId) =>
+            !readableRecordIds.has(relationTargetRecordId),
         )
       ) {
         throw new PermissionsException(
-          'Linked record is not readable by your current role',
+          'Relation target record is not readable by your current role',
           PermissionsExceptionCode.RLS_VALIDATION_FAILED,
         );
       }
