@@ -69,7 +69,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine/utils/find-accessible-record-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
@@ -482,15 +482,13 @@ export class RecordPermissionsReadService {
             ],
         });
 
-        if (fieldReadableSQLCondition === true) {
-          return undefined;
-        }
-
-        if (fieldReadableSQLCondition === false) {
-          return {
-            fieldMetadataIds: [fieldMetadataId],
-            sqlCondition: { sql: 'TRUE', parameters: {} },
-          };
+        if (isBoolean(fieldReadableSQLCondition)) {
+          return fieldReadableSQLCondition
+            ? undefined
+            : {
+                fieldMetadataIds: [fieldMetadataId],
+                sqlCondition: { sql: 'TRUE', parameters: {} },
+              };
         }
 
         return {

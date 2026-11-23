@@ -807,6 +807,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         FIELD_RESTRICTION_LISTS,
       rowLevelPermissionRuleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+      sourceFieldMetadataUniversalIdentifier: FIELD_RESTRICTION_LISTS,
     },
   },
   {
