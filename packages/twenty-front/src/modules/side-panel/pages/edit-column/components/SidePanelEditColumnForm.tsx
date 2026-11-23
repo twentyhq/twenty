@@ -63,6 +63,7 @@ type SidePanelEditColumnFormProps = {
   recordFieldId?: string;
   storedRelationScope?: ViewFieldRelationScope | null;
   storedRelationTargetFieldMetadataId?: string | null;
+  storedLabel?: string | null;
 };
 
 export const SidePanelEditColumnForm = ({
@@ -73,6 +74,7 @@ export const SidePanelEditColumnForm = ({
   recordFieldId,
   storedRelationScope,
   storedRelationTargetFieldMetadataId,
+  storedLabel,
 }: SidePanelEditColumnFormProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -108,6 +110,7 @@ export const SidePanelEditColumnForm = ({
     useState(
       isJunctionRelation ? null : (storedRelationTargetFieldMetadataId ?? null),
     );
+  const [label, setLabel] = useState(storedLabel ?? null);
   const [isSaving, setIsSaving] = useState(false);
 
   const trimmedLimitInput = limitInput.trim();
@@ -128,6 +131,7 @@ export const SidePanelEditColumnForm = ({
       ? { lookupTargetFieldMetadataItem: selectedLookupTargetFieldMetadataItem }
       : undefined,
     isScopedRelationColumn: true,
+    customLabel: undefined,
   });
 
   const handleSaveClick = async () => {
@@ -153,6 +157,7 @@ export const SidePanelEditColumnForm = ({
       recordFieldId,
       relationScope,
       relationTargetFieldMetadataId,
+      label,
     });
 
     if (!isSaved) {
@@ -176,10 +181,13 @@ export const SidePanelEditColumnForm = ({
   return (
     <StyledContainer ref={containerRef} tabIndex={-1}>
       <SidePanelEditColumnHeader
+        instanceId={`edit-column-label-${sidePanelPageId}`}
         icon={
           <ColumnIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         }
         defaultLabel={columnHeader.label}
+        label={label}
+        onLabelChange={setLabel}
       />
       <StyledContent>
         {!isJunctionRelation && (

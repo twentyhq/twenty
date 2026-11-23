@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ColumnHeaderFieldMetadataItem = Pick<
@@ -8,7 +9,7 @@ type ColumnHeaderFieldMetadataItem = Pick<
   'label' | 'icon' | 'description'
 >;
 
-export const getRecordFieldColumnHeader = ({
+const getDefaultRecordFieldColumnHeader = ({
   fieldMetadataItem,
   lookupTarget,
   isScopedRelationColumn,
@@ -35,4 +36,19 @@ export const getRecordFieldColumnHeader = ({
       lookupTargetFieldMetadataItem.description ??
       fieldMetadataItem.description,
   };
+};
+
+export const getRecordFieldColumnHeader = ({
+  customLabel,
+  ...defaultColumnHeaderArgs
+}: Parameters<typeof getDefaultRecordFieldColumnHeader>[0] & {
+  customLabel?: string | null;
+}): ColumnHeaderFieldMetadataItem => {
+  const defaultColumnHeader = getDefaultRecordFieldColumnHeader(
+    defaultColumnHeaderArgs,
+  );
+
+  return isNonEmptyString(customLabel)
+    ? { ...defaultColumnHeader, label: customLabel }
+    : defaultColumnHeader;
 };
