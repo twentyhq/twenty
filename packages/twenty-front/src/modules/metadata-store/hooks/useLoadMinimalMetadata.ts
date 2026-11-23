@@ -4,7 +4,6 @@ import {
   metadataStoreState,
   type MetadataEntityKey,
 } from '@/metadata-store/states/metadataStoreState';
-import { type FlatNavigationMenuItem } from '@/metadata-store/types/FlatNavigationMenuItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FindMinimalMetadataQuery } from '@/metadata-store/types/MinimalMetadata';
@@ -67,15 +66,19 @@ export const useLoadMinimalMetadata = () => {
       }
     }
 
-    // Entities cached before their fragment selected universalIdentifier keep
-    // a matching hash, so they would never be refetched otherwise
+    // Cached before the fragment selected universalIdentifier, with a matching hash
     for (const entityKey of ['views', 'navigationMenuItems'] as const) {
-      const cachedEntities = store.get(metadataStoreState.atomFamily(entityKey))
-        .current as (FlatView | FlatNavigationMenuItem)[];
+      const cachedEntities = store.get(
+        metadataStoreState.atomFamily(entityKey),
+      ).current;
 
       if (
         !staleEntityKeys.includes(entityKey) &&
-        cachedEntities.some((entity) => !isDefined(entity.universalIdentifier))
+        cachedEntities.some(
+          (entity) =>
+            !('universalIdentifier' in entity) ||
+            !isDefined(entity.universalIdentifier),
+        )
       ) {
         staleEntityKeys.push(entityKey);
       }
