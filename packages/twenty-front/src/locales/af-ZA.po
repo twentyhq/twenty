@@ -2290,11 +2290,6 @@ msgstr "Voeg kaart by"
 msgid "Add CC"
 msgstr "Voeg CC by"
 
-#. js-lingui-id: PKjhUq
-#: src/modules/inbox/components/NavigationDrawerInboxChannelsSection.tsx
-msgid "Add channel"
-msgstr "Voeg kanaal by"
-
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
@@ -16115,10 +16110,10 @@ msgstr "Binne minder as 'n dag"
 msgid "In progress"
 msgstr "In proses"
 
-#. js-lingui-id: 2zgsSp
+#. js-lingui-id: q6UzTa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops."
-msgstr "Aan die gang: dwing boodskap- en kalenderkanaalsigbaarheid af met toestemmingreëls op rekordvlak. Benodig relasie-spronge."
+msgid "In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths."
+msgstr "Aan die gang: dwing sigbaarheid van boodskap- en kalenderkanale af met toestemmingsreëls op rekordvlak. Benodig verhoudingspronge en verwante rekordpaaie."
 
 #. js-lingui-id: 0Nl1Pt
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx

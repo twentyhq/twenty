@@ -19,6 +19,13 @@ type MessageToRefresh = Pick<
   'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
 >;
 
+type MessageChannelMessageAssociationSource = Partial<
+  Pick<
+    MessageChannelMessageAssociationWorkspaceEntity,
+    'accountOwnerId' | 'handle'
+  >
+>;
+
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
   existingThreadInDB?: Pick<MessageThreadWorkspaceEntity, 'id'>;
@@ -45,12 +52,7 @@ type MessageAccumulator = {
     | 'messageThreadExternalId'
     | 'direction'
   > &
-    Partial<
-      Pick<
-        MessageChannelMessageAssociationWorkspaceEntity,
-        'accountOwnerId' | 'handle'
-      >
-    >;
+    MessageChannelMessageAssociationSource;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -69,12 +71,7 @@ export class MessagingMessageService {
     messageChannelId: string;
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
-    associationSource: Partial<
-      Pick<
-        MessageChannelMessageAssociationWorkspaceEntity,
-        'accountOwnerId' | 'handle'
-      >
-    >;
+    associationSource: MessageChannelMessageAssociationSource;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];

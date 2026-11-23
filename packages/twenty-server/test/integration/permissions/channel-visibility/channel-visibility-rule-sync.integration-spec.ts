@@ -18,6 +18,7 @@ const setJonyChannelVisibility = (visibility: string) =>
 
 const setChannelVisibilityRlsEnabled = async (value: boolean) => {
   for (const featureFlag of [
+    FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
     FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
     FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
   ]) {
