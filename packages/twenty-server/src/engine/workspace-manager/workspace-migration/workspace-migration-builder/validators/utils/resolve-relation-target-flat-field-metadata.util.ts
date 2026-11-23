@@ -7,12 +7,10 @@ import { resolveEffectiveUniversalFlatEntityProperty } from 'src/engine/metadata
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-
-export type RelationTargetFlatFieldMetadataFailureReason =
-  | 'UNEXPECTED_RELATION_TYPE'
-  | 'NOT_ON_RELATION_TARGET_OBJECT'
-  | 'INACTIVE'
-  | 'IS_A_RELATION';
+import {
+  RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON,
+  type RelationTargetFlatFieldMetadataFailureReason,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/constants/relation-target-flat-field-metadata-failure-reason.constant';
 
 export const resolveRelationTargetFlatFieldMetadata = ({
   flatFieldMetadata,
@@ -33,7 +31,10 @@ export const resolveRelationTargetFlatFieldMetadata = ({
       relationType,
     })
   ) {
-    return { failureReason: 'UNEXPECTED_RELATION_TYPE' };
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.UNEXPECTED_RELATION_TYPE,
+    };
   }
 
   const relationTargetFlatFieldMetadata = findFlatEntityByUniversalIdentifier({
@@ -46,7 +47,10 @@ export const resolveRelationTargetFlatFieldMetadata = ({
     relationTargetFlatFieldMetadata.objectMetadataUniversalIdentifier !==
       flatFieldMetadata.relationTargetObjectMetadataUniversalIdentifier
   ) {
-    return { failureReason: 'NOT_ON_RELATION_TARGET_OBJECT' };
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.NOT_ON_RELATION_TARGET_OBJECT,
+    };
   }
 
   if (
@@ -56,13 +60,19 @@ export const resolveRelationTargetFlatFieldMetadata = ({
       property: 'isActive',
     })
   ) {
-    return { failureReason: 'INACTIVE' };
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.INACTIVE,
+    };
   }
 
   if (
     isMorphOrRelationFieldMetadataType(relationTargetFlatFieldMetadata.type)
   ) {
-    return { failureReason: 'IS_A_RELATION' };
+    return {
+      failureReason:
+        RELATION_TARGET_FLAT_FIELD_METADATA_FAILURE_REASON.IS_A_RELATION,
+    };
   }
 
   return { relationTargetFlatFieldMetadata };
