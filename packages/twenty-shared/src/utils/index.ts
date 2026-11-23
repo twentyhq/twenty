@@ -244,6 +244,7 @@ export { formatToShortNumber } from './format/formatToShortNumber';
 export { coerceFormulaValue } from './formula/coerceFormulaValue';
 export { compileFormulaExpression } from './formula/compileFormulaExpression';
 export { createFormulaEvaluator } from './formula/createFormulaEvaluator';
+export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormulaBindings';
 export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
 export { isFormulaFieldMetadata } from './formula/isFormulaFieldMetadata';
 export { isFormulaFieldMetadataType } from './formula/isFormulaFieldMetadataType';

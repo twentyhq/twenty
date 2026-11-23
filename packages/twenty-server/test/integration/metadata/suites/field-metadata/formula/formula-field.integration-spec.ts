@@ -439,5 +439,23 @@ describe('Formula fields', () => {
     });
 
     expect(await findGadget('total')).toEqual({ total: 125 });
+
+    const [{ universalIdentifier: priceUniversalIdentifier }] =
+      await global.testDataSource.query(
+        `SELECT "universalIdentifier" FROM core."fieldMetadata" WHERE "id" = $1`,
+        [priceFieldMetadataId],
+      );
+    const [{ settings }] = await global.testDataSource.query(
+      `SELECT "settings" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'total'`,
+      [gadgetObjectMetadataId],
+    );
+
+    expect(settings.formula).toMatchObject({
+      expression: 'unitPrice * quantity',
+      bindings: {
+        unitPrice: priceUniversalIdentifier,
+        quantity: expect.any(String),
+      },
+    });
   });
 });
