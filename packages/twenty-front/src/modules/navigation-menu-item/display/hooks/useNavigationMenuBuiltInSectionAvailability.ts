@@ -28,8 +28,7 @@ export const useNavigationMenuBuiltInSectionAvailability = () => {
       !isDefined(requiredPermissionFlag) ||
       permissionFlagMap[requiredPermissionFlag];
     const hasRequiredFeature =
-      !isDefined(requiredFeatureFlag) ||
-      featureFlagsMap[requiredFeatureFlag] === true;
+      !isDefined(requiredFeatureFlag) || featureFlagsMap[requiredFeatureFlag];
 
     return hasRequiredPermission && hasRequiredFeature;
   };
