@@ -1,3 +1,4 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { getUserDevice } from 'twenty-ui/utilities';
 
@@ -10,7 +11,7 @@ const WINDOWS_NOTIFICATION_SETTINGS_URL = 'ms-settings:notifications';
 
 // Order matters: Edge and Opera user agents also contain "Chrome/", and
 // Chrome's contains "Safari/"
-const BROWSERS = [
+const BROWSERS = doNotTranslate([
   {
     userAgentToken: 'Edg/',
     name: 'Microsoft Edge',
@@ -27,9 +28,14 @@ const BROWSERS = [
     name: 'Google Chrome',
     macBundleId: 'com.google.Chrome',
   },
-  // Safari lists each site separately in macOS settings
-  { userAgentToken: 'Safari/', name: 'Safari', macBundleId: undefined },
-];
+  // Safari lists each website in macOS settings, not Safari itself
+  {
+    userAgentToken: 'Safari/',
+    name: 'Safari',
+    macBundleId: undefined,
+    macSettingsEntryName: 'Twenty',
+  },
+]);
 
 export const getSystemNotificationSettings = (): SystemNotificationSettings => {
   const device = getUserDevice();
@@ -41,6 +47,7 @@ export const getSystemNotificationSettings = (): SystemNotificationSettings => {
     return {
       operatingSystem: 'windows',
       browserName: browser?.name,
+      settingsEntryName: browser?.name,
       url: WINDOWS_NOTIFICATION_SETTINGS_URL,
     };
   }
@@ -49,6 +56,7 @@ export const getSystemNotificationSettings = (): SystemNotificationSettings => {
     return {
       operatingSystem: 'mac',
       browserName: browser?.name,
+      settingsEntryName: browser?.macSettingsEntryName ?? browser?.name,
       url: isDefined(browser?.macBundleId)
         ? `${MAC_NOTIFICATION_SETTINGS_URL}?id=${browser.macBundleId}`
         : MAC_NOTIFICATION_SETTINGS_URL,

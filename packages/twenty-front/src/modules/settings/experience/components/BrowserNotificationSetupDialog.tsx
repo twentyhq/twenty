@@ -38,8 +38,10 @@ export const BrowserNotificationSetupDialog = ({
 }: BrowserNotificationSetupDialogProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
-  const { operatingSystem, browserName, url } = getSystemNotificationSettings();
+  const { operatingSystem, browserName, settingsEntryName, url } =
+    getSystemNotificationSettings();
   const browserLabel = browserName ?? t`your browser`;
+  const settingsEntryLabel = settingsEntryName ?? browserLabel;
 
   const closeSetupDialog = () =>
     closeDialog(BROWSER_NOTIFICATION_SETUP_DIALOG_ID);
@@ -54,9 +56,9 @@ export const BrowserNotificationSetupDialog = ({
     confirm: t`Did you see a test notification?`,
     'system-settings':
       operatingSystem === 'mac'
-        ? t`Allow ${browserLabel} in macOS settings`
+        ? t`Allow ${settingsEntryLabel} in macOS settings`
         : operatingSystem === 'windows'
-          ? t`Allow ${browserLabel} in Windows settings`
+          ? t`Allow ${settingsEntryLabel} in Windows settings`
           : t`Check your system notification settings`,
     'confirm-after-system-settings': t`Did you see it this time?`,
     success: t`Notifications are set up`,
@@ -67,9 +69,9 @@ export const BrowserNotificationSetupDialog = ({
     confirm: t`We just sent one. It shows up in a corner of your screen.`,
     'system-settings':
       operatingSystem === 'mac'
-        ? t`macOS can block ${browserLabel} even when Twenty is allowed. Open Notifications, select ${browserLabel} and turn on Allow notifications. Then send a test.`
+        ? t`macOS can block notifications even when ${browserLabel} allows Twenty. Open Notifications, select ${settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test.`
         : operatingSystem === 'windows'
-          ? t`Windows can block ${browserLabel} even when Twenty is allowed. Open Notifications, turn on ${browserLabel} and turn off Do not disturb. Then send a test.`
+          ? t`Windows can block ${browserLabel} even when Twenty is allowed. Open Notifications, turn on ${settingsEntryLabel} and turn off Do not disturb. Then send a test.`
           : t`Your system can block ${browserLabel} even when Twenty is allowed. Allow notifications for ${browserLabel} in your system settings, then send a test.`,
     'confirm-after-system-settings': t`We just sent another test notification.`,
     success: t`New inbox messages will show up like the test notification while your browser is running.`,
@@ -185,11 +187,11 @@ export const BrowserNotificationSetupDialog = ({
           </Dialog.Header>
           {step === 'system-settings' &&
             operatingSystem !== 'other' &&
-            isDefined(browserName) && (
+            isDefined(settingsEntryName) && (
               <Dialog.Body>
                 <SystemNotificationSettingsIllustration
                   operatingSystem={operatingSystem}
-                  browserName={browserName}
+                  settingsEntryName={settingsEntryName}
                 />
               </Dialog.Body>
             )}

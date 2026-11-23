@@ -30,6 +30,7 @@ describe('getSystemNotificationSettings', () => {
       {
         operatingSystem: 'mac',
         browserName: 'Google Chrome',
+        settingsEntryName: 'Google Chrome',
         url: `${MAC_NOTIFICATION_SETTINGS_URL}?id=com.google.Chrome`,
       },
     ],
@@ -39,6 +40,7 @@ describe('getSystemNotificationSettings', () => {
       {
         operatingSystem: 'mac',
         browserName: 'Microsoft Edge',
+        settingsEntryName: 'Microsoft Edge',
         url: `${MAC_NOTIFICATION_SETTINGS_URL}?id=com.microsoft.edgemac`,
       },
     ],
@@ -48,6 +50,7 @@ describe('getSystemNotificationSettings', () => {
       {
         operatingSystem: 'mac',
         browserName: 'Firefox',
+        settingsEntryName: 'Firefox',
         url: `${MAC_NOTIFICATION_SETTINGS_URL}?id=org.mozilla.firefox`,
       },
     ],
@@ -57,6 +60,7 @@ describe('getSystemNotificationSettings', () => {
       {
         operatingSystem: 'mac',
         browserName: 'Safari',
+        settingsEntryName: 'Twenty',
         url: MAC_NOTIFICATION_SETTINGS_URL,
       },
     ],
@@ -66,6 +70,7 @@ describe('getSystemNotificationSettings', () => {
       {
         operatingSystem: 'windows',
         browserName: 'Google Chrome',
+        settingsEntryName: 'Google Chrome',
         url: 'ms-settings:notifications',
       },
     ],

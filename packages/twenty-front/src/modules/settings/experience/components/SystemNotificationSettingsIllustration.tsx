@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconAppWindow } from 'twenty-ui/icon';
+import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SystemNotificationSettingsIllustrationRow = {
@@ -12,7 +13,7 @@ type SystemNotificationSettingsIllustrationRow = {
 
 type SystemNotificationSettingsIllustrationProps = {
   operatingSystem: 'mac' | 'windows';
-  browserName: string;
+  settingsEntryName: string;
 };
 
 const StyledWindow = styled.div`
@@ -68,29 +69,9 @@ const StyledRowLabel = styled.span`
   flex: 1;
 `;
 
-const StyledToggle = styled.span<{ isOn: boolean }>`
-  background: ${({ isOn }) =>
-    isOn
-      ? themeCssVariables.color.blue
-      : themeCssVariables.border.color.strong};
-  border-radius: 8px;
-  display: flex;
-  height: 16px;
-  justify-content: ${({ isOn }) => (isOn ? 'flex-end' : 'flex-start')};
-  padding: 2px;
-  width: 28px;
-`;
-
-const StyledToggleKnob = styled.span`
-  background: ${themeCssVariables.background.primary};
-  border-radius: 50%;
-  height: 12px;
-  width: 12px;
-`;
-
 export const SystemNotificationSettingsIllustration = ({
   operatingSystem,
-  browserName,
+  settingsEntryName,
 }: SystemNotificationSettingsIllustrationProps) => {
   const { t } = useLingui();
 
@@ -107,7 +88,7 @@ export const SystemNotificationSettingsIllustration = ({
           { label: t`Notifications`, isOn: true, isHighlighted: false },
           { label: t`Do not disturb`, isOn: false, isHighlighted: false },
           {
-            label: browserName,
+            label: settingsEntryName,
             isOn: true,
             isHighlighted: true,
             hasAppIcon: true,
@@ -125,16 +106,14 @@ export const SystemNotificationSettingsIllustration = ({
           </StyledTrafficLights>
         )}
         {operatingSystem === 'mac'
-          ? t`Notifications › ${browserName}`
+          ? t`Notifications › ${settingsEntryName}`
           : t`System › Notifications`}
       </StyledWindowTitle>
       {rows.map(({ label, isOn, isHighlighted, hasAppIcon }) => (
         <StyledRow key={label} isHighlighted={isHighlighted}>
           {hasAppIcon === true && <IconAppWindow size={16} />}
           <StyledRowLabel>{label}</StyledRowLabel>
-          <StyledToggle isOn={isOn}>
-            <StyledToggleKnob />
-          </StyledToggle>
+          <Switch checked={isOn} readOnly size="sm" tabIndex={-1} />
         </StyledRow>
       ))}
     </StyledWindow>
