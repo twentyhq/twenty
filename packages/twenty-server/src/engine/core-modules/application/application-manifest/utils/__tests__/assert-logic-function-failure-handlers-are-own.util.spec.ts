@@ -9,7 +9,6 @@ import { type UniversalFlatEntityMaps } from 'src/engine/workspace-manager/works
 const FAILING_LOGIC_FUNCTION_IDENTIFIER = 'failing-logic-function';
 const MANIFEST_LOGIC_FUNCTION_IDENTIFIER = 'manifest-logic-function';
 const EXISTING_LOGIC_FUNCTION_IDENTIFIER = 'existing-logic-function';
-const UNKNOWN_LOGIC_FUNCTION_IDENTIFIER = 'unknown-logic-function';
 
 const buildFlatLogicFunctionMaps = (
   universalIdentifiers: string[],
@@ -73,15 +72,6 @@ describe('assertLogicFunctionFailureHandlersAreOwn', () => {
         inferDeletionFromMissingEntities: true,
       }),
     ).not.toThrow();
-  });
-
-  it('rejects a failure handler outside the application', () => {
-    expect(() =>
-      assertFailureHandler({
-        onFailureUniversalIdentifier: UNKNOWN_LOGIC_FUNCTION_IDENTIFIER,
-        inferDeletionFromMissingEntities: true,
-      }),
-    ).toThrow(ApplicationException);
   });
 
   it('accepts an existing logic function of the application on a partial sync', () => {

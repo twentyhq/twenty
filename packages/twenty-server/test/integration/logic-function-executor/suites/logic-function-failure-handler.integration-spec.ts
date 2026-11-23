@@ -28,6 +28,8 @@ const FAILURE_HANDLER_UNIVERSAL_IDENTIFIER =
 const UNKNOWN_FUNCTION_UNIVERSAL_IDENTIFIER =
   'b1a95f51-73fa-4842-ab54-1e4e419b053c';
 
+const BULLMQ_STALLED_JOB_FAILURE_REASON_FIELD = 'defa';
+
 const FAILING_HANDLER_CODE = `export const main = async () => {
   throw new Error('Agent run crashed');
 };
@@ -88,6 +90,36 @@ describe('Logic function failure handler (integration)', () => {
   let logicFunctionInspectionQueue: Queue<LogicFunctionTriggerJobData>;
   let failingFunctionId: string;
   let failureHandlerId: string;
+
+  const enqueueFailingFunctionRun = ({
+    payload,
+    isFailureHandlerRun,
+    delay,
+  }: {
+    payload: object;
+    isFailureHandlerRun?: boolean;
+    delay?: number;
+  }) =>
+    global.app
+      .get<MessageQueueService>(
+        getQueueToken(MessageQueue.logicFunctionQueue),
+        { strict: false },
+      )
+      .add<LogicFunctionTriggerJobData>(
+        LogicFunctionTriggerJob.name,
+        {
+          logicFunctionId: failingFunctionId,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          payload,
+          ...(isDefined(isFailureHandlerRun) ? { isFailureHandlerRun } : {}),
+        },
+        {
+          retryLimit: 0,
+          ...(isDefined(delay) ? { delay } : {}),
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
+        },
+      );
 
   const getFailureHandlerJobs = async () =>
     (
@@ -159,24 +191,7 @@ describe('Logic function failure handler (integration)', () => {
   it('runs the failure handler with the original payload when a queued run fails', async () => {
     const originalPayload = { requestId: 'request-1' };
 
-    await global.app
-      .get<MessageQueueService>(
-        getQueueToken(MessageQueue.logicFunctionQueue),
-        { strict: false },
-      )
-      .add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        {
-          logicFunctionId: failingFunctionId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          payload: originalPayload,
-        },
-        {
-          retryLimit: 0,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        },
-      );
+    await enqueueFailingFunctionRun({ payload: originalPayload });
 
     await waitForAllJobsToFinish();
 
@@ -198,34 +213,18 @@ describe('Logic function failure handler (integration)', () => {
   }, 120000);
 
   it('runs the failure handler when the queue fails a job whose workers kept crashing', async () => {
-    const queueJobId = await global.app
-      .get<MessageQueueService>(
-        getQueueToken(MessageQueue.logicFunctionQueue),
-        { strict: false },
-      )
-      .add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        {
-          logicFunctionId: failingFunctionId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          payload: { requestId: 'request-crashed' },
-        },
-        {
-          retryLimit: 0,
-          delay: 60_000,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        },
-      );
+    const queueJobId = await enqueueFailingFunctionRun({
+      payload: { requestId: 'request-crashed' },
+      delay: 60_000,
+    });
 
     if (!isDefined(queueJobId)) {
       throw new Error('The crashed run job was not enqueued');
     }
 
-    // BullMQ flags a job this way once it stalled more than maxStalledCount times.
     await redisConnection.hset(
       logicFunctionInspectionQueue.toKey(queueJobId),
-      'defa',
+      BULLMQ_STALLED_JOB_FAILURE_REASON_FIELD,
       'job stalled more than allowable limit',
     );
 
@@ -251,25 +250,10 @@ describe('Logic function failure handler (integration)', () => {
   it('does not run a failure handler when a failure handler run fails', async () => {
     const failureHandlerJobCountBefore = (await getFailureHandlerJobs()).length;
 
-    await global.app
-      .get<MessageQueueService>(
-        getQueueToken(MessageQueue.logicFunctionQueue),
-        { strict: false },
-      )
-      .add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        {
-          logicFunctionId: failingFunctionId,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          payload: { requestId: 'request-2' },
-          isFailureHandlerRun: true,
-        },
-        {
-          retryLimit: 0,
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          applicationUniversalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        },
-      );
+    await enqueueFailingFunctionRun({
+      payload: { requestId: 'request-2' },
+      isFailureHandlerRun: true,
+    });
 
     await waitForAllJobsToFinish();
 
