@@ -1,4 +1,3 @@
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   createFormulaEvaluator,
@@ -53,28 +52,6 @@ const buildDependencies = ({
       relationTargetObjectMetadataId,
     }));
 };
-
-// The evaluator is cached with the plan, so it only keeps the descriptors its formula reads
-const keepReadFieldDescriptors = ({
-  fields,
-  paths,
-}: {
-  fields: ValidationRuleFieldDescriptor[];
-  paths: string[];
-}): ValidationRuleFieldDescriptor[] =>
-  fields
-    .filter(({ name }) => paths.includes(name))
-    .map((field) =>
-      isDefined(field.relationTargetFields)
-        ? {
-            ...field,
-            relationTargetFields: field.relationTargetFields.filter(
-              (targetField) =>
-                paths.includes(`${field.name}.${targetField.name}`),
-            ),
-          }
-        : field,
-    );
 
 export const buildFormulaFieldEvaluationPlans = ({
   flatObjectMetadata,
@@ -173,7 +150,7 @@ export const buildFormulaFieldEvaluationPlans = ({
       ),
       evaluate: createFormulaEvaluator({
         expression,
-        fields: keepReadFieldDescriptors({ fields, paths }),
+        fields,
         fieldMetadataType: type,
       }),
     };
