@@ -18,10 +18,14 @@ export const getNavigationMenuTabIdsWithChatSections = (
   >[],
 ) =>
   new Set(
-    navigationMenuItems.flatMap((item) =>
-      isBuiltInSectionKey(item.builtInSectionKey) &&
-      AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
-        ? [isDefined(item.parentId) ? item.parentId : HOME_TAB_ID]
-        : [],
-    ),
+    navigationMenuItems.flatMap((item) => {
+      if (
+        !isBuiltInSectionKey(item.builtInSectionKey) ||
+        !AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
+      ) {
+        return [];
+      }
+
+      return [isDefined(item.parentId) ? item.parentId : HOME_TAB_ID];
+    }),
   );
