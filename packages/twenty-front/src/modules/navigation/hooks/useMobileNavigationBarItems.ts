@@ -2,7 +2,7 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuItemFolderIdFamilyState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdFamilyState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
@@ -47,7 +47,7 @@ type MobileNavigationBarItem = {
   label: string;
   Icon: IconComponent;
   onClick: () => void;
-  attention?: NavigationMenuChatAttention | null;
+  attention?: InboxChatAttention | null;
   hasDividerAfter?: boolean;
 };
 

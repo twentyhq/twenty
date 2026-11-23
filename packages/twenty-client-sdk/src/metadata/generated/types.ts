@@ -4113,6 +4113,9 @@ export default {
             ]
         },
         "CreatePageLayoutWidgetInput": {
+            "conditionalAvailability": [
+                340
+            ],
             "configuration": [
                 340
             ],
@@ -10946,6 +10949,9 @@ export default {
             "applicationName": [
                 4
             ],
+            "conditionalAvailability": [
+                340
+            ],
             "conditionalAvailabilityExpression": [
                 4
             ],
@@ -15108,6 +15114,9 @@ export default {
             ]
         },
         "UpdatePageLayoutWidgetInput": {
+            "conditionalAvailability": [
+                340
+            ],
             "conditionalAvailabilityExpression": [
                 4
             ],
@@ -15140,6 +15149,9 @@ export default {
             ]
         },
         "UpdatePageLayoutWidgetWithIdInput": {
+            "conditionalAvailability": [
+                340
+            ],
             "conditionalAvailabilityExpression": [
                 4
             ],

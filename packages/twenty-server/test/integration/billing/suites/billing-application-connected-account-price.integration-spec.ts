@@ -1,5 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
+import Stripe from 'stripe';
+import { type ObjectLiteral, Repository } from 'typeorm';
+
 import {
   getSeededBillingWorkspaceId,
   setupResourceCreditSubscription,
@@ -19,6 +22,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
 import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
 
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { type AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { SyncSubscriptionApplicationsJob } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
@@ -424,6 +428,96 @@ describe('Application price per connected account (integration)', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier,
     });
+  }, 120000);
+
+  it('does not create a connected account whose charge is declined', async () => {
+    const handle = 'declined-linkedin@apple.dev';
+
+    updateSubscriptionSpy.mockRejectedValueOnce(
+      new Stripe.errors.StripeCardError({
+        type: 'card_error',
+        message: 'Your card was declined.',
+      }),
+    );
+
+    await expect(connectAccount({ handle })).rejects.toMatchObject({
+      code: ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED,
+    });
+
+    const connectedAccounts = await query(
+      `SELECT id FROM core."connectedAccount" WHERE handle = $1 AND "workspaceId" = $2`,
+      [handle, workspaceId],
+    );
+
+    expect(connectedAccounts).toHaveLength(0);
+    expect(findApplicationItem()).toBeUndefined();
+  }, 120000);
+
+  it('charges each of two accounts connected at the same time', async () => {
+    const originalSave = Repository.prototype.save;
+    let shouldDelayConnectedAccountSave = true;
+
+    spies.push(
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation(async function (
+          this: Repository<ObjectLiteral>,
+          ...args: unknown[]
+        ) {
+          if (
+            shouldDelayConnectedAccountSave &&
+            this.metadata.tableName === 'connectedAccount'
+          ) {
+            shouldDelayConnectedAccountSave = false;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+
+          return Reflect.apply(originalSave, this, args);
+        }),
+    );
+
+    await Promise.all([
+      connectAccount({ handle: 'first-concurrent-linkedin@apple.dev' }),
+      connectAccount({ handle: 'second-concurrent-linkedin@apple.dev' }),
+    ]);
+
+    expect(findApplicationItem()?.quantity).toBe(2);
+  }, 120000);
+
+  it('does not reconnect a disconnected account whose charge is declined', async () => {
+    const handle = 'returning-linkedin@apple.dev';
+    const connectedAccountId = await connectAccount({ handle });
+
+    await runApplicationsSync();
+    await disconnectConnectedAccount(connectedAccountId);
+    await waitForAllJobsToFinish();
+    await runApplicationsSync();
+
+    expect(findApplicationItem()).toBeUndefined();
+
+    updateSubscriptionSpy.mockRejectedValueOnce(
+      new Stripe.errors.StripeCardError({
+        type: 'card_error',
+        message: 'Your card was declined.',
+      }),
+    );
+
+    await expect(
+      connectAccount({
+        handle,
+        reconnectingConnectedAccountId: connectedAccountId,
+      }),
+    ).rejects.toMatchObject({
+      code: ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED,
+    });
+
+    const [connectedAccount] = await query<{ archivedAt: Date | null }>(
+      `SELECT "archivedAt" FROM core."connectedAccount" WHERE id = $1`,
+      [connectedAccountId],
+    );
+
+    expect(connectedAccount.archivedAt).not.toBeNull();
+    expect(findApplicationItem()).toBeUndefined();
   }, 120000);
 
   it('bills each connected account of the application and stops with the last one', async () => {

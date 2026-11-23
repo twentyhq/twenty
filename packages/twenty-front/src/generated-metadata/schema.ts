@@ -1971,6 +1971,7 @@ export type CreatePageLayoutTabInput = {
 };
 
 export type CreatePageLayoutWidgetInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   configuration: Scalars['JSON']['input'];
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   pageLayoutTabId: Scalars['UUID']['input'];
@@ -2626,6 +2627,7 @@ export enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED = 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED',
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED = 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED',
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS = 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS',
   IS_CHANNEL_VISIBILITY_RLS_ENABLED = 'IS_CHANNEL_VISIBILITY_RLS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
@@ -5949,7 +5951,10 @@ export type PageLayoutWidget = {
   applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
   applicationName?: Maybe<Scalars['String']['output']>;
+  conditionalAvailability?: Maybe<Scalars['JSON']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
+  /** @deprecated Use conditionalAvailability instead */
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime']['output'];
@@ -8107,6 +8112,7 @@ export type UpdatePageLayoutTabWithWidgetsInput = {
 };
 
 export type UpdatePageLayoutWidgetInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;
@@ -8119,6 +8125,7 @@ export type UpdatePageLayoutWidgetInput = {
 };
 
 export type UpdatePageLayoutWidgetWithIdInput = {
+  conditionalAvailability?: InputMaybe<Scalars['JSON']['input']>;
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']['input']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']['input']>;
   configuration?: InputMaybe<Scalars['JSON']['input']>;

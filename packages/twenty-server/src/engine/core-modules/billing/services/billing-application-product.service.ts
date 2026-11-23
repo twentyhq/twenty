@@ -8,10 +8,6 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { APPLICATION_PRICE_INTERVALS } from 'src/engine/core-modules/billing/constants/application-price-intervals.constant';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -62,9 +58,11 @@ export class BillingApplicationProductService {
   async findTargetApplicationProducts({
     workspaceId,
     subscribedStripeProductIds = [],
+    additionalConnectedAccountApplicationId,
   }: {
     workspaceId: string;
     subscribedStripeProductIds?: string[];
+    additionalConnectedAccountApplicationId?: string;
   }): Promise<TargetApplicationProduct[]> {
     const declaredPrices = await this.findDeclaredPrices(workspaceId);
 
@@ -92,16 +90,25 @@ export class BillingApplicationProductService {
         ],
       });
 
-    return catalogEntries.flatMap(
-      ({ declaredPrice, stripeProductId, billingProduct }) => {
-        if (!isDefined(billingProduct)) {
-          if (subscribedStripeProductIds.includes(stripeProductId)) {
-            throw new BillingException(
-              `Application product ${stripeProductId} of workspace ${workspaceId} is on the subscription but its catalog entry is incomplete`,
-              BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-            );
-          }
+    const repairedCatalogEntries = await Promise.all(
+      catalogEntries.map(async (catalogEntry) => {
+        if (
+          isDefined(catalogEntry.billingProduct) ||
+          !subscribedStripeProductIds.includes(catalogEntry.stripeProductId)
+        ) {
+          return catalogEntry;
+        }
 
+        return {
+          ...catalogEntry,
+          billingProduct: await this.createProduct(catalogEntry.declaredPrice),
+        };
+      }),
+    );
+
+    return repairedCatalogEntries.flatMap(
+      ({ declaredPrice, billingProduct }) => {
+        if (!isDefined(billingProduct)) {
           this.logger.warn(
             `Application price ${declaredPrice.price.universalIdentifier} of workspace ${workspaceId} has no catalog entry yet`,
           );
@@ -113,9 +120,13 @@ export class BillingApplicationProductService {
           per: declaredPrice.price.per,
           workspaceMemberCount,
           connectedAccountCount:
-            connectedAccountCountByApplicationId.get(
+            (connectedAccountCountByApplicationId.get(
               declaredPrice.applicationId,
-            ) ?? 0,
+            ) ?? 0) +
+            (declaredPrice.applicationId ===
+            additionalConnectedAccountApplicationId
+              ? 1
+              : 0),
         });
 
         return quantity > 0 ? [{ billingProduct, quantity }] : [];

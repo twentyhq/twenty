@@ -8,7 +8,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
-import { type NavigationMenuChatAttention } from '@/navigation-menu-item/common/types/NavigationMenuChatAttention';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { NavigationMenuTabMenuContent } from '@/navigation-menu-item/edit/components/NavigationMenuTabMenuContent';
 import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
@@ -31,7 +31,7 @@ type MainNavigationDrawerSidebarTabProps = {
   isActive: boolean;
   isExpanded: boolean;
   shouldShowTooltip: boolean;
-  attention: NavigationMenuChatAttention | null;
+  attention: InboxChatAttention | null;
 };
 
 export const MainNavigationDrawerSidebarTab = ({

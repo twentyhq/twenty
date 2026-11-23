@@ -79,7 +79,7 @@ describe('useNavigationMenuChatAttention', () => {
   });
 
   it('flags tabs holding a chat section while a chat needs input', () => {
-    mockSummary({ needsInputThreadCount: 1 });
+    mockSummary({ needsInputThreadCount: 1, hasUnreadMentionThread: true });
 
     const { result } = renderHook(() => useNavigationMenuChatAttention());
 
@@ -95,6 +95,14 @@ describe('useNavigationMenuChatAttention', () => {
     const { result } = renderHook(() => useNavigationMenuChatAttention());
 
     expect(result.current.getTabChatAttention('chats-tab')).toBe('unread');
+  });
+
+  it('flags an unread assignment as unread', () => {
+    mockSummary({ hasUnreadAssignedThread: true, unreadOpenThreadCount: 1 });
+
+    const { result } = renderHook(() => useNavigationMenuChatAttention());
+
+    expect(result.current.chatAttention).toBe('unread');
   });
 
   it('ignores an unread chat that is neither a mention nor an assignment', () => {
