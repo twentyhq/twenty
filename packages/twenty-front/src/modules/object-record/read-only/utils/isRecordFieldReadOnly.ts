@@ -8,14 +8,12 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
-  isFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
   objectMetadataId: string;
-  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIEditable'> &
-    Partial<Pick<FieldMetadataItem, 'settings'>>;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'isUIEditable'>;
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
 };
@@ -27,11 +25,7 @@ export const isRecordFieldReadOnly = ({
   objectPermissionsByObjectMetadataId,
   fieldDefinition,
 }: IsRecordFieldReadOnlyParams) => {
-  if (
-    isRecordReadOnly ||
-    !(fieldMetadataItem.isUIEditable ?? true) ||
-    isFormulaFieldMetadata(fieldMetadataItem)
-  ) {
+  if (isRecordReadOnly || !(fieldMetadataItem.isUIEditable ?? true)) {
     return true;
   }
 

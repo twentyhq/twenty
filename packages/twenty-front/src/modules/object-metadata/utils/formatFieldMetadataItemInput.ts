@@ -28,7 +28,6 @@ export const formatFieldMetadataItemInput = (
       return input.settings;
     }
 
-    // Only a field that had a formula has one to clear
     if (!isNonEmptyString(formulaExpression)) {
       return isFormulaFieldMetadata({ settings: input.settings })
         ? { ...input.settings, formula: null }
