@@ -78,17 +78,21 @@ export const computePageLayoutWidgetWithCopiedConditionalAvailability = <
     ? { ...flatPageLayoutWidget, conditionalAvailability: copiedOwnNode }
     : flatPageLayoutWidget;
 
-  const overriddenRuleConversion =
+  const hasOverriddenLegacyRuleWithoutTree =
     LEGACY_RULE_PROPERTIES.some(isOverridden) &&
-    !isOverridden('conditionalAvailability')
-      ? fromLegacyPageLayoutWidgetRuleToConditionalAvailability(
-          resolveEffectiveFlatEntity({
-            metadataName: 'pageLayoutWidget',
-            flatEntity: flatPageLayoutWidget,
-            authorContext: { workspaceCustomApplicationUniversalIdentifier },
-          }),
-        )
-      : undefined;
+    !isOverridden('conditionalAvailability');
+
+  const effectivePageLayoutWidget = resolveEffectiveFlatEntity({
+    metadataName: 'pageLayoutWidget',
+    flatEntity: flatPageLayoutWidget,
+    authorContext: { workspaceCustomApplicationUniversalIdentifier },
+  });
+
+  const overriddenRuleConversion = hasOverriddenLegacyRuleWithoutTree
+    ? fromLegacyPageLayoutWidgetRuleToConditionalAvailability(
+        effectivePageLayoutWidget,
+      )
+    : undefined;
 
   const unreadableRuleMessages = [ownRuleConversion, overriddenRuleConversion]
     .filter(isDefined)

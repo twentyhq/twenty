@@ -121,12 +121,15 @@ const isSameUnderLooseAndStrictEquality = ({
 }: {
   firstOperand: unknown;
   secondOperand: unknown;
-}): boolean =>
-  isJsonLogicLiteral(firstOperand) && isJsonLogicLiteral(secondOperand)
-    ? typeof firstOperand === typeof secondOperand
-    : [firstOperand, secondOperand]
-        .filter(isJsonLogicLiteral)
-        .every((literal) => isString(literal) && Number.isNaN(Number(literal)));
+}): boolean => {
+  if (isJsonLogicLiteral(firstOperand) && isJsonLogicLiteral(secondOperand)) {
+    return typeof firstOperand === typeof secondOperand;
+  }
+
+  return [firstOperand, secondOperand]
+    .filter(isJsonLogicLiteral)
+    .every((literal) => isString(literal) && Number.isNaN(Number(literal)));
+};
 
 const toEqualityNode = ({
   isStrict,
