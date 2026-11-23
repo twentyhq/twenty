@@ -953,6 +953,14 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       return undefined;
     }
 
+    if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records`,
+        userFriendlyMessage: msg`This operand is not supported for this relation`,
+      };
+    }
+
     if (
       operand !== RowLevelPermissionPredicateOperand.IS_EMPTY &&
       operand !== RowLevelPermissionPredicateOperand.IS_NOT_EMPTY
@@ -964,7 +972,7 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       };
     }
 
-    if (isRelationHopEnabled !== true) {
+    if (!isRelationHopEnabled) {
       return {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         message: t`Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates`,

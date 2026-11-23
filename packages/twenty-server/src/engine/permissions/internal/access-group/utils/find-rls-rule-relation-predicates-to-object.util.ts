@@ -13,6 +13,34 @@ import { isRlsOneToManyEmptinessPredicate } from 'src/engine/permissions/interna
 import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
+// Emptiness of a one-to-many relation reads the target's join column, like a hop through it
+const toRelationHopShape = ({
+  predicate,
+  flatFieldMetadataMaps,
+}: {
+  predicate: RowLevelPermissionPredicate;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): RowLevelPermissionPredicate => {
+  const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: predicate.fieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
+
+  if (
+    !isDefined(fieldMetadata) ||
+    !isDefined(fieldMetadata.relationTargetFieldMetadataId) ||
+    !isRlsOneToManyEmptinessPredicate({ predicate, fieldMetadata })
+  ) {
+    return predicate;
+  }
+
+  return {
+    ...predicate,
+    relationFieldMetadataId: fieldMetadata.id,
+    fieldMetadataId: fieldMetadata.relationTargetFieldMetadataId,
+  };
+};
+
 export const findRlsRuleRelationPredicatesToObject = ({
   featureFlagsMap,
   rolesPermissions,
@@ -35,23 +63,9 @@ export const findRlsRuleRelationPredicatesToObject = ({
         ({ predicates }) => predicates,
       ),
     )
-    .map((predicate) => {
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: predicate.fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-      // Emptiness of a one-to-many relation reads the target's join column, like a hop through it
-      return isDefined(fieldMetadata) &&
-        isDefined(fieldMetadata.relationTargetFieldMetadataId) &&
-        isRlsOneToManyEmptinessPredicate({ predicate, fieldMetadata })
-        ? {
-            ...predicate,
-            relationFieldMetadataId: fieldMetadata.id,
-            fieldMetadataId: fieldMetadata.relationTargetFieldMetadataId,
-          }
-        : predicate;
-    })
+    .map((predicate) =>
+      toRelationHopShape({ predicate, flatFieldMetadataMaps }),
+    )
     .filter(
       ({ relationFieldMetadataId, fieldMetadataId }) =>
         isDefined(relationFieldMetadataId) &&
