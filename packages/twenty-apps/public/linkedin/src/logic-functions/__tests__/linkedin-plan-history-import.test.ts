@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   kvStore: new Map<string, unknown>(),
   listUnipileInboxIds: vi.fn(),
   listUnipileChats: vi.fn(),
+  getUnipileChat: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/define', () => ({
@@ -35,7 +36,11 @@ vi.mock('src/unipile/utils/list-unipile-chats.util', () => ({
   listUnipileChats: mocks.listUnipileChats,
 }));
 
-const { UnipileRateLimitError } =
+vi.mock('src/unipile/utils/get-unipile-chat.util', () => ({
+  getUnipileChat: mocks.getUnipileChat,
+}));
+
+const { UnipileRateLimitError, UnipileRequestError } =
   await import('src/unipile/utils/request-unipile.util');
 
 const { linkedinPlanHistoryImportHandler } =
@@ -117,6 +122,41 @@ describe('linkedinPlanHistoryImportHandler', () => {
       chunkCount: 3,
       planJobId: 'linkedin-history-plan-run-1-0',
     });
+  });
+
+  it('lists the conversations the member selected, most recent first, skipping one deleted since', async () => {
+    mocks.kvStore.set(STATE_KEY, {
+      ...RUNNING_STATE,
+      importPolicy: 'SELECTED',
+    });
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChatIds: ['older', 'deleted', 'newer'],
+    });
+    mocks.getUnipileChat.mockImplementation(
+      async ({ chatId }: { chatId: string }) => {
+        if (chatId === 'deleted') {
+          throw new UnipileRequestError('Chat not found', 404);
+        }
+
+        return {
+          id: chatId,
+          last_message_timestamp:
+            chatId === 'newer'
+              ? '2026-10-29T00:00:00.000Z'
+              : '2026-10-01T00:00:00.000Z',
+        };
+      },
+    );
+
+    await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
+      status: 'PLANNED',
+      chunkCount: 1,
+    });
+
+    expect(getStoredChatIds(0)).toEqual(['newer', 'older']);
+    expect(mocks.listUnipileInboxIds).not.toHaveBeenCalled();
+    expect(mocks.listUnipileChats).not.toHaveBeenCalled();
   });
 
   it('starts the import chain on the first page only', async () => {

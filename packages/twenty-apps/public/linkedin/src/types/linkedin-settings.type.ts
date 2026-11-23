@@ -4,6 +4,7 @@ import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type
 
 export type LinkedinSettings = {
   importPolicy: LinkedinImportPolicy;
+  selectedChatIds: string[];
   areGroupChatsImported: boolean;
   historyConversationLimit: LinkedinHistoryConversationLimit;
   contactAutoCreationPolicy: LinkedinContactAutoCreationPolicy;

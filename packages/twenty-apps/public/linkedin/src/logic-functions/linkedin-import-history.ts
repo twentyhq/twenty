@@ -123,7 +123,12 @@ export const linkedinImportHistoryHandler = async (
     matchedPersonCount: 0,
     createdPersonCount: 0,
     attachmentCount: 0,
-    skippedChatCounts: { GROUP_CHATS_OFF: 0, NO_MESSAGES: 0, NO_CONTACT: 0 },
+    skippedChatCounts: {
+      NOT_SELECTED: 0,
+      GROUP_CHATS_OFF: 0,
+      NO_MESSAGES: 0,
+      NO_CONTACT: 0,
+    },
   };
 
   const buildCurrentProgress = (): LinkedinHistoryImportProgress => ({
