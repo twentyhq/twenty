@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { type IconComponent, IconUserPlus, IconUsers } from 'twenty-ui/icon';
+import { IconUserPlus, IconUsers } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -13,21 +13,18 @@ export const useOpenAiChatParticipantsInSidePanel = () => {
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
-  const openPage = useCallback(
+  const openAiChatParticipantsInSidePanel = useCallback(
     ({
       threadId,
       page,
-      pageTitle,
-      pageIcon,
     }: {
       threadId: string;
       page:
         | SidePanelPages.AiChatParticipants
         | SidePanelPages.AddAiChatParticipants;
-      pageTitle: string;
-      pageIcon: IconComponent;
     }) => {
       const pageId = v4();
+      const isAddPage = page === SidePanelPages.AddAiChatParticipants;
 
       store.set(
         aiChatParticipantsThreadIdComponentState.atomFamily({
@@ -36,35 +33,15 @@ export const useOpenAiChatParticipantsInSidePanel = () => {
         threadId,
       );
 
-      navigateSidePanelMenu({ page, pageTitle, pageIcon, pageId });
+      navigateSidePanelMenu({
+        page,
+        pageTitle: isAddPage ? t`Add participants` : t`Participants`,
+        pageIcon: isAddPage ? IconUserPlus : IconUsers,
+        pageId,
+      });
     },
-    [navigateSidePanelMenu, store],
+    [navigateSidePanelMenu, store, t],
   );
 
-  const openAiChatParticipantsInSidePanel = useCallback(
-    (threadId: string) =>
-      openPage({
-        threadId,
-        page: SidePanelPages.AiChatParticipants,
-        pageTitle: t`Participants`,
-        pageIcon: IconUsers,
-      }),
-    [openPage, t],
-  );
-
-  const openAddAiChatParticipantsInSidePanel = useCallback(
-    (threadId: string) =>
-      openPage({
-        threadId,
-        page: SidePanelPages.AddAiChatParticipants,
-        pageTitle: t`Add participants`,
-        pageIcon: IconUserPlus,
-      }),
-    [openPage, t],
-  );
-
-  return {
-    openAiChatParticipantsInSidePanel,
-    openAddAiChatParticipantsInSidePanel,
-  };
+  return { openAiChatParticipantsInSidePanel };
 };

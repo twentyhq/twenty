@@ -6,18 +6,24 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAddParticipantsToAiChatThread } from '@/ai-chat/threads/hooks/useAddParticipantsToAiChatThread';
+import { useAiChatThreadMembers } from '@/ai-chat/threads/hooks/useAiChatThreadMembers';
+import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelAddAiChatParticipantsMemberItem } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsMemberItem';
 import { SidePanelAiChatParticipantsPageLayout } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPageLayout';
-import { useAddAiChatParticipantsCandidates } from '@/side-panel/pages/ai-chat-participants/hooks/useAddAiChatParticipantsCandidates';
+import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { aiChatParticipantsThreadIdComponentState } from '@/side-panel/states/aiChatParticipantsThreadIdComponentState';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledSearchContainer = styled.div`
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -33,8 +39,22 @@ export const SidePanelAddAiChatParticipantsPage = () => {
   const [checkedWorkspaceMemberIds, setCheckedWorkspaceMemberIds] = useState<
     string[]
   >([]);
-  const candidates = useAddAiChatParticipantsCandidates({
-    threadId: aiChatParticipantsThreadId ?? '',
+  const thread = useAtomFamilySelectorValue(
+    aiChatThreadRecordFamilySelector,
+    aiChatParticipantsThreadId ?? '',
+  );
+  const threadMembers = useAiChatThreadMembers(thread);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const candidates = getAssignAiChatMemberOptions({
+    workspaceMembers: currentWorkspaceMembers,
+    currentWorkspaceMemberId: currentWorkspaceMember?.id,
+    excludedWorkspaceMemberIds: [
+      currentWorkspaceMember?.id,
+      ...threadMembers.map(({ id }) => id),
+    ].filter(isDefined),
     search,
   });
   const { addParticipantsToAiChatThread, isAdding } =

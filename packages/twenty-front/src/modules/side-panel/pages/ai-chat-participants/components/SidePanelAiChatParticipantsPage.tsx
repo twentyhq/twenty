@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { IconUserPlus } from 'twenty-ui/icon';
@@ -37,7 +38,7 @@ export const SidePanelAiChatParticipantsPage = () => {
   );
   const threadMembers = useAiChatThreadMembers(thread);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const { openAddAiChatParticipantsInSidePanel } =
+  const { openAiChatParticipantsInSidePanel } =
     useOpenAiChatParticipantsInSidePanel();
 
   if (!isDefined(aiChatParticipantsThreadId)) {
@@ -64,9 +65,10 @@ export const SidePanelAiChatParticipantsPage = () => {
                 color="accent"
                 startIcon={<IconUserPlus />}
                 onClick={() =>
-                  openAddAiChatParticipantsInSidePanel(
-                    aiChatParticipantsThreadId,
-                  )
+                  openAiChatParticipantsInSidePanel({
+                    threadId: aiChatParticipantsThreadId,
+                    page: SidePanelPages.AddAiChatParticipants,
+                  })
                 }
               >{t`Add participants`}</Button>,
             ]

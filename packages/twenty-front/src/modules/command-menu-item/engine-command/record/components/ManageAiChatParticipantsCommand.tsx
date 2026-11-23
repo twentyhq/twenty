@@ -1,3 +1,4 @@
+import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
@@ -13,7 +14,10 @@ export const ManageAiChatParticipantsCommand = () => {
     const [thread] = selectedRecords;
 
     if (isDefined(thread)) {
-      openAiChatParticipantsInSidePanel(thread.id);
+      openAiChatParticipantsInSidePanel({
+        threadId: thread.id,
+        page: SidePanelPages.AiChatParticipants,
+      });
     }
   };
 

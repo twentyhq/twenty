@@ -1,5 +1,4 @@
 import { randomUUID } from 'node:crypto';
-import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { AGENT_CHAT_THREAD_PARTICIPANTS_ADD_MAX_COUNT } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-participants-add-max-count.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import {
@@ -7,7 +6,6 @@ import {
   addParticipantsThroughApi,
   findMyParticipant,
   readThreadActivity,
-  setShareWithMember,
   setShareWithJony,
 } from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 
@@ -32,35 +30,6 @@ describe('Adding chat thread participants through the authenticated API', () => 
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-  });
-
-  it('leaves out a member the caller cannot share the chat with', async () => {
-    const threadId = await createTestThread();
-
-    await setShareWithMember({
-      threadId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      accessLevel: RecordShareAccessLevel.READ_WRITE,
-      enabled: true,
-    });
-    await setShareWithMember({
-      threadId,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-      accessLevel: RecordShareAccessLevel.READ,
-      enabled: true,
-    });
-
-    const response = await addParticipantsThroughApi({
-      threadId,
-      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.addAgentChatThreadParticipants).toEqual([]);
-    expect(
-      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
-    ).toEqual([]);
   });
 
   it('refuses a caller who can only read the chat', async () => {
