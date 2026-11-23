@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
-import { useApplyAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyAiChatThreadUpdate';
+import { useApplyOptimisticAiChatThreadUpdate } from '@/ai-chat/threads/hooks/useApplyOptimisticAiChatThreadUpdate';
 import { useRefreshInboxChannelSummaries } from '@/inbox/hooks/useRefreshInboxChannelSummaries';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -14,10 +14,11 @@ export const useMoveInboxThreadToChannel = () => {
   const client = useApolloClient();
   const store = useStore();
   const { enqueueToast } = useToast();
-  const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
+  const { applyOptimisticAiChatThreadUpdate } =
+    useApplyOptimisticAiChatThreadUpdate();
   const { refreshInboxChannelSummaries } = useRefreshInboxChannelSummaries();
 
-  const moveAgentChatThreadToChannel = useCallback(
+  const moveInboxThreadToChannel = useCallback(
     async ({
       threadId,
       channelId,
@@ -33,7 +34,7 @@ export const useMoveInboxThreadToChannel = () => {
         return;
       }
 
-      applyAiChatThreadUpdate({
+      const { rollback } = applyOptimisticAiChatThreadUpdate({
         id: threadId,
         channelId,
         channelArchivedAt: null,
@@ -48,22 +49,11 @@ export const useMoveInboxThreadToChannel = () => {
         await refreshInboxChannelSummaries();
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
-
-        if (
-          store.get(aiChatThreadRecordFamilySelector.selectorFamily(threadId))
-            ?.channelId === channelId
-        ) {
-          applyAiChatThreadUpdate({
-            id: threadId,
-            channelId: previousThread?.channelId ?? null,
-            channelArchivedAt: previousThread?.channelArchivedAt ?? null,
-            channelSnoozedUntil: previousThread?.channelSnoozedUntil ?? null,
-          });
-        }
+        rollback();
       }
     },
     [
-      applyAiChatThreadUpdate,
+      applyOptimisticAiChatThreadUpdate,
       client,
       enqueueToast,
       refreshInboxChannelSummaries,
@@ -71,5 +61,5 @@ export const useMoveInboxThreadToChannel = () => {
     ],
   );
 
-  return { moveAgentChatThreadToChannel };
+  return { moveInboxThreadToChannel };
 };

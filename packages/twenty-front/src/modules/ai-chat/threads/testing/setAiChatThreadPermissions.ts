@@ -1,7 +1,10 @@
 import { type createStore } from 'jotai';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import {
+  type CurrentWorkspaceMember,
+  currentWorkspaceMemberState,
+} from '@/auth/states/currentWorkspaceMemberState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { recordPermissionsFamilyState } from '@/object-record/record-sharing/states/recordPermissionsFamilyState';
 import { type RecordPermissionsDto } from '~/generated-metadata/graphql';
@@ -18,11 +21,17 @@ export const setAiChatThreadPermissions = ({
 }) => {
   const workspace =
     store.get(currentWorkspaceState.atom) ?? mockCurrentWorkspace;
-  const member = store.get(currentWorkspaceMemberState.atom) ?? {
+  const member: CurrentWorkspaceMember = store.get(
+    currentWorkspaceMemberState.atom,
+  ) ?? {
     id: 'member',
+    name: { firstName: '', lastName: '' },
+    locale: null,
+    colorScheme: 'System',
+    userEmail: '',
   };
   store.set(currentWorkspaceState.atom, workspace);
-  store.set(currentWorkspaceMemberState.atom, member as never);
+  store.set(currentWorkspaceMemberState.atom, member);
   store.set(metadataStoreState.atomFamily('objectMetadataItems'), {
     current: [{ id: 'chat-object', nameSingular: 'agentChatThread' }],
     draft: [],

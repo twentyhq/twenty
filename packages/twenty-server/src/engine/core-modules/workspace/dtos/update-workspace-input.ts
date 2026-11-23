@@ -1,9 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { isUndefined } from '@sniptt/guards';
+import { isString, isUndefined } from '@sniptt/guards';
 
 import GraphQLJSON from 'graphql-type-json';
 import { type AiModelTier } from 'twenty-shared/ai';
-import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
+import {
+  EVENT_LOG_RETENTION,
+  WORKSPACE_DISPLAY_NAME_MAX_LENGTH,
+} from 'twenty-shared/constants';
 
 import {
   IsArray,
@@ -16,11 +19,12 @@ import {
   IsUUID,
   Matches,
   Max,
+  MaxLength,
   Min,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AiDataPolicyInput } from 'src/engine/core-modules/workspace/dtos/ai-data-policy.input';
@@ -47,6 +51,8 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  @Transform(({ value }) => (isString(value) ? value.trim() : value))
+  @MaxLength(WORKSPACE_DISPLAY_NAME_MAX_LENGTH)
   displayName?: string;
 
   @Field({ nullable: true })

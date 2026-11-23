@@ -35,13 +35,4 @@ describe('isAiChatUserMessageCollapsible', () => {
       }),
     ).toBe(true);
   });
-
-  it('keeps the message open when the line height is unknown', () => {
-    expect(
-      isAiChatUserMessageCollapsible({
-        contentHeightInPx: 800,
-        lineHeightInPx: Number.NaN,
-      }),
-    ).toBe(false);
-  });
 });

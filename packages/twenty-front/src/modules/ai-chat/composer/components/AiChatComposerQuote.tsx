@@ -6,7 +6,7 @@ import { AiChatComposerQuotePreview } from '@/ai-chat/composer/components/AiChat
 import { AiChatMessageAuthorResolver } from '@/ai-chat/messages/components/AiChatMessageAuthorResolver';
 import { useAiChatMessageAuthor } from '@/ai-chat/messages/hooks/useAiChatMessageAuthor';
 import { useIsOwnAiChatMessage } from '@/ai-chat/messages/hooks/useIsOwnAiChatMessage';
-import { aiChatQuotedMessageIdFamilyState } from '@/ai-chat/states/aiChatQuotedMessageIdFamilyState';
+import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { aiChatHasMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatHasMessageFamilySelector';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { getAiChatMessageQuoteExcerpt } from '@/ai-chat/messages/utils/getAiChatMessageQuoteExcerpt';
@@ -16,15 +16,13 @@ import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFami
 export const AiChatComposerQuote = () => {
   const { t } = useLingui();
   const { threadId } = useAiChatInstanceOrThrow();
-  const [aiChatQuotedMessageId, setAiChatQuotedMessageId] = useAtomFamilyState(
-    aiChatQuotedMessageIdFamilyState,
-    {
+  const [aiChatComposerQuotedMessageId, setAiChatComposerQuotedMessageId] =
+    useAtomFamilyState(aiChatComposerQuotedMessageIdFamilyState, {
       threadId,
-    },
-  );
+    });
   const quotedMessage = useAtomFamilySelectorValue(
     aiChatThreadMessageFamilySelector,
-    { threadId, messageId: aiChatQuotedMessageId },
+    { threadId, messageId: aiChatComposerQuotedMessageId },
   );
   const aiChatHasMessage = useAtomFamilySelectorValue(
     aiChatHasMessageFamilySelector,
@@ -33,11 +31,11 @@ export const AiChatComposerQuote = () => {
   const quotedMessageAuthor = useAiChatMessageAuthor(quotedMessage);
   const isOwnQuotedMessage = useIsOwnAiChatMessage(quotedMessage);
 
-  if (!isDefined(aiChatQuotedMessageId) || !aiChatHasMessage) {
+  if (!isDefined(aiChatComposerQuotedMessageId) || !aiChatHasMessage) {
     return null;
   }
 
-  const removeQuote = () => setAiChatQuotedMessageId(null);
+  const removeQuote = () => setAiChatComposerQuotedMessageId(null);
 
   if (!isDefined(quotedMessage) || !isDefined(quotedMessageAuthor)) {
     return (

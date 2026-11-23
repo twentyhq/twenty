@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent, useId, useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 import { FormFieldRow } from 'twenty-ui/components/input';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Autocomplete, Input } from 'twenty-ui/primitives/input';
@@ -13,9 +14,8 @@ import { ChatRecipientChip } from '@/chat/components/ChatRecipientChip';
 import { AiChatNewThreadRecipientPicker } from '@/ai-chat/composer/components/AiChatNewThreadRecipientPicker';
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useAiChatNewThreadRecipientSuggestions } from '@/ai-chat/composer/hooks/useAiChatNewThreadRecipientSuggestions';
-import { aiChatChannelsState } from '@/ai-chat/threads/states/aiChatChannelsState';
-import { aiChatNewThreadChannelIdState } from '@/ai-chat/composer/states/aiChatNewThreadChannelIdState';
-import { aiChatNewThreadRecipientsFamilyState } from '@/ai-chat/states/aiChatNewThreadRecipientsFamilyState';
+import { aiChatChannelFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatChannelFamilySelector';
+import { aiChatComposerNewThreadRecipientsFamilyState } from '@/ai-chat/composer/states/aiChatComposerNewThreadRecipientsFamilyState';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
@@ -28,9 +28,8 @@ import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const ADD_RECIPIENTS_INPUT_MIN_WIDTH_PX = 80;
@@ -76,17 +75,15 @@ export const AiChatNewThreadRecipientField = () => {
     useRemoveFocusItemFromFocusStackById();
   const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [recipients, setRecipients] = useAtomFamilyState(
-    aiChatNewThreadRecipientsFamilyState,
+    aiChatComposerNewThreadRecipientsFamilyState,
     newAiChatThreadId,
-  );
-  const [aiChatNewThreadChannelId, setAiChatNewThreadChannelId] = useAtomState(
-    aiChatNewThreadChannelIdState,
   );
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const channel = useAtomStateValue(aiChatChannelsState)?.find(
-    ({ id }) => id === aiChatNewThreadChannelId,
+  const aiChatChannel = useAtomFamilySelectorValue(
+    aiChatChannelFamilySelector,
+    recipients.channelId,
   );
   const recipientWorkspaceMembers = currentWorkspaceMembers.filter(({ id }) =>
     recipients.recipientWorkspaceMemberIds.includes(id),
@@ -100,7 +97,6 @@ export const AiChatNewThreadRecipientField = () => {
     showMoreSuggestions,
     resetVisibleSuggestionCount,
   } = useAiChatNewThreadRecipientSuggestions({
-    // The list fades out on close, so it keeps the results it showed.
     search: isDropdownOpen ? search : searchWhenSuggestionsClosed,
   });
 
@@ -213,18 +209,18 @@ export const AiChatNewThreadRecipientField = () => {
               />
             );
           })}
-          {isDefined(channel) && (
+          {isDefined(aiChatChannel) && (
             <ChatRecipientChip
-              label={channel.name}
+              label={aiChatChannel.name}
               avatar={
                 <AiChatChannelIcon
-                  channel={channel}
+                  channel={aiChatChannel}
                   size={theme.icon.size.sm}
                 />
               }
               onRemove={() => {
                 focusAddRecipientsInput();
-                setAiChatNewThreadChannelId(null);
+                setRecipients((current) => ({ ...current, channelId: null }));
               }}
             />
           )}

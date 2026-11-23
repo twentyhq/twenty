@@ -2,10 +2,9 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { aiChatContinueInSidePanelThreadIdState } from '@/ai-chat/states/aiChatContinueInSidePanelThreadIdState';
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 
 type UseReturnFromExpandedAiChatParams = {
@@ -27,12 +26,19 @@ export const useReturnFromExpandedAiChat = ({
 
   return useCallback(() => {
     if (!reopenSidePanel) {
-      store.set(aiChatContinueInSidePanelThreadIdState.atom, null);
-      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      store.set(isWorkspaceSetupChatActiveState.atom, false);
       void closeSidePanelMenu();
     }
 
-    navigate(destinationPath ?? returnLocation ?? defaultHomePagePath);
+    const destination =
+      destinationPath ?? returnLocation ?? defaultHomePagePath;
+
+    if (reopenSidePanel) {
+      navigate(destination);
+      return;
+    }
+
+    navigate(destination, { state: { isAiChatHandoffSkipped: true } });
   }, [
     reopenSidePanel,
     destinationPath,

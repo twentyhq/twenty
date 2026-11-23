@@ -21,14 +21,14 @@ import { useAiChatUsage } from '@/ai-chat/usage/hooks/useAiChatUsage';
 import { useAiChatUserCreditsUsage } from '@/ai-chat/usage/hooks/useAiChatUserCreditsUsage';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { useIsWorkspaceSetupChat } from '@/ai-chat/workspace-setup/hooks/useIsWorkspaceSetupChat';
-import { aiChatUsageFamilyState } from '@/ai-chat/usage/states/aiChatUsageFamilyState';
+import { useIsWorkspaceSetupChat } from '@/ai-chat/hooks/useIsWorkspaceSetupChat';
+import { aiChatThreadUsageFamilySelector } from '@/ai-chat/usage/states/selectors/aiChatThreadUsageFamilySelector';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '@/localization/utils/formatNumber';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 const StyledFooter = styled.div`
   display: flex;
@@ -59,9 +59,12 @@ export const AiChatContextUsageButton = () => {
 
   const { threadId } = useAiChatInstanceOrThrow();
 
-  const aiChatUsage = useAtomFamilyStateValue(aiChatUsageFamilyState, {
-    threadId,
-  });
+  const aiChatThreadUsage = useAtomFamilySelectorValue(
+    aiChatThreadUsageFamilySelector,
+    {
+      threadId,
+    },
+  );
 
   const tiers = useAiModelTiers();
 
@@ -73,16 +76,15 @@ export const AiChatContextUsageButton = () => {
 
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
-  const modelTier = isWorkspaceSetupChat
-    ? 'fast'
-    : (aiChatUserSelectedModelTier ?? chatTier);
+  const modelTier =
+    aiChatUserSelectedModelTier ?? (isWorkspaceSetupChat ? 'fast' : chatTier);
 
   const contextWindow =
-    aiChatUsage?.contextWindowTokens ??
+    aiChatThreadUsage?.contextWindowTokens ??
     tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
     0;
 
-  const conversationSize = aiChatUsage?.conversationSize ?? 0;
+  const conversationSize = aiChatThreadUsage?.conversationSize ?? 0;
 
   const percentage =
     contextWindow > 0
@@ -192,7 +194,7 @@ export const AiChatContextUsageButton = () => {
                 />
               )}
             {showDetails && <AiChatContextUsageDetails />}
-            {isDefined(aiChatUsage) && (
+            {isDefined(aiChatThreadUsage) && (
               <>
                 <Separator />
                 <StyledFooter>

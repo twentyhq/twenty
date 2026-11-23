@@ -17,6 +17,7 @@ const getViewSortsInputSchema = z.object({
 
 @DefineTool({
   name: 'get_view_sorts',
+  isReadOnly: true,
   category: ToolCategory.VIEW,
   accessPolicy: VIEW_SORT_ACCESS_POLICY,
   description:

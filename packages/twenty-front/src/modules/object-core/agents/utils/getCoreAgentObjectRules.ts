@@ -27,7 +27,7 @@ export const getCoreAgentObjectRules = ({
   );
 
   return {
-    hasRecordLevelFilter: (role?.rowLevelPermissionPredicates ?? []).some(
+    hasRule: (role?.rowLevelPermissionPredicates ?? []).some(
       (predicate) => predicate.objectMetadataId === objectMetadataId,
     ),
     unreadableFieldCount: objectFieldPermissions.filter(

@@ -9,6 +9,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { addFlatNavigationMenuItemToMapsAndUpdateIndex } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/add-flat-navigation-menu-item-to-maps-and-update-index.util';
+import { computeNavigationMenuItemRemovalOperations } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/compute-navigation-menu-item-removal-operations.util';
 import { fromCreateNavigationMenuItemInputToFlatNavigationMenuItemToCreate } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-create-navigation-menu-item-input-to-flat-navigation-menu-item-to-create.util';
 import { fromDeleteNavigationMenuItemInputToFlatNavigationMenuItemOrThrow } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-delete-navigation-menu-item-input-to-flat-navigation-menu-item-or-throw.util';
 import { fromFlatNavigationMenuItemToNavigationMenuItemDto } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/from-flat-navigation-menu-item-to-navigation-menu-item-dto.util';
@@ -20,7 +21,6 @@ import {
   type UpdateNavigationMenuItemInput,
   type UpdateOneNavigationMenuItemInput,
 } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
-import { getNavigationMenuItemDescendantsDeepestFirst } from 'src/engine/metadata-modules/flat-navigation-menu-item/utils/get-navigation-menu-item-descendants-deepest-first.util';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { getNavigationMenuItemCreationRank } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-navigation-menu-item-creation-rank.util';
 import {
@@ -398,6 +398,8 @@ export class NavigationMenuItemService {
             flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
             flatPageLayoutMaps,
             updateNavigationMenuItemInput: updateInput,
+            workspaceCustomApplicationUniversalIdentifier:
+              workspaceCustomFlatApplication.universalIdentifier,
           },
         ),
       );
@@ -508,12 +510,7 @@ export class NavigationMenuItemService {
         },
       );
 
-    const flatEntitiesToDeleteOrdered: FlatNavigationMenuItem[] = [];
-    const seenDeleteId = new Set<string>();
-    const deletedNavigationMenuItemDtoByRequestedId = new Map<
-      string,
-      NavigationMenuItemDTO
-    >();
+    const rootNavigationMenuItems: FlatNavigationMenuItem[] = [];
 
     for (const requestedId of uniqueOrderedIds) {
       const flatNavigationMenuItemRoot =
@@ -529,31 +526,18 @@ export class NavigationMenuItemService {
         },
       );
 
-      deletedNavigationMenuItemDtoByRequestedId.set(
-        requestedId,
-        fromFlatNavigationMenuItemToNavigationMenuItemDto(
-          flatNavigationMenuItemRoot,
-        ),
-      );
-
-      const flatEntitiesForRoot = [
-        ...getNavigationMenuItemDescendantsDeepestFirst({
-          parentId: requestedId,
-          userWorkspaceIdKey:
-            flatNavigationMenuItemRoot.userWorkspaceId ?? 'null',
-          childrenByUserWorkspaceIdAndParentId:
-            existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId,
-        }),
-        flatNavigationMenuItemRoot,
-      ];
-
-      for (const flatEntity of flatEntitiesForRoot) {
-        if (!seenDeleteId.has(flatEntity.id)) {
-          seenDeleteId.add(flatEntity.id);
-          flatEntitiesToDeleteOrdered.push(flatEntity);
-        }
-      }
+      rootNavigationMenuItems.push(flatNavigationMenuItemRoot);
     }
+
+    const { flatEntityToDelete, flatEntityToUpdate } =
+      computeNavigationMenuItemRemovalOperations({
+        rootNavigationMenuItems,
+        childrenByUserWorkspaceIdAndParentId:
+          existingFlatNavigationMenuItemMaps.byUserWorkspaceIdAndParentId,
+        workspaceCustomApplicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        now: new Date().toISOString(),
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -561,8 +545,8 @@ export class NavigationMenuItemService {
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: flatEntitiesToDeleteOrdered,
-              flatEntityToUpdate: [],
+              flatEntityToDelete,
+              flatEntityToUpdate,
             },
           },
           workspaceId,
@@ -579,18 +563,15 @@ export class NavigationMenuItemService {
       );
     }
 
-    return uniqueOrderedIds.map((requestedId) => {
-      const dto = deletedNavigationMenuItemDtoByRequestedId.get(requestedId);
+    const updatedById = new Map(
+      flatEntityToUpdate.map((flatEntity) => [flatEntity.id, flatEntity]),
+    );
 
-      if (!isDefined(dto)) {
-        throw new NavigationMenuItemException(
-          'Failed to resolve deleted navigation menu item in batch',
-          NavigationMenuItemExceptionCode.NAVIGATION_MENU_ITEM_NOT_FOUND,
-        );
-      }
-
-      return dto;
-    });
+    return rootNavigationMenuItems.map((rootNavigationMenuItem) =>
+      fromFlatNavigationMenuItemToNavigationMenuItemDto(
+        updatedById.get(rootNavigationMenuItem.id) ?? rootNavigationMenuItem,
+      ),
+    );
   }
 
   async findTargetRecord({

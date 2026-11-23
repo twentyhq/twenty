@@ -18,6 +18,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { resolveSyncedApplicationCapabilities } from 'src/engine/core-modules/application/utils/resolve-synced-application-capabilities.util';
 import { resolveSyncedApplicationIframeMediaPermissions } from 'src/engine/core-modules/application/utils/resolve-synced-application-iframe-media-permissions.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
+import { toApplicationBillingPricesOrThrow } from 'src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util';
 import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
@@ -96,6 +97,7 @@ export class ApplicationSyncService {
     toRequestedIframeMediaPermissionsOrThrow(
       manifest.application.requestedIframeMediaPermissions,
     );
+    toApplicationBillingPricesOrThrow(manifest.application.billing?.prices);
 
     const ownerFlatApplication: FlatApplication = dryRun
       ? await this.resolveDryRunOwnerFlatApplication({ workspaceId, manifest })
@@ -202,6 +204,7 @@ export class ApplicationSyncService {
       yarnLockFileId: null,
       availablePackages: {},
       billing: manifest.application.billing ?? {},
+      acceptedBillingPrices: null,
       grantedCapabilities: toApplicationCapabilities(
         manifest.application.requestedCapabilities,
       ),

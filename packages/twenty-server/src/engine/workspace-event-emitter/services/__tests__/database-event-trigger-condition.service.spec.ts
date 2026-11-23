@@ -126,6 +126,7 @@ const buildService = async ({
 };
 
 const BIG_COMPANY_EVENT: ObjectRecordEvent = {
+  eventId: 'event-1',
   recordId: 'opportunity-1',
   properties: { after: { companyId: 'big' } },
 };

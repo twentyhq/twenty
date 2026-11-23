@@ -317,6 +317,7 @@ export class ActionToolProvider implements ToolProvider {
       }),
       executionRef: { kind: 'static', toolId },
       ...(isDefined(approval) && { approval }),
+      ...(tool.isReadOnly && { isReadOnly: true }),
     };
   }
 }

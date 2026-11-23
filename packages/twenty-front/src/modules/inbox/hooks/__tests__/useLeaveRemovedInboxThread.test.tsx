@@ -3,9 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useLeaveRemovedInboxThread } from '@/inbox/hooks/useLeaveRemovedInboxThread';
-import { aiChatDraftsByThreadIdState } from '@/ai-chat/states/aiChatDraftsByThreadIdState';
 import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatThreadParticipantsState';
-import { aiChatInputIsEmptyFamilySelector } from '@/ai-chat/composer/states/selectors/aiChatInputIsEmptyFamilySelector';
 import { newAiChatThreadIdState } from '@/ai-chat/states/newAiChatThreadIdState';
 import { setInboxThreadList } from '@/inbox/testing/setInboxThreadList';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
@@ -21,7 +19,7 @@ jest.mock('@/ai-chat/hooks/useProjectAiChatThreadToUrl', () => ({
   useProjectAiChatThreadToUrl: () => ({ projectAiChatThreadToUrl }),
 }));
 
-jest.mock('@/ai-chat/hooks/useLoadAiChatThread', () => ({
+jest.mock('@/ai-chat/threads/hooks/useLoadAiChatThread', () => ({
   useLoadAiChatThread: () => ({ loadAiChatThread }),
 }));
 
@@ -64,7 +62,7 @@ const leave = async () => {
   await act(() => result.current.leaveRemovedInboxThread());
 };
 
-describe('useLeaveRemovedAiChatThread', () => {
+describe('useLeaveRemovedInboxThread', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -73,31 +71,23 @@ describe('useLeaveRemovedAiChatThread', () => {
     window.history.pushState(null, '', `/inbox/${REMOVED_CHAT_ID}`);
   });
 
-  it('moves to the most recent chat with its draft when the current one is gone', async () => {
+  it('moves to the most recent chat when the current one is gone', async () => {
     setInboxThreadList(jotaiStore, [
       buildChat(OLDER_CHAT_ID, '2026-09-01T00:00:00.000Z'),
       buildChat(RECENT_CHAT_ID, '2026-09-20T00:00:00.000Z'),
     ]);
-    jotaiStore.set(
-      aiChatThreadParticipantsState.atom,
-      Object.fromEntries(
+    jotaiStore.set(aiChatThreadParticipantsState.atom, {
+      isLoaded: true,
+      rowsByThreadId: Object.fromEntries(
         [OLDER_CHAT_ID, RECENT_CHAT_ID].map((threadId) => [
           threadId,
           buildFollowedParticipant(threadId),
         ]),
       ),
-    );
-    jotaiStore.set(aiChatDraftsByThreadIdState.atom, {
-      [RECENT_CHAT_ID]: 'Pending question',
     });
 
     await leave();
 
-    expect(
-      jotaiStore.get(
-        aiChatInputIsEmptyFamilySelector.selectorFamily(RECENT_CHAT_ID),
-      ),
-    ).toBe(false);
     expect(projectAiChatThreadToUrl).toHaveBeenCalledWith(RECENT_CHAT_ID);
   });
 

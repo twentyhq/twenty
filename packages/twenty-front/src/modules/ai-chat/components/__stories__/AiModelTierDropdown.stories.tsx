@@ -8,7 +8,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiModelTierDropdown } from '@/ai-chat/components/AiModelTierDropdown';
 import { AiChatSurfaceContext } from '@/ai-chat/contexts/AiChatSurfaceContext';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { isWorkspaceSetupChatActiveState } from '@/ai-chat/states/isWorkspaceSetupChatActiveState';
 
 const StyledTriggerContainer = styled.div`
   margin-top: 200px;
@@ -16,7 +16,7 @@ const StyledTriggerContainer = styled.div`
 `;
 
 const meta: Meta<typeof AiModelTierDropdown> = {
-  title: 'Modules/AiChat/AiModelTierDropdown',
+  title: 'Modules/AI/AiModelTierDropdown',
   component: AiModelTierDropdown,
   args: { dropdownId: 'model-tier-story' },
   decorators: [
@@ -25,9 +25,8 @@ const meta: Meta<typeof AiModelTierDropdown> = {
       const setupChat = parameters.setupChat === true;
       useEffect(() => {
         store.set(aiChatUserSelectedModelTierState.atom, null);
-        store.set(shouldOpenAiChatAfterOnboardingState.atom, setupChat);
-        return () =>
-          store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+        store.set(isWorkspaceSetupChatActiveState.atom, setupChat);
+        return () => store.set(isWorkspaceSetupChatActiveState.atom, false);
       }, [store, setupChat]);
       return (
         <AiChatSurfaceContext.Provider value="side-panel">

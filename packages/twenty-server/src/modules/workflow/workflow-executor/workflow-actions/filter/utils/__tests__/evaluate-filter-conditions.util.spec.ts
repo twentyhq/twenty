@@ -5,6 +5,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
 
 describe('evaluateFilterConditions', () => {
@@ -1538,6 +1539,43 @@ describe('evaluateFilterConditions', () => {
 
         expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow();
       });
+
+      it.each([
+        { type: 'TEXT', leftOperand: 'value' },
+        { type: 'RAW_JSON', leftOperand: 'value' },
+        { type: 'BOOLEAN', leftOperand: 'true' },
+        { type: 'DATE', leftOperand: '2026-01-01T00:00:00Z' },
+        { type: 'UUID', leftOperand: 'value' },
+        { type: 'RATING', leftOperand: 'RATING_1' },
+        { type: 'RELATION', leftOperand: 'value' },
+        {
+          type: 'CURRENCY',
+          leftOperand: 'EUR',
+          compositeFieldSubFieldName: 'currencyCode',
+        },
+        { type: 'NUMBER', leftOperand: '1' },
+        { type: 'SELECT', leftOperand: 'value' },
+        { type: 'STRING', leftOperand: 'value' },
+      ])(
+        'should reject an unsupported operand on a $type filter as invalid step input',
+        ({ type, leftOperand, compositeFieldSubFieldName }) => {
+          const filter = {
+            ...createFilter(
+              ViewFilterOperand.IS_NOT_NULL,
+              leftOperand,
+              '',
+              type,
+            ),
+            compositeFieldSubFieldName,
+          };
+
+          expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
+            expect.objectContaining({
+              code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+            }),
+          );
+        },
+      );
 
       it('should handle unsupported filter type with default filter logic', () => {
         const filter = createFilter(

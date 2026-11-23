@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { getWorkspaceMemberNameOrEmail } from 'twenty-shared/workspace';
 
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
-import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 
 export type AssignAiChatMemberOption = {
   workspaceMember: PartialWorkspaceMember;

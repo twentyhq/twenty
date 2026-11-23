@@ -35,7 +35,6 @@ const FOLLOWER_ID = '20202020-0000-4000-8000-000000000012';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-// The test workspace has no conversation objects; person.company stands in for the company leg.
 const companyTargetField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'company',
@@ -50,12 +49,12 @@ const mockThread: { current: ObjectRecord | undefined } = {
   current: undefined,
 };
 
-jest.mock('@/ai-chat/threads/hooks/useAttachChatThreadToRecord', () => ({
-  useAttachChatThreadToRecord: () => ({ attachChatThreadToRecord }),
+jest.mock('@/ai-chat/threads/hooks/useAttachAiChatThreadToRecord', () => ({
+  useAttachAiChatThreadToRecord: () => ({ attachChatThreadToRecord }),
 }));
 
-jest.mock('@/ai-chat/threads/hooks/useDetachChatThreadFromRecord', () => ({
-  useDetachChatThreadFromRecord: () => ({
+jest.mock('@/ai-chat/threads/hooks/useDetachAiChatThreadFromRecord', () => ({
+  useDetachAiChatThreadFromRecord: () => ({
     detachChatThreadFromRecord: (linkIds: string[]) =>
       detachChatThreadFromRecord(linkIds),
   }),
@@ -96,7 +95,6 @@ jest.mock(
   }),
 );
 
-// MockedProvider can't answer the picker's network search.
 jest.mock(
   '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch',
   () => ({
@@ -239,17 +237,20 @@ const renderDetails = async ({
         buildWorkspaceMember(WRITER_ID, 'Writer'),
       ]);
       store.set(aiChatThreadParticipantsState.atom, {
-        [THREAD_ID]: {
-          __typename: 'AgentChatThreadParticipant',
-          id: 'participant-1',
-          threadId: THREAD_ID,
-          lastReadAt: null,
-          archivedAt: null,
-          snoozedUntil: null,
-          isSubscribed,
-          lastMentionedAt: null,
-          mentionsResolvedAt: null,
-          updatedAt: '2020-01-01T00:00:00.000Z',
+        isLoaded: true,
+        rowsByThreadId: {
+          [THREAD_ID]: {
+            __typename: 'AgentChatThreadParticipant',
+            id: 'participant-1',
+            threadId: THREAD_ID,
+            lastReadAt: null,
+            archivedAt: null,
+            snoozedUntil: null,
+            isSubscribed,
+            lastMentionedAt: null,
+            mentionsResolvedAt: null,
+            updatedAt: '2020-01-01T00:00:00.000Z',
+          },
         },
       });
     },

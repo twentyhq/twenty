@@ -11,6 +11,7 @@ type CommandMenuItemSwitchProps = {
   id: string;
   LeftIcon?: IconComponent;
   text: string;
+  description?: string;
   checked: boolean;
   onCheckedChange?: SwitchProps['onCheckedChange'];
   size?: SwitchProps['size'];
@@ -35,6 +36,7 @@ export const CommandMenuItemSwitch = ({
   id,
   LeftIcon,
   text,
+  description,
   checked,
   onCheckedChange,
   size = 'md',
@@ -55,6 +57,7 @@ export const CommandMenuItemSwitch = ({
           </StyledIconContainer>
         )
       }
+      description={description}
       disabled={disabled}
       checked={checked}
       onCheckedChange={onCheckedChange}

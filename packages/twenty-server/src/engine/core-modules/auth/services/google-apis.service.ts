@@ -13,6 +13,7 @@ import {
 import { v4 } from 'uuid';
 import { EntityManager, Repository } from 'typeorm';
 
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -61,6 +62,7 @@ export class GoogleAPIsService {
   private readonly logger = new Logger(GoogleAPIsService.name);
 
   constructor(
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -283,6 +285,10 @@ export class GoogleAPIsService {
               );
           }
         },
+      );
+
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
       );
 
       if (isMessagingEnabled && isMessagingAvailable) {

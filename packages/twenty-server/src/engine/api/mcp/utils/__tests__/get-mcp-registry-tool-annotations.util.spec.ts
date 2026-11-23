@@ -59,7 +59,7 @@ describe('getMcpRegistryToolAnnotations', () => {
   );
 
   it.each<[ToolExecutionRef]>([
-    [{ kind: 'static', toolId: 'get_view_fields' }],
+    [{ kind: 'static', toolId: 'create_view_field' }],
     [
       {
         kind: 'logic_function',
@@ -74,6 +74,15 @@ describe('getMcpRegistryToolAnnotations', () => {
       );
     },
   );
+
+  it('should return closed world read-only annotations for a non-database tool declared read-only', () => {
+    expect(
+      getMcpRegistryToolAnnotations({
+        executionRef: { kind: 'static', toolId: 'get_view_fields' },
+        isReadOnly: true,
+      }),
+    ).toEqual(MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS);
+  });
 
   it('should flag a non-database tool declared destructive', () => {
     expect(
