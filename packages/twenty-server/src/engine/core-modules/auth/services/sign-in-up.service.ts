@@ -334,7 +334,6 @@ export class SignInUpService {
     const userData = params.userData as {
       type: 'existingUser';
       existingUser: UserEntity;
-      picture?: string | null;
     };
 
     const user = userData.existingUser;
@@ -343,7 +342,6 @@ export class SignInUpService {
       user,
       workspace: params.workspace,
       roleId: params.roleId,
-      pictureUrl: userData.picture ?? undefined,
     });
 
     return user;
@@ -353,20 +351,17 @@ export class SignInUpService {
     user,
     workspace,
     roleId,
-    pictureUrl,
   }: {
     user: UserEntity;
     workspace: WorkspaceEntity;
     roleId?: string | null;
-    pictureUrl?: string;
   }) {
     try {
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace({
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
         workspace,
         roleId,
-        pictureUrl,
-      });
+      );
     } catch (error) {
       if (
         error instanceof BillingException &&
@@ -796,7 +791,7 @@ export class SignInUpService {
               workspaceId: workspace.id,
               isExistingUser,
               pictureUrl: isExistingUser
-                ? (userData.picture ?? undefined)
+                ? undefined
                 : userData.newUserWithPicture.picture,
               applicationUniversalIdentifier:
                 customApplication.universalIdentifier,

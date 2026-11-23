@@ -268,17 +268,11 @@ export class UserWorkspaceService {
     }, authContext);
   }
 
-  async addUserToWorkspaceIfUserNotInWorkspace({
-    user,
-    workspace,
-    roleId,
-    pictureUrl,
-  }: {
-    user: UserEntity;
-    workspace: WorkspaceEntity;
-    roleId?: string | null;
-    pictureUrl?: string;
-  }) {
+  async addUserToWorkspaceIfUserNotInWorkspace(
+    user: UserEntity,
+    workspace: WorkspaceEntity,
+    roleId?: string | null,
+  ) {
     const existingUserWorkspace = await this.checkUserWorkspaceExists(
       user.id,
       workspace.id,
@@ -301,7 +295,6 @@ export class UserWorkspaceService {
             userId: user.id,
             workspaceId: workspace.id,
             isExistingUser: true,
-            pictureUrl,
             locale: user.locale,
           });
 
@@ -620,16 +613,12 @@ export class UserWorkspaceService {
     queryRunner?: QueryRunner,
   ) {
     if (isExistingUser) {
-      const copiedAvatarUrl = await this.copyOldestDefaultAvatar({
+      return this.copyOldestDefaultAvatar({
         userId,
         workspaceId,
         applicationUniversalIdentifier,
         queryRunner,
       });
-
-      if (isDefined(copiedAvatarUrl)) {
-        return copiedAvatarUrl;
-      }
     }
 
     if (!isDefined(pictureUrl) || pictureUrl === '') {
