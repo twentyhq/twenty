@@ -68,55 +68,73 @@ export class AccessGroupReadService {
   async findPrincipalsRelatedRecordPathAccessGroupCompactIds(
     request: PermissionsObjectAccessRequest,
   ): Promise<number[]> {
-    return this.findRelatedRecordPathAccessGroupCompactIds({
-      request,
-      isAccessGroupKept: () => true,
+    return this.findCompactIds({
+      workspaceId: request.principals.workspaceId,
+      accessGroups:
+        await this.buildPrincipalsRelatedRecordPathAccessGroups(request),
     });
   }
 
-  async findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingField({
+  async findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields({
     request,
-    sourceObjectMetadataId,
-    sourceFieldMetadataId,
+    sourceFields,
   }: {
     request: PermissionsObjectAccessRequest;
-    sourceObjectMetadataId: string;
-    sourceFieldMetadataId: string;
-  }): Promise<number[]> {
-    return this.findRelatedRecordPathAccessGroupCompactIds({
-      request,
-      isAccessGroupKept: ({ objectMetadataId, unreadableFieldIds }) =>
-        objectMetadataId !== sourceObjectMetadataId ||
-        !unreadableFieldIds.includes(sourceFieldMetadataId),
-    });
+    sourceFields: {
+      sourceObjectMetadataId: string;
+      sourceFieldMetadataId: string;
+    }[];
+  }): Promise<number[][]> {
+    const accessGroups =
+      await this.buildPrincipalsRelatedRecordPathAccessGroups(request);
+    const accessGroupsShowingFields = sourceFields.map(
+      ({ sourceObjectMetadataId, sourceFieldMetadataId }) =>
+        accessGroups.filter(
+          ({ objectMetadataId, unreadableFieldIds }) =>
+            objectMetadataId !== sourceObjectMetadataId ||
+            !unreadableFieldIds.includes(sourceFieldMetadataId),
+        ),
+    );
+    const groupHashes = [
+      ...new Set(
+        accessGroupsShowingFields.flatMap((accessGroupsShowingField) =>
+          accessGroupsShowingField.map(({ groupHash }) => groupHash),
+        ),
+      ),
+    ];
+    const compactIdByGroupHash = isNonEmptyArray(groupHashes)
+      ? await this.accessGroupReadRepository.findCompactIdByGroupHash({
+          workspaceId: request.principals.workspaceId,
+          groupHashes,
+        })
+      : new Map<string, number>();
+
+    return accessGroupsShowingFields.map((accessGroupsShowingField) =>
+      accessGroupsShowingField
+        .map(({ groupHash }) => compactIdByGroupHash.get(groupHash))
+        .filter(isDefined),
+    );
   }
 
-  private async findRelatedRecordPathAccessGroupCompactIds({
-    request,
-    isAccessGroupKept,
-  }: {
-    request: PermissionsObjectAccessRequest;
-    isAccessGroupKept: (accessGroup: AccessGroupWithoutCompactId) => boolean;
-  }): Promise<number[]> {
+  private async buildPrincipalsRelatedRecordPathAccessGroups(
+    request: PermissionsObjectAccessRequest,
+  ): Promise<AccessGroupWithoutCompactId[]> {
     if (!canRelatedRecordPathExtendAccess(request)) {
       return [];
     }
 
-    const { workspaceId } = request.principals;
     const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+      await this.workspaceCacheService.getOrRecompute(
+        request.principals.workspaceId,
+        ['flatFieldMetadataMaps'],
+      );
 
-    return this.findCompactIds({
-      workspaceId,
-      accessGroups: buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
-        request,
-        workspaceMembers: [
-          await this.findPrincipalWorkspaceMember(request.principals),
-        ].filter(isDefined),
-        flatFieldMetadataMaps,
-      }).filter(isAccessGroupKept),
+    return buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
+      request,
+      workspaceMembers: [
+        await this.findPrincipalWorkspaceMember(request.principals),
+      ].filter(isDefined),
+      flatFieldMetadataMaps,
     });
   }
 

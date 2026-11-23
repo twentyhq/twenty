@@ -30,4 +30,27 @@ export class AccessGroupReadRepository {
 
     return rows.map(({ compactId }) => compactId);
   }
+
+  async findCompactIdByGroupHash({
+    workspaceId,
+    groupHashes,
+  }: {
+    workspaceId: string;
+    groupHashes: string[];
+  }): Promise<Map<string, number>> {
+    const rows = await this.recordPermissionQueryService.execute<{
+      groupHash: string;
+      compactId: number;
+    }>({
+      workspaceId,
+      query: {
+        sql: `SELECT "groupHash", "compactId" FROM ${buildAccessGroupTableExpression(workspaceId)} WHERE "groupHash" = ANY(:groupHashes)`,
+        parameters: { groupHashes },
+      },
+    });
+
+    return new Map(
+      rows.map(({ groupHash, compactId }) => [groupHash, compactId]),
+    );
+  }
 }

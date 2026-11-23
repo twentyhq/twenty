@@ -4,7 +4,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { RELATED_RECORD_PATH_INHERITED_FIELDS } from 'src/engine/permissions/internal/related-record-path/constants/related-record-path-inherited-fields.constant';
+
+export type RelatedRecordPathInheritedFieldDefinition = {
+  fieldUniversalIdentifier: string;
+  sourceFieldUniversalIdentifier: string;
+};
 
 export type RelatedRecordPathInheritedField = {
   fieldMetadataId: string;
@@ -13,13 +17,15 @@ export type RelatedRecordPathInheritedField = {
 };
 
 export const findRelatedRecordPathInheritedFields = ({
+  inheritedFieldDefinitions,
   objectMetadataId,
   flatFieldMetadataMaps,
 }: {
+  inheritedFieldDefinitions: RelatedRecordPathInheritedFieldDefinition[];
   objectMetadataId: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): RelatedRecordPathInheritedField[] =>
-  RELATED_RECORD_PATH_INHERITED_FIELDS.flatMap(
+  inheritedFieldDefinitions.flatMap(
     ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) => {
       const flatFieldMetadata =
         flatFieldMetadataMaps.byUniversalIdentifier[fieldUniversalIdentifier];

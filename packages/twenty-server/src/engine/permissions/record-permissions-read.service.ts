@@ -54,6 +54,7 @@ import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
+import { CHANNEL_VISIBILITY_RELATED_RECORD_PATH_INHERITED_FIELDS } from 'src/engine/permissions/channel-visibility/constants/channel-visibility-related-record-path-inherited-fields.constant';
 import { findRelatedRecordPathInheritedFields } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-inherited-fields.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
@@ -451,6 +452,8 @@ export class RecordPermissionsReadService {
     }
 
     const inheritedFields = findRelatedRecordPathInheritedFields({
+      inheritedFieldDefinitions:
+        CHANNEL_VISIBILITY_RELATED_RECORD_PATH_INHERITED_FIELDS,
       objectMetadataId: objectAccessRequest.flatObjectMetadata.id,
       flatFieldMetadataMaps:
         objectAccessRequest.metadataMaps.flatFieldMetadataMaps,
@@ -463,48 +466,43 @@ export class RecordPermissionsReadService {
       return [];
     }
 
-    const principalsAccessGroupCompactIds =
-      await this.findPrincipalsAccessGroupCompactIds(objectAccessRequest);
-
-    const inheritedUnreadableFieldsSQLConditions = await Promise.all(
-      inheritedFields.map(
-        async ({
-          fieldMetadataId,
-          sourceObjectMetadataId,
-          sourceFieldMetadataId,
-        }) => {
-          const fieldReadableSQLCondition = this.buildRecordsAccessSQLCondition(
-            {
-              objectAccessRequest,
-              tableAlias,
-              principalsAccessGroupCompactIds,
-              principalsRelatedRecordPathAccessGroupCompactIds:
-                await this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingField(
-                  {
-                    request: objectAccessRequest,
-                    sourceObjectMetadataId,
-                    sourceFieldMetadataId,
-                  },
-                ),
-            },
-          );
-
-          if (fieldReadableSQLCondition === true) {
-            return undefined;
-          }
-
-          return {
-            fieldMetadataIds: [fieldMetadataId],
-            sqlCondition:
-              fieldReadableSQLCondition === false
-                ? { sql: 'TRUE', parameters: {} }
-                : {
-                    sql: `NOT (${fieldReadableSQLCondition.sql})`,
-                    parameters: fieldReadableSQLCondition.parameters,
-                  },
-          };
-        },
+    const [
+      principalsAccessGroupCompactIds,
+      principalsRelatedRecordPathAccessGroupCompactIdsShowingFields,
+    ] = await Promise.all([
+      this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields(
+        { request: objectAccessRequest, sourceFields: inheritedFields },
       ),
+    ]);
+
+    const inheritedUnreadableFieldsSQLConditions = inheritedFields.map(
+      ({ fieldMetadataId }, inheritedFieldIndex) => {
+        const fieldReadableSQLCondition = this.buildRecordsAccessSQLCondition({
+          objectAccessRequest,
+          tableAlias,
+          principalsAccessGroupCompactIds,
+          principalsRelatedRecordPathAccessGroupCompactIds:
+            principalsRelatedRecordPathAccessGroupCompactIdsShowingFields[
+              inheritedFieldIndex
+            ],
+        });
+
+        if (fieldReadableSQLCondition === true) {
+          return undefined;
+        }
+
+        return {
+          fieldMetadataIds: [fieldMetadataId],
+          sqlCondition:
+            fieldReadableSQLCondition === false
+              ? { sql: 'TRUE', parameters: {} }
+              : {
+                  sql: `NOT (${fieldReadableSQLCondition.sql})`,
+                  parameters: fieldReadableSQLCondition.parameters,
+                },
+        };
+      },
     );
 
     return inheritedUnreadableFieldsSQLConditions.filter(isDefined);
