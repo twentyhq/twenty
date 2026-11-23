@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Create core view should refuse preset filters on a view of another object 1`] = `
+exports[`Create core view should refuse preset filters on a view of another object than the inbox chat thread 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",

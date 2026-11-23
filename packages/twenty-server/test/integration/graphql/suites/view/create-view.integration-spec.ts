@@ -114,7 +114,7 @@ describe('Create core view', () => {
     });
   });
 
-  it('should refuse preset filters on a view of another object', async () => {
+  it('should refuse preset filters on a view of another object than the inbox chat thread', async () => {
     const { errors } = await createOneView({
       input: {
         name: 'Preset View',
