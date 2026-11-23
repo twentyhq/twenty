@@ -663,13 +663,7 @@ export class RecordPermissionsReadService {
       linkedObjectMetadataId,
       linkedRecordIds,
     ] of linkedRecordIdsByObjectMetadataId) {
-      const linkedFlatObjectMetadata = this.findFlatObjectMetadata({
-        metadataMaps,
-        objectMetadataId: linkedObjectMetadataId,
-      });
-
       if (
-        !isDefined(linkedFlatObjectMetadata) ||
         !isMainRoleRestrictedByRlsRule({
           principals,
           metadataMaps,
@@ -679,29 +673,13 @@ export class RecordPermissionsReadService {
         continue;
       }
 
-      const sqlCondition = this.buildSelectableRecordsSQLCondition({
+      const readableRecordIds = await this.findAccessibleRecordIds({
         principals,
-        metadataMaps,
-        flatObjectMetadata: linkedFlatObjectMetadata,
+        objectMetadataId: linkedObjectMetadataId,
         operationType: 'read',
+        recordIds: [...linkedRecordIds],
+        transactionScope,
       });
-
-      if (sqlCondition === true) {
-        continue;
-      }
-
-      const readableRecordIds =
-        sqlCondition === false
-          ? new Set<string>()
-          : await this.recordPermissionReadRepository.findRecordIdsMatchingSQLCondition(
-              {
-                workspaceId: principals.workspaceId,
-                flatObjectMetadata: linkedFlatObjectMetadata,
-                recordIds: [...linkedRecordIds],
-                sqlCondition,
-                transactionScope,
-              },
-            );
 
       if (
         [...linkedRecordIds].some(
