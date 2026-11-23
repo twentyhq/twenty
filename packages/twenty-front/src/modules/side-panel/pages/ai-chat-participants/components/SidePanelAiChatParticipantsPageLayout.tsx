@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 
@@ -30,6 +31,8 @@ export const SidePanelAiChatParticipantsPageLayout = ({
   <StyledContainer>
     {header}
     <StyledListContainer>{children}</StyledListContainer>
-    {footerActions && <SidePanelFooter actions={footerActions} />}
+    {isNonEmptyArray(footerActions) && (
+      <SidePanelFooter actions={footerActions} />
+    )}
   </StyledContainer>
 );

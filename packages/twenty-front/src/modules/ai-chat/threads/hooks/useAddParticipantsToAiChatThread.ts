@@ -46,7 +46,7 @@ export const useAddParticipantsToAiChatThread = () => {
       try {
         const { data } = await apolloClient.mutate({
           mutation: AddAgentChatThreadParticipantsDocument,
-          variables: { threadId, workspaceMemberIds },
+          variables: { input: { threadId, workspaceMemberIds } },
         });
         const addedWorkspaceMemberIds =
           data?.addAgentChatThreadParticipants ?? [];
@@ -56,7 +56,7 @@ export const useAddParticipantsToAiChatThread = () => {
           applyWriters(addedWorkspaceMemberIds);
           enqueueToast({
             status: 'warning',
-            children: t`Some members could not be added because they cannot use AI chat.`,
+            children: t`Some members could not be added.`,
           });
         }
 

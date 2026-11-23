@@ -44,7 +44,7 @@ export const SidePanelAiChatParticipantsPage = () => {
     return null;
   }
 
-  const canEdit = threadPermissions?.canUpdate !== false;
+  const canEdit = threadPermissions?.canUpdate ?? false;
   const assignee = threadMembers.find(({ id }) => id === thread?.assigneeId);
   const participants = threadMembers.filter(
     ({ id }) => id !== thread?.assigneeId,
@@ -68,7 +68,7 @@ export const SidePanelAiChatParticipantsPage = () => {
                     aiChatParticipantsThreadId,
                   )
                 }
-              >{t`Add participant`}</Button>,
+              >{t`Add participants`}</Button>,
             ]
           : undefined
       }

@@ -2,12 +2,8 @@ import { gql } from '@apollo/client';
 
 export const ADD_AGENT_CHAT_THREAD_PARTICIPANTS = gql`
   mutation AddAgentChatThreadParticipants(
-    $threadId: UUID!
-    $workspaceMemberIds: [UUID!]!
+    $input: AddAgentChatThreadParticipantsInput!
   ) {
-    addAgentChatThreadParticipants(
-      threadId: $threadId
-      workspaceMemberIds: $workspaceMemberIds
-    )
+    addAgentChatThreadParticipants(input: $input)
   }
 `;

@@ -11,6 +11,11 @@ input ActivateWorkspaceInput {
   displayName: String
 }
 
+input AddAgentChatThreadParticipantsInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]!
+}
+
 input AddQuerySubscriptionInput {
   eventStreamId: String!
   operationSignature: JSON!
@@ -3532,7 +3537,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
-  addAgentChatThreadParticipants(threadId: UUID!, workspaceMemberIds: [UUID!]!): [UUID!]!
+  addAgentChatThreadParticipants(input: AddAgentChatThreadParticipantsInput!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!

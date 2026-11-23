@@ -28,6 +28,11 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AddAgentChatThreadParticipantsInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds: Array<Scalars['UUID']['input']>;
+};
+
 export type AddQuerySubscriptionInput = {
   eventStreamId: Scalars['String']['input'];
   operationSignature: Scalars['JSON']['input'];
@@ -4052,8 +4057,7 @@ export type MutationAddAgentChatMessageReactionArgs = {
 
 
 export type MutationAddAgentChatThreadParticipantsArgs = {
-  threadId: Scalars['UUID']['input'];
-  workspaceMemberIds: Array<Scalars['UUID']['input']>;
+  input: AddAgentChatThreadParticipantsInput;
 };
 
 

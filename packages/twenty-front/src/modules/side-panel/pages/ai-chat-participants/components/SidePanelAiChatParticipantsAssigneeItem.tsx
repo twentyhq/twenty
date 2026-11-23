@@ -29,7 +29,10 @@ export const SidePanelAiChatParticipantsAssigneeItem = ({
 
   const handleOpenAssign = () => {
     if (!disabled) {
-      openAssignAiChatInSidePanel([threadId]);
+      openAssignAiChatInSidePanel({
+        threadIds: [threadId],
+        shouldGoBackAfterAssign: true,
+      });
     }
   };
 
