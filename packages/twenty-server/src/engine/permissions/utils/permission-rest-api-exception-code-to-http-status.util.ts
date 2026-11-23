@@ -16,6 +16,7 @@ export const permissionRestApiExceptionCodeToHttpStatus = (
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_ADMIN_USER:
     case PermissionsExceptionCode.CANNOT_DELETE_LAST_SERVER_ADMIN:
     case PermissionsExceptionCode.ROLE_NOT_EDITABLE:
+    case PermissionsExceptionCode.RECORD_NOT_EDITABLE:
     case PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.MEMBER_ROLE_CANNOT_BE_DELETED:
     case PermissionsExceptionCode.CUSTOM_ROLES_NOT_ENTITLED:

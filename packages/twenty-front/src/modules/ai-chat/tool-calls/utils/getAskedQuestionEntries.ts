@@ -11,7 +11,6 @@ type AskedQuestionEntry = {
   answer?: AskQuestionResponse;
 };
 
-// calls asked before ask_question carry a list of questions and answers
 export const getAskedQuestionEntries = (
   result: AskQuestionToolResult | AskQuestionsToolResult | undefined,
 ): AskedQuestionEntry[] => {

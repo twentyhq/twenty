@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAiChatAssistantProfile } from '@/ai-chat/hooks/useAiChatAssistantProfile';
 import { useToggleAiChatMessageReaction } from '@/ai-chat/messages/hooks/useToggleAiChatMessageReaction';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/messages/states/aiChatMessageReactionsFamilyState';
+import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';

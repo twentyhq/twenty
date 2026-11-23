@@ -614,6 +614,11 @@ type ApplicationConnectedAccountDTO {
   visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
+type ApplicationConnectedMemberCount {
+  applicationId: UUID!
+  connectedMemberCount: Int!
+}
+
 type ApplicationConnectionProvider {
   applicationId: String!
   displayName: String!
@@ -2491,6 +2496,7 @@ enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
@@ -2499,7 +2505,6 @@ enum FeatureFlagKey {
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
-  IS_PERMISSION_TABLES_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -3857,6 +3862,7 @@ type NavigationMenuItem {
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
   type: NavigationMenuItemType!
+  universalIdentifier: UUID
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
@@ -4051,6 +4057,7 @@ type ObjectRecordsPermissions {
   canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
+  canReadSomeRecords: Boolean!
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
@@ -4461,7 +4468,7 @@ type Query {
   findUninstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findUpgradeApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
-  findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  findWorkspaceFromInviteHash(inviteHash: String!): WorkspaceFromInviteHash!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   frontComponent(id: UUID!): FrontComponent
   frontComponents: [FrontComponent!]!
@@ -4562,7 +4569,8 @@ type Query {
   validationRulesReadingField(fieldMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
-  workspaceApplicationAuthorizations: [ApplicationAuthorization!]!
+  workspaceApplicationAuthorizations(applicationId: UUID): [ApplicationAuthorization!]!
+  workspaceApplicationConnectedMemberCounts: [ApplicationConnectedMemberCount!]!
 }
 
 type RatioAggregateConfig {
@@ -4760,6 +4768,7 @@ type RowLevelPermissionPredicate {
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: String
   workspaceMemberSubFieldName: String
 }
 
@@ -4839,6 +4848,7 @@ input RowLevelPermissionRulePredicateInput {
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: UUID
   workspaceMemberSubFieldName: String
 }
 
@@ -6793,6 +6803,13 @@ enum WorkspaceDiscoverability {
   HIDDEN
   MEMBERS_AND_INVITEES
   PUBLIC
+}
+
+type WorkspaceFromInviteHash {
+  allowImpersonation: Boolean!
+  displayName: String
+  id: UUID!
+  logo: String
 }
 
 type WorkspaceInvitation {

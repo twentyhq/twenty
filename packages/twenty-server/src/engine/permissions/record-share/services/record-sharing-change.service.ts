@@ -55,6 +55,8 @@ export class RecordSharingChangeService {
       throw new NotFoundError('Record not found');
     }
 
+    const afterCommitCallbacks: (() => void | Promise<void>)[] = [];
+
     try {
       await this.workspaceQueryExecutorService.runInTransaction(
         async (executor) => {
@@ -62,6 +64,7 @@ export class RecordSharingChangeService {
             workspaceId,
             executeRawQuery: (sql, parameters = []) =>
               executor.execute({ text: sql, values: parameters }),
+            afterCommit: (callback) => afterCommitCallbacks.push(callback),
           };
 
           await this.recordShareRepository.lockRecordForSharingChange({
@@ -120,6 +123,10 @@ export class RecordSharingChangeService {
       );
     } catch (error) {
       throw toPermissionsException(error);
+    }
+
+    for (const afterCommitCallback of afterCommitCallbacks) {
+      await afterCommitCallback();
     }
 
     return this.recordSharingReadService.findRecordSharingAfterChange(args);
