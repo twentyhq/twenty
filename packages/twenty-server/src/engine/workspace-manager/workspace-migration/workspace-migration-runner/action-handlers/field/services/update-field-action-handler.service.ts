@@ -467,6 +467,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
 
+      await this.addMissingServerOnlyCompositeColumns({
+        flatFieldMetadata,
+        queryRunner,
+        schemaName,
+        tableName,
+      });
       await this.renameServerOnlyCompositeColumns({
         flatFieldMetadata,
         queryRunner,
@@ -517,6 +523,30 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     });
   }
 
+  // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
+  private async addMissingServerOnlyCompositeColumns({
+    flatFieldMetadata,
+    queryRunner,
+    schemaName,
+    tableName,
+  }: {
+    flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+  }) {
+    await this.workspaceSchemaManagerService.columnManager.addColumns({
+      queryRunner,
+      schemaName,
+      tableName,
+      columnDefinitions: buildServerOnlyCompositeColumnDefinitions({
+        fieldType: flatFieldMetadata.type,
+        fieldName: flatFieldMetadata.name,
+      }),
+      shouldSkipExistingColumns: true,
+    });
+  }
+
   private async renameServerOnlyCompositeColumns({
     flatFieldMetadata,
     queryRunner,
@@ -537,15 +567,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     const toColumnDefinitions = buildServerOnlyCompositeColumnDefinitions({
       fieldType: flatFieldMetadata.type,
       fieldName: toName,
-    });
-
-    // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
-    await this.workspaceSchemaManagerService.columnManager.addColumns({
-      queryRunner,
-      schemaName,
-      tableName,
-      columnDefinitions: fromColumnDefinitions,
-      shouldSkipExistingColumns: true,
     });
 
     for (const [
