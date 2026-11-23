@@ -42,7 +42,7 @@ export const getRecordFieldColumnHeader = ({
   customLabel,
   ...defaultColumnHeaderArgs
 }: Parameters<typeof getDefaultRecordFieldColumnHeader>[0] & {
-  customLabel: string | null | undefined;
+  customLabel?: string | null;
 }): ColumnHeaderFieldMetadataItem => {
   const defaultColumnHeader = getDefaultRecordFieldColumnHeader(
     defaultColumnHeaderArgs,
