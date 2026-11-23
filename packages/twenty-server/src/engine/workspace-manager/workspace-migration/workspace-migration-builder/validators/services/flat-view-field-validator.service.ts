@@ -15,7 +15,6 @@ import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/wor
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFlatViewFieldLabel } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util';
 import { validateFlatViewFieldRelationAggregate } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util';
-import { validateFlatViewFieldRelationAggregateNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate-not-overridden.util';
 import { validateFlatViewFieldRelationScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util';
 import { validateFlatViewFieldRelationScopeNotOverridden } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util';
 import { validateFlatViewFieldRelationTarget } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util';
@@ -94,14 +93,6 @@ export class FlatViewFieldValidatorService {
     );
 
     validationResult.errors.push(
-      ...validateFlatViewFieldRelationAggregateNotOverridden({
-        existingFlatViewField,
-        updatedFlatViewField,
-        buildOptions,
-      }),
-    );
-
-    validationResult.errors.push(
       ...validateFlatViewFieldLabel({
         flatViewField: updatedFlatViewField,
         buildOptions,
@@ -123,7 +114,6 @@ export class FlatViewFieldValidatorService {
         }),
         ...validateFlatViewFieldRelationAggregate({
           flatViewField: updatedFlatViewField,
-          flatFieldMetadata,
           flatFieldMetadataMaps,
         }),
       );
@@ -305,7 +295,6 @@ export class FlatViewFieldValidatorService {
         }),
         ...validateFlatViewFieldRelationAggregate({
           flatViewField: flatViewFieldToValidate,
-          flatFieldMetadata,
           flatFieldMetadataMaps,
         }),
       );

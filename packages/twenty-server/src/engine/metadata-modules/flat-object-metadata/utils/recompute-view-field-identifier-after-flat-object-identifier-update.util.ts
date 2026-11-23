@@ -93,7 +93,6 @@ export const recomputeViewFieldIdentifierAfterFlatObjectIdentifierUpdate = ({
         relationTargetFieldMetadataUniversalIdentifier: null,
         universalRelationScope: null,
         label: null,
-        relationAggregateOperation: null,
         viewFieldGroupId: null,
         viewFieldGroupUniversalIdentifier: null,
         overrides: null,

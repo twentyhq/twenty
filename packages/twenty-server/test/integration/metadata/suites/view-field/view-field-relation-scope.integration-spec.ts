@@ -18,7 +18,7 @@ import {
   ViewFilterOperand,
   ViewSortDirection,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type ViewFieldRelationScopeInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/view-field-relation-scope.input';
@@ -32,7 +32,6 @@ type FieldNode = {
 const SCOPED_VIEW_FIELD_GQL_FIELDS = `
   ${VIEW_FIELD_GQL_FIELDS}
   relationTargetFieldMetadataId
-  relationAggregateOperation
   relationScope {
     filters {
       id
@@ -55,6 +54,7 @@ const SCOPED_VIEW_FIELD_GQL_FIELDS = `
       relationTargetFieldMetadataId
     }
     limit
+    aggregateOperation
   }
 `;
 
@@ -180,7 +180,7 @@ const buildOpenDealsFilterScope = (): ViewFieldRelationScopeInput => {
 const createScopedViewField = ({
   relationScope,
   relationTargetFieldMetadataId,
-  relationAggregateOperation,
+  aggregateOperation,
   viewId = testContext.companyViewId,
   fieldMetadataId = testContext.companyDealsFieldId,
   isCanonical = false,
@@ -188,7 +188,7 @@ const createScopedViewField = ({
 }: {
   relationScope: ViewFieldRelationScopeInput;
   relationTargetFieldMetadataId?: string;
-  relationAggregateOperation?: AggregateOperations;
+  aggregateOperation?: AggregateOperations;
   viewId?: string;
   fieldMetadataId?: string;
   isCanonical?: boolean;
@@ -200,9 +200,10 @@ const createScopedViewField = ({
     input: {
       viewId,
       fieldMetadataId,
-      relationScope,
+      relationScope: isDefined(aggregateOperation)
+        ? { ...relationScope, aggregateOperation }
+        : relationScope,
       relationTargetFieldMetadataId,
-      relationAggregateOperation,
       isCanonical,
       position: 1,
     },
@@ -467,12 +468,12 @@ describe('View field filtering, sorting and limiting its related records', () =>
       data: { createViewField },
     } = await createScopedViewField({
       relationScope: buildOpenDealsFilterScope(),
-      relationAggregateOperation: AggregateOperations.COUNT,
+      aggregateOperation: AggregateOperations.COUNT,
       expectToFail: false,
     });
 
     expect(createViewField).toMatchObject({
-      relationAggregateOperation: AggregateOperations.COUNT,
+      relationScope: { aggregateOperation: AggregateOperations.COUNT },
       relationTargetFieldMetadataId: null,
     });
 
@@ -484,14 +485,17 @@ describe('View field filtering, sorting and limiting its related records', () =>
       input: {
         id: createViewField.id,
         update: {
-          relationAggregateOperation: AggregateOperations.MIN,
+          relationScope: {
+            ...buildOpenDealsFilterScope(),
+            aggregateOperation: AggregateOperations.MIN,
+          },
           relationTargetFieldMetadataId: testContext.dealCloseDateFieldId,
         },
       },
     });
 
     expect(updateViewField).toMatchObject({
-      relationAggregateOperation: AggregateOperations.MIN,
+      relationScope: { aggregateOperation: AggregateOperations.MIN },
       relationTargetFieldMetadataId: testContext.dealCloseDateFieldId,
     });
   });
@@ -500,39 +504,39 @@ describe('View field filtering, sorting and limiting its related records', () =>
     {
       title: 'its scope is limited',
       getRelationScope: () => ({ ...buildOpenDealsFilterScope(), limit: 3 }),
-      relationAggregateOperation: AggregateOperations.COUNT,
+      aggregateOperation: AggregateOperations.COUNT,
       expectedMessage: 'cannot have sorts or a limit',
     },
     {
       title: 'its scope is sorted',
       getRelationScope: buildOpenDealsScope,
-      relationAggregateOperation: AggregateOperations.COUNT,
+      aggregateOperation: AggregateOperations.COUNT,
       expectedMessage: 'cannot have sorts or a limit',
     },
     {
       title: 'it sums a date',
       getRelationScope: buildOpenDealsFilterScope,
-      relationAggregateOperation: AggregateOperations.SUM,
+      aggregateOperation: AggregateOperations.SUM,
       getRelationTargetFieldMetadataId: () => testContext.dealCloseDateFieldId,
       expectedMessage: 'does not support this aggregate operation',
     },
     {
       title: 'it sums without a field',
       getRelationScope: buildOpenDealsFilterScope,
-      relationAggregateOperation: AggregateOperations.SUM,
+      aggregateOperation: AggregateOperations.SUM,
       expectedMessage: 'requires a related record field',
     },
   ])(
     'rejects an aggregate column when $title',
     async ({
       getRelationScope,
-      relationAggregateOperation,
+      aggregateOperation,
       getRelationTargetFieldMetadataId,
       expectedMessage,
     }) => {
       const response = await createScopedViewField({
         relationScope: getRelationScope(),
-        relationAggregateOperation,
+        aggregateOperation,
         relationTargetFieldMetadataId: getRelationTargetFieldMetadataId?.(),
         expectToFail: true,
       });
