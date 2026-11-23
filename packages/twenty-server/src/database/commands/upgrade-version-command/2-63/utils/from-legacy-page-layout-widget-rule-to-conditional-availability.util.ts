@@ -1,21 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
-  buildDeviceConditionalAvailability,
-  CONDITIONAL_AVAILABILITY_DEVICES,
-  type ConditionalAvailabilityDevice,
   type ConditionalAvailabilityNode,
   parseConditionalAvailabilityExpression,
+  validateConditionalAvailabilityNode,
 } from 'twenty-shared/conditional-availability';
-import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+
+import { fromLegacyJsonLogicToConditionalAvailability } from 'src/database/commands/upgrade-version-command/2-63/utils/from-legacy-json-logic-to-conditional-availability.util';
 
 type LegacyPageLayoutWidgetRuleConversion =
   | { isValid: true; node: ConditionalAvailabilityNode | null }
   | { isValid: false; errorMessage: string };
-
-// The json-logic shape of built-in widgets, kept here so the command still reads it once the built-in constants are gone; any other shape is reported and left alone
-const buildLegacyDeviceJsonLogic = (device: ConditionalAvailabilityDevice) => ({
-  and: [{ '===': [{ var: 'device' }, device] }],
-});
 
 export const fromLegacyPageLayoutWidgetRuleToConditionalAvailability = ({
   conditionalAvailabilityExpression,
@@ -35,16 +30,23 @@ export const fromLegacyPageLayoutWidgetRuleToConditionalAvailability = ({
     return { isValid: true, node: null };
   }
 
-  const device = CONDITIONAL_AVAILABILITY_DEVICES.find((legacyDevice) =>
-    fastDeepEqual(conditionalDisplay, buildLegacyDeviceJsonLogic(legacyDevice)),
-  );
+  const node = fromLegacyJsonLogicToConditionalAvailability(conditionalDisplay);
 
-  if (!isDefined(device)) {
+  if (!isDefined(node)) {
     return {
       isValid: false,
-      errorMessage: 'The json-logic rule is not one of the two device rules',
+      errorMessage: 'The json-logic rule uses a form the tree cannot express',
     };
   }
 
-  return { isValid: true, node: buildDeviceConditionalAvailability(device) };
+  const validationResult = validateConditionalAvailabilityNode({
+    node,
+    metadataName: 'pageLayoutWidget',
+  });
+
+  if (!validationResult.isValid) {
+    return { isValid: false, errorMessage: validationResult.errorMessage };
+  }
+
+  return { isValid: true, node };
 };
