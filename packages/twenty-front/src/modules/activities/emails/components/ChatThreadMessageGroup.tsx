@@ -6,6 +6,7 @@ import { type ChatMessageReaction } from '@/activities/emails/types/ChatMessageR
 import { CHAT_GROUPED_MESSAGE_GAP } from '@/chat/constants/ChatGroupedMessageGap';
 import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
 import { CHAT_RUN_GAP } from '@/chat/constants/ChatRunGap';
+import { isChatMessageTimeSharedWithNext } from '@/chat/utils/isChatMessageTimeSharedWithNext';
 
 const StyledGroup = styled.div<{ isFollowedByRun: boolean }>`
   display: flex;
@@ -37,6 +38,10 @@ export const ChatThreadMessageGroup = ({
         hasSenderHeader={!group.isOutgoing && index === 0}
         isGroupedWithPrevious={index > 0}
         isGroupedWithNext={index < group.messages.length - 1}
+        isTimeSharedWithNext={isChatMessageTimeSharedWithNext({
+          sentAt: message.receivedAt,
+          nextSentAt: group.messages[index + 1]?.receivedAt,
+        })}
         reactions={reactionsByMessageId?.[message.id] ?? []}
         onReactionToggle={onReactionToggle}
       />

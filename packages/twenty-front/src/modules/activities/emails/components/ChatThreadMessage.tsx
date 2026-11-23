@@ -15,6 +15,7 @@ import { ChatMessageTime } from '@/chat/components/ChatMessageTime';
 import { StyledChatMessageBubble } from '@/chat/components/StyledChatMessageBubble';
 import { StyledChatMessageFooter } from '@/chat/components/StyledChatMessageFooter';
 import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
+import { StyledChatMessageStandaloneMeta } from '@/chat/components/StyledChatMessageStandaloneMeta';
 import { CHAT_GROUPED_MESSAGE_GAP } from '@/chat/constants/ChatGroupedMessageGap';
 import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
 import { LightCopyIconButtonWithoutPadding } from '@/ui/input/components/LightCopyIconButtonWithoutPadding';
@@ -50,6 +51,7 @@ type ChatThreadMessageProps = {
   hasSenderHeader: boolean;
   isGroupedWithPrevious: boolean;
   isGroupedWithNext: boolean;
+  isTimeSharedWithNext: boolean;
   reactions: ChatMessageReaction[];
   onReactionToggle?: (messageId: string, emoji: string) => void;
 };
@@ -60,6 +62,7 @@ export const ChatThreadMessage = ({
   hasSenderHeader,
   isGroupedWithPrevious,
   isGroupedWithNext,
+  isTimeSharedWithNext,
   reactions,
   onReactionToggle,
 }: ChatThreadMessageProps) => {
@@ -82,32 +85,30 @@ export const ChatThreadMessage = ({
   );
   const hasText = isNonEmptyString(message.text);
   const hasReactions = isNonEmptyArray(reactions);
-  const hasMeta = isOutgoing || isDefined(message.receivedAt);
+  const hasBubble = hasText || !isNonEmptyArray(files);
+  const meta =
+    !isTimeSharedWithNext && (isOutgoing || isDefined(message.receivedAt)) ? (
+      <>
+        {isDefined(message.receivedAt) && (
+          <ChatMessageTime date={message.receivedAt} />
+        )}
+        {isOutgoing && <ChatMessageReceipt status="sent" />}
+      </>
+    ) : undefined;
 
   return (
     <StyledMessageRow
       isRightAligned={isOutgoing}
       isGroupedWithPrevious={isGroupedWithPrevious}
       isGroupedWithNext={isGroupedWithNext}
-      hasFooter={hasReactions}
+      hasFooter={hasReactions || (!hasBubble && isDefined(meta))}
       data-hover-card={hasText ? '' : undefined}
       tabIndex={hasText && isTouchDevice ? -1 : undefined}
     >
       {senderHeader}
-      {(hasText || !isNonEmptyArray(files)) && (
+      {hasBubble && (
         <StyledChatMessageBubble isUser isOtherMember={!isOutgoing}>
-          <ChatMessageBubbleContent
-            meta={
-              hasMeta ? (
-                <>
-                  {isDefined(message.receivedAt) && (
-                    <ChatMessageTime date={message.receivedAt} />
-                  )}
-                  {isOutgoing && <ChatMessageReceipt status="sent" />}
-                </>
-              ) : undefined
-            }
-          >
+          <ChatMessageBubbleContent meta={meta}>
             <StyledMessageText>
               <Linkify
                 options={{
@@ -123,6 +124,11 @@ export const ChatThreadMessage = ({
       )}
       {isNonEmptyArray(files) && (
         <ChatMessageAttachments files={files} isRightAligned={isOutgoing} />
+      )}
+      {!hasBubble && isDefined(meta) && (
+        <StyledChatMessageStandaloneMeta isRightAligned={isOutgoing}>
+          {meta}
+        </StyledChatMessageStandaloneMeta>
       )}
       {hasReactions && (
         <StyledChatMessageFooter isCompact isRightAligned={isOutgoing}>

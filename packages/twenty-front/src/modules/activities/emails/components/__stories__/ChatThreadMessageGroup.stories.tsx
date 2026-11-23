@@ -78,10 +78,10 @@ export const OutgoingText: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findAllByText(/\d{1,2}:52/)).toHaveLength(3);
+    await expect(await canvas.findAllByText(/\d{1,2}:52/)).toHaveLength(1);
     await expect(
       await canvas.findAllByRole('img', { name: 'Sent' }),
-    ).toHaveLength(3);
+    ).toHaveLength(1);
   },
 };
 
