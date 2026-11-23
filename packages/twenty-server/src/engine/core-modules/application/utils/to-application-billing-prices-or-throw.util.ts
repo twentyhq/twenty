@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   ApplicationException,
@@ -21,5 +22,5 @@ export const toApplicationBillingPricesOrThrow = (
     );
   }
 
-  return prices ?? [];
+  return isDefined(prices) ? prices : [];
 };
