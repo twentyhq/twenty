@@ -9,7 +9,7 @@ import {
 } from 'test/integration/metadata/suites/utils/webhook-test.util';
 import { createOneViewOnObject } from 'test/integration/metadata/suites/view/utils/create-one-view-on-object.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
+import { ViewVisibility } from 'twenty-shared/types';
 
 describe('private metadata webhooks (integration)', () => {
   let unlistedViewId: string;
@@ -107,16 +107,13 @@ describe('private metadata webhooks (integration)', () => {
     expect(
       await findSentRecordIds({
         metadataName: 'workflow',
-        record: { id: randomUUID(), visibility: WorkflowVisibility.PRIVATE },
+        record: { id: randomUUID(), isPrivate: true },
       }),
     ).toEqual([]);
     expect(
       await findSentRecordIds({
         metadataName: 'workflow',
-        record: {
-          id: workspaceWorkflowId,
-          visibility: WorkflowVisibility.WORKSPACE,
-        },
+        record: { id: workspaceWorkflowId, isPrivate: false },
       }),
     ).toEqual([workspaceWorkflowId]);
   });

@@ -1,16 +1,15 @@
 import { useStore } from 'jotai';
 
+import { useSendAiChatComposerMessage } from '@/ai-chat/composer/hooks/useSendAiChatComposerMessage';
 import { writeAiChatPromptDraft } from '@/ai-chat/composer/utils/writeAiChatPromptDraft';
-import { AI_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai-chat/constants/AiChatSendMessageEventName';
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
-import { type AiChatInstanceEventDetail } from '@/ai-chat/types/AiChatInstanceEventDetail';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 
 export const useApplyAiChatPromptInChat = () => {
   const store = useStore();
-  const { instanceId, threadId } = useAiChatInstanceOrThrow();
+  const { threadId } = useAiChatInstanceOrThrow();
+  const { sendAiChatComposerMessage } = useSendAiChatComposerMessage();
 
   const applyAiChatPromptInChat = ({
     serializedDocument,
@@ -22,10 +21,7 @@ export const useApplyAiChatPromptInChat = () => {
     writeAiChatPromptDraft({ store, threadId, serializedDocument });
 
     if (mode === 'SEND') {
-      dispatchBrowserEvent<AiChatInstanceEventDetail>(
-        AI_CHAT_SEND_MESSAGE_EVENT_NAME,
-        { instanceId },
-      );
+      sendAiChatComposerMessage();
 
       return;
     }

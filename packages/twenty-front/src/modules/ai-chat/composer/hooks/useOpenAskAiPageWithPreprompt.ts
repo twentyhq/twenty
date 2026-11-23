@@ -7,13 +7,12 @@ import { useApplyAiChatPreprompt } from '@/ai-chat/composer/hooks/useApplyAiChat
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { type AiChatPrepromptMode } from '@/ai-chat/types/AiChatPrepromptMode';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
-import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/states/composer/aiChatComposerAttachmentsFamilyState';
+import { aiChatComposerAttachmentsFamilyState } from '@/ai-chat/composer/states/aiChatComposerAttachmentsFamilyState';
 import { aiChatRequiredThreadListenersState } from '@/ai-chat/states/aiChatRequiredThreadListenersState';
 import { aiChatUserSelectedModelTierState } from '@/ai-chat/states/aiChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Kept coarse because it is part of the front component SDK surface.
-export type AiChatModelPreselection = 'FAST' | 'SMART';
+type AiChatModelPreselection = 'FAST' | 'SMART';
 
 const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
   FAST: 'fast',
@@ -22,7 +21,7 @@ const TIER_BY_PRESELECTION: Record<AiChatModelPreselection, AiModelTier> = {
 
 export const useOpenAskAiPageWithPreprompt = () => {
   const store = useStore();
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { switchToNewAiChat } = useSwitchToNewAiChat();
   const { applyAiChatPreprompt } = useApplyAiChatPreprompt();
   const setAiChatUserSelectedModelTier = useSetAtomState(
     aiChatUserSelectedModelTierState,
@@ -41,17 +40,16 @@ export const useOpenAskAiPageWithPreprompt = () => {
     model?: AiChatModelPreselection;
     files?: File[];
   }): Promise<string | null> => {
-    const newAiChatThreadId = switchToNewChat();
+    const newAiChatThreadId = switchToNewAiChat();
 
     if (isDefined(model)) {
       const tier = TIER_BY_PRESELECTION[model];
 
-      // null keeps following the workspace, so a later change there applies.
       setAiChatUserSelectedModelTier(tier === chatTier ? null : tier);
     }
 
     if (!isNonEmptyArray(files)) {
-      applyAiChatPreprompt({
+      await applyAiChatPreprompt({
         threadId: newAiChatThreadId,
         serializedDocument,
         mode,
@@ -83,7 +81,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
       return null;
     }
 
-    applyAiChatPreprompt({
+    await applyAiChatPreprompt({
       threadId: newAiChatThreadId,
       serializedDocument,
       mode: isNonEmptyArray(uploadedFiles) ? mode : 'PREFILL',

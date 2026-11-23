@@ -5,7 +5,6 @@ import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/creat
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type AiChatThreadsAssigneeSummary = {
-  // Set only when every chat has the same assignee
   sharedAssigneeId: string | null;
   hasAssignee: boolean;
 };

@@ -16,7 +16,7 @@ import { getFieldFilesValueFromFilePart } from '@/chat/utils/getFieldFilesValueF
 
 import { AiChatMessageAuthorHeader } from '@/ai-chat/messages/components/AiChatMessageAuthorHeader';
 import { AiChatMessageReplyQuote } from '@/ai-chat/messages/components/AiChatMessageReplyQuote';
-import { AiChatAssistantMessageRenderer } from '@/ai-chat/messages/components/AiChatAssistantMessageRenderer';
+import { AiChatMessagePartsRenderer } from '@/ai-chat/messages/components/AiChatMessagePartsRenderer';
 import { AiChatMessageReactions } from '@/ai-chat/messages/components/AiChatMessageReactions';
 import { AiChatMessageActions } from '@/ai-chat/messages/components/AiChatMessageActions';
 import { AiChatErrorRenderer } from '@/ai-chat/messages/components/AiChatErrorRenderer';
@@ -36,6 +36,7 @@ import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiCha
 import { AI_CHAT_UNGROUPED_MESSAGE_POSITION } from '@/ai-chat/messages/constants/AiChatUngroupedMessagePosition';
 import { aiChatThreadMessageFamilySelector } from '@/ai-chat/states/selectors/aiChatThreadMessageFamilySelector';
 import { isAiChatMessageOwn } from '@/ai-chat/messages/utils/isAiChatMessageOwn';
+import { getAiChatMessageText } from '@/ai-chat/messages/utils/getAiChatMessageText';
 import { parseAiChatMessageQuote } from '@/ai-chat/messages/utils/parseAiChatMessageQuote';
 import { getAiChatSenderLabel } from '@/ai-chat/utils/getAiChatSenderLabel';
 import { isSilentAiChatMessage } from '@/ai-chat/messages/utils/isSilentAiChatMessage';
@@ -71,7 +72,6 @@ const StyledMessageContainer = styled.div<{
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
 `;
 
-// The list spaces rows with one gap, so a grouped row gives back the difference
 const StyledMessageRow = styled(StyledChatMessageRow)<{
   isTightlyGroupedWithNext: boolean;
 }>`
@@ -142,7 +142,7 @@ export const AiChatMessage = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const agentChatMessage = useAtomFamilySelectorValue(
+  const aiChatMessage = useAtomFamilySelectorValue(
     aiChatThreadMessageFamilySelector,
     { threadId, messageId },
   );
@@ -175,22 +175,22 @@ export const AiChatMessage = ({
   );
 
   if (
-    !isDefined(agentChatMessage) ||
-    (isSilentAiChatMessage(agentChatMessage) && !isDefined(error))
+    !isDefined(aiChatMessage) ||
+    (isSilentAiChatMessage(aiChatMessage) && !isDefined(error))
   ) {
     return null;
   }
 
-  const senderId = agentChatMessage.metadata?.senderWorkspaceMemberId;
+  const senderId = aiChatMessage.metadata?.senderWorkspaceMemberId;
   const sender = currentWorkspaceMembers.find(
     (member) => isDefined(senderId) && member.id === senderId,
   );
   const isOwnMessage = isAiChatMessageOwn({
-    message: agentChatMessage,
+    message: aiChatMessage,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
     isSenderlessUserMessageOwn: !isAiChatInboxEnabled,
   });
-  const isUser = agentChatMessage.role === AGENT_MESSAGE_ROLE.USER;
+  const isUser = aiChatMessage.role === AGENT_MESSAGE_ROLE.USER;
   const { isGroupedWithPrevious, isGroupedWithNext, isTimeSharedWithNext } =
     isAiChatInboxEnabled
       ? aiChatMessageGroupPosition
@@ -199,7 +199,7 @@ export const AiChatMessage = ({
   const isRightAligned = isAiChatInboxEnabled ? isOwnMessage : isUser;
   const canManageMessage = isUser && isOwnMessage && !isReadOnly;
   const shouldMirrorMessageActions = isAiChatInboxEnabled && isOwnMessage;
-  const createdAt = agentChatMessage.metadata?.createdAt ?? new Date();
+  const createdAt = aiChatMessage.metadata?.createdAt ?? new Date();
   const isOtherMemberMessage = isAiChatInboxEnabled && !isOwnMessage;
   const hasHeader = isOtherMemberMessage && !isGroupedWithPrevious;
   const hasTimeInBubble = isAiChatInboxEnabled && isOwnMessage && isUser;
@@ -209,39 +209,38 @@ export const AiChatMessage = ({
     isAiChatInboxEnabled &&
     !isDirectMessage &&
     isNonEmptyArray(aiChatMessageReactions);
-  const hasContent = isNonEmptyArray(agentChatMessage.parts);
+  const hasContent = isNonEmptyArray(aiChatMessage.parts);
   const hasSideActions = isAiChatInboxEnabled && isUser;
   const hasFooter = hasContent && (!hasSideActions || hasReactions);
   const isTightlyGroupedWithNext =
     isGroupedWithNext && !hasVisibleTimeInBubble && !hasFooter;
   const shouldShowError =
-    isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
+    isDefined(error) && aiChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
-  const attachments = agentChatMessage.parts
+  const attachments = aiChatMessage.parts
     .filter(isExtendedFileUIPart)
     .map(getFieldFilesValueFromFilePart);
-  const messageText =
-    agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
+  const messageText = getAiChatMessageText(aiChatMessage);
   const messageQuote =
     isAiChatInboxEnabled && isUser
       ? parseAiChatMessageQuote(messageText)
       : null;
   const messageParts = !isDefined(messageQuote)
-    ? agentChatMessage.parts
-    : agentChatMessage.parts.map((part) =>
+    ? aiChatMessage.parts
+    : aiChatMessage.parts.map((part) =>
         part.type === 'text' && part.text === messageText
           ? { ...part, text: messageQuote.replyText }
           : part,
       );
   const messageContent = (
-    <AiChatAssistantMessageRenderer
+    <AiChatMessagePartsRenderer
       isUserMessage={isUser}
       isLastMessageStreaming={isLastMessageStreaming}
       messageParts={messageParts}
       hasError={shouldShowError}
       shouldHideThinkingSteps={isMessageBeforeFirstUserMessage}
       workDurationMs={getAiChatMessageWorkDurationMs({
-        metadata: agentChatMessage.metadata,
+        metadata: aiChatMessage.metadata,
         isStreaming: isLastMessageStreaming,
       })}
     />
@@ -282,8 +281,8 @@ export const AiChatMessage = ({
         {hasHeader && (
           <AiChatMessageAuthorHeader
             messageId={messageId}
-            role={agentChatMessage.role}
-            metadata={agentChatMessage.metadata}
+            role={aiChatMessage.role}
+            metadata={aiChatMessage.metadata}
             createdAt={createdAt}
           />
         )}

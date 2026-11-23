@@ -1,5 +1,4 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
@@ -304,7 +303,7 @@ describe('reconstructWorkflowsManifest', () => {
       }),
       syncWorkflow({
         manifest: manifest('b1000000-0000-4000-8000-000000000000'),
-        workflowOverrides: { visibility: WorkflowVisibility.PRIVATE },
+        workflowOverrides: { isPrivate: true },
       }),
       syncWorkflow({
         manifest: manifest('b2000000-0000-4000-8000-000000000000'),

@@ -6,37 +6,33 @@ import { type createStore } from 'jotai';
 import {
   type AgentChatSubscriptionEvent,
   type ExtendedUIMessage,
-  mapAgentMessagesToUIMessages,
 } from 'twenty-shared/ai';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai-chat/constants/AiChatStreamLivenessCheckIntervalInMs';
-import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai-chat/constants/AiChatStreamLivenessTimeoutInMs';
+import { AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS } from '@/ai-chat/instance/constants/AiChatStreamLivenessCheckIntervalInMs';
+import { AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS } from '@/ai-chat/instance/constants/AiChatStreamLivenessTimeoutInMs';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
 import { aiChatThreadReplyErrorFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyErrorFamilyState';
-import { aiChatThreadReplyRecoveryAttemptsFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyRecoveryAttemptsFamilyState';
+import { aiChatThreadReplyRecoveryAttemptsFamilyState } from '@/ai-chat/instance/states/aiChatThreadReplyRecoveryAttemptsFamilyState';
 import { aiChatThreadReplyStatusFamilyState } from '@/ai-chat/states/reply/aiChatThreadReplyStatusFamilyState';
 import { aiChatMessageReactionRevisionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionRevisionsFamilyState';
-import { aiChatMessageReactionsFamilyState } from '@/ai-chat/states/server/aiChatMessageReactionsFamilyState';
 import { aiChatThreadFetchedMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadFetchedMessagesFamilyState';
 import { aiChatThreadIsFetchingMessagesFamilyState } from '@/ai-chat/states/server/aiChatThreadIsFetchingMessagesFamilyState';
-import { aiChatThreadIsMissingFamilyState } from '@/ai-chat/states/server/aiChatThreadIsMissingFamilyState';
-import { aiChatThreadUsageFamilyState } from '@/ai-chat/states/server/aiChatThreadUsageFamilyState';
 import { type AiChatThreadStreamDependencies } from '@/ai-chat/instance/types/AiChatThreadStreamDependencies';
-import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
-import { getAiChatMessageThreadTitle } from '@/ai-chat/threads/utils/getAiChatMessageThreadTitle';
-import { refetchToolIndexOnUnknownTools } from '@/ai-chat/tool-calls/utils/refetchToolIndexOnUnknownTools';
-import { type AiChatStreamCatchup } from '@/ai-chat/types/AiChatStreamCatchup';
+import { type AiChatStreamCatchup } from '@/ai-chat/instance/types/AiChatStreamCatchup';
 import { type AiChatThreadStream } from '@/ai-chat/types/AiChatThreadStream';
-import { accumulateAiChatUsage } from '@/ai-chat/usage/utils/accumulateAiChatUsage';
-import { getAiChatUsageFromThread } from '@/ai-chat/usage/utils/getAiChatUsageFromThread';
 import { AiChatErrorCode } from '@/ai-chat/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai-chat/utils/createAiChatCodedError';
-import { createMidStreamAdapter } from '@/ai-chat/utils/createMidStreamAdapter';
-import { createStreamChunkSequencer } from '@/ai-chat/utils/createStreamChunkSequencer';
+import { applyAiChatMessageReactionsUpdate } from '@/ai-chat/instance/utils/applyAiChatMessageReactionsUpdate';
+import { createAiChatStreamedMessageThreadUpdater } from '@/ai-chat/instance/utils/createAiChatStreamedMessageThreadUpdater';
+import { createAiChatStreamMessageFlusher } from '@/ai-chat/instance/utils/createAiChatStreamMessageFlusher';
+import { createMidStreamAdapter } from '@/ai-chat/instance/utils/createMidStreamAdapter';
+import { createStreamChunkSequencer } from '@/ai-chat/instance/utils/createStreamChunkSequencer';
 import { endAiChatReplyStatus } from '@/ai-chat/utils/endAiChatReplyStatus';
-import { isChatAccessDenied } from '@/ai-chat/utils/isChatAccessDenied';
-import { upsertAiChatMessage } from '@/ai-chat/utils/upsertAiChatMessage';
+import { isAiChatAccessDenied } from '@/ai-chat/instance/utils/isAiChatAccessDenied';
+import { loadAiChatThreadIfUnknown } from '@/ai-chat/instance/utils/loadAiChatThreadIfUnknown';
+import { storeFetchedAiChatMessages } from '@/ai-chat/instance/utils/storeFetchedAiChatMessages';
+import { subscribeToAiChatDisplayedMessagesSync } from '@/ai-chat/instance/utils/subscribeToAiChatDisplayedMessagesSync';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
@@ -47,7 +43,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
-const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 const MAX_SILENT_RECOVERY_ATTEMPTS = 3;
 
@@ -75,17 +70,13 @@ export const openAiChatThreadStream = ({
     aiChatThreadDisplayedMessagesFamilyState.atomFamily(familyKey);
   const fetchedMessagesAtom =
     aiChatThreadFetchedMessagesFamilyState.atomFamily(familyKey);
-  const usageAtom = aiChatThreadUsageFamilyState.atomFamily(familyKey);
   const recoveryAttemptsAtom =
     aiChatThreadReplyRecoveryAttemptsFamilyState.atomFamily(familyKey);
   const liveReactionRevisionsAtom =
     aiChatMessageReactionRevisionsFamilyState.atomFamily(familyKey);
 
-  // Changes made while unsubscribed were missed, so fetches must fill them in again
   store.set(liveReactionRevisionsAtom, {});
 
-  let throttleTimer: ReturnType<typeof setTimeout> | null = null;
-  let latestMessage: ExtendedUIMessage | null = null;
   let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
   let isDisposed = false;
   let isAccessDenied = false;
@@ -97,6 +88,13 @@ export const openAiChatThreadStream = ({
   let lastFetchId = 0;
 
   const isInactive = () => isDisposed || isAccessDenied;
+
+  const messageFlusher = createAiChatStreamMessageFlusher({
+    store,
+    threadId,
+    isInactive,
+    getApolloClient: () => getDependencies().apolloClient,
+  });
 
   const closeWriter = () => {
     if (isDefined(writer)) {
@@ -118,88 +116,27 @@ export const openAiChatThreadStream = ({
     }
   };
 
-  const flushLatestMessage = () => {
-    const messageToFlush = latestMessage;
-
-    if (isInactive() || !isDefined(messageToFlush)) {
-      return;
-    }
-
-    store.set(displayedMessagesAtom, (currentMessages) =>
-      upsertAiChatMessage(currentMessages, messageToFlush),
-    );
-    refetchToolIndexOnUnknownTools({
-      apolloClient: getDependencies().apolloClient,
-      messages: [messageToFlush],
-    });
-  };
-
-  const scheduleFlush = (message: ExtendedUIMessage) => {
-    latestMessage = message;
-
-    if (!isDefined(throttleTimer)) {
-      flushLatestMessage();
-
-      throttleTimer = setTimeout(() => {
-        throttleTimer = null;
-        flushLatestMessage();
-      }, THROTTLE_MS);
-    }
-  };
-
   const startReadLoop = async (readable: ReadableStream<UIMessageChunk>) => {
     const messageStream = readUIMessageStream({ stream: readable });
-
-    let lastUsageCountedMessageId: string | null = null;
+    const updateThreadFromStreamedMessage =
+      createAiChatStreamedMessageThreadUpdater({
+        store,
+        threadId,
+        applyAiChatThreadUpdate: (update) =>
+          getDependencies().applyAiChatThreadUpdate(update),
+      });
 
     for await (const message of messageStream) {
       if (isInactive()) {
         break;
       }
       const extendedMessage = message as ExtendedUIMessage;
-      const title = getAiChatMessageThreadTitle(extendedMessage);
-      const threadRecord = store.get(
-        aiChatThreadRecordFamilySelector.selectorFamily(threadId),
-      );
 
-      if (
-        isDefined(title) &&
-        isDefined(threadRecord) &&
-        !isNonEmptyString(threadRecord.title)
-      ) {
-        getDependencies().applyAiChatThreadUpdate({ id: threadId, title });
-      }
-
-      const usage = extendedMessage.metadata?.usage;
-      const model = extendedMessage.metadata?.model;
-
-      if (
-        isDefined(usage) &&
-        isDefined(model) &&
-        lastUsageCountedMessageId !== extendedMessage.id
-      ) {
-        lastUsageCountedMessageId = extendedMessage.id;
-
-        store.set(usageAtom, (previousUsage) =>
-          accumulateAiChatUsage(
-            previousUsage ??
-              (isDefined(threadRecord)
-                ? getAiChatUsageFromThread(threadRecord)
-                : null),
-            usage,
-            model,
-          ),
-        );
-      }
-
-      scheduleFlush(extendedMessage);
+      updateThreadFromStreamedMessage(extendedMessage);
+      messageFlusher.schedule(extendedMessage);
     }
 
-    if (isDefined(throttleTimer)) {
-      clearTimeout(throttleTimer);
-      throttleTimer = null;
-    }
-    flushLatestMessage();
+    messageFlusher.flush();
 
     if (!isDisposed) {
       endStream();
@@ -237,7 +174,6 @@ export const openAiChatThreadStream = ({
 
     const fetchId = ++lastFetchId;
 
-    // Marked before the query starts, so the fetched messages never replace the stream in between
     store.set(isFetchingAtom, true);
 
     try {
@@ -255,32 +191,11 @@ export const openAiChatThreadStream = ({
         return;
       }
 
-      // A live snapshot is at least as recent as a fetch, which may have been read before it
-      const liveReactionRevisions = store.get(liveReactionRevisionsAtom);
-
-      for (const message of data.chatMessages ?? []) {
-        if (!isDefined(liveReactionRevisions[message.id])) {
-          store.set(
-            aiChatMessageReactionsFamilyState.atomFamily({
-              messageId: message.id,
-            }),
-            message.reactions,
-          );
-        }
-      }
-
-      const uiMessages = mapAgentMessagesToUIMessages(data.chatMessages ?? []);
-
-      refetchToolIndexOnUnknownTools({
+      storeFetchedAiChatMessages({
+        store,
+        threadId,
+        chatMessages: data.chatMessages ?? [],
         apolloClient: getDependencies().apolloClient,
-        messages: uiMessages,
-      });
-
-      store.set(fetchedMessagesAtom, {
-        messages: uiMessages.filter((message) => message.status !== 'queued'),
-        queuedMessages: uiMessages.filter(
-          (message) => message.status === 'queued',
-        ),
       });
 
       if (isDefined(data.chatStreamCatchupChunks)) {
@@ -343,28 +258,11 @@ export const openAiChatThreadStream = ({
       }
 
       case 'message-reactions-updated': {
-        const liveRevisions = store.get(liveReactionRevisionsAtom);
-        const appliedRevision = liveRevisions[event.messageId];
-
-        if (isDefined(appliedRevision) && event.revision < appliedRevision) {
-          break;
-        }
-
-        store.set(liveReactionRevisionsAtom, {
-          ...liveRevisions,
-          [event.messageId]: event.revision,
-        });
-        store.set(
-          aiChatMessageReactionsFamilyState.atomFamily({
-            messageId: event.messageId,
-          }),
-          event.reactions,
-        );
+        applyAiChatMessageReactionsUpdate({ store, threadId, event });
         break;
       }
 
       case 'keepalive': {
-        // The reconnect heartbeat also reloads shared link access, catching edit downgrades without polling.
         if (
           !isDefined(lastPermissionsRefreshAt) ||
           Date.now() - lastPermissionsRefreshAt >=
@@ -431,11 +329,7 @@ export const openAiChatThreadStream = ({
   const handleAccessDenied = () => {
     isAccessDenied = true;
     disposeSubscription?.();
-    latestMessage = null;
-    if (isDefined(throttleTimer)) {
-      clearTimeout(throttleTimer);
-      throttleTimer = null;
-    }
+    messageFlusher.cancel();
     resetStreamProcessing();
     store.set(displayedMessagesAtom, []);
     store.set(fetchedMessagesAtom, { messages: [], queuedMessages: [] });
@@ -458,11 +352,10 @@ export const openAiChatThreadStream = ({
         if (isInactive()) {
           return;
         }
-        if (isChatAccessDenied(value.errors)) {
+        if (isAiChatAccessDenied(value.errors)) {
           handleAccessDenied();
           return;
         }
-        // The server yields the first keepalive itself on subscribe, so only later events prove pub/sub delivers
         if (hasReceivedInitialKeepalive) {
           lastBroadcastAt = Date.now();
           store.set(recoveryAttemptsAtom, 0);
@@ -491,7 +384,7 @@ export const openAiChatThreadStream = ({
         if (isInactive()) {
           return;
         }
-        if (Array.isArray(errors) && isChatAccessDenied(errors)) {
+        if (Array.isArray(errors) && isAiChatAccessDenied(errors)) {
           handleAccessDenied();
         }
       },
@@ -511,11 +404,11 @@ export const openAiChatThreadStream = ({
     const isPending =
       isStreamOpen || store.get(replyStatusAtom) === 'awaiting-first-chunk';
     const recoveryAttempts = store.get(recoveryAttemptsAtom);
+    const isRecoveryInProgress = recoveryAttempts !== 0;
 
-    // Resubscribing clears the pending flags, so a started recovery runs until a broadcast arrives or it gives up
     if (
       isAccessDenied ||
-      (!isPending && recoveryAttempts === 0) ||
+      (!isPending && !isRecoveryInProgress) ||
       Date.now() - lastBroadcastAt <= AI_CHAT_STREAM_LIVENESS_TIMEOUT_IN_MS
     ) {
       return;
@@ -539,59 +432,16 @@ export const openAiChatThreadStream = ({
     onResubscribeRequested();
   }, AI_CHAT_STREAM_LIVENESS_CHECK_INTERVAL_IN_MS);
 
-  let isDisplayedSyncScheduled = false;
+  const unsubscribeDisplayedMessagesSync =
+    subscribeToAiChatDisplayedMessagesSync({ store, threadId, isInactive });
 
-  // Deferred: a chunk sets the status to idle for an instant before streaming
-  const syncDisplayedMessages = () => {
-    if (isDisplayedSyncScheduled) {
-      return;
-    }
-
-    isDisplayedSyncScheduled = true;
-
-    queueMicrotask(() => {
-      isDisplayedSyncScheduled = false;
-
-      if (
-        store.get(replyStatusAtom) !== 'idle' ||
-        store.get(isFetchingAtom) ||
-        isInactive()
-      ) {
-        return;
-      }
-
-      const fetchedMessages = store.get(fetchedMessagesAtom).messages;
-
-      if (store.get(displayedMessagesAtom) !== fetchedMessages) {
-        store.set(displayedMessagesAtom, fetchedMessages);
-      }
-    });
-  };
-
-  const unsubscribeDisplayedSync = [
-    store.sub(replyStatusAtom, syncDisplayedMessages),
-    store.sub(isFetchingAtom, syncDisplayedMessages),
-    store.sub(fetchedMessagesAtom, syncDisplayedMessages),
-  ];
-
-  const loadThreadIfUnknown = async () => {
-    const storedThread = store.get(
-      aiChatThreadRecordFamilySelector.selectorFamily(threadId),
-    );
-
-    // A live update or a favorite can store a thread before it is fetched
-    if (isDefined(storedThread?.conversationType)) {
-      return;
-    }
-
-    const loadedThread = await getDependencies().loadAiChatThread(threadId);
-
-    if (!isDisposed && loadedThread === null) {
-      store.set(aiChatThreadIsMissingFamilyState.atomFamily(familyKey), true);
-    }
-  };
-
-  void loadThreadIfUnknown();
+  void loadAiChatThreadIfUnknown({
+    store,
+    threadId,
+    loadAiChatThread: (threadIdToLoad) =>
+      getDependencies().loadAiChatThread(threadIdToLoad),
+    isDisposed: () => isDisposed,
+  });
   refetchMessages();
 
   return {
@@ -603,12 +453,10 @@ export const openAiChatThreadStream = ({
     dispose: () => {
       isDisposed = true;
       clearInterval(livenessInterval);
-      unsubscribeDisplayedSync.forEach((unsubscribe) => unsubscribe());
+      unsubscribeDisplayedMessagesSync();
       chunkSequencer.reset();
       store.set(replyStatusAtom, endAiChatReplyStatus('awaiting-first-chunk'));
-      if (isDefined(throttleTimer)) {
-        clearTimeout(throttleTimer);
-      }
+      messageFlusher.cancel();
       cleanupStream();
       if (!isAccessDenied) {
         disposeSubscription?.();

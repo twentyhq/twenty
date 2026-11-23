@@ -20,6 +20,7 @@ import {
 
 import { ADD_ROW_LEVEL_PERMISSION_RULE_LINKS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-row-level-permission-rule-links-upgrade-command-name.constant';
 import { ADD_RELATION_FIELD_METADATA_ID_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-relation-field-metadata-id-to-row-level-permission-predicate-upgrade-command-name.constant';
+import { ADD_WORKSPACE_MEMBER_RELATION_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-workspace-member-relation-to-row-level-permission-predicate-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -41,6 +42,9 @@ import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/
 @Index('IDX_RLPP_RULE_ID', ['rowLevelPermissionRuleId'])
 @Index('IDX_RLPP_WORKSPACE_MEMBER_FIELD_METADATA_ID', [
   'workspaceMemberFieldMetadataId',
+])
+@Index('IDX_RLPP_WORKSPACE_MEMBER_RELATION_FIELD_METADATA_ID', [
+  'workspaceMemberRelationFieldMetadataId',
 ])
 export class RowLevelPermissionPredicateEntity
   extends SyncableEntity
@@ -120,6 +124,19 @@ export class RowLevelPermissionPredicateEntity
   )
   @JoinColumn({ name: 'workspaceMemberFieldMetadataId' })
   workspaceMemberFieldMetadata: Relation<FieldMetadataEntity> | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_WORKSPACE_MEMBER_RELATION_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid' })
+  workspaceMemberRelationFieldMetadataId: string | null;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspaceMemberRelationFieldMetadataId' })
+  workspaceMemberRelationFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   rowLevelPermissionPredicateGroupId: string | null;

@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeRuleShapeHash } from 'src/engine/permissions/internal/access-group/utils/compute-rule-shape-hash.util';
-import { findRlsRuleLiteralValuesPredicate } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-literal-values-predicate.util';
+import { findRlsRuleSplitPredicate } from 'src/engine/permissions/internal/access-group/utils/find-rls-rule-split-predicate.util';
 
 export const resolveAccessGroupRuleShape = ({
   objectMetadataId,
@@ -28,7 +28,7 @@ export const resolveAccessGroupRuleShape = ({
   splitPredicate: (RowLevelPermissionPredicate & { value: string[] }) | null;
 } => {
   const splitPredicate = isDefined(rowLevelPermissionRule)
-    ? findRlsRuleLiteralValuesPredicate(rowLevelPermissionRule)
+    ? findRlsRuleSplitPredicate(rowLevelPermissionRule)
     : null;
   const unreadableFieldIds = [
     ...new Set([

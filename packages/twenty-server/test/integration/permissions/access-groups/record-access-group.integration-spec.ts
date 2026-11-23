@@ -66,7 +66,9 @@ describe('access group ids on records (integration)', () => {
   };
 
   const syncAndRecompute = async () => {
-    await accessGroupSyncService.syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    await accessGroupSyncService.syncAccessGroups({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
     await recordAccessGroupComputationService.recomputeRecordAccessGroupIdsOfAllObjectRecords(
       {
         workspaceId: SEED_APPLE_WORKSPACE_ID,

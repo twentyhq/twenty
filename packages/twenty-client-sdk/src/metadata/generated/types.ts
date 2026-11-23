@@ -117,11 +117,11 @@ export default {
         710,
         712,
         715,
-        720,
         721,
         722,
-        725,
-        726
+        723,
+        726,
+        727
     ],
     "types": {
         "AccessGroupPropagationProgress": {
@@ -2183,7 +2183,7 @@ export default {
                 495
             ],
             "workspaceUrls": [
-                727
+                728
             ],
             "__typename": [
                 4
@@ -5593,7 +5593,7 @@ export default {
                 320
             ],
             "workspace": [
-                724
+                725
             ],
             "__typename": [
                 4
@@ -6045,7 +6045,7 @@ export default {
                 99
             ],
             "workspace": [
-                728
+                729
             ],
             "__typename": [
                 4
@@ -9446,7 +9446,7 @@ export default {
                 }
             ],
             "syncApplication": [
-                723,
+                724,
                 {
                     "dryRun": [
                         1
@@ -10105,7 +10105,7 @@ export default {
                 }
             ],
             "updateWorkspaceMemberRole": [
-                718,
+                719,
                 {
                     "roleId": [
                         562,
@@ -10770,6 +10770,9 @@ export default {
             "canReadAllRecords": [
                 1
             ],
+            "canReadSomeRecords": [
+                1
+            ],
             "canSoftDeleteAllRecords": [
                 1
             ],
@@ -11400,7 +11403,7 @@ export default {
                 4
             ],
             "workspaceUrls": [
-                727
+                728
             ],
             "__typename": [
                 4
@@ -11685,7 +11688,7 @@ export default {
                 }
             ],
             "checkWorkspaceInviteHashIsValid": [
-                717,
+                718,
                 {
                     "inviteHash": [
                         4,
@@ -11979,7 +11982,7 @@ export default {
                 711
             ],
             "findWorkspaceFromInviteHash": [
-                709,
+                716,
                 {
                     "inviteHash": [
                         4,
@@ -11988,7 +11991,7 @@ export default {
                 }
             ],
             "findWorkspaceInvitations": [
-                716
+                717
             ],
             "frontComponent": [
                 300,
@@ -12436,7 +12439,7 @@ export default {
                 }
             ],
             "myUserApplicationVariables": [
-                719
+                720
             ],
             "navigationMenuItem": [
                 400,
@@ -12997,7 +13000,7 @@ export default {
                 562
             ],
             "workspaceMembers": [
-                718
+                719
             ],
             "__typename": [
                 4
@@ -13060,6 +13063,9 @@ export default {
                 340
             ],
             "workspaceMemberFieldMetadataId": [
+                4
+            ],
+            "workspaceMemberRelationFieldMetadataId": [
                 4
             ],
             "workspaceMemberSubFieldName": [
@@ -13208,6 +13214,9 @@ export default {
             ],
             "workspaceMemberFieldMetadataId": [
                 4
+            ],
+            "workspaceMemberRelationFieldMetadataId": [
+                562
             ],
             "workspaceMemberSubFieldName": [
                 4
@@ -13624,7 +13633,7 @@ export default {
                 4
             ],
             "result": [
-                716
+                717
             ],
             "success": [
                 1
@@ -13813,7 +13822,7 @@ export default {
                 99
             ],
             "workspace": [
-                728
+                729
             ],
             "__typename": [
                 4
@@ -13890,7 +13899,7 @@ export default {
         },
         "StartWorkspaceSetupChatResult": {
             "outcome": [
-                726
+                727
             ],
             "thread": [
                 18
@@ -16391,10 +16400,10 @@ export default {
                 669
             ],
             "workspaceMember": [
-                718
+                719
             ],
             "workspaceMembers": [
-                718
+                719
             ],
             "workspaces": [
                 669
@@ -16606,7 +16615,7 @@ export default {
                 99
             ],
             "workspaceUrls": [
-                727
+                728
             ],
             "__typename": [
                 4
@@ -17514,7 +17523,7 @@ export default {
                 8
             ],
             "workspaceUrls": [
-                727
+                728
             ],
             "__typename": [
                 4
@@ -17550,7 +17559,7 @@ export default {
                 340
             ],
             "personOutcome": [
-                725
+                726
             ],
             "__typename": [
                 4
@@ -17568,6 +17577,23 @@ export default {
             ]
         },
         "WorkspaceDiscoverability": {},
+        "WorkspaceFromInviteHash": {
+            "allowImpersonation": [
+                1
+            ],
+            "displayName": [
+                4
+            ],
+            "id": [
+                562
+            ],
+            "logo": [
+                4
+            ],
+            "__typename": [
+                4
+            ]
+        },
         "WorkspaceInvitation": {
             "email": [
                 4
@@ -17604,7 +17630,7 @@ export default {
                 4
             ],
             "dateFormat": [
-                720
+                721
             ],
             "id": [
                 562
@@ -17616,7 +17642,7 @@ export default {
                 303
             ],
             "numberFormat": [
-                721
+                722
             ],
             "openRecordIn": [
                 422
@@ -17625,7 +17651,7 @@ export default {
                 477
             ],
             "timeFormat": [
-                722
+                723
             ],
             "timeZone": [
                 4
@@ -17703,7 +17729,7 @@ export default {
                 562
             ],
             "workspaceUrls": [
-                727
+                728
             ],
             "__typename": [
                 4

@@ -7,7 +7,6 @@ import {
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// The defaults only cover the moment before the workspace has loaded.
 export const useWorkspaceAiModelTiers = (): {
   chatTier: AiModelTier;
   agentTier: AiModelTier;
