@@ -77,6 +77,7 @@ const buildEvent = ({
   name,
   workspaceId: 'workspace-id',
   objectMetadata: FAKE_OBJECT_METADATA,
+  eventId: 'database-event-1',
   recordId,
   properties: { updatedFields },
 });
