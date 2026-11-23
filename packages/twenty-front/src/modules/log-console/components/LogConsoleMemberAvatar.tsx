@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLifebuoy } from 'twenty-ui/icon';
 
-import { AppChip } from '@/applications/components/AppChip';
+import { ActorAppChip } from '@/applications/components/ActorAppChip';
 import { type LogConsoleMember } from '@/log-console/types/LogConsoleMember';
 import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { getActorSourceIcon } from '@/ui/field/display/utils/getActorSourceIcon';
@@ -20,11 +20,9 @@ export const LogConsoleMemberAvatar = ({
     isDefined(member.context?.applicationId)
   ) {
     return (
-      <AppChip
+      <ActorAppChip
         applicationId={member.context.applicationId}
-        fallbackApplicationData={{ name: member.name }}
-        size="sm"
-        chipOnly
+        name={member.name}
       />
     );
   }

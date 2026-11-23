@@ -1,4 +1,4 @@
-import { AppChip } from '@/applications/components/AppChip';
+import { ActorAppChip } from '@/applications/components/ActorAppChip';
 import { type FieldActorValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 
@@ -26,12 +26,7 @@ export const ActorDisplay = ({
       variant="plain"
       startElement={
         source === 'APPLICATION' && isDefined(context?.applicationId) ? (
-          <AppChip
-            applicationId={context.applicationId}
-            fallbackApplicationData={{ name }}
-            size="sm"
-            chipOnly
-          />
+          <ActorAppChip applicationId={context.applicationId} name={name} />
         ) : (
           <AvatarOrIcon
             colorSeed={workspaceMemberId ?? undefined}
