@@ -40,7 +40,6 @@ export const fromUpdateRelatedRecordPathInputToFlatRelatedRecordPathToUpdateOrTh
       isSystemSideEffect: false,
     });
 
-    // GraphQL accepts an explicit null for any optional input, but neither property is ever null
     const { overrides, updatedEditableProperties } =
       sanitizeOverridableEntityInput({
         metadataName: 'relatedRecordPath',
