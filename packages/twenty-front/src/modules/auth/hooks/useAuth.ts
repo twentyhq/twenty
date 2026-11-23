@@ -61,6 +61,7 @@ import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirect
 import { isChooseWorkspaceActionRequested } from '@/auth/utils/isChooseWorkspaceActionRequested';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { closeWebPushNotificationsAndUnsubscribe } from '@/web-push/utils/closeWebPushNotificationsAndUnsubscribe';
+import { updateAppBadge } from '@/web-push/utils/updateAppBadge';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -468,6 +469,7 @@ export const useAuth = () => {
     } catch {}
 
     await closeWebPushNotificationsAndUnsubscribe().catch(logError);
+    await updateAppBadge(0).catch(logError);
 
     broadcastSignOutToOtherTabs();
     clearSession();
