@@ -275,8 +275,8 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
     );
   });
 
-  it('rejects a custom provider that declares no authorize or callback logic function', () => {
-    expect(() =>
+  it('leaves the custom config empty for a provider without authorize or callback logic function, for the validator to refuse', () => {
+    expect(
       fromConnectionProviderManifestToUniversalFlatConnectionProvider({
         connectionProviderManifest: {
           universalIdentifier: PROVIDER_UID,
@@ -287,9 +287,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         },
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
-      }),
-    ).toThrow(
-      'must declare authorizeLogicFunctionUniversalIdentifier and callbackLogicFunctionUniversalIdentifier',
-    );
+      }).customConfig,
+    ).toBeNull();
   });
 });

@@ -1,19 +1,15 @@
 import {
   type ConnectionProviderManifest,
   DEFAULT_CONNECTION_PROVIDER_SCOPE,
-  resolveManifestReferenceUniversalIdentifier,
+  normalizeConnectionProviderManifest,
   type StoredCustomConnectionProviderConfig,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  ApplicationException,
-  ApplicationExceptionCode,
-} from 'src/engine/core-modules/application/application.exception';
-
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
 
+// A custom provider missing either logic function gets no config, which the connection provider validator refuses.
 const toStoredCustomConfig = (
   connectionProviderManifest: ConnectionProviderManifest,
 ): StoredCustomConnectionProviderConfig | null => {
@@ -21,27 +17,16 @@ const toStoredCustomConfig = (
     return null;
   }
 
-  const { custom } = connectionProviderManifest;
-
-  const authorizeLogicFunctionUniversalIdentifier =
-    resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: custom.authorizeLogicFunctionUniversalIdentifier,
-      deprecatedReference: custom.authorizeLogicFunction,
-    });
-  const callbackLogicFunctionUniversalIdentifier =
-    resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: custom.callbackLogicFunctionUniversalIdentifier,
-      deprecatedReference: custom.callbackLogicFunction,
-    });
+  const {
+    authorizeLogicFunctionUniversalIdentifier,
+    callbackLogicFunctionUniversalIdentifier,
+  } = connectionProviderManifest.custom;
 
   if (
     !isDefined(authorizeLogicFunctionUniversalIdentifier) ||
     !isDefined(callbackLogicFunctionUniversalIdentifier)
   ) {
-    throw new ApplicationException(
-      `Custom connection provider ${connectionProviderManifest.universalIdentifier} must declare authorizeLogicFunctionUniversalIdentifier and callbackLogicFunctionUniversalIdentifier`,
-      ApplicationExceptionCode.INVALID_INPUT,
-    );
+    return null;
   }
 
   return {
@@ -60,6 +45,9 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
     applicationUniversalIdentifier: string;
     now: string;
   }): UniversalFlatConnectionProvider => {
+    const normalizedManifest = normalizeConnectionProviderManifest(
+      connectionProviderManifest,
+    );
     const oauthConfig: StoredOAuthConnectionProviderConfig | null =
       connectionProviderManifest.type === 'oauth'
         ? {
@@ -91,7 +79,7 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       scope:
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,
       oauthConfig,
-      customConfig: toStoredCustomConfig(connectionProviderManifest),
+      customConfig: toStoredCustomConfig(normalizedManifest),
       oauthDiscoveryConfig:
         connectionProviderManifest.type === 'oauth-discovery'
           ? {
@@ -100,26 +88,12 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
             }
           : null,
       identifyAccountLogicFunctionUniversalIdentifier:
-        resolveManifestReferenceUniversalIdentifier({
-          universalIdentifier:
-            connectionProviderManifest.identifyAccountLogicFunctionUniversalIdentifier,
-          deprecatedReference:
-            connectionProviderManifest.identifyAccountLogicFunction,
-        }) ?? null,
+        normalizedManifest.identifyAccountLogicFunctionUniversalIdentifier ??
+        null,
       onConnectLogicFunctionUniversalIdentifier:
-        resolveManifestReferenceUniversalIdentifier({
-          universalIdentifier:
-            connectionProviderManifest.onConnectLogicFunctionUniversalIdentifier,
-          deprecatedReference:
-            connectionProviderManifest.onConnectLogicFunction,
-        }) ?? null,
+        normalizedManifest.onConnectLogicFunctionUniversalIdentifier ?? null,
       onDisconnectLogicFunctionUniversalIdentifier:
-        resolveManifestReferenceUniversalIdentifier({
-          universalIdentifier:
-            connectionProviderManifest.onDisconnectLogicFunctionUniversalIdentifier,
-          deprecatedReference:
-            connectionProviderManifest.onDisconnectLogicFunction,
-        }) ?? null,
+        normalizedManifest.onDisconnectLogicFunctionUniversalIdentifier ?? null,
       createdAt: now,
       updatedAt: now,
     };

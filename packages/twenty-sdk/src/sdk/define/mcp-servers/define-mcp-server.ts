@@ -4,7 +4,7 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
 import {
   type McpServerManifest,
-  resolveManifestReferenceUniversalIdentifier,
+  normalizeMcpServerManifest,
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl, isNonEmptyString } from 'twenty-shared/utils';
 
@@ -35,11 +35,8 @@ export const defineMcpServer: DefineEntity<McpServerManifest> = (config) => {
     errors.push(`MCP server url "${config.url}" must be an HTTP or HTTPS URL`);
   }
 
-  const connectionProviderUniversalIdentifier =
-    resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: config.connectionProviderUniversalIdentifier,
-      deprecatedReference: config.connectionProvider,
-    });
+  const normalizedConfig = normalizeMcpServerManifest(config);
+  const { connectionProviderUniversalIdentifier } = normalizedConfig;
 
   if (
     isDefined(connectionProviderUniversalIdentifier) &&
@@ -50,5 +47,5 @@ export const defineMcpServer: DefineEntity<McpServerManifest> = (config) => {
     );
   }
 
-  return createValidationResult({ config, errors });
+  return createValidationResult({ config: normalizedConfig, errors });
 };

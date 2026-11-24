@@ -1,6 +1,6 @@
 import {
   type ConnectionProviderManifest,
-  resolveManifestReferenceUniversalIdentifier,
+  normalizeConnectionProviderManifest,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,9 +17,12 @@ export const getConnectionProviderManifestLogicFunctionReferences = (
   hook: ConnectionProviderLogicFunctionHook;
   universalIdentifier: string;
 }[] => {
+  const normalizedConnectionProvider =
+    normalizeConnectionProviderManifest(connectionProvider);
+
   const custom =
-    connectionProvider.type === 'custom'
-      ? connectionProvider.custom
+    normalizedConnectionProvider.type === 'custom'
+      ? normalizedConnectionProvider.custom
       : undefined;
 
   const references: {
@@ -28,41 +31,26 @@ export const getConnectionProviderManifestLogicFunctionReferences = (
   }[] = [
     {
       hook: 'identifyAccount',
-      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
-        universalIdentifier:
-          connectionProvider.identifyAccountLogicFunctionUniversalIdentifier,
-        deprecatedReference: connectionProvider.identifyAccountLogicFunction,
-      }),
+      universalIdentifier:
+        normalizedConnectionProvider.identifyAccountLogicFunctionUniversalIdentifier,
     },
     {
       hook: 'onConnect',
-      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
-        universalIdentifier:
-          connectionProvider.onConnectLogicFunctionUniversalIdentifier,
-        deprecatedReference: connectionProvider.onConnectLogicFunction,
-      }),
+      universalIdentifier:
+        normalizedConnectionProvider.onConnectLogicFunctionUniversalIdentifier,
     },
     {
       hook: 'onDisconnect',
-      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
-        universalIdentifier:
-          connectionProvider.onDisconnectLogicFunctionUniversalIdentifier,
-        deprecatedReference: connectionProvider.onDisconnectLogicFunction,
-      }),
+      universalIdentifier:
+        normalizedConnectionProvider.onDisconnectLogicFunctionUniversalIdentifier,
     },
     {
       hook: 'authorize',
-      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
-        universalIdentifier: custom?.authorizeLogicFunctionUniversalIdentifier,
-        deprecatedReference: custom?.authorizeLogicFunction,
-      }),
+      universalIdentifier: custom?.authorizeLogicFunctionUniversalIdentifier,
     },
     {
       hook: 'callback',
-      universalIdentifier: resolveManifestReferenceUniversalIdentifier({
-        universalIdentifier: custom?.callbackLogicFunctionUniversalIdentifier,
-        deprecatedReference: custom?.callbackLogicFunction,
-      }),
+      universalIdentifier: custom?.callbackLogicFunctionUniversalIdentifier,
     },
   ];
 

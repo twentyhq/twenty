@@ -6,7 +6,7 @@ import {
   CONNECTION_PROVIDER_SCOPES,
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
-  resolveManifestReferenceUniversalIdentifier,
+  normalizeConnectionProviderManifest,
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
@@ -54,10 +54,8 @@ const getCustomConfigErrors = (
   }
 
   return CUSTOM_LOGIC_FUNCTION_KEYS.flatMap((logicFunctionKey) => {
-    const universalIdentifier = resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: custom[`${logicFunctionKey}UniversalIdentifier`],
-      deprecatedReference: custom[logicFunctionKey],
-    });
+    const universalIdentifier =
+      custom[`${logicFunctionKey}UniversalIdentifier`];
 
     if (!isDefined(universalIdentifier)) {
       return [
@@ -78,6 +76,7 @@ export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
 > = (config) => {
   const errors: string[] = [];
+  const normalizedConfig = normalizeConnectionProviderManifest(config);
 
   if (!config.universalIdentifier) {
     errors.push('Connection provider must have a universalIdentifier');
@@ -100,10 +99,8 @@ export const defineConnectionProvider: DefineEntity<
   }
 
   for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
-    const universalIdentifier = resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: config[`${logicFunctionKey}UniversalIdentifier`],
-      deprecatedReference: config[logicFunctionKey],
-    });
+    const universalIdentifier =
+      normalizedConfig[`${logicFunctionKey}UniversalIdentifier`];
     const referenceError = isDefined(universalIdentifier)
       ? getInvalidLogicFunctionReferenceError({
           path: logicFunctionKey,
@@ -174,9 +171,9 @@ export const defineConnectionProvider: DefineEntity<
     );
   }
 
-  if (config.type === 'custom') {
-    errors.push(...getCustomConfigErrors(config.custom));
+  if (normalizedConfig.type === 'custom') {
+    errors.push(...getCustomConfigErrors(normalizedConfig.custom));
   }
 
-  return createValidationResult({ config, errors });
+  return createValidationResult({ config: normalizedConfig, errors });
 };

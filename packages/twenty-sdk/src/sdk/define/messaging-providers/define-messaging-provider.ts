@@ -5,7 +5,7 @@ import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres
 import {
   MESSAGING_PROVIDER_CONVERSATION_STYLES,
   type MessagingProviderManifest,
-  resolveManifestReferenceUniversalIdentifier,
+  normalizeMessagingProviderManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
@@ -39,11 +39,8 @@ export const defineMessagingProvider: DefineEntity<
     errors.push('Messaging provider must have a displayName');
   }
 
-  const connectionProviderUniversalIdentifier =
-    resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: config.connectionProviderUniversalIdentifier,
-      deprecatedReference: config.connectionProvider,
-    });
+  const normalizedConfig = normalizeMessagingProviderManifest(config);
+  const { connectionProviderUniversalIdentifier } = normalizedConfig;
 
   if (!isDefined(connectionProviderUniversalIdentifier)) {
     errors.push(
@@ -56,10 +53,8 @@ export const defineMessagingProvider: DefineEntity<
   }
 
   for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
-    const universalIdentifier = resolveManifestReferenceUniversalIdentifier({
-      universalIdentifier: config[`${logicFunctionKey}UniversalIdentifier`],
-      deprecatedReference: config[logicFunctionKey],
-    });
+    const universalIdentifier =
+      normalizedConfig[`${logicFunctionKey}UniversalIdentifier`];
 
     if (
       isDefined(universalIdentifier) &&
@@ -80,5 +75,5 @@ export const defineMessagingProvider: DefineEntity<
     );
   }
 
-  return createValidationResult({ config, errors });
+  return createValidationResult({ config: normalizedConfig, errors });
 };

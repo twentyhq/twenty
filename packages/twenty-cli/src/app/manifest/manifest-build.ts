@@ -1,4 +1,8 @@
-import { withBothManifestReferenceSpellings } from '@/app/manifest/utils/with-both-manifest-reference-spellings';
+import {
+  withDeprecatedConnectionProviderReferences,
+  withDeprecatedMcpServerReferences,
+  withDeprecatedMessagingProviderReferences,
+} from '@/app/manifest/utils/with-deprecated-provider-references';
 import { fromObjectConfigToObjectManifest } from '@/app/manifest/utils/from-object-config-to-object-manifest';
 import { fromLogicFunctionConfigToLogicFunctionManifest } from '@/app/manifest/utils/from-logic-function-config-to-logic-function-manifest';
 import { fromFrontComponentConfigToFrontComponentManifest } from '@/app/manifest/utils/from-front-component-config-to-front-component-manifest';
@@ -296,29 +300,8 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        const connectionProvider = withBothManifestReferenceSpellings({
-          entity: extract.config,
-          referenceKeys: [
-            'identifyAccountLogicFunction',
-            'onConnectLogicFunction',
-            'onDisconnectLogicFunction',
-          ],
-        });
-
         connectionProviders.push(
-          connectionProvider.type === 'custom' &&
-            isDefined(connectionProvider.custom)
-            ? {
-                ...connectionProvider,
-                custom: withBothManifestReferenceSpellings({
-                  entity: connectionProvider.custom,
-                  referenceKeys: [
-                    'authorizeLogicFunction',
-                    'callbackLogicFunction',
-                  ],
-                }),
-              }
-            : connectionProvider,
+          withDeprecatedConnectionProviderReferences(extract.config),
         );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -332,14 +315,7 @@ export const buildManifest = async (
             filePath,
           });
         messagingProviders.push(
-          withBothManifestReferenceSpellings({
-            entity: extract.config,
-            referenceKeys: [
-              'connectionProvider',
-              'sendMessageLogicFunction',
-              'markThreadAsReadLogicFunction',
-            ],
-          }),
+          withDeprecatedMessagingProviderReferences(extract.config),
         );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
@@ -351,12 +327,7 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        mcpServers.push(
-          withBothManifestReferenceSpellings({
-            entity: extract.config,
-            referenceKeys: ['connectionProvider'],
-          }),
-        );
+        mcpServers.push(withDeprecatedMcpServerReferences(extract.config));
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         mcpServersFilePaths.push(relativePath);
