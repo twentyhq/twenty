@@ -53,7 +53,24 @@
 }
 
 .search {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  min-block-size: 36px;
   padding: var(--t-spacing-2);
+}
+
+.searchInput[type='search'] {
+  font-size: var(--t-font-size-sm);
+
+  &::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}
+
+.separator[data-orientation] {
+  background-color: var(--t-border-color-light);
 }
 
 .viewport {

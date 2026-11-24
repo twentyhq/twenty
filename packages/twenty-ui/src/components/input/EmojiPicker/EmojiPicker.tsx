@@ -4,6 +4,7 @@ import { EmojiPicker as FrimousseEmojiPicker } from 'frimousse';
 import { useRef } from 'react';
 
 import { Input } from '@ui/primitives/input/Input/Input';
+import { Separator } from '@ui/primitives/layout/Separator/Separator';
 
 import styles from './EmojiPicker.module.scss';
 import { EmojiPickerEmoji } from './internal/EmojiPickerEmoji';
@@ -46,8 +47,12 @@ export const EmojiPicker = ({
           aria-label={searchLabel}
           placeholder={searchPlaceholder}
           autoFocus={autoFocus}
+          variant="plain"
+          hasFocusRing={false}
+          className={styles.searchInput}
         />
       </div>
+      <Separator className={styles.separator} />
       <FrimousseEmojiPicker.Viewport className={styles.viewport} tabIndex={0}>
         <FrimousseEmojiPicker.Loading className={styles.message}>
           {loadingLabel}
