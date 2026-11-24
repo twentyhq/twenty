@@ -120,15 +120,17 @@ export const computeViewPresetFilterGqlFilter = ({
     case 'INBOX_SNOOZED':
     case 'INBOX_DONE':
     case 'INBOX_MENTIONS':
-      return isDefined(currentWorkspaceMemberId)
-        ? {
-            ...NOT_DIRECT_MESSAGE,
-            ...computeMemberInboxStatusFilter({
-              presetFilter,
-              workspaceMemberId: currentWorkspaceMemberId,
-            }),
-          }
-        : MATCHES_NO_RECORD;
+      if (!isDefined(currentWorkspaceMemberId)) {
+        return MATCHES_NO_RECORD;
+      }
+
+      return {
+        ...NOT_DIRECT_MESSAGE,
+        ...computeMemberInboxStatusFilter({
+          presetFilter,
+          workspaceMemberId: currentWorkspaceMemberId,
+        }),
+      };
     case 'INBOX_CHANNEL_OPEN':
       return {
         or: [
