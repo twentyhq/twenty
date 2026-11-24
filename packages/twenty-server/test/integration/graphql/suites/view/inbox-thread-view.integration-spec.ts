@@ -8,7 +8,7 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 
-type ChatView = {
+type InboxThreadView = {
   id: string;
   name: string;
   type: ViewType;
@@ -17,7 +17,7 @@ type ChatView = {
   viewFilters: { operand: ViewFilterOperand; value: unknown }[];
 };
 
-const CHAT_VIEW_GQL_FIELDS = `
+const INBOX_THREAD_VIEW_GQL_FIELDS = `
   id
   name
   type
@@ -29,28 +29,31 @@ const CHAT_VIEW_GQL_FIELDS = `
   }
 `;
 
-const findChatViews = async (objectMetadataId: string) => {
-  const { data } = await findViews<ChatView>({
+const findInboxThreadViews = async (objectMetadataId: string) => {
+  const { data } = await findViews<InboxThreadView>({
     objectMetadataId,
-    gqlFields: CHAT_VIEW_GQL_FIELDS,
+    gqlFields: INBOX_THREAD_VIEW_GQL_FIELDS,
     expectToFail: false,
   });
 
   return data.getViews;
 };
 
-describe('Chat inbox views', () => {
-  let chatObjectMetadataId: string;
+describe('Inbox thread views', () => {
+  let inboxThreadObjectMetadataId: string;
 
   beforeAll(async () => {
-    chatObjectMetadataId = await findObjectMetadataIdByName('agentChatThread');
+    inboxThreadObjectMetadataId =
+      await findObjectMetadataIdByName('agentChatThread');
   });
 
   it('should seed the standard inbox views with their presets and saved filters', async () => {
-    const chatViews = await findChatViews(chatObjectMetadataId);
+    const inboxThreadViews = await findInboxThreadViews(
+      inboxThreadObjectMetadataId,
+    );
 
     expect(
-      chatViews
+      inboxThreadViews
         .sort((viewA, viewB) => viewA.position - viewB.position)
         .map(({ name, type, presetFilter, viewFilters }) => ({
           name,
@@ -106,11 +109,11 @@ describe('Chat inbox views', () => {
     ]);
   });
 
-  it('should create, read and destroy a chat view with a preset filter', async () => {
+  it('should create, read and destroy an inbox thread view with a preset filter', async () => {
     const { data } = await createOneView({
       input: {
-        name: 'My done chats',
-        objectMetadataId: chatObjectMetadataId,
+        name: 'My done threads',
+        objectMetadataId: inboxThreadObjectMetadataId,
         icon: 'IconCircleCheck',
         type: ViewType.INBOX,
         presetFilter: ViewPresetFilter.INBOX_DONE,
@@ -123,11 +126,11 @@ describe('Chat inbox views', () => {
 
     expect(data.createView.presetFilter).toBe(ViewPresetFilter.INBOX_DONE);
     expect(
-      (await findChatViews(chatObjectMetadataId)).find(
+      (await findInboxThreadViews(inboxThreadObjectMetadataId)).find(
         (view) => view.id === createdViewId,
       ),
     ).toMatchObject({
-      name: 'My done chats',
+      name: 'My done threads',
       type: ViewType.INBOX,
       presetFilter: ViewPresetFilter.INBOX_DONE,
     });
@@ -135,7 +138,7 @@ describe('Chat inbox views', () => {
     await destroyOneView({ viewId: createdViewId, expectToFail: false });
 
     expect(
-      (await findChatViews(chatObjectMetadataId)).some(
+      (await findInboxThreadViews(inboxThreadObjectMetadataId)).some(
         (view) => view.id === createdViewId,
       ),
     ).toBe(false);

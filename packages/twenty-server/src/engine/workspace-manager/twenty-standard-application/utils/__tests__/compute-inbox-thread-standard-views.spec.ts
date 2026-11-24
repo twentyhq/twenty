@@ -14,7 +14,7 @@ const NOW = '2024-01-01T00:00:00.000Z';
 
 const INBOX_THREAD = STANDARD_OBJECTS.agentChatThread;
 
-describe('AgentChatThread standard views build', () => {
+describe('Inbox thread standard views build', () => {
   const { allFlatEntityMaps } =
     computeTwentyStandardApplicationAllFlatEntityMaps({
       now: NOW,
@@ -22,7 +22,7 @@ describe('AgentChatThread standard views build', () => {
       twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
     });
 
-  const chatViews = Object.values(
+  const inboxThreadViews = Object.values(
     allFlatEntityMaps.flatViewMaps.byUniversalIdentifier,
   )
     .filter(isDefined)
@@ -35,7 +35,7 @@ describe('AgentChatThread standard views build', () => {
 
   it('builds the six inbox views in tab order with their presets', () => {
     expect(
-      chatViews.map((view) => ({
+      inboxThreadViews.map((view) => ({
         universalIdentifier: view.universalIdentifier,
         type: view.type,
         key: view.key,
@@ -79,16 +79,16 @@ describe('AgentChatThread standard views build', () => {
   });
 
   it('saves the needs input and assigned to me filters', () => {
-    const chatViewUniversalIdentifiers = chatViews.map(
+    const inboxThreadViewUniversalIdentifiers = inboxThreadViews.map(
       (view) => view.universalIdentifier,
     );
 
-    const chatViewFilters = Object.values(
+    const inboxThreadViewFilters = Object.values(
       allFlatEntityMaps.flatViewFilterMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
       .filter((viewFilter) =>
-        chatViewUniversalIdentifiers.includes(
+        inboxThreadViewUniversalIdentifiers.includes(
           viewFilter.viewUniversalIdentifier,
         ),
       )
@@ -100,7 +100,7 @@ describe('AgentChatThread standard views build', () => {
         value: viewFilter.value,
       }));
 
-    expect(chatViewFilters).toEqual([
+    expect(inboxThreadViewFilters).toEqual([
       {
         viewUniversalIdentifier:
           INBOX_THREAD.views.needsInput.universalIdentifier,

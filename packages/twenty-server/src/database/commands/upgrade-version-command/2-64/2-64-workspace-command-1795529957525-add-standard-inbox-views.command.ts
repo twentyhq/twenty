@@ -33,7 +33,7 @@ const INBOX_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-64:add-standard-inbox-views',
   description:
-    'Add the standard inbox views of chats and their saved filters in existing workspaces',
+    'Add the standard inbox thread views and their saved filters in existing workspaces',
 })
 export class AddStandardInboxViewsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -56,16 +56,16 @@ export class AddStandardInboxViewsCommand extends ProvisionedWorkspaceCommandRun
         'flatViewFilterMaps',
       ]);
 
-    const hasChatObject = isDefined(
+    const hasInboxThreadObject = isDefined(
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
         universalIdentifier: INBOX_THREAD.universalIdentifier,
       }),
     );
 
-    if (!hasChatObject) {
+    if (!hasInboxThreadObject) {
       this.logger.log(
-        `Chat object does not exist for workspace ${workspaceId}, skipping`,
+        `Inbox thread object does not exist for workspace ${workspaceId}, skipping`,
       );
 
       return;
