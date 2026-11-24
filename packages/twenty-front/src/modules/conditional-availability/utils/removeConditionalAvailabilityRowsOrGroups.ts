@@ -1,21 +1,22 @@
 import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
+import { type ConditionalAvailabilityRowOrGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowOrGroup';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-export const removeConditionalAvailabilityRowOrGroup = ({
+export const removeConditionalAvailabilityRowsOrGroups = ({
   rowGroup,
-  rowOrGroupId,
+  shouldRemove,
 }: {
   rowGroup: ConditionalAvailabilityRowGroup;
-  rowOrGroupId: string;
+  shouldRemove: (rowOrGroup: ConditionalAvailabilityRowOrGroup) => boolean;
 }): ConditionalAvailabilityRowGroup => ({
   ...rowGroup,
   children: rowGroup.children
-    .filter((child) => child.id !== rowOrGroupId)
+    .filter((child) => !shouldRemove(child))
     .map((child) =>
       child.type === 'group'
-        ? removeConditionalAvailabilityRowOrGroup({
+        ? removeConditionalAvailabilityRowsOrGroups({
             rowGroup: child,
-            rowOrGroupId,
+            shouldRemove,
           })
         : child,
     )

@@ -2,6 +2,7 @@ import { type ConditionalAvailabilityEditorState } from '@/conditional-availabil
 import { type ConditionalAvailabilityEditorStateValidation } from '@/conditional-availability/types/ConditionalAvailabilityEditorStateValidation';
 import { convertConditionalAvailabilityRowOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowOrGroupToNode';
 import { isConditionalAvailabilityRowOrGroupValid } from '@/conditional-availability/utils/isConditionalAvailabilityRowOrGroupValid';
+import { removeConditionalAvailabilityRowsOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityRowsOrGroups';
 import {
   type ConditionalAvailabilityMetadataName,
   validateConditionalAvailabilityNode,
@@ -21,10 +22,14 @@ export const validateConditionalAvailabilityEditorState = ({
     case 'unsupportedRule':
       return { status: 'invalid', reason: 'unsupportedRule' };
     case 'customRule': {
-      const { rowTree } = editorState;
+      const rowTree = removeConditionalAvailabilityRowsOrGroups({
+        rowGroup: editorState.rowTree,
+        shouldRemove: (rowOrGroup) =>
+          rowOrGroup.type === 'row' && !isNonEmptyArray(rowOrGroup.values),
+      });
 
       if (!isNonEmptyArray(rowTree.children)) {
-        return { status: 'invalid', reason: 'noRow' };
+        return { status: 'valid', node: null };
       }
 
       if (!isConditionalAvailabilityRowOrGroupValid({ rowOrGroup: rowTree })) {

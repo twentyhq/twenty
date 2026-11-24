@@ -1,6 +1,6 @@
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
-import { removeConditionalAvailabilityRowOrGroup } from '@/conditional-availability/utils/removeConditionalAvailabilityRowOrGroup';
+import { removeConditionalAvailabilityRowsOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityRowsOrGroups';
 import { updateConditionalAvailabilityRow } from '@/conditional-availability/utils/updateConditionalAvailabilityRow';
 import { updateConditionalAvailabilityRowGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityRowGroup';
 import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
@@ -71,17 +71,38 @@ describe('validateConditionalAvailabilityEditorState', () => {
     ).toEqual({ status: 'invalid', reason: 'unsupportedRule' });
   });
 
-  it('should refuse a row tree without any row', () => {
+  it('should return no node when no row has a value', () => {
     expect(validateRowTree({ ...ROW_TREE, children: [] })).toEqual({
-      status: 'invalid',
-      reason: 'noRow',
+      status: 'valid',
+      node: null,
     });
+
+    expect(
+      validateRowTree({ ...ROW_TREE, children: [DEVICE_ROW_WITHOUT_VALUE] }),
+    ).toEqual({ status: 'valid', node: null });
   });
 
-  it('should refuse a row without value, then accept the rows once that row has a value', () => {
+  it('should refuse a row holding the same value twice', () => {
+    expect(
+      validateRowTree({
+        ...ROW_TREE,
+        children: [
+          {
+            ...ROLE_ROW,
+            values: [
+              ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+              ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+            ],
+          },
+        ],
+      }),
+    ).toEqual({ status: 'invalid', reason: 'invalidRows' });
+  });
+
+  it('should skip a row without value, and write it once it has one', () => {
     expect(validateRowTree(ROW_TREE)).toEqual({
-      status: 'invalid',
-      reason: 'invalidRows',
+      status: 'valid',
+      node: ROLE_NODE,
     });
 
     const rowTreeWithMobileDevice = updateConditionalAvailabilityRow({
@@ -101,9 +122,10 @@ describe('validateConditionalAvailabilityEditorState', () => {
   });
 
   it('should drop a group with its last row', () => {
-    const rowTreeWithoutDeviceRow = removeConditionalAvailabilityRowOrGroup({
+    const rowTreeWithoutDeviceRow = removeConditionalAvailabilityRowsOrGroups({
       rowGroup: ROW_TREE,
-      rowOrGroupId: DEVICE_ROW_WITHOUT_VALUE.id,
+      shouldRemove: (rowOrGroup) =>
+        rowOrGroup.id === DEVICE_ROW_WITHOUT_VALUE.id,
     });
 
     expect(rowTreeWithoutDeviceRow.children).toEqual([ROLE_ROW]);
