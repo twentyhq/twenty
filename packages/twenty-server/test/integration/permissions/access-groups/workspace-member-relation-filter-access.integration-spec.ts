@@ -6,15 +6,15 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { createRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-relation-between-objects.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { revokeObjectRecordsPermissions } from 'test/integration/metadata/suites/object-permission/utils/revoke-object-records-permissions.util';
-import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
-import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
-import { type PermissionTestRecordName } from 'test/integration/permissions/utils/permission-test-workspace.type';
+import {
+  type PermissionTestExpectedAnswers,
+  type PermissionTestPrincipals,
+  type PermissionTestRecordName,
+} from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   FeatureFlagKey,
@@ -24,12 +24,13 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { type RowLevelPermissionRulePredicateInput } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
+import {
+  type RowLevelPermissionRuleInput,
+  type RowLevelPermissionRulePredicateInput,
+} from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/inputs/upsert-row-level-permission-rules.input';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type AccessGroupSyncService } from 'src/engine/permissions/internal/access-group/services/access-group-sync.service';
 import { type RecordAccessGroupComputationService } from 'src/engine/permissions/internal/access-group/services/record-access-group-computation.service';
-import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
-import { type RecordPermissionsReadService } from 'src/engine/permissions/record-permissions-read.service';
 import { type DeferredWorkspaceOperationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-operation-runner.service';
 
 const SEAT_OBJECT_NAME = 'accessRecordTeamSeat';
@@ -39,12 +40,51 @@ const VISIBILITY_TIER_RECORDS: PermissionTestRecordName[] = [
   'fullVisibilityTier',
 ];
 
+const REACHES_READ_AND_UPDATE: PermissionTestExpectedAnswers = {
+  findRecordsActions: {
+    canRead: true,
+    canUpdate: true,
+    canSoftDelete: false,
+    canDelete: false,
+  },
+  canReadRecords: true,
+  canUpdateRecords: true,
+};
+
+const REACHES_READ_ONLY: PermissionTestExpectedAnswers = {
+  findRecordsActions: {
+    canRead: true,
+    canUpdate: false,
+    canSoftDelete: false,
+    canDelete: false,
+  },
+  canReadRecords: true,
+  canUpdateRecords: false,
+};
+
+const REACHES_NOTHING: PermissionTestExpectedAnswers = {
+  findRecordsActions: {
+    canRead: false,
+    canUpdate: false,
+    canSoftDelete: false,
+    canDelete: false,
+  },
+  canReadRecords: false,
+  canUpdateRecords: false,
+};
+
+const SEATED_MEMBER: Pick<
+  PermissionTestPrincipals,
+  'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
+> = {
+  mainPrincipal: { type: 'workspaceMember', role: 'rowLevel' },
+  limitingPrincipal: { type: 'none' },
+  applicationPrincipal: { type: 'customApplication' },
+};
+
 describePermissionTestWorkspace({
   name: 'access through a filtered relation of the workspace member',
-  defineTests: ({ findWorkspace }) => {
-    let leadMemberId: string;
-    let seatMemberId: string;
-    let roleId: string;
+  defineTests: ({ findWorkspace, describeRecordAccess }) => {
     let mediumSeatId: string;
     let recordCompanyFieldMetadataId: string;
     let seatCompanyFieldMetadataId: string;
@@ -75,24 +115,6 @@ describePermissionTestWorkspace({
       return Object.values<{ id: string }>(response.body.data)[0].id;
     };
 
-    const takeSeat = ({
-      workspaceMemberId,
-      record,
-      seatRole,
-    }: {
-      workspaceMemberId: string;
-      record: PermissionTestRecordName;
-      seatRole: 'LEAD' | 'MEMBER';
-    }) =>
-      createRecord({
-        objectName: SEAT_OBJECT_NAME,
-        data: {
-          companyId: companyIds[record],
-          memberId: workspaceMemberId,
-          seatRole,
-        },
-      });
-
     const syncAndCompute = async () => {
       await waitForAllJobsToFinish();
       await getAppProviderByClassName<AccessGroupSyncService>(
@@ -103,42 +125,7 @@ describePermissionTestWorkspace({
       ).runPendingOperations(findWorkspace().workspaceId);
     };
 
-    const findReadableVisibilityTierRecords = async (
-      workspaceMemberId: string,
-    ): Promise<PermissionTestRecordName[]> => {
-      const workspace = findWorkspace();
-      const principals =
-        await getAppProviderByClassName<PrincipalPermissionsReadService>(
-          'PrincipalPermissionsReadService',
-        ).resolvePermissionsPrincipals({
-          authContext: await resolveWorkspaceMemberAuthContext({
-            workspaceId: workspace.workspaceId,
-            workspaceMemberId,
-          }),
-        });
-      const recordPermissionsReadService =
-        getAppProviderByClassName<RecordPermissionsReadService>(
-          'RecordPermissionsReadService',
-        );
-      const readableRecords: PermissionTestRecordName[] = [];
-
-      for (const record of VISIBILITY_TIER_RECORDS) {
-        if (
-          await recordPermissionsReadService.canAccessRecords({
-            principals,
-            objectMetadataId: workspace.objectMetadataId,
-            recordIds: [workspace.recordIds[record]],
-            operationType: 'read',
-          })
-        ) {
-          readableRecords.push(record);
-        }
-      }
-
-      return readableRecords;
-    };
-
-    const buildLeadSeatPredicate = (
+    const buildSeatPredicate = (
       overrides: Partial<RowLevelPermissionRulePredicateInput> = {},
     ): RowLevelPermissionRulePredicateInput => ({
       id: v4(),
@@ -146,23 +133,32 @@ describePermissionTestWorkspace({
       operand: RowLevelPermissionPredicateOperand.IS,
       workspaceMemberRelationFieldMetadataId: memberSeatsFieldMetadataId,
       workspaceMemberFieldMetadataId: seatCompanyFieldMetadataId,
-      workspaceMemberRelationFilterFieldMetadataId: seatRoleFieldMetadataId,
-      workspaceMemberRelationFilterValues: ['LEAD'],
       ...overrides,
     });
 
-    const upsertRule = ({
-      predicate,
+    const buildLeadSeatPredicate = (
+      overrides: Partial<RowLevelPermissionRulePredicateInput> = {},
+    ): RowLevelPermissionRulePredicateInput =>
+      buildSeatPredicate({
+        workspaceMemberRelationFilterFieldMetadataId: seatRoleFieldMetadataId,
+        workspaceMemberRelationFilterValues: ['LEAD'],
+        ...overrides,
+      });
+
+    const upsertRules = ({
+      objectMetadataId = findWorkspace().objectMetadataId,
+      rules,
       shouldFail = false,
     }: {
-      predicate: RowLevelPermissionRulePredicateInput;
+      objectMetadataId?: string;
+      rules: RowLevelPermissionRuleInput[];
       shouldFail?: boolean;
     }) =>
       upsertRowLevelPermissionRules({
         input: {
-          roleId,
-          objectMetadataId: findWorkspace().objectMetadataId,
-          rules: [{ canReadRecords: true, predicates: [predicate] }],
+          roleId: findWorkspace().roleIds.rowLevel,
+          objectMetadataId,
+          rules,
         },
         expectToFail: shouldFail,
         token: findWorkspace().adminAccessToken,
@@ -194,27 +190,27 @@ describePermissionTestWorkspace({
         expectToFail: false,
         token,
       });
-      const findObjectMetadataIdOrThrow = (nameSingular: string): string => {
-        const objectMetadataId = objects.find(
+      const findObjectMetadataOrThrow = (nameSingular: string) => {
+        const objectMetadata = objects.find(
           (object) => object.nameSingular === nameSingular,
-        )?.id;
+        );
 
-        if (!isDefined(objectMetadataId)) {
+        if (!isDefined(objectMetadata)) {
           throw new Error(`${nameSingular} object metadata not found`);
         }
 
-        return objectMetadataId;
+        return objectMetadata;
       };
-      companyObjectMetadataId = findObjectMetadataIdOrThrow('company');
-
-      const companyIdField = objects
-        .find(({ nameSingular }) => nameSingular === 'company')
-        ?.fieldsList.find(({ name }) => name === 'id');
+      const companyObjectMetadata = findObjectMetadataOrThrow('company');
+      const companyIdField = companyObjectMetadata.fieldsList.find(
+        ({ name }) => name === 'id',
+      );
 
       if (!isDefined(companyIdField)) {
         throw new Error('company.id field metadata not found');
       }
 
+      companyObjectMetadataId = companyObjectMetadata.id;
       companyIdFieldMetadataId = companyIdField.id;
 
       const { data: seatObjectData } = await createOneObjectMetadata({
@@ -250,7 +246,7 @@ describePermissionTestWorkspace({
               objectMetadataId: seatObjectMetadataId,
               name: 'member',
               targetObjectMetadataId:
-                findObjectMetadataIdOrThrow('workspaceMember'),
+                findObjectMetadataOrThrow('workspaceMember').id,
               targetFieldLabel: 'Access record seats',
             },
           ].map(
@@ -298,39 +294,16 @@ describePermissionTestWorkspace({
         seatMemberField.relation.targetFieldMetadata.id;
       seatRoleFieldMetadataId = seatRoleData.createOneField.id;
 
-      const { data: roleData } = await createOneRole({
-        input: {
-          label: 'Lead seats',
-          canReadAllObjectRecords: true,
-          canUpdateAllObjectRecords: false,
-          canSoftDeleteAllObjectRecords: false,
-          canDestroyAllObjectRecords: false,
-          canBeAssignedToUsers: true,
-        },
-        gqlFields: 'id',
-        expectToFail: false,
-        token,
+      await upsertRules({
+        rules: [
+          { canReadRecords: true, predicates: [buildSeatPredicate()] },
+          {
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [buildLeadSeatPredicate()],
+          },
+        ],
       });
-
-      roleId = roleData.createOneRole.id;
-
-      await revokeObjectRecordsPermissions({
-        roleId,
-        objectMetadataId: workspace.objectMetadataId,
-        token,
-      });
-      await upsertRule({ predicate: buildLeadSeatPredicate() });
-
-      leadMemberId = workspace.workspaceMemberIds.none;
-      seatMemberId = workspace.workspaceMemberIds.rowLevel;
-
-      for (const workspaceMemberId of [leadMemberId, seatMemberId]) {
-        await updateWorkspaceMemberRole({
-          input: { workspaceMemberId, roleId },
-          expectToFail: false,
-          token,
-        });
-      }
 
       for (const record of VISIBILITY_TIER_RECORDS) {
         companyIds[record] = await createRecord({
@@ -351,21 +324,21 @@ describePermissionTestWorkspace({
         expect(response.body.errors).toBeUndefined();
       }
 
-      await takeSeat({
-        workspaceMemberId: leadMemberId,
-        record: 'lowVisibilityTier',
-        seatRole: 'LEAD',
-      });
-      mediumSeatId = await takeSeat({
-        workspaceMemberId: leadMemberId,
-        record: 'mediumVisibilityTier',
-        seatRole: 'MEMBER',
-      });
-      await takeSeat({
-        workspaceMemberId: seatMemberId,
-        record: 'fullVisibilityTier',
-        seatRole: 'MEMBER',
-      });
+      const takeSeat = (
+        record: PermissionTestRecordName,
+        seatRole: 'LEAD' | 'MEMBER',
+      ) =>
+        createRecord({
+          objectName: SEAT_OBJECT_NAME,
+          data: {
+            companyId: companyIds[record],
+            memberId: workspace.workspaceMemberIds.rowLevel,
+            seatRole,
+          },
+        });
+
+      await takeSeat('lowVisibilityTier', 'LEAD');
+      mediumSeatId = await takeSeat('mediumVisibilityTier', 'MEMBER');
 
       await syncAndCompute();
       await getAppProviderByClassName<RecordAccessGroupComputationService>(
@@ -376,53 +349,78 @@ describePermissionTestWorkspace({
       });
     });
 
-    it('should only read through the relation rows that match the filter', async () => {
-      expect(await findReadableVisibilityTierRecords(leadMemberId)).toEqual([
-        'lowVisibilityTier',
-      ]);
-      expect(await findReadableVisibilityTierRecords(seatMemberId)).toEqual([]);
+    describeRecordAccess({
+      name: 'a member reading through every seat and editing through lead seats',
+      ...SEATED_MEMBER,
+      cases: [
+        {
+          it: 'reads and edits the record of a lead seat',
+          record: 'lowVisibilityTier',
+          expected: REACHES_READ_AND_UPDATE,
+        },
+        {
+          it: 'only reads the record of a member seat',
+          record: 'mediumVisibilityTier',
+          expected: REACHES_READ_ONLY,
+        },
+        {
+          it: 'reaches nothing without a seat',
+          record: 'fullVisibilityTier',
+          expected: REACHES_NOTHING,
+        },
+        {
+          it: 'reaches nothing as an API key, which has no seats',
+          mainPrincipal: { type: 'apiKey', role: 'rowLevel' },
+          record: 'lowVisibilityTier',
+          expected: REACHES_NOTHING,
+        },
+      ],
     });
 
-    it('should give access once the filtered field of a relation row changes', async () => {
-      const response = await makeGraphqlApiRequest(
-        updateOneOperationFactory({
-          objectMetadataSingularName: SEAT_OBJECT_NAME,
-          gqlFields: 'id',
-          recordId: mediumSeatId,
-          data: { seatRole: 'LEAD' },
-        }),
-        findWorkspace().adminAccessToken,
-      );
+    describe('once the member seat is promoted to lead', () => {
+      beforeAll(async () => {
+        const response = await makeGraphqlApiRequest(
+          updateOneOperationFactory({
+            objectMetadataSingularName: SEAT_OBJECT_NAME,
+            gqlFields: 'id',
+            recordId: mediumSeatId,
+            data: { seatRole: 'LEAD' },
+          }),
+          findWorkspace().adminAccessToken,
+        );
 
-      expect(response.body.errors).toBeUndefined();
+        expect(response.body.errors).toBeUndefined();
 
-      await syncAndCompute();
+        await syncAndCompute();
+      });
 
-      expect(await findReadableVisibilityTierRecords(leadMemberId)).toEqual([
-        'lowVisibilityTier',
-        'mediumVisibilityTier',
-      ]);
+      describeRecordAccess({
+        name: 'the promoted seat',
+        ...SEATED_MEMBER,
+        cases: [
+          {
+            it: 'now gives edit on its record',
+            record: 'mediumVisibilityTier',
+            expected: REACHES_READ_AND_UPDATE,
+          },
+        ],
+      });
     });
 
     it('should compare a record id with the records the member relation rows point to', async () => {
-      const { errors } = await upsertRowLevelPermissionRules({
-        input: {
-          roleId,
-          objectMetadataId: companyObjectMetadataId,
-          rules: [
-            {
-              canReadRecords: true,
-              canUpdateRecords: true,
-              predicates: [
-                buildLeadSeatPredicate({
-                  fieldMetadataId: companyIdFieldMetadataId,
-                }),
-              ],
-            },
-          ],
-        },
-        expectToFail: false,
-        token: findWorkspace().adminAccessToken,
+      const { errors } = await upsertRules({
+        objectMetadataId: companyObjectMetadataId,
+        rules: [
+          {
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [
+              buildLeadSeatPredicate({
+                fieldMetadataId: companyIdFieldMetadataId,
+              }),
+            ],
+          },
+        ],
       });
 
       expect(errors).toBeUndefined();
@@ -456,8 +454,13 @@ describePermissionTestWorkspace({
         }),
       },
     ])('should refuse $title', async ({ overrides }) => {
-      const { errors } = await upsertRule({
-        predicate: buildLeadSeatPredicate(overrides()),
+      const { errors } = await upsertRules({
+        rules: [
+          {
+            canReadRecords: true,
+            predicates: [buildLeadSeatPredicate(overrides())],
+          },
+        ],
         shouldFail: true,
       });
 
