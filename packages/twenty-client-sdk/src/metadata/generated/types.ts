@@ -238,6 +238,9 @@ export default {
             "triggers": [
                 346
             ],
+            "universalIdentifier": [
+                563
+            ],
             "updatedAt": [
                 230
             ],

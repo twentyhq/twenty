@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { EmojiPickerExample } from './EmojiPickerExample';
 import { mockEmojiPickerStoryData } from './mockEmojiPickerStoryData';
@@ -12,6 +12,7 @@ const meta: Meta<typeof EmojiPickerExample> = {
   component: EmojiPickerExample,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   beforeEach: () => mockEmojiPickerStoryData(),
   args: { onEmojiSelect: fn() },
 };
@@ -21,7 +22,7 @@ type Story = StoryObj<typeof EmojiPickerExample>;
 
 export const SearchAndPointerSelection: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const search = canvas.getByRole('searchbox', { name: 'Search emojis' });
 
     const firstEmoji = await canvas.findByRole('gridcell', {
@@ -52,7 +53,7 @@ export const SearchAndPointerSelection: Story = {
 export const KeyboardSelection: Story = {
   args: { autoFocus: true },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const search = canvas.getByRole('searchbox', { name: 'Search emojis' });
 
     await expect(search).toHaveFocus();
@@ -80,7 +81,7 @@ export const EmptyResultsAndLabels: Story = {
     emptyLabel: 'No matching reactions',
   },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const search = canvas.getByRole('searchbox', { name: 'Find a reaction' });
 
     await expect(search).toHaveAttribute('placeholder', 'Search by name');

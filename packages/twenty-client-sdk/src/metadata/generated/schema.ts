@@ -42,6 +42,7 @@ export interface Agent {
     responseFormat?: Scalars['JSON']
     roleId?: Scalars['UUID']
     triggers: Scalars['JSON'][]
+    universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     __typename: 'Agent'
 }
@@ -4693,6 +4694,7 @@ export interface AgentGenqlSelection{
     responseFormat?: boolean | number
     roleId?: boolean | number
     triggers?: boolean | number
+    universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
