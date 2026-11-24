@@ -1,18 +1,15 @@
 import { getMissingCreateCalendarEventScopes } from '@/accounts/utils/hasMissingCreateCalendarEventScopes';
 import { useCalendarEventTargetObjectMetadataItems } from '@/activities/calendar/hooks/useCalendarEventTargetObjectMetadataItems';
 import { useCreateCalendarEvent } from '@/activities/calendar/hooks/useCreateCalendarEvent';
+import { useCalendarEventComposerRecurrence } from '@/activities/calendar/hooks/useCalendarEventComposerRecurrence';
 import { useCreateCalendarEventTargets } from '@/activities/calendar/hooks/useCreateCalendarEventTargets';
 import { useRefetchTimelineCalendarEvents } from '@/activities/calendar/hooks/useRefetchTimelineCalendarEvents';
 import { isCalendarEventComposerCreatingState } from '@/activities/calendar/states/isCalendarEventComposerCreatingState';
 import { type CalendarEventComposerInitialValues } from '@/activities/calendar/types/CalendarEventComposerInitialValues';
-import { CALENDAR_EVENT_RECURRENCE_DEFAULT_OCCURRENCE_COUNT } from '@/activities/calendar/constants/CalendarEventRecurrenceDefaultOccurrenceCount';
-import { type CalendarEventComposerRecurrence } from '@/activities/calendar/types/CalendarEventComposerRecurrence';
 import { type CalendarEventComposerTarget } from '@/activities/calendar/types/CalendarEventComposerTarget';
-import { type CalendarEventRecurrenceEnd } from '@/activities/calendar/types/CalendarEventRecurrenceEnd';
 import { getCalendarEventComposerDefaultDates } from '@/activities/calendar/utils/getCalendarEventComposerDefaultDates';
 import { getCalendarEventDatesAfterModeChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterModeChange';
 import { getCalendarEventDatesAfterStartChange } from '@/activities/calendar/utils/getCalendarEventDatesAfterStartChange';
-import { getCalendarEventRecurrenceDefaultEndDate } from '@/activities/calendar/utils/getCalendarEventRecurrenceDefaultEndDate';
 import { getCalendarEventRecurrenceInput } from '@/activities/calendar/utils/getCalendarEventRecurrenceInput';
 import { getCalendarEventStartDateInTimeZone } from '@/activities/calendar/utils/getCalendarEventStartDateInTimeZone';
 import { isCalendarCreationEnabledForAccount } from '@/activities/calendar/utils/isCalendarCreationEnabledForAccount';
@@ -36,7 +33,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { type CalendarEventRecurrenceFrequency } from '~/generated-metadata/graphql';
 
 export const useCalendarEventComposer = ({
   initialValues,
@@ -87,14 +83,19 @@ export const useCalendarEventComposer = ({
       timeZone: initialValues?.timeZone ?? doNotTranslate('UTC'),
     }),
   );
-  const [recurrence, setRecurrence] =
-    useState<CalendarEventComposerRecurrence | null>(null);
 
   const startDateInTimeZone = getCalendarEventStartDateInTimeZone({
     startsAt: dates.startsAt,
     isFullDay,
     timeZone,
   });
+  const {
+    recurrence,
+    hasValidRecurrenceEndDate,
+    handleRecurrenceFrequencyChange,
+    handleRecurrenceEndTypeChange,
+    updateRecurrence,
+  } = useCalendarEventComposerRecurrence({ startDateInTimeZone });
 
   const calendarAccounts = accounts.filter(isCalendarCreationEnabledForAccount);
   const accountOptions: SelectOption<string>[] = calendarAccounts.map(
@@ -195,11 +196,6 @@ export const useCalendarEventComposer = ({
     ? dates.endsAt.slice(0, 10) > dates.startsAt.slice(0, 10)
     : Date.parse(dates.endsAt) > Date.parse(dates.startsAt);
 
-  const recurrenceEnd = recurrence?.end;
-  const hasValidRecurrenceEndDate =
-    recurrenceEnd?.type !== 'ON_DATE' ||
-    recurrenceEnd.endDate >= startDateInTimeZone;
-
   const canCreate =
     isNonEmptyString(title.trim()) &&
     isDefined(selectedAccount) &&
@@ -250,70 +246,6 @@ export const useCalendarEventComposer = ({
                 .toString()
             : value,
       }));
-    }
-  };
-
-  const handleRecurrenceFrequencyChange = (
-    frequency: CalendarEventRecurrenceFrequency | null,
-  ) => {
-    if (!isDefined(frequency)) {
-      setRecurrence(null);
-
-      return;
-    }
-
-    setRecurrence((currentRecurrence) => ({
-      frequency,
-      interval: 1,
-      daysOfWeek: currentRecurrence?.daysOfWeek ?? [],
-      end: currentRecurrence?.end ?? { type: 'NEVER' },
-    }));
-  };
-
-  const updateRecurrence = (
-    recurrenceUpdate: Partial<CalendarEventComposerRecurrence>,
-  ) => {
-    setRecurrence((currentRecurrence) => {
-      if (!isDefined(currentRecurrence)) {
-        return currentRecurrence;
-      }
-
-      return { ...currentRecurrence, ...recurrenceUpdate };
-    });
-  };
-
-  const handleRecurrenceEndTypeChange = (
-    endType: CalendarEventRecurrenceEnd['type'],
-  ) => {
-    if (!isDefined(recurrence) || recurrence.end.type === endType) {
-      return;
-    }
-
-    switch (endType) {
-      case 'NEVER':
-        updateRecurrence({ end: { type: 'NEVER' } });
-
-        return;
-      case 'ON_DATE': {
-        const defaultEndDate = getCalendarEventRecurrenceDefaultEndDate({
-          frequency: recurrence.frequency,
-          interval: recurrence.interval,
-          startDateInTimeZone,
-        });
-
-        updateRecurrence({ end: { type: 'ON_DATE', endDate: defaultEndDate } });
-
-        return;
-      }
-      case 'AFTER_OCCURRENCE_COUNT':
-        updateRecurrence({
-          end: {
-            type: 'AFTER_OCCURRENCE_COUNT',
-            occurrenceCount: CALENDAR_EVENT_RECURRENCE_DEFAULT_OCCURRENCE_COUNT,
-          },
-        });
-
-        return;
     }
   };
 
