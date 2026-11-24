@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
+import { SettingsBillingEmailNotMemberBanner } from '@/settings/billing/components/SettingsBillingEmailNotMemberBanner';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
@@ -10,13 +11,19 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { usePaymentMethodFlow } from '@/settings/billing/hooks/usePaymentMethodFlow';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { SubscriptionStatus } from '~/generated-metadata/graphql';
+import {
+  BillingEmailDocument,
+  PermissionFlagType,
+  SubscriptionStatus,
+} from '~/generated-metadata/graphql';
 
 const SETTINGS_BILLING_UPDATE_PAYMENT_MODAL_ID =
   'settings-billing-update-payment-modal';
@@ -58,8 +65,25 @@ export const SettingsBillingContent = () => {
   const canCancelCurrentSubscription =
     hasNotCanceledCurrentSubscription && !hasScheduledCancellation;
 
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
+  const { data: billingEmailData } = useQuery(BillingEmailDocument, {
+    skip: !hasPermissionToManageBilling || !hasNotCanceledCurrentSubscription,
+  });
+  const billingEmail = billingEmailData?.billingEmail.email;
+  const displayBillingEmailNotMemberBanner =
+    isDefined(billingEmail) &&
+    billingEmailData?.billingEmail.belongsToWorkspaceMember === false;
+
   return (
     <SettingsPageContainer>
+      {displayBillingEmailNotMemberBanner && (
+        <SettingsBillingEmailNotMemberBanner
+          billingEmail={billingEmail}
+          onChangeEmail={openBillingPortal}
+        />
+      )}
       {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
         <SettingsBillingTrialNoPaymentMethodBanner
           currentBillingSubscription={currentBillingSubscription}
@@ -69,6 +93,7 @@ export const SettingsBillingContent = () => {
         currentWorkspace &&
         currentBillingSubscription && (
           <SettingsBillingSubscriptionInfo
+            billingEmail={billingEmail}
             currentWorkspace={currentWorkspace}
             currentBillingSubscription={currentBillingSubscription}
             onManageBilling={openBillingPortal}

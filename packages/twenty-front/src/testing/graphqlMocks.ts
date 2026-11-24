@@ -16,6 +16,7 @@ import { mockedPublicWorkspaceDataBySubdomain } from '~/testing/mock-data/public
 import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
+import { BILLING_EMAIL } from '@/settings/billing/graphql/queries/billingEmail';
 import { BILLING_PARTNER_CODE } from '@/settings/billing/graphql/queries/billingPartnerCode';
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
 import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
@@ -573,6 +574,17 @@ export const graphqlMocks = {
             __typename: 'BillingPartnerCode',
             partnerCode: null,
             isEditable: true,
+          },
+        },
+      });
+    }),
+    graphql.query(getOperationName(BILLING_EMAIL) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          billingEmail: {
+            __typename: 'BillingEmail',
+            email: mockedUserData.email,
+            belongsToWorkspaceMember: true,
           },
         },
       });

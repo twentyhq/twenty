@@ -24,10 +24,12 @@ import {
   IconCalendarDue,
   IconClockPlay,
   IconCoins,
+  IconMail,
   IconSum,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
@@ -140,6 +142,7 @@ const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
 `;
 
 type SettingsBillingSubscriptionInfoCardProps = {
+  billingEmail?: string | null;
   canDisplaySwitchToMonthlyAction: boolean;
   canDisplaySwitchToYearlyAction: boolean;
   creditsSubtotalDetails?: string;
@@ -171,6 +174,7 @@ type SettingsBillingSubscriptionInfoCardProps = {
 };
 
 export const SettingsBillingSubscriptionInfoCard = ({
+  billingEmail,
   canDisplaySwitchToMonthlyAction,
   canDisplaySwitchToYearlyAction,
   creditsSubtotalDetails,
@@ -263,6 +267,11 @@ export const SettingsBillingSubscriptionInfoCard = ({
               Icon={IconCalendarDue}
             >
               {displayedSubscriptionDate}
+            </BillingFieldRow>
+          )}
+          {isDefined(billingEmail) && (
+            <BillingFieldRow label={t`Billing email`} Icon={IconMail}>
+              <OverflowingTextWithTooltip text={billingEmail} />
             </BillingFieldRow>
           )}
         </StyledSettingsBillingCardFieldList>

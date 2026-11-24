@@ -12,6 +12,7 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { BillingEmailDTO } from 'src/engine/core-modules/billing/dtos/billing-email.dto';
 import { BillingEndTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-end-trial-period.dto';
 import { BillingResourceCreditUsageDTO } from 'src/engine/core-modules/billing/dtos/billing-resource-credit-usage.dto';
 import { BillingPlanDTO } from 'src/engine/core-modules/billing/dtos/billing-plan.dto';
@@ -26,6 +27,7 @@ import { BillingSwitchPlanInput } from 'src/engine/core-modules/billing/dtos/inp
 import { BillingUpdateUserCreditsFallbackInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-user-credits-fallback.input';
 import { BillingUpdateSubscriptionItemPriceInput } from 'src/engine/core-modules/billing/dtos/inputs/billing-update-subscription-item-price.input';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingEmailService } from 'src/engine/core-modules/billing/services/billing-email.service';
 import { BillingPartnerCodeService } from 'src/engine/core-modules/billing/services/billing-partner-code.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
@@ -127,6 +129,7 @@ export class BillingResolver {
     private readonly billingPlanService: BillingPlanService,
     private readonly billingService: BillingService,
     private readonly billingPartnerCodeService: BillingPartnerCodeService,
+    private readonly billingEmailService: BillingEmailService,
     private readonly billingUsageService: BillingUsageService,
     private readonly settingPermissionsService: SettingPermissionsService,
   ) {}
@@ -144,6 +147,14 @@ export class BillingResolver {
         forPaymentMethodUpdate,
       ),
     };
+  }
+
+  @Query(() => BillingEmailDTO)
+  @UseGuards(AccessPolicyGuard(BILLING_ACCESS_POLICY))
+  async billingEmail(
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<BillingEmailDTO> {
+    return this.billingEmailService.getBillingEmail(workspace.id);
   }
 
   @Query(() => BillingPartnerCodeDTO)
