@@ -2100,6 +2100,7 @@ msgstr "Szereplő"
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "Add"
 msgstr "Hozzáad"
 
@@ -2107,6 +2108,11 @@ msgstr "Hozzáad"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "\"{optionName}\" hozzáadása az opciókhoz"
+
+#. js-lingui-id: AQVwJ5
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "Add {checkedCount}"
+msgstr ""
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
@@ -2529,6 +2535,12 @@ msgstr "Felhasználók hozzáadása vagy eltávolítása"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Kimeneti mező hozzáadása"
+
+#. js-lingui-id: aY6gdO
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Add participants"
+msgstr ""
 
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
@@ -4637,6 +4649,7 @@ msgstr "Önhöz rendelve"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Assignee"
 msgstr "Felelős"
 
@@ -20540,6 +20553,7 @@ msgid "No apps found"
 msgstr "Nem találhatók alkalmazások"
 
 #. js-lingui-id: 3bvkPk
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsAssigneeItem.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
 msgstr "Nincs felelős"
@@ -20966,6 +20980,11 @@ msgstr "Nem találhatók tagok"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members match your search"
 msgstr "Nincsenek tagok, akik megfelelnek a keresésnek"
+
+#. js-lingui-id: 5bqxVl
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "No members to add"
+msgstr ""
 
 #. js-lingui-id: IohPnt
 #: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
@@ -23019,6 +23038,12 @@ msgstr "bekezdés"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Parameters"
 msgstr "Paraméterek"
+
+#. js-lingui-id: MZHPuB
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Participants"
+msgstr ""
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -26659,6 +26684,7 @@ msgstr "Keresési ikon"
 #. js-lingui-id: AaDUlx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Tagok keresése"
@@ -28525,6 +28551,11 @@ msgstr "Néhány elrendezési módosítást nem sikerült menteni"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Néhány naplóadat el lett dobva a méretkorlát betartása érdekében ({0} bejegyzés, {1} bájt)."
+
+#. js-lingui-id: FUT0ml
+#: src/modules/ai-chat/threads/hooks/useAddParticipantsToAiChatThread.ts
+msgid "Some members could not be added."
+msgstr ""
 
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
@@ -34544,6 +34575,7 @@ msgstr "Munkaterületi tag azonosítója"
 
 #. js-lingui-id: wtxjAY
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Workspace members"
@@ -34767,6 +34799,7 @@ msgstr "Tegnap"
 #: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
 msgstr "Ön"

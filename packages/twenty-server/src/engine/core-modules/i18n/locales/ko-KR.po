@@ -10806,6 +10806,12 @@ msgstr "상위 뷰 필터 그룹을 찾을 수 없음"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId와 folderId가 일치해야 합니다. folderId는 더 이상 사용되지 않으므로 parentId를 사용하세요."
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr ""
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

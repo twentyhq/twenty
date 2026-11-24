@@ -10806,6 +10806,12 @@ msgstr "Վերադաս տեսքի ֆիլտրի խումբը չի գտնվել"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId-ը և folderId-ը պետք է համընկնեն։ folderId-ը հնացած է, օգտագործեք parentId-ը։"
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr ""
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
