@@ -473,6 +473,7 @@ export type Mutation = {
   duplicateCoreWorkflow: CoreWorkflowDto;
   duplicateCoreWorkflowVersionStep: WorkflowVersionStepChanges;
   generateSignedDpa: GenerateSignedDpaResult;
+  markMessageThreadAsRead: Scalars['Boolean']['output'];
   retryWorkflowRun: WorkflowRun;
   runCoreWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
@@ -565,6 +566,11 @@ export type MutationDuplicateCoreWorkflowVersionStepArgs = {
 
 export type MutationGenerateSignedDpaArgs = {
   input: GenerateSignedDpaInput;
+};
+
+
+export type MutationMarkMessageThreadAsReadArgs = {
+  messageThreadId: Scalars['UUID']['input'];
 };
 
 

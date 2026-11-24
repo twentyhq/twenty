@@ -21,6 +21,7 @@ import { MessageChannelResolver } from 'src/engine/metadata-modules/message-chan
 import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { ApplicationMessageFoldersService } from 'src/engine/metadata-modules/message-channel/services/application-message-folders.service';
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { ApplicationMessageReadStateService } from 'src/engine/metadata-modules/message-channel/services/application-message-read-state.service';
 import { ApplicationMessageReadService } from 'src/engine/metadata-modules/message-channel/services/application-message-read.service';
 import { ApplicationMessageSendAttachmentsService } from 'src/engine/metadata-modules/message-channel/services/application-message-send-attachments.service';
 import { ApplicationMessageSendService } from 'src/engine/metadata-modules/message-channel/services/application-message-send.service';
@@ -67,6 +68,7 @@ import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibili
     ApplicationMessageFoldersResolver,
     ApplicationMessageIngestionService,
     ApplicationMessageIngestionResolver,
+    ApplicationMessageReadStateService,
     ApplicationMessageReadService,
     ApplicationMessageReadResolver,
     ApplicationMessageSendService,

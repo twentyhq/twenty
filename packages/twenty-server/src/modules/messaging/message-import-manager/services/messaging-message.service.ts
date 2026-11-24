@@ -52,7 +52,8 @@ type MessageAccumulator = {
     | 'messageThreadExternalId'
     | 'direction'
   > &
-    MessageChannelMessageAssociationSource;
+    MessageChannelMessageAssociationSource &
+    Partial<Pick<MessageChannelMessageAssociationWorkspaceEntity, 'isRead'>>;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -249,6 +250,7 @@ export class MessagingMessageService {
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
               ...associationSource,
+              ...(isDefined(message.isRead) ? { isRead: message.isRead } : {}),
             };
 
             associationToCreateByMessageId.set(
