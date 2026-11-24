@@ -1,6 +1,7 @@
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
+import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
 import {
   ViewFilterOperand,
@@ -14,7 +15,11 @@ type InboxThreadView = {
   type: ViewType;
   position: number;
   presetFilter: ViewPresetFilter | null;
-  viewFilters: { operand: ViewFilterOperand; value: string }[];
+  viewFilters: {
+    fieldMetadataId: string;
+    operand: ViewFilterOperand;
+    value: string;
+  }[];
 };
 
 const INBOX_THREAD_VIEW_GQL_FIELDS = `
@@ -24,6 +29,7 @@ const INBOX_THREAD_VIEW_GQL_FIELDS = `
   position
   presetFilter
   viewFilters {
+    fieldMetadataId
     operand
     value
   }
@@ -51,6 +57,15 @@ describe('Inbox thread views', () => {
     const inboxThreadViews = await findInboxThreadViews(
       inboxThreadObjectMetadataId,
     );
+    const pendingQuestionMessageIdFieldMetadataId =
+      await findFieldMetadataIdByName({
+        objectMetadataId: inboxThreadObjectMetadataId,
+        fieldName: 'pendingQuestionMessageId',
+      });
+    const assigneeFieldMetadataId = await findFieldMetadataIdByName({
+      objectMetadataId: inboxThreadObjectMetadataId,
+      fieldName: 'assignee',
+    });
 
     expect(
       inboxThreadViews
@@ -72,7 +87,13 @@ describe('Inbox thread views', () => {
         name: 'Needs input',
         type: ViewType.INBOX,
         presetFilter: ViewPresetFilter.INBOX_OPEN,
-        viewFilters: [{ operand: ViewFilterOperand.IS_NOT_EMPTY, value: '' }],
+        viewFilters: [
+          {
+            fieldMetadataId: pendingQuestionMessageIdFieldMetadataId,
+            operand: ViewFilterOperand.IS_NOT_EMPTY,
+            value: '',
+          },
+        ],
       },
       {
         name: 'Mentions',
@@ -86,6 +107,7 @@ describe('Inbox thread views', () => {
         presetFilter: ViewPresetFilter.INBOX_OPEN,
         viewFilters: [
           {
+            fieldMetadataId: assigneeFieldMetadataId,
             operand: ViewFilterOperand.IS,
             value: JSON.stringify({
               isCurrentWorkspaceMemberSelected: true,
