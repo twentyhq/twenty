@@ -12,7 +12,7 @@ export const fromFlatViewFieldToViewFieldDto = (
   const {
     createdAt,
     updatedAt,
-    deletedAt,
+    deletedAt: _deletedAt,
     overrides: _overrides,
     ...rest
   } = effectiveFlatViewField;
@@ -22,6 +22,5 @@ export const fromFlatViewFieldToViewFieldDto = (
     isOverridden: false,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
-    deletedAt: deletedAt ? new Date(deletedAt) : null,
   };
 };

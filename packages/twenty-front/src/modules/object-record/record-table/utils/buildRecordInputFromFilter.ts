@@ -10,6 +10,7 @@ import { deepMerge, isDefined } from 'twenty-shared/utils';
 export const buildRecordInputFromFilter = ({
   currentRecordFilters,
   objectMetadataItem,
+  uneditableFields = [],
   currentWorkspaceMember,
   currentRecordId,
   timeZone,
@@ -20,6 +21,7 @@ export const buildRecordInputFromFilter = ({
       relation?: Pick<FieldMetadataItemRelation, 'type'> | null;
     })[];
   };
+  uneditableFields?: string[];
   currentWorkspaceMember?: CurrentWorkspaceMember;
   currentRecordId?: string;
   timeZone: string;
@@ -32,6 +34,10 @@ export const buildRecordInputFromFilter = ({
     );
 
     if (!isDefined(fieldMetadataItem)) {
+      return;
+    }
+
+    if (uneditableFields.includes(fieldMetadataItem.id)) {
       return;
     }
 

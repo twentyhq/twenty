@@ -22,7 +22,7 @@ export const AiChatMessageAuthorAvatar = ({
         <Avatar
           colorSeed={author.agentId}
           name={author.name}
-          size="sm"
+          size="md"
           shape="circle"
         />
       );
@@ -32,7 +32,7 @@ export const AiChatMessageAuthorAvatar = ({
           src={getAbsoluteImageUrl(author.sender?.avatarUrl)}
           colorSeed={author.senderWorkspaceMemberId}
           name={author.name}
-          size="sm"
+          size="md"
           shape="circle"
         />
       );
@@ -41,7 +41,7 @@ export const AiChatMessageAuthorAvatar = ({
         <Avatar
           colorSeed={author.messageId}
           name={author.name}
-          size="sm"
+          size="md"
           shape="circle"
         />
       );

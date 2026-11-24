@@ -10,10 +10,12 @@ import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-d
 const INBOX_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
 
 type NavigationDrawerInboxTriageSectionProps = {
+  label?: string;
   headerAction?: ReactNode;
 };
 
 export const NavigationDrawerInboxTriageSection = ({
+  label,
   headerAction,
 }: NavigationDrawerInboxTriageSectionProps) => {
   const { t } = useLingui();
@@ -22,7 +24,7 @@ export const NavigationDrawerInboxTriageSection = ({
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_TRIAGE_NAVIGATION_SECTION_ID}
-      label={t`Triage`}
+      label={label ?? t`Triage`}
       rightIcon={headerAction}
       alwaysShowRightIcon={isDefined(headerAction)}
     >

@@ -13,7 +13,6 @@ const existingFlatWorkflow: FlatWorkflow = {
   applicationUniversalIdentifier: '20202020-0000-4000-8000-000000000007',
   name: 'Onboarding',
   versionDefinitionHash: null,
-  lastPublishedVersionId: null,
   lastPublishedCoreWorkflowVersionId: null,
   workspaceWorkflowId: null,
   isSystem: false,
