@@ -5,7 +5,7 @@ import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/
 import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
-export const clearCalendarEventsRecordingOn = async (
+export const clearCalendarEventsAutoRecording = async (
   client: Pick<CoreApiClient, 'mutation'>,
   calendarEventIds: string[],
 ): Promise<number> => {
@@ -23,9 +23,7 @@ export const clearCalendarEventsRecordingOn = async (
           __args: {
             filter: {
               id: { in: calendarEventIdBatch },
-              callRecorderPreference: {
-                in: [CallRecorderPreference.ON, CallRecorderPreference.AUTO],
-              },
+              callRecorderPreference: { eq: CallRecorderPreference.AUTO },
             },
             data: {
               callRecorderPreference: null,
