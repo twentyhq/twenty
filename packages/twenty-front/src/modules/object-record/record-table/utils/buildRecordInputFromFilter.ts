@@ -2,54 +2,20 @@ import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMembe
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { buildValueFromFilter } from '@/object-record/record-table/utils/buildValueFromFilter';
-import {
-  type ObjectRecord,
-  RecordFilterGroupLogicalOperator,
-} from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { deepMerge, isDefined } from 'twenty-shared/utils';
-
-const isFilterInOrRecordFilterGroup = (
-  recordFilterGroupId: string | undefined,
-  recordFilterGroupsById: Map<string, RecordFilterGroup>,
-): boolean => {
-  const visitedGroupIds = new Set<string>();
-  let currentGroupId: string | null | undefined = recordFilterGroupId;
-
-  while (isDefined(currentGroupId) && !visitedGroupIds.has(currentGroupId)) {
-    visitedGroupIds.add(currentGroupId);
-
-    const recordFilterGroup = recordFilterGroupsById.get(currentGroupId);
-
-    if (!isDefined(recordFilterGroup)) {
-      return false;
-    }
-
-    if (
-      recordFilterGroup.logicalOperator === RecordFilterGroupLogicalOperator.OR
-    ) {
-      return true;
-    }
-
-    currentGroupId = recordFilterGroup.parentRecordFilterGroupId;
-  }
-
-  return false;
-};
 
 export const buildRecordInputFromFilter = ({
   currentRecordFilters,
-  currentRecordFilterGroups,
   objectMetadataItem,
-  uneditableFields,
+  uneditableFields = [],
   currentWorkspaceMember,
   currentRecordId,
   timeZone,
 }: {
   currentRecordFilters: RecordFilter[];
-  currentRecordFilterGroups?: RecordFilterGroup[];
   objectMetadataItem: {
     fields: (Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'options'> & {
       relation?: Pick<FieldMetadataItemRelation, 'type'> | null;
@@ -61,10 +27,6 @@ export const buildRecordInputFromFilter = ({
   timeZone: string;
 }): Partial<ObjectRecord> => {
   const recordInput: Partial<ObjectRecord> = {};
-  const uneditableFieldIdSet = new Set(uneditableFields ?? []);
-  const recordFilterGroupsById = new Map(
-    (currentRecordFilterGroups ?? []).map((group) => [group.id, group]),
-  );
 
   currentRecordFilters.forEach((filter) => {
     const fieldMetadataItem = objectMetadataItem.fields.find(
@@ -75,16 +37,7 @@ export const buildRecordInputFromFilter = ({
       return;
     }
 
-    if (uneditableFieldIdSet.has(filter.fieldMetadataId)) {
-      return;
-    }
-
-    if (
-      isFilterInOrRecordFilterGroup(
-        filter.recordFilterGroupId,
-        recordFilterGroupsById,
-      )
-    ) {
+    if (uneditableFields.includes(fieldMetadataItem.id)) {
       return;
     }
 
