@@ -26,12 +26,14 @@ const isSourceMatchingFilter = ({
     });
   }
 
-  return isDefined(source.accountOwnerId)
-    ? isMatchingUUIDFilter({
-        uuidFilter: metadataResolvedFieldFilter,
-        value: source.accountOwnerId,
-      })
-    : metadataResolvedFieldFilter.is === 'NULL';
+  if (!isDefined(source.accountOwnerId)) {
+    return metadataResolvedFieldFilter.is === 'NULL';
+  }
+
+  return isMatchingUUIDFilter({
+    uuidFilter: metadataResolvedFieldFilter,
+    value: source.accountOwnerId,
+  });
 };
 
 export const computeChannelIdFilterFromSourceFilter = ({

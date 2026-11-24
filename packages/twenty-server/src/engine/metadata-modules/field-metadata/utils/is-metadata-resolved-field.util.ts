@@ -3,4 +3,4 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 export const isMetadataResolvedField = ({
   isMetadataResolved,
 }: Pick<FlatFieldMetadata, 'isMetadataResolved'>): boolean =>
-  isMetadataResolved === true;
+  isMetadataResolved;

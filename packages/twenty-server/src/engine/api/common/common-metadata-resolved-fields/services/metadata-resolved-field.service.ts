@@ -219,7 +219,7 @@ export class MetadataResolvedFieldService {
       providedLoadContext ?? this.createContextLoader(authContext.workspace.id);
 
     const sourceFilterByMetadataResolvedFieldFilter = new Map<
-      Record<string, unknown>,
+      ObjectRecordFilter,
       ObjectRecordFilter
     >(
       await Promise.all(
