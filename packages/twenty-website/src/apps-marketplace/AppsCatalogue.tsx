@@ -35,6 +35,15 @@ const Header = styled.div`
   scroll-margin-top: ${MENU_HEIGHT_PX}px;
 `;
 
+// The filters open the list: they sit closer to the intro than the section's
+// 80px, at SectionStack's own mobile step, so a small button does not float
+// in the gap. Doubled class: wins over SectionStack's child margin.
+const Listing = styled.div`
+  && {
+    margin-top: ${spacing(10)};
+  }
+`;
+
 // The partners directory's spacing between the filters and the results.
 const Results = styled.div`
   margin-top: ${spacing(6)};
@@ -129,7 +138,7 @@ export function AppsCatalogue({ apps, isUnavailable }: AppsCatalogueProps) {
             </Body>
           </EmptyState>
         ) : (
-          <div>
+          <Listing>
             <FilterBar
               ariaLabel={i18n._(msg`Filter apps`)}
               facets={facets}
@@ -147,7 +156,7 @@ export function AppsCatalogue({ apps, isUnavailable }: AppsCatalogueProps) {
                 <AppCards apps={visibleApps} />
               )}
             </Results>
-          </div>
+          </Listing>
         )}
       </SectionStack>
     </SectionShell>
