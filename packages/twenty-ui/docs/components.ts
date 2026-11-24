@@ -71,6 +71,7 @@ import { SEPARATOR_PROP_DESCRIPTIONS } from './separatorPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { REACTION_BUTTON_PROP_DESCRIPTIONS } from './reactionButtonPropDescriptions';
+import { EMOJI_PICKER_PART_PROP_DESCRIPTIONS } from './emojiPickerPartPropDescriptions';
 import { EMOJI_PICKER_PROP_DESCRIPTIONS } from './emojiPickerPropDescriptions';
 import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
 import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
@@ -357,6 +358,12 @@ export const DOCUMENTED_COMPONENTS = [
       locale: 'en',
       searchPlaceholder: 'searchLabel',
       autoFocus: 'false',
+    },
+    parts: ['Root', 'Trigger', 'Options'],
+    partPropDescriptions: EMOJI_PICKER_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      Root: { locale: 'en' },
+      Options: { searchPlaceholder: 'searchLabel', autoFocus: 'false' },
     },
   },
   {

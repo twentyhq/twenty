@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -50,6 +51,12 @@ export const EmojiPickerExample = ({
         loadingLabel={loadingLabel}
         emptyLabel={emptyLabel}
         autoFocus={autoFocus}
+        defaultOpen
+        triggerProps={{ render: <Button>Add reaction</Button> }}
+        contentProps={{
+          'aria-label': 'Add reaction',
+          width: EMOJI_PICKER_STORY_WIDTH_PX,
+        }}
         onEmojiSelect={(selectedEmoji) => {
           setEmoji(selectedEmoji);
           onEmojiSelect?.(selectedEmoji);

@@ -1,12 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, waitFor, within } from 'storybook/test';
 
-import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
-import { Button } from '@ui/primitives/input/Button/Button';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { EmojiPicker } from '../EmojiPicker';
 import { EmojiPickerExample } from './EmojiPickerExample';
 import { EMOJI_PICKER_STORY_DATA } from './emojiPickerStoryData';
 import { mockEmojiPickerStoryData } from './mockEmojiPickerStoryData';
@@ -96,9 +93,8 @@ const EMOJI_PICKER_GLYPHS_STORY_EMOJIS: typeof EMOJI_PICKER_STORY_DATA.emojis =
     })),
   ).map((emoji, order) => ({ ...emoji, order }));
 
-const EMOJI_PICKER_GLYPHS_STORY_FIRST_SECTION_LABEL = 'Smileys & emotion';
 const EMOJI_PICKER_GLYPHS_STORY_SECTION_LABELS = [
-  EMOJI_PICKER_GLYPHS_STORY_FIRST_SECTION_LABEL,
+  'Smileys & emotion',
   'People & body',
   'Flags',
 ];
@@ -134,13 +130,13 @@ type Story = StoryObj<typeof EmojiPickerExample>;
 
 export const WideGlyphsRenderWhole: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
-    const saluteEmoji = await canvas.findByRole('gridcell', {
+    const saluteEmoji = await canvas.findByRole('option', {
       name: 'Saluting face',
     });
 
-    const viewport = saluteEmoji.closest<HTMLElement>('[frimousse-viewport]');
+    const viewport = saluteEmoji.closest<HTMLElement>('[data-scrollable]');
 
     await expect(viewport).toBeInTheDocument();
 
@@ -150,7 +146,7 @@ export const WideGlyphsRenderWhole: Story = {
 
     const glyphRange = document.createRange();
 
-    for (const emojiButton of within(viewport).getAllByRole('gridcell')) {
+    for (const emojiButton of within(viewport).getAllByRole('option')) {
       const cellBounds = emojiButton.getBoundingClientRect();
 
       glyphRange.selectNodeContents(emojiButton);
@@ -163,28 +159,14 @@ export const WideGlyphsRenderWhole: Story = {
       await expect(glyphBounds.bottom).toBeLessThanOrEqual(cellBounds.bottom);
     }
 
-    const firstRow = saluteEmoji.closest<HTMLElement>('[frimousse-row]');
-    const firstRowCells = isDefined(firstRow)
-      ? within(firstRow).getAllByRole('gridcell')
-      : [];
-    const firstRowCellsWidth = firstRowCells.reduce(
-      (width, cell) => width + cell.getBoundingClientRect().width,
-      0,
-    );
-
-    await expect(firstRowCellsWidth).toBeCloseTo(
-      firstRow?.getBoundingClientRect().width ?? 0,
-      0,
-    );
-
     viewport.scrollTop = viewport.scrollHeight;
 
-    const lastEmoji = await canvas.findByRole('gridcell', {
+    const lastEmoji = await canvas.findByRole('option', {
       name: 'Flag: European Union',
     });
 
     await waitFor(() =>
-      expect(lastEmoji.getBoundingClientRect().bottom).toBeLessThan(
+      expect(lastEmoji.getBoundingClientRect().bottom).toBeLessThanOrEqual(
         viewport.getBoundingClientRect().bottom,
       ),
     );
@@ -193,53 +175,13 @@ export const WideGlyphsRenderWhole: Story = {
 
 export const SectionLabelsUseDropdownSectionStyle: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
 
     for (const label of EMOJI_PICKER_GLYPHS_STORY_SECTION_LABELS) {
-      await expect(await canvas.findByText(label)).toBeVisible();
+      const sectionLabel = await canvas.findByText(label);
+
+      await expect(sectionLabel).toBeVisible();
+      await expect(sectionLabel).toHaveAttribute('data-dropdown-section-label');
     }
-
-    const sectionLabel = canvas.getByText(
-      EMOJI_PICKER_GLYPHS_STORY_FIRST_SECTION_LABEL,
-    );
-    const root = sectionLabel.closest<HTMLElement>('[frimousse-root]');
-
-    await expect(root).toBeInTheDocument();
-
-    if (!isDefined(root)) {
-      return;
-    }
-
-    const sectionLabelStyle = getComputedStyle(sectionLabel);
-    const rootStyle = getComputedStyle(root);
-
-    await expect(sectionLabelStyle.fontWeight).toBe('600');
-    await expect(sectionLabelStyle.backgroundColor).toBe(
-      rootStyle.backgroundColor,
-    );
-  },
-};
-
-export const InDropdownPanel: Story = {
-  render: (args) => (
-    <Dropdown.Root type="panel" defaultOpen>
-      <Dropdown.Trigger render={<Button>Add reaction</Button>} />
-      <Dropdown.Content aria-label="Add reaction" width={296}>
-        <EmojiPicker
-          emojibaseUrl={EMOJI_PICKER_GLYPHS_STORY_EMOJIBASE_URL}
-          searchLabel="Search emojis"
-          loadingLabel="Loading emojis"
-          emptyLabel="No emoji found"
-          onEmojiSelect={(emoji) => args.onEmojiSelect?.(emoji)}
-        />
-      </Dropdown.Content>
-    </Dropdown.Root>
-  ),
-  play: async ({ canvasElement }) => {
-    const body = within(canvasElement.ownerDocument.body);
-
-    await expect(
-      await body.findByRole('gridcell', { name: 'Saluting face' }),
-    ).toBeVisible();
   },
 };

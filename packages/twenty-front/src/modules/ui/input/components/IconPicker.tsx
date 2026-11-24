@@ -13,11 +13,11 @@ import {
   type ButtonVariant,
 } from 'twenty-ui/primitives/input';
 import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
+import { useLoadMoreOnScroll } from 'twenty-ui/utilities';
 
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { ICON_PICKER_DROPDOWN_CONTENT_WIDTH } from '@/ui/input/components/constants/IconPickerDropdownContentWidth';
 import { ICON_PICKER_DEFAULT_VISIBLE_COUNT } from '@/ui/input/components/constants/IconPickerDefaultVisibleCount';
-import { IconPickerScrollEffect } from '@/ui/input/effect-components/IconPickerScrollEffect';
 import { iconPickerVisibleCountState } from '@/ui/input/states/iconPickerVisibleCountState';
 import { getIconPickerLabel } from '@/ui/input/utils/getIconPickerLabel';
 import { getIconPickerSearchScore } from '@/ui/input/utils/getIconPickerSearchScore';
@@ -124,6 +124,16 @@ export const IconPicker = ({
   }, [icons, searchString, selectedIconKey]);
   const visibleIconKeys = matchingIconKeys.slice(0, visibleCount);
   const isLoadingMore = visibleCount < matchingIconKeys.length;
+
+  useLoadMoreOnScroll({
+    sentinelRef,
+    scrollContainerRef,
+    enabled: isLoadingMore,
+    onLoadMore: () =>
+      setVisibleCount(
+        (previousCount) => previousCount + ICON_PICKER_DEFAULT_VISIBLE_COUNT,
+      ),
+  });
   const columns = Math.max(
     1,
     Math.floor(
@@ -265,12 +275,6 @@ export const IconPicker = ({
                     <Dropdown.Loading>{t`Loading more...`}</Dropdown.Loading>
                   )}
                 </div>
-                <IconPickerScrollEffect
-                  dropdownId={dropdownId}
-                  sentinelRef={sentinelRef}
-                  scrollContainerRef={scrollContainerRef}
-                  enabled={isLoadingMore}
-                />
               </Dropdown.Section>
             </Dropdown.SelectionGroup>
           </StyledPopupContent>

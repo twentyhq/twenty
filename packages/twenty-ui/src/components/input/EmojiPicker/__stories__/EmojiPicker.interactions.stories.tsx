@@ -22,25 +22,21 @@ type Story = StoryObj<typeof EmojiPickerExample>;
 
 export const SearchAndPointerSelection: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const search = canvas.getByRole('searchbox', { name: 'Search emojis' });
 
-    const firstEmoji = await canvas.findByRole('gridcell', {
+    const firstEmoji = await canvas.findByRole('option', {
       name: 'Thumbs up',
     });
 
-    await expect(firstEmoji).toHaveAttribute('aria-colindex', '1');
-    await expect(firstEmoji.closest('[role="row"]')).toHaveAttribute(
-      'aria-rowindex',
-      '1',
-    );
+    await expect(firstEmoji).toBeVisible();
     await userEvent.type(search, 'celebrate');
     await waitFor(() =>
       expect(
-        canvas.queryByRole('gridcell', { name: 'Thumbs up' }),
+        canvas.queryByRole('option', { name: 'Thumbs up' }),
       ).not.toBeInTheDocument(),
     );
-    const partyPopper = canvas.getByRole('gridcell', { name: 'Party popper' });
+    const partyPopper = canvas.getByRole('option', { name: 'Party popper' });
     await userEvent.click(partyPopper);
     await expect(args.onEmojiSelect).toHaveBeenCalledOnce();
     await expect(args.onEmojiSelect).toHaveBeenCalledWith('🎉');
@@ -53,15 +49,15 @@ export const SearchAndPointerSelection: Story = {
 export const KeyboardSelection: Story = {
   args: { autoFocus: true },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const search = canvas.getByRole('searchbox', { name: 'Search emojis' });
 
     await expect(search).toHaveFocus();
-    await canvas.findByRole('gridcell', { name: 'Thumbs up' });
+    await canvas.findByRole('option', { name: 'Thumbs up' });
     await userEvent.type(search, 'eyes');
     await waitFor(() =>
       expect(
-        canvas.queryByRole('gridcell', { name: 'Thumbs up' }),
+        canvas.queryByRole('option', { name: 'Thumbs up' }),
       ).not.toBeInTheDocument(),
     );
     await userEvent.keyboard('{ArrowDown}{Enter}');
@@ -81,16 +77,16 @@ export const EmptyResultsAndLabels: Story = {
     emptyLabel: 'No matching reactions',
   },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement.ownerDocument.body);
     const search = canvas.getByRole('searchbox', { name: 'Find a reaction' });
 
     await expect(search).toHaveAttribute('placeholder', 'Search by name');
-    await canvas.findByRole('gridcell', { name: 'Thumbs up' });
+    await canvas.findByRole('option', { name: 'Thumbs up' });
     await userEvent.type(search, 'unknown-reaction');
     await expect(
       await canvas.findByText('No matching reactions'),
     ).toBeVisible();
-    await expect(canvas.queryAllByRole('gridcell')).toHaveLength(0);
+    await expect(canvas.queryAllByRole('option')).toHaveLength(0);
     await userEvent.keyboard('{ArrowDown}{Enter}');
     await expect(args.onEmojiSelect).not.toHaveBeenCalled();
   },

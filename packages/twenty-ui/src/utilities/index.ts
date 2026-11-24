@@ -21,9 +21,11 @@ export { TOUCH_DEVICE_MEDIA_QUERY } from './responsive/constants/TouchDeviceMedi
 export { useIsMobile } from './responsive/hooks/useIsMobile';
 export { useIsTouchDevice } from './responsive/hooks/useIsTouchDevice';
 export { useMediaQuery } from './responsive/hooks/useMediaQuery';
+export { useLoadMoreOnScroll } from './scroll/hooks/useLoadMoreOnScroll';
 export type { Nullable } from './types/Nullable';
 export { getAvatarInitial } from './utils/getAvatarInitial';
 export { getSafeUrl } from './utils/getSafeUrl';
+export { getSearchMatchScore } from './utils/getSearchMatchScore';
 export { isDefined } from './utils/isDefined';
 export { normalizeSearchText } from './utils/normalizeSearchText';
 export { preventDismissingClickActivation } from './utils/preventDismissingClickActivation';
