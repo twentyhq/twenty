@@ -336,6 +336,12 @@ msgstr "{0, plural, other {クレジット/期間}}"
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
 msgstr "{0, plural, other {参加したチームメイトごとに{formattedInviteTeamCreditsRewardPerUser}の無料クレジットを獲得}}"
 
+#. js-lingui-id: ywXd/t
+#. placeholder {0}: end.occurrenceCount
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "{0, plural, one {occurrence} other {occurrences}}"
+msgstr ""
+
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
@@ -922,6 +928,26 @@ msgstr "{importContactsCallRecordingHours, plural, other {{formattedImportContac
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, other {{1} インストール}}"
+
+#. js-lingui-id: UON5Ro
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {day} other {days}}"
+msgstr ""
+
+#. js-lingui-id: UGYVsx
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {month} other {months}}"
+msgstr ""
+
+#. js-lingui-id: RxZ6VS
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {week} other {weeks}}"
+msgstr ""
+
+#. js-lingui-id: qB4ocR
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {year} other {years}}"
+msgstr ""
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -2999,6 +3025,11 @@ msgstr "高度なオプション"
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr "アフリカーンス語"
+
+#. js-lingui-id: NawEr2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "After"
+msgstr ""
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -6415,6 +6446,11 @@ msgstr "このワークフローの最近の実行を確認し、失敗したも
 msgid "Check verification"
 msgstr "確認チェック"
 
+#. js-lingui-id: fbu0qc
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check when the event stops repeating"
+msgstr ""
+
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Check your Emails"
@@ -9487,6 +9523,7 @@ msgid "Czech"
 msgstr "チェコ語"
 
 #. js-lingui-id: U0sC6H
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
 msgstr "毎日"
@@ -10912,6 +10949,11 @@ msgstr "ドキュメント"
 msgid "Documentation"
 msgstr "ドキュメント"
 
+#. js-lingui-id: 7xJ6D1
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Does not repeat"
+msgstr ""
+
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
 msgid "Doesn't contain"
@@ -12032,6 +12074,7 @@ msgstr "エンドポイントURL"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
@@ -12709,6 +12752,11 @@ msgstr "イベントの可視性"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Events"
 msgstr "イベント"
+
+#. js-lingui-id: CRsuq4
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Every"
+msgstr ""
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13723,6 +13771,11 @@ msgstr "ツールの同期に失敗しました"
 msgid "Failed to synchronize the marketplace catalog."
 msgstr "マーケットプレイスカタログの同期に失敗しました。"
 
+#. js-lingui-id: UUsjVV
+#: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
+msgid "Failed to test agent"
+msgstr ""
+
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
@@ -14417,6 +14470,11 @@ msgstr "最初の2行"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
 msgstr "最初の5行"
+
+#. js-lingui-id: idQLQP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "First event"
+msgstr ""
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -19169,6 +19227,7 @@ msgstr "マージ中..."
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -19535,6 +19594,11 @@ msgstr "月払い"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Monthly"
 msgstr "月払い"
+
+#. js-lingui-id: WHc/gS
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Monthly on day {startDayOfMonth}"
+msgstr ""
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -20008,6 +20072,7 @@ msgid "Network error"
 msgstr "ネットワークエラー"
 
 #. js-lingui-id: qqeAJM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -21884,6 +21949,11 @@ msgstr "ログの保持日数（{minEventLogRetentionInDays}～{maxEventLogReten
 msgid "Number of decimals"
 msgstr "小数点の数"
 
+#. js-lingui-id: Dh3U6L
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Number of occurrences"
+msgstr ""
+
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Number of records to skip. Combine with Limit to page through results."
@@ -22087,6 +22157,11 @@ msgstr "ol"
 msgid "Omit zero values"
 msgstr "ゼロ値を省略する"
 
+#. js-lingui-id: Z5HWHd
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On"
+msgstr ""
+
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
@@ -22101,6 +22176,11 @@ msgstr "{remainingDays} と {lastDay} に"
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "On a schedule"
 msgstr "スケジュールで"
+
+#. js-lingui-id: RuEWFx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On date"
+msgstr ""
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22332,9 +22412,6 @@ msgid "Only you will be able to see your emails and events"
 msgstr "あなた以外はメールやイベントを見ることができません"
 
 #. js-lingui-id: 1TNIig
-#: src/modules/inbox/components/AiChatThreadStatusField.tsx
-#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
-#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 #: src/modules/log-console/components/LogConsole.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -22342,6 +22419,14 @@ msgstr "あなた以外はメールやイベントを見ることができませ
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "開く"
+
+#. js-lingui-id: zzFeSa
+#: src/modules/inbox/components/AiChatThreadStatusField.tsx
+#: src/modules/inbox/constants/InboxChannelNavigationItems.ts
+#: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
+msgctxt "Inbox thread status"
+msgid "Open"
+msgstr ""
 
 #. js-lingui-id: awIyH2
 #. placeholder {0}: account.handle
@@ -25449,6 +25534,22 @@ msgstr "フィールドを並べ替え"
 msgid "Reorder options"
 msgstr "オプションを並べ替え"
 
+#. js-lingui-id: BwWIp2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat"
+msgstr ""
+
+#. js-lingui-id: X9KmrM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat interval"
+msgstr ""
+
+#. js-lingui-id: KR6sNP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "Repeat on"
+msgstr ""
+
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
@@ -26128,6 +26229,11 @@ msgstr "ファイルやデータを分析するコードを実行"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "関数を実行"
+
+#. js-lingui-id: gdJPPW
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Run test"
+msgstr ""
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -29428,6 +29534,11 @@ msgstr "このレコードと最近のアクティビティを要約してくだ
 msgid "Summarize this view"
 msgstr "このビューを要約する"
 
+#. js-lingui-id: mLm1b0
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Summarize what changed on Acme this week"
+msgstr ""
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -29864,6 +29975,7 @@ msgid "Terms of Service"
 msgstr "利用規約"
 
 #. js-lingui-id: NnH3pK
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -29876,6 +29988,19 @@ msgstr "利用規約"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "テスト"
+
+#. js-lingui-id: jra4Ko
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
+msgid "Test agent"
+msgstr ""
+
+#. js-lingui-id: AriIhI
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "Test Agent"
+msgstr ""
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -30091,6 +30216,11 @@ msgstr "このアカウントに紐づくメールアドレス"
 #: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "アカウントに関連付けられたメール"
+
+#. js-lingui-id: pJahAY
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date can't be before the first event."
+msgstr ""
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -31797,10 +31927,10 @@ msgstr "AIタブを、チャットのトリアージ、割り当て、スヌー�
 msgid "Turns"
 msgstr "ターン"
 
-#. js-lingui-id: ZKeDcZ
+#. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr "ワークフローまたはアプリがこのエージェントを使用すると、ターンがここに表示されます"
+msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
+msgstr ""
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -34055,6 +34185,7 @@ msgid "Week"
 msgstr "週"
 
 #. js-lingui-id: 4XSc4l
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
 msgstr "毎週"
@@ -34856,6 +34987,11 @@ msgstr "年"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Yearly"
 msgstr "年払い"
+
+#. js-lingui-id: 1+9d+F
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Yearly on {startMonthAndDay}"
+msgstr ""
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
