@@ -952,8 +952,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
     workspaceLocalProperties: ['isPrivate', 'createdByUserWorkspaceId'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      lastPublishedVersionId:
-        'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
         'the sync points it at the active version, or at the one it publishes from the definition',
     },
