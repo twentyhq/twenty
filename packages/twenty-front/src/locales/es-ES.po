@@ -5262,6 +5262,21 @@ msgstr "Facturar créditos a tu espacio de trabajo"
 msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
 msgstr "Facturar los precios declarados por las aplicaciones instaladas en la suscripción del espacio de trabajo. El precio aún no se muestra antes de la instalación."
 
+#. js-lingui-id: WVxikw
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month"
+msgstr ""
+
+#. js-lingui-id: 9nZzfz
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per account"
+msgstr ""
+
+#. js-lingui-id: iOQoBV
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per member"
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5317,11 +5332,6 @@ msgstr "Error en la sesión del portal de facturación. Por favor, reintenta o c
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Billing stays {upcomingIntervalAdjective}. To switch to {selectedIntervalAdjective} billing, confirm this change first, then switch the billing interval as a second step."
 msgstr "La facturación se mantiene {upcomingIntervalAdjective}. Para cambiar a la facturación {selectedIntervalAdjective}, primero confirma este cambio y, a continuación, cambia el intervalo de facturación como segundo paso."
-
-#. js-lingui-id: 75WIQJ
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Bills credits"
-msgstr "Factura créditos"
 
 #. js-lingui-id: 8kIU+G
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -8147,6 +8157,7 @@ msgid "Copy to clipboard"
 msgstr "Copiar al portapapeles"
 
 #. js-lingui-id: RTxUjI
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Copy to Clipboard"
 msgstr "Copiar al portapapeles"
@@ -17811,6 +17822,11 @@ msgstr "Permitir que cada miembro decida por sí mismo"
 msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
 msgstr "Permite que las vistas de tabla y lista agrupadas muestren sus grupos como pestañas, un grupo a la vez. Actívalo después de que se complete la actualización de la instancia."
 
+#. js-lingui-id: livXRh
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Let members connect their own accounts"
+msgstr ""
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -19164,6 +19180,11 @@ msgstr "Mensaje"
 msgid "Message {recipientName}"
 msgstr "Enviar mensaje a {recipientName}"
 
+#. js-lingui-id: +nYs0G
+#: src/modules/chat/components/ChatMessageFloatingActions.tsx
+msgid "Message actions"
+msgstr ""
+
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Message attachments"
@@ -20020,6 +20041,7 @@ msgstr "Nunca, ni por Twenty ni por los proveedores"
 
 #. js-lingui-id: isRobC
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/chat/components/ChatMessageDaySeparator.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -23060,6 +23082,11 @@ msgstr "Vistas de página"
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Pages"
 msgstr "Páginas"
+
+#. js-lingui-id: wl6crM
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Paid app"
+msgstr ""
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -29920,6 +29947,7 @@ msgid "Text Colors"
 msgstr "Colores de texto"
 
 #. js-lingui-id: lyaiTc
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "Texto copiado al portapapeles"
@@ -31195,6 +31223,7 @@ msgid "To"
 msgstr "Para"
 
 #. js-lingui-id: ecUA8p
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
@@ -34876,6 +34905,7 @@ msgid "Yes, I saw it"
 msgstr "Sí, la vi"
 
 #. js-lingui-id: y/0uwd
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
