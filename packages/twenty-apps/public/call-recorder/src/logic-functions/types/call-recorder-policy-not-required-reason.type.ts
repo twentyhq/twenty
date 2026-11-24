@@ -3,6 +3,7 @@ export type CallRecorderPolicyNotRequiredReason =
   | 'EVENT_CANCELED'
   | 'PREFERENCE_OFF'
   | 'NO_OWNER'
+  | 'OWNERS_OPTED_OUT'
   | 'MISSING_CONFERENCE_LINK'
   | 'UNSUPPORTED_MEETING_PLATFORM'
   | 'EVENT_NOT_UPCOMING'

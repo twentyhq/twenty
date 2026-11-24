@@ -1,4 +1,4 @@
-import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { Module } from '@nestjs/common';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -31,7 +31,7 @@ import { WorkflowStepWaitModule } from 'src/modules/workflow/workflow-wait/workf
 
 @Module({
   imports: [
-    WorkflowCoreModule,
+    WorkflowVersionCoreModule,
     WorkflowRunModule,
     CodeActionModule,
     LogicFunctionActionModule,

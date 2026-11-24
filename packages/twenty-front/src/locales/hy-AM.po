@@ -1895,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Մուտք գործեք ձեր Twenty աշխատանքային տարածք MCP-ի միջոցով"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Մուտք գործել ձեր աշխատանքային տարածքի տվյալներին"
 
@@ -2100,6 +2100,7 @@ msgstr "Դերակատար"
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "Add"
 msgstr "Ավելացնել"
 
@@ -2107,6 +2108,11 @@ msgstr "Ավելացնել"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "Ավելացնել \"{optionName}\"-ը տարբերակների ցուցակին"
+
+#. js-lingui-id: AQVwJ5
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "Add {checkedCount}"
+msgstr "Ավելացնել {checkedCount}"
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
@@ -2529,6 +2535,12 @@ msgstr "Ավելացնել կամ հեռացնել օգտատերերին"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Ավելացնել ելքային դաշտ"
+
+#. js-lingui-id: aY6gdO
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Add participants"
+msgstr "Ավելացնել մասնակիցներ"
 
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
@@ -4637,6 +4649,7 @@ msgstr "Ձեզ նշանակված"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Assignee"
 msgstr "Կատարող"
 
@@ -9418,6 +9431,11 @@ msgstr "Կարգավորել գրառման էջը"
 msgid "Customize sidebar"
 msgstr "Կարգավորել կողային վահանակը"
 
+#. js-lingui-id: CZs1kG
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
+msgid "Customize tab"
+msgstr "Հարմարեցնել ներդիրը"
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
@@ -13848,6 +13866,7 @@ msgstr "Արագ"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Նախընտրած զրույցներ"
 
@@ -20534,6 +20553,7 @@ msgid "No apps found"
 msgstr "Հավելվածներ չեն գտնվել"
 
 #. js-lingui-id: 3bvkPk
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsAssigneeItem.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
 msgstr "Նշանակված չկա"
@@ -20960,6 +20980,11 @@ msgstr "Անդամներ չեն գտնվել"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members match your search"
 msgstr "Ոչ մի անդամ չի համապատասխանում ձեր որոնմանը"
+
+#. js-lingui-id: 5bqxVl
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "No members to add"
+msgstr "Ավելացնելու անդամներ չկան"
 
 #. js-lingui-id: IohPnt
 #: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
@@ -23014,6 +23039,12 @@ msgstr "պարբերություն"
 msgid "Parameters"
 msgstr "Պարամետրեր"
 
+#. js-lingui-id: MZHPuB
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Participants"
+msgstr "Մասնակիցներ"
+
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -24360,7 +24391,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Կարդացեք համակարգի հուշումները՝ հասկանալու, թե ինչպես է աշխատում AI‑ը (~{0} թոքեններ)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Կարդալ ձեր պրոֆիլը"
 
@@ -26653,6 +26684,7 @@ msgstr "Որոնել պատկերակ"
 #. js-lingui-id: AaDUlx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Որոնել անդամներ"
@@ -27790,6 +27822,7 @@ msgstr "Կարգավորվում է ձեր <0>տվյալների բազան</0>.
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
@@ -28518,6 +28551,11 @@ msgstr "Դասավորության որոշ փոփոխություններ չհ�
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Մասամբ տեղեկամատյանի տվյալները հանվել են՝ չափի սահմանափակմանը համապատասխանելու համար ({0} գրառում, {1} բայթ)։"
+
+#. js-lingui-id: FUT0ml
+#: src/modules/ai-chat/threads/hooks/useAddParticipantsToAiChatThread.ts
+msgid "Some members could not be added."
+msgstr "Որոշ անդամներ չհաջողվեց ավելացնել։"
 
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
@@ -30014,6 +30052,11 @@ msgstr "Արտահանումն ընդհատվել է։ Խնդրում ենք կ�
 msgid "The fields below are now available as variables in the next steps."
 msgstr "Ստորև նշված դաշտերն այժմ հասանելի են որպես փոփոխականներ հաջորդ քայլերում։"
 
+#. js-lingui-id: UbUlij
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The first value that is set, or nothing when none is."
+msgstr "Առաջին սահմանված արժեքը, կամ ոչինչ, եթե ոչ մեկը սահմանված չէ։"
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -30023,6 +30066,11 @@ msgstr "Լրիվ համաձայնագիրն՝ ձեր տեղակայման համ
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Պատկերակը, որը ձեր աշխատահոսի գործարկիչը կցուցադրի հրամանների ցանկում"
+
+#. js-lingui-id: Qp6vM+
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The largest of the numbers. Values that are not numbers are ignored."
+msgstr "Թվերից ամենամեծը։ Թիվ չհանդիսացող արժեքները անտեսվում են։"
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30106,6 +30154,11 @@ msgstr "Ցանկի տարրերի քանակը, կամ 0, եթե այն ցանկ
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
 msgstr "Առաջին ամսաթվից մինչև երկրորդը ամբողջ միավորների քանակը, բացասական, երբ երկրորդն ավելի վաղ է։ Րոպեներն ու ժամերը անցած ժամանակն են, իսկ ավելի երկար միավորները UTC-ով հաշվում են օրացուցային օրերն ու ամիսները։"
 
+#. js-lingui-id: wmIQo4
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number rounded to a number of decimals."
+msgstr "Տասնորդական նիշերի որոշակի քանակով կլորացված թիվը։"
+
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -30141,6 +30194,11 @@ msgstr "Չհաջողվեց որոշել կապի կազմաձևումը։"
 msgid "The role attached to this webhook."
 msgstr "Այս վեբհուկին կցված դերը։"
 
+#. js-lingui-id: eHwsp0
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The second value when the condition is true, otherwise the third."
+msgstr "Երկրորդ արժեքը, երբ պայմանը ճշմարիտ է, հակառակ դեպքում՝ երրորդը։"
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -30161,10 +30219,25 @@ msgstr "Ընտրված գրառումները (մինչև {maxRecordsFormatted})
 msgid "The shared email you want to use."
 msgstr "Այն ընդհանուր էլ. փոստի հասցեն, որը ցանկանում եք օգտագործել։"
 
+#. js-lingui-id: CZF2sj
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The smallest of the numbers. Values that are not numbers are ignored."
+msgstr "Թվերից ամենափոքրը։ Թիվ չհանդիսացող արժեքներն անտեսվում են։"
+
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
 msgstr "Ամսաթիվը պարունակող միավորի սկիզբը՝ UTC-ով։ Շաբաթները սկսվում են երկուշաբթիից։"
+
+#. js-lingui-id: hdgKJ2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in lower case."
+msgstr "Փոքրատառ տեքստը։"
+
+#. js-lingui-id: P/EZTH
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in upper case."
+msgstr "Մեծատառ տեքստը։"
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30212,6 +30285,11 @@ msgstr "Օգտագործումը, որի համար կիրառվում է այս
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The value a field had before the update. Empty when the record is created."
 msgstr "Թարմացումից առաջ դաշտի ունեցած արժեքը։ Դատարկ է, երբ գրառումը ստեղծվում է։"
+
+#. js-lingui-id: cXlUXr
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The values joined as one text. Values that are not set are skipped."
+msgstr "Մեկ տեքստի մեջ միավորված արժեքները։ Չսահմանված արժեքները բաց են թողնվում։"
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -34537,6 +34615,7 @@ msgstr "Աշխատատարածքի անդամի ID"
 
 #. js-lingui-id: wtxjAY
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Workspace members"
@@ -34760,6 +34839,7 @@ msgstr "Երեկ"
 #: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
 msgstr "Դուք"

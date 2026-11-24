@@ -347,6 +347,42 @@ describe('ingestLinkedinMessages', () => {
     expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
   });
 
+  it('skips a conversation the member did not select', async () => {
+    await expect(
+      ingest({
+        settings: {
+          ...DEFAULT_LINKEDIN_SETTINGS,
+          importPolicy: 'SELECTED',
+          selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
+        },
+      }),
+    ).resolves.toMatchObject({
+      ingestedMessageCount: 0,
+      skippedReason: 'NOT_SELECTED',
+    });
+    expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
+  it('imports a selected group chat even when nobody in it is in Twenty and group chats are off', async () => {
+    resolveCounterpartsLikeUnipile();
+
+    await expect(
+      ingest({
+        chat: GROUP_CHAT,
+        settings: {
+          ...DEFAULT_LINKEDIN_SETTINGS,
+          importPolicy: 'SELECTED',
+          selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
+          areGroupChatsImported: false,
+        },
+      }),
+    ).resolves.toMatchObject({
+      ingestedMessageCount: 1,
+      matchedPersonCount: 0,
+    });
+  });
+
   it('creates a person for an unknown profile the member messaged', async () => {
     await ingest();
 

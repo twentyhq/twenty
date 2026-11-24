@@ -107,6 +107,8 @@ const scheduleBot = ({
       iCalUid: 'calendar-event-uid',
       conferenceLinkUrl: 'https://meet.example.com/customer-sync',
       calendarChannelIds: [],
+      participants: [],
+      hasUnlistedParticipants: false,
       callRecorderPreference: 'ON',
     },
   });

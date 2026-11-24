@@ -28,6 +28,11 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AddAgentChatThreadParticipantsInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds: Array<Scalars['UUID']['input']>;
+};
+
 export type AddQuerySubscriptionInput = {
   eventStreamId: Scalars['String']['input'];
   operationSignature: Scalars['JSON']['input'];
@@ -2113,6 +2118,7 @@ export type CreateViewInput = {
   icon: Scalars['String']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
   isCompact?: InputMaybe<Scalars['Boolean']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
@@ -2123,10 +2129,10 @@ export type CreateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  presetFilter?: InputMaybe<ViewPresetFilter>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
-  visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type CreateViewSortInput = {
@@ -2430,6 +2436,7 @@ export enum EngineComponentKey {
   GO_TO_WORKFLOWS = 'GO_TO_WORKFLOWS',
   HIDE_DELETED_RECORDS = 'HIDE_DELETED_RECORDS',
   IMPORT_RECORDS = 'IMPORT_RECORDS',
+  MANAGE_AI_CHAT_PARTICIPANTS = 'MANAGE_AI_CHAT_PARTICIPANTS',
   MARK_AI_CHAT_AS_DONE = 'MARK_AI_CHAT_AS_DONE',
   MARK_AI_CHAT_AS_READ = 'MARK_AI_CHAT_AS_READ',
   MARK_AI_CHAT_AS_UNREAD = 'MARK_AI_CHAT_AS_UNREAD',
@@ -3717,6 +3724,7 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
+  addAgentChatThreadParticipants: Array<Scalars['UUID']['output']>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
   archiveInboxThread: Scalars['Boolean']['output'];
@@ -3988,6 +3996,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateRelatedRecordPath: RelatedRecordPath;
   updateSkill: Skill;
   updateTabPresence: Scalars['Boolean']['output'];
   updateTimelineActivityType: TimelineActivityType;
@@ -4049,6 +4058,11 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAddAgentChatMessageReactionArgs = {
   emoji: Scalars['String']['input'];
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAddAgentChatThreadParticipantsArgs = {
+  input: AddAgentChatThreadParticipantsInput;
 };
 
 
@@ -5398,6 +5412,11 @@ export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String']['input'];
   passwordResetToken: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateRelatedRecordPathArgs = {
+  input: UpdateRelatedRecordPathInput;
 };
 
 
@@ -7037,6 +7056,7 @@ export type RelatedRecordPath = {
   __typename?: 'RelatedRecordPath';
   firstFieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   isInherent: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   secondFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -8147,6 +8167,12 @@ export type UpdatePageLayoutWithTabsInput = {
   type: PageLayoutType;
 };
 
+export type UpdateRelatedRecordPathInput = {
+  id: Scalars['UUID']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isInherent?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type UpdateRoleInput = {
   /** The id of the role to update */
   id: Scalars['UUID']['input'];
@@ -8298,6 +8324,7 @@ export type UpdateViewInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   isCompact?: InputMaybe<Scalars['Boolean']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
@@ -8310,7 +8337,6 @@ export type UpdateViewInput = {
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
-  visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type UpdateViewSortInput = {
@@ -8839,6 +8865,7 @@ export type View = {
   isCompact: Scalars['Boolean']['output'];
   /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
   isSystemSideEffect: Scalars['Boolean']['output'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -8850,6 +8877,7 @@ export type View = {
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float']['output'];
+  presetFilter?: Maybe<ViewPresetFilter>;
   shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;
@@ -8861,6 +8889,7 @@ export type View = {
   viewFilters: Array<ViewFilter>;
   viewGroups: Array<ViewGroup>;
   viewSorts: Array<ViewSort>;
+  /** @deprecated Use isPrivate instead */
   visibility: ViewVisibility;
   workspaceId: Scalars['UUID']['output'];
 };
@@ -9060,6 +9089,16 @@ export enum ViewKey {
 export enum ViewOpenRecordIn {
   RECORD_PAGE = 'RECORD_PAGE',
   SIDE_PANEL = 'SIDE_PANEL'
+}
+
+export enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE = 'INBOX_CHANNEL_DONE',
+  INBOX_CHANNEL_OPEN = 'INBOX_CHANNEL_OPEN',
+  INBOX_CHANNEL_SNOOZED = 'INBOX_CHANNEL_SNOOZED',
+  INBOX_DONE = 'INBOX_DONE',
+  INBOX_MENTIONS = 'INBOX_MENTIONS',
+  INBOX_OPEN = 'INBOX_OPEN',
+  INBOX_SNOOZED = 'INBOX_SNOOZED'
 }
 
 export type ViewSort = {
