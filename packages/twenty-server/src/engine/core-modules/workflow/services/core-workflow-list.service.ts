@@ -223,13 +223,15 @@ export class CoreWorkflowListService {
       matchesFlatWorkflow,
     });
 
-    return isDefined(flatWorkflow)
-      ? fromFlatWorkflowToCoreWorkflowDto({
-          flatWorkflow,
-          statuses: flatWorkflow.statuses,
-          userWorkspaceId: reader.userWorkspaceId,
-        })
-      : null;
+    if (!isDefined(flatWorkflow)) {
+      return null;
+    }
+
+    return fromFlatWorkflowToCoreWorkflowDto({
+      flatWorkflow,
+      statuses: flatWorkflow.statuses,
+      userWorkspaceId: reader.userWorkspaceId,
+    });
   }
 
   private async findReadableFlatWorkflows({
