@@ -21,8 +21,8 @@ const computePositionRightAfter = ({
   navigationMenuItem,
   siblings,
 }: {
-  navigationMenuItem: FlatNavigationMenuItem;
-  siblings: FlatNavigationMenuItem[];
+  navigationMenuItem: Pick<FlatNavigationMenuItem, 'position'>;
+  siblings: Pick<FlatNavigationMenuItem, 'position'>[];
 }): number => {
   const followingPositions = siblings
     .map((sibling) => sibling.position)
@@ -159,18 +159,22 @@ export const buildAutomationsNavigationMenuItemOperations = ({
     ...computeAgentsNavigationMenuItemPlacement(),
   };
 
+  const flatEntityToCreate = hasAgentsNavigationMenuItem
+    ? []
+    : [agentsNavigationMenuItem];
+
+  if (!isDefined(untouchedFolder)) {
+    return { flatEntityToCreate, flatEntityToUpdate: [] };
+  }
+
   return {
-    flatEntityToCreate: hasAgentsNavigationMenuItem
-      ? []
-      : [agentsNavigationMenuItem],
-    flatEntityToUpdate: isDefined(untouchedFolder)
-      ? [
-          {
-            ...untouchedFolder,
-            name: AUTOMATIONS_NAVIGATION_FOLDER.name,
-            updatedAt: now,
-          },
-        ]
-      : [],
+    flatEntityToCreate,
+    flatEntityToUpdate: [
+      {
+        ...untouchedFolder,
+        name: AUTOMATIONS_NAVIGATION_FOLDER.name,
+        updatedAt: now,
+      },
+    ],
   };
 };
