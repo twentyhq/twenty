@@ -308,12 +308,8 @@ describe('BullMQDriver scheduledAt', () => {
     );
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
   it('stores the initial eligibility date in the job options', async () => {
-    jest.useFakeTimers({ now: timestamp });
+    jest.setSystemTime(timestamp);
 
     const { jobs } = await driver.bulkAdd(
       MessageQueue.workspaceQueue,
