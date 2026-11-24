@@ -1,7 +1,6 @@
-import { isNonEmptyArray } from 'twenty-shared/utils';
-
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { doesRecordFilterReadFields } from 'src/engine/api/common/common-query-runners/utils/does-record-filter-read-fields.util';
 import { type CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -34,12 +33,19 @@ export const buildMutationQueryBuilder = async ({
   });
 
   const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
+  const { computedColumnShapes = [], columnShapeByColumnName } =
+    filteredQueryBuilder.tableShape;
   // A write statement reads the stored table, where computed columns hold no value
-  const hasComputedColumns = isNonEmptyArray(
-    filteredQueryBuilder.tableShape.computedColumnShapes,
-  );
+  const isFilteringOnComputedColumns = doesRecordFilterReadFields({
+    filter,
+    fieldNames: new Set(
+      computedColumnShapes.map(
+        ({ columnName }) => columnShapeByColumnName[columnName]?.fieldName,
+      ),
+    ),
+  });
 
-  if (!hasRelationTraversal && !hasComputedColumns) {
+  if (!hasRelationTraversal && !isFilteringOnComputedColumns) {
     return {
       selectQueryBuilder: filteredQueryBuilder,
       rowLevelPermissionsApplied: false,
