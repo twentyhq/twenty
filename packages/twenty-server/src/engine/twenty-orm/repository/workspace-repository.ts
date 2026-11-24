@@ -1571,17 +1571,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return records.map((record) => {
       const computedRecord = computedRecordById.get(record.id);
 
-      return isDefined(computedRecord)
-        ? {
-            ...record,
-            ...Object.fromEntries(
-              computedFieldNames.map((fieldName) => [
-                fieldName,
-                computedRecord[fieldName],
-              ]),
-            ),
-          }
-        : record;
+      if (!isDefined(computedRecord)) {
+        return record;
+      }
+
+      const computedValues = Object.fromEntries(
+        computedFieldNames.map((fieldName) => [
+          fieldName,
+          computedRecord[fieldName],
+        ]),
+      );
+
+      return { ...record, ...computedValues };
     });
   }
 

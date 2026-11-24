@@ -316,7 +316,6 @@ describe('View tools', () => {
 
         expect(viewService.findByWorkspaceId).toHaveBeenCalledWith(
           mockWorkspaceId,
-          mockUserWorkspaceId,
         );
         expect(result).toEqual({
           views: [
@@ -351,7 +350,6 @@ describe('View tools', () => {
         expect(viewService.findByObjectMetadataId).toHaveBeenCalledWith(
           mockWorkspaceId,
           mockObjectMetadataId,
-          mockUserWorkspaceId,
         );
         expect(result).toHaveProperty('views.length', 1);
       });
@@ -405,7 +403,6 @@ describe('View tools', () => {
           viewId: mockViewId,
           workspaceId: mockWorkspaceId,
           currentWorkspaceMemberId: 'workspace-member-id',
-          currentUserWorkspaceId: mockUserWorkspaceId,
         });
         expect(result).toEqual(mockQueryParams);
       });

@@ -26,6 +26,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: false,
   [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED]: false,
   [FeatureFlagKey.IS_FORMULA_FIELD_ENABLED]: true,
+  [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {
