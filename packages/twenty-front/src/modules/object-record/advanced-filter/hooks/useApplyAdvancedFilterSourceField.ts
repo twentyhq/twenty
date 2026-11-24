@@ -12,7 +12,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ApplyAdvancedFilterSourceFieldParams = {
@@ -59,7 +59,7 @@ export const useApplyAdvancedFilterSourceField = () => {
   }: ApplyAdvancedFilterSourceFieldParams) => {
     setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataItem.id);
 
-    const filterType = getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
+    const filterType = getFilterTypeFromFieldMetadata(sourceFieldMetadataItem);
 
     const defaultOperand = getDefaultAdvancedFilterOperand({
       filterType,

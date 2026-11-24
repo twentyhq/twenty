@@ -8,6 +8,7 @@ import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
 import { SettingsDataModelFieldPhonesSettingsFormCard } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesSettingsFormCard';
+import { SettingsDataModelFieldRollupSettingsFormCard } from '@/settings/data-model/fields/forms/rollup/components/SettingsDataModelFieldRollupSettingsFormCard';
 import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import { SettingsDataModelFieldPreviewWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewWidget';
 
@@ -45,6 +46,7 @@ const previewableTypes = [
   FieldMetadataType.RELATION,
   FieldMetadataType.MORPH_RELATION,
   FieldMetadataType.RICH_TEXT,
+  FieldMetadataType.ROLLUP,
   FieldMetadataType.SELECT,
   FieldMetadataType.TEXT,
   FieldMetadataType.UUID,
@@ -60,6 +62,16 @@ export const SettingsDataModelFieldSettingsFormCard = ({
 
   if (!previewableTypes.includes(fieldType)) {
     return null;
+  }
+
+  if (fieldType === FieldMetadataType.ROLLUP) {
+    return (
+      <SettingsDataModelFieldRollupSettingsFormCard
+        existingFieldMetadataId={existingFieldMetadataId}
+        objectNameSingular={objectNameSingular}
+        disabled={disabled}
+      />
+    );
   }
 
   if (fieldType === FieldMetadataType.BOOLEAN) {

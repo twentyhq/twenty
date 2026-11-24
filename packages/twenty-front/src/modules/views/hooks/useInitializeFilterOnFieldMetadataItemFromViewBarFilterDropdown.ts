@@ -19,7 +19,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
@@ -75,7 +75,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
             currentRecordFiltersCallbackState,
           );
 
-          const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+          const filterType = getFilterTypeFromFieldMetadata(fieldMetadataItem);
 
           if (filterType === 'RELATION' || filterType === 'SELECT') {
             pushFocusItemToFocusStack({

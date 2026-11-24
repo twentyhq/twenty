@@ -10,6 +10,7 @@ export const SORTABLE_FIELD_METADATA_TYPES = [
   FieldMetadataType.EMAILS,
   FieldMetadataType.FULL_NAME,
   FieldMetadataType.RATING,
+  FieldMetadataType.ROLLUP,
   FieldMetadataType.CURRENCY,
   FieldMetadataType.ACTOR,
   FieldMetadataType.LINKS,

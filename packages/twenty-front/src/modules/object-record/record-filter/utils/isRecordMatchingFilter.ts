@@ -26,6 +26,7 @@ import {
 import {
   COMPOSITE_FIELD_SUB_FIELD_MATCHERS_MAP,
   computeRelationGqlFieldJoinColumnName,
+  getFieldMetadataValueType,
   isDefined,
   isEmptyObject,
   isFieldReferenceFilterOperator,
@@ -400,7 +401,7 @@ export const isRecordMatchingFilter = ({
       });
     }
 
-    switch (objectMetadataField.type) {
+    switch (getFieldMetadataValueType(objectMetadataField)) {
       case FieldMetadataType.RATING:
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,

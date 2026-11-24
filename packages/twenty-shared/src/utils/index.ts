@@ -191,6 +191,7 @@ export { filterSelectOptionsOfFieldMetadataItem } from './filter/utils/filterSel
 export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
 export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilterOperandsForFilterableFieldType';
+export { getFilterTypeFromFieldMetadata } from './filter/utils/getFilterTypeFromFieldMetadata';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export { isFieldReferenceFilterOperator } from './filter/utils/isFieldReferenceFilterOperator';

@@ -3,7 +3,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelationTargetFieldLabel';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 
 export const getRecordFilterTypeAndLabelFromFieldMetadata = ({
   fieldMetadataId,
@@ -41,8 +41,8 @@ export const getRecordFilterTypeAndLabelFromFieldMetadata = ({
     return undefined;
   }
 
-  const type = getFilterTypeFromFieldType(
-    (relationTargetFieldMetadataItem ?? sourceFieldMetadataItem).type,
+  const type = getFilterTypeFromFieldMetadata(
+    relationTargetFieldMetadataItem ?? sourceFieldMetadataItem,
   );
 
   const label = isSystemSearchVectorField(sourceFieldMetadataItem.name)

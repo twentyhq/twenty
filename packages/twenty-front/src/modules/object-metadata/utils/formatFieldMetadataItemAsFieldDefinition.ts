@@ -4,6 +4,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 
 import { getFieldButtonIcon } from '@/object-record/record-field/ui/utils/getFieldButtonIcon';
 import { FieldMetadataType } from 'twenty-shared/types';
+import { getFieldMetadataValueType } from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 export type FieldMetadataItemAsFieldDefinitionProps = {
@@ -58,7 +59,7 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
     label: field.label,
     showLabel,
     labelWidth,
-    type: field.type,
+    type: getFieldMetadataValueType(field),
     metadata: fieldDefintionMetadata,
     iconName: field.icon ?? 'Icon123',
     defaultValue: field.defaultValue,

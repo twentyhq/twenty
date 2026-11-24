@@ -15,7 +15,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { useLingui } from '@lingui/react/macro';
 
@@ -40,7 +40,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
 
   const operandsForFilterType = isDefined(effectiveFieldMetadataItem)
     ? getRecordFilterOperands({
-        filterType: getFilterTypeFromFieldType(effectiveFieldMetadataItem.type),
+        filterType: getFilterTypeFromFieldMetadata(effectiveFieldMetadataItem),
         subFieldName: subFieldNameUsedInDropdown,
       })
     : [];
@@ -79,9 +79,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
     return null;
   }
 
-  const filterType = getFilterTypeFromFieldType(
-    effectiveFieldMetadataItem.type,
-  );
+  const filterType = getFilterTypeFromFieldMetadata(effectiveFieldMetadataItem);
 
   const isDateFilter = DATE_FILTER_TYPES.includes(filterType);
 

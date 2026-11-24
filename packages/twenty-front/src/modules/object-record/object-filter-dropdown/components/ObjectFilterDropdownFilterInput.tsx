@@ -17,7 +17,7 @@ import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/o
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId: string;
@@ -55,8 +55,8 @@ export const ObjectFilterDropdownFilterInput = ({
     return null;
   }
 
-  const filterType = getFilterTypeFromFieldType(
-    filterValueFieldMetadataItem.type,
+  const filterType = getFilterTypeFromFieldMetadata(
+    filterValueFieldMetadataItem,
   );
 
   const isOnlyOperand = !isOperandWithFilterValue;

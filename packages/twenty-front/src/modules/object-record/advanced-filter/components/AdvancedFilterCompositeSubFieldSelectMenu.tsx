@@ -8,7 +8,7 @@ import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/recor
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -28,7 +28,7 @@ export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   const { applyAdvancedFilterCompositeSubField } =
     useApplyAdvancedFilterCompositeSubField();
 
-  const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+  const filterType = getFilterTypeFromFieldMetadata(fieldMetadataItem);
 
   if (!isCompositeFilterableFieldType(filterType)) {
     return null;

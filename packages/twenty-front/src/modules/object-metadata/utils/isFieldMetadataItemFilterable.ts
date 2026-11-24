@@ -26,6 +26,7 @@ export const isFieldMetadataItemFilterable = (field: FieldMetadataItem) => {
     FieldMetadataType.MULTI_SELECT,
     FieldMetadataType.CURRENCY,
     FieldMetadataType.RATING,
+    FieldMetadataType.ROLLUP,
     FieldMetadataType.ACTOR,
     FieldMetadataType.PHONES,
     FieldMetadataType.ARRAY,

@@ -4,7 +4,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
 import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelationTargetFieldLabel';
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
@@ -13,7 +13,7 @@ export const useCreateEmptyRecordFilterFromFieldMetadataItem = () => {
   const createEmptyRecordFilterFromFieldMetadataItem = (
     fieldMetadataItem: FieldMetadataItem,
   ) => {
-    const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+    const filterType = getFilterTypeFromFieldMetadata(fieldMetadataItem);
 
     const availableOperandsForFilter = getRecordFilterOperands({
       filterType,

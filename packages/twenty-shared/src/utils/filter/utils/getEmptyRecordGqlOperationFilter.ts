@@ -25,7 +25,7 @@ import { computeEmptyGqlOperationFilterForMorphRelation } from '@/utils/filter/c
 import { type RecordFilter } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
 import { type FieldShared } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { generateILikeFiltersForCompositeFields } from '@/utils/filter/utils/generateILikeFiltersForCompositeFields';
-import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
+import { getFilterTypeFromFieldMetadata } from '@/utils/filter/utils/getFilterTypeFromFieldMetadata';
 import { isNonEmptyString } from '@sniptt/guards';
 
 type GetEmptyRecordGqlOperationFilterParams = {
@@ -46,7 +46,7 @@ export const getEmptyRecordGqlOperationFilter = ({
 
   const isSubFieldFilter = isNonEmptyString(compositeFieldName);
 
-  const filterType = getFilterTypeFromFieldType(correspondingField.type);
+  const filterType = getFilterTypeFromFieldMetadata(correspondingField);
 
   switch (filterType) {
     case 'TEXT':

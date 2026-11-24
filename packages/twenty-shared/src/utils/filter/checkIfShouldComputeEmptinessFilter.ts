@@ -4,7 +4,7 @@ import {
   type ViewFilterOperand,
 } from '@/types';
 import { isEmptinessOperand } from '@/utils/filter/isEmptinessOperand';
-import { getFilterTypeFromFieldType } from '@/utils/filter/utils/getFilterTypeFromFieldType';
+import { getFilterTypeFromFieldMetadata } from '@/utils/filter/utils/getFilterTypeFromFieldMetadata';
 
 export const checkIfShouldComputeEmptinessFilter = ({
   recordFilterOperand,
@@ -22,8 +22,8 @@ export const checkIfShouldComputeEmptinessFilter = ({
   const filterTypesThatHaveNoEmptinessOperand: FilterableAndTSVectorFieldType[] =
     ['BOOLEAN', 'TS_VECTOR'];
 
-  const filterType = getFilterTypeFromFieldType(
-    correspondingFieldMetadataItem.type,
+  const filterType = getFilterTypeFromFieldMetadata(
+    correspondingFieldMetadataItem,
   );
 
   const filterHasEmptinessOperands =

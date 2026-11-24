@@ -13,9 +13,13 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+} from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useLingui } from '@lingui/react/macro';
 
@@ -35,14 +39,16 @@ export const SettingsObjectNewFieldSelect = () => {
     },
   });
 
-  const excludedFieldTypes: FieldType[] = (
-    [
-      FieldMetadataType.NUMERIC,
-      FieldMetadataType.ACTOR,
-      FieldMetadataType.UUID,
-      FieldMetadataType.ROLLUP,
-    ] as const
-  ).filter(isDefined);
+  const isRollupFieldEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ROLLUP_FIELD_ENABLED,
+  );
+
+  const excludedFieldTypes: FieldType[] = [
+    FieldMetadataType.NUMERIC,
+    FieldMetadataType.ACTOR,
+    FieldMetadataType.UUID,
+    ...(isRollupFieldEnabled ? [] : [FieldMetadataType.ROLLUP]),
+  ];
 
   useEffect(() => {
     if (workspaceSurface.type === 'main' && !activeObjectMetadataItem) {

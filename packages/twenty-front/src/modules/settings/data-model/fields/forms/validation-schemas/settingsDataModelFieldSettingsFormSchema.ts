@@ -10,6 +10,7 @@ import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fiel
 import { settingsDataModelFieldMorphRelationFormSchema } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationForm';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
+import { settingsDataModelFieldRollupFormSchema } from '@/settings/data-model/fields/forms/rollup/components/SettingsDataModelFieldRollupForm';
 import {
   settingsDataModelFieldMultiSelectFormSchema,
   settingsDataModelFieldSelectFormSchema,
@@ -111,6 +112,10 @@ const filesFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.FILES) })
   .merge(mergeSettingsSchemas(settingsDataModelFieldMaxValuesSchema));
 
+const rollupFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.ROLLUP) })
+  .extend(settingsDataModelFieldRollupFormSchema.shape);
+
 const otherFieldsFormSchema = z
   .object({
     type: z.enum(
@@ -132,6 +137,7 @@ const otherFieldsFormSchema = z
           FieldMetadataType.LINKS,
           FieldMetadataType.ARRAY,
           FieldMetadataType.FILES,
+          FieldMetadataType.ROLLUP,
         ]),
       ) as [FieldMetadataType, ...FieldMetadataType[]],
     ),
@@ -157,6 +163,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     linksFieldFormSchema,
     arrayFieldFormSchema,
     filesFieldFormSchema,
+    rollupFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );

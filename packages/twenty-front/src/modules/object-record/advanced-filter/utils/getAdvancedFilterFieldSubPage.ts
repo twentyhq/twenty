@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
-import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata } from 'twenty-shared/utils';
 
 export const getAdvancedFilterFieldSubPage = (
   fieldMetadataItem: FieldMetadataItem,
@@ -12,7 +12,7 @@ export const getAdvancedFilterFieldSubPage = (
 
   if (
     isCompositeFilterableFieldType(
-      getFilterTypeFromFieldType(fieldMetadataItem.type),
+      getFilterTypeFromFieldMetadata(fieldMetadataItem),
     )
   ) {
     return 'composite';

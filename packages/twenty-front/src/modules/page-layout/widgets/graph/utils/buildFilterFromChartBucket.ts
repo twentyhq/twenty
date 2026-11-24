@@ -13,7 +13,7 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 import {
-  getFilterTypeFromFieldType,
+  getFilterTypeFromFieldMetadata,
   isDefined,
   isFieldMetadataDateKind,
   parseToPlainDateOrThrow,
@@ -138,7 +138,7 @@ export const buildFilterFromChartBucket = ({
   }
 
   const availableOperands = getRecordFilterOperands({
-    filterType: getFilterTypeFromFieldType(fieldMetadataItem.type),
+    filterType: getFilterTypeFromFieldMetadata(fieldMetadataItem),
     subFieldName: subFieldName ?? undefined,
   });
 

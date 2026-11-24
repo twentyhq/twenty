@@ -17,7 +17,7 @@ import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
@@ -66,8 +66,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       );
     }
 
-    const filterType = getFilterTypeFromFieldType(
-      defaultFieldMetadataItemForFilter.type,
+    const filterType = getFilterTypeFromFieldMetadata(
+      defaultFieldMetadataItemForFilter,
     );
 
     const defaultSubFieldName =
@@ -109,8 +109,8 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
     upsertRecordFilterGroup(newRecordFilterGroup);
 
-    const filterType = getFilterTypeFromFieldType(
-      defaultFieldMetadataItemForFilter.type,
+    const filterType = getFilterTypeFromFieldMetadata(
+      defaultFieldMetadataItemForFilter,
     );
 
     const newRecordFilter: RecordFilter = {

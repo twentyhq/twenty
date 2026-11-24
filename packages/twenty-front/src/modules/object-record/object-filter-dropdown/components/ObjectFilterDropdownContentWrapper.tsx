@@ -4,7 +4,7 @@ import { filterValueFieldMetadataItemUsedInDropdownComponentSelector } from '@/o
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 
 export const ObjectFilterDropdownContentWrapper = ({
   children,
@@ -17,8 +17,8 @@ export const ObjectFilterDropdownContentWrapper = ({
     return null;
   }
 
-  const filterType = getFilterTypeFromFieldType(
-    filterValueFieldMetadataItem.type,
+  const filterType = getFilterTypeFromFieldMetadata(
+    filterValueFieldMetadataItem,
   );
 
   const isDateFilter = DATE_FILTER_TYPES.includes(filterType);

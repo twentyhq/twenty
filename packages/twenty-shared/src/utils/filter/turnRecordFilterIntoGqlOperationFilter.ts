@@ -42,7 +42,7 @@ import { type DateTimeFilter } from '@/types/RecordGqlOperationFilter';
 import {
   checkIfShouldComputeEmptinessFilter,
   CustomError,
-  getFilterTypeFromFieldType,
+  getFilterTypeFromFieldMetadata,
   getNextPeriodStart,
   getPeriodStart,
   isDefined,
@@ -100,6 +100,7 @@ export type FieldShared = {
   name: string;
   type: FieldMetadataType;
   label: string;
+  settings?: object | null;
   relation?: { sourceObjectMetadata: { id: string } } | null;
   morphRelations?: FieldSharedMorphRelation[] | null;
 };
@@ -265,7 +266,7 @@ const buildDirectFieldGqlOperationFilter = ({
 
   const isSubFieldFilter = isNonEmptyString(subFieldName);
 
-  const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+  const filterType = getFilterTypeFromFieldMetadata(fieldMetadataItem);
 
   switch (filterType) {
     case 'TEXT':

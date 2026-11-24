@@ -13,7 +13,7 @@ import { getRelationTargetFieldLabel } from '@/object-metadata/utils/getRelation
 import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ApplyAdvancedFilterRelationTargetFieldParams = {
@@ -66,8 +66,8 @@ export const useApplyAdvancedFilterRelationTargetField = () => {
   }: ApplyAdvancedFilterRelationTargetFieldParams) => {
     setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataItem.id);
 
-    const filterType = getFilterTypeFromFieldType(
-      relationTargetFieldMetadataItem.type,
+    const filterType = getFilterTypeFromFieldMetadata(
+      relationTargetFieldMetadataItem,
     );
 
     const firstOperand = getRecordFilterOperands({

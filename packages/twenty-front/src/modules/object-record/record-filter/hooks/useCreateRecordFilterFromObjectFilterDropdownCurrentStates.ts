@@ -6,7 +6,7 @@ import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jota
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
@@ -51,8 +51,8 @@ export const useCreateRecordFilterFromObjectFilterDropdownCurrentStates =
           );
         }
 
-        const filterType = getFilterTypeFromFieldType(
-          fieldMetadataItemUsedInDropdown.type,
+        const filterType = getFilterTypeFromFieldMetadata(
+          fieldMetadataItemUsedInDropdown,
         );
 
         if (!isDefined(selectedOperandInDropdown)) {

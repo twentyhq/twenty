@@ -140,3 +140,24 @@ export const WithSelectForm: Story = {
     );
   },
 };
+
+export const WithRollupForm: Story = {
+  args: {
+    existingFieldMetadataId: 'new-field',
+    fieldType: FieldMetadataType.ROLLUP,
+    objectNameSingular: 'company',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Related records')).toBeVisible();
+    expect(canvas.getByText('Count')).toBeVisible();
+    expect(canvas.queryByText('Field')).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText('Add filter'));
+
+    expect(
+      await canvas.findByRole('button', { name: 'Remove filter' }),
+    ).toBeVisible();
+  },
+};

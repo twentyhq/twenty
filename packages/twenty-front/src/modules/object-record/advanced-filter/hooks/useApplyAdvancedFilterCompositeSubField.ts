@@ -13,7 +13,7 @@ import { getRecordFilterOperands } from '@/object-record/record-filter/utils/get
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldMetadata, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ApplyAdvancedFilterCompositeSubFieldParams = {
@@ -65,7 +65,7 @@ export const useApplyAdvancedFilterCompositeSubField = () => {
   }: ApplyAdvancedFilterCompositeSubFieldParams) => {
     setFieldMetadataItemIdUsedInDropdown(sourceFieldMetadataItem.id);
 
-    const filterType = getFilterTypeFromFieldType(sourceFieldMetadataItem.type);
+    const filterType = getFilterTypeFromFieldMetadata(sourceFieldMetadataItem);
 
     const firstOperand = getRecordFilterOperands({
       filterType,
