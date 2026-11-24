@@ -4,8 +4,8 @@ import { isDefined, normalizeIframeOrigin } from 'twenty-shared/utils';
 
 export const buildIframeMediaPermissionsPolicy = (
   permissions: IframeMediaPermission[],
-): string =>
-  MEDIA_CAPABILITIES.map((capability) => {
+): string => {
+  const mediaDirectives = MEDIA_CAPABILITIES.map((capability) => {
     const origins = permissions
       .filter((permission) => permission[capability])
       .map((permission) =>
@@ -15,4 +15,7 @@ export const buildIframeMediaPermissionsPolicy = (
     const allowedOrigins = [...new Set(origins)].map((origin) => `"${origin}"`);
 
     return `${capability}=(${['self', ...allowedOrigins].join(' ')})`;
-  }).join(', ');
+  });
+
+  return [...mediaDirectives, 'geolocation=()'].join(', ');
+};

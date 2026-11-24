@@ -16,6 +16,7 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 const INBOX_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
 type NavigationDrawerInboxFavoritesSectionProps = {
+  label?: string;
   channels: AiChatChannel[];
   threads: InboxThreadListItemData[];
   currentThreadId: string | null;
@@ -24,6 +25,7 @@ type NavigationDrawerInboxFavoritesSectionProps = {
 };
 
 export const NavigationDrawerInboxFavoritesSection = ({
+  label,
   channels,
   threads,
   currentThreadId,
@@ -50,7 +52,7 @@ export const NavigationDrawerInboxFavoritesSection = ({
   return (
     <CollapsibleNavigationDrawerSection
       sectionId={INBOX_FAVORITES_NAVIGATION_SECTION_ID}
-      label={t`Favorites`}
+      label={label ?? t`Favorites`}
       rightIcon={headerAction}
       alwaysShowRightIcon={isDefined(headerAction)}
     >
