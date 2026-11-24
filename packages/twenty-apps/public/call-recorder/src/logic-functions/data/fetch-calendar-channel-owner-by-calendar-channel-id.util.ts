@@ -1,10 +1,11 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type CalendarChannelOwner } from 'src/logic-functions/types/calendar-channel-owner.type';
 import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
-export const fetchOwnerUserWorkspaceIdByCalendarChannelId = async (): Promise<
-  Map<string, string>
+export const fetchCalendarChannelOwnerByCalendarChannelId = async (): Promise<
+  Map<string, CalendarChannelOwner>
 > => {
   // The endpoint refuses a caller acting for a user, which a function reached through a route is by default.
   const metadataClient = new MetadataApiClient({
@@ -14,21 +15,25 @@ export const fetchOwnerUserWorkspaceIdByCalendarChannelId = async (): Promise<
   const { calendarChannels } = await metadataClient.query({
     calendarChannels: {
       id: true,
+      handle: true,
       connectedAccount: { userWorkspaceId: true },
     },
   });
-  const ownerUserWorkspaceIdByCalendarChannelId = new Map<string, string>();
+  const calendarChannelOwnerByCalendarChannelId = new Map<
+    string,
+    CalendarChannelOwner
+  >();
 
-  for (const { id, connectedAccount } of calendarChannels) {
+  for (const { id, handle, connectedAccount } of calendarChannels) {
     if (!isDefined(connectedAccount)) {
       continue;
     }
 
-    ownerUserWorkspaceIdByCalendarChannelId.set(
-      id,
-      connectedAccount.userWorkspaceId,
-    );
+    calendarChannelOwnerByCalendarChannelId.set(id, {
+      userWorkspaceId: connectedAccount.userWorkspaceId,
+      handle,
+    });
   }
 
-  return ownerUserWorkspaceIdByCalendarChannelId;
+  return calendarChannelOwnerByCalendarChannelId;
 };

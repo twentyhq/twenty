@@ -31,7 +31,6 @@ const CHANNEL_OBJECT_UNIVERSAL_IDENTIFIERS = [
 
 const { attachment, callRecording } = STANDARD_OBJECTS;
 
-// Their records follow a channel record when they have one, and stay readable through the role when they have none
 const OBJECTS_FOLLOWING_A_CHANNEL_RECORD = [
   {
     objectUniversalIdentifier: attachment.universalIdentifier,

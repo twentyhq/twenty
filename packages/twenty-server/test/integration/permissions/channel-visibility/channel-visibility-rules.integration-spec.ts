@@ -18,7 +18,6 @@ import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/per
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
-import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -183,6 +182,7 @@ const findMessagesOfChannel = async ({
 };
 
 describe('channel visibility through row level rules (integration)', () => {
+  let companyId: string;
   let companyAttachmentId: string;
   let messageAttachmentId: string;
   let callRecordingWithoutEventId: string;
@@ -196,12 +196,14 @@ describe('channel visibility through row level rules (integration)', () => {
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
+    // Seeded companies may be gone: other suites of the same shard delete them all
+    companyId = await createRecord({
+      objectMetadataSingularName: 'company',
+      data: { name: 'Channel visibility company' },
+    });
     companyAttachmentId = await createRecord({
       objectMetadataSingularName: 'attachment',
-      data: {
-        name: 'Company attachment',
-        targetCompanyId: COMPANY_DATA_SEED_IDS.ID_1,
-      },
+      data: { name: 'Company attachment', targetCompanyId: companyId },
     });
     messageAttachmentId = await createRecord({
       objectMetadataSingularName: 'attachment',
@@ -270,6 +272,10 @@ describe('channel visibility through row level rules (integration)', () => {
         recordId: callRecordingId,
       });
     }
+    await destroyRecord({
+      objectMetadataSingularName: 'company',
+      recordId: companyId,
+    });
     await setJonyChannelVisibility('SHARE_EVERYTHING');
 
     for (const featureFlag of [...FLAGS].reverse()) {

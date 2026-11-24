@@ -299,6 +299,32 @@ describe('linkedinHandleWebhookEventHandler', () => {
     });
   });
 
+  it('leaves out a message of a conversation the member did not select, without reading it', async () => {
+    mocks.kvGet.mockImplementation(async (key: string) =>
+      key === 'linkedin-settings:connection-id'
+        ? {
+            importPolicy: 'SELECTED',
+            selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
+          }
+        : null,
+    );
+
+    await expect(
+      linkedinHandleWebhookEventHandler(
+        buildMessageEvent({
+          sender_id: DAPHNE.id,
+          sender: DAPHNE,
+          is_sender: false,
+        }),
+      ),
+    ).resolves.toEqual({
+      handled: false,
+      reason: 'Conversation is not selected',
+    });
+    expect(mocks.getUnipileChat).not.toHaveBeenCalled();
+    expect(mocks.ingestMessages).not.toHaveBeenCalled();
+  });
+
   it.each([
     [
       'Unipile answers 503',
