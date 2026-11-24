@@ -24407,6 +24407,11 @@ msgstr "Կարդացեք համակարգի հուշումները՝ հասկա�
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Կարդացեք համակարգի հուշումները՝ հասկանալու, թե ինչպես է աշխատում AI‑ը (~{0} թոքեններ)"
 
+#. js-lingui-id: SIPs3V
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
+msgstr ""
+
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
@@ -34246,6 +34251,11 @@ msgstr "Վիջեթ"
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Widget Settings"
 msgstr "Վիջեթի կարգավորումներ"
+
+#. js-lingui-id: 0LuHF2
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Widget visibility rule tree"
+msgstr ""
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
