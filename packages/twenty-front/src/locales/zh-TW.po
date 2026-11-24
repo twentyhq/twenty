@@ -111,10 +111,20 @@ msgstr "「{path}」超出欄位「{fieldName}」允許的層級"
 msgid "\"{path}\" goes more than one relation deep"
 msgstr "「{path}」超出一層關聯"
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr ""
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
 msgstr "「{path}」不是值"
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
+msgstr ""
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -574,7 +584,7 @@ msgstr "{0} 位工作區成員"
 #. placeholder {0}: entry.label
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 msgid "{0}, back"
-msgstr ""
+msgstr "{0}，返回"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
@@ -882,6 +892,16 @@ msgstr "{formattedRunCount} 次執行中有 {formattedFailedRunCount} 次失敗"
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "已使用 {formattedPercentage}%，{formattedContextWindow} 個權杖中已使用 {formattedConversationSize} 個"
+
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -2694,7 +2714,7 @@ msgstr "添加 SSO 身份提供者"
 #. js-lingui-id: iC/d3X
 #: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
 msgid "Add summary column"
-msgstr ""
+msgstr "新增摘要欄"
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -5268,7 +5288,7 @@ msgstr "落後"
 #. js-lingui-id: +68Gui
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 msgid "Belongs to"
-msgstr ""
+msgstr "隸屬於"
 
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
@@ -5597,7 +5617,7 @@ msgstr "建立多對多關聯"
 #. js-lingui-id: Hz2eHF
 #: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
 msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
-msgstr ""
+msgstr "在此檢視中由 {relationLabel} 建立。無法排序或篩選。"
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -8570,7 +8590,7 @@ msgstr "計數唯一值"
 #. js-lingui-id: wGiHe7
 #: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
 msgid "Count, total, list"
-msgstr ""
+msgstr "計數、總計、清單"
 
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
@@ -10353,7 +10373,7 @@ msgstr "刪除部分 {objectLabelPlural} · {throughRules}"
 #. js-lingui-id: x6UH+z
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Delete summary column"
-msgstr ""
+msgstr "刪除摘要欄位"
 
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
@@ -10545,7 +10565,7 @@ msgstr "降序"
 #. js-lingui-id: 8Y0+ya
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Describe a {objectLabel} and what changed on it"
-msgstr ""
+msgstr "描述一個 {objectLabel} 及其變更內容"
 
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
@@ -10964,7 +10984,7 @@ msgstr "您要取消訂閱嗎？"
 #. js-lingui-id: oc+pOk
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Do your scheduled task now"
-msgstr ""
+msgstr "立即執行排定的任務"
 
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -11604,7 +11624,7 @@ msgstr "編輯部分 {objectLabelPlural} · {throughRules}"
 #. js-lingui-id: 0Ou9Le
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 msgid "Edit summary column…"
-msgstr ""
+msgstr "編輯摘要欄位……"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -14707,6 +14727,11 @@ msgstr "前成員"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "表單適用於手動觸發程序"
+
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr ""
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -17941,6 +17966,11 @@ msgstr "允許使用者限制及共用個別記錄。"
 msgid "Let record-level permission rules compare a field of a related record."
 msgstr "允許記錄層級的權限規則比較相關記錄的欄位。"
 
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
+msgstr ""
+
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
 msgid "Let this member sign in again if they lost their authenticator app"
@@ -19840,7 +19870,7 @@ msgstr "已移至垃圾桶"
 #. js-lingui-id: B9k2wp
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 msgid "Moves the end of a running trial to this date. Adding one again replaces the current extension."
-msgstr ""
+msgstr "將進行中試用期的結束日期移至此日期。再次新增會取代目前的延長期限。"
 
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -29596,7 +29626,7 @@ msgstr "摘要說明 Acme 本週的變更"
 #. js-lingui-id: dXoieq
 #: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
 msgid "Summary"
-msgstr ""
+msgstr "摘要"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
@@ -30533,7 +30563,7 @@ msgstr "正在準備逐字稿…"
 #. js-lingui-id: nQjBTv
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
 msgid "The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one."
-msgstr ""
+msgstr "試用期現在結束：有卡片的工作區會立即收費，其他工作區會暫停，直到新增卡片為止。"
 
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
@@ -30756,12 +30786,12 @@ msgstr "此代理來自應用程式，因此無法在此變更其工具。"
 #. js-lingui-id: h1DyDq
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
-msgstr ""
+msgstr "此代理程式通常會在沒有訊息的情況下於 {details} 執行。請要求它立即執行排定的任務。"
 
 #. js-lingui-id: qC+xo7
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
-msgstr ""
+msgstr "此代理程式通常會針對該筆記錄，於 {details} 的「{label}」啟動。描述一筆記錄，以瞭解它如何處理。"
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -30890,7 +30920,7 @@ msgstr "此聊天已不再可用。"
 #. js-lingui-id: GsXQeq
 #: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
-msgstr ""
+msgstr "此欄位最多可顯示 {QUERY_MAX_RECORDS_FROM_RELATION} 筆記錄。"
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
