@@ -14,8 +14,14 @@ export const setFormulaFieldBindingsThroughMutation = ({
   existingFlatFieldMetadataMaps,
   universalFlatFieldMetadataMapsToMutate,
 }: {
-  existingFlatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
-  universalFlatFieldMetadataMapsToMutate: UniversalFlatEntityMaps<UniversalFlatFieldMetadata>;
+  existingFlatFieldMetadataMaps: Pick<
+    AllFlatEntityMaps['flatFieldMetadataMaps'],
+    'byUniversalIdentifier'
+  >;
+  universalFlatFieldMetadataMapsToMutate: Pick<
+    UniversalFlatEntityMaps<UniversalFlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): void => {
   const formulaUniversalFlatFieldMetadatas = Object.values(
     universalFlatFieldMetadataMapsToMutate.byUniversalIdentifier,

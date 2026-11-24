@@ -26,15 +26,20 @@ export const buildFormulaSqlColumnsByPath = (
       continue;
     }
 
-    if (type === FieldMetadataType.RELATION) {
-      if (relationType === RelationType.MANY_TO_ONE) {
-        formulaSqlColumnsByPath.set(name, {
-          columnName: computeMorphOrRelationFieldJoinColumnName({ name }),
-          columnFieldMetadataType: type,
-          fieldUniversalIdentifier: universalIdentifier,
-        });
-      }
+    if (
+      type === FieldMetadataType.RELATION &&
+      relationType === RelationType.MANY_TO_ONE
+    ) {
+      formulaSqlColumnsByPath.set(name, {
+        columnName: computeMorphOrRelationFieldJoinColumnName({ name }),
+        columnFieldMetadataType: type,
+        fieldUniversalIdentifier: universalIdentifier,
+      });
 
+      continue;
+    }
+
+    if (type === FieldMetadataType.RELATION) {
       continue;
     }
 
