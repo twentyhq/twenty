@@ -79,6 +79,15 @@ describe('formatFieldMetadataItemInput', () => {
     ).toEqual({ decimals: 2, formula: null });
   });
 
+  it('should clear a formula from the existing settings when the form leaves settings out', () => {
+    expect(
+      formatFieldMetadataItemInput(
+        { formula: '' },
+        { formula: { expression: 'price > 10' } },
+      ).settings,
+    ).toEqual({ formula: null });
+  });
+
   it('should not add an empty formula to a field that has none', () => {
     expect(
       formatFieldMetadataItemInput({ settings: { decimals: 2 }, formula: '' })
