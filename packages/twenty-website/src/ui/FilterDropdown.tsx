@@ -8,6 +8,8 @@ import { IconChevronDown } from '@tabler/icons-react';
 
 import {
   color,
+  DURATION,
+  EASING,
   fontFamily,
   fontSize,
   radius,
@@ -27,7 +29,7 @@ const Chevron = styled.span`
   color: ${semanticColor.inkSubtle};
   display: inline-flex;
   flex-shrink: 0;
-  transition: transform 180ms ease;
+  transition: transform ${DURATION.xs} ${EASING.standard};
 `;
 
 const Trigger = styled(Popover.Trigger)`
@@ -44,8 +46,8 @@ const Trigger = styled(Popover.Trigger)`
   line-height: ${fontSize(4)};
   padding: ${spacing(1.5)} ${spacing(3)};
   transition:
-    background 120ms ease,
-    border-color 120ms ease;
+    background ${DURATION.xxs} ${EASING.gentle},
+    border-color ${DURATION.xxs} ${EASING.gentle};
   white-space: nowrap;
 
   &[data-active] {
@@ -58,7 +60,7 @@ const Trigger = styled(Popover.Trigger)`
   }
 
   &:focus-visible {
-    outline: 2px solid ${color('black-40')};
+    outline: 2px solid ${color('blue')};
     outline-offset: 2px;
   }
 
@@ -99,7 +101,7 @@ const OptionRow = styled.label`
   gap: ${spacing(2)};
   line-height: ${fontSize(4)};
   padding: ${spacing(1.5)} ${spacing(2)};
-  transition: background 100ms ease;
+  transition: background ${DURATION.xxs} ${EASING.gentle};
   user-select: none;
 
   &:hover {

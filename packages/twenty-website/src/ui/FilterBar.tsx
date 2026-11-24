@@ -7,6 +7,8 @@ import { IconX } from '@tabler/icons-react';
 
 import {
   color,
+  DURATION,
+  EASING,
   fontFamily,
   fontSize,
   radius,
@@ -77,11 +79,11 @@ const RemoveButton = styled.button`
   cursor: pointer;
   display: inline-flex;
   padding: 0;
-  transition: color 100ms ease;
+  transition: color ${DURATION.xxs} ${EASING.gentle};
 
   &:focus-visible {
     border-radius: ${radius(0.5)};
-    outline: 2px solid ${color('black-40')};
+    outline: 2px solid ${color('blue')};
     outline-offset: 2px;
   }
   color: ${semanticColor.inkSubtle};
@@ -99,11 +101,11 @@ const ClearAll = styled.button`
   cursor: pointer;
   display: inline-flex;
   padding: 0;
-  transition: color 100ms ease;
+  transition: color ${DURATION.xxs} ${EASING.gentle};
 
   &:focus-visible {
     border-radius: ${radius(0.5)};
-    outline: 2px solid ${color('black-40')};
+    outline: 2px solid ${color('blue')};
     outline-offset: 2px;
   }
   color: ${semanticColor.inkMuted};
