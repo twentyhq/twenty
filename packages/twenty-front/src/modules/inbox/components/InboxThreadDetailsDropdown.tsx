@@ -248,7 +248,7 @@ export const InboxThreadDetailsDropdown = ({
                     emphasis="subtle"
                     onClick={() => {
                       closeDropdown(dropdownId);
-                      openAssignAiChatInSidePanel([threadId]);
+                      openAssignAiChatInSidePanel({ threadIds: [threadId] });
                     }}
                   >
                     <IconPencil />
