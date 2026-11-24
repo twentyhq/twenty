@@ -26,9 +26,7 @@ import { CoreWorkflowByIdArgs } from 'src/engine/core-modules/workflow/dtos/core
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
 import { DuplicateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-core-workflow.input';
 import { UpdateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow.input';
-import { UpdateCoreWorkflowVisibilityInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow-visibility.input';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
-import { resolveCoreWorkflowIsPrivateFromInput } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-is-private-from-input.util';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowRunInsightsService } from 'src/engine/core-modules/workflow/services/core-workflow-run-insights.service';
@@ -120,17 +118,14 @@ export class CoreWorkflowResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @Args('input')
-    { coreWorkflowId, name, isPrivate, visibility }: UpdateCoreWorkflowInput,
+    { coreWorkflowId, name, isPrivate }: UpdateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO | null> {
     await this.coreWorkflowMutationWorkspaceService.updateWorkflow({
       workspaceId,
       userWorkspaceId,
       coreWorkflowId,
       name,
-      isPrivate: resolveCoreWorkflowIsPrivateFromInput({
-        isPrivate,
-        visibility,
-      }),
+      isPrivate,
     });
 
     return this.coreWorkflowListService.findOneById({
@@ -139,19 +134,6 @@ export class CoreWorkflowResolver {
       callerApplication: undefined,
       coreWorkflowId,
     });
-  }
-
-  @Mutation(() => CoreWorkflowDTO, {
-    nullable: true,
-    deprecationReason: 'Use updateCoreWorkflow with isPrivate instead',
-  })
-  @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
-  async updateCoreWorkflowVisibility(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('input') input: UpdateCoreWorkflowVisibilityInput,
-  ): Promise<CoreWorkflowDTO | null> {
-    return this.updateCoreWorkflow(workspace, userWorkspaceId, input);
   }
 
   @Mutation(() => CoreWorkflowDTO)
@@ -192,7 +174,7 @@ export class CoreWorkflowResolver {
     application: FlatApplication | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @Args('input') { name, isPrivate, visibility }: CreateCoreWorkflowInput,
+    @Args('input') { name, isPrivate }: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
     this.assertWorkflowActorOrThrow({ workspaceMember, application });
 
@@ -200,10 +182,7 @@ export class CoreWorkflowResolver {
       workspaceId,
       userWorkspaceId,
       name,
-      isPrivate: resolveCoreWorkflowIsPrivateFromInput({
-        isPrivate,
-        visibility,
-      }),
+      isPrivate,
     });
   }
 

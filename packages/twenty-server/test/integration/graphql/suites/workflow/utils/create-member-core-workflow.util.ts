@@ -2,8 +2,7 @@ import {
   createCoreWorkflow,
   linkCoreWorkflowToLegacyWorkspaceIds,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
-import { updateCoreWorkflowVisibility } from 'test/integration/graphql/suites/workflow/utils/update-core-workflow-visibility.util';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { updateCoreWorkflowIsPrivate } from 'test/integration/graphql/suites/workflow/utils/update-core-workflow-is-private.util';
 
 export type MemberCoreWorkflow = {
   coreWorkflowId: string;
@@ -13,10 +12,10 @@ export type MemberCoreWorkflow = {
 
 export const createMemberCoreWorkflow = async ({
   name,
-  visibility,
+  isPrivate,
 }: {
   name: string;
-  visibility: WorkflowVisibility;
+  isPrivate: boolean;
 }): Promise<MemberCoreWorkflow> => {
   const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
     name,
@@ -25,9 +24,9 @@ export const createMemberCoreWorkflow = async ({
     coreWorkflowId,
   });
 
-  if (visibility !== WorkflowVisibility.WORKSPACE) {
-    await updateCoreWorkflowVisibility({
-      input: { coreWorkflowId, visibility },
+  if (isPrivate) {
+    await updateCoreWorkflowIsPrivate({
+      input: { coreWorkflowId, isPrivate },
       expectToFail: false,
     });
   }

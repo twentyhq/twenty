@@ -20,7 +20,7 @@ const FIND_ALL_VIEWS_QUERY = `
       anyFieldFilterValue
       calendarFieldMetadataId
       calendarLayout
-      visibility
+      isPrivate
       createdByUserWorkspaceId
       isActive
       viewFields {
