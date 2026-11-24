@@ -5,7 +5,7 @@ import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/
 import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { buildSystemAuthContext } from 'src/engine/core-modules/auth/utils/build-system-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
-import { isOwnableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-ownable-entity-visible-to-caller.util';
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 
 const OWNER_USER_WORKSPACE_ID = 'owner-user-workspace';
 
@@ -36,29 +36,29 @@ const sharedEntity = {
   createdByUserWorkspaceId: OWNER_USER_WORKSPACE_ID,
 };
 
-describe('isOwnableEntityVisibleToCaller', () => {
+describe('isPrivatableEntityVisibleToCaller', () => {
   it('shows a shared entity to every caller, including none', () => {
     expect(
-      isOwnableEntityVisibleToCaller({
-        ownableEntity: sharedEntity,
+      isPrivatableEntityVisibleToCaller({
+        privatableEntity: sharedEntity,
         authContext: buildMemberAuthContext('someone-else'),
       }),
     ).toBe(true);
     expect(
-      isOwnableEntityVisibleToCaller({ ownableEntity: sharedEntity }),
+      isPrivatableEntityVisibleToCaller({ privatableEntity: sharedEntity }),
     ).toBe(true);
   });
 
   it('shows a private entity to its creator only', () => {
     expect(
-      isOwnableEntityVisibleToCaller({
-        ownableEntity: privateEntity,
+      isPrivatableEntityVisibleToCaller({
+        privatableEntity: privateEntity,
         authContext: buildMemberAuthContext(OWNER_USER_WORKSPACE_ID),
       }),
     ).toBe(true);
     expect(
-      isOwnableEntityVisibleToCaller({
-        ownableEntity: privateEntity,
+      isPrivatableEntityVisibleToCaller({
+        privatableEntity: privateEntity,
         authContext: buildMemberAuthContext('someone-else'),
       }),
     ).toBe(false);
@@ -66,8 +66,8 @@ describe('isOwnableEntityVisibleToCaller', () => {
 
   it('hides an ownerless private entity from every member', () => {
     expect(
-      isOwnableEntityVisibleToCaller({
-        ownableEntity: { isPrivate: true, createdByUserWorkspaceId: null },
+      isPrivatableEntityVisibleToCaller({
+        privatableEntity: { isPrivate: true, createdByUserWorkspaceId: null },
         authContext: buildMemberAuthContext(OWNER_USER_WORKSPACE_ID),
       }),
     ).toBe(false);
@@ -94,8 +94,8 @@ describe('isOwnableEntityVisibleToCaller', () => {
 
     for (const authContext of nonMemberAuthContexts) {
       expect(
-        isOwnableEntityVisibleToCaller({
-          ownableEntity: privateEntity,
+        isPrivatableEntityVisibleToCaller({
+          privatableEntity: privateEntity,
           authContext,
         }),
       ).toBe(false);
@@ -104,8 +104,8 @@ describe('isOwnableEntityVisibleToCaller', () => {
 
   it('shows a private entity to the system', () => {
     expect(
-      isOwnableEntityVisibleToCaller({
-        ownableEntity: privateEntity,
+      isPrivatableEntityVisibleToCaller({
+        privatableEntity: privateEntity,
         authContext: buildSystemAuthContext({ workspace }),
       }),
     ).toBe(true);
@@ -115,11 +115,14 @@ describe('isOwnableEntityVisibleToCaller', () => {
     expect(
       workspaceAuthContextStorage.run(
         buildMemberAuthContext(OWNER_USER_WORKSPACE_ID),
-        () => isOwnableEntityVisibleToCaller({ ownableEntity: privateEntity }),
+        () =>
+          isPrivatableEntityVisibleToCaller({
+            privatableEntity: privateEntity,
+          }),
       ),
     ).toBe(true);
     expect(
-      isOwnableEntityVisibleToCaller({ ownableEntity: privateEntity }),
+      isPrivatableEntityVisibleToCaller({ privatableEntity: privateEntity }),
     ).toBe(false);
   });
 });

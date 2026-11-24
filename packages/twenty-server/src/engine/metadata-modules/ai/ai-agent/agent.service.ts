@@ -9,7 +9,7 @@ import { addAgentTriggerConditionBindingsOrThrow } from 'src/engine/metadata-mod
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
-import { isOwnableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-ownable-entity-visible-to-caller.util';
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -51,7 +51,7 @@ export class AgentService {
     return Object.values(flatAgentMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatAgent) =>
-        isOwnableEntityVisibleToCaller({ ownableEntity: flatAgent }),
+        isPrivatableEntityVisibleToCaller({ privatableEntity: flatAgent }),
       )
       .map((flatAgent) => {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
@@ -83,7 +83,7 @@ export class AgentService {
 
     if (
       !isDefined(flatAgent) ||
-      !isOwnableEntityVisibleToCaller({ ownableEntity: flatAgent })
+      !isPrivatableEntityVisibleToCaller({ privatableEntity: flatAgent })
     ) {
       throw new AiException(`Agent not found`, AiExceptionCode.AGENT_NOT_FOUND);
     }

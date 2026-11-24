@@ -4,17 +4,17 @@ import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storag
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type OwnableEntity } from 'src/engine/permissions/metadata-permissions/types/ownable-entity.type';
+import { type PrivatableEntity } from 'src/engine/permissions/metadata-permissions/types/privatable-entity.type';
 
-export const isOwnableEntityVisibleToCaller = ({
-  ownableEntity,
+export const isPrivatableEntityVisibleToCaller = ({
+  privatableEntity,
   authContext = workspaceAuthContextStorage.getStore(),
 }: {
-  ownableEntity: Pick<OwnableEntity, 'isPrivate'> &
-    Partial<Pick<OwnableEntity, 'createdByUserWorkspaceId'>>;
+  privatableEntity: Pick<PrivatableEntity, 'isPrivate'> &
+    Partial<Pick<PrivatableEntity, 'createdByUserWorkspaceId'>>;
   authContext?: WorkspaceAuthContext;
 }): boolean => {
-  if (ownableEntity.isPrivate === false) {
+  if (privatableEntity.isPrivate === false) {
     return true;
   }
 
@@ -28,6 +28,6 @@ export const isOwnableEntityVisibleToCaller = ({
 
   return (
     isUserAuthContext(authContext) &&
-    ownableEntity.createdByUserWorkspaceId === authContext.userWorkspaceId
+    privatableEntity.createdByUserWorkspaceId === authContext.userWorkspaceId
   );
 };

@@ -39,7 +39,7 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { isOwnableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-ownable-entity-visible-to-caller.util';
+import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -238,7 +238,7 @@ export class ApplicationResolver {
     });
 
     return agents.filter((agent) =>
-      isOwnableEntityVisibleToCaller({ ownableEntity: agent }),
+      isPrivatableEntityVisibleToCaller({ privatableEntity: agent }),
     );
   }
 
