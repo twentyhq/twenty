@@ -38,22 +38,22 @@ Fiecare rulare primește payloadul său ca argument al handlerului, exact ca ori
 </Note>
 
 <Note>
-Ajutorul mai vechi `enqueueJob`, care pune în coadă un singur job per apel, este depreciat. Folosiți în schimb `enqueueJobs` cu o listă `jobs` cu un singur element. Argumentul `payloads` este și el învechit — transmiteți în schimb `jobs`, care acceptă aceeași încărcătură utilă pentru fiecare execuție și vă permite să denumiți fiecare execuție.
+Ajutorul mai vechi `enqueueJob`, care pune în coadă un singur job per apel, este depreciat. Folosiți în schimb `enqueueJobs` cu o listă `jobs` cu un singur element. Argumentul `payloads` este și el învechit — transmiteți în schimb `jobs`, care acceptă aceeași încărcătură utilă pentru fiecare execuție și vă permite să denumiți fiecare execuție. Câmpul `jobIds` al rezultatului este, de asemenea, învechit: citiți fiecare id din `jobs` în schimb.
 </Note>
 
 ## Interogați periodic joburile
 
-`enqueueJobs` returnează câte un `jobId` pentru fiecare execuție pusă în coadă, în aceeași ordine ca lucrările pe care le-ai transmis. `getJobs` citește stadiul la care au ajuns acele execuții, într-un singur apel.
+`enqueueJobs` returnează câte o intrare pentru fiecare rulare pusă în coadă în `jobs`, fiecare având propriul `jobId`, în aceeași ordine ca joburile pe care le-ați transmis. `getJobs` citește stadiul la care au ajuns acele execuții, într-un singur apel.
 
 ```ts
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
 
-const { jobIds } = await enqueueJobs({
+const { jobs } = await enqueueJobs({
   logicFunctionUniversalIdentifier: ENRICH_COMPANY,
   jobs: [{ payload: { companyId: 'abc' } }],
 });
 
-const statuses = await getJobs(jobIds);
+const statuses = await getJobs(jobs.map(({ jobId }) => jobId));
 ```
 
 Un singur apel `getJobs` citește cel mult `200` de ID-uri, aceeași limită pe care `enqueueJobs` o aplică unui lot.
@@ -106,6 +106,16 @@ await enqueueJobs({
   jobs: [{ payload: { page: 1 } }],
   retryLimit: 3,
   delayMs: 60_000,
+});
+```
+
+Pentru a seta limita de reîncercări o singură dată pentru fiecare rulare pusă în coadă a unei funcții, declarați `retryLimit` chiar pe funcție. Se aplică rulărilor pornite de `enqueueJobs`, cron, evenimentele bazei de date și rutele serverului, iar un `retryLimit` transmis către `enqueueJobs` îl suprascrie pentru acel apel. Fără aceasta, valorile implicite sunt `0` pentru `enqueueJobs`, `10` pentru cron și `3` pentru evenimentele bazei de date și rutele serverului.
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  retryLimit: 3,
+  handler,
 });
 ```
 
@@ -167,6 +177,60 @@ Coada întârzie încercările de reîncercare folosind backoff exponențial și
 
 <Warning>
 Reîncercările rulează din nou întregul handler și se pot produce după ce unele efecte secundare au reușit. Faceți handlerul idempotent înainte de a solicita reîncercări.
+</Warning>
+
+## Reacționează când un job eșuează definitiv
+
+O execuție pusă în coadă se poate încheia fără ca codul tău să ajungă la propria gestionare a erorilor, de exemplu când atinge `timeoutSeconds`. Adaugă `onJobFailure` lângă `handler`, iar Twenty îl apelează o dată când o execuție pusă în coadă a funcției eșuează și nu va fi reîncercată.
+
+```ts src/logic-functions/answer-request.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type LogicFunctionJobFailure } from 'twenty-sdk/logic-function';
+
+type AnswerRequestPayload = { requestId: string };
+
+export default defineLogicFunction({
+  universalIdentifier: 'b4d7e0f1-5c2a-4e8b-9a3d-6f1e2c7b8a90',
+  name: 'answer-request',
+  timeoutSeconds: 240,
+  handler: async (payload: AnswerRequestPayload) => {
+    // ...
+  },
+  onJobFailure: async ({
+    payload,
+    error,
+  }: LogicFunctionJobFailure<AnswerRequestPayload>) => {
+    await markRequestFailed(payload.requestId, error.message);
+  },
+});
+```
+
+`onJobFailure` primește eșecul ca prim argument și același context de execuție ca `handler` drept al doilea:
+
+| Câmp               | Descriere                                                                                                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `payload`          | Încărcătura utilă a execuției eșuate.                                                                                                                                |
+| `error.type`       | `TimeoutError` pentru un timeout, `name` al erorii pentru o eroare generată sau o eroare de platformă, `UnrecoverableError` când jobul s-a blocat de prea multe ori. |
+| `error.message`    | Mesajul de eroare.                                                                                                                                                   |
+| `job.id`           | Jobul pus în coadă care a eșuat. Pentru un job pe care l-ai pus în coadă cu `enqueueJobs`, `jobId` pe care l-a returnat.                                             |
+| `job.attemptsMade` | Câte încercări în coadă a făcut jobul înainte de a eșua definitiv.                                                                                                   |
+
+Rulează ca propriul job pus în coadă, într-un proces nou, cu `timeoutSeconds` al funcției. ID-ul jobului este ID-ul jobului eșuat urmat de `.on-failure`, astfel încât îl poți interoga cu `getJobs`, iar un eșec nu îl pornește niciodată de două ori.
+
+Rulează după:
+
+* o eroare generată de codul tău care nu este reîncercată, inclusiv un `RetryableLogicFunctionError` după ce se atinge `maxRetries`;
+* un timeout;
+* o eroare de platformă după ce jobul pus în coadă nu mai are încercări disponibile;
+* blocarea de două ori a procesului worker care rulează jobul. Coada rulează din nou jobul după prima blocare, iar după a doua marchează jobul ca eșuat cu `job stalled more than allowable limit`. Apoi `onJobFailure` rulează când un worker preia jobul, astfel că, după o întrerupere completă, rulează când workerii revin.
+
+Nu rulează:
+
+* pentru execuții care nu trec prin coada de joburi, cum ar fi apelurile de instrumente, pașii fluxului de lucru și resolverul unei rute de server (o funcție țintă pe care resolverul o pune în coadă este acoperită);
+* când `onJobFailure` însuși eșuează, astfel încât nu poate intra într-o buclă.
+
+<Warning>
+Execuția eșuată ar putea să fi finalizat unele efecte secundare înainte de a se opri. Nu rula din nou orbește aceeași activitate din `onJobFailure`; în schimb, înregistrează eșecul sau informează utilizatorul. Fă-l idempotent, deoarece coada îl reîncearcă de până la trei ori în cazul unei erori de platformă. Livrarea se face cu efort maxim: dacă un worker se oprește în momentul dintre eșecul unui job și punerea în coadă a `onJobFailure`, acesta nu rulează.
 </Warning>
 
 ## Folosește-l: parcurge pe pagini o sincronizare lungă
