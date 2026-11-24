@@ -32,16 +32,7 @@ export class BackfillRollupFieldsJob {
     await this.messageQueueService.add<BackfillRollupFieldsJobData>(
       BACKFILL_ROLLUP_FIELDS_JOB_NAME,
       { ...jobData, afterRecordId: nextAfterRecordId },
-      {
-        workspaceId: jobData.workspaceId,
-        isWorkspaceJob: true,
-        ...(isDefined(jobData.deduplicationId) && {
-          deduplication: {
-            id: jobData.deduplicationId,
-            keepLastIfActive: true,
-          },
-        }),
-      },
+      { workspaceId: jobData.workspaceId, isWorkspaceJob: true },
     );
   }
 }
