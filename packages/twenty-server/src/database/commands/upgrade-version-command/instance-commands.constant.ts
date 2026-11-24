@@ -336,6 +336,7 @@ import { AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand }
 import { AddFieldMetadataOptionDescriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795521314196-add-field-metadata-option-description';
 import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
 import { AddPresetFilterToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795514647600-add-preset-filter-to-view';
+import { AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523223000-add-workspace-member-relation-filter-to-row-level-permission-predicate';
 import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795485960153-drop-legacy-workflow-version-id-columns';
 
 export const INSTANCE_COMMANDS = [
@@ -675,5 +676,6 @@ export const INSTANCE_COMMANDS = [
   DropWorkflowVisibilityFastInstanceCommand,
   AddPresetFilterToViewFastInstanceCommand,
   AddFieldMetadataOptionDescriptionFastInstanceCommand,
+  AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstanceCommand,
   DropLegacyWorkflowVersionIdColumnsFastInstanceCommand,
 ];

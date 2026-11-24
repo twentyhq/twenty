@@ -417,11 +417,14 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "workspaceMemberFieldMetadataUniversalIdentifier",
       "workspaceMemberSubFieldName",
       "workspaceMemberRelationFieldMetadataUniversalIdentifier",
+      "workspaceMemberRelationFilterFieldMetadataUniversalIdentifier",
+      "workspaceMemberRelationFilterValues",
       "deletedAt",
       "rowLevelPermissionRuleUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "value",
+      "workspaceMemberRelationFilterValues",
     ],
   },
   "rowLevelPermissionPredicateGroup": {
