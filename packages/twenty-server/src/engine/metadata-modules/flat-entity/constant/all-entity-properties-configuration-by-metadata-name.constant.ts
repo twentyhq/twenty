@@ -728,6 +728,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    jobFailureHandlerName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    retryLimit: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     checksum: {
       toCompare: true,
       toStringify: false,

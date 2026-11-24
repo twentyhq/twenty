@@ -81,7 +81,7 @@ export class AccessGroupReadService {
   }: {
     request: PermissionsObjectAccessRequest;
     sourceFields: {
-      sourceObjectMetadataId: string;
+      sourceObjectMetadataId: string | null;
       sourceFieldMetadataId: string;
     }[];
   }): Promise<number[][]> {
@@ -91,8 +91,9 @@ export class AccessGroupReadService {
       ({ sourceObjectMetadataId, sourceFieldMetadataId }) =>
         accessGroups.filter(
           ({ objectMetadataId, unreadableFieldIds }) =>
-            objectMetadataId !== sourceObjectMetadataId ||
-            !unreadableFieldIds.includes(sourceFieldMetadataId),
+            isDefined(sourceObjectMetadataId) &&
+            (objectMetadataId !== sourceObjectMetadataId ||
+              !unreadableFieldIds.includes(sourceFieldMetadataId)),
         ),
     );
     const groupHashes = [

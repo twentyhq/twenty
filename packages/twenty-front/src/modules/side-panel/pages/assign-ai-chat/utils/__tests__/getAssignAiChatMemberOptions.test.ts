@@ -44,6 +44,17 @@ describe('getAssignAiChatMemberOptions', () => {
     ]);
   });
 
+  it('leaves out the excluded members', () => {
+    expect(
+      getAssignAiChatMemberOptions({
+        workspaceMembers: WORKSPACE_MEMBERS,
+        currentWorkspaceMemberId: 'jane',
+        excludedWorkspaceMemberIds: ['jane', 'nameless'],
+        search: '',
+      }).map(({ label }) => label),
+    ).toEqual(['Phil Schiler']);
+  });
+
   it('matches names and emails regardless of case and surrounding spaces', () => {
     expect(listLabels('  SCHILER ')).toEqual(['Phil Schiler']);
     expect(listLabels('jane@')).toEqual(['Jane Austen']);

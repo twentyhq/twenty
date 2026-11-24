@@ -332,8 +332,9 @@ import { RelatedRecordPathOverridableEntityFastInstanceCommand } from 'src/datab
 import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477704494-add-view-is-private';
 import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795477704495-backfill-view-is-private-overrides';
 import { RelaxWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478750333-relax-workflow-visibility';
-import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478765003-add-source-field-to-field-permission';
-import { AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478765004-add-source-field-foreign-key-to-field-permission';
+import { AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795507394217-add-logic-function-job-failure-handler-name-and-retry-limit';
+import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795511362338-add-source-field-to-field-permission';
+import { AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795511362339-add-source-field-foreign-key-to-field-permission';
 import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
 
 export const INSTANCE_COMMANDS = [
@@ -669,6 +670,7 @@ export const INSTANCE_COMMANDS = [
   AddViewIsPrivateFastInstanceCommand,
   BackfillViewIsPrivateOverridesSlowInstanceCommand,
   RelaxWorkflowVisibilityFastInstanceCommand,
+  AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand,
   AddSourceFieldToFieldPermissionFastInstanceCommand,
   AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand,
   DropWorkflowVisibilityFastInstanceCommand,

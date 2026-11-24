@@ -1,0 +1,1 @@
+export const LOGIC_FUNCTION_MAX_RETRY_LIMIT = 10;
