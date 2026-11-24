@@ -2,21 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  decodeCursor,
-  encodeCursorData,
-} from 'src/engine/api/common/utils/cursors.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import { type CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import { type CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { type WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
-import { type CoreWorkflowCursor } from 'src/engine/core-modules/workflow/types/core-workflow-cursor.type';
 import { type CoreWorkflowReader } from 'src/engine/core-modules/workflow/types/core-workflow-reader.type';
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
-import { buildCoreWorkflowCursor } from 'src/engine/core-modules/workflow/utils/build-core-workflow-cursor.util';
-import { compareCoreWorkflowCursors } from 'src/engine/core-modules/workflow/utils/compare-core-workflow-cursors.util';
+import { getCoreWorkflowKeysetSort } from 'src/engine/core-modules/workflow/utils/get-core-workflow-keyset-sort.util';
 import { fromFlatWorkflowToCoreWorkflowDto } from 'src/engine/core-modules/workflow/utils/from-flat-workflow-to-core-workflow-dto.util';
 import { isFlatWorkflowReadableByReader } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-readable-by-reader.util';
 import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/utils/get-core-workflow-current-version.util';
@@ -114,9 +108,6 @@ export class CoreWorkflowListService {
       workspaceId: string;
     }): Promise<CoreWorkflowConnectionDTO> {
     const filterPredicate = buildCoreWorkflowFilterPredicate(filter);
-    const afterCursor = isDefined(after)
-      ? decodeCursor<CoreWorkflowCursor>(after)
-      : undefined;
 
     const readableFlatWorkflows = await this.findReadableFlatWorkflows({
       workspaceId,
@@ -128,10 +119,9 @@ export class CoreWorkflowListService {
     const page = paginateMetadataItemsByKeyset({
       items: matchingFlatWorkflows,
       limit: first,
-      afterCursor,
-      toCursor: (flatWorkflow) =>
-        buildCoreWorkflowCursor({ flatWorkflow, orderBy }),
-      compareCursors: compareCoreWorkflowCursors({ orderBy, orderByDirection }),
+      after,
+      direction: orderByDirection,
+      ...getCoreWorkflowKeysetSort(orderBy),
     });
 
     const edges = page.entries.map(({ item: flatWorkflow, cursor }) => ({
@@ -140,7 +130,7 @@ export class CoreWorkflowListService {
         statuses: flatWorkflow.statuses,
         userWorkspaceId: reader.userWorkspaceId,
       }),
-      cursor: encodeCursorData(cursor),
+      cursor,
     }));
 
     return {
