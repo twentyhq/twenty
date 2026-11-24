@@ -91,32 +91,12 @@ const createAttachment = async (
   return response.body.data.createAttachment.id;
 };
 
-const createCompany = async (): Promise<string> => {
-  const response = await makeGraphqlApiRequest(
-    createOneOperationFactory({
-      objectMetadataSingularName: 'company',
-      gqlFields: 'id',
-      data: { name: 'Channel visibility company' },
-    }),
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.createCompany.id;
-};
-
-const destroyRecord = async ({
-  objectMetadataSingularName,
-  recordId,
-}: {
-  objectMetadataSingularName: string;
-  recordId: string;
-}) => {
+const destroyAttachment = async (attachmentId: string) => {
   const response = await makeGraphqlApiRequest(
     destroyOneOperationFactory({
-      objectMetadataSingularName,
+      objectMetadataSingularName: 'attachment',
       gqlFields: 'id',
-      recordId,
+      recordId: attachmentId,
     }),
   );
 
@@ -171,8 +151,18 @@ describe('channel visibility through row level rules (integration)', () => {
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
-    // Seeded companies can be wiped by other specs sharing the shard
-    companyId = await createCompany();
+    // Seeded companies may be gone: other suites of the same shard delete them all
+    const companyResponse = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        data: { name: 'Channel visibility company' },
+      }),
+    );
+
+    expect(companyResponse.body.errors).toBeUndefined();
+    companyId = companyResponse.body.data.createCompany.id;
+
     companyAttachmentId = await createAttachment({
       name: 'Company attachment',
       targetCompanyId: companyId,
@@ -196,18 +186,15 @@ describe('channel visibility through row level rules (integration)', () => {
 
   afterAll(async () => {
     await restoreRoleWideAccessToChannelObjects();
-    await destroyRecord({
-      objectMetadataSingularName: 'attachment',
-      recordId: companyAttachmentId,
-    });
-    await destroyRecord({
-      objectMetadataSingularName: 'attachment',
-      recordId: messageAttachmentId,
-    });
-    await destroyRecord({
-      objectMetadataSingularName: 'company',
-      recordId: companyId,
-    });
+    await destroyAttachment(companyAttachmentId);
+    await destroyAttachment(messageAttachmentId);
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: companyId,
+      }),
+    );
     await setJonyChannelVisibility('SHARE_EVERYTHING');
 
     for (const featureFlag of [...FLAGS].reverse()) {

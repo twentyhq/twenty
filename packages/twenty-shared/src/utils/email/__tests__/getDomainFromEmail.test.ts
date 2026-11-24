@@ -1,4 +1,4 @@
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+import { getDomainFromEmail } from '@/utils/email/getDomainFromEmail';
 
 describe('getDomainFromEmail', () => {
   it('returns the domain of a simple address', () => {
