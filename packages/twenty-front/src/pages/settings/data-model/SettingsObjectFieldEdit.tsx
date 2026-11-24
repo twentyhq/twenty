@@ -273,7 +273,10 @@ export const SettingsObjectFieldEdit = () => {
       );
       const formattedInput = Object.fromEntries(
         Object.entries(
-          formatFieldMetadataItemInput(formValues, fieldMetadataItem.settings),
+          formatFieldMetadataItemInput({
+            ...formValues,
+            existingSettings: fieldMetadataItem.settings,
+          }),
         ).filter(([key]) => dirtyInputKeys.includes(key)),
       );
 

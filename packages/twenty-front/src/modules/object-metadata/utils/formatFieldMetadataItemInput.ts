@@ -18,13 +18,16 @@ export const formatFieldMetadataItemInput = (
       | 'isLabelSyncedWithName'
       | 'isUnique'
     >
-  > & { formula?: string; formulaCurrencyCode?: string },
-  existingSettings?: FieldMetadataItem['settings'],
+  > & {
+    formula?: string;
+    formulaCurrencyCode?: string;
+    existingSettings?: FieldMetadataItem['settings'];
+  },
 ) => {
   const formulaExpression = input.formula?.trim();
   const formulaCurrencyCodeExpression = input.formulaCurrencyCode?.trim();
   // Some field type forms leave settings out, yet clearing their formula must keep the rest
-  const settings = input.settings ?? existingSettings;
+  const settings = input.settings ?? input.existingSettings;
 
   const formatSettings = () => {
     if (!isDefined(formulaExpression)) {

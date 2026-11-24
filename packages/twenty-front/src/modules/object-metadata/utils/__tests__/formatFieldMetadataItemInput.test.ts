@@ -81,10 +81,10 @@ describe('formatFieldMetadataItemInput', () => {
 
   it('should clear a formula from the existing settings when the form leaves settings out', () => {
     expect(
-      formatFieldMetadataItemInput(
-        { formula: '' },
-        { formula: { expression: 'price > 10' } },
-      ).settings,
+      formatFieldMetadataItemInput({
+        formula: '',
+        existingSettings: { formula: { expression: 'price > 10' } },
+      }).settings,
     ).toEqual({ formula: null });
   });
 
