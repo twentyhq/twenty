@@ -4,6 +4,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNull } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,7 +37,7 @@ export const SidePanelDefaultSelectionEffect = ({
       return;
     }
 
-    if (defaultSelectedItemId === null) {
+    if (isNull(defaultSelectedItemId)) {
       resetSelectedItem();
       return;
     }

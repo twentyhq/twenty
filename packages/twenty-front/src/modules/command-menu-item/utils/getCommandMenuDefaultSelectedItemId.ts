@@ -21,13 +21,9 @@ export const getCommandMenuDefaultSelectedItemId = ({
     return firstCommandItemId;
   }
 
-  if (isDefined(firstRecordItemId)) {
-    return firstRecordItemId;
-  }
-
   if (isDefined(askAiItemId) && doesSearchReadAsQuestion) {
     return askAiItemId;
   }
 
-  return null;
+  return firstRecordItemId ?? null;
 };

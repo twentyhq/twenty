@@ -121,6 +121,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   } = useSidePanelSearchRecords({
     shouldSkipEmptySearch: true,
     shouldIgnoreObjectFilter: true,
+    limit: COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
   });
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
@@ -185,7 +186,13 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     });
 
   const setSectionOpen = useCallback(
-    (section: CommandMenuItemSection, isOpen: boolean) => {
+    ({
+      section,
+      isOpen,
+    }: {
+      section: CommandMenuItemSection;
+      isOpen: boolean;
+    }) => {
       setSectionsToggleState((toggleState) =>
         toggleCommandMenuItemSection({
           section,
@@ -480,7 +487,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
                       isOpen: isSectionOpen(section),
                       preview: getSectionPreview(section),
                       onToggle: () =>
-                        setSectionOpen(section, !isSectionOpen(section)),
+                        setSectionOpen({
+                          section,
+                          isOpen: !isSectionOpen(section),
+                        }),
                     }
                   : undefined
               }

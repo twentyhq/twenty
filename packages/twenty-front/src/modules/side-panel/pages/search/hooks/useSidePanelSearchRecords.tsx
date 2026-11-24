@@ -13,11 +13,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 type UseSidePanelSearchRecordsParams = {
   shouldSkipEmptySearch?: boolean;
   shouldIgnoreObjectFilter?: boolean;
+  limit?: number;
 };
 
 export const useSidePanelSearchRecords = ({
   shouldSkipEmptySearch = false,
   shouldIgnoreObjectFilter = false,
+  limit,
 }: UseSidePanelSearchRecordsParams = {}) => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const sidePanelSearchObjectFilter = useAtomStateValue(
@@ -43,6 +45,7 @@ export const useSidePanelSearchRecords = ({
   const { loading, searchRecords, error } = useObjectRecordSearchRecords({
     objectNameSingulars: includedObjectNameSingulars,
     searchInput: deferredSidePanelSearch,
+    limit,
     skip: hasNoSearchableObject || isSkippedEmptySearch,
   });
 

@@ -17,7 +17,10 @@ export const useCommandMenuCollapsibleSectionHotkeys = ({
   setSectionOpen,
 }: {
   collapsibleSections: CommandMenuCollapsibleSectionNavigation[];
-  setSectionOpen: (section: CommandMenuItemSection, isOpen: boolean) => void;
+  setSectionOpen: (sectionToggle: {
+    section: CommandMenuItemSection;
+    isOpen: boolean;
+  }) => void;
 }) => {
   const store = useStore();
   const { setSelectedItemId } = useSelectableList(
@@ -45,7 +48,7 @@ export const useCommandMenuCollapsibleSectionHotkeys = ({
       }
 
       keyboardEvent.preventDefault();
-      setSectionOpen(action.section, action.isOpen);
+      setSectionOpen({ section: action.section, isOpen: action.isOpen });
 
       if (isDefined(action.itemIdToSelect)) {
         setSelectedItemId(action.itemIdToSelect);
