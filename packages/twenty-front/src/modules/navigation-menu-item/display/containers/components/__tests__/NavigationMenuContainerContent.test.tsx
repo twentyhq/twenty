@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
+import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { NavigationMenuContainerContent } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -57,7 +58,7 @@ const buildChild = ({
 }: Pick<
   NavigationMenuItem,
   'id' | 'type' | 'position'
->): NavigationMenuItem => ({
+>): NamedNavigationMenuItem => ({
   __typename: 'NavigationMenuItem',
   id,
   name: id,
@@ -73,7 +74,7 @@ const renderContainer = ({
   sections,
 }: {
   items: NavigationMenuItem[];
-  sections: NavigationMenuItem[];
+  sections: NamedNavigationMenuItem[];
 }) => {
   jest.mocked(useNavigationMenuContainerItems).mockReturnValue({
     topLevelItems: items,
