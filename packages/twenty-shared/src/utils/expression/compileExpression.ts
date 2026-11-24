@@ -12,7 +12,6 @@ import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValid
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
-import { isDefined } from '@/utils/validation/isDefined';
 
 export const compileExpression = ({
   expression,
