@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
+import { type MemberRecordingPreference } from 'src/logic-functions/types/member-recording-preference.type';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 
@@ -31,6 +32,23 @@ const buildPolicyResult = (
     calendarEvent: buildCalendarEventInput(overrides),
     ownerUserWorkspaceIdByCalendarChannelId:
       OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
+    memberRecordingPreferenceByUserWorkspaceId: new Map([
+      ['user-workspace-1', 'ALL'],
+    ]),
+    now: NOW,
+  });
+
+const buildPolicyResultForMemberRecordingPreferences = (
+  memberRecordingPreferenceByUserWorkspaceId: Map<
+    string,
+    MemberRecordingPreference
+  >,
+) =>
+  buildCallRecorderPolicyResult({
+    calendarEvent: buildCalendarEventInput({}),
+    ownerUserWorkspaceIdByCalendarChannelId:
+      OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
+    memberRecordingPreferenceByUserWorkspaceId,
     now: NOW,
   });
 
@@ -78,6 +96,24 @@ describe('buildCallRecorderPolicyResult', () => {
 
     expect(policyResult.shouldRequestBot).toBe(true);
     expect(policyResult.reason).toBe('RECORDING_ENABLED');
+  });
+
+  it('does not request a bot when the member who has the meeting chose to record none', () => {
+    const policyResult = buildPolicyResultForMemberRecordingPreferences(
+      new Map([['user-workspace-1', 'NONE']]),
+    );
+
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('OWNERS_OPTED_OUT');
+  });
+
+  it('does not request a bot when the choice of the member who has the meeting cannot be read', () => {
+    const policyResult = buildPolicyResultForMemberRecordingPreferences(
+      new Map(),
+    );
+
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('OWNERS_OPTED_OUT');
   });
 
   it('does not request a bot for a meeting linked to no calendar channel', () => {

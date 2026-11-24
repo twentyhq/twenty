@@ -28,7 +28,6 @@ import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { useEffect, useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -153,7 +152,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
 const SAVABLE_VIEW: ViewWithRelations = {
   ...mockedViews.find((view) => view.name === 'All Companies')!,
   key: null,
-  visibility: ViewVisibility.UNLISTED,
+  isPrivate: true,
 };
 
 const SavableCurrentViewDecorator: Decorator = (Story) => {

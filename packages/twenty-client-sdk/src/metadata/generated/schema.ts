@@ -2717,6 +2717,7 @@ export interface Mutation {
     updatePageLayoutWidget: PageLayoutWidget
     updatePageLayoutWithTabsAndWidgets: PageLayout
     updatePasswordViaResetToken: InvalidatePassword
+    updateRelatedRecordPath: RelatedRecordPath
     updateSkill: Skill
     updateTabPresence: Scalars['Boolean']
     updateTimelineActivityType: TimelineActivityType
@@ -3480,6 +3481,7 @@ export interface RecordTableConfiguration {
 export interface RelatedRecordPath {
     firstFieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
+    isActive: Scalars['Boolean']
     isInherent: Scalars['Boolean']
     objectMetadataId: Scalars['UUID']
     secondFieldMetadataId?: Scalars['UUID']
@@ -4222,6 +4224,7 @@ export interface View {
     isCompact: Scalars['Boolean']
     /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom: Scalars['Boolean']
+    isPrivate: Scalars['Boolean']
     isSystemSideEffect: Scalars['Boolean']
     kanbanAggregateOperation?: AggregateOperations
     kanbanAggregateOperationFieldMetadataId?: Scalars['UUID']
@@ -4244,6 +4247,7 @@ export interface View {
     viewFilters: ViewFilter[]
     viewGroups: ViewGroup[]
     viewSorts: ViewSort[]
+    /** @deprecated Use isPrivate instead */
     visibility: ViewVisibility
     workspaceId: Scalars['UUID']
     __typename: 'View'
@@ -6231,7 +6235,7 @@ export interface CreateViewFilterInput {fieldMetadataId: Scalars['UUID'],id?: (S
 
 export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scalars['UUID'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null),viewId: Scalars['UUID']}
 
-export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
+export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
@@ -7654,6 +7658,7 @@ export interface MutationGenqlSelection{
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
     updatePageLayoutWithTabsAndWidgets?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWithTabsInput} })
     updatePasswordViaResetToken?: (InvalidatePasswordGenqlSelection & { __args: {newPassword: Scalars['String'], passwordResetToken: Scalars['String']} })
+    updateRelatedRecordPath?: (RelatedRecordPathGenqlSelection & { __args: {input: UpdateRelatedRecordPathInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     updateTabPresence?: { __args: {input: UpdateTabPresenceInput} }
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
@@ -8481,6 +8486,7 @@ export interface RecordTargetInput {objectMetadataId: Scalars['UUID'],recordId: 
 export interface RelatedRecordPathGenqlSelection{
     firstFieldMetadataId?: boolean | number
     id?: boolean | number
+    isActive?: boolean | number
     isInherent?: boolean | number
     objectMetadataId?: boolean | number
     secondFieldMetadataId?: boolean | number
@@ -9150,6 +9156,8 @@ export interface UpdatePageLayoutWidgetWithIdInput {conditionalAvailability?: (S
 
 export interface UpdatePageLayoutWithTabsInput {isFirstTabPinned?: (Scalars['Boolean'] | null),name: Scalars['String'],objectMetadataId?: (Scalars['UUID'] | null),tabs: UpdatePageLayoutTabWithWidgetsInput[],type: PageLayoutType}
 
+export interface UpdateRelatedRecordPathInput {id: Scalars['UUID'],isActive?: (Scalars['Boolean'] | null),isInherent?: (Scalars['Boolean'] | null)}
+
 export interface UpdateRoleInput {
 /** The id of the role to update */
 id: Scalars['UUID'],update: UpdateRolePayload}
@@ -9204,7 +9212,7 @@ update: UpdateViewGroupInputUpdates}
 
 export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID'] | null),fieldValue?: (Scalars['String'] | null),isVisible?: (Scalars['Boolean'] | null),position?: (Scalars['Float'] | null)}
 
-export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
+export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
 openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
@@ -9571,6 +9579,7 @@ export interface ViewGenqlSelection{
     isCompact?: boolean | number
     /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
     isCustom?: boolean | number
+    isPrivate?: boolean | number
     isSystemSideEffect?: boolean | number
     kanbanAggregateOperation?: boolean | number
     kanbanAggregateOperationFieldMetadataId?: boolean | number
@@ -9593,6 +9602,7 @@ export interface ViewGenqlSelection{
     viewFilters?: ViewFilterGenqlSelection
     viewGroups?: ViewGroupGenqlSelection
     viewSorts?: ViewSortGenqlSelection
+    /** @deprecated Use isPrivate instead */
     visibility?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number

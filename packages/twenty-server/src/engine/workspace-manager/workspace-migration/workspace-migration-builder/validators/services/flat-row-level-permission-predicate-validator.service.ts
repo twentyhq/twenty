@@ -119,6 +119,21 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         validationResult.errors.push(unsupportedOperandError);
       }
 
+      const oneToManyRelationError = this.getOneToManyRelationError({
+        fieldMetadata,
+        operand: flatPredicateToValidate.operand,
+        relationFieldMetadataUniversalIdentifier:
+          flatPredicateToValidate.relationFieldMetadataUniversalIdentifier,
+        isRelationHopEnabled:
+          additionalCacheDataMaps.featureFlagsMap[
+            FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+          ],
+      });
+
+      if (isDefined(oneToManyRelationError)) {
+        validationResult.errors.push(oneToManyRelationError);
+      }
+
       const invalidValueError = this.getInvalidValueError({
         fieldType: fieldMetadata.type,
         operand: flatPredicateToValidate.operand,
@@ -383,6 +398,21 @@ export class FlatRowLevelPermissionPredicateValidatorService {
 
       if (isDefined(unsupportedOperandError)) {
         validationResult.errors.push(unsupportedOperandError);
+      }
+
+      const oneToManyRelationError = this.getOneToManyRelationError({
+        fieldMetadata,
+        operand: updatedPredicate.operand,
+        relationFieldMetadataUniversalIdentifier:
+          updatedPredicate.relationFieldMetadataUniversalIdentifier,
+        isRelationHopEnabled:
+          additionalCacheDataMaps.featureFlagsMap[
+            FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+          ],
+      });
+
+      if (isDefined(oneToManyRelationError)) {
+        validationResult.errors.push(oneToManyRelationError);
       }
 
       const invalidValueError = this.getInvalidValueError({
@@ -898,6 +928,55 @@ export class FlatRowLevelPermissionPredicateValidatorService {
         code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
         message: t`Fields "${fieldName}" and "${workspaceMemberFieldName}" must be relations pointing to the same object to be compared`,
         userFriendlyMessage: msg`These two relation fields do not point to the same object`,
+      };
+    }
+
+    return undefined;
+  }
+
+  private getOneToManyRelationError({
+    fieldMetadata,
+    operand,
+    relationFieldMetadataUniversalIdentifier,
+    isRelationHopEnabled,
+  }: {
+    fieldMetadata: UniversalFlatFieldMetadata;
+    operand: RowLevelPermissionPredicateOperand;
+    relationFieldMetadataUniversalIdentifier: string | null;
+    isRelationHopEnabled: boolean | undefined;
+  }) {
+    if (
+      isDefined(relationFieldMetadataUniversalIdentifier) ||
+      !isMorphOrRelationUniversalFlatFieldMetadata(fieldMetadata) ||
+      fieldMetadata.universalSettings?.relationType !== RelationType.ONE_TO_MANY
+    ) {
+      return undefined;
+    }
+
+    if (fieldMetadata.type === FieldMetadataType.MORPH_RELATION) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records`,
+        userFriendlyMessage: msg`This operand is not supported for this relation`,
+      };
+    }
+
+    if (
+      operand !== RowLevelPermissionPredicateOperand.IS_EMPTY &&
+      operand !== RowLevelPermissionPredicateOperand.IS_NOT_EMPTY
+    ) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records`,
+        userFriendlyMessage: msg`This operand is not supported for this relation`,
+      };
+    }
+
+    if (!isRelationHopEnabled) {
+      return {
+        code: RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+        message: t`Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates`,
+        userFriendlyMessage: msg`This operand is not supported for this relation`,
       };
     }
 

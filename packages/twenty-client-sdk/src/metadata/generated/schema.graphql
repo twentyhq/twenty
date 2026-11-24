@@ -2000,6 +2000,7 @@ input CreateViewInput {
   icon: String!
   id: UUID
   isCompact: Boolean = false
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -2016,7 +2017,7 @@ input CreateViewInput {
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -3807,6 +3808,7 @@ type Mutation {
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
+  updateRelatedRecordPath(input: UpdateRelatedRecordPathInput!): RelatedRecordPath!
   updateSkill(input: UpdateSkillInput!): Skill!
   updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
@@ -4685,6 +4687,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isActive: Boolean!
   isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
@@ -5720,6 +5723,12 @@ input UpdatePageLayoutWithTabsInput {
   type: PageLayoutType!
 }
 
+input UpdateRelatedRecordPathInput {
+  id: UUID!
+  isActive: Boolean
+  isInherent: Boolean
+}
+
 input UpdateRoleInput {
   """The id of the role to update"""
   id: UUID!
@@ -5876,6 +5885,7 @@ input UpdateViewInput {
   icon: String
   id: UUID
   isCompact: Boolean
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -5891,7 +5901,7 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6427,6 +6437,7 @@ type View {
   isActive: Boolean!
   isCompact: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -6448,7 +6459,7 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility!
+  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
