@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
-import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
-import { findManyFlatViewChildrenAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-caller.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
 import { fromCreateViewFilterGroupInputToFlatViewFilterGroupToCreate } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-create-view-filter-group-input-to-flat-view-filter-group-to-create.util';
 import { fromDestroyViewFilterGroupInputToFlatViewFilterGroupOrThrow } from 'src/engine/metadata-modules/flat-view-filter-group/utils/from-destroy-view-filter-group-input-to-flat-view-filter-group-or-throw.util';
@@ -313,7 +313,7 @@ export class ViewFilterGroupService {
       );
 
     return sortByPositionInViewFilterGroup(
-      findManyFlatViewChildrenAvailableToCaller({
+      findManyFlatViewChildrenVisibleToCaller({
         flatViewMaps,
         flatViewChildMaps: flatViewFilterGroupMaps,
         flatViewChildIdsKey: 'viewFilterGroupIds',
@@ -345,7 +345,7 @@ export class ViewFilterGroupService {
       !isDefined(flatViewFilterGroup) ||
       flatViewFilterGroup.deletedAt !== null ||
       !isDefined(
-        findFlatViewAvailableToCaller({
+        findFlatViewVisibleToCaller({
           viewId: flatViewFilterGroup.viewId,
           flatViewMaps,
         }),

@@ -37,7 +37,6 @@ import {
   ViewExceptionMessageKey,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
-import { isViewAvailableToCaller } from 'src/engine/metadata-modules/view/utils/is-view-available-to-caller.util';
 import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -369,7 +368,7 @@ export class ViewService {
           viewTypes.length === 0 ||
           viewTypes.includes(flatView.type),
       )
-      .filter(isViewAvailableToCaller)
+      .filter((flatView) => isViewVisibleToCaller({ view: flatView }))
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 

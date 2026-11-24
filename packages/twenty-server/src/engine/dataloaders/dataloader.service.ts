@@ -29,8 +29,8 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
-import { findManyFlatViewChildrenAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-caller.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -720,7 +720,7 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatViewAvailableToCaller({
+        const flatView = findFlatViewVisibleToCaller({
           viewId: viewId,
           flatViewMaps,
         });
@@ -815,7 +815,7 @@ export class DataloaderService {
           return [];
         }
 
-        const flatView = findFlatViewAvailableToCaller({
+        const flatView = findFlatViewVisibleToCaller({
           viewId: flatViewFieldGroup.viewId,
           flatViewMaps,
         });
@@ -845,7 +845,7 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId }) => {
-        const flatView = findFlatViewAvailableToCaller({
+        const flatView = findFlatViewVisibleToCaller({
           viewId: viewId,
           flatViewMaps,
         });
@@ -888,7 +888,7 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId }) =>
-        findManyFlatViewChildrenAvailableToCaller({
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewFilterMaps,
           flatViewChildIdsKey: 'viewFilterIds',
@@ -914,7 +914,7 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId }) =>
-        findManyFlatViewChildrenAvailableToCaller({
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewSortMaps,
           flatViewChildIdsKey: 'viewSortIds',
@@ -940,7 +940,7 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId }) =>
-        findManyFlatViewChildrenAvailableToCaller({
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewGroupMaps,
           flatViewChildIdsKey: 'viewGroupIds',
@@ -966,7 +966,7 @@ export class DataloaderService {
         );
 
       return dataLoaderParams.map(({ viewId }) =>
-        findManyFlatViewChildrenAvailableToCaller({
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewFilterGroupMaps,
           flatViewChildIdsKey: 'viewFilterGroupIds',

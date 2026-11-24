@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
-import { findManyFlatViewChildrenAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-caller.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
@@ -338,7 +338,7 @@ export class ViewFilterService {
       );
 
     return sortByPositionInViewFilterGroup(
-      findManyFlatViewChildrenAvailableToCaller({
+      findManyFlatViewChildrenVisibleToCaller({
         flatViewMaps,
         flatViewChildMaps: flatViewFilterMaps,
         flatViewChildIdsKey: 'viewFilterIds',
@@ -370,7 +370,7 @@ export class ViewFilterService {
       !isDefined(flatViewFilter) ||
       flatViewFilter.deletedAt !== null ||
       !isDefined(
-        findFlatViewAvailableToCaller({
+        findFlatViewVisibleToCaller({
           viewId: flatViewFilter.viewId,
           flatViewMaps,
         }),

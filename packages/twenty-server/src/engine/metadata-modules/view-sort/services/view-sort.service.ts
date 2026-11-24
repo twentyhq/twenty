@@ -7,8 +7,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
-import { findManyFlatViewChildrenAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-caller.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { sortViewSortsByCreation } from 'src/engine/metadata-modules/flat-view/utils/sort-view-sorts-by-creation.util';
 import { fromCreateViewSortInputToFlatViewSortToCreate } from 'src/engine/metadata-modules/flat-view-sort/utils/from-create-view-sort-input-to-flat-view-sort-to-create.util';
 import { fromDestroyViewSortInputToFlatViewSortOrThrow } from 'src/engine/metadata-modules/flat-view-sort/utils/from-destroy-view-sort-input-to-flat-view-sort-or-throw.util';
@@ -286,7 +286,7 @@ export class ViewSortService {
       );
 
     return sortViewSortsByCreation(
-      findManyFlatViewChildrenAvailableToCaller({
+      findManyFlatViewChildrenVisibleToCaller({
         flatViewMaps,
         flatViewChildMaps: flatViewSortMaps,
         flatViewChildIdsKey: 'viewSortIds',
@@ -318,7 +318,7 @@ export class ViewSortService {
       !isDefined(flatViewSort) ||
       flatViewSort.deletedAt !== null ||
       !isDefined(
-        findFlatViewAvailableToCaller({
+        findFlatViewVisibleToCaller({
           viewId: flatViewSort.viewId,
           flatViewMaps,
         }),

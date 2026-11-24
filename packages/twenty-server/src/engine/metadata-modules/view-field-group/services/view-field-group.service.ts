@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -294,7 +294,7 @@ export class ViewFieldGroupService {
 
     if (
       !isDefined(
-        findFlatViewAvailableToCaller({
+        findFlatViewVisibleToCaller({
           viewId: viewId,
           flatViewMaps,
         }),
@@ -342,7 +342,7 @@ export class ViewFieldGroupService {
 
     if (
       !isDefined(
-        findFlatViewAvailableToCaller({
+        findFlatViewVisibleToCaller({
           viewId: flatViewFieldGroup.viewId,
           flatViewMaps,
         }),

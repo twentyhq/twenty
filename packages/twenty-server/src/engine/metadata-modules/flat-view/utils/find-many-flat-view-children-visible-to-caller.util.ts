@@ -7,8 +7,8 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
-import { isViewAvailableToCaller } from 'src/engine/metadata-modules/view/utils/is-view-available-to-caller.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 
 type FlatViewChildByIdsKey = {
   viewFilterGroupIds: FlatViewFilterGroup;
@@ -18,7 +18,7 @@ type FlatViewChildByIdsKey = {
 };
 
 // Without a viewId, the children of every view available to the user
-export const findManyFlatViewChildrenAvailableToCaller = <
+export const findManyFlatViewChildrenVisibleToCaller = <
   TFlatViewChildIdsKey extends keyof FlatViewChildByIdsKey,
 >({
   flatViewMaps,
@@ -34,9 +34,10 @@ export const findManyFlatViewChildrenAvailableToCaller = <
   viewId?: string;
 }): FlatViewChildByIdsKey[TFlatViewChildIdsKey][] => {
   const flatViews = isDefined(viewId)
-    ? [findFlatViewAvailableToCaller({ viewId, flatViewMaps })]
+    ? [findFlatViewVisibleToCaller({ viewId, flatViewMaps })]
     : Object.values(flatViewMaps.byUniversalIdentifier).filter(
-        (flatView) => isDefined(flatView) && isViewAvailableToCaller(flatView),
+        (flatView) =>
+          isDefined(flatView) && isViewVisibleToCaller({ view: flatView }),
       );
 
   return flatViews

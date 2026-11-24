@@ -17,7 +17,7 @@ import { getWorkspaceCustomApplicationUniversalIdentifierOrThrow } from 'src/eng
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-entity-property.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { isViewAvailableToCaller } from 'src/engine/metadata-modules/view/utils/is-view-available-to-caller.util';
+import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
@@ -143,7 +143,7 @@ export class MinimalMetadataService {
     )
       .filter(isDefined)
       .filter((flatView) => flatView.workspaceId === workspaceId)
-      .filter(isViewAvailableToCaller)
+      .filter((flatView) => isViewVisibleToCaller({ view: flatView }))
       .map((flatView) => ({
         id: flatView.id,
         type: flatView.type,
