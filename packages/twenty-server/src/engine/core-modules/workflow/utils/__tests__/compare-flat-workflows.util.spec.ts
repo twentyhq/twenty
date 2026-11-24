@@ -11,10 +11,13 @@ const flatWorkflows = [
   { id: 'd', name: 'Beta', updatedAt: '2026-01-02T00:00:00.000Z' },
 ];
 
-const sortIds = (
-  orderBy: CoreWorkflowOrderByField,
-  orderByDirection: CoreWorkflowOrderByDirection,
-) =>
+const sortIds = ({
+  orderBy,
+  orderByDirection,
+}: {
+  orderBy: CoreWorkflowOrderByField;
+  orderByDirection: CoreWorkflowOrderByDirection;
+}) =>
   [...flatWorkflows]
     .sort(compareFlatWorkflows({ orderBy, orderByDirection }))
     .map(({ id }) => id);
@@ -22,22 +25,28 @@ const sortIds = (
 describe('compareFlatWorkflows', () => {
   it('should sort by name ascending with unnamed workflows last and ids breaking ties', () => {
     expect(
-      sortIds(CoreWorkflowOrderByField.NAME, CoreWorkflowOrderByDirection.ASC),
+      sortIds({
+        orderBy: CoreWorkflowOrderByField.NAME,
+        orderByDirection: CoreWorkflowOrderByDirection.ASC,
+      }),
     ).toEqual(['b', 'c', 'd', 'a']);
   });
 
   it('should keep unnamed workflows last when sorting by name descending', () => {
     expect(
-      sortIds(CoreWorkflowOrderByField.NAME, CoreWorkflowOrderByDirection.DESC),
+      sortIds({
+        orderBy: CoreWorkflowOrderByField.NAME,
+        orderByDirection: CoreWorkflowOrderByDirection.DESC,
+      }),
     ).toEqual(['d', 'c', 'b', 'a']);
   });
 
   it('should sort by updatedAt descending with ids breaking ties', () => {
     expect(
-      sortIds(
-        CoreWorkflowOrderByField.UPDATED_AT,
-        CoreWorkflowOrderByDirection.DESC,
-      ),
+      sortIds({
+        orderBy: CoreWorkflowOrderByField.UPDATED_AT,
+        orderByDirection: CoreWorkflowOrderByDirection.DESC,
+      }),
     ).toEqual(['a', 'd', 'c', 'b']);
   });
 });
