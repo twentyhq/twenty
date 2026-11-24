@@ -72,7 +72,7 @@ export class RollupFieldComputationService {
   }: {
     workspaceId: string;
     objectMetadataId: string;
-    rollupFieldMetadataIds?: string[];
+    rollupFieldMetadataIds: string[];
     afterRecordId: string | null;
     batchCount: number;
   }): Promise<string | null> {
