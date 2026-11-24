@@ -9436,6 +9436,7 @@ msgid "Customize record page"
 msgstr "Datensatzseite anpassen"
 
 #. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -28211,6 +28212,11 @@ msgstr "Seitenbereich"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "Seitenpanel"
+
+#. js-lingui-id: QWUT9V
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+msgid "Sidebar actions"
+msgstr ""
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx

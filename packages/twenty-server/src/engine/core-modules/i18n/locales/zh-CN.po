@@ -390,6 +390,18 @@ msgstr "导航项不能同时包含路径和导航目标对象"
 msgid "A nested relation widget must use the table layout."
 msgstr "嵌套关系小部件必须使用表格布局。"
 
+#. js-lingui-id: +qTJHH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot be tied to a row level permission rule"
+msgstr ""
+
+#. js-lingui-id: +cMY8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot use itself as its source"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -13435,6 +13447,16 @@ msgstr "源文档标题"
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
 msgstr "源文档标题"
+
+#. js-lingui-id: gAdogO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field metadata not found"
+msgstr ""
+
+#. js-lingui-id: 8Fgyo1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field not found"
+msgstr ""
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts

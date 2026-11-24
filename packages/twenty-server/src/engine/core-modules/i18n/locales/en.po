@@ -385,6 +385,18 @@ msgstr "A navigation item cannot carry both a path and a navigation target objec
 msgid "A nested relation widget must use the table layout."
 msgstr "A nested relation widget must use the table layout."
 
+#. js-lingui-id: +qTJHH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot be tied to a row level permission rule"
+msgstr "A nested unreadable field cannot be tied to a row level permission rule"
+
+#. js-lingui-id: +cMY8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot use itself as its source"
+msgstr "A nested unreadable field cannot use itself as its source"
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -13430,6 +13442,16 @@ msgstr "Source Document Title"
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
 msgstr "Source Document Title"
+
+#. js-lingui-id: gAdogO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field metadata not found"
+msgstr "Source field metadata not found"
+
+#. js-lingui-id: 8Fgyo1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field not found"
+msgstr "Source field not found"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts

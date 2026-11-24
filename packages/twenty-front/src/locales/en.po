@@ -9431,6 +9431,7 @@ msgid "Customize record page"
 msgstr "Customize record page"
 
 #. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -28206,6 +28207,11 @@ msgstr "Side panel"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "Side Panel"
+
+#. js-lingui-id: QWUT9V
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+msgid "Sidebar actions"
+msgstr "Sidebar actions"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx

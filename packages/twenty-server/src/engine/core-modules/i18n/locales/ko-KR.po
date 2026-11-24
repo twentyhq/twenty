@@ -390,6 +390,18 @@ msgstr "탐색 항목에는 path와 탐색 대상 객체를 모두 포함할 수
 msgid "A nested relation widget must use the table layout."
 msgstr "중첩 관계 위젯은 테이블 레이아웃을 사용해야 합니다."
 
+#. js-lingui-id: +qTJHH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot be tied to a row level permission rule"
+msgstr ""
+
+#. js-lingui-id: +cMY8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot use itself as its source"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -13435,6 +13447,16 @@ msgstr "소스 문서 제목"
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
 msgstr "소스 문서 제목"
+
+#. js-lingui-id: gAdogO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field metadata not found"
+msgstr ""
+
+#. js-lingui-id: 8Fgyo1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field not found"
+msgstr ""
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts

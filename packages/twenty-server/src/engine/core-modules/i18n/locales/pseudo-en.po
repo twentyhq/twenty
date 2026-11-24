@@ -385,6 +385,18 @@ msgstr ""
 msgid "A nested relation widget must use the table layout."
 msgstr ""
 
+#. js-lingui-id: +qTJHH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot be tied to a row level permission rule"
+msgstr ""
+
+#. js-lingui-id: +cMY8o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "A nested unreadable field cannot use itself as its source"
+msgstr ""
+
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "A network error occurred while accessing calendar."
@@ -13429,6 +13441,16 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-part-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Source Document Title"
+msgstr ""
+
+#. js-lingui-id: gAdogO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field metadata not found"
+msgstr ""
+
+#. js-lingui-id: 8Fgyo1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
+msgid "Source field not found"
 msgstr ""
 
 #. js-lingui-id: o0N9e6
