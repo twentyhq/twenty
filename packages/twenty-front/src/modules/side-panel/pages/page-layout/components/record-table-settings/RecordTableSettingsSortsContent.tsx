@@ -14,6 +14,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const StyledSortItemContainer = styled.div`
   align-items: center;
   display: flex;
@@ -99,7 +105,7 @@ export const RecordTableSettingsSortsContent = ({
   };
 
   return (
-    <>
+    <StyledContainer>
       {currentRecordSorts.map((sort) => (
         <StyledSortItemContainer key={sort.id}>
           <Select
@@ -135,6 +141,6 @@ export const RecordTableSettingsSortsContent = ({
           variant="outline"
         >{t`Add sort`}</Button>
       </StyledAddButtonContainer>
-    </>
+    </StyledContainer>
   );
 };

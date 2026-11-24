@@ -26,7 +26,6 @@ const VIEW_SORT_DTO_GQL_FIELDS = `
   workspaceId
   createdAt
   updatedAt
-  deletedAt
 `;
 
 const VIEW_SORT_REST_READ_TEST_CASES =

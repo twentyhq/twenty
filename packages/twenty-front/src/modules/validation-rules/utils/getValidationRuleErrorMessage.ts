@@ -14,7 +14,10 @@ export const getValidationRuleErrorMessage = ({
   errorParams?: ValidationRuleErrorParams;
   errorMessage: string;
 }): string => {
+  const argumentCount = errorParams?.argumentCount ?? 0;
   const fieldName = errorParams?.fieldName ?? '';
+  const functionName = errorParams?.functionName ?? '';
+  const minimumArgumentCount = errorParams?.minimumArgumentCount ?? 0;
   const maxLength = errorParams?.maxLength ?? 0;
   const path = errorParams?.path ?? '';
   const relationFieldName = errorParams?.relationFieldName ?? '';
@@ -34,6 +37,10 @@ export const getValidationRuleErrorMessage = ({
       return t`Bracket access is not supported, use dot access instead`;
     case 'SPACED_MEMBER_DOT':
       return t`Write ${path} without spaces around the dot`;
+    case 'WRONG_ARGUMENT_COUNT':
+      return errorParams?.maximumArgumentCount === minimumArgumentCount
+        ? t`${functionName} takes ${minimumArgumentCount} argument(s), but got ${argumentCount}`
+        : t`${functionName} takes at least ${minimumArgumentCount} argument(s), but got ${argumentCount}`;
     case 'NOT_A_VALUE':
       return t`"${path}" is not a value`;
     case 'UNKNOWN_FIELD':
@@ -50,6 +57,10 @@ export const getValidationRuleErrorMessage = ({
       return t`"${path}" goes more than one relation deep`;
     case 'PREVIOUS_VALUE_OF_RELATION':
       return t`"${path}" reads a relation, but previous values only cover this record's own fields`;
+    case 'PREVIOUS_VALUE_IN_FORMULA':
+      return t`"${path}" reads a previous value, which a formula cannot use`;
+    case 'COMPOSITE_FIELD_WITHOUT_PART':
+      return t`"${path}" has several parts: read one of them, such as ${path}.${subfieldName}`;
     case 'NON_BOOLEAN_RESULT':
       return t`Expression did not return true or false`;
     case 'INCOMPLETE_EXPRESSION':
