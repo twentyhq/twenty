@@ -137,6 +137,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     requestedCapabilities: [],
     requestedIframeMediaPermissions: [],
     billsCredits: false,
+    billingPrices: [],
     objects: [],
     roles: [],
   };

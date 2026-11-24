@@ -15,6 +15,7 @@ const FORMAT_LOCALE_MAP = {
 
 export type FormatNumberOptions = {
   decimals?: number;
+  minimumDecimals?: number;
   abbreviate?: boolean; // use k, M, B suffixes for large numbers
   locale?: string;
   format?: NumberFormat;
@@ -22,6 +23,7 @@ export type FormatNumberOptions = {
 
 const defaultOptions: Required<FormatNumberOptions> = {
   decimals: DEFAULT_DECIMAL_VALUE,
+  minimumDecimals: 0,
   abbreviate: false,
   locale: FORMAT_LOCALE_MAP[NumberFormat.COMMAS_AND_DOT],
   format: NumberFormat.COMMAS_AND_DOT,
@@ -82,16 +84,29 @@ const getLocaleForFormat = (format?: NumberFormat): string => {
   );
 };
 
+const getMinimumFractionDigits = ({
+  minimumDecimals,
+  decimals,
+}: Pick<FormatNumberOptions, 'minimumDecimals' | 'decimals'>) => {
+  const minimumFractionDigits = minimumDecimals ?? 0;
+
+  return isDefined(decimals)
+    ? Math.min(minimumFractionDigits, decimals)
+    : minimumFractionDigits;
+};
+
 const numberFormatterByKey = new Map<string, Intl.NumberFormat>();
 
 const getNumberFormatter = ({
   locale,
+  minimumFractionDigits = 0,
   maximumFractionDigits,
 }: {
   locale: string;
+  minimumFractionDigits?: number;
   maximumFractionDigits: number;
 }) => {
-  const key = `${locale}-${maximumFractionDigits}`;
+  const key = `${locale}-${minimumFractionDigits}-${maximumFractionDigits}`;
   const cachedFormatter = numberFormatterByKey.get(key);
 
   if (isDefined(cachedFormatter)) {
@@ -99,7 +114,7 @@ const getNumberFormatter = ({
   }
 
   const formatter = new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
+    minimumFractionDigits,
     maximumFractionDigits,
   });
 
@@ -142,6 +157,7 @@ export const formatNumber = (
 
   return getNumberFormatter({
     locale,
+    minimumFractionDigits: getMinimumFractionDigits(options),
     maximumFractionDigits: options.decimals,
   }).format(value);
 };
