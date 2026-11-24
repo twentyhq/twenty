@@ -24,9 +24,13 @@ export const getFieldMetadataValueType = ({
     return type;
   }
 
-  return isDefined(settings) &&
-    'resultType' in settings &&
-    isRollupResultFieldMetadataType(settings.resultType)
-    ? settings.resultType
-    : FieldMetadataType.NUMBER;
+  if (!isDefined(settings) || !('resultType' in settings)) {
+    return FieldMetadataType.NUMBER;
+  }
+
+  if (!isRollupResultFieldMetadataType(settings.resultType)) {
+    return FieldMetadataType.NUMBER;
+  }
+
+  return settings.resultType;
 };
