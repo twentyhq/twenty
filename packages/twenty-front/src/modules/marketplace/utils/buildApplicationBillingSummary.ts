@@ -21,7 +21,7 @@ const getPriceLabel = ({
 }): string => {
   switch (per) {
     case ApplicationBillingPriceUnit.CONNECTED_ACCOUNT:
-      return t`Bill your workspace ${amount} / month per connected account`;
+      return t`Bill your workspace ${amount} / month per account`;
     case ApplicationBillingPriceUnit.WORKSPACE_MEMBER:
       return t`Bill your workspace ${amount} / month per member`;
     default:

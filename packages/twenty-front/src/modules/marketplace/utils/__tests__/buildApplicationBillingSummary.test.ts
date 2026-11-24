@@ -36,7 +36,7 @@ describe('buildApplicationBillingSummary', () => {
         formatAmount,
       }),
     ).toEqual([
-      'Bill your workspace $7.00 / month per connected account',
+      'Bill your workspace $7.00 / month per account',
       'Bill your workspace $15.00 / month per member',
       'Bill your workspace $20.00 / month',
       'Let members connect their own accounts',
