@@ -3256,21 +3256,14 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Focuses the search input when the options mount."
+        "description": "Focuses the search input when the picker mounts."
       },
       {
-        "name": "contentProps",
-        "type": "Omit<DropdownContentProps, \"children\">",
+        "name": "className",
+        "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Dropdown popup props, including placement, width, and accessible attributes."
-      },
-      {
-        "name": "defaultOpen",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the popup is initially open when uncontrolled."
+        "description": "Additional class name applied to the picker root div."
       },
       {
         "name": "emojibaseUrl",
@@ -3291,7 +3284,7 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Caller-supplied message displayed while emoji data or more emojis load."
+        "description": "Caller-supplied message displayed while emoji data loads."
       },
       {
         "name": "locale",
@@ -3305,28 +3298,21 @@
         "type": "(emoji: string) => void",
         "required": true,
         "defaultValue": null,
-        "description": "Called with the selected Unicode emoji string. The application owns the selected value and persistence."
+        "description": "Called with the selected Unicode emoji string. The application owns the selected value, persistence, and popup visibility."
       },
       {
-        "name": "onOpenChange",
-        "type": "((open: boolean) => void)",
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
         "required": false,
         "defaultValue": null,
-        "description": "Called with the next open state when the popup opens or closes."
-      },
-      {
-        "name": "open",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the popup is open. Use with onOpenChange to control it."
+        "description": "Ref for the picker root div."
       },
       {
         "name": "searchLabel",
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Accessible name for the Dropdown.Search input. Also supplies its placeholder unless searchPlaceholder is set."
+        "description": "Accessible name for the search input. Also supplies its placeholder unless searchPlaceholder is set."
       },
       {
         "name": "searchPlaceholder",
@@ -3336,147 +3322,11 @@
         "description": "Optional placeholder overriding the search label."
       },
       {
-        "name": "triggerProps",
-        "type": "DropdownTriggerProps",
+        "name": "style",
+        "type": "CSSProperties",
         "required": false,
         "defaultValue": null,
-        "description": "Props for Dropdown.Trigger, including render for the button that opens the picker."
-      }
-    ],
-    "parts": [
-      {
-        "name": "Root",
-        "props": [
-          {
-            "name": "children",
-            "type": "ReactNode",
-            "required": false,
-            "defaultValue": null,
-            "description": "EmojiPicker parts, rendered inside a Dropdown.Root of type picker."
-          },
-          {
-            "name": "emojibaseUrl",
-            "type": "string",
-            "required": true,
-            "defaultValue": null,
-            "description": "Base URL for caller-hosted Emojibase data. The picker loads data.json and messages.json from the selected locale directory."
-          },
-          {
-            "name": "locale",
-            "type": "string",
-            "required": false,
-            "defaultValue": "en",
-            "description": "Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately."
-          },
-          {
-            "name": "onEmojiSelect",
-            "type": "(emoji: string) => void",
-            "required": true,
-            "defaultValue": null,
-            "description": "Called with the selected Unicode emoji string. The application owns the selected value and persistence."
-          }
-        ]
-      },
-      {
-        "name": "Trigger",
-        "props": [
-          {
-            "name": "className",
-            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-          },
-          {
-            "name": "closeDelay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "0",
-            "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "delay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "300",
-            "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "id",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
-          },
-          {
-            "name": "nativeButton",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "true",
-            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
-          },
-          {
-            "name": "openOnHover",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the popover should also open when the trigger is hovered."
-          },
-          {
-            "name": "render",
-            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
-            "required": false,
-            "defaultValue": null,
-            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-          },
-          {
-            "name": "style",
-            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
-            "required": false,
-            "defaultValue": null,
-            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-          }
-        ]
-      },
-      {
-        "name": "Options",
-        "props": [
-          {
-            "name": "autoFocus",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Focuses the search input when the options mount."
-          },
-          {
-            "name": "emptyLabel",
-            "type": "string",
-            "required": true,
-            "defaultValue": null,
-            "description": "Caller-supplied message displayed when no emoji matches the search."
-          },
-          {
-            "name": "loadingLabel",
-            "type": "string",
-            "required": true,
-            "defaultValue": null,
-            "description": "Caller-supplied message displayed while emoji data or more emojis load."
-          },
-          {
-            "name": "searchLabel",
-            "type": "string",
-            "required": true,
-            "defaultValue": null,
-            "description": "Accessible name for the Dropdown.Search input. Also supplies its placeholder unless searchPlaceholder is set."
-          },
-          {
-            "name": "searchPlaceholder",
-            "type": "string",
-            "required": false,
-            "defaultValue": "searchLabel",
-            "description": "Optional placeholder overriding the search label."
-          }
-        ]
+        "description": "Native inline styles applied to the picker root div."
       }
     ]
   },
@@ -8974,7 +8824,7 @@
           },
           {
             "name": "ref",
-            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...>)) | null",
             "required": false,
             "defaultValue": null,
             "description": "Ref to the trigger button, or the element supplied through render."
@@ -10749,7 +10599,7 @@
           },
           {
             "name": "ref",
-            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (RefObject<...> | ((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)))) | null",
+            "type": "((((instance: HTMLButtonElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<HTMLButtonElement | null>) & (((instance: HTMLElement | null) => void | (() => VoidOrUndefinedOnly)) | RefObject<...>)) | null",
             "required": false,
             "defaultValue": null,
             "description": "Ref to the rendered trigger element, a button by default."

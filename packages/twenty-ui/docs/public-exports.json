@@ -1,12 +1,6 @@
 {
   ".": {
-    "reExports": [
-      "components",
-      "icon",
-      "primitives",
-      "theme",
-      "utilities"
-    ],
+    "reExports": ["components", "icon", "primitives", "theme", "utilities"],
     "values": {},
     "types": {}
   },
@@ -134,9 +128,7 @@
       "CurrencyPickerTriggerProps": "components/input/CurrencyPicker/types/CurrencyPickerTriggerProps",
       "DatePickerHeaderProps": "components/input/DatePicker/types/DatePickerHeaderProps",
       "DatePickerProps": "components/input/DatePicker/types/DatePickerProps",
-      "EmojiPickerOptionsProps": "components/input/EmojiPicker/types/EmojiPickerOptionsProps",
       "EmojiPickerProps": "components/input/EmojiPicker/types/EmojiPickerProps",
-      "EmojiPickerRootProps": "components/input/EmojiPicker/types/EmojiPickerRootProps",
       "FormFieldRowProps": "components/input/FormFieldRow/types/FormFieldRowProps",
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
@@ -1297,7 +1289,6 @@
       "getMainColorNameFromPaletteColorName": "utilities/color/utils/getMainColorNameFromPaletteColorName",
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
       "getSafeUrl": "utilities/utils/getSafeUrl",
-      "getSearchMatchScore": "utilities/utils/getSearchMatchScore",
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",
       "isPageZoomGesture": "utilities/zoom/utils/isPageZoomGesture",
@@ -1311,7 +1302,6 @@
       "TOUCH_DEVICE_MEDIA_QUERY": "utilities/responsive/constants/TouchDeviceMediaQuery",
       "useIsMobile": "utilities/responsive/hooks/useIsMobile",
       "useIsTouchDevice": "utilities/responsive/hooks/useIsTouchDevice",
-      "useLoadMoreOnScroll": "utilities/scroll/hooks/useLoadMoreOnScroll",
       "useMediaQuery": "utilities/responsive/hooks/useMediaQuery"
     },
     "types": {

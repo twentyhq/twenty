@@ -1,16 +1,20 @@
 import { type EmojiPickerProps } from '../src/components/input/EmojiPicker/types/EmojiPickerProps';
-import { EMOJI_PICKER_OPTIONS_PROP_DESCRIPTIONS } from './emojiPickerPartPropDescriptions';
-import { EMOJI_PICKER_ROOT_PROP_DESCRIPTIONS } from './emojiPickerRootPropDescriptions';
 
 export const EMOJI_PICKER_PROP_DESCRIPTIONS = {
-  ...EMOJI_PICKER_ROOT_PROP_DESCRIPTIONS,
-  ...EMOJI_PICKER_OPTIONS_PROP_DESCRIPTIONS,
-  triggerProps:
-    'Props for Dropdown.Trigger, including render for the button that opens the picker.',
-  contentProps:
-    'Dropdown popup props, including placement, width, and accessible attributes.',
-  open: 'Whether the popup is open. Use with onOpenChange to control it.',
-  defaultOpen: 'Whether the popup is initially open when uncontrolled.',
-  onOpenChange:
-    'Called with the next open state when the popup opens or closes.',
+  emojibaseUrl:
+    'Base URL for caller-hosted Emojibase data. The picker loads data.json and messages.json from the selected locale directory.',
+  locale:
+    'Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately.',
+  searchLabel:
+    'Accessible name for the search input. Also supplies its placeholder unless searchPlaceholder is set.',
+  searchPlaceholder: 'Optional placeholder overriding the search label.',
+  loadingLabel: 'Caller-supplied message displayed while emoji data loads.',
+  emptyLabel:
+    'Caller-supplied message displayed when no emoji matches the search.',
+  onEmojiSelect:
+    'Called with the selected Unicode emoji string. The application owns the selected value, persistence, and popup visibility.',
+  autoFocus: 'Focuses the search input when the picker mounts.',
+  className: 'Additional class name applied to the picker root div.',
+  style: 'Native inline styles applied to the picker root div.',
+  ref: 'Ref for the picker root div.',
 } satisfies Partial<Record<keyof EmojiPickerProps, string>>;

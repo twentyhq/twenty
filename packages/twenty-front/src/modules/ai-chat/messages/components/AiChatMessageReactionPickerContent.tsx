@@ -40,17 +40,14 @@ export const AiChatMessageReactionPickerContent = ({
 
   if (isEmojiPickerOpen) {
     return (
-      <EmojiPicker.Root
+      <EmojiPicker
         emojibaseUrl={AI_CHAT_EMOJIBASE_URL}
+        searchLabel={t`Search emojis`}
+        loadingLabel={t`Loading emojis`}
+        emptyLabel={t`No emoji found`}
+        autoFocus
         onEmojiSelect={onEmojiSelect}
-      >
-        <EmojiPicker.Options
-          searchLabel={t`Search emojis`}
-          loadingLabel={t`Loading emojis`}
-          emptyLabel={t`No emoji found`}
-          autoFocus
-        />
-      </EmojiPicker.Root>
+      />
     );
   }
 

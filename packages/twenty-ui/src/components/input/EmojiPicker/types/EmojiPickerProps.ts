@@ -1,13 +1,15 @@
-import { type DropdownContentProps } from '@ui/components/navigation/Dropdown/types/DropdownContentProps';
-import { type DropdownRootProps } from '@ui/components/navigation/Dropdown/types/DropdownRootProps';
-import { type DropdownTriggerProps } from '@ui/components/navigation/Dropdown/types/DropdownTriggerProps';
+import { type ComponentPropsWithRef } from 'react';
 
-import { type EmojiPickerOptionsProps } from './EmojiPickerOptionsProps';
-import { type EmojiPickerRootProps } from './EmojiPickerRootProps';
-
-export type EmojiPickerProps = Omit<EmojiPickerRootProps, 'children'> &
-  EmojiPickerOptionsProps &
-  Pick<DropdownRootProps, 'open' | 'defaultOpen' | 'onOpenChange'> & {
-    triggerProps?: DropdownTriggerProps;
-    contentProps?: Omit<DropdownContentProps, 'children'>;
-  };
+export type EmojiPickerProps = Omit<
+  ComponentPropsWithRef<'div'>,
+  'children'
+> & {
+  emojibaseUrl: string;
+  locale?: string;
+  searchLabel: string;
+  searchPlaceholder?: string;
+  loadingLabel: string;
+  emptyLabel: string;
+  onEmojiSelect: (emoji: string) => void;
+  autoFocus?: boolean;
+};

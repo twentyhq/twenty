@@ -12,15 +12,11 @@
  */}
 
 <ParamField body="autoFocus" type="boolean" default="false">
-  Focuses the search input when the options mount.
+  Focuses the search input when the picker mounts.
 </ParamField>
 
-<ParamField body="contentProps" type="Omit&lt;DropdownContentProps, &quot;children&quot;&gt;">
-  Dropdown popup props, including placement, width, and accessible attributes.
-</ParamField>
-
-<ParamField body="defaultOpen" type="boolean">
-  Whether the popup is initially open when uncontrolled.
+<ParamField body="className" type="string">
+  Additional class name applied to the picker root div.
 </ParamField>
 
 <ParamField body="emojibaseUrl" type="string" required>
@@ -32,7 +28,7 @@
 </ParamField>
 
 <ParamField body="loadingLabel" type="string" required>
-  Caller-supplied message displayed while emoji data or more emojis load.
+  Caller-supplied message displayed while emoji data loads.
 </ParamField>
 
 <ParamField body="locale" type="string" default="en">
@@ -40,112 +36,21 @@
 </ParamField>
 
 <ParamField body="onEmojiSelect" type="(emoji: string) =&gt; void" required>
-  Called with the selected Unicode emoji string. The application owns the selected value and persistence.
+  Called with the selected Unicode emoji string. The application owns the selected value, persistence, and popup visibility.
 </ParamField>
 
-<ParamField body="onOpenChange" type="((open: boolean) =&gt; void)">
-  Called with the next open state when the popup opens or closes.
-</ParamField>
-
-<ParamField body="open" type="boolean">
-  Whether the popup is open. Use with onOpenChange to control it.
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref for the picker root div.
 </ParamField>
 
 <ParamField body="searchLabel" type="string" required>
-  Accessible name for the Dropdown.Search input. Also supplies its placeholder unless searchPlaceholder is set.
+  Accessible name for the search input. Also supplies its placeholder unless searchPlaceholder is set.
 </ParamField>
 
 <ParamField body="searchPlaceholder" type="string" default="searchLabel">
   Optional placeholder overriding the search label.
 </ParamField>
 
-<ParamField body="triggerProps" type="DropdownTriggerProps">
-  Props for Dropdown.Trigger, including render for the button that opens the picker.
-</ParamField>
-
-### EmojiPicker.Root
-
-<ParamField body="Root.children" type="ReactNode">
-  EmojiPicker parts, rendered inside a Dropdown.Root of type picker.
-</ParamField>
-
-<ParamField body="Root.emojibaseUrl" type="string" required>
-  Base URL for caller-hosted Emojibase data. The picker loads data.json and messages.json from the selected locale directory.
-</ParamField>
-
-<ParamField body="Root.locale" type="string" default="en">
-  Emoji catalogue locale. The caller must host its data and message files. Interface labels are supplied separately.
-</ParamField>
-
-<ParamField body="Root.onEmojiSelect" type="(emoji: string) =&gt; void" required>
-  Called with the selected Unicode emoji string. The application owns the selected value and persistence.
-</ParamField>
-
-### EmojiPicker.Trigger
-
-<ParamField body="Trigger.className" type="string | ((state: PopoverTriggerState) =&gt; string | undefined)">
-  CSS class applied to the element, or a function that
-  returns a class based on the component's state.
-</ParamField>
-
-<ParamField body="Trigger.closeDelay" type="number" default="0">
-  How long to wait before closing the popover that was opened on hover.
-  Specified in milliseconds.
-
-  Requires the `openOnHover` prop.
-</ParamField>
-
-<ParamField body="Trigger.delay" type="number" default="300">
-  How long to wait before the popover may be opened on hover. Specified in milliseconds.
-
-  Requires the `openOnHover` prop.
-</ParamField>
-
-<ParamField body="Trigger.id" type="string">
-  ID of the trigger. In addition to being forwarded to the rendered element,
-  it is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop).
-</ParamField>
-
-<ParamField body="Trigger.nativeButton" type="boolean" default="true">
-  Whether the component renders a native `<button>` element when replacing it
-  via the `render` prop.
-  Set to `false` if the rendered element is not a button (e.g. `<div>`).
-</ParamField>
-
-<ParamField body="Trigger.openOnHover" type="boolean" default="false">
-  Whether the popover should also open when the trigger is hovered.
-</ParamField>
-
-<ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTriggerState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
-</ParamField>
-
-<ParamField body="Trigger.style" type="CSSProperties | ((state: PopoverTriggerState) =&gt; CSSProperties | undefined)">
-  Style applied to the element, or a function that
-  returns a style object based on the component's state.
-</ParamField>
-
-### EmojiPicker.Options
-
-<ParamField body="Options.autoFocus" type="boolean" default="false">
-  Focuses the search input when the options mount.
-</ParamField>
-
-<ParamField body="Options.emptyLabel" type="string" required>
-  Caller-supplied message displayed when no emoji matches the search.
-</ParamField>
-
-<ParamField body="Options.loadingLabel" type="string" required>
-  Caller-supplied message displayed while emoji data or more emojis load.
-</ParamField>
-
-<ParamField body="Options.searchLabel" type="string" required>
-  Accessible name for the Dropdown.Search input. Also supplies its placeholder unless searchPlaceholder is set.
-</ParamField>
-
-<ParamField body="Options.searchPlaceholder" type="string" default="searchLabel">
-  Optional placeholder overriding the search label.
+<ParamField body="style" type="CSSProperties">
+  Native inline styles applied to the picker root div.
 </ParamField>

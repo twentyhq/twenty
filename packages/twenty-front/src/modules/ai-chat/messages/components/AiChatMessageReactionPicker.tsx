@@ -35,7 +35,7 @@ export const AiChatMessageReactionPicker = ({
   return (
     <DropdownRoot
       dropdownId={dropdownId}
-      type="picker"
+      type="panel"
       onOpenChange={() => setIsEmojiPickerOpen(false)}
     >
       <Dropdown.Trigger
