@@ -93,6 +93,17 @@ const USER_ACCESS_POLICY: AccessPolicy = {
   },
   requiredPermissionFlags: [],
 };
+
+const USER_SESSION_ACCESS_POLICY: AccessPolicy = {
+  authPrincipals: {
+    userSession: true,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  },
+  requiredPermissionFlags: [],
+};
+
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) {
     return null;
@@ -419,15 +430,8 @@ export class UserResolver {
   @ResolveField(() => String, {
     nullable: true,
   })
-  @UseGuards(NoPermissionGuard)
-  supportUserHash(
-    @Parent() parent: UserEntity,
-    @AuthIsUserSession() isUserSession: boolean,
-  ): string | null {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
+  supportUserHash(@Parent() parent: UserEntity): string | null {
     if (
       this.twentyConfigService.get('SUPPORT_DRIVER') !== SupportDriver.FRONT
     ) {
@@ -732,15 +736,8 @@ export class UserResolver {
   @ResolveField(() => [UserWorkspaceEntity], {
     nullable: false,
   })
-  @UseGuards(NoPermissionGuard)
-  async workspaces(
-    @Parent() user: UserEntity,
-    @AuthIsUserSession() isUserSession: boolean,
-  ) {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
+  async workspaces(@Parent() user: UserEntity) {
     return user.userWorkspaces;
   }
 
@@ -749,32 +746,20 @@ export class UserResolver {
     name: 'userWorkspaces',
     nullable: false,
   })
-  @UseGuards(NoPermissionGuard)
-  async userWorkspacesField(
-    @Parent() user: UserEntity,
-    @AuthIsUserSession() isUserSession: boolean,
-  ) {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
+  async userWorkspacesField(@Parent() user: UserEntity) {
     return user.userWorkspaces;
   }
 
   @ResolveField(() => AvailableWorkspaces)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(AccessPolicyGuard(USER_SESSION_ACCESS_POLICY))
   async availableWorkspaces(
     @AuthUser() user: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
     @AuthAuthenticatedAt() authenticatedAt: Date | undefined,
-    @AuthIsUserSession() isUserSession: boolean,
   ): Promise<AvailableWorkspaces> {
-    if (!isUserSession) {
-      throw buildUserSessionRequiredError();
-    }
-
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,
