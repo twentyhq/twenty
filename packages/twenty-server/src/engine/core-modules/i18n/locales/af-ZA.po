@@ -15647,6 +15647,11 @@ msgstr "Hierdie toestemming is op die objek gedeaktiveer en kan nie toegestaan w
 msgid "This plan is not available."
 msgstr "Hierdie plan is nie beskikbaar nie."
 
+#. js-lingui-id: oGIo+g
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "This preset filter is not available on this object"
+msgstr ""
+
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
@@ -17428,6 +17433,11 @@ msgstr "Aansig nie gevind ná upsert nie"
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "View not found for widget"
 msgstr "Aansig vir widget nie gevind nie"
+
+#. js-lingui-id: s4TNbU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "View preset filter must belong to the view object"
+msgstr ""
 
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
