@@ -1,7 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-import { isWorkEmail } from 'src/utils/is-work-email';
+import { getDomainFromEmail, isWorkEmail } from 'twenty-shared/utils';
 
 export const isSameWorkDomainInvitation = ({
   senderEmail,
