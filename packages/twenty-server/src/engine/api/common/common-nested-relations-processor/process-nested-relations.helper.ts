@@ -348,7 +348,7 @@ export class ProcessNestedRelationsHelper {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem: targetObjectMetadata,
-        parentObjectRecords: relationResults as ObjectRecord[],
+        parentObjectRecords: relationResults,
         selection: relationSelection.selection,
         limit,
         authContext,
