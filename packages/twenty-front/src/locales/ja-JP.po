@@ -10510,6 +10510,11 @@ msgstr "降順"
 msgid "Descending"
 msgstr "降順"
 
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr ""
+
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
@@ -10923,6 +10928,11 @@ msgstr "インポートしない"
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Do you want to unsubscribe?"
 msgstr "配信を停止しますか？"
+
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr ""
 
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -30688,6 +30698,16 @@ msgstr "このエージェントはアプリから作成されたため、ここ
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "このエージェントはアプリから作成されたため、ここではツールを変更できません。"
+
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr ""
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr ""
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
