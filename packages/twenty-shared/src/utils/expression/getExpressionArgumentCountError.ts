@@ -11,12 +11,51 @@ const OPERAND_COUNT_BY_OPERATOR_TYPE: Partial<Record<string, number>> = {
   IOP3: 3,
 };
 
-// Replays the reverse Polish instructions to know which function each call applies
+type ArgumentCountError = {
+  errorMessage: string;
+  errorParams: ValidationRuleErrorParams;
+};
+
+const getFunctionCallArgumentCountError = ({
+  functionName,
+  argumentCount,
+}: {
+  functionName: string | undefined;
+  argumentCount: number;
+}): ArgumentCountError | undefined => {
+  if (!isDefined(functionName) || !isValidationRuleFunctionName(functionName)) {
+    return undefined;
+  }
+
+  const { minimumArgumentCount, maximumArgumentCount } =
+    VALIDATION_RULE_FUNCTIONS[functionName];
+
+  if (
+    argumentCount >= minimumArgumentCount &&
+    argumentCount <= maximumArgumentCount
+  ) {
+    return undefined;
+  }
+
+  const expectedArgumentCount =
+    minimumArgumentCount === maximumArgumentCount
+      ? `${minimumArgumentCount}`
+      : `at least ${minimumArgumentCount}`;
+
+  return {
+    errorMessage: `${functionName} takes ${expectedArgumentCount} argument(s), but got ${argumentCount}`,
+    errorParams: {
+      functionName,
+      minimumArgumentCount,
+      maximumArgumentCount,
+      argumentCount,
+    },
+  };
+};
+
 export const getExpressionArgumentCountError = (
   instructions: ExpressionInstruction[],
-):
-  | { errorMessage: string; errorParams: ValidationRuleErrorParams }
-  | undefined => {
+): ArgumentCountError | undefined => {
   const functionNameStack: (string | undefined)[] = [];
   const popOperands = (count: number) =>
     functionNameStack.splice(functionNameStack.length - count, count);
@@ -42,27 +81,13 @@ export const getExpressionArgumentCountError = (
 
       const functionName = functionNameStack.pop();
 
-      if (
-        isDefined(functionName) &&
-        isValidationRuleFunctionName(functionName)
-      ) {
-        const { minimumArgumentCount, maximumArgumentCount } =
-          VALIDATION_RULE_FUNCTIONS[functionName];
+      const callError = getFunctionCallArgumentCountError({
+        functionName,
+        argumentCount,
+      });
 
-        if (
-          argumentCount < minimumArgumentCount ||
-          argumentCount > maximumArgumentCount
-        ) {
-          return {
-            errorMessage: `${functionName} takes ${minimumArgumentCount === maximumArgumentCount ? minimumArgumentCount : `at least ${minimumArgumentCount}`} argument(s), but got ${argumentCount}`,
-            errorParams: {
-              functionName,
-              minimumArgumentCount,
-              maximumArgumentCount,
-              argumentCount,
-            },
-          };
-        }
+      if (isDefined(callError)) {
+        return callError;
       }
     } else {
       popOperands(
