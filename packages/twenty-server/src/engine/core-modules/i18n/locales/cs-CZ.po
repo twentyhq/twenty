@@ -412,6 +412,16 @@ msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Cíl poznámky"
 
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Morfní vztah jedna ku mnoha nelze porovnávat přímo; pro porovnání pole jeho záznamů přejděte přes vztah"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Vztah jedna ku mnoha podporuje pouze operandy IS_EMPTY a IS_NOT_EMPTY; pro porovnání pole jeho záznamů přejděte přes vztah"
+
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "A page layout navigation menu item can only point to a standalone page"
@@ -751,6 +761,16 @@ msgstr "Běh pracovního postupu"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Člen pracovního prostoru"
+
+#. js-lingui-id: EAIj51
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a field and at least one value"
+msgstr ""
+
+#. js-lingui-id: mZ5k8L
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a workspace member relation"
+msgstr ""
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3124,6 +3144,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Chaty spojené s příležitostí"
 
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Kontrola, zda je relace jedna k mnoha prázdná, vyžaduje průchody relacemi v predikátech oprávnění na úrovni řádků"
+
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
@@ -3139,6 +3164,11 @@ msgstr "Vyberte existující typ aktivity časové osy, který chcete přepsat."
 msgid "Choose one person or one role to share with."
 msgstr "Vyberte jednu osobu nebo jednu roli, se kterou chcete sdílet."
 
+#. js-lingui-id: 8+4T+u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field and the values to keep on the related records"
+msgstr ""
+
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
@@ -3148,6 +3178,11 @@ msgstr "Vyberte pole pro čtení v souvisejících záznamech"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
 msgstr "Vyberte objekt, který emituje tento typ aktivity časové osy."
+
+#. js-lingui-id: fr9dvq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the relation of the workspace member to filter"
+msgstr ""
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5678,6 +5713,11 @@ msgstr "Pole \"{workspaceMemberFieldName}\" není polem objektu workspaceMember,
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
 msgstr "Pole \"{workspaceMemberRelationFieldName}\" není relací typu jedna ku mnoha objektu workspaceMember"
 
+#. js-lingui-id: yfFA+h
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
+msgstr ""
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6126,6 +6166,11 @@ msgstr "Filtr na „{0}“ používá volby {invalidValuesText}, které neexistu
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "Operand filtru není pro tento typ pole podporován"
+
+#. js-lingui-id: twPawb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Filter the related records on one of their select, text or boolean fields"
+msgstr ""
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10481,6 +10526,16 @@ msgstr "Fáze příležitosti"
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
 msgstr "Možnost „{optionLabel}“ je součástí pole a nelze ji odstranit. Místo toho ji deaktivujte."
 
+#. js-lingui-id: xTWr3W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
+msgstr ""
+
+#. js-lingui-id: cCRBHe
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" has an invalid description"
+msgstr ""
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10790,6 +10845,12 @@ msgstr "Nadřazená skupina filtrů zobrazení nebyla nalezena"
 #: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId a folderId se musí shodovat. folderId je zastaralé, použijte parentId."
+
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "Účastníci"
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -15568,6 +15629,13 @@ msgstr "Toto oprávnění k objektu je již pro roli nastaveno"
 msgid "This operand is not supported for this field"
 msgstr "Tento operand není pro toto pole podporován"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Tento operand není pro tuto relaci podporován"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15618,6 +15686,11 @@ msgstr "Toto oprávnění je pro objekt zakázáno a nelze jej udělit"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This plan is not available."
 msgstr "Tento plán není k dispozici."
+
+#. js-lingui-id: oGIo+g
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "This preset filter is not available on this object"
+msgstr "Tento přednastavený filtr není pro tento objekt k dispozici"
 
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -15842,6 +15915,11 @@ msgstr "Tento pracovní postup již existuje"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Tento pracovní postup již existuje."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Tento identifikátor workflow odpovídá více než jednomu workflow."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17396,6 +17474,11 @@ msgstr "Zobrazení nenalezeno po upsertu"
 msgid "View not found for widget"
 msgstr "Zobrazení nenalezeno pro widget"
 
+#. js-lingui-id: s4TNbU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "View preset filter must belong to the view object"
+msgstr "Přednastavený filtr zobrazení musí patřit objektu zobrazení"
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -17576,6 +17659,16 @@ msgstr "Nepodařilo se spustit připojení. Zkuste to prosím znovu."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Tento klíč se nepodařilo ověřit. Zkontrolujte ho, nebo to zkuste později, pokud služba není dostupná."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Tuto aplikaci se nám nepodařilo vyúčtovat. Aktualizujte způsob platby a zkuste to znovu."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Toto připojení se nám nepodařilo vyúčtovat. Aktualizujte způsob platby a zkuste to znovu."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -18286,6 +18379,12 @@ msgstr "Pole stránky záznamu člena pracovního prostoru"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
 msgstr "Metadata relačního pole člena pracovního prostoru nebyla nalezena"
+
+#. js-lingui-id: L8uUWk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation filter field metadata not found"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

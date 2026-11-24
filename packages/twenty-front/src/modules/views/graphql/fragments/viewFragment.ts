@@ -34,7 +34,7 @@ export const VIEW_FRAGMENT = gql`
     calendarFieldMetadataId
     calendarEndFieldMetadataId
     calendarLayout
-    visibility
+    isPrivate
     createdByUserWorkspaceId
     applicationId
     universalIdentifier

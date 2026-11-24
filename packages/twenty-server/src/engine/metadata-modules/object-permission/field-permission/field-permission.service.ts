@@ -63,6 +63,8 @@ const toUniversalFlatFieldPermissionToDelete = (
     fieldPermission.rowLevelPermissionPredicateGroupUniversalIdentifier,
   rowLevelPermissionRuleUniversalIdentifier:
     fieldPermission.rowLevelPermissionRuleUniversalIdentifier,
+  sourceFieldMetadataUniversalIdentifier:
+    fieldPermission.sourceFieldMetadataUniversalIdentifier,
   canReadFieldValue: fieldPermission.canReadFieldValue ?? undefined,
   canUpdateFieldValue: fieldPermission.canUpdateFieldValue ?? undefined,
   createdAt: fieldPermission.createdAt,
@@ -268,6 +270,8 @@ export class FieldPermissionService {
               current.rowLevelPermissionPredicateGroupUniversalIdentifier,
             rowLevelPermissionRuleUniversalIdentifier:
               current.rowLevelPermissionRuleUniversalIdentifier,
+            sourceFieldMetadataUniversalIdentifier:
+              current.sourceFieldMetadataUniversalIdentifier,
             canReadFieldValue: effectiveCanRead,
             canUpdateFieldValue: effectiveCanUpdate,
             createdAt: current.createdAt,

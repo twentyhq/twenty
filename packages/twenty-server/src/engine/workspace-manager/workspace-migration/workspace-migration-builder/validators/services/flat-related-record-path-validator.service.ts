@@ -7,6 +7,7 @@ import { type ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { MAX_INHERENT_RELATED_RECORD_PATH_CHAIN_LENGTH } from 'src/engine/metadata-modules/related-record-path/constants/max-inherent-related-record-path-chain-length.constant';
 import { RelatedRecordPathExceptionCode } from 'src/engine/metadata-modules/related-record-path/related-record-path.exception';
@@ -92,7 +93,7 @@ const buildNotFoundError = (): FlatEntityValidationError => ({
 @Injectable()
 export class FlatRelatedRecordPathValidatorService {
   private collectPathErrors({
-    universalFlatRelatedRecordPath,
+    universalFlatRelatedRecordPath: authoredUniversalFlatRelatedRecordPath,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -102,6 +103,10 @@ export class FlatRelatedRecordPathValidatorService {
     universalFlatRelatedRecordPath: UniversalFlatRelatedRecordPath;
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: RelatedRecordPathRelatedMaps;
   }): FlatEntityValidationError[] {
+    const universalFlatRelatedRecordPath = resolveEffectiveUniversalFlatEntity({
+      metadataName: 'relatedRecordPath',
+      universalFlatEntity: authoredUniversalFlatRelatedRecordPath,
+    });
     const {
       objectMetadataUniversalIdentifier,
       secondFieldMetadataUniversalIdentifier,
@@ -252,18 +257,29 @@ export class FlatRelatedRecordPathValidatorService {
       ];
     }
 
-    if (!universalFlatRelatedRecordPath.isInherent) {
+    if (
+      !universalFlatRelatedRecordPath.isInherent ||
+      universalFlatRelatedRecordPath.isActive === false
+    ) {
       return [];
     }
 
     const inherentRelatedRecordPathEdges = [
-      ...Object.values(flatRelatedRecordPathMaps.byUniversalIdentifier).filter(
-        (otherFlatRelatedRecordPath) =>
-          isDefined(otherFlatRelatedRecordPath) &&
-          otherFlatRelatedRecordPath.isInherent &&
-          otherFlatRelatedRecordPath.universalIdentifier !==
-            universalFlatRelatedRecordPath.universalIdentifier,
-      ),
+      ...Object.values(flatRelatedRecordPathMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .map((otherFlatRelatedRecordPath) =>
+          resolveEffectiveUniversalFlatEntity({
+            metadataName: 'relatedRecordPath',
+            universalFlatEntity: otherFlatRelatedRecordPath,
+          }),
+        )
+        .filter(
+          (otherFlatRelatedRecordPath) =>
+            otherFlatRelatedRecordPath.isInherent &&
+            otherFlatRelatedRecordPath.isActive !== false &&
+            otherFlatRelatedRecordPath.universalIdentifier !==
+              universalFlatRelatedRecordPath.universalIdentifier,
+        ),
       universalFlatRelatedRecordPath,
     ]
       .filter(isDefined)
