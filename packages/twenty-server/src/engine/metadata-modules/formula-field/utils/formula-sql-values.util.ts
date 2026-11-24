@@ -101,7 +101,7 @@ export const keepFormulaSqlValueInRange = ({
 export const toDoublePrecision = (numberSql: string): string =>
   `(CASE WHEN abs(${numberSql}) < 1e-300 THEN 0 WHEN abs(${numberSql}) <= 1e300 THEN ${numberSql} END)::double precision`;
 
-const isDateValue = ({ type }: FormulaSqlValue): boolean =>
+const isDateValue = ({ type }: Pick<FormulaSqlValue, 'type'>): boolean =>
   type === 'date' || type === 'dateTime';
 
 export const toDateLikeValue = (
@@ -119,15 +119,17 @@ export const toDateLikeValue = (
     return undefined;
   }
 
-  return expressionDate.isDateOnly
-    ? {
-        sql: `${escapeLiteral(expressionDate.date.toString())}::date`,
-        type: 'date',
-      }
-    : {
-        sql: `${escapeLiteral(expressionDate.dateTime.toInstant().toString())}::timestamptz`,
-        type: 'dateTime',
-      };
+  if (expressionDate.isDateOnly) {
+    return {
+      sql: `${escapeLiteral(expressionDate.date.toString())}::date`,
+      type: 'date',
+    };
+  }
+
+  return {
+    sql: `${escapeLiteral(expressionDate.dateTime.toInstant().toString())}::timestamptz`,
+    type: 'dateTime',
+  };
 };
 
 export const toDateLikeValueOrThrow = ({
@@ -148,12 +150,16 @@ export const toDateLikeValueOrThrow = ({
   return dateLikeValue;
 };
 
-export const toUtcTimestamp = (value: FormulaSqlValue): string =>
+export const toUtcTimestamp = (
+  value: Pick<FormulaSqlValue, 'sql' | 'type'>,
+): string =>
   value.type === 'date'
     ? `(${value.sql})::timestamp`
     : `((${value.sql}) AT TIME ZONE 'UTC')`;
 
-export const toUtcDate = (value: FormulaSqlValue): string =>
+export const toUtcDate = (
+  value: Pick<FormulaSqlValue, 'sql' | 'type'>,
+): string =>
   value.type === 'date' ? `(${value.sql})` : `${toUtcTimestamp(value)}::date`;
 
 export const fromUtcTimestamp = ({

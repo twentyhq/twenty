@@ -13,8 +13,11 @@ export const getFieldMetadataFormulaCurrencyCodeExpression = ({
 
   const formula = settings.formula;
 
-  return isPlainObject(formula) &&
-    isNonEmptyString(formula.currencyCodeExpression)
+  if (!isPlainObject(formula)) {
+    return undefined;
+  }
+
+  return isNonEmptyString(formula.currencyCodeExpression)
     ? formula.currencyCodeExpression
     : undefined;
 };
