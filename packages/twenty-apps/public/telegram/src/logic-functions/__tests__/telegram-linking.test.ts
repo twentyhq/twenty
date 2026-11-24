@@ -153,7 +153,7 @@ describe('connecting a Telegram account', () => {
       params: {
         url: `${SERVER_ROUTES_URL}/${TELEGRAM_UPDATES_RESOLVER_UNIVERSAL_IDENTIFIER}`,
         secret_token: WEBHOOK_SECRET,
-        allowed_updates: ['message', 'callback_query', 'my_chat_member'],
+        allowed_updates: ['message', 'my_chat_member'],
       },
     });
   });

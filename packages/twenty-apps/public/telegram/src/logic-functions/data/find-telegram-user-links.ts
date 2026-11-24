@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_USER_LINKS_PAGE_SIZE } from 'src/logic-functions/constants/telegram-user-links-page-size';
 import { type TelegramUserLink } from 'src/logic-functions/types/telegram-user-link.type';
@@ -26,7 +27,7 @@ export const findTelegramUserLinks = async ({
         __args: {
           filter: Object.fromEntries(
             Object.entries(filter)
-              .filter(([, value]) => isNonEmptyString(value))
+              .filter(([, value]) => isDefined(value))
               .map(([field, value]) => [field, { eq: value }]),
           ),
           first: TELEGRAM_USER_LINKS_PAGE_SIZE,

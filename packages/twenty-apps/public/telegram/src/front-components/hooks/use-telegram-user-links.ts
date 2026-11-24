@@ -4,9 +4,8 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type TelegramUserLinkRecord } from 'src/front-components/types/telegram-user-link-record.type';
 import { fetchCurrentWorkspaceMemberId } from 'src/front-components/utils/fetch-current-workspace-member-id';
+import { TELEGRAM_USER_LINKS_PAGE_SIZE } from 'src/logic-functions/constants/telegram-user-links-page-size';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
-
-const TELEGRAM_USER_LINKS_PAGE_SIZE = 200;
 
 type TelegramUserLinksResponse = {
   data?: {

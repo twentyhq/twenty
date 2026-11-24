@@ -53,4 +53,22 @@ describe('findTelegramUserLinks', () => {
       'cursor-1',
     );
   });
+
+  it('keeps an empty filter value instead of matching every link', async () => {
+    const query = vi.fn().mockResolvedValue({
+      telegramUserLinks: {
+        edges: [],
+        pageInfo: { hasNextPage: false, endCursor: null },
+      },
+    });
+
+    await findTelegramUserLinks({
+      client: { query },
+      filter: { telegramUserId: '' },
+    });
+
+    expect(query.mock.calls[0][0].telegramUserLinks.__args.filter).toEqual({
+      telegramUserId: { eq: '' },
+    });
+  });
 });

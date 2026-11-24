@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TELEGRAM_API_BASE_URL } from 'src/logic-functions/constants/telegram-api-base-url';
 import { TELEGRAM_API_REQUEST_TIMEOUT_MS } from 'src/logic-functions/constants/telegram-api-request-timeout-ms';
@@ -41,7 +42,7 @@ export const callTelegramApi = async <TResult>({
   const body = (await response.json().catch(() => undefined)) as
     TelegramApiResponseBody<TResult> | undefined;
 
-  if (body?.ok !== true || body.result === undefined) {
+  if (body?.ok !== true || !isDefined(body.result)) {
     throw new TelegramApiError({
       method,
       errorCode: body?.error_code ?? response.status,

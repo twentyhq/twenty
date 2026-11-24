@@ -12,16 +12,15 @@ export const telegramUninstallHandler = async (): Promise<{
   const links = await findTelegramUserLinks({
     client: new CoreApiClient({ runAs: 'application' }),
   });
-  let releasedClaimCount = 0;
+  const claimedTelegramUserIds = links
+    .map((link) => link.telegramUserId)
+    .filter(isDefined);
 
-  for (const link of links) {
-    if (isDefined(link.telegramUserId)) {
-      await releaseTelegramUserClaim(link.telegramUserId);
-      releasedClaimCount += 1;
-    }
+  for (const telegramUserId of claimedTelegramUserIds) {
+    await releaseTelegramUserClaim(telegramUserId);
   }
 
-  return { releasedClaimCount };
+  return { releasedClaimCount: claimedTelegramUserIds.length };
 };
 
 export default defineUninstallLogicFunction({
