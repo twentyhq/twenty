@@ -16,7 +16,11 @@ type ValidationRuleIdentifierPathError = {
 };
 
 type ResolveValidationRuleIdentifierPathResult =
-  | { isResolved: true; bindings: ValidationRuleBindings }
+  | {
+      isResolved: true;
+      bindings: ValidationRuleBindings;
+      toManyRelationName?: string;
+    }
   | ({ isResolved: false } & ValidationRuleIdentifierPathError);
 
 const resolveSubfieldSegments = ({
@@ -125,9 +129,11 @@ const resolvePreviousValuePath = ({
 export const resolveValidationRuleIdentifierPath = ({
   path,
   fields,
+  allowToManyRelations = false,
 }: {
   path: string;
   fields: ValidationRuleFieldDescriptor[];
+  allowToManyRelations?: boolean;
 }): ResolveValidationRuleIdentifierPathResult => {
   const [rootSegment, ...memberSegments] = path.split('.');
 
@@ -175,11 +181,15 @@ export const resolveValidationRuleIdentifierPath = ({
       : { isResolved: false, ...subfieldError };
   }
 
-  if (
-    rootField.type === FieldMetadataType.MORPH_RELATION ||
-    rootField.relationType !== RelationType.MANY_TO_ONE ||
-    !isDefined(rootField.relationTargetFields)
-  ) {
+  const isToManyRelation =
+    rootField.type === FieldMetadataType.RELATION &&
+    rootField.relationType === RelationType.ONE_TO_MANY;
+  const isReadableRelation =
+    rootField.type === FieldMetadataType.RELATION &&
+    (rootField.relationType === RelationType.MANY_TO_ONE ||
+      (allowToManyRelations && isToManyRelation));
+
+  if (!isReadableRelation || !isDefined(rootField.relationTargetFields)) {
     return {
       isResolved: false,
       errorMessage: `"${rootSegment}" is not a to-one relation`,
@@ -188,12 +198,14 @@ export const resolveValidationRuleIdentifierPath = ({
     };
   }
 
+  const toManyRelationName = isToManyRelation ? rootSegment : undefined;
   const [targetFieldSegment, ...targetSubfieldSegments] = memberSegments;
 
   if (!isDefined(targetFieldSegment)) {
     return {
       isResolved: true,
       bindings: { [rootSegment]: rootField.universalIdentifier },
+      toManyRelationName,
     };
   }
 
@@ -239,6 +251,7 @@ export const resolveValidationRuleIdentifierPath = ({
           [`${rootSegment}.${targetFieldSegment}`]:
             targetField.universalIdentifier,
         },
+        toManyRelationName,
       }
     : { isResolved: false, ...subfieldError };
 };

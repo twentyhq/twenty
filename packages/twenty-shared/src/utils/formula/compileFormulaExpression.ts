@@ -12,7 +12,11 @@ export const compileFormulaExpression = ({
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
 }): ValidationRuleCompilationResult => {
-  const compilation = compileExpression({ expression, fields });
+  const compilation = compileExpression({
+    expression,
+    fields,
+    allowAggregates: true,
+  });
 
   if (!compilation.isValid) {
     return compilation;

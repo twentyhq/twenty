@@ -4,18 +4,22 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { findExpressionAggregationError } from '@/utils/expression/findExpressionAggregationError';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const compileExpression = ({
   expression,
   fields,
+  allowAggregates = false,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
+  allowAggregates?: boolean;
 }): ValidationRuleCompilationResult => {
   if (expression.trim().length === 0) {
     return {
@@ -78,9 +82,14 @@ export const compileExpression = ({
   const identifierPaths = parsedExpression.variables({ withMembers: true });
 
   let bindings: ValidationRuleBindings = {};
+  const toManyRelationNameByPath = new Map<string, string>();
 
   for (const path of identifierPaths) {
-    const resolution = resolveValidationRuleIdentifierPath({ path, fields });
+    const resolution = resolveValidationRuleIdentifierPath({
+      path,
+      fields,
+      allowToManyRelations: allowAggregates,
+    });
 
     if (!resolution.isResolved) {
       return {
@@ -92,6 +101,20 @@ export const compileExpression = ({
     }
 
     bindings = { ...bindings, ...resolution.bindings };
+
+    if (isDefined(resolution.toManyRelationName)) {
+      toManyRelationNameByPath.set(path, resolution.toManyRelationName);
+    }
+  }
+
+  const aggregationError = findExpressionAggregationError({
+    instructions: parsedExpression.tokens,
+    toManyRelationNameByPath,
+    allowAggregates,
+  });
+
+  if (isDefined(aggregationError)) {
+    return { isValid: false, ...aggregationError };
   }
 
   return { isValid: true, bindings };

@@ -15,6 +15,7 @@ export const getValidationRuleErrorMessage = ({
   errorMessage: string;
 }): string => {
   const fieldName = errorParams?.fieldName ?? '';
+  const functionName = errorParams?.functionName ?? '';
   const maxLength = errorParams?.maxLength ?? 0;
   const path = errorParams?.path ?? '';
   const relationFieldName = errorParams?.relationFieldName ?? '';
@@ -52,6 +53,16 @@ export const getValidationRuleErrorMessage = ({
       return t`"${path}" reads a relation, but previous values only cover this record's own fields`;
     case 'PREVIOUS_VALUE_IN_FORMULA':
       return t`"${path}" reads a previous value, which a formula cannot use`;
+    case 'AGGREGATE_NOT_ALLOWED':
+      return t`${functionName}() reads related records, which only a formula can do`;
+    case 'INVALID_AGGREGATE_ARGUMENT':
+      return relationFieldName.length > 0
+        ? t`The condition of ${functionName}() cannot read "${relationFieldName}"`
+        : t`${functionName}() needs a relation, for example count(tasks) or sum(deals.amount)`;
+    case 'NESTED_AGGREGATE':
+      return t`${functionName}() cannot contain another aggregate`;
+    case 'TO_MANY_RELATION_OUTSIDE_AGGREGATE':
+      return t`"${fieldName}" has many records: read it inside count(), sum(), avg(), min() or max()`;
     case 'NON_BOOLEAN_RESULT':
       return t`Expression did not return true or false`;
     case 'INCOMPLETE_EXPRESSION':
