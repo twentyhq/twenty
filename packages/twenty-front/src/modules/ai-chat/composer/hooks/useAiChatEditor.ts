@@ -82,7 +82,6 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
             return false;
           }
 
-          // Touch keyboards have no Shift+Enter, so return inserts the same line break and the send button sends
           if (window.matchMedia(TOUCH_DEVICE_MEDIA_QUERY).matches) {
             view.dispatch(
               view.state.tr
