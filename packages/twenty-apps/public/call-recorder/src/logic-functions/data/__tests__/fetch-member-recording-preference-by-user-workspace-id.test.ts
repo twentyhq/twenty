@@ -45,6 +45,14 @@ describe('fetchMemberRecordingPreferenceByUserWorkspaceId', () => {
           userWorkspaceId: 'user-workspace-2',
           value: 'NONE',
         }),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-3',
+          value: 'INTERNAL',
+        }),
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-4',
+          value: 'EXTERNAL',
+        }),
       ],
     });
 
@@ -52,6 +60,8 @@ describe('fetchMemberRecordingPreferenceByUserWorkspaceId', () => {
       new Map([
         ['user-workspace-1', 'ALL'],
         ['user-workspace-2', 'NONE'],
+        ['user-workspace-3', 'INTERNAL'],
+        ['user-workspace-4', 'EXTERNAL'],
       ]),
     );
   });
