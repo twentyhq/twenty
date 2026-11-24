@@ -41,7 +41,7 @@ export const NavigationMenuAiChatRecentsSection = ({
   const recentThreads = filterInboxRecentThreads({
     threads,
     favoriteThreads: inboxFavoriteThreads,
-    isDirectMessageEnabled: false,
+    shouldExcludeDirectMessages: false,
   });
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
