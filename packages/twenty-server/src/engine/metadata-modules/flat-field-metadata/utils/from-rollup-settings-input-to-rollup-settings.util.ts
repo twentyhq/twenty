@@ -58,7 +58,7 @@ export const fromRollupSettingsInputToRollupSettings = ({
     result: {
       ...settings,
       aggregatedFieldMetadataId,
-      // The validator sees the aggregated field and reports an operation it cannot take
+      // Placeholder for an operation the field cannot take; the validator refuses it with a precise error
       resultType: resultType ?? FieldMetadataType.NUMBER,
     },
   };
