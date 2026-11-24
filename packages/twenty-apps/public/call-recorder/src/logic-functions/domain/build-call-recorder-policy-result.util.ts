@@ -1,7 +1,8 @@
-import { isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
 import { UNREADABLE_MEMBER_RECORDING_PREFERENCE } from 'src/logic-functions/constants/unreadable-member-recording-preference';
+import { type CalendarChannelOwner } from 'src/logic-functions/types/calendar-channel-owner.type';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
 import { type MemberRecordingPreference } from 'src/logic-functions/types/member-recording-preference.type';
@@ -11,12 +12,12 @@ import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-cal
 
 export const buildCallRecorderPolicyResult = ({
   calendarEvent,
-  ownerUserWorkspaceIdByCalendarChannelId,
+  calendarChannelOwnerByCalendarChannelId,
   memberRecordingPreferenceByUserWorkspaceId,
   now,
 }: {
   calendarEvent: CallRecorderPolicyCalendarEventInput;
-  ownerUserWorkspaceIdByCalendarChannelId: Map<string, string>;
+  calendarChannelOwnerByCalendarChannelId: Map<string, CalendarChannelOwner>;
   memberRecordingPreferenceByUserWorkspaceId: Map<
     string,
     MemberRecordingPreference
@@ -40,13 +41,13 @@ export const buildCallRecorderPolicyResult = ({
       callRecorderPreference,
       ownerRecordingPreferences: calendarEvent.calendarChannelIds
         .map((calendarChannelId) =>
-          ownerUserWorkspaceIdByCalendarChannelId.get(calendarChannelId),
+          calendarChannelOwnerByCalendarChannelId.get(calendarChannelId),
         )
-        .filter(isString)
+        .filter(isDefined)
         .map(
-          (ownerUserWorkspaceId) =>
+          (calendarChannelOwner) =>
             memberRecordingPreferenceByUserWorkspaceId.get(
-              ownerUserWorkspaceId,
+              calendarChannelOwner.userWorkspaceId,
             ) ?? UNREADABLE_MEMBER_RECORDING_PREFERENCE,
         ),
       isCanceled: calendarEvent.isCanceled,

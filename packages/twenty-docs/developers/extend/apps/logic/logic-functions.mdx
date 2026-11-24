@@ -931,6 +931,20 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
+**Work addresses.** `isWorkEmail(address)` from `twenty-sdk/email` tells a company address from a personal one, with the same list of free and disposable email providers Twenty itself uses. It has its own entry because that list weighs about 240 KB, so only the functions that import it bundle it:
+
+```ts
+import { isWorkEmail } from 'twenty-sdk/email';
+
+isWorkEmail('ada@acme.com'); // true
+isWorkEmail('ada@gmail.com'); // false
+```
+
+The domain is compared as written, so lowercase the address first.
+
+</Note>
+
+<Note>
   **Install hooks** — pre-install, post-install, and uninstall handlers — share
   this runtime but are declared with their own define functions and don't take
   trigger settings. See [Install
