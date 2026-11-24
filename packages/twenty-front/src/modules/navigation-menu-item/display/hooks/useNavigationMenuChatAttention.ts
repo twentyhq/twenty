@@ -1,8 +1,5 @@
-import { isBuiltInSectionKey } from 'twenty-shared/utils';
-
 import { useInboxChatAttention } from '@/inbox/hooks/useInboxChatAttention';
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
-import { AI_CHAT_BUILT_IN_SECTION_KEYS } from '@/navigation-menu-item/common/constants/AiChatBuiltInSectionKeys';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
 export const useNavigationMenuChatAttention = () => {
@@ -10,12 +7,9 @@ export const useNavigationMenuChatAttention = () => {
   const { unreadOpenThreadCount } = useInboxOpenThreadsSummary();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
 
-  const tabIdsWithChatSections = new Set(
+  const tabIdsWithInboxSection = new Set(
     workspaceNavigationMenuItems.flatMap((item) =>
-      isBuiltInSectionKey(item.builtInSectionKey) &&
-      AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
-        ? [item.parentId ?? null]
-        : [],
+      item.builtInSectionKey === 'aiChatInbox' ? [item.parentId ?? null] : [],
     ),
   );
 
@@ -23,6 +17,6 @@ export const useNavigationMenuChatAttention = () => {
     chatAttention,
     unreadOpenThreadCount,
     getTabChatAttention: (tabId: string | null) =>
-      tabIdsWithChatSections.has(tabId) ? chatAttention : null,
+      tabIdsWithInboxSection.has(tabId) ? chatAttention : null,
   };
 };

@@ -63,9 +63,14 @@ describe('useNavigationMenuChatAttention', () => {
           builtInSectionKey: 'aiChatChannels',
         }),
         buildSection({
-          id: 'favorite-chats-section',
+          id: 'home-inbox-section',
           parentId: null,
-          builtInSectionKey: 'aiChatFavorites',
+          builtInSectionKey: 'aiChatInbox',
+        }),
+        buildSection({
+          id: 'tab-inbox-section',
+          parentId: 'inbox-tab',
+          builtInSectionKey: 'aiChatInbox',
         }),
         buildSection({
           id: 'sales-section',
@@ -78,13 +83,14 @@ describe('useNavigationMenuChatAttention', () => {
     });
   });
 
-  it('flags tabs holding a chat section while a chat needs input', () => {
+  it('flags only tabs holding the Inbox section while a chat needs input', () => {
     mockSummary({ needsInputThreadCount: 1, hasUnreadMentionThread: true });
 
     const { result } = renderHook(() => useNavigationMenuChatAttention());
 
     expect(result.current.chatAttention).toBe('needs-input');
-    expect(result.current.getTabChatAttention('chats-tab')).toBe('needs-input');
+    expect(result.current.getTabChatAttention('inbox-tab')).toBe('needs-input');
+    expect(result.current.getTabChatAttention('chats-tab')).toBeNull();
     expect(result.current.getTabChatAttention('sales-tab')).toBeNull();
     expect(result.current.getTabChatAttention(null)).toBe('needs-input');
   });
@@ -94,7 +100,7 @@ describe('useNavigationMenuChatAttention', () => {
 
     const { result } = renderHook(() => useNavigationMenuChatAttention());
 
-    expect(result.current.getTabChatAttention('chats-tab')).toBe('unread');
+    expect(result.current.getTabChatAttention('inbox-tab')).toBe('unread');
   });
 
   it('flags an unread assignment as unread', () => {
