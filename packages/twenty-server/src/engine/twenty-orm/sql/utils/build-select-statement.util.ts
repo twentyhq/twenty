@@ -138,7 +138,10 @@ const renderTableSource = ({
   tableShape,
   tableSourceByObjectMetadataId,
 }: {
-  tableShape: WorkspaceTableShape;
+  tableShape: Pick<
+    WorkspaceTableShape,
+    'objectMetadataId' | 'schemaName' | 'tableName'
+  >;
   tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
 }): string =>
   tableSourceByObjectMetadataId?.[tableShape.objectMetadataId] ??
