@@ -3,6 +3,7 @@ import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type RollupAggregateOperation } from '@/types/RollupAggregateOperation';
 import { type RollupResultFieldMetadataType } from '@/types/RollupResultFieldMetadataType';
 import { type FieldMetadataValueType } from '@/utils/fieldMetadata/getFieldMetadataValueType';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRollupResultType = ({
   aggregateOperation,
@@ -12,7 +13,9 @@ export const computeRollupResultType = ({
   aggregatedFieldValueType: FieldMetadataValueType | null;
 }): RollupResultFieldMetadataType | null => {
   if (aggregateOperation === AggregateOperations.COUNT) {
-    return aggregatedFieldValueType === null ? FieldMetadataType.NUMBER : null;
+    return isDefined(aggregatedFieldValueType)
+      ? null
+      : FieldMetadataType.NUMBER;
   }
 
   if (aggregatedFieldValueType === FieldMetadataType.NUMBER) {
