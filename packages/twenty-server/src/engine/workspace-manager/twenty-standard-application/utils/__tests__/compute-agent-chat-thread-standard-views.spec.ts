@@ -30,7 +30,7 @@ describe('AgentChatThread standard views build', () => {
       (view) =>
         view.objectMetadataUniversalIdentifier === CHAT.universalIdentifier,
     )
-    .sort((viewA, viewB) => (viewA?.position ?? 0) - (viewB?.position ?? 0));
+    .sort((viewA, viewB) => viewA.position - viewB.position);
 
   it('builds the six inbox views in tab order with their presets', () => {
     expect(
