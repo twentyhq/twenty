@@ -9,7 +9,7 @@ type FormulaSqlIntervalUnit = {
   maximumAmount: number;
 };
 
-// Larger amounts yield no date, which keeps additions far inside the range Postgres timestamps can hold
+// About 4,000 years at most, so a date of years 0001-9999 moved by any allowed amount stays after 4713 BC, the earliest timestamp Postgres holds
 const FORMULA_SQL_INTERVAL_UNITS: Partial<
   Record<string, FormulaSqlIntervalUnit>
 > = {
@@ -26,32 +26,32 @@ const FORMULA_SQL_INTERVAL_UNITS: Partial<
   HOUR: {
     intervalField: 'hours',
     multiplier: 1,
-    maximumAmount: 87_600_000,
+    maximumAmount: 35_000_000,
   },
   DAY: {
     intervalField: 'days',
     multiplier: 1,
-    maximumAmount: 3_660_000,
+    maximumAmount: 1_460_000,
   },
   WEEK: {
     intervalField: 'weeks',
     multiplier: 1,
-    maximumAmount: 520_000,
+    maximumAmount: 208_000,
   },
   MONTH: {
     intervalField: 'months',
     multiplier: 1,
-    maximumAmount: 120_000,
+    maximumAmount: 48_000,
   },
   QUARTER: {
     intervalField: 'months',
     multiplier: 3,
-    maximumAmount: 40_000,
+    maximumAmount: 16_000,
   },
   YEAR: {
     intervalField: 'years',
     multiplier: 1,
-    maximumAmount: 10_000,
+    maximumAmount: 4_000,
   },
 };
 

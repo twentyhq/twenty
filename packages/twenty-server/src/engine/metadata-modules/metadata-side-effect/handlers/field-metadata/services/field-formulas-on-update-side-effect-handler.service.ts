@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeFormulaFieldUpdatesAfterFieldRename } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-updates-after-field-rename.util';
+import { computeFormulaFieldUpdatesAfterFieldRenames } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-updates-after-field-renames.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -38,10 +38,24 @@ export class FieldFormulasOnUpdateSideEffectHandlerService extends MetadataSideE
 
     const fieldOperations =
       allFlatEntityOperationRecordByMetadataName.fieldMetadata;
+    // Every renamed field of the batch, so each handler call yields the same complete rewrite
+    const newFieldNameByUniversalIdentifier = new Map(
+      Object.values(fieldOperations?.flatEntityToUpdate ?? {})
+        .filter(isDefined)
+        .flatMap(({ universalIdentifier, name }) => {
+          const existingName =
+            relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+              universalIdentifier
+            ]?.name;
+
+          return isDefined(existingName) && existingName !== name
+            ? [[universalIdentifier, name] as const]
+            : [];
+        }),
+    );
     const flatFieldMetadataToUpdate =
-      computeFormulaFieldUpdatesAfterFieldRename({
-        renamedFieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
-        newFieldName: flatFieldMetadata.name,
+      computeFormulaFieldUpdatesAfterFieldRenames({
+        newFieldNameByUniversalIdentifier,
         existingUniversalFlatFieldMetadataByUniversalIdentifier:
           relatedFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
         pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier:
