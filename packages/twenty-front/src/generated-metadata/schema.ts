@@ -7163,6 +7163,8 @@ export type RowLevelPermissionPredicate = {
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
   workspaceMemberRelationFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFilterFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFilterValues?: Maybe<Array<Scalars['String']['output']>>;
   workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7245,6 +7247,8 @@ export type RowLevelPermissionRulePredicateInput = {
   value?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   workspaceMemberRelationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberRelationFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberRelationFilterValues?: InputMaybe<Array<Scalars['String']['input']>>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
