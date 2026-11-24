@@ -12,10 +12,13 @@ import {
   computeTwentyStandardApplicationAllFlatEntityMaps,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
-const mapFlatEntities = <T extends SyncableFlatEntity>(
-  flatEntityMaps: FlatEntityMaps<T>,
-  mapFlatEntity: (flatEntity: T) => T,
-): FlatEntityMaps<T> => ({
+const mapFlatEntities = <T extends SyncableFlatEntity>({
+  flatEntityMaps,
+  mapFlatEntity,
+}: {
+  flatEntityMaps: FlatEntityMaps<T>;
+  mapFlatEntity: (flatEntity: T) => T;
+}): FlatEntityMaps<T> => ({
   ...flatEntityMaps,
   byUniversalIdentifier: Object.fromEntries(
     Object.entries(flatEntityMaps.byUniversalIdentifier).map(
@@ -70,29 +73,29 @@ export const computeTwentyStandardApplicationAllFlatEntityMapsWithLegacyAgentCha
       idByUniversalIdentifierByMetadataName,
       allFlatEntityMaps: {
         ...allFlatEntityMaps,
-        flatObjectMetadataMaps: mapFlatEntities(
-          allFlatEntityMaps.flatObjectMetadataMaps,
-          (flatObjectMetadata) => ({
+        flatObjectMetadataMaps: mapFlatEntities({
+          flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+          mapFlatEntity: (flatObjectMetadata) => ({
             ...flatObjectMetadata,
             ...LEGACY_AGENT_CHAT_OBJECT_NAMES_BY_UNIVERSAL_IDENTIFIER[
               flatObjectMetadata.universalIdentifier
             ],
           }),
-        ),
-        flatFieldMetadataMaps: mapFlatEntities(
-          allFlatEntityMaps.flatFieldMetadataMaps,
-          applyLegacyRelationFieldName,
-        ),
-        flatIndexMaps: mapFlatEntities(
-          allFlatEntityMaps.flatIndexMaps,
-          (flatIndexMetadata) => ({
+        }),
+        flatFieldMetadataMaps: mapFlatEntities({
+          flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+          mapFlatEntity: applyLegacyRelationFieldName,
+        }),
+        flatIndexMaps: mapFlatEntities({
+          flatEntityMaps: allFlatEntityMaps.flatIndexMaps,
+          mapFlatEntity: (flatIndexMetadata) => ({
             ...flatIndexMetadata,
             name:
               LEGACY_AGENT_CHAT_INDEX_NAMES_BY_UNIVERSAL_IDENTIFIER[
                 flatIndexMetadata.universalIdentifier
               ] ?? flatIndexMetadata.name,
           }),
-        ),
+        }),
       },
     };
   };
