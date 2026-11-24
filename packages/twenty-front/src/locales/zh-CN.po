@@ -111,10 +111,20 @@ msgstr "“{path}”的层级深度超出字段“{fieldName}”允许的范围"
 msgid "\"{path}\" goes more than one relation deep"
 msgstr "“{path}”的关系层级超过一层"
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr ""
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
 msgstr "“{path}”不是一个值"
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
+msgstr ""
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -570,6 +580,12 @@ msgstr "没有电子邮件地址的 {0} 位"
 msgid "{0} workspace members"
 msgstr "{0} 位工作区成员"
 
+#. js-lingui-id: vZ4SMq
+#. placeholder {0}: entry.label
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+msgid "{0}, back"
+msgstr "{0}，返回"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -876,6 +892,16 @@ msgstr "{formattedRunCount} 次运行中有 {formattedFailedRunCount} 次失败"
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "已使用 {formattedPercentage}%，{formattedConversationSize} / {formattedContextWindow} 个令牌"
+
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -2684,6 +2710,11 @@ msgstr "添加排序"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "添加 SSO 身份提供商"
+
+#. js-lingui-id: iC/d3X
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Add summary column"
+msgstr "添加汇总列"
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -5254,6 +5285,11 @@ msgstr "行为"
 msgid "Behind"
 msgstr "落后"
 
+#. js-lingui-id: +68Gui
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Belongs to"
+msgstr "属于"
+
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Belongs to one"
@@ -5577,6 +5613,11 @@ msgstr "构建校验和"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "创建多对多关系"
+
+#. js-lingui-id: Hz2eHF
+#: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
+msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
+msgstr "在此视图中根据 {relationLabel} 构建。无法排序或筛选。"
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -8546,6 +8587,11 @@ msgstr "计算为是"
 msgid "Count unique values"
 msgstr "计算唯一值"
 
+#. js-lingui-id: wGiHe7
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Count, total, list"
+msgstr "计数、总计、列表"
+
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
@@ -10324,6 +10370,11 @@ msgstr "删除技能"
 msgid "Delete some {objectLabelPlural} · {throughRules}"
 msgstr "删除部分 {objectLabelPlural} · {throughRules}"
 
+#. js-lingui-id: x6UH+z
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Delete summary column"
+msgstr "删除汇总列"
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
@@ -10514,7 +10565,7 @@ msgstr "降序"
 #. js-lingui-id: 8Y0+ya
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Describe a {objectLabel} and what changed on it"
-msgstr ""
+msgstr "描述一个 {objectLabel} 及其发生的变化"
 
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
@@ -10933,7 +10984,7 @@ msgstr "您确定要退订吗？"
 #. js-lingui-id: oc+pOk
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Do your scheduled task now"
-msgstr ""
+msgstr "立即执行你的计划任务"
 
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -11414,7 +11465,6 @@ msgid "Edit all records"
 msgstr "编辑所有记录"
 
 #. js-lingui-id: QM4RhQ
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
 msgstr "编辑列"
@@ -11570,6 +11620,11 @@ msgstr "编辑共享标签"
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
 msgstr "通过 {throughRules} 编辑部分 {objectLabelPlural}"
+
+#. js-lingui-id: 0Ou9Le
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit summary column…"
+msgstr "编辑摘要列……"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12318,6 +12373,7 @@ msgid "Enter JSON array"
 msgstr "输入 JSON 数组"
 
 #. js-lingui-id: uV9utd
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
 msgstr ""
@@ -14103,6 +14159,7 @@ msgstr "字段级权限"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/page-layout/hooks/useCreatePendingFieldsWidgetViews.ts
 #: src/modules/page-layout/utils/createDefaultFieldsWidget.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14373,11 +14430,6 @@ msgstr "筛选时间线"
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
 msgstr "筛选工作流"
-
-#. js-lingui-id: 03Qqf9
-#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
-msgid "Filtered"
-msgstr "已过滤"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -14675,6 +14727,11 @@ msgstr "前成员"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "表单用于手动触发"
+
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr ""
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -15445,6 +15502,7 @@ msgid "Has attachments"
 msgstr "有附件"
 
 #. js-lingui-id: MvwlmR
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
 msgstr "一对多"
@@ -16352,6 +16410,7 @@ msgid "Inactive Skill Options"
 msgstr "停用技能选项"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -17906,6 +17965,11 @@ msgstr "允许用户限制和共享单条记录。"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
 msgstr "允许记录级权限规则比较关联记录的字段。"
+
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
+msgstr ""
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -19803,6 +19867,11 @@ msgstr "跨团队和代理推进工作进展"
 msgid "Moved to trash"
 msgstr "已移至回收站"
 
+#. js-lingui-id: B9k2wp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Moves the end of a running trial to this date. Adding one again replaces the current extension."
+msgstr "将正在进行的试用结束日期延至此日期。再次添加将替换当前的延期。"
+
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "ms"
@@ -21326,6 +21395,7 @@ msgstr "服务器未响应"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
@@ -26587,6 +26657,8 @@ msgstr "SDK"
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -29551,6 +29623,11 @@ msgstr "总结此视图"
 msgid "Summarize what changed on Acme this week"
 msgstr "总结 Acme 本周的变更"
 
+#. js-lingui-id: dXoieq
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Summary"
+msgstr "摘要"
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -30483,6 +30560,11 @@ msgstr "转录内容在导入前已过期。"
 msgid "The transcript is being prepared…"
 msgstr "正在准备转录内容…"
 
+#. js-lingui-id: nQjBTv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one."
+msgstr "试用现已结束：有银行卡的工作区将立即收费，其他工作区将被暂停，直到其添加银行卡。"
+
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
@@ -30704,12 +30786,12 @@ msgstr "此代理来自应用，因此无法在此处更改其工具。"
 #. js-lingui-id: h1DyDq
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
-msgstr ""
+msgstr "该代理通常会在 {details} 时运行，不带消息。请让它立即执行其计划任务。"
 
 #. js-lingui-id: qC+xo7
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
-msgstr ""
+msgstr "该代理通常会针对该记录，在 {details} 时以“{label}”启动。描述一个记录，看看它如何处理。"
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -30834,6 +30916,11 @@ msgstr "无法打开此聊天。请尝试再次选择它。"
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
 msgstr "此聊天已不可用。"
+
+#. js-lingui-id: GsXQeq
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
+msgstr "此列最多可显示 {QUERY_MAX_RECORDS_FROM_RELATION} 条记录。"
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -31699,7 +31786,6 @@ msgstr "翻译"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "分类"
 

@@ -111,10 +111,20 @@ msgstr "\"{path}\" arriba a més profunditat de la que permet el camp \"{fieldNa
 msgid "\"{path}\" goes more than one relation deep"
 msgstr "\"{path}\" aprofundeix més d'una relació"
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr ""
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\" no és un valor"
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
+msgstr ""
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -570,6 +580,12 @@ msgstr "{0} sense correu electrònic"
 msgid "{0} workspace members"
 msgstr "{0} membres de l'espai de treball"
 
+#. js-lingui-id: vZ4SMq
+#. placeholder {0}: entry.label
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+msgid "{0}, back"
+msgstr "{0}, enrere"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -876,6 +892,16 @@ msgstr "Han fallat {formattedFailedRunCount} de {formattedRunCount} execucions"
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "{formattedPercentage}% utilitzat, {formattedConversationSize} de {formattedContextWindow} testimonis"
+
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -2684,6 +2710,11 @@ msgstr "Afegeix ordenació"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Afegeix un proveïdor d'identitats SSO"
+
+#. js-lingui-id: iC/d3X
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Add summary column"
+msgstr "Afegeix una columna de resum"
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -5254,6 +5285,11 @@ msgstr "Comportament"
 msgid "Behind"
 msgstr "Desactualitzat"
 
+#. js-lingui-id: +68Gui
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Belongs to"
+msgstr "Pertany a"
+
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Belongs to one"
@@ -5577,6 +5613,11 @@ msgstr "Suma de verificació de la compilació"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Crea relacions de molts a molts"
+
+#. js-lingui-id: Hz2eHF
+#: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
+msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
+msgstr "Generada en aquesta vista a partir de {relationLabel}. No es pot ordenar ni filtrar."
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -8546,6 +8587,11 @@ msgstr "Compta cert"
 msgid "Count unique values"
 msgstr "Compta valors únics"
 
+#. js-lingui-id: wGiHe7
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Count, total, list"
+msgstr "Recompte, total, llista"
+
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
@@ -10324,6 +10370,11 @@ msgstr "Suprimeix l'habilitat"
 msgid "Delete some {objectLabelPlural} · {throughRules}"
 msgstr "Suprimeix alguns {objectLabelPlural} · {throughRules}"
 
+#. js-lingui-id: x6UH+z
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Delete summary column"
+msgstr "Suprimeix la columna de resum"
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
@@ -10514,7 +10565,7 @@ msgstr "Descendent"
 #. js-lingui-id: 8Y0+ya
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Describe a {objectLabel} and what changed on it"
-msgstr ""
+msgstr "Descriu un {objectLabel} i què hi ha canviat"
 
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
@@ -10933,7 +10984,7 @@ msgstr "Vols donar-te de baixa?"
 #. js-lingui-id: oc+pOk
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Do your scheduled task now"
-msgstr ""
+msgstr "Fes ara la teva tasca programada"
 
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -11414,7 +11465,6 @@ msgid "Edit all records"
 msgstr "Edita tots els registres"
 
 #. js-lingui-id: QM4RhQ
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
 msgstr "Edita la columna"
@@ -11570,6 +11620,11 @@ msgstr "Edita les etiquetes compartides"
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
 msgstr "Edita alguns {objectLabelPlural} · {throughRules}"
+
+#. js-lingui-id: 0Ou9Le
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit summary column…"
+msgstr "Edita la columna de resum…"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12318,6 +12373,7 @@ msgid "Enter JSON array"
 msgstr "Introdueix una matriu JSON"
 
 #. js-lingui-id: uV9utd
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
 msgstr ""
@@ -14103,6 +14159,7 @@ msgstr "Permisos a nivell de camp"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/page-layout/hooks/useCreatePendingFieldsWidgetViews.ts
 #: src/modules/page-layout/utils/createDefaultFieldsWidget.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14373,11 +14430,6 @@ msgstr "Filtra la línia de temps"
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
 msgstr "Filtra els fluxos de treball"
-
-#. js-lingui-id: 03Qqf9
-#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
-msgid "Filtered"
-msgstr "Filtrat"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -14675,6 +14727,11 @@ msgstr "Antic membre"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "Els formularis són per a activadors manuals"
+
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr ""
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -15445,6 +15502,7 @@ msgid "Has attachments"
 msgstr "Té adjunts"
 
 #. js-lingui-id: MvwlmR
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
 msgstr "En té molts"
@@ -16352,6 +16410,7 @@ msgid "Inactive Skill Options"
 msgstr "Opcions de l'habilitat inactiva"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -17906,6 +17965,11 @@ msgstr "Permet que les persones restringeixin i comparteixin registres individua
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
 msgstr "Permet que les regles de permisos a nivell de registre comparin un camp d'un registre relacionat."
+
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
+msgstr ""
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -19803,6 +19867,11 @@ msgstr "Fes avançar la feina entre equips i agents"
 msgid "Moved to trash"
 msgstr "Mogut a la paperera"
 
+#. js-lingui-id: B9k2wp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Moves the end of a running trial to this date. Adding one again replaces the current extension."
+msgstr "Mou el final d'un període de prova en curs a aquesta data. Si n'afegiu un altre, se substitueix l'extensió actual."
+
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "ms"
@@ -21326,6 +21395,7 @@ msgstr "Cap resposta del servidor"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
@@ -26587,6 +26657,8 @@ msgstr "SDK"
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -29551,6 +29623,11 @@ msgstr "Resumeix aquesta vista"
 msgid "Summarize what changed on Acme this week"
 msgstr "Resumeix què ha canviat a Acme aquesta setmana"
 
+#. js-lingui-id: dXoieq
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Summary"
+msgstr "Resum"
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -30483,6 +30560,11 @@ msgstr "La transcripció ha caducat abans que es pogués importar."
 msgid "The transcript is being prepared…"
 msgstr "S'està preparant la transcripció…"
 
+#. js-lingui-id: nQjBTv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one."
+msgstr "El període de prova acaba ara: els espais de treball amb una targeta es cobren immediatament; els altres se suspenen fins que n'afegeixin una."
+
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
@@ -30704,12 +30786,12 @@ msgstr "Aquest agent prové d'una aplicació, per tant, les seves eines no es po
 #. js-lingui-id: h1DyDq
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
-msgstr ""
+msgstr "Aquest agent normalment s'executa {details}, sense cap missatge. Demana-li que faci ara la seva tasca programada."
 
 #. js-lingui-id: qC+xo7
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
-msgstr ""
+msgstr "Aquest agent normalment s'inicia a «{label}» per a {details}, amb aquest registre. Descriu-ne un per veure com el gestiona."
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -30834,6 +30916,11 @@ msgstr "No s'ha pogut obrir aquest xat. Proveu de seleccionar-lo de nou."
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
 msgstr "Aquest xat ja no està disponible."
+
+#. js-lingui-id: GsXQeq
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
+msgstr "Aquesta columna pot mostrar fins a {QUERY_MAX_RECORDS_FROM_RELATION} registres."
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -31699,7 +31786,6 @@ msgstr "Traduccions"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Triatge"
 

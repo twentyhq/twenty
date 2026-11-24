@@ -111,10 +111,20 @@ msgstr "Το \"{path}\" υπερβαίνει το βάθος που επιτρέ
 msgid "\"{path}\" goes more than one relation deep"
 msgstr "Το \"{path}\" υπερβαίνει το βάθος μίας σχέσης"
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr ""
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
 msgstr "Το \"{path}\" δεν είναι τιμή"
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
+msgstr ""
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -570,6 +580,12 @@ msgstr "{0} χωρίς διεύθυνση email"
 msgid "{0} workspace members"
 msgstr "{0} μέλη χώρου εργασίας"
 
+#. js-lingui-id: vZ4SMq
+#. placeholder {0}: entry.label
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+msgid "{0}, back"
+msgstr "{0}, πίσω"
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -876,6 +892,16 @@ msgstr "{formattedFailedRunCount} από {formattedRunCount} εκτελέσει�
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "Χρησιμοποιήθηκε {formattedPercentage}%, {formattedConversationSize} από {formattedContextWindow} tokens"
+
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -2684,6 +2710,11 @@ msgstr "Προσθήκη ταξινόμησης"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Προσθήκη παρόχου ταυτότητας SSO"
+
+#. js-lingui-id: iC/d3X
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Add summary column"
+msgstr "Προσθήκη στήλης σύνοψης"
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -5254,6 +5285,11 @@ msgstr "Συμπεριφορά"
 msgid "Behind"
 msgstr "Σε παλαιότερη έκδοση"
 
+#. js-lingui-id: +68Gui
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Belongs to"
+msgstr "Ανήκει σε"
+
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Belongs to one"
@@ -5577,6 +5613,11 @@ msgstr "Άθροισμα ελέγχου build"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Δημιουργήστε σχέσεις πολλά-προς-πολλά"
+
+#. js-lingui-id: Hz2eHF
+#: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
+msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
+msgstr "Ενσωματωμένο σε αυτή την προβολή από το {relationLabel}. Δεν μπορεί να ταξινομηθεί ή να φιλτραριστεί."
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -8546,6 +8587,11 @@ msgstr "Καταμέτρηση αληθούς"
 msgid "Count unique values"
 msgstr "Καταμέτρηση μοναδικών τιμών"
 
+#. js-lingui-id: wGiHe7
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Count, total, list"
+msgstr "Πλήθος, σύνολο, λίστα"
+
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
@@ -10324,6 +10370,11 @@ msgstr "Διαγραφή δεξιότητας"
 msgid "Delete some {objectLabelPlural} · {throughRules}"
 msgstr "Διαγραφή ορισμένων {objectLabelPlural} · {throughRules}"
 
+#. js-lingui-id: x6UH+z
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Delete summary column"
+msgstr "Διαγραφή στήλης σύνοψης"
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
@@ -10514,7 +10565,7 @@ msgstr "Φθίνουσα"
 #. js-lingui-id: 8Y0+ya
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Describe a {objectLabel} and what changed on it"
-msgstr ""
+msgstr "Περιγράψτε ένα {objectLabel} και τι άλλαξε σε αυτό"
 
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
@@ -10933,7 +10984,7 @@ msgstr "Θέλετε να καταργήσετε την εγγραφή σας;"
 #. js-lingui-id: oc+pOk
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "Do your scheduled task now"
-msgstr ""
+msgstr "Εκτελέστε τώρα την προγραμματισμένη εργασία σας"
 
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -11414,7 +11465,6 @@ msgid "Edit all records"
 msgstr "Επεξεργασία όλων των εγγραφών"
 
 #. js-lingui-id: QM4RhQ
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
 msgstr "Επεξεργασία στήλης"
@@ -11570,6 +11620,11 @@ msgstr "Επεξεργασία κοινόχρηστων ετικετών"
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
 msgstr "Επεξεργασία ορισμένων {objectLabelPlural} · {throughRules}"
+
+#. js-lingui-id: 0Ou9Le
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit summary column…"
+msgstr "Επεξεργασία στήλης σύνοψης…"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12318,6 +12373,7 @@ msgid "Enter JSON array"
 msgstr "Εισάγετε έναν πίνακα JSON"
 
 #. js-lingui-id: uV9utd
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
 msgstr ""
@@ -14103,6 +14159,7 @@ msgstr "Δικαιώματα Επιπέδου Πεδίου"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/page-layout/hooks/useCreatePendingFieldsWidgetViews.ts
 #: src/modules/page-layout/utils/createDefaultFieldsWidget.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14373,11 +14430,6 @@ msgstr "Φιλτράρισμα χρονοδιαγράμματος"
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
 msgstr "Φιλτράρισμα ροών εργασίας"
-
-#. js-lingui-id: 03Qqf9
-#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
-msgid "Filtered"
-msgstr "Φιλτραρισμένο"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -14675,6 +14727,11 @@ msgstr "Πρώην μέλος"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "Οι φόρμες προορίζονται για μη αυτόματα εναύσματα"
+
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr ""
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -15445,6 +15502,7 @@ msgid "Has attachments"
 msgstr "Έχει συνημμένα"
 
 #. js-lingui-id: MvwlmR
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
 msgstr "Έχει πολλά"
@@ -16352,6 +16410,7 @@ msgid "Inactive Skill Options"
 msgstr "Ανενεργές επιλογές δεξιότητας"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -17906,6 +17965,11 @@ msgstr "Επιτρέψτε στους χρήστες να περιορίζουν
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
 msgstr "Να επιτρέπεται στους κανόνες δικαιωμάτων σε επίπεδο εγγραφής να συγκρίνουν ένα πεδίο μιας σχετικής εγγραφής."
+
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
+msgstr ""
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -19803,6 +19867,11 @@ msgstr "Προωθήστε την εργασία σε ομάδες και πρά
 msgid "Moved to trash"
 msgstr "Μεταφέρθηκε στον κάδο απορριμμάτων"
 
+#. js-lingui-id: B9k2wp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Moves the end of a running trial to this date. Adding one again replaces the current extension."
+msgstr "Μετακινεί τη λήξη μιας ενεργής δοκιμαστικής περιόδου σε αυτή την ημερομηνία. Η προσθήκη νέας παράτασης αντικαθιστά την τρέχουσα παράταση."
+
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
 msgid "ms"
@@ -21326,6 +21395,7 @@ msgstr "Δεν υπήρξε απόκριση από τον διακομιστή"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
@@ -26587,6 +26657,8 @@ msgstr "SDK"
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -29551,6 +29623,11 @@ msgstr "Σύνοψη αυτής της προβολής"
 msgid "Summarize what changed on Acme this week"
 msgstr "Συνοψίστε τι άλλαξε στο Acme αυτή την εβδομάδα"
 
+#. js-lingui-id: dXoieq
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Summary"
+msgstr "Περίληψη"
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -30483,6 +30560,11 @@ msgstr "Η απομαγνητοφώνηση έληξε πριν μπορέσει
 msgid "The transcript is being prepared…"
 msgstr "Η απομαγνητοφώνηση προετοιμάζεται…"
 
+#. js-lingui-id: nQjBTv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one."
+msgstr "Η δοκιμαστική περίοδος λήγει τώρα: οι χώροι εργασίας με κάρτα χρεώνονται αμέσως, ενώ οι υπόλοιποι αναστέλλονται μέχρι να προσθέσουν μία."
+
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
@@ -30706,12 +30788,12 @@ msgstr "Αυτός ο πράκτορας προέρχεται από μια εφ
 #. js-lingui-id: h1DyDq
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
-msgstr ""
+msgstr "Αυτός ο πράκτορας εκτελείται συνήθως {details}, χωρίς μήνυμα. Ζητήστε του να εκτελέσει τώρα την προγραμματισμένη εργασία του."
 
 #. js-lingui-id: qC+xo7
 #: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
 msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
-msgstr ""
+msgstr "Αυτός ο πράκτορας ξεκινά συνήθως στο “{label}” για {details}, με εκείνη την εγγραφή. Περιγράψτε μία για να δείτε πώς τη χειρίζεται."
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -30836,6 +30918,11 @@ msgstr "Δεν ήταν δυνατό το άνοιγμα αυτής της συ�
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
 msgstr "Αυτή η συνομιλία δεν είναι πλέον διαθέσιμη."
+
+#. js-lingui-id: GsXQeq
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
+msgstr "Αυτή η στήλη μπορεί να εμφανίσει έως {QUERY_MAX_RECORDS_FROM_RELATION} εγγραφές."
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -31701,7 +31788,6 @@ msgstr "Μεταφράσεις"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Ταξινόμηση"
 
