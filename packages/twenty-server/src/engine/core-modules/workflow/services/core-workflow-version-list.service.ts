@@ -8,6 +8,7 @@ import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/serv
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
+import { isFlatWorkflowVisibleToCaller } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-visible-to-caller.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUuidPropertyInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-uuid-property-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -21,13 +22,11 @@ export class CoreWorkflowVersionListService {
 
   async findManyByWorkspaceWorkflowId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     workspaceWorkflowId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
     const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
@@ -44,22 +43,11 @@ export class CoreWorkflowVersionListService {
 
     if (
       !isDefined(parentFlatWorkflow) ||
-      !canCallerReachApplication({
-        callingApplication: callerApplication,
-        applicationId: parentFlatWorkflow.applicationId,
-        operation: 'read',
+      !isFlatWorkflowVisibleToCaller({
+        flatWorkflow: parentFlatWorkflow,
+        callerApplication,
         workspaceCustomApplicationId,
       })
-    ) {
-      return [];
-    }
-
-    if (
-      !(await this.coreWorkflowAccessService.isCoreWorkflowAccessible({
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowId: parentFlatWorkflow.id,
-      }))
     ) {
       return [];
     }
@@ -74,13 +62,11 @@ export class CoreWorkflowVersionListService {
 
   async findManyByCoreWorkflowId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
     const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
@@ -107,7 +93,7 @@ export class CoreWorkflowVersionListService {
     }
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      { workspaceId, userWorkspaceId, coreWorkflowIds: [flatWorkflow.id] },
+      { workspaceId, coreWorkflowIds: [flatWorkflow.id] },
     );
 
     return buildCoreWorkflowVersionSummaries({
@@ -120,13 +106,11 @@ export class CoreWorkflowVersionListService {
 
   async findOneByCoreWorkflowVersionId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowVersionId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
     const {
@@ -167,7 +151,7 @@ export class CoreWorkflowVersionListService {
     }
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflowId] },
+      { workspaceId, coreWorkflowIds: [coreWorkflowId] },
     );
 
     const flatWorkflowVersionsInCreationOrder =

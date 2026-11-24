@@ -7,12 +7,12 @@ import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core
 import { type CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import { type CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { type WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
-import { type CoreWorkflowReader } from 'src/engine/core-modules/workflow/types/core-workflow-reader.type';
+import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
 import { getCoreWorkflowKeysetSort } from 'src/engine/core-modules/workflow/utils/get-core-workflow-keyset-sort.util';
 import { fromFlatWorkflowToCoreWorkflowDto } from 'src/engine/core-modules/workflow/utils/from-flat-workflow-to-core-workflow-dto.util';
-import { isFlatWorkflowReadableByReader } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-readable-by-reader.util';
+import { isFlatWorkflowVisibleToCaller } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-visible-to-caller.util';
 import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/utils/get-core-workflow-current-version.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUuidPropertyInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-uuid-property-in-flat-entity-maps.util';
@@ -32,8 +32,8 @@ export class CoreWorkflowListService {
   async findManyWithCurrentVersions({
     workspaceId,
     coreWorkflowIds,
-    ...reader
-  }: CoreWorkflowReader & {
+    ...caller
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     coreWorkflowIds: string[];
   }): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
@@ -48,7 +48,7 @@ export class CoreWorkflowListService {
       flatEntityMaps: flatWorkflowMaps,
     })
       .filter((flatWorkflow) =>
-        isFlatWorkflowReadableByReader({ flatWorkflow, ...reader }),
+        isFlatWorkflowVisibleToCaller({ flatWorkflow, ...caller }),
       )
       .flatMap((flatWorkflow) => {
         const coreWorkflowVersions =
@@ -84,7 +84,6 @@ export class CoreWorkflowListService {
             workflow: fromFlatWorkflowToCoreWorkflowDto({
               flatWorkflow,
               statuses: coreWorkflowVersions?.statuses ?? [],
-              userWorkspaceId: reader.userWorkspaceId,
             }),
             versions,
             currentVersion: {
@@ -104,19 +103,19 @@ export class CoreWorkflowListService {
     orderBy,
     orderByDirection,
     filter,
-    ...reader
+    ...caller
   }: CoreWorkflowsArgs &
-    CoreWorkflowReader & {
+    CoreWorkflowReadCaller & {
       workspaceId: string;
     }): Promise<CoreWorkflowConnectionDTO> {
     const filterPredicate = buildCoreWorkflowFilterPredicate(filter);
 
-    const readableFlatWorkflows = await this.findReadableFlatWorkflows({
+    const visibleFlatWorkflows = await this.findFlatWorkflowsVisibleToCaller({
       workspaceId,
-      reader,
+      caller,
     });
 
-    const matchingFlatWorkflows = readableFlatWorkflows.filter(filterPredicate);
+    const matchingFlatWorkflows = visibleFlatWorkflows.filter(filterPredicate);
 
     const page = paginateMetadataItemsByKeyset({
       items: matchingFlatWorkflows,
@@ -130,7 +129,6 @@ export class CoreWorkflowListService {
       node: fromFlatWorkflowToCoreWorkflowDto({
         flatWorkflow,
         statuses: flatWorkflow.statuses,
-        userWorkspaceId: reader.userWorkspaceId,
       }),
       cursor,
     }));
@@ -148,8 +146,8 @@ export class CoreWorkflowListService {
   async findOneById({
     workspaceId,
     coreWorkflowId,
-    ...reader
-  }: CoreWorkflowReader & {
+    ...caller
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
@@ -166,7 +164,7 @@ export class CoreWorkflowListService {
 
     if (
       !isDefined(flatWorkflow) ||
-      !isFlatWorkflowReadableByReader({ flatWorkflow, ...reader })
+      !isFlatWorkflowVisibleToCaller({ flatWorkflow, ...caller })
     ) {
       return null;
     }
@@ -175,15 +173,14 @@ export class CoreWorkflowListService {
       flatWorkflow,
       statuses:
         coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id]?.statuses ?? [],
-      userWorkspaceId: reader.userWorkspaceId,
     });
   }
 
   async findOneByWorkspaceWorkflowId({
     workspaceId,
     workspaceWorkflowId,
-    ...reader
-  }: CoreWorkflowReader & {
+    ...caller
+  }: CoreWorkflowReadCaller & {
     workspaceId: string;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
@@ -201,7 +198,7 @@ export class CoreWorkflowListService {
 
     if (
       !isDefined(flatWorkflow) ||
-      !isFlatWorkflowReadableByReader({ flatWorkflow, ...reader })
+      !isFlatWorkflowVisibleToCaller({ flatWorkflow, ...caller })
     ) {
       return null;
     }
@@ -210,16 +207,15 @@ export class CoreWorkflowListService {
       flatWorkflow,
       statuses:
         coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id]?.statuses ?? [],
-      userWorkspaceId: reader.userWorkspaceId,
     });
   }
 
-  private async findReadableFlatWorkflows({
+  private async findFlatWorkflowsVisibleToCaller({
     workspaceId,
-    reader,
+    caller,
   }: {
     workspaceId: string;
-    reader: CoreWorkflowReader;
+    caller: CoreWorkflowReadCaller;
   }): Promise<FlatWorkflowWithStatuses[]> {
     const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -230,7 +226,7 @@ export class CoreWorkflowListService {
     return Object.values(flatWorkflowMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter((flatWorkflow) =>
-        isFlatWorkflowReadableByReader({ flatWorkflow, ...reader }),
+        isFlatWorkflowVisibleToCaller({ flatWorkflow, ...caller }),
       )
       .map((flatWorkflow) => ({
         ...flatWorkflow,
