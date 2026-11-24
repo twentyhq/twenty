@@ -7,12 +7,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { NAVIGATION_MENU_TAB_MAX_COUNT } from '@/navigation-menu-item/common/constants/NavigationMenuTabMaxCount';
 import { MainNavigationDrawerAddTabButton } from '@/navigation/components/MainNavigationDrawerAddTabButton';
 import { MainNavigationDrawerSidebarTab } from '@/navigation/components/MainNavigationDrawerSidebarTab';
 import { MainNavigationDrawerTab } from '@/navigation/components/MainNavigationDrawerTab';
+import { StyledNavigationDrawerAttentionDot } from '@/navigation/components/StyledNavigationDrawerAttentionDot';
 import { MainNavigationDrawerTabDropTarget } from '@/navigation/components/MainNavigationDrawerTabDropTarget';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
@@ -72,6 +74,8 @@ export const MainNavigationDrawerTabSwitcher = () => {
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
   const { getTabChatAttention, unreadOpenThreadCount } =
     useNavigationMenuChatAttention();
+  const getNavigationMenuTabAttentionLabel =
+    useGetNavigationMenuTabAttentionLabel();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
@@ -116,6 +120,10 @@ export const MainNavigationDrawerTabSwitcher = () => {
         const isDisabled =
           drawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU &&
           isLayoutCustomizationModeEnabled;
+        const homeChatAttention =
+          drawerTab === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
+            ? getTabChatAttention(null)
+            : null;
 
         const drawerTabButton = (
           <MainNavigationDrawerTab
@@ -130,23 +138,36 @@ export const MainNavigationDrawerTabSwitcher = () => {
             }
             shouldShowTooltip={shouldShowTooltips}
             ariaLabel={
-              isUnread ? t`${label}, ${unreadOpenThreadCount} unread` : label
+              isUnread
+                ? t`${label}, ${unreadOpenThreadCount} unread`
+                : getNavigationMenuTabAttentionLabel({
+                    tabName: label,
+                    attention: homeChatAttention,
+                  })
             }
             onClick={() => switchNavigationDrawerTab(drawerTab)}
             iconAccessory={
-              isUnread && (
-                <Badge
-                  render={<StyledUnreadBadge />}
-                  aria-hidden="true"
-                  size="xs"
-                  color="red"
-                  shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
-                >
-                  {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
-                    ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
-                    : unreadOpenThreadCount}
-                </Badge>
-              )
+              <>
+                {isDefined(homeChatAttention) && (
+                  <StyledNavigationDrawerAttentionDot
+                    data-attention={homeChatAttention}
+                    aria-hidden="true"
+                  />
+                )}
+                {isUnread && (
+                  <Badge
+                    render={<StyledUnreadBadge />}
+                    aria-hidden="true"
+                    size="xs"
+                    color="red"
+                    shape={unreadOpenThreadCount < 10 ? 'circle' : 'pill'}
+                  >
+                    {unreadOpenThreadCount > MAX_DISPLAYED_UNREAD_COUNT
+                      ? `${MAX_DISPLAYED_UNREAD_COUNT}+`
+                      : unreadOpenThreadCount}
+                  </Badge>
+                )}
+              </>
             }
           />
         );
