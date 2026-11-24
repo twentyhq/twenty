@@ -152,9 +152,7 @@ export const SubscriptionAppAsksForBillingConsentOnInstall: Story = {
 
     await waitFor(() =>
       expect(
-        body.getByText(
-          'Bill your workspace $7.00 / month per account',
-        ),
+        body.getByText('Bill your workspace $7.00 / month per account'),
       ).toBeVisible(),
     );
     expect(
