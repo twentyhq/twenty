@@ -14,6 +14,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { RECONCILE_ROLLUP_FIELDS_CRON_PATTERN } from 'src/engine/core-modules/rollup-field/constants/reconcile-rollup-fields-cron-pattern.constant';
 import { RECONCILE_ROLLUP_FIELDS_JOB_NAME } from 'src/engine/core-modules/rollup-field/constants/reconcile-rollup-fields-job-name.constant';
+import { computeRollupFieldReconcileDelayMs } from 'src/engine/core-modules/rollup-field/utils/compute-rollup-field-reconcile-delay-ms.util';
 import { type ReconcileRollupFieldsJobData } from 'src/engine/core-modules/rollup-field/types/reconcile-rollup-fields-job-data.type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -51,7 +52,11 @@ export class ReconcileRollupFieldsCronJob {
         await this.messageQueueService.add<ReconcileRollupFieldsJobData>(
           RECONCILE_ROLLUP_FIELDS_JOB_NAME,
           { workspaceId },
-          { workspaceId, isWorkspaceJob: true },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+            delay: computeRollupFieldReconcileDelayMs(workspaceId),
+          },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

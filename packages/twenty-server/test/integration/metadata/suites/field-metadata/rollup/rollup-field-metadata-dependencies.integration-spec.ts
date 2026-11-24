@@ -20,8 +20,9 @@ import {
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { ROLLUP_MAX_FIELDS_PER_OBJECT } from 'src/engine/metadata-modules/flat-field-metadata/constants/rollup-max-fields-per-object.constant';
+
 const STATUS_FILTER_ID = '20202020-a0a1-4000-8000-0000000000f1';
-const ROLLUP_MAX_FIELDS_PER_OBJECT = 10;
 
 describe('Rollup field metadata dependencies', () => {
   let testObjects: RollupTestObjects;
