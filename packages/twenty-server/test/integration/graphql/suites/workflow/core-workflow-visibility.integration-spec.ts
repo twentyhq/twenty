@@ -561,10 +561,10 @@ describe('core workflow visibility (e2e)', () => {
         );
 
         for (const { coreWorkflowId } of [draftWorkflow, activeWorkflow]) {
-          const response = await setVisibility(
+          const response = await setIsPrivate({
             coreWorkflowId,
-            WorkflowVisibility.PRIVATE,
-          );
+            isPrivate: true,
+          });
 
           expect(response.body.errors).toBeUndefined();
         }
@@ -576,7 +576,7 @@ describe('core workflow visibility (e2e)', () => {
           .map(({ coreWorkflowId }) => coreWorkflowId);
 
         for (const coreWorkflowId of coreWorkflowIds) {
-          await setVisibility(coreWorkflowId, WorkflowVisibility.WORKSPACE);
+          await setIsPrivate({ coreWorkflowId, isPrivate: false });
         }
 
         await deleteCoreWorkflows({ coreWorkflowIds });
