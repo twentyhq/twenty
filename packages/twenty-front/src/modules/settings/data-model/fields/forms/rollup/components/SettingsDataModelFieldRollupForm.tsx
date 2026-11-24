@@ -35,8 +35,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 export const settingsDataModelFieldRollupFormSchema = z.object({
-  // Loose objects keep the settings this form does not edit (filter groups,
-  // decimals, sub-field filters) when saving a rollup created elsewhere
+  // Loose objects keep settings this form does not edit, e.g. filterGroups
   settings: z
     .looseObject({
       relationFieldMetadataId: z.uuid(),
