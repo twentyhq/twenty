@@ -1,12 +1,12 @@
-import { computeChannelInboxViewPresetGqlFilter } from '@/ai/utils/compute-channel-inbox-view-preset-gql-filter.util';
-import { computePersonalInboxViewPresetGqlFilter } from '@/ai/utils/compute-personal-inbox-view-preset-gql-filter.util';
+import { turnChannelInboxViewPresetFilterIntoRecordGqlOperationFilter } from '@/ai/utils/turn-channel-inbox-view-preset-filter-into-record-gql-operation-filter.util';
+import { turnPersonalInboxViewPresetFilterIntoRecordGqlOperationFilter } from '@/ai/utils/turn-personal-inbox-view-preset-filter-into-record-gql-operation-filter.util';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 import { type ViewPresetFilter } from '@/types/ViewPresetFilter';
 import { isDefined } from '@/utils/validation/isDefined';
 
 const MATCHES_NO_RECORD: RecordGqlOperationFilter = { id: { is: 'NULL' } };
 
-export const computeViewPresetFilterGqlFilter = ({
+export const turnViewPresetFilterIntoRecordGqlOperationFilter = ({
   presetFilter,
   currentWorkspaceMemberId,
 }: {
@@ -26,13 +26,15 @@ export const computeViewPresetFilterGqlFilter = ({
         return MATCHES_NO_RECORD;
       }
 
-      return computePersonalInboxViewPresetGqlFilter({
+      return turnPersonalInboxViewPresetFilterIntoRecordGqlOperationFilter({
         presetFilter,
         workspaceMemberId: currentWorkspaceMemberId,
       });
     case 'INBOX_CHANNEL_OPEN':
     case 'INBOX_CHANNEL_SNOOZED':
     case 'INBOX_CHANNEL_DONE':
-      return computeChannelInboxViewPresetGqlFilter(presetFilter);
+      return turnChannelInboxViewPresetFilterIntoRecordGqlOperationFilter(
+        presetFilter,
+      );
   }
 };

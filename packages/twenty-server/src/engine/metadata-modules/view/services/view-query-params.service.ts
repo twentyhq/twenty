@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { computeViewPresetFilterGqlFilter } from 'twenty-shared/ai';
+import { turnViewPresetFilterIntoRecordGqlOperationFilter } from 'twenty-shared/ai';
 import {
   RecordFilterGroupLogicalOperator,
   type RecordGqlOperationFilter,
@@ -118,7 +118,7 @@ export class ViewQueryParamsService {
         recordFilterGroups,
         filterValueDependencies: { currentWorkspaceMemberId, timeZone },
       }),
-      computeViewPresetFilterGqlFilter({
+      turnViewPresetFilterIntoRecordGqlOperationFilter({
         presetFilter: view.presetFilter,
         currentWorkspaceMemberId,
       }),

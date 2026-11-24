@@ -17,7 +17,7 @@ import { buildGroupByFieldObject } from '@/page-layout/widgets/graph/utils/build
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -121,8 +121,8 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
     recordGroupValues: visibleRecordGroupValues,
   });
 
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter();
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
   const { data, loading, error } = useQuery(groupByAggregateQuery, {
     skip:
@@ -135,7 +135,7 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
         anyFieldFilter,
         requestFilters,
         recordGroupOptionsFilter,
-        currentViewPresetGqlOperationFilter,
+        currentViewPresetFilterAsRecordGqlOperationFilter,
       ]),
       groupBy: {
         ...groupByGqlInput,

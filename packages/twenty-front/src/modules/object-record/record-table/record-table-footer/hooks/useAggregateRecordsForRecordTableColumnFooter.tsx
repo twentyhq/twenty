@@ -32,7 +32,7 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 
 export const useAggregateRecordsForRecordTableColumnFooter = (
   aggregateFieldMetadataId: string,
@@ -117,8 +117,8 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       filterValue: anyFieldFilterValue,
     });
 
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter();
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
   const { data, loading, refetch } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -127,7 +127,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       requestFilters,
       recordGroupFilter,
       anyFieldFilter,
-      currentViewPresetGqlOperationFilter,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
     ]),
     skip: !isDefined(aggregateOperationForViewField),
   });

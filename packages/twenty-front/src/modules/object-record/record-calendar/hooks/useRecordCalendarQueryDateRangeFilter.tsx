@@ -10,7 +10,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import { type Temporal } from 'temporal-polyfill';
 import {
   combineFilters,
@@ -54,8 +54,8 @@ export const useRecordCalendarQueryDateRangeFilter = (
     anyFieldFilterValueComponentState,
     viewBarInstanceId,
   );
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter();
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
   const calendarFieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === recordIndexCalendarFieldMetadataId,
   );
@@ -99,7 +99,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
       dateRangeFilterBefore,
       viewFilter,
       anyFieldFilter,
-      currentViewPresetGqlOperationFilter,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
     ]),
   };
 };

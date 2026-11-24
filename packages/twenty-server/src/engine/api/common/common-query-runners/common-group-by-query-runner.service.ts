@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { computeViewPresetFilterGqlFilter } from 'twenty-shared/ai';
+import { turnViewPresetFilterIntoRecordGqlOperationFilter } from 'twenty-shared/ai';
 import {
   CompositeFieldSubFieldName,
   type ObjectRecord,
@@ -308,7 +308,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
             timeZone: 'UTC', // TODO: see if we use workspace member timezone here
           },
         }),
-        computeViewPresetFilterGqlFilter({
+        turnViewPresetFilterIntoRecordGqlOperationFilter({
           presetFilter: visibleView?.presetFilter,
           currentWorkspaceMemberId,
         }),

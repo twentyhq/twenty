@@ -9,7 +9,7 @@ import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrem
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 
 type UseUpdateMultipleRecordsActionsProps = {
   objectNameSingular: string;
@@ -50,8 +50,10 @@ export const useUpdateMultipleRecordsActions = ({
     flattenedFieldMetadataItemsSelector,
   );
 
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter(contextStoreInstanceId);
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter(
+      contextStoreInstanceId,
+    );
 
   const graphqlFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
@@ -61,7 +63,7 @@ export const useUpdateMultipleRecordsActions = ({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
-    currentViewPresetGqlOperationFilter,
+    currentViewPresetFilterAsRecordGqlOperationFilter,
   });
 
   const {

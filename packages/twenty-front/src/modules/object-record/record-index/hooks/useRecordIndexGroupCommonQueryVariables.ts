@@ -14,7 +14,7 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -92,14 +92,14 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
     recordGroupValues,
   });
 
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter();
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
   const combinedFilters = combineFilters([
     anyFieldFilter,
     requestFilters,
     recordGroupOptionsFilter,
-    currentViewPresetGqlOperationFilter,
+    currentViewPresetFilterAsRecordGqlOperationFilter,
   ]);
 
   const recordGroupsLimit = visibleRecordGroupDefinitions.length;

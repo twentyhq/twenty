@@ -1,5 +1,5 @@
 import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
-import { computeViewPresetFilterGqlFilter } from '@/ai/utils/compute-view-preset-filter-gql-filter.util';
+import { turnViewPresetFilterIntoRecordGqlOperationFilter } from '@/ai/utils/turn-view-preset-filter-into-record-gql-operation-filter.util';
 import { ViewPresetFilter } from '@/types/ViewPresetFilter';
 
 const WORKSPACE_MEMBER_ID = '20202020-463f-435b-828c-107e007a2711';
@@ -22,12 +22,12 @@ const ARCHIVED_WITHOUT_ACTIVITY_SINCE = [
   { channelArchivedAt: { gteField: 'lastActivityAt' } },
 ];
 
-describe('computeViewPresetFilterGqlFilter', () => {
+describe('turnViewPresetFilterIntoRecordGqlOperationFilter', () => {
   it.each([null, undefined])(
     'adds no condition for a view whose preset is %s',
     (presetFilter) => {
       expect(
-        computeViewPresetFilterGqlFilter({
+        turnViewPresetFilterIntoRecordGqlOperationFilter({
           presetFilter,
           currentWorkspaceMemberId: WORKSPACE_MEMBER_ID,
         }),
@@ -39,7 +39,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
     'leaves direct messages out of %s',
     (presetFilter) => {
       expect(
-        computeViewPresetFilterGqlFilter({
+        turnViewPresetFilterIntoRecordGqlOperationFilter({
           presetFilter,
           currentWorkspaceMemberId: WORKSPACE_MEMBER_ID,
         }),
@@ -55,7 +55,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
     'matches no record for %s without a workspace member',
     (presetFilter) => {
       expect(
-        computeViewPresetFilterGqlFilter({
+        turnViewPresetFilterIntoRecordGqlOperationFilter({
           presetFilter,
           currentWorkspaceMemberId: undefined,
         }),
@@ -66,7 +66,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
   it.each(CHANNEL_PRESET_FILTERS)(
     'reads %s from the thread alone',
     (presetFilter) => {
-      const filter = computeViewPresetFilterGqlFilter({
+      const filter = turnViewPresetFilterIntoRecordGqlOperationFilter({
         presetFilter,
         currentWorkspaceMemberId: undefined,
       });
@@ -78,7 +78,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
 
   it('keeps a channel chat open until it is archived, and again once it has newer activity', () => {
     expect(
-      computeViewPresetFilterGqlFilter({
+      turnViewPresetFilterIntoRecordGqlOperationFilter({
         presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
         currentWorkspaceMemberId: WORKSPACE_MEMBER_ID,
       }),
@@ -97,7 +97,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
     'lists %s chats archived without activity since, including chats with no activity',
     (presetFilter, channelSnoozedUntil) => {
       expect(
-        computeViewPresetFilterGqlFilter({
+        turnViewPresetFilterIntoRecordGqlOperationFilter({
           presetFilter,
           currentWorkspaceMemberId: WORKSPACE_MEMBER_ID,
         }),

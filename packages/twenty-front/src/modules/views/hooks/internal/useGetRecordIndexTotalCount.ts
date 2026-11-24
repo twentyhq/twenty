@@ -9,7 +9,7 @@ import { AggregateOperations } from '@/object-record/record-table/constants/Aggr
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetRecordGroupVisibilityFilters } from '@/views/hooks/useGetRecordGroupVisibilityFilters';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -58,8 +58,8 @@ export const useGetRecordIndexTotalCount = () => {
       filterValue: anyFieldFilterValue,
     });
 
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter();
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
   const { data, loading } = useAggregateRecords<{
     id: { COUNT: number };
@@ -67,7 +67,7 @@ export const useGetRecordIndexTotalCount = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: combineFilters([
       { ...filter, ...anyFieldFilter },
-      currentViewPresetGqlOperationFilter,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
     ]),
     recordGqlFieldsAggregate: {
       id: [AggregateOperations.COUNT],

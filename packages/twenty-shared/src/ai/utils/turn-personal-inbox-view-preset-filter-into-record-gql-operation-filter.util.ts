@@ -1,10 +1,10 @@
 import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConversationType';
 import { type PersonalInboxViewPresetFilter } from '@/ai/types/PersonalInboxViewPresetFilter';
-import { computePersonalArchivedWithoutActivitySinceGqlFilters } from '@/ai/utils/compute-personal-archived-without-activity-since-gql-filters.util';
+import { computeRecordGqlOperationFiltersForThreadsArchivedByWorkspaceMember } from '@/ai/utils/compute-record-gql-operation-filters-for-threads-archived-by-workspace-member.util';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
 // Keep in sync with getAgentChatThreadInboxStatus, which places loaded chats on the client
-export const computePersonalInboxViewPresetGqlFilter = ({
+export const turnPersonalInboxViewPresetFilterIntoRecordGqlOperationFilter = ({
   presetFilter,
   workspaceMemberId,
 }: {
@@ -45,10 +45,12 @@ export const computePersonalInboxViewPresetGqlFilter = ({
     case 'INBOX_SNOOZED':
       return {
         ...notDirectMessage,
-        or: computePersonalArchivedWithoutActivitySinceGqlFilters({
-          workspaceMemberId,
-          isSnoozed: true,
-        }),
+        or: computeRecordGqlOperationFiltersForThreadsArchivedByWorkspaceMember(
+          {
+            workspaceMemberId,
+            isSnoozed: true,
+          },
+        ),
       };
     case 'INBOX_DONE':
       return {
@@ -61,10 +63,12 @@ export const computePersonalInboxViewPresetGqlFilter = ({
               archivedAt: { is: 'NOT_NULL' },
             },
           },
-          ...computePersonalArchivedWithoutActivitySinceGqlFilters({
-            workspaceMemberId,
-            isSnoozed: false,
-          }),
+          ...computeRecordGqlOperationFiltersForThreadsArchivedByWorkspaceMember(
+            {
+              workspaceMemberId,
+              isSnoozed: false,
+            },
+          ),
         ],
       };
   }

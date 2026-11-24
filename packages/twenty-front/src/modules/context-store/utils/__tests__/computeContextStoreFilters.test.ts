@@ -32,7 +32,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
-      currentViewPresetGqlOperationFilter: {},
+      currentViewPresetFilterAsRecordGqlOperationFilter: {},
     });
 
     expect(filters).toEqual({
@@ -71,7 +71,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: 'any field search',
-      currentViewPresetGqlOperationFilter: {},
+      currentViewPresetFilterAsRecordGqlOperationFilter: {},
     });
 
     // Explicitly selected records must be targeted as-is, even if they would
@@ -108,7 +108,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: 'Airtable',
-      currentViewPresetGqlOperationFilter: {},
+      currentViewPresetFilterAsRecordGqlOperationFilter: {},
     });
 
     const serializedFilters = JSON.stringify(filters);
@@ -147,7 +147,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
-      currentViewPresetGqlOperationFilter: {},
+      currentViewPresetFilterAsRecordGqlOperationFilter: {},
     });
 
     expect(filters).toEqual({
@@ -182,7 +182,7 @@ describe('computeContextStoreFilters', () => {
     });
   });
   it('should add the current view preset filter when the whole view is targeted', () => {
-    const currentViewPresetGqlOperationFilter = {
+    const currentViewPresetFilterAsRecordGqlOperationFilter = {
       participants: { isSubscribed: { eq: true } },
     };
 
@@ -197,12 +197,14 @@ describe('computeContextStoreFilters', () => {
         fieldMetadataItems: personObjectMetadataItem.fields,
         filterValueDependencies: mockFilterValueDependencies,
         contextStoreAnyFieldFilterValue: '',
-        currentViewPresetGqlOperationFilter,
+        currentViewPresetFilterAsRecordGqlOperationFilter,
       });
 
     expect(
       computeFilters({ mode: 'exclusion', excludedRecordIds: [] }),
-    ).toEqual({ and: [{}, {}, currentViewPresetGqlOperationFilter] });
+    ).toEqual({
+      and: [{}, {}, currentViewPresetFilterAsRecordGqlOperationFilter],
+    });
 
     expect(
       computeFilters({ mode: 'selection', selectedRecordIds: ['1'] }),

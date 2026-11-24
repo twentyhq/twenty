@@ -14,7 +14,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 import { useEffect } from 'react';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
@@ -59,8 +59,8 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       flattenedFieldMetadataItemsSelector,
     );
 
-    const currentViewPresetGqlOperationFilter =
-      useCurrentViewPresetGqlOperationFilter();
+    const currentViewPresetFilterAsRecordGqlOperationFilter =
+      useCurrentViewPresetFilterAsRecordGqlOperationFilter();
 
     const computedFilter = computeContextStoreFilters({
       contextStoreTargetedRecordsRule,
@@ -70,7 +70,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       fieldMetadataItems: flattenedFieldMetadataItems,
       filterValueDependencies,
       contextStoreAnyFieldFilterValue,
-      currentViewPresetGqlOperationFilter,
+      currentViewPresetFilterAsRecordGqlOperationFilter,
     });
 
     const { totalCount } = useFindManyRecords({

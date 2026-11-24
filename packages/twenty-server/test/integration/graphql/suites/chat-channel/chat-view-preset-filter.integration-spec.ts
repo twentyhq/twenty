@@ -3,7 +3,7 @@ import {
   type AgentChatInboxAction,
   type AgentChatInboxState,
   type AgentChatThreadConversationType,
-  computeViewPresetFilterGqlFilter,
+  turnViewPresetFilterIntoRecordGqlOperationFilter,
   getAgentChatThreadInboxStatus,
   isAgentChatThreadInPresetFilter,
 } from 'twenty-shared/ai';
@@ -187,7 +187,7 @@ describe('Chat view preset filters through the record API', () => {
         await findThreadIds({
           and: [
             { id: { in: threadIds } },
-            computeViewPresetFilterGqlFilter({
+            turnViewPresetFilterIntoRecordGqlOperationFilter({
               presetFilter: viewPresetFilter,
               currentWorkspaceMemberId: JANE,
             }),
@@ -213,7 +213,7 @@ describe('Chat view preset filters through the record API', () => {
         await findThreadIds({
           and: [
             { channelId: { eq: channelId } },
-            computeViewPresetFilterGqlFilter({
+            turnViewPresetFilterIntoRecordGqlOperationFilter({
               presetFilter: viewPresetFilter,
               currentWorkspaceMemberId: undefined,
             }),

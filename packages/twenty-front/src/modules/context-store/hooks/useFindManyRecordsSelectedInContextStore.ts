@@ -12,7 +12,7 @@ import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/
 import { RecordFilterOperand } from 'twenty-shared/types';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetGqlOperationFilter';
+import { useCurrentViewPresetFilterAsRecordGqlOperationFilter } from '@/views/hooks/useCurrentViewPresetFilterAsRecordGqlOperationFilter';
 
 export const useFindManyRecordsSelectedInContextStore = ({
   instanceId,
@@ -66,8 +66,8 @@ export const useFindManyRecordsSelectedInContextStore = ({
         'deletedAt' && filter.operand === RecordFilterOperand.IS_NOT_EMPTY,
   );
 
-  const currentViewPresetGqlOperationFilter =
-    useCurrentViewPresetGqlOperationFilter(instanceId);
+  const currentViewPresetFilterAsRecordGqlOperationFilter =
+    useCurrentViewPresetFilterAsRecordGqlOperationFilter(instanceId);
 
   const queryFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
@@ -77,7 +77,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
     fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
-    currentViewPresetGqlOperationFilter,
+    currentViewPresetFilterAsRecordGqlOperationFilter,
   });
 
   const { records, loading, totalCount } = useFindManyRecords({
