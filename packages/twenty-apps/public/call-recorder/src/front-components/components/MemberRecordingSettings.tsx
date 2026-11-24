@@ -32,10 +32,10 @@ export const MemberRecordingSettings = () => {
     });
 
   const options: { label: string; value: MemberRecordingPreference }[] = [
-    { label: t('All my meetings'), value: 'ALL' },
-    { label: t('Only internal meetings'), value: 'INTERNAL' },
-    { label: t('Only external meetings'), value: 'EXTERNAL' },
-    { label: t('None of my meetings'), value: 'NONE' },
+    { label: t('All'), value: 'ALL' },
+    { label: t('Internal'), value: 'INTERNAL' },
+    { label: t('External'), value: 'EXTERNAL' },
+    { label: t('None'), value: 'NONE' },
   ];
 
   const handleChange = async (nextValue: string) => {
