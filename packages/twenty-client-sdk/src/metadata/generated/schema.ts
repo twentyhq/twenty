@@ -874,6 +874,8 @@ export interface AutocompleteResult {
 export interface AvailableWorkspace {
     displayName?: Scalars['String']
     id: Scalars['UUID']
+    /** @deprecated Always null. Will be removed. */
+    inviteHash?: Scalars['String']
     loginToken?: Scalars['String']
     logo?: Scalars['String']
     personalInviteToken?: Scalars['String']
@@ -5582,6 +5584,8 @@ export interface AutocompleteResultGenqlSelection{
 export interface AvailableWorkspaceGenqlSelection{
     displayName?: boolean | number
     id?: boolean | number
+    /** @deprecated Always null. Will be removed. */
+    inviteHash?: boolean | number
     loginToken?: boolean | number
     logo?: boolean | number
     personalInviteToken?: boolean | number
