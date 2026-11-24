@@ -1,23 +1,28 @@
+import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useLingui } from '@lingui/react/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 
 type SettingsBillingEmailNotMemberBannerProps = {
   billingEmail: string;
-  onChangeEmail: () => void;
 };
 
 export const SettingsBillingEmailNotMemberBanner = ({
   billingEmail,
-  onChangeEmail,
 }: SettingsBillingEmailNotMemberBannerProps) => {
   const { t } = useLingui();
+
+  const { openBillingPortal } = useBillingPortalSession(
+    getSettingsPath(SettingsPath.Billing),
+  );
 
   return (
     <InlineBanner
       status="info"
       action={
         <InlineBanner.Action
-          onClick={onChangeEmail}
+          onClick={openBillingPortal}
         >{t`Change email`}</InlineBanner.Action>
       }
     >

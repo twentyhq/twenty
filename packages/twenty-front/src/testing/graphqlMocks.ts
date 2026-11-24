@@ -584,7 +584,7 @@ export const graphqlMocks = {
           billingEmail: {
             __typename: 'BillingEmail',
             email: mockedUserData.email,
-            belongsToWorkspaceMember: true,
+            isWorkspaceMemberEmail: true,
           },
         },
       });

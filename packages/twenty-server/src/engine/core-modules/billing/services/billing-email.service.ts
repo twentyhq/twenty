@@ -31,7 +31,7 @@ export class BillingEmailService {
     );
 
     if (!isDefined(billingCustomer)) {
-      return { email: null, belongsToWorkspaceMember: false };
+      return { email: null, isWorkspaceMemberEmail: false };
     }
 
     const { email } =
@@ -40,13 +40,13 @@ export class BillingEmailService {
       );
 
     if (!isNonEmptyString(email)) {
-      return { email: null, belongsToWorkspaceMember: false };
+      return { email: null, isWorkspaceMemberEmail: false };
     }
 
-    const belongsToWorkspaceMember = await this.userWorkspaceRepository.exists({
+    const isWorkspaceMemberEmail = await this.userWorkspaceRepository.exists({
       where: { workspaceId, user: { email: email.trim() } },
     });
 
-    return { email, belongsToWorkspaceMember };
+    return { email, isWorkspaceMemberEmail };
   }
 }

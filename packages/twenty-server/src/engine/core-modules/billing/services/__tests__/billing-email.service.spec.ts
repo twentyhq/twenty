@@ -37,7 +37,7 @@ describe('BillingEmailService', () => {
 
     await expect(service.getBillingEmail(WORKSPACE_ID)).resolves.toEqual({
       email: null,
-      belongsToWorkspaceMember: false,
+      isWorkspaceMemberEmail: false,
     });
     expect(getCustomerPartnerAndEmail).not.toHaveBeenCalled();
   });
@@ -47,7 +47,7 @@ describe('BillingEmailService', () => {
 
     await expect(service.getBillingEmail(WORKSPACE_ID)).resolves.toEqual({
       email: null,
-      belongsToWorkspaceMember: false,
+      isWorkspaceMemberEmail: false,
     });
     expect(exists).not.toHaveBeenCalled();
   });
@@ -60,7 +60,7 @@ describe('BillingEmailService', () => {
 
     await expect(service.getBillingEmail(WORKSPACE_ID)).resolves.toEqual({
       email: 'jane@acme.com',
-      belongsToWorkspaceMember: false,
+      isWorkspaceMemberEmail: false,
     });
   });
 });

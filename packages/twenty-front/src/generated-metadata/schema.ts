@@ -1201,8 +1201,8 @@ export type BillingCustomer = {
 
 export type BillingEmail = {
   __typename?: 'BillingEmail';
-  belongsToWorkspaceMember: Scalars['Boolean']['output'];
   email?: Maybe<Scalars['String']['output']>;
+  isWorkspaceMemberEmail: Scalars['Boolean']['output'];
 };
 
 export type BillingEndTrialPeriod = {

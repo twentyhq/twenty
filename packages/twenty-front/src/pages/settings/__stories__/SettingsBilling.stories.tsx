@@ -66,7 +66,7 @@ export const BillingEmailNotMember: Story = {
               billingEmail: {
                 __typename: 'BillingEmail',
                 email: 'jane@acme.com',
-                belongsToWorkspaceMember: false,
+                isWorkspaceMemberEmail: false,
               },
             },
           });

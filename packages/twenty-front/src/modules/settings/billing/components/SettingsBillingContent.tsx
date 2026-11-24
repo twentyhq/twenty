@@ -69,20 +69,18 @@ export const SettingsBillingContent = () => {
     PermissionFlagType.BILLING,
   );
   const { data: billingEmailData } = useQuery(BillingEmailDocument, {
+    fetchPolicy: 'cache-and-network',
     skip: !hasPermissionToManageBilling || !hasNotCanceledCurrentSubscription,
   });
   const billingEmail = billingEmailData?.billingEmail.email;
   const displayBillingEmailNotMemberBanner =
     isDefined(billingEmail) &&
-    billingEmailData?.billingEmail.belongsToWorkspaceMember === false;
+    billingEmailData?.billingEmail.isWorkspaceMemberEmail === false;
 
   return (
     <SettingsPageContainer>
       {displayBillingEmailNotMemberBanner && (
-        <SettingsBillingEmailNotMemberBanner
-          billingEmail={billingEmail}
-          onChangeEmail={openBillingPortal}
-        />
+        <SettingsBillingEmailNotMemberBanner billingEmail={billingEmail} />
       )}
       {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
         <SettingsBillingTrialNoPaymentMethodBanner

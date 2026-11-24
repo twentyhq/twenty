@@ -2457,11 +2457,11 @@ export default {
             ]
         },
         "BillingEmail": {
-            "belongsToWorkspaceMember": [
-                1
-            ],
             "email": [
                 4
+            ],
+            "isWorkspaceMemberEmail": [
+                1
             ],
             "__typename": [
                 4

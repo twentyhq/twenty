@@ -8,5 +8,5 @@ export class BillingEmailDTO {
   email: string | null;
 
   @Field(() => Boolean)
-  belongsToWorkspaceMember: boolean;
+  isWorkspaceMemberEmail: boolean;
 }

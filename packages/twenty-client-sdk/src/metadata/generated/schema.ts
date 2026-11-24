@@ -978,8 +978,8 @@ export interface BillingCustomer {
 }
 
 export interface BillingEmail {
-    belongsToWorkspaceMember: Scalars['Boolean']
     email?: Scalars['String']
+    isWorkspaceMemberEmail: Scalars['Boolean']
     __typename: 'BillingEmail'
 }
 
@@ -5692,8 +5692,8 @@ export interface BillingCustomerGenqlSelection{
 }
 
 export interface BillingEmailGenqlSelection{
-    belongsToWorkspaceMember?: boolean | number
     email?: boolean | number
+    isWorkspaceMemberEmail?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
