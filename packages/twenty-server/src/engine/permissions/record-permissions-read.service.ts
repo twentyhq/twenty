@@ -54,7 +54,7 @@ import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
-import { findRelatedRecordPathUnreadableNestedFields } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
+import { type RelatedRecordPathUnreadableNestedField } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -69,7 +69,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { PermissionsMetadataMapsService } from 'src/engine/permissions/internal/combine/services/permissions-metadata-maps.service';
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
-import { isBoolean, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine/utils/find-accessible-record-ids.util';
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
@@ -435,29 +435,23 @@ export class RecordPermissionsReadService {
     ]);
   }
 
-  async buildUnreadableNestedFieldsSQLConditions({
+  async buildReadRecordsAccessSQLConditionsShowingSourceFields({
     tableAlias,
+    sourceFields,
     ...question
-  }: ObjectQuestion & { tableAlias: string }): Promise<
-    { fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]
-  > {
-    const objectAccessRequest = await this.findObjectAccessRequest({
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+    sourceFields: RelatedRecordPathUnreadableNestedField[];
+  }): Promise<(SQLCondition | boolean)[]> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
       ...question,
       operationType: 'read',
     });
 
-    if (!isDefined(objectAccessRequest)) {
-      return [];
-    }
-
-    const unreadableNestedFields =
-      findRelatedRecordPathUnreadableNestedFields(objectAccessRequest);
-
-    if (
-      !isNonEmptyArray(unreadableNestedFields) ||
-      !canRelatedRecordPathExtendAccess(objectAccessRequest)
-    ) {
-      return [];
+    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+      return sourceFields.map(() => true);
     }
 
     const [
@@ -466,42 +460,19 @@ export class RecordPermissionsReadService {
     ] = await Promise.all([
       this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
       this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields(
-        { request: objectAccessRequest, sourceFields: unreadableNestedFields },
+        { request: objectAccessRequest, sourceFields },
       ),
     ]);
 
-    const unreadableNestedFieldsSQLConditions = unreadableNestedFields.map(
-      ({ fieldMetadataId }, unreadableNestedFieldIndex) => {
-        const fieldReadableSQLCondition = this.buildRecordsAccessSQLCondition({
+    return principalsRelatedRecordPathAccessGroupCompactIdsShowingFields.map(
+      (principalsRelatedRecordPathAccessGroupCompactIds) =>
+        this.buildRecordsAccessSQLCondition({
           objectAccessRequest,
           tableAlias,
           principalsAccessGroupCompactIds,
-          principalsRelatedRecordPathAccessGroupCompactIds:
-            principalsRelatedRecordPathAccessGroupCompactIdsShowingFields[
-              unreadableNestedFieldIndex
-            ],
-        });
-
-        if (isBoolean(fieldReadableSQLCondition)) {
-          return fieldReadableSQLCondition
-            ? undefined
-            : {
-                fieldMetadataIds: [fieldMetadataId],
-                sqlCondition: { sql: 'TRUE', parameters: {} },
-              };
-        }
-
-        return {
-          fieldMetadataIds: [fieldMetadataId],
-          sqlCondition: {
-            sql: `NOT (${fieldReadableSQLCondition.sql})`,
-            parameters: fieldReadableSQLCondition.parameters,
-          },
-        };
-      },
+          principalsRelatedRecordPathAccessGroupCompactIds,
+        }),
     );
-
-    return unreadableNestedFieldsSQLConditions.filter(isDefined);
   }
 
   private async findPrincipalsAccessGroupCompactIds(

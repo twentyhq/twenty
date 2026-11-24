@@ -2,6 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 
+import { isBoolean } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -12,6 +13,7 @@ import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/co
 import { RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/constants/restricted-placeholder-field-universal-identifiers.constant';
 import { buildFieldsUnreadableByEveryMatchingRuleSQLConditions } from 'src/engine/permissions/internal/field-access/utils/build-fields-unreadable-by-every-matching-rule-sql-conditions.util';
 import { findRlsRuleInaccessibleFields } from 'src/engine/permissions/internal/field-access/utils/find-rls-rule-inaccessible-fields.util';
+import { findRelatedRecordPathUnreadableNestedFields } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { renderRlsRecordFilterToSql } from 'src/engine/permissions/internal/rls/utils/render-rls-record-filter-to-sql.util';
 import { buildRlsRulesRecordFilter } from 'src/engine/permissions/internal/rls/utils/resolve-rls-rule-record-filter.util';
 import {
@@ -66,9 +68,11 @@ export class RecordFieldPermissionsReadService {
         objectMetadataId,
         tableAlias,
       })),
-      ...(await this.recordPermissionsReadService.buildUnreadableNestedFieldsSQLConditions(
-        { principals, objectMetadataId, tableAlias },
-      )),
+      ...(await this.buildUnreadableNestedFieldsSQLConditions({
+        principals,
+        objectMetadataId,
+        tableAlias,
+      })),
     ];
 
     if (!isNonEmptyArray(unreadableFieldsSQLConditions)) {
@@ -140,6 +144,61 @@ export class RecordFieldPermissionsReadService {
           }) ?? { sql: 'TRUE', parameters: {} },
         }),
       ),
+    );
+  }
+
+  private async buildUnreadableNestedFieldsSQLConditions({
+    principals,
+    objectMetadataId,
+    tableAlias,
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+  }): Promise<{ fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]> {
+    const { metadataMaps, flatObjectMetadata } =
+      await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
+    const unreadableNestedFields = findRelatedRecordPathUnreadableNestedFields({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+    });
+
+    if (!isNonEmptyArray(unreadableNestedFields)) {
+      return [];
+    }
+
+    const fieldReadableSQLConditions =
+      await this.recordPermissionsReadService.buildReadRecordsAccessSQLConditionsShowingSourceFields(
+        {
+          principals,
+          objectMetadataId,
+          tableAlias,
+          sourceFields: unreadableNestedFields,
+        },
+      );
+
+    return unreadableNestedFields.flatMap(
+      ({ fieldMetadataId }, unreadableNestedFieldIndex) => {
+        const fieldReadableSQLCondition =
+          fieldReadableSQLConditions[unreadableNestedFieldIndex];
+
+        if (fieldReadableSQLCondition === true) {
+          return [];
+        }
+
+        return [
+          {
+            fieldMetadataIds: [fieldMetadataId],
+            sqlCondition: isBoolean(fieldReadableSQLCondition)
+              ? { sql: 'TRUE', parameters: {} }
+              : {
+                  sql: `NOT (${fieldReadableSQLCondition.sql})`,
+                  parameters: fieldReadableSQLCondition.parameters,
+                },
+          },
+        ];
+      },
     );
   }
 
