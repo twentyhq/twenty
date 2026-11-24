@@ -68,14 +68,11 @@ export class ViewController {
     @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
   ) {
     const page = await this.viewService.findManyWithRelationsPaginated({
       workspaceId: workspace.id,
       objectMetadataId,
-      userWorkspaceId,
       pagination: parseMetadataRestPagination(request),
     });
 
@@ -96,14 +93,11 @@ export class ViewController {
     @Param('id') id: string,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     const view =
-      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+      await this.viewService.findByIdWithRelationsVisibleToCallerOrThrow({
         id,
         workspaceId: workspace.id,
-        userWorkspaceId,
       });
 
     const processedViews = await this.processViewsWithTemplates(
