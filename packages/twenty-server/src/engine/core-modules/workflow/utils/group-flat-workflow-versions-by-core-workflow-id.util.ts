@@ -1,64 +1,34 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { compareFlatWorkflowVersionsByCreation } from 'src/engine/core-modules/workflow/utils/compare-flat-workflow-versions-by-creation.util';
 import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
-const compareFlatWorkflowVersionsByCreation = (
-  firstFlatWorkflowVersion: FlatWorkflowVersion,
-  secondFlatWorkflowVersion: FlatWorkflowVersion,
-): number => {
-  const createdAtDifference =
-    Date.parse(firstFlatWorkflowVersion.createdAt) -
-    Date.parse(secondFlatWorkflowVersion.createdAt);
-
-  if (createdAtDifference !== 0) {
-    return createdAtDifference;
-  }
-
-  if (firstFlatWorkflowVersion.id === secondFlatWorkflowVersion.id) {
-    return 0;
-  }
-
-  return firstFlatWorkflowVersion.id < secondFlatWorkflowVersion.id ? -1 : 1;
-};
-
-export const groupFlatWorkflowVersionsByCoreWorkflowId = ({
-  flatWorkflowVersionMaps,
-  coreWorkflowIds,
-}: {
-  flatWorkflowVersionMaps: FlatWorkflowVersionMaps;
-  coreWorkflowIds?: Set<string>;
-}): Map<string, FlatWorkflowVersion[]> => {
+export const groupFlatWorkflowVersionsByCoreWorkflowId = (
+  flatWorkflowVersionMaps: FlatWorkflowVersionMaps,
+): Map<string, FlatWorkflowVersion[]> => {
   const flatWorkflowVersionsByCoreWorkflowId = new Map<
     string,
     FlatWorkflowVersion[]
   >();
 
-  for (const flatWorkflowVersion of Object.values(
+  const flatWorkflowVersionsInCreationOrder = Object.values(
     flatWorkflowVersionMaps.byUniversalIdentifier,
-  )) {
-    const coreWorkflowId = flatWorkflowVersion?.coreWorkflowId;
+  )
+    .filter(isDefined)
+    .sort(compareFlatWorkflowVersionsByCreation);
 
-    if (
-      !isDefined(flatWorkflowVersion) ||
-      !isDefined(coreWorkflowId) ||
-      (isDefined(coreWorkflowIds) && !coreWorkflowIds.has(coreWorkflowId))
-    ) {
+  for (const flatWorkflowVersion of flatWorkflowVersionsInCreationOrder) {
+    const { coreWorkflowId } = flatWorkflowVersion;
+
+    if (!isDefined(coreWorkflowId)) {
       continue;
     }
 
-    const flatWorkflowVersions =
-      flatWorkflowVersionsByCoreWorkflowId.get(coreWorkflowId) ?? [];
-
-    flatWorkflowVersions.push(flatWorkflowVersion);
-    flatWorkflowVersionsByCoreWorkflowId.set(
-      coreWorkflowId,
-      flatWorkflowVersions,
-    );
-  }
-
-  for (const flatWorkflowVersions of flatWorkflowVersionsByCoreWorkflowId.values()) {
-    flatWorkflowVersions.sort(compareFlatWorkflowVersionsByCreation);
+    flatWorkflowVersionsByCoreWorkflowId.set(coreWorkflowId, [
+      ...(flatWorkflowVersionsByCoreWorkflowId.get(coreWorkflowId) ?? []),
+      flatWorkflowVersion,
+    ]);
   }
 
   return flatWorkflowVersionsByCoreWorkflowId;

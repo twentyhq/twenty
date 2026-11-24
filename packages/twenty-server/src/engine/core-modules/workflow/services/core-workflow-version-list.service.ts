@@ -7,12 +7,11 @@ import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dt
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
+import { compareFlatWorkflowVersionsByCreation } from 'src/engine/core-modules/workflow/utils/compare-flat-workflow-versions-by-creation.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
-import { groupFlatWorkflowVersionsByCoreWorkflowId } from 'src/engine/core-modules/workflow/utils/group-flat-workflow-versions-by-core-workflow-id.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflowVersionMaps } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version-maps.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
-import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const findFlatWorkflowVersionsInCreationOrder = ({
@@ -22,10 +21,13 @@ const findFlatWorkflowVersionsInCreationOrder = ({
   flatWorkflowVersionMaps: FlatWorkflowVersionMaps;
   coreWorkflowId: string;
 }): FlatWorkflowVersion[] =>
-  groupFlatWorkflowVersionsByCoreWorkflowId({
-    flatWorkflowVersionMaps,
-    coreWorkflowIds: new Set([coreWorkflowId]),
-  }).get(coreWorkflowId) ?? [];
+  Object.values(flatWorkflowVersionMaps.byUniversalIdentifier)
+    .filter(isDefined)
+    .filter(
+      (flatWorkflowVersion) =>
+        flatWorkflowVersion.coreWorkflowId === coreWorkflowId,
+    )
+    .sort(compareFlatWorkflowVersionsByCreation);
 
 @Injectable()
 export class CoreWorkflowVersionListService {
@@ -53,11 +55,12 @@ export class CoreWorkflowVersionListService {
 
     const parentFlatWorkflow = Object.values(
       flatWorkflowMaps.byUniversalIdentifier,
-    ).find(
-      (flatWorkflow): flatWorkflow is FlatWorkflow =>
-        isDefined(flatWorkflow) &&
-        flatWorkflow.workspaceWorkflowId === workspaceWorkflowId,
-    );
+    )
+      .filter(isDefined)
+      .find(
+        (flatWorkflow) =>
+          flatWorkflow.workspaceWorkflowId === workspaceWorkflowId,
+      );
 
     if (
       !isDefined(parentFlatWorkflow) ||
