@@ -41,6 +41,7 @@ const BASE_FLAT_VIEW: FlatView = {
   mainGroupByFieldMetadataId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
+  presetFilter: null,
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,
