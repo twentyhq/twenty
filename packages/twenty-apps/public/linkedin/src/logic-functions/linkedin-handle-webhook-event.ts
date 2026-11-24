@@ -17,6 +17,7 @@ import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/ut
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
 import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import { ingestLinkedinMessages } from 'src/logic-functions/utils/ingest-linkedin-messages.util';
+import { isLinkedinChatSelected } from 'src/logic-functions/utils/is-linkedin-chat-selected.util';
 import { isTransientLinkedinError } from 'src/logic-functions/utils/is-transient-linkedin-error.util';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileWebhookEvent } from 'src/unipile/types/unipile-webhook-event.type';
@@ -43,6 +44,10 @@ const ingestUnipileMessage = async ({
   }
 
   const settings = await getLinkedinSettings(connectedAccountId);
+
+  if (!isLinkedinChatSelected({ settings, chatId: message.chat_id })) {
+    return { handled: false, reason: 'Conversation is not selected' };
+  }
 
   const chat = await getUnipileChat({
     accountId: unipileAccountId,
