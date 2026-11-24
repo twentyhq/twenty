@@ -67,21 +67,30 @@ const CoverImage = styled.img`
   width: 100%;
 `;
 
-// Under the cover, its icon half on the band as on the app cards, flush
-// with the page's left edge like everything below; the name
-// and tagline, then Install level with the tagline on wide screens.
+// The cover's caption, as on a store page: icon, name and tagline, then
+// Install at the head of the side column, on Columns' own grid so the button
+// lines up with the facts below it. Closer to the cover than the section's
+// 80px, at SectionStack's own mobile step, so it reads as the cover's.
 const Header = styled.div`
   && {
-    margin-top: calc(-1 * ${ICON_SIZE_PX / 2}px);
+    margin-top: ${spacing(10)};
   }
 
   display: grid;
   gap: ${spacing(6)};
 
   ${mediaUp('md')} {
-    align-items: end;
-    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: ${spacing(16)};
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   }
+`;
+
+const Identity = styled.div`
+  align-items: center;
+  display: grid;
+  gap: ${spacing(6)};
+  grid-template-columns: auto minmax(0, 1fr);
 `;
 
 const HeaderText = styled.div`
@@ -90,11 +99,6 @@ const HeaderText = styled.div`
 
   & > * + * {
     margin-top: ${spacing(2)};
-  }
-
-  & > :first-child {
-    margin-bottom: ${spacing(4)};
-    position: relative;
   }
 `;
 
@@ -363,22 +367,24 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
           </Cover>
 
           <Header>
-            <HeaderText>
+            <Identity>
               <AppIcon app={app} sizePx={ICON_SIZE_PX} />
-              <Heading as="h1" size="md" weight="light" wrap="normal">
-                {app.name}
-              </Heading>
-              {/* The tagline's first sentence: the whole one runs to 260
+              <HeaderText>
+                <Heading as="h1" size="md" weight="light" wrap="normal">
+                  {app.name}
+                </Heading>
+                {/* The tagline's first sentence: the whole one runs to 260
                   characters, and the overview says the rest. */}
-              <Body muted size="sm">
-                {leadSentence(app.tagline)}
-              </Body>
-              {isBeta && (
-                <Body muted size="xs">
-                  {i18n._(msg`Beta`)}
+                <Body muted size="sm">
+                  {leadSentence(app.tagline)}
                 </Body>
-              )}
-            </HeaderText>
+                {isBeta && (
+                  <Body muted size="xs">
+                    {i18n._(msg`Beta`)}
+                  </Body>
+                )}
+              </HeaderText>
+            </Identity>
             <div>
               <Button
                 href={buildAppInstallUrl(app.universalIdentifier)}
