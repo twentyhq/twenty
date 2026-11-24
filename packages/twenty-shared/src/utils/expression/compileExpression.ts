@@ -88,7 +88,6 @@ export const compileExpression = ({
     const resolution = resolveValidationRuleIdentifierPath({
       path,
       fields,
-      shouldAllowToManyRelations: shouldAllowAggregates,
     });
 
     if (!resolution.isResolved) {

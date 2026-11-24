@@ -1,9 +1,8 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
-import { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from 'twenty-shared/constants';
 import { type ExpressionInstruction } from 'twenty-shared/types';
 import {
+  getFormulaAggregateCall,
   isDefined,
-  isFormulaAggregateFunctionName,
   parseExpressionInstructions,
 } from 'twenty-shared/utils';
 
@@ -118,39 +117,50 @@ const compileInstructions = ({
     name: string;
     argumentEntries: FormulaSqlStackEntry[];
   }): FormulaSqlValue | undefined => {
-    if (!isFormulaAggregateFunctionName(name)) {
+    const aggregateCall = getFormulaAggregateCall({
+      functionName: name,
+      argumentPaths: argumentEntries.map((entry) =>
+        entry.kind === 'path' ? entry.path : undefined,
+      ),
+      getToManyRelationName: (path) => {
+        const [relationFieldName] = path.split('.');
+
+        return isDefined(relationFieldName) &&
+          isDefined(resolveAggregationSource?.(relationFieldName))
+          ? relationFieldName
+          : undefined;
+      },
+    });
+
+    if (!isDefined(aggregateCall)) {
       return undefined;
     }
 
     const [relationEntry, conditionEntry] = argumentEntries;
-    const [relationFieldName] =
-      relationEntry?.kind === 'path' ? relationEntry.path.split('.') : [];
-    const aggregationSource = isDefined(relationFieldName)
-      ? resolveAggregationSource?.(relationFieldName)
+    const aggregationSource = aggregateCall.isValid
+      ? resolveAggregationSource?.(aggregateCall.relationName)
       : undefined;
 
-    if (!isDefined(relationEntry) || !isDefined(aggregationSource)) {
-      if (name === 'min' || name === 'max') {
-        return undefined;
-      }
-
+    if (
+      !aggregateCall.isValid ||
+      !isDefined(relationEntry) ||
+      !isDefined(aggregationSource)
+    ) {
       throw new FormulaSqlCompilationException({
-        message: `${name}() needs a relation with many records`,
+        message: `${name}() needs a relation, for example count(tasks) or sum(deals.amount)`,
       });
     }
 
-    if (argumentEntries.length > FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT) {
-      throw new FormulaSqlCompilationException({
-        message: `${name}() takes a relation and a condition`,
-      });
-    }
+    const relationFieldName = aggregateCall.relationName;
 
     return compileFormulaSqlAggregateOrThrow({
-      functionName: name,
+      functionName: aggregateCall.functionName,
       relationFieldName,
       aggregationSource,
       aggregatedValue:
-        name === 'count' ? undefined : toValueOrThrow(relationEntry),
+        aggregateCall.functionName === 'count'
+          ? undefined
+          : toValueOrThrow(relationEntry),
       condition: isDefined(conditionEntry)
         ? toValueOrThrow(conditionEntry)
         : undefined,

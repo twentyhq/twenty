@@ -175,7 +175,8 @@ describe('compileFormulaFieldToSql', () => {
     {
       type: FieldMetadataType.NUMBER,
       expression: 'count(supplier)',
-      errorMessage: 'count() needs a relation with many records',
+      errorMessage:
+        'count() needs a relation, for example count(tasks) or sum(deals.amount)',
     },
     {
       type: FieldMetadataType.NUMBER,
