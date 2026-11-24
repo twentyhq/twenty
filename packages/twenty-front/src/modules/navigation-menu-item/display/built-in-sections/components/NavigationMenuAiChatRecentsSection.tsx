@@ -43,9 +43,6 @@ export const NavigationMenuAiChatRecentsSection = ({
       ? { shouldOpenInFullPage: true }
       : { resetNavigationStack: true },
   );
-  const isDirectMessageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
-  );
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const { threads, inboxThreadList, isLoading } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
@@ -54,7 +51,7 @@ export const NavigationMenuAiChatRecentsSection = ({
   const recentThreads = filterInboxRecentThreads({
     threads,
     favoriteThreads: inboxFavoriteThreads,
-    isDirectMessageEnabled,
+    shouldExcludeDirectMessages: false,
   });
 
   if (isLoading && !isDefined(headerAction)) {
