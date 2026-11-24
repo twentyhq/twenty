@@ -58,6 +58,12 @@ export const EmojiPicker = ({
 
         const forwardedEvent = new KeyboardEvent('keydown', {
           key: event.key,
+          code: event.code,
+          altKey: event.altKey,
+          ctrlKey: event.ctrlKey,
+          metaKey: event.metaKey,
+          shiftKey: event.shiftKey,
+          repeat: event.repeat,
           cancelable: true,
         });
 

@@ -161,16 +161,19 @@ export const WideGlyphsRenderWhole: Story = {
     }
 
     const firstRow = saluteEmoji.closest<HTMLElement>('[frimousse-row]');
-    const firstRowCells = isDefined(firstRow)
-      ? within(firstRow).getAllByRole('gridcell')
-      : [];
-    const firstRowCellsWidth = firstRowCells.reduce(
-      (width, cell) => width + cell.getBoundingClientRect().width,
-      0,
-    );
+
+    await expect(firstRow).toBeInTheDocument();
+
+    if (!isDefined(firstRow)) {
+      return;
+    }
+
+    const firstRowCellsWidth = within(firstRow)
+      .getAllByRole('gridcell')
+      .reduce((width, cell) => width + cell.getBoundingClientRect().width, 0);
 
     await expect(firstRowCellsWidth).toBeCloseTo(
-      firstRow?.getBoundingClientRect().width ?? 0,
+      firstRow.getBoundingClientRect().width,
       0,
     );
 
