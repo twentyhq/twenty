@@ -10,9 +10,9 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795527654001)
+@RegisteredWorkspaceCommand('2.64.0', 1795527654001)
 @Command({
-  name: 'upgrade:2-63:backfill-user-workspace-default-avatar-file-id',
+  name: 'upgrade:2-64:backfill-user-workspace-default-avatar-file-id',
   description:
     'Backfill userWorkspace.defaultAvatarFileId from defaultAvatarUrl, skipping URLs whose core picture file no longer exists',
 })

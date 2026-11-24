@@ -24,7 +24,7 @@ import {
 } from 'typeorm';
 
 import { ADD_USER_WORKSPACE_INBOX_NOTIFICATION_SETTINGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/add-user-workspace-inbox-notification-settings-upgrade-command-name.constant';
-import { ADD_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-user-workspace-default-avatar-file-id-upgrade-command-name.constant';
+import { ADD_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-user-workspace-default-avatar-file-id-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';

@@ -1,2 +1,0 @@
-export const ADD_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID_UPGRADE_COMMAND_NAME =
-  '2.63.0_AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand_1795527654000';
