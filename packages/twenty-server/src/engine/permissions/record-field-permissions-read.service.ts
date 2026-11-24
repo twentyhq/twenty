@@ -26,6 +26,11 @@ import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissio
 import { type ObjectQuestion } from 'src/engine/permissions/types/record-permissions-question.type';
 import { type SQLCondition } from 'src/engine/permissions/types/sql-condition.type';
 
+type UnreadableFieldsSQLCondition = {
+  fieldMetadataIds: string[];
+  sqlCondition: SQLCondition;
+};
+
 @Injectable()
 export class RecordFieldPermissionsReadService {
   constructor(
@@ -52,11 +57,7 @@ export class RecordFieldPermissionsReadService {
     objectMetadataId,
     tableAlias,
   }: ObjectQuestion & { tableAlias: string }): Promise<
-    {
-      fieldMetadataIds: string[];
-      sqlCondition: SQLCondition;
-      placeholderFieldMetadataIds: string[];
-    }[]
+    (UnreadableFieldsSQLCondition & { placeholderFieldMetadataIds: string[] })[]
   > {
     if (!isDefined(principals)) {
       return [];
@@ -110,7 +111,7 @@ export class RecordFieldPermissionsReadService {
     principals: PermissionsPrincipalsWithRolesContext;
     objectMetadataId: string;
     tableAlias: string;
-  }): Promise<{ fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]> {
+  }): Promise<UnreadableFieldsSQLCondition[]> {
     const rlsRuleInaccessibleFields = findRlsRuleInaccessibleFields({
       principals,
       metadataMaps: await this.permissionsMetadataMapsService.loadForPrincipals(
@@ -155,7 +156,7 @@ export class RecordFieldPermissionsReadService {
     principals: PermissionsPrincipalsWithRolesContext;
     objectMetadataId: string;
     tableAlias: string;
-  }): Promise<{ fieldMetadataIds: string[]; sqlCondition: SQLCondition }[]> {
+  }): Promise<UnreadableFieldsSQLCondition[]> {
     const { metadataMaps, flatObjectMetadata } =
       await this.findObjectMetadataOrThrow({ principals, objectMetadataId });
     const unreadableNestedFields = findRelatedRecordPathUnreadableNestedFields({
