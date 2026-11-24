@@ -3,7 +3,6 @@ import { type FormulaAggregateCall } from '@/types/FormulaAggregateCall';
 import { isFormulaAggregateFunctionName } from '@/utils/formula/isFormulaAggregateFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// Undefined when the call is not an aggregate, which includes min and max of plain values
 export const getFormulaAggregateCall = ({
   functionName,
   argumentPaths,
