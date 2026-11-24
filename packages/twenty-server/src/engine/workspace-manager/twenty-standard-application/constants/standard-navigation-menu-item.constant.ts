@@ -117,7 +117,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 1,
   },
   automationsFolderAllAgents: {
-    universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
+    universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     type: NavigationMenuItemType.NATIVE_PAGE,
     nativePageKey: 'agents',
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
