@@ -159,17 +159,20 @@ const compileRelativeDateRange = ({
     return `COALESCE(${timestamp} >= ${periodStart} AND ${timestamp} < ${periodStart} + ${onePeriod}, FALSE)`;
   }
 
-  const isInRange = (start: string, end: string) =>
+  const isInRange = ({ start, end }: { start: string; end: string }) =>
     `COALESCE(${amountSql} >= 1 AND ${timestamp} >= ${start} AND ${timestamp} < ${end}, FALSE)`;
 
   if (direction === 'PAST') {
-    return isInRange(`${periodStart} - ${periods}`, periodStart);
+    return isInRange({
+      start: `${periodStart} - ${periods}`,
+      end: periodStart,
+    });
   }
 
-  return isInRange(
-    `${periodStart} + ${onePeriod}`,
-    `${periodStart} + ${onePeriod} + ${periods}`,
-  );
+  return isInRange({
+    start: `${periodStart} + ${onePeriod}`,
+    end: `${periodStart} + ${onePeriod} + ${periods}`,
+  });
 };
 
 const buildTextCaseFunction = (
