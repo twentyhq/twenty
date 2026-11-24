@@ -1,4 +1,4 @@
-import { isWorkEmail } from 'src/utils/is-work-email';
+import { isWorkEmail } from '@/utils/email/isWorkEmail';
 
 describe('isWorkEmail', () => {
   it('should return true for a work email', () => {

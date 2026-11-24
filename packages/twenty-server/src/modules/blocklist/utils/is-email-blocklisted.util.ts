@@ -1,4 +1,5 @@
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
+import { getDomainFromEmail } from 'twenty-shared/utils';
+
 
 export const isEmailBlocklisted = (
   channelHandle: string[],

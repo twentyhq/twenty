@@ -3,11 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  assertIsDefinedOrThrow,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, getDomainFromEmail, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Not, Repository } from 'typeorm';
 
@@ -43,7 +39,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 @Injectable()
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
