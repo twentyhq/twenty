@@ -35,7 +35,7 @@ const EXCEPTION_HANDLER_SERVICE_PROVIDER = {
   useValue: { captureExceptions: () => [] },
 };
 
-export const runQueryOnGraphqlApp = async ({
+const runQueryOnGraphqlApp = async ({
   resolver,
   source,
   request,
