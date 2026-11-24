@@ -149,17 +149,20 @@ describePermissionTestWorkspace({
       ...overrides,
     });
 
-    const upsertRule = (
-      predicate: RowLevelPermissionRulePredicateInput,
-      expectToFail = false,
-    ) =>
+    const upsertRule = ({
+      predicate,
+      shouldFail = false,
+    }: {
+      predicate: RowLevelPermissionRulePredicateInput;
+      shouldFail?: boolean;
+    }) =>
       upsertRowLevelPermissionRules({
         input: {
           roleId,
           objectMetadataId: findWorkspace().objectMetadataId,
           rules: [{ canReadRecords: true, predicates: [predicate] }],
         },
-        expectToFail,
+        expectToFail: shouldFail,
         token: findWorkspace().adminAccessToken,
       });
 
@@ -302,7 +305,7 @@ describePermissionTestWorkspace({
         objectMetadataId: workspace.objectMetadataId,
         token,
       });
-      await upsertRule(buildLeadSeatPredicate());
+      await upsertRule({ predicate: buildLeadSeatPredicate() });
 
       leadMemberId = workspace.workspaceMemberIds.none;
       seatMemberId = workspace.workspaceMemberIds.rowLevel;
@@ -415,10 +418,10 @@ describePermissionTestWorkspace({
         }),
       },
     ])('should refuse $title', async ({ overrides }) => {
-      const { errors } = await upsertRule(
-        buildLeadSeatPredicate(overrides()),
-        true,
-      );
+      const { errors } = await upsertRule({
+        predicate: buildLeadSeatPredicate(overrides()),
+        shouldFail: true,
+      });
 
       expect(errors).toBeDefined();
     });
