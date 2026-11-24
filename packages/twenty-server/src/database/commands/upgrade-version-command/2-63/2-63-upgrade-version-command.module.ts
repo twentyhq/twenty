@@ -8,6 +8,7 @@ import { AddAiChatParticipantsCommandMenuItemCommand } from 'src/database/comman
 import { AddCallRecordingRelatedRecordPathCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795517101008-add-call-recording-related-record-path.command';
 import { CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795522445881-copy-page-layout-widget-rules-to-conditional-availability.command';
 import { AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795527933153-add-favorites-navigation-menu-section.command';
+import { AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795528202227-add-default-layout-navigation-menu-items.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -33,6 +34,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddCallRecordingRelatedRecordPathCommand,
     CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand,
     AddFavoritesNavigationMenuSectionCommand,
+    AddDefaultLayoutNavigationMenuItemsCommand,
   ],
 })
 export class V2_63_UpgradeVersionCommandModule {}

@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { isBuiltInSectionKey } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   IconComment,
@@ -8,6 +9,9 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 
+import { AI_CHAT_BUILT_IN_SECTION_KEYS } from '@/navigation-menu-item/common/constants/AiChatBuiltInSectionKeys';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NAVIGATION_DRAWER_MODE_ORDER } from '@/navigation/constants/NavigationDrawerModeOrder';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
@@ -34,6 +38,12 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
@@ -60,7 +70,28 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
     },
   };
 
-  return NAVIGATION_DRAWER_MODE_ORDER.filter(
-    (tab) => tab !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || hasAiPermission,
-  ).map((tab) => ({ ...navigationDrawerTabDisplays[tab], tab }));
+  const hasAiChatSectionInSidebar =
+    isCustomizableSidebarEnabled &&
+    workspaceNavigationMenuItems.some(
+      ({ builtInSectionKey }) =>
+        isBuiltInSectionKey(builtInSectionKey) &&
+        AI_CHAT_BUILT_IN_SECTION_KEYS.includes(builtInSectionKey) &&
+        isBuiltInSectionAvailable(builtInSectionKey),
+    );
+
+  const isTabShown = (tab: NavigationDrawerActiveTab) => {
+    switch (tab) {
+      case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
+        return hasAiPermission && !hasAiChatSectionInSidebar;
+      case NAVIGATION_DRAWER_TABS.SETTINGS:
+        return !isCustomizableSidebarEnabled;
+      default:
+        return true;
+    }
+  };
+
+  return NAVIGATION_DRAWER_MODE_ORDER.filter(isTabShown).map((tab) => ({
+    ...navigationDrawerTabDisplays[tab],
+    tab,
+  }));
 };
