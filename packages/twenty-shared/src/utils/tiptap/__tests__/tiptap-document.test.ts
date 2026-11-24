@@ -120,6 +120,26 @@ describe('TipTap document primitives', () => {
     );
   });
 
+  it('projects hard breaks to Markdown line breaks', () => {
+    expect(
+      tipTapDocumentToMarkdown({
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'Last week' },
+              { type: 'hardBreak' },
+              { type: 'text', text: '- job limiter' },
+              { type: 'hardBreak' },
+              { type: 'text', text: '- linkedin app' },
+            ],
+          },
+        ],
+      }),
+    ).toBe('Last week  \n\\- job limiter  \n\\- linkedin app');
+  });
+
   it('projects blockquotes to Markdown quotes', () => {
     expect(
       tipTapDocumentToMarkdown({
