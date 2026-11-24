@@ -39,6 +39,7 @@ export const AccessPolicyGuard = (
         );
       } catch (error) {
         // Exception filters do not run on field resolvers
+        // TODO: map field resolver errors in one place in a dedicated change, then drop this
         if (
           error instanceof PermissionsException &&
           isGraphqlFieldResolverContext(context)
