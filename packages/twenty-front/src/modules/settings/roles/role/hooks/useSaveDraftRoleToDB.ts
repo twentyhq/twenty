@@ -4,6 +4,7 @@ import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
 import { useUpdateWorkspaceMemberRole } from '@/settings/roles/hooks/useUpdateWorkspaceMemberRole';
+import { filterFieldPermissionsOfPredicateGroups } from '@/settings/roles/role/utils/filterFieldPermissionsOfPredicateGroups';
 import { getFieldPermissionsToUpsert } from '@/settings/roles/role/utils/getFieldPermissionsToUpsert';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -99,19 +100,15 @@ export const useSaveDraftRoleToDB = ({
     persistedFieldPermissions: settingsPersistedRole?.fieldPermissions ?? [],
   });
 
-  const draftPredicateGroupIds = new Set(
-    (draftRole.rowLevelPermissionPredicateGroups ?? []).map(({ id }) => id),
-  );
-
-  const ruleFieldPermissionsToUpsert = getFieldPermissionsToUpsert({
-    dirtyFieldPermissions: dirtyFields.rowLevelPermissionFieldPermissions ?? [],
-    persistedFieldPermissions:
-      settingsPersistedRole?.rowLevelPermissionFieldPermissions ?? [],
-  }).filter(
-    ({ rowLevelPermissionPredicateGroupId }) =>
-      isDefined(rowLevelPermissionPredicateGroupId) &&
-      draftPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
-  );
+  const ruleFieldPermissionsToUpsert = filterFieldPermissionsOfPredicateGroups({
+    fieldPermissions: getFieldPermissionsToUpsert({
+      dirtyFieldPermissions:
+        dirtyFields.rowLevelPermissionFieldPermissions ?? [],
+      persistedFieldPermissions:
+        settingsPersistedRole?.rowLevelPermissionFieldPermissions ?? [],
+    }),
+    predicateGroups: draftRole.rowLevelPermissionPredicateGroups ?? [],
+  });
 
   const upsertFieldPermissionsForRole = async ({
     targetRoleId,
