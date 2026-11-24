@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -18,7 +20,7 @@ export class CoreWorkflowOwnershipTransferService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async transferPrivateWorkflowsToSuccessor({
+  async transferWorkflowsOwnershipToSuccessor({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
@@ -26,34 +28,45 @@ export class CoreWorkflowOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<void> {
     const { workspaceId } = removedUserWorkspace;
-    const privateWorkflowsOfRemovedMember = {
-      createdByUserWorkspaceId: removedUserWorkspace.id,
-      isPrivate: true,
-    };
 
-    const hasPrivateWorkflows = await this.coreWorkflowRepository.exists(
+    const workflowsOfRemovedMember = await this.coreWorkflowRepository.find(
       workspaceId,
-      { where: privateWorkflowsOfRemovedMember },
+      {
+        select: { id: true, isPrivate: true },
+        where: { createdByUserWorkspaceId: removedUserWorkspace.id },
+      },
     );
 
-    if (!hasPrivateWorkflows) {
+    if (!isNonEmptyArray(workflowsOfRemovedMember)) {
       return;
     }
 
-    const successorUserWorkspace =
-      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
-        removedUserWorkspace,
-        actingUserWorkspaceId,
-      });
+    const privateWorkflowIds = workflowsOfRemovedMember
+      .filter(({ isPrivate }) => isPrivate)
+      .map(({ id }) => id);
 
-    if (!isDefined(successorUserWorkspace)) {
-      return;
+    const successorUserWorkspace = isNonEmptyArray(privateWorkflowIds)
+      ? await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
+          removedUserWorkspace,
+          actingUserWorkspaceId,
+        })
+      : undefined;
+
+    if (isDefined(successorUserWorkspace)) {
+      await this.coreWorkflowRepository.update(
+        workspaceId,
+        {
+          id: In(privateWorkflowIds),
+          createdByUserWorkspaceId: removedUserWorkspace.id,
+        },
+        { createdByUserWorkspaceId: successorUserWorkspace.id },
+      );
     }
 
     await this.coreWorkflowRepository.update(
       workspaceId,
-      privateWorkflowsOfRemovedMember,
-      { createdByUserWorkspaceId: successorUserWorkspace.id },
+      { createdByUserWorkspaceId: removedUserWorkspace.id },
+      { createdByUserWorkspaceId: null },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

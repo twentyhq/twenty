@@ -21,7 +21,7 @@ export class ViewOwnershipTransferService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async transferPrivateViewsToSuccessor({
+  async transferViewsOwnershipToSuccessor({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
@@ -35,36 +35,45 @@ export class ViewOwnershipTransferService {
       ['flatViewMaps'],
     );
 
-    const privateViewIds = Object.values(flatViewMaps.byUniversalIdentifier)
+    const viewsOfRemovedMember = Object.values(
+      flatViewMaps.byUniversalIdentifier,
+    )
       .filter(isDefined)
       .filter(
         (flatView) =>
-          flatView.createdByUserWorkspaceId === removedUserWorkspace.id &&
-          getEffectiveViewIsPrivate(flatView) !== false,
-      )
-      .map((flatView) => flatView.id);
+          flatView.createdByUserWorkspaceId === removedUserWorkspace.id,
+      );
 
-    if (!isNonEmptyArray(privateViewIds)) {
+    if (!isNonEmptyArray(viewsOfRemovedMember)) {
       return;
     }
 
-    const successorUserWorkspace =
-      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
-        removedUserWorkspace,
-        actingUserWorkspaceId,
-      });
+    const privateViewIds = viewsOfRemovedMember
+      .filter((flatView) => getEffectiveViewIsPrivate(flatView) !== false)
+      .map((flatView) => flatView.id);
 
-    if (!isDefined(successorUserWorkspace)) {
-      return;
+    const successorUserWorkspace = isNonEmptyArray(privateViewIds)
+      ? await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
+          removedUserWorkspace,
+          actingUserWorkspaceId,
+        })
+      : undefined;
+
+    if (isDefined(successorUserWorkspace)) {
+      await this.viewRepository.update(
+        workspaceId,
+        {
+          id: In(privateViewIds),
+          createdByUserWorkspaceId: removedUserWorkspace.id,
+        },
+        { createdByUserWorkspaceId: successorUserWorkspace.id },
+      );
     }
 
     await this.viewRepository.update(
       workspaceId,
-      {
-        id: In(privateViewIds),
-        createdByUserWorkspaceId: removedUserWorkspace.id,
-      },
-      { createdByUserWorkspaceId: successorUserWorkspace.id },
+      { createdByUserWorkspaceId: removedUserWorkspace.id },
+      { createdByUserWorkspaceId: null },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

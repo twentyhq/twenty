@@ -39,21 +39,23 @@ export class UserWorkspaceSuccessorTransferService {
       actingUserWorkspaceId,
     });
 
-    await this.viewOwnershipTransferService.transferPrivateViewsToSuccessor({
+    await this.viewOwnershipTransferService.transferViewsOwnershipToSuccessor({
       removedUserWorkspace,
       actingUserWorkspaceId,
     });
 
-    await this.coreWorkflowOwnershipTransferService.transferPrivateWorkflowsToSuccessor(
+    await this.coreWorkflowOwnershipTransferService.transferWorkflowsOwnershipToSuccessor(
       {
         removedUserWorkspace,
         actingUserWorkspaceId,
       },
     );
 
-    await this.agentOwnershipTransferService.transferPrivateAgentsToSuccessor({
-      removedUserWorkspace,
-      actingUserWorkspaceId,
-    });
+    await this.agentOwnershipTransferService.transferAgentsOwnershipToSuccessor(
+      {
+        removedUserWorkspace,
+        actingUserWorkspaceId,
+      },
+    );
   }
 }
