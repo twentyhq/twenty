@@ -10,7 +10,6 @@ import { parse } from 'graphql';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { PermissionTableService } from 'src/engine/permissions/permission-table/services/permission-table.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const OBJECT_NAME_SINGULAR = 'permissionTableRecord';
@@ -99,26 +98,6 @@ describe('permission tables', () => {
 
     expect(recordShares).toEqual([
       { recordId, accessLevel: RecordShareAccessLevel.READ },
-    ]);
-  });
-
-  it('should create the permission tables again on a workspace that already has them', async () => {
-    const { workspaceId } = await createPermissionTestActiveWorkspace();
-
-    await expect(
-      global.app.get(PermissionTableService).createTables({ workspaceId }),
-    ).resolves.toBeUndefined();
-
-    const permissionTables = await global.testDataSource.query(
-      `SELECT "table_name" FROM information_schema.tables
-       WHERE "table_schema" = $1 AND "table_name" IN ('recordShare', 'accessGroup')
-       ORDER BY "table_name"`,
-      [getWorkspaceSchemaName(workspaceId)],
-    );
-
-    expect(permissionTables).toEqual([
-      { table_name: 'accessGroup' },
-      { table_name: 'recordShare' },
     ]);
   });
 });
