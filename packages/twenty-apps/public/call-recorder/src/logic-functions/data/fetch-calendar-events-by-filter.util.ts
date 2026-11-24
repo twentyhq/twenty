@@ -1,5 +1,6 @@
-import { isString, isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isString, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
@@ -23,6 +24,17 @@ type CalendarEventNode = {
   callRecorderPreference?: string | null;
   calendarChannelEventAssociations?: {
     edges?: { node?: { calendarChannelId?: string | null } | null }[] | null;
+  } | null;
+  calendarEventParticipants?: {
+    pageInfo?: { hasNextPage?: boolean | null } | null;
+    edges?:
+      | {
+          node?: {
+            handle?: string | null;
+            workspaceMemberId?: string | null;
+          } | null;
+        }[]
+      | null;
   } | null;
 };
 
@@ -60,6 +72,10 @@ export const fetchCalendarEventsByFilter = async (
               calendarChannelEventAssociations: {
                 edges: { node: { calendarChannelId: true } },
               },
+              calendarEventParticipants: {
+                pageInfo: { hasNextPage: true },
+                edges: { node: { handle: true, workspaceMemberId: true } },
+              },
             },
           },
         },
@@ -93,5 +109,16 @@ export const fetchCalendarEventsByFilter = async (
     )
       .map((edge) => edge.node?.calendarChannelId)
       .filter(isString),
+    participants: (calendarEvent.calendarEventParticipants?.edges ?? [])
+      .map((edge) => edge.node)
+      .filter(isDefined)
+      .map((participant) => ({
+        handle: isNonEmptyString(participant.handle)
+          ? participant.handle
+          : undefined,
+        isWorkspaceMember: isNonEmptyString(participant.workspaceMemberId),
+      })),
+    hasUnlistedParticipants:
+      calendarEvent.calendarEventParticipants?.pageInfo?.hasNextPage ?? false,
   }));
 };

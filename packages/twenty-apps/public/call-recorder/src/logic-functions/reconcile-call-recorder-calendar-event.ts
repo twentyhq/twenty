@@ -17,7 +17,7 @@ import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/com
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
-import { fetchOwnerUserWorkspaceIdByCalendarChannelId } from 'src/logic-functions/data/fetch-owner-user-workspace-id-by-calendar-channel-id.util';
+import { fetchCalendarChannelOwnerByCalendarChannelId } from 'src/logic-functions/data/fetch-calendar-channel-owner-by-calendar-channel-id.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
@@ -131,17 +131,17 @@ const findCalendarEventIdsWithRecordingOnAlreadyHonored = async (
   }
 
   const [
-    ownerUserWorkspaceIdByCalendarChannelId,
+    calendarChannelOwnerByCalendarChannelId,
     memberRecordingPreferenceByUserWorkspaceId,
   ] = await Promise.all([
-    fetchOwnerUserWorkspaceIdByCalendarChannelId(),
+    fetchCalendarChannelOwnerByCalendarChannelId(),
     fetchMemberRecordingPreferenceByUserWorkspaceId(),
   ]);
   const requestingCalendarEvents = calendarEvents
     .map((calendarEvent) =>
       buildCallRecorderPolicyResult({
         calendarEvent,
-        ownerUserWorkspaceIdByCalendarChannelId,
+        calendarChannelOwnerByCalendarChannelId,
         memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),

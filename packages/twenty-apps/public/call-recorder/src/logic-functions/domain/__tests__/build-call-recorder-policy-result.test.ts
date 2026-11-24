@@ -18,11 +18,16 @@ const buildCalendarEventInput = (
   conferenceLinkUrl: 'https://meet.google.com/customer-sync',
   callRecorderPreference: undefined,
   calendarChannelIds: ['calendar-channel-1'],
+  participants: [],
+  hasUnlistedParticipants: false,
   ...overrides,
 });
 
-const OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID = new Map([
-  ['calendar-channel-1', 'user-workspace-1'],
+const CALENDAR_CHANNEL_OWNER_BY_CALENDAR_CHANNEL_ID = new Map([
+  [
+    'calendar-channel-1',
+    { userWorkspaceId: 'user-workspace-1', handle: 'ada@acme.com' },
+  ],
 ]);
 
 const buildPolicyResult = (
@@ -30,8 +35,8 @@ const buildPolicyResult = (
 ) =>
   buildCallRecorderPolicyResult({
     calendarEvent: buildCalendarEventInput(overrides),
-    ownerUserWorkspaceIdByCalendarChannelId:
-      OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
+    calendarChannelOwnerByCalendarChannelId:
+      CALENDAR_CHANNEL_OWNER_BY_CALENDAR_CHANNEL_ID,
     memberRecordingPreferenceByUserWorkspaceId: new Map([
       ['user-workspace-1', 'ALL'],
     ]),
@@ -46,8 +51,8 @@ const buildPolicyResultForMemberRecordingPreferences = (
 ) =>
   buildCallRecorderPolicyResult({
     calendarEvent: buildCalendarEventInput({}),
-    ownerUserWorkspaceIdByCalendarChannelId:
-      OWNER_USER_WORKSPACE_ID_BY_CALENDAR_CHANNEL_ID,
+    calendarChannelOwnerByCalendarChannelId:
+      CALENDAR_CHANNEL_OWNER_BY_CALENDAR_CHANNEL_ID,
     memberRecordingPreferenceByUserWorkspaceId,
     now: NOW,
   });
