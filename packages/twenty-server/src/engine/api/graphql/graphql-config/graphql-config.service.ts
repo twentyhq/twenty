@@ -10,6 +10,7 @@ import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
 import { ApiPath } from 'twenty-shared/types';
 
+import { GRAPHQL_FIELD_RESOLVER_ENHANCERS } from 'src/engine/api/graphql/graphql-config/constants/graphql-field-resolver-enhancers.constant';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
@@ -84,6 +85,7 @@ export class GraphQLConfigService implements GqlOptionsFactory<
       autoSchemaFile: true,
       include: [CoreEngineModule, ModulesModule],
       resolverSchemaScope: 'core',
+      fieldResolverEnhancers: GRAPHQL_FIELD_RESOLVER_ENHANCERS,
       buildSchemaOptions: {},
       resolvers: { JSON: GraphQLJSON },
       plugins: plugins,

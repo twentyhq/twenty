@@ -19,20 +19,14 @@ const SCHEDULE_TRIGGER: WorkflowTrigger = {
 const applicationWorkflow = ({
   id,
   trigger,
-  workflowId = null,
-  workspaceWorkflowVersionId = null,
 }: {
   id: string;
   trigger: WorkflowTrigger;
-  workflowId?: string | null;
-  workspaceWorkflowVersionId?: string | null;
 }) => ({
   id,
   flatUniversalWorkflowVersion: {
     id: `${id.slice(0, -1)}9`,
     triggers: [trigger],
-    workflowId,
-    workspaceWorkflowVersionId,
   },
 });
 
@@ -61,31 +55,6 @@ describe('buildApplicationWorkflowCronTriggerCacheEntries', () => {
         workspaceId: WORKSPACE_ID,
         workflowId: '11111111-1111-4111-8111-111111111111',
         coreWorkflowVersionId: '11111111-1111-4111-8111-111111111119',
-        pattern: '30 */2 * * *',
-      },
-    ]);
-  });
-
-  it('keeps the legacy identifiers of a workflow first published in the workspace', () => {
-    expect(
-      buildApplicationWorkflowCronTriggerCacheEntries({
-        workspaceId: WORKSPACE_ID,
-        workflows: [
-          applicationWorkflow({
-            id: '33333333-3333-4333-8333-333333333333',
-            trigger: SCHEDULE_TRIGGER,
-            workflowId: '44444444-4444-4444-8444-444444444444',
-            workspaceWorkflowVersionId: '55555555-5555-4555-8555-555555555555',
-          }),
-        ],
-      }),
-    ).toEqual([
-      {
-        workspaceId: WORKSPACE_ID,
-        workflowId: '33333333-3333-4333-8333-333333333333',
-        legacyWorkflowId: '44444444-4444-4444-8444-444444444444',
-        coreWorkflowVersionId: '33333333-3333-4333-8333-333333333339',
-        workspaceWorkflowVersionId: '55555555-5555-4555-8555-555555555555',
         pattern: '30 */2 * * *',
       },
     ]);

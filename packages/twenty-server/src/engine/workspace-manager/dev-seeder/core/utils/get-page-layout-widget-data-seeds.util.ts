@@ -83,6 +83,7 @@ export const getPageLayoutWidgetFlatEntitySeeds = ({
       universalConfiguration,
       conditionalDisplay: null,
       conditionalAvailabilityExpression: null,
+      conditionalAvailability: null,
       isActive: true,
       createdAt: now,
       updatedAt: now,

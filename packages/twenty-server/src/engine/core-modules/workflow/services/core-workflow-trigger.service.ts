@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import {
+  CoreWorkflowMetadataException,
+  CoreWorkflowMetadataExceptionCode,
+} from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -19,6 +22,8 @@ export class CoreWorkflowTriggerService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    @InjectWorkspaceScopedRepository(WorkflowEntity)
+    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
     private readonly cacheStorageService: CacheStorageService,
@@ -45,30 +50,37 @@ export class CoreWorkflowTriggerService {
     });
   }
 
-  async resolveDispatchedCoreVersionId({
+  async findCoreWorkflowById({
     workspaceId,
-    coreWorkflowVersionId,
-    workspaceWorkflowVersionId,
-    lastPublishedCoreWorkflowVersionId,
+    coreWorkflowId,
   }: {
     workspaceId: string;
-    coreWorkflowVersionId?: string | null;
-    workspaceWorkflowVersionId?: string | null;
-    lastPublishedCoreWorkflowVersionId?: string | null;
-  }): Promise<string | undefined> {
-    if (isDefined(coreWorkflowVersionId)) {
-      return coreWorkflowVersionId;
+    coreWorkflowId: string;
+  }): Promise<WorkflowEntity | null> {
+    return this.coreWorkflowRepository.findOne(workspaceId, {
+      where: { id: coreWorkflowId },
+    });
+  }
+
+  async findCoreWorkflowByIdOrWorkspaceWorkflowId({
+    workspaceId,
+    workflowId,
+  }: {
+    workspaceId: string;
+    workflowId: string;
+  }): Promise<WorkflowEntity | null> {
+    const workflows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: [{ id: workflowId }, { workspaceWorkflowId: workflowId }],
+    });
+
+    if (workflows.length > 1) {
+      throw new CoreWorkflowMetadataException(
+        `Ambiguous core workflow mapping for ${workflowId} in workspace ${workspaceId}`,
+        CoreWorkflowMetadataExceptionCode.AMBIGUOUS_WORKFLOW_IDENTIFIER,
+      );
     }
 
-    if (isDefined(workspaceWorkflowVersionId)) {
-      return (
-        await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-          where: { workspaceWorkflowVersionId },
-        })
-      )?.id;
-    }
-
-    return lastPublishedCoreWorkflowVersionId ?? undefined;
+    return workflows[0] ?? null;
   }
 
   async invalidateAutomatedTriggerMaps(workspaceId: string): Promise<void> {

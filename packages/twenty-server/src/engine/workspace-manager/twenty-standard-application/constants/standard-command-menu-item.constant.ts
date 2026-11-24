@@ -667,7 +667,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+      'numberOfSelectedRecords == 1 and none(selectedRecords, "isPrivate") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier: null,
     availabilityCoreObjectName: 'workflow',
     frontComponentUniversalIdentifier: null,
@@ -693,7 +693,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "PRIVATE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and every(selectedRecords, "isPrivate") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
     availabilityObjectMetadataUniversalIdentifier: null,
     availabilityCoreObjectName: 'workflow',
     frontComponentUniversalIdentifier: null,
@@ -1052,12 +1052,30 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords >= 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
+      'numberOfSelectedRecords >= 2 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.ASSIGN_AI_CHAT,
     hotKeys: ['A'],
+  },
+  manageAiChatParticipants: {
+    universalIdentifier: 'a80f76ad-a1d3-4e24-b4b7-368e2899752b',
+    label: i18nLabel(
+      msg({ message: `Participants`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconUsers',
+    isPinned: true,
+    position: 80.5,
+    shortLabel: null,
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and featureFlags.IS_AI_CHAT_INBOX_ENABLED and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "conversationType", "DIRECT_MESSAGE")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MANAGE_AI_CHAT_PARTICIPANTS,
+    hotKeys: null,
   },
   // Chats have their own Share item; it is a system object, so this one never shows there
   shareAnyRecord: {
@@ -1279,6 +1297,44 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EMAIL_PAGE_STYLE,
     hotKeys: null,
+  },
+  goToWorkflows: {
+    universalIdentifier: 'e04acd97-dc5a-42d4-98b9-615cd7289488',
+    label: i18nLabel(
+      msg({ message: `Go to Workflows`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconSettingsAutomation',
+    isPinned: false,
+    position: 46.25,
+    shortLabel: i18nLabel(
+      msg({ message: `Workflows`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.WORKFLOWS',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    hotKeys: ['G', 'W'],
+    payload: { path: '/workflows' },
+  },
+  goToAgents: {
+    universalIdentifier: 'd4e9a36b-00df-46e0-ac40-e10ee08975da',
+    label: i18nLabel(
+      msg({ message: `Go to Agents`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconLego',
+    isPinned: false,
+    position: 46.5,
+    shortLabel: i18nLabel(
+      msg({ message: `Agents`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+    conditionalAvailabilityExpression: 'permissionFlags.AI',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    hotKeys: ['G', 'A'],
+    payload: { path: '/agents' },
   },
   goToSettings: {
     universalIdentifier: 'ef9aba44-0068-453e-930a-f8c182af18ee',

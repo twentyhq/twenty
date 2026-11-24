@@ -20,7 +20,6 @@ import {
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { buildCoreWorkflowVisibilitySqlPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-sql-predicate.util';
 import { buildCoreWorkflowVisibilityWhere } from 'src/engine/core-modules/workflow/utils/build-core-workflow-visibility-where.util';
-import { getCoreWorkflowVisibilityFromIsPrivate } from 'src/engine/core-modules/workflow/utils/get-core-workflow-visibility-from-is-private.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { canChangeCoreWorkflowVisibilitySelectExpression } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility-select-expression.util';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
@@ -40,7 +39,6 @@ type CoreWorkflowRow = {
   id: string;
   cursorSortValue: string | null;
   name: string | null;
-  lastPublishedVersionId: string | null;
   lastPublishedCoreWorkflowVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
@@ -106,7 +104,7 @@ const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
 
 const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
-         c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
+         c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
          c."isSystem",
          c."isPrivate",
@@ -125,13 +123,11 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
     hasActiveVersion: row.hasActiveVersion,
     hasDeactivatedVersion: row.hasDeactivatedVersion,
   }),
-  lastPublishedVersionId: row.lastPublishedVersionId,
   lastPublishedCoreWorkflowVersionId: row.lastPublishedCoreWorkflowVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
   isSystem: row.isSystem,
   isPrivate: row.isPrivate,
-  visibility: getCoreWorkflowVisibilityFromIsPrivate(row.isPrivate),
   canChangeVisibility: row.canChangeVisibility,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
@@ -140,7 +136,7 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
 const CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE = `LEFT JOIN core."workflowVersion" v
      ON v."coreWorkflowId" = c.id AND v."workspaceId" = $1`;
 
-const GROUP_BY_CLAUSE = `${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", c."workspaceWorkflowId"`;
+const GROUP_BY_CLAUSE = `${GROUPED_WORKFLOW_COLUMNS}, c."applicationId", c."workspaceWorkflowId"`;
 
 @Injectable()
 export class CoreWorkflowListService {
@@ -185,7 +181,6 @@ export class CoreWorkflowListService {
           id: true,
           coreWorkflowId: true,
           status: true,
-          workspaceWorkflowVersionId: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -255,7 +250,6 @@ export class CoreWorkflowListService {
           coreWorkflowId: version.coreWorkflowId,
           label: buildCoreWorkflowVersionLabel(index + 1),
           status: version.status,
-          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
           workspaceWorkflowId: workflow.workspaceWorkflowId,
           trigger: null,
           steps: null,
@@ -299,16 +293,12 @@ export class CoreWorkflowListService {
                   version.status === WorkflowVersionStatus.DEACTIVATED,
               ),
             }),
-            lastPublishedVersionId: workflow.lastPublishedVersionId,
             lastPublishedCoreWorkflowVersionId:
               workflow.lastPublishedCoreWorkflowVersionId,
             applicationId: workflow.applicationId,
             workspaceWorkflowId: workflow.workspaceWorkflowId,
             isSystem: workflow.isSystem,
             isPrivate: workflow.isPrivate,
-            visibility: getCoreWorkflowVisibilityFromIsPrivate(
-              workflow.isPrivate,
-            ),
             canChangeVisibility: canChangeCoreWorkflowVisibility({
               createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,
               userWorkspaceId,

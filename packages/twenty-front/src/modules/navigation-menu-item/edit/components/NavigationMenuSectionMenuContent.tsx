@@ -1,12 +1,17 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
-import { IconFolderSymlink, IconHome, IconTrash } from 'twenty-ui/icon';
+import {
+  IconFolderSymlink,
+  IconHome,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { useIcons } from 'twenty-ui/icon/provider';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
-import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
+import { canMoveBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canMoveBuiltInSectionToContainer';
 import { isNavigationMenuItemBuiltInSection } from '@/navigation-menu-item/common/utils/isNavigationMenuItemBuiltInSection';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -22,11 +27,13 @@ type NavigationMenuSectionMenuContentProps = {
     NavigationMenuItem,
     'id' | 'name' | 'icon' | 'parentId' | 'type' | 'builtInSectionKey'
   >;
+  onAddItem?: () => void;
   onClose: () => void;
 };
 
 export const NavigationMenuSectionMenuContent = ({
   section,
+  onAddItem,
   onClose,
 }: NavigationMenuSectionMenuContentProps) => {
   const { t } = useLingui();
@@ -51,7 +58,7 @@ export const NavigationMenuSectionMenuContent = ({
   const canMoveTo = (containerId: string | null) =>
     containerId !== currentContainerId &&
     (!isDefined(section.builtInSectionKey) ||
-      canAddBuiltInSectionToContainer({
+      canMoveBuiltInSectionToContainer({
         builtInSectionKey: section.builtInSectionKey,
         containerId,
         items: workspaceNavigationMenuItems,
@@ -92,21 +99,36 @@ export const NavigationMenuSectionMenuContent = ({
             <Dropdown.Separator />
           </>
         )}
+        {isDefined(onAddItem) && (
+          <>
+            <Dropdown.Section>
+              <NavigationMenuItemSelectableItem
+                item={{
+                  id: 'add-item',
+                  label: t`Add item`,
+                  Icon: IconPlus,
+                  hasSubMenu: true,
+                  onClick: onAddItem,
+                }}
+              />
+            </Dropdown.Section>
+            <Dropdown.Separator />
+          </>
+        )}
         <Dropdown.Section>
           {reorderOptions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
           ))}
-          {tabs.length > 0 && (
-            <NavigationMenuItemSelectableItem
-              item={{
-                id: 'move-to-tab',
-                label: t`Move to tab`,
-                Icon: IconFolderSymlink,
-                hasSubMenu: true,
-                onClick: () => goToPage('tabs'),
-              }}
-            />
-          )}
+          <NavigationMenuItemSelectableItem
+            item={{
+              id: 'move-to-tab',
+              label: t`Move to tab`,
+              Icon: IconFolderSymlink,
+              isDisabled: tabOptions.every((option) => option.isDisabled),
+              hasSubMenu: true,
+              onClick: () => goToPage('tabs'),
+            }}
+          />
           <NavigationMenuItemSelectableItem
             item={{
               id: 'remove',

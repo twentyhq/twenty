@@ -152,7 +152,7 @@ export class AdminPanelStatisticsService {
       string,
       {
         workspace: WorkspaceEntity;
-        fallbackAvatarUrlsByUserId: Map<string, string | null>;
+        fallbackAvatarFileIdsByUserId: Map<string, string | null>;
       }
     >();
 
@@ -168,12 +168,12 @@ export class AdminPanelStatisticsService {
 
         const entry = contextsByWorkspaceId.get(workspace.id) ?? {
           workspace,
-          fallbackAvatarUrlsByUserId: new Map(),
+          fallbackAvatarFileIdsByUserId: new Map(),
         };
 
-        entry.fallbackAvatarUrlsByUserId.set(
+        entry.fallbackAvatarFileIdsByUserId.set(
           user.id,
-          userWorkspace.defaultAvatarUrl ?? null,
+          userWorkspace.defaultAvatarFileId,
         );
         contextsByWorkspaceId.set(workspace.id, entry);
       }
@@ -181,11 +181,11 @@ export class AdminPanelStatisticsService {
 
     await Promise.all(
       Array.from(contextsByWorkspaceId.values()).map(
-        async ({ workspace, fallbackAvatarUrlsByUserId }) => {
+        async ({ workspace, fallbackAvatarFileIdsByUserId }) => {
           const perWorkspaceSigned =
             await this.userService.loadSignedAvatarUrlsByUserId({
               workspace,
-              fallbackAvatarUrlsByUserId,
+              fallbackAvatarFileIdsByUserId,
             });
 
           for (const [userId, signedUrl] of perWorkspaceSigned.entries()) {

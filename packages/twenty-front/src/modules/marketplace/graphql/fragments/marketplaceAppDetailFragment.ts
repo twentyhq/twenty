@@ -30,6 +30,15 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
       camera
     }
     billsCredits
+    billingPrices {
+      universalIdentifier
+      label
+      type
+      billingPeriod
+      amountCents
+      currency
+      per
+    }
     objects {
       universalIdentifier
     }

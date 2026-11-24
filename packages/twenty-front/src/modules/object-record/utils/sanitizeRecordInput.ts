@@ -5,7 +5,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
-import { removeTypenamesFromCompositeFieldValue } from '@/object-record/utils/removeTypenamesFromCompositeFieldValue';
+import { removeTypenames } from '~/utils/removeTypenames';
 import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
@@ -106,10 +106,7 @@ export const sanitizeRecordInput = ({
           isDefined(fieldMetadataItem) &&
           isCompositeFieldType(fieldMetadataItem.type)
         ) {
-          return [
-            fieldName,
-            removeTypenamesFromCompositeFieldValue(fieldValue),
-          ];
+          return [fieldName, removeTypenames(fieldValue)];
         }
 
         // TODO: validate fieldValue against the field type, including composite structures

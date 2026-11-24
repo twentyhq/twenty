@@ -1,37 +1,76 @@
 .root {
+  background: var(--t-background-primary);
   display: flex;
   flex-direction: column;
   height: 280px;
   width: 100%;
 
-  [frimousse-category-header] {
-    background: var(--t-background-primary);
-    color: var(--t-font-color-secondary);
-    font-size: var(--t-font-size-xs);
-    padding: var(--t-spacing-1) var(--t-spacing-2);
+  [frimousse-list] {
+    padding: 0 var(--t-spacing-1) var(--t-spacing-1);
   }
 
-  [frimousse-row] {
-    padding: 0 var(--t-spacing-1);
+  [frimousse-category-header] {
+    align-items: center;
+    background: var(--t-background-primary);
+    block-size: var(--t-spacing-6);
+    box-sizing: border-box;
+    color: var(--t-font-color-tertiary);
+    display: flex;
+    font-size: var(--t-font-size-xs);
+    font-weight: var(--t-font-weight-semi-bold);
+    line-height: var(--t-text-line-height-md);
+    padding-inline: var(--t-spacing-1);
+    user-select: none;
   }
 
   [frimousse-emoji] {
+    align-items: center;
     background: none;
+    block-size: var(--t-spacing-8);
     border: none;
-    border-radius: var(--t-border-radius-sm);
     cursor: pointer;
+    display: flex;
+    flex: none;
     font-size: var(--t-font-size-lg);
-    height: var(--t-spacing-8);
-    width: var(--t-spacing-8);
+    inline-size: calc(100% / var(--frimousse-list-columns));
+    justify-content: center;
+    padding: 0;
 
-    &[data-active] {
+    &[data-active] > .glyph {
       background: var(--t-background-transparent-light);
     }
   }
 }
 
+.glyph {
+  align-items: center;
+  block-size: var(--t-spacing-8);
+  border-radius: var(--t-border-radius-md);
+  display: flex;
+  flex: none;
+  inline-size: var(--t-spacing-8);
+  justify-content: center;
+}
+
 .search {
-  margin: var(--t-spacing-2);
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  min-block-size: 36px;
+  padding: var(--t-spacing-2);
+}
+
+.searchInput[type='search'] {
+  font-size: var(--t-font-size-sm);
+
+  &::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}
+
+.separator[data-orientation] {
+  background-color: var(--t-border-color-light);
 }
 
 .viewport {

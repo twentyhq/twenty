@@ -117,7 +117,7 @@ describe('computeSubscriptionUpdateOptions', () => {
     });
   });
 
-  it('returns always_invoice when an applications update raises a quantity', () => {
+  it('rejects an applications update raising a quantity when the payment fails', () => {
     const result = computeSubscriptionUpdateOptions(
       { type: SubscriptionUpdateType.APPLICATIONS },
       { isQuantityIncrease: true },
@@ -125,6 +125,18 @@ describe('computeSubscriptionUpdateOptions', () => {
 
     expect(result).toEqual({
       proration: 'always_invoice',
+      paymentBehavior: 'error_if_incomplete',
+    });
+  });
+
+  it('prorates an applications update with no quantity going up on the next invoice', () => {
+    const result = computeSubscriptionUpdateOptions(
+      { type: SubscriptionUpdateType.APPLICATIONS },
+      { isQuantityIncrease: false },
+    );
+
+    expect(result).toEqual({
+      proration: 'create_prorations',
     });
   });
 });

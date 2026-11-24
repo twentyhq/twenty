@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, type ReactNode, Suspense } from 'react';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
@@ -13,15 +14,17 @@ const LazyWorkspaceSectionListDndKit = lazy(() =>
 );
 
 type NavigationMenuContainerEditableItemsProps = {
-  containerId: string;
+  containerId: string | null;
   topLevelItems: NavigationMenuItem[];
   folderChildrenById: Map<string, NavigationMenuItem[]>;
+  renderSection?: (section: NavigationMenuItem) => ReactNode;
 };
 
 export const NavigationMenuContainerEditableItems = ({
   containerId,
   topLevelItems,
   folderChildrenById,
+  renderSection,
 }: NavigationMenuContainerEditableItemsProps) => {
   const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
     selectedNavigationMenuItemIdInEditModeState,
@@ -32,13 +35,15 @@ export const NavigationMenuContainerEditableItems = ({
     <Suspense
       fallback={
         <WorkspaceSectionListReadOnly
-          filteredItems={topLevelItems}
+          filteredItems={topLevelItems.filter(
+            (item) => item.type !== NavigationMenuItemType.SECTION,
+          )}
           folderChildrenById={folderChildrenById}
         />
       }
     >
       <LazyWorkspaceSectionListDndKit
-        containerId={containerId}
+        containerId={containerId ?? undefined}
         filteredItems={topLevelItems}
         folderChildrenById={folderChildrenById}
         getEditModeProps={(item) => ({
@@ -47,6 +52,7 @@ export const NavigationMenuContainerEditableItems = ({
           onEditModeClick: () => handleNavigationMenuItemClick({ item }),
         })}
         onNavigationMenuItemClick={handleNavigationMenuItemClick}
+        renderSection={renderSection}
       />
     </Suspense>
   );
