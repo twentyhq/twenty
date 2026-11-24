@@ -33,13 +33,18 @@ const toRelationUniversalSettings = ({
 };
 
 const toUniversalSettings = ({
+  fieldMetadataType,
   settings,
   fieldMetadataIdToUniversalIdentifierMap,
 }: {
+  fieldMetadataType: FieldMetadataType;
   settings: FieldMetadataSettings;
   fieldMetadataIdToUniversalIdentifierMap: Map<string, string>;
 }): FlatFieldMetadata['universalSettings'] => {
-  if (isFieldMetadataSettingsOfType(settings, FieldMetadataType.ROLLUP)) {
+  if (
+    fieldMetadataType === FieldMetadataType.ROLLUP &&
+    isFieldMetadataSettingsOfType(settings, FieldMetadataType.ROLLUP)
+  ) {
     return fromRollupSettingsToUniversalRollupSettings({
       settings,
       fieldMetadataUniversalIdentifierById: Object.fromEntries(
@@ -83,6 +88,7 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     });
 
   const settingsWithUniversalIdentifiers = toUniversalSettings({
+    fieldMetadataType: fieldMetadataEntity.type,
     settings: fieldMetadataEntity.settings,
     fieldMetadataIdToUniversalIdentifierMap,
   });
