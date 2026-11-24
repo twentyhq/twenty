@@ -338,7 +338,7 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
         frequency: 'WEEKLY',
         interval: 2,
         daysOfWeek: ['THURSDAY'],
-        occurrenceCount: 5,
+        endOccurrenceCount: 5,
       },
     });
 

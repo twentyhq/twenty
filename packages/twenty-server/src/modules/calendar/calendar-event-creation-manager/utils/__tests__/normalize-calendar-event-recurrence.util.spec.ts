@@ -15,7 +15,7 @@ describe('normalizeCalendarEventRecurrence', () => {
       daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
       firstOccurrenceDate: '2026-10-21',
       endDate: undefined,
-      occurrenceCount: undefined,
+      endOccurrenceCount: undefined,
     });
   });
 

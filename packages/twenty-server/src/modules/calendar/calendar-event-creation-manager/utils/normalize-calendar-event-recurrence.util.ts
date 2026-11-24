@@ -25,7 +25,7 @@ export const normalizeCalendarEventRecurrence = ({
 }): CalendarEventRecurrence | { error: MessageDescriptor } => {
   const interval = recurrence.interval ?? 1;
   const endDate = recurrence.endDate ?? undefined;
-  const occurrenceCount = recurrence.occurrenceCount ?? undefined;
+  const endOccurrenceCount = recurrence.endOccurrenceCount ?? undefined;
   const startsAtInTimeZone = toCalendarEventTemporalDateTime({
     isoDateTime: startsAt,
     isFullDay,
@@ -36,16 +36,17 @@ export const normalizeCalendarEventRecurrence = ({
 
   if (
     !isPositiveWholeNumber(interval) ||
-    (isDefined(occurrenceCount) && !isPositiveWholeNumber(occurrenceCount))
+    (isDefined(endOccurrenceCount) &&
+      !isPositiveWholeNumber(endOccurrenceCount))
   ) {
     return {
-      error: msg`recurrence.interval and recurrence.occurrenceCount must be positive whole numbers`,
+      error: msg`recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers`,
     };
   }
 
-  if (isDefined(endDate) && isDefined(occurrenceCount)) {
+  if (isDefined(endDate) && isDefined(endOccurrenceCount)) {
     return {
-      error: msg`A recurrence ends either on recurrence.endDate or after recurrence.occurrenceCount, not both`,
+      error: msg`A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both`,
     };
   }
 
@@ -78,6 +79,6 @@ export const normalizeCalendarEventRecurrence = ({
     daysOfWeek: isWeekly ? weeklyDaysOfWeek : [],
     firstOccurrenceDate,
     endDate,
-    occurrenceCount,
+    endOccurrenceCount,
   };
 };

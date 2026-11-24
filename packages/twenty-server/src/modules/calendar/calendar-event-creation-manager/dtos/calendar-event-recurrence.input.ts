@@ -20,5 +20,5 @@ export class CalendarEventRecurrenceInput {
   endDate?: string;
 
   @Field(() => Int, { nullable: true })
-  occurrenceCount?: number;
+  endOccurrenceCount?: number;
 }

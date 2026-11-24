@@ -374,7 +374,7 @@ describe('useCalendarEventComposer', () => {
             frequency: CalendarEventRecurrenceFrequency.WEEKLY,
             interval: 1,
             daysOfWeek: [CalendarEventRecurrenceWeekday.THURSDAY],
-            occurrenceCount: 10,
+            endOccurrenceCount: 10,
           },
         }),
       );

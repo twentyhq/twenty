@@ -55,7 +55,7 @@ describe('toGoogleEventInput', () => {
         interval: 2,
         daysOfWeek: ['WEDNESDAY', 'FRIDAY'],
         firstOccurrenceDate: '2026-07-01',
-        occurrenceCount: 6,
+        endOccurrenceCount: 6,
       },
     });
 

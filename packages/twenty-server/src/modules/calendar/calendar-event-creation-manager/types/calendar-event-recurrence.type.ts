@@ -7,5 +7,5 @@ export type CalendarEventRecurrence = {
   daysOfWeek: CalendarEventRecurrenceWeekday[];
   firstOccurrenceDate: string;
   endDate?: string;
-  occurrenceCount?: number;
+  endOccurrenceCount?: number;
 };

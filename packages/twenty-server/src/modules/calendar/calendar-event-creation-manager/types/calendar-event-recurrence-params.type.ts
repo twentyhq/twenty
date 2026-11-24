@@ -6,5 +6,5 @@ export type CalendarEventRecurrenceParams = {
   interval?: number | null;
   daysOfWeek?: CalendarEventRecurrenceWeekday[] | null;
   endDate?: string | null;
-  occurrenceCount?: number | null;
+  endOccurrenceCount?: number | null;
 };

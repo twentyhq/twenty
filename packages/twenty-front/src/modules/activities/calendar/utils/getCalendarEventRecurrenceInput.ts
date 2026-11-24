@@ -17,6 +17,6 @@ export const getCalendarEventRecurrenceInput = (
     case 'ON_DATE':
       return { ...repeatRule, endDate: end.endDate };
     case 'AFTER_OCCURRENCE_COUNT':
-      return { ...repeatRule, occurrenceCount: end.occurrenceCount };
+      return { ...repeatRule, endOccurrenceCount: end.occurrenceCount };
   }
 };

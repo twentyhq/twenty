@@ -82,10 +82,10 @@ export const CreateCalendarEventToolInputZodSchema = z.object({
       endDate: z
         .string()
         .describe(
-          'Last date the event can repeat on, inclusive, as YYYY-MM-DD in the event time zone. Omit for no end. Do not combine with occurrenceCount.',
+          'Last date the event can repeat on, inclusive, as YYYY-MM-DD in the event time zone. Omit for no end. Do not combine with endOccurrenceCount.',
         )
         .optional(),
-      occurrenceCount: z
+      endOccurrenceCount: z
         .number()
         .int()
         .min(1)

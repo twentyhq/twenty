@@ -31,9 +31,9 @@ export const toMicrosoftEventRecurrence = ({
     range.endDate = recurrence.endDate;
   }
 
-  if (isDefined(recurrence.occurrenceCount)) {
+  if (isDefined(recurrence.endOccurrenceCount)) {
     range.type = 'numbered';
-    range.numberOfOccurrences = recurrence.occurrenceCount;
+    range.numberOfOccurrences = recurrence.endOccurrenceCount;
   }
 
   switch (recurrence.frequency) {

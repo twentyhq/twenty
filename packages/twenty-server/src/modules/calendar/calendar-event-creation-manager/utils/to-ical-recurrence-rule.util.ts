@@ -44,8 +44,8 @@ export const toICalRecurrenceRule = ({
     );
   }
 
-  if (isDefined(recurrence.occurrenceCount)) {
-    ruleParts.push(`COUNT=${recurrence.occurrenceCount}`);
+  if (isDefined(recurrence.endOccurrenceCount)) {
+    ruleParts.push(`COUNT=${recurrence.endOccurrenceCount}`);
   }
 
   if (isDefined(recurrence.endDate)) {
