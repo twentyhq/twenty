@@ -63,8 +63,7 @@ export function AppsHero({ apps }: AppsHeroProps) {
     <SectionShell
       background={
         <>
-          <AppsBackdrop />
-          <AppsOrbit apps={apps} />
+          <AppsOrbit apps={apps} backdrop={<AppsBackdrop />} />
         </>
       }
       fullBleedBackground

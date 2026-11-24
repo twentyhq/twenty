@@ -1,7 +1,13 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import { type CSSProperties, useEffect, useMemo, useRef } from 'react';
+import {
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { getReducedMotionSnapshot } from '@/platform/motion';
@@ -67,6 +73,26 @@ const Stage = styled.div`
   overflow: hidden;
   pointer-events: none;
   position: absolute;
+`;
+
+// The pattern around the orbit, sized and placed from the orbit itself (its
+// radius and centre variables) so it keeps clear of the ring at every width.
+// The source is drawn for this box (hero_pattern.py, shape « halo »): ring
+// centre at 50% / 115.5% of the box, clear radius 70% of its height, box ratio
+// 3600 / 1250. The ring's labels hang inside the radius, so the margin is
+// only the logos' size.
+const RingsField = styled.div`
+  --apps-stage-rings-height: calc(
+    (var(--apps-stage-orbit-radius) + 40px) / 0.7
+  );
+  height: var(--apps-stage-rings-height);
+  left: 50%;
+  position: absolute;
+  top: calc(
+    var(--apps-stage-orbit-center) - var(--apps-stage-rings-height) * 1.155
+  );
+  transform: translateX(-50%);
+  width: calc(var(--apps-stage-rings-height) * 2.88);
 `;
 
 const Enter = styled.div`
@@ -186,9 +212,11 @@ type StageStyle = CSSProperties & {
 
 type AppsOrbitProps = {
   apps: readonly MarketplaceApp[];
+  // the halftone pattern drawn around the ring, behind it
+  backdrop?: ReactNode;
 };
 
-export function AppsOrbit({ apps }: AppsOrbitProps) {
+export function AppsOrbit({ apps, backdrop }: AppsOrbitProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   // A new array would make the ink reader read again.
@@ -397,6 +425,7 @@ export function AppsOrbit({ apps }: AppsOrbitProps) {
 
   return (
     <Stage aria-hidden ref={stageRef}>
+      {isDefined(backdrop) && <RingsField>{backdrop}</RingsField>}
       <Enter>
         <Ring ref={ringRef}>
           {Array.from({ length: SLOT_COUNT }, (_, slot) => {
