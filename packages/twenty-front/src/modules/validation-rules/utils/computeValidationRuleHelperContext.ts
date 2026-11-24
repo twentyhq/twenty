@@ -8,6 +8,7 @@ import { VALIDATION_RULE_KEYWORDS } from '@/validation-rules/constants/Validatio
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperContext } from '@/validation-rules/types/ValidationRuleHelperContext';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
+import { type ValidationRuleSyntaxDefinition } from '@/validation-rules/types/ValidationRuleSyntaxDefinition';
 import { getValidationRuleFunctionDefinitions } from '@/validation-rules/utils/getValidationRuleFunctionDefinitions';
 
 const WORD_BEFORE_CURSOR_PATTERN =
@@ -23,9 +24,11 @@ const getLastPathSegment = (path: string) => path.split('.').at(-1) ?? path;
 const computeRootItems = ({
   query,
   fields,
+  functionDefinitions,
 }: {
   query: string;
   fields: ValidationRuleEditorField[];
+  functionDefinitions: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperItem[] => {
   const fieldItems: ValidationRuleHelperItem[] = fields
     .filter((field) => !field.path.includes('.'))
@@ -33,10 +36,9 @@ const computeRootItems = ({
     .filter((field) => matchesQuery([field.path, field.label], query))
     .map((field) => ({ kind: 'field', field }));
 
-  const functionItems: ValidationRuleHelperItem[] =
-    getValidationRuleFunctionDefinitions()
-      .filter((definition) => matchesQuery([definition.name], query))
-      .map((definition) => ({ kind: 'function', definition }));
+  const functionItems: ValidationRuleHelperItem[] = functionDefinitions
+    .filter((definition) => matchesQuery([definition.name], query))
+    .map((definition) => ({ kind: 'function', definition }));
 
   const keywordItems: ValidationRuleHelperItem[] =
     VALIDATION_RULE_KEYWORDS.filter((definition) =>
@@ -50,10 +52,12 @@ export const computeValidationRuleHelperContext = ({
   textBeforeCursor,
   isCursorAfterField,
   fields,
+  functionDefinitions = getValidationRuleFunctionDefinitions(),
 }: {
   textBeforeCursor: string;
   isCursorAfterField: boolean;
   fields: ValidationRuleEditorField[];
+  functionDefinitions?: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperContext => {
   const cursorOffset = textBeforeCursor.length;
   const lastToken = tokenizeValidationRuleExpression(textBeforeCursor).at(-1);
@@ -65,7 +69,7 @@ export const computeValidationRuleHelperContext = ({
   if (isCursorAfterField) {
     return {
       replaceFromOffset: cursorOffset,
-      items: computeRootItems({ query: '', fields }),
+      items: computeRootItems({ query: '', fields, functionDefinitions }),
     };
   }
 
@@ -75,7 +79,11 @@ export const computeValidationRuleHelperContext = ({
   if (!isDefined(parentPath)) {
     return {
       replaceFromOffset: cursorOffset - partialWord.length,
-      items: computeRootItems({ query: partialWord, fields }),
+      items: computeRootItems({
+        query: partialWord,
+        fields,
+        functionDefinitions,
+      }),
     };
   }
 
