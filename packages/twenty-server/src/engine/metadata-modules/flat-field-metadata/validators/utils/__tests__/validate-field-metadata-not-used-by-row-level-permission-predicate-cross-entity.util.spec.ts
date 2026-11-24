@@ -33,6 +33,34 @@ const buildTerritoryField = (
     : {}),
 });
 
+const buildPredicatesInMigrationMaps = ({
+  isPredicateInMigrationMaps,
+  workspaceMemberReferenceProperty,
+}: {
+  isPredicateInMigrationMaps: boolean;
+  workspaceMemberReferenceProperty: WorkspaceMemberReferenceProperty | null;
+}) => {
+  if (
+    !isPredicateInMigrationMaps &&
+    !isDefined(workspaceMemberReferenceProperty)
+  ) {
+    return {};
+  }
+
+  const predicate: Record<string, string> = {
+    universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
+    roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
+    objectMetadataUniversalIdentifier: COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
+  };
+
+  if (isDefined(workspaceMemberReferenceProperty)) {
+    predicate[workspaceMemberReferenceProperty] =
+      TERRITORY_FIELD_UNIVERSAL_IDENTIFIER;
+  }
+
+  return { [PREDICATE_UNIVERSAL_IDENTIFIER]: predicate };
+};
+
 const buildDeleteActions = (universalIdentifiers: string[]) =>
   universalIdentifiers.map((universalIdentifier) => ({ universalIdentifier }));
 
@@ -63,24 +91,10 @@ const validate = ({
     optimisticUniversalFlatMaps: {
       flatRowLevelPermissionPredicateMaps: {
         ...createEmptyFlatEntityMaps(),
-        byUniversalIdentifier:
-          isPredicateInMigrationMaps ||
-          isDefined(workspaceMemberReferenceProperty)
-            ? {
-                [PREDICATE_UNIVERSAL_IDENTIFIER]: {
-                  universalIdentifier: PREDICATE_UNIVERSAL_IDENTIFIER,
-                  roleUniversalIdentifier: ROLE_UNIVERSAL_IDENTIFIER,
-                  objectMetadataUniversalIdentifier:
-                    COMPANY_OBJECT_UNIVERSAL_IDENTIFIER,
-                  ...(isDefined(workspaceMemberReferenceProperty)
-                    ? {
-                        [workspaceMemberReferenceProperty]:
-                          TERRITORY_FIELD_UNIVERSAL_IDENTIFIER,
-                      }
-                    : {}),
-                },
-              }
-            : {},
+        byUniversalIdentifier: buildPredicatesInMigrationMaps({
+          isPredicateInMigrationMaps,
+          workspaceMemberReferenceProperty,
+        }),
       } as never,
     },
     orchestratorActionsReport: {
