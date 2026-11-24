@@ -129,7 +129,6 @@ export class CoreWorkflowMutationWorkspaceService {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
       {
         workspaceId,
-        userWorkspaceId,
         coreWorkflowIds: [coreWorkflowIdToDuplicate],
       },
     );
@@ -187,7 +186,6 @@ export class CoreWorkflowMutationWorkspaceService {
     try {
       return await this.writeDuplicatedContentAndReturn({
         workspaceId,
-        userWorkspaceId,
         duplicatedCoreWorkflowId: duplicatedWorkflow.id,
         trigger: remappedTrigger,
         steps: remappedSteps,
@@ -196,7 +194,6 @@ export class CoreWorkflowMutationWorkspaceService {
       try {
         await this.deleteWorkflows({
           workspaceId,
-          userWorkspaceId,
           coreWorkflowIds: [duplicatedWorkflow.id],
         });
       } catch (cleanupError) {
@@ -209,13 +206,11 @@ export class CoreWorkflowMutationWorkspaceService {
 
   private async writeDuplicatedContentAndReturn({
     workspaceId,
-    userWorkspaceId,
     duplicatedCoreWorkflowId,
     trigger,
     steps,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     duplicatedCoreWorkflowId: string;
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
@@ -230,7 +225,6 @@ export class CoreWorkflowMutationWorkspaceService {
     const duplicatedCoreWorkflow =
       await this.coreWorkflowListService.findOneById({
         workspaceId,
-        userWorkspaceId,
         callerApplication: undefined,
         coreWorkflowId: duplicatedCoreWorkflowId,
       });
@@ -379,7 +373,6 @@ export class CoreWorkflowMutationWorkspaceService {
   }): Promise<void> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
-      userWorkspaceId,
       coreWorkflowIds: [coreWorkflowId],
     });
 
@@ -616,16 +609,13 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async deleteWorkflows({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowIds,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<DeletedCoreWorkflowDTO[]> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
-      userWorkspaceId,
       coreWorkflowIds,
     });
 
@@ -651,11 +641,9 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async discardDraftVersion({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowVersionId,
   }: DiscardCoreWorkflowDraftInput & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<string | null> {
     const coreVersion = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
@@ -688,7 +676,6 @@ export class CoreWorkflowMutationWorkspaceService {
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
-      userWorkspaceId,
       coreWorkflowIds: [coreVersion.coreWorkflowId],
     });
 

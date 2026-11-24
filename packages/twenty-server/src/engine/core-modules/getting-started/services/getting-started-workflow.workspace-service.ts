@@ -59,7 +59,6 @@ export class GettingStartedWorkflowWorkspaceService {
         const savedCoreWorkflow = isDefined(savedWorkflow)
           ? await this.coreWorkflowListService.findOneById({
               workspaceId,
-              userWorkspaceId,
               callerApplication: undefined,
               coreWorkflowId: savedWorkflow.workflowId,
             })

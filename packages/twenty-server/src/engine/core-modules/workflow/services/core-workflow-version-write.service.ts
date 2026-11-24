@@ -108,16 +108,14 @@ export class CoreWorkflowVersionWriteService {
 
   async getValidatedDraftCoreWorkflowVersion({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
     const { coreWorkflowVersion } =
       await this.coreWorkflowAccessService.findEditableCoreWorkflowVersionOrThrow(
-        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
+        { workspaceId, coreWorkflowVersionId },
       );
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.DRAFT) {

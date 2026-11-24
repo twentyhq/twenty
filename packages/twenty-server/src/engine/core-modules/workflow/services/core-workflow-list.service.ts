@@ -33,6 +33,7 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { getPrivatableEntityCallerScope } from 'src/engine/permissions/metadata-permissions/utils/get-privatable-entity-caller-scope.util';
 
 type CoreWorkflowRow = {
   createdAt: Date;
@@ -79,10 +80,6 @@ const SORT_COLUMN_BY_FIELD: Record<
 // every raw query binds the reader and its application right after the workspace so filter parameters start at $4 in both page and count queries
 const READER_PARAMETER = '$2';
 const READER_APPLICATION_PARAMETER = '$3';
-const VISIBILITY_PREDICATE = buildCoreWorkflowVisibilitySqlPredicate({
-  tableAlias: 'c',
-  userWorkspaceIdParameter: READER_PARAMETER,
-});
 const READER_APPLICATION_PREDICATE = `(${READER_APPLICATION_PARAMETER}::uuid IS NULL OR c."applicationId" = ${READER_APPLICATION_PARAMETER}::uuid)`;
 
 const getReaderApplicationId = ({
@@ -98,6 +95,22 @@ const getReaderApplicationId = ({
   return reachableApplications.type === 'own'
     ? reachableApplications.applicationId
     : null;
+};
+
+const getReaderVisibility = () => {
+  const callerScope = getPrivatableEntityCallerScope();
+
+  return {
+    readerUserWorkspaceId:
+      callerScope.type === 'sharedAndOwned'
+        ? callerScope.userWorkspaceId
+        : null,
+    visibilityPredicate: buildCoreWorkflowVisibilitySqlPredicate({
+      tableAlias: 'c',
+      userWorkspaceIdParameter: READER_PARAMETER,
+      callerScope,
+    }),
+  };
 };
 
 const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
@@ -151,19 +164,19 @@ export class CoreWorkflowListService {
 
   async findManyWithCurrentVersions({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowIds,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
     const readerApplicationId = getReaderApplicationId({
       callerApplication,
       workspaceCustomApplicationId,
     });
+
+    const callerScope = getPrivatableEntityCallerScope();
 
     const [coreWorkflows, coreWorkflowVersions] = await Promise.all([
       this.coreWorkflowRepository.find(workspaceId, {
@@ -172,7 +185,7 @@ export class CoreWorkflowListService {
           ...(isDefined(readerApplicationId)
             ? { applicationId: readerApplicationId }
             : {}),
-          userWorkspaceId,
+          callerScope,
         }),
       }),
       this.coreWorkflowVersionRepository.find(workspaceId, {
@@ -301,7 +314,10 @@ export class CoreWorkflowListService {
             isPrivate: workflow.isPrivate,
             canChangeVisibility: canChangeCoreWorkflowVisibility({
               createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,
-              userWorkspaceId,
+              userWorkspaceId:
+                callerScope.type === 'sharedAndOwned'
+                  ? callerScope.userWorkspaceId
+                  : undefined,
             }),
             createdAt: workflow.createdAt.toISOString(),
             updatedAt: workflow.updatedAt.toISOString(),
@@ -315,7 +331,6 @@ export class CoreWorkflowListService {
 
   async findManyByWorkspaceId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     first,
@@ -326,7 +341,6 @@ export class CoreWorkflowListService {
   }: CoreWorkflowsArgs &
     CoreWorkflowReadCaller & {
       workspaceId: string;
-      userWorkspaceId: string | undefined;
     }): Promise<CoreWorkflowConnectionDTO> {
     const { column, cursorExpression, nullable, cast } =
       SORT_COLUMN_BY_FIELD[orderBy];
@@ -339,9 +353,11 @@ export class CoreWorkflowListService {
       callerApplication,
       workspaceCustomApplicationId,
     });
+    const { readerUserWorkspaceId, visibilityPredicate } =
+      getReaderVisibility();
     const parameters: unknown[] = [
       workspaceId,
-      userWorkspaceId ?? null,
+      readerUserWorkspaceId,
       readerApplicationId,
     ];
 
@@ -392,7 +408,7 @@ export class CoreWorkflowListService {
        FROM core."workflow" c
        ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
        WHERE c."workspaceId" = $1
-         AND ${VISIBILITY_PREDICATE}
+         AND ${visibilityPredicate}
          AND ${READER_APPLICATION_PREDICATE}
        ${keysetCondition}
        GROUP BY ${GROUP_BY_CLAUSE}
@@ -404,7 +420,8 @@ export class CoreWorkflowListService {
 
     const totalCount = await this.countByWorkspaceId({
       workspaceId,
-      userWorkspaceId,
+      readerUserWorkspaceId,
+      visibilityPredicate,
       readerApplicationId,
       filterPredicate,
       filterParameters,
@@ -433,18 +450,15 @@ export class CoreWorkflowListService {
 
   async findOneById({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     coreWorkflowId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
     return this.findOneByFilterExpression({
       workspaceId,
-      userWorkspaceId,
       callerApplication,
       workspaceCustomApplicationId,
       filterExpression: 'c.id = $4',
@@ -454,18 +468,15 @@ export class CoreWorkflowListService {
 
   async findOneByWorkspaceWorkflowId({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     workspaceWorkflowId,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
     return this.findOneByFilterExpression({
       workspaceId,
-      userWorkspaceId,
       callerApplication,
       workspaceCustomApplicationId,
       filterExpression: 'c."workspaceWorkflowId" = $4',
@@ -475,14 +486,12 @@ export class CoreWorkflowListService {
 
   private async findOneByFilterExpression({
     workspaceId,
-    userWorkspaceId,
     callerApplication,
     workspaceCustomApplicationId,
     filterExpression,
     filterParameter,
   }: CoreWorkflowReadCaller & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     filterExpression: string;
     filterParameter: string;
   }): Promise<CoreWorkflowDTO | null> {
@@ -490,6 +499,8 @@ export class CoreWorkflowListService {
       callerApplication,
       workspaceCustomApplicationId,
     });
+    const { readerUserWorkspaceId, visibilityPredicate } =
+      getReaderVisibility();
     const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
       `SELECT
          c.id,
@@ -499,13 +510,13 @@ export class CoreWorkflowListService {
        FROM core."workflow" c
        ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
        WHERE c."workspaceId" = $1
-         AND ${VISIBILITY_PREDICATE}
+         AND ${visibilityPredicate}
          AND ${READER_APPLICATION_PREDICATE}
          AND ${filterExpression}
        GROUP BY ${GROUP_BY_CLAUSE}`,
       [
         workspaceId,
-        userWorkspaceId ?? null,
+        readerUserWorkspaceId,
         readerApplicationId,
         filterParameter,
       ],
@@ -522,20 +533,22 @@ export class CoreWorkflowListService {
 
   private async countByWorkspaceId({
     workspaceId,
-    userWorkspaceId,
+    readerUserWorkspaceId,
+    visibilityPredicate,
     readerApplicationId,
     filterPredicate,
     filterParameters,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    readerUserWorkspaceId: string | null;
+    visibilityPredicate: string;
     readerApplicationId: string | null;
     filterPredicate?: string;
     filterParameters: unknown[];
   }): Promise<number> {
     const parameters: unknown[] = [
       workspaceId,
-      userWorkspaceId ?? null,
+      readerUserWorkspaceId,
       readerApplicationId,
     ];
 
@@ -545,7 +558,7 @@ export class CoreWorkflowListService {
           `SELECT count(*)::int AS "totalCount"
            FROM core."workflow" c
            WHERE c."workspaceId" = $1
-             AND ${VISIBILITY_PREDICATE}
+             AND ${visibilityPredicate}
              AND ${READER_APPLICATION_PREDICATE}`,
           parameters,
         );
@@ -563,7 +576,7 @@ export class CoreWorkflowListService {
            FROM core."workflow" c
            ${CORE_WORKFLOW_VERSIONS_JOIN_CLAUSE}
            WHERE c."workspaceId" = $1
-             AND ${VISIBILITY_PREDICATE}
+             AND ${visibilityPredicate}
              AND ${READER_APPLICATION_PREDICATE}
            GROUP BY ${GROUPED_WORKFLOW_COLUMNS}
            HAVING ${filterPredicate}

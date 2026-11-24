@@ -24,6 +24,9 @@ import {
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
+import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { type CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
@@ -542,6 +545,35 @@ describe('core workflow visibility (e2e)', () => {
           'CoreWorkflowLifecycleWorkspaceService',
         );
 
+      const validateCoreWorkflowVersionAs = ({
+        userWorkspaceId,
+        coreWorkflowVersionId,
+      }: {
+        userWorkspaceId: string;
+        coreWorkflowVersionId: string;
+      }) =>
+        withWorkspaceAuthContext(
+          buildUserAuthContext({
+            workspace: { id: SEED_APPLE_WORKSPACE_ID } as NonNullable<
+              RawAuthContext['workspace']
+            >,
+            userWorkspaceId,
+            user: { id: userWorkspaceId } as NonNullable<
+              RawAuthContext['user']
+            >,
+            workspaceMemberId: userWorkspaceId,
+            workspaceMember: { id: userWorkspaceId } as NonNullable<
+              RawAuthContext['workspaceMember']
+            >,
+            userSessionVariant: 'standard',
+          }),
+          () =>
+            lifecycleService().validateCoreWorkflowVersion({
+              workspaceId: SEED_APPLE_WORKSPACE_ID,
+              coreWorkflowVersionId,
+            }),
+        );
+
       beforeAll(async () => {
         draftWorkflow = await createCoreWorkflow({
           name: 'Private Workflow Draft',
@@ -584,8 +616,7 @@ describe('core workflow visibility (e2e)', () => {
 
       it('refuses to validate its version for another member', async () => {
         await expect(
-          lifecycleService().validateCoreWorkflowVersion({
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
+          validateCoreWorkflowVersionAs({
             userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
             coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
           }),
@@ -594,8 +625,7 @@ describe('core workflow visibility (e2e)', () => {
 
       it('still validates its version for its creator', async () => {
         await expect(
-          lifecycleService().validateCoreWorkflowVersion({
-            workspaceId: SEED_APPLE_WORKSPACE_ID,
+          validateCoreWorkflowVersionAs({
             userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
             coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
           }),
