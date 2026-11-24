@@ -1,9 +1,11 @@
 import { type HalftoneImageBackdropProps } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { paletteColorNumber } from '@/tokens';
 
-// The integrator hero's full-bleed field: the creator hero's settings
-// (CREATOR_HERO_BACKDROP) on another seed of ribbons.py. Grey dashes with a
-// slow wave, white behind the copy, blue under the cursor.
+// The integrator hero's full-bleed field: three ribbons of fine lines braided
+// across the hero's width (hero_pattern.py, shape « braid »), the creator
+// hero's ribbons drawn as one regular braid. The creator hero's settings
+// (CREATOR_HERO_BACKDROP): grey dashes, slow wave, blue under the cursor,
+// white areas left untouched.
 export const INTEGRATOR_HERO_BACKDROP: Pick<
   HalftoneImageBackdropProps,
   'imageUrl' | 'settings'

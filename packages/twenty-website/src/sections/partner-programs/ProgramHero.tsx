@@ -4,7 +4,7 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
-import { GRADIENT, HERO_COMPOSITION, spacing } from '@/tokens';
+import { GRADIENT, HERO_COMPOSITION, mediaUp, RHYTHM, spacing } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 // WhyTwentyHero's composition: centered intro, actions, then the visual.
@@ -27,8 +27,18 @@ const VisualStage = styled.div`
   width: 100%;
 `;
 
+// Without a visual, the room under the actions that brings the hero to the
+// shared height, so the backdrop shows below the copy.
 const BackdropRoom = styled.div`
-  height: ${HERO_COMPOSITION.backdropRoomPx}px;
+  height: calc(
+    ${HERO_COMPOSITION.belowActionsPx}px - ${spacing(RHYTHM.hero.bottom.base)}
+  );
+
+  ${mediaUp('md')} {
+    height: calc(
+      ${HERO_COMPOSITION.belowActionsPx}px - ${spacing(RHYTHM.hero.bottom.md)}
+    );
+  }
 `;
 
 const GradientBackdrop = styled.div`
