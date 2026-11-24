@@ -62,6 +62,13 @@ export default defineObject({
           color: 'red',
           position: 3,
         },
+        {
+          id: WHATSAPP_CAMPAIGN_SKIP_REASON_OPTION_UNIVERSAL_IDENTIFIERS.TEMPLATE_UNAVAILABLE,
+          value: 'TEMPLATE_UNAVAILABLE',
+          label: 'Template no longer approved',
+          color: 'red',
+          position: 4,
+        },
       ],
     },
     {

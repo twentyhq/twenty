@@ -28,9 +28,16 @@ const handler = async ({ campaignId, personId, ...content }: SendCampaignMessage
   }
 
   const { whatsAppTemplate } = await client.query({
-    whatsAppTemplate: { __args: { filter: { id: { eq: content.templateId } } }, category: true },
+    whatsAppTemplate: { __args: { filter: { id: { eq: content.templateId } } }, category: true, status: true },
   });
   const [person] = await findWhatsAppTemplateRecipientPeopleOrThrow({ client, recipients: { personIds: [personId] } });
+
+  // a scheduled campaign can outlive its template's approval; Meta would refuse it on every retry
+  if (!isDefined(whatsAppTemplate) || whatsAppTemplate.status !== 'APPROVED') {
+    await recordWhatsAppCampaignLateSkip({ campaignId, person: person ?? null, reason: 'TEMPLATE_UNAVAILABLE' });
+
+    return { isSent: false, reason: 'TEMPLATE_UNAVAILABLE' };
+  }
 
   if (!isDefined(person)) {
     await recordWhatsAppCampaignLateSkip({ campaignId, person: null, reason: 'PERSON_DELETED' });
@@ -41,7 +48,7 @@ const handler = async ({ campaignId, personId, ...content }: SendCampaignMessage
   // the person may have changed since the campaign was scheduled
   const recipient = resolveWhatsAppCampaignRecipient({
     person,
-    templateCategory: whatsAppTemplate?.category ?? null,
+    templateCategory: whatsAppTemplate.category,
     content,
   });
 
