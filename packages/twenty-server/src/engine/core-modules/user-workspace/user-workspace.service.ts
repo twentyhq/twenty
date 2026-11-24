@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -43,6 +44,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { RoleAssignmentWriteService } from 'src/engine/permissions/role-assignment/role-assignment-write.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -273,7 +275,14 @@ export class UserWorkspaceService {
       workspace.id,
     );
 
-    if (existingUserWorkspace) {
+    if (isDefined(existingUserWorkspace)) {
+      await this.resumeInterruptedMembershipIfNeeded({
+        user,
+        workspace,
+        userWorkspace: existingUserWorkspace,
+        roleId,
+      });
+
       return;
     }
 
@@ -299,6 +308,25 @@ export class UserWorkspaceService {
         },
       });
 
+    await this.completeMembershipSetup({
+      user,
+      workspace,
+      userWorkspace,
+      roleId: resolvedRoleId,
+    });
+  }
+
+  private async completeMembershipSetup({
+    user,
+    workspace,
+    userWorkspace,
+    roleId,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    userWorkspace: UserWorkspaceEntity;
+    roleId: string;
+  }) {
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
     ]);
@@ -306,7 +334,7 @@ export class UserWorkspaceService {
     await this.roleAssignmentWriteService.assignRoleToUserWorkspaces({
       workspaceId: workspace.id,
       userWorkspaceIds: [userWorkspace.id],
-      roleId: resolvedRoleId,
+      roleId,
     });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -319,6 +347,65 @@ export class UserWorkspaceService {
       workspaceId: workspace.id,
       value: true,
     });
+  }
+
+  private async resumeInterruptedMembershipIfNeeded({
+    user,
+    workspace,
+    userWorkspace,
+    roleId,
+  }: {
+    user: UserEntity;
+    workspace: WorkspaceEntity;
+    userWorkspace: UserWorkspaceEntity;
+    roleId?: string | null;
+  }) {
+    // A roleless member of an active workspace was interrupted mid-setup and already counted against the seat limit.
+    // A creator has no role until activation, so other workspaces are skipped.
+    if (
+      workspace.activationStatus !== WorkspaceActivationStatus.ACTIVE ||
+      (await this.roleTargetRepository.existsBy(workspace.id, {
+        userWorkspaceId: userWorkspace.id,
+      }))
+    ) {
+      return;
+    }
+
+    const resolvedRoleId = await this.resolveRoleIdForNewMember(
+      roleId ??
+        (await this.findPendingInvitationRoleId({
+          workspaceId: workspace.id,
+          email: user.email,
+        })),
+      workspace,
+    );
+
+    await this.createWorkspaceMember(workspace.id, user);
+
+    await this.completeMembershipSetup({
+      user,
+      workspace,
+      userWorkspace,
+      roleId: resolvedRoleId,
+    });
+  }
+
+  private async findPendingInvitationRoleId({
+    workspaceId,
+    email,
+  }: {
+    workspaceId: string;
+    email: string;
+  }): Promise<string | null | undefined> {
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspaceId,
+        email,
+      );
+
+    return isDefined(invitation)
+      ? castAppTokenToWorkspaceInvitationUtil(invitation).roleId
+      : undefined;
   }
 
   private async resolveRoleIdForNewMember(
