@@ -71,17 +71,16 @@ export const EmailThreadWidgetContent = ({
     defaultDraft: null,
   });
 
-  const handleComposerOpenChange = useCallback(
-    (open: boolean, nextReplyMode: EmailReplyMode = 'reply') => {
-      setComposerIntent(open ? 'opened' : 'closed');
-      setReplyMode(open ? nextReplyMode : 'reply');
+  const handleComposerOpen = useCallback((nextReplyMode: EmailReplyMode) => {
+    setComposerIntent('opened');
+    setReplyMode(nextReplyMode);
+  }, []);
 
-      if (!open) {
-        setClickedDraftPrefill(null);
-      }
-    },
-    [],
-  );
+  const handleComposerClose = useCallback(() => {
+    setComposerIntent('closed');
+    setReplyMode('reply');
+    setClickedDraftPrefill(null);
+  }, []);
 
   const handleDraftClick = useCallback(
     (message: EmailThreadMessageWithSender) => {
@@ -153,7 +152,8 @@ export const EmailThreadWidgetContent = ({
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
-          setIsComposerOpen={handleComposerOpenChange}
+          onComposerOpen={handleComposerOpen}
+          onComposerClose={handleComposerClose}
           replyMode={replyMode}
           draftPrefill={draftPrefill}
           draftKey={isDefined(draftPrefill) ? undefined : emailComposerDraftKey}

@@ -39,7 +39,8 @@ type EmailThreadComposerProps = {
   replyContext: ReplyContextReady;
   isInSidePanel: boolean;
   isComposerOpen: boolean;
-  setIsComposerOpen: (open: boolean, replyMode?: EmailReplyMode) => void;
+  onComposerOpen: (replyMode: EmailReplyMode) => void;
+  onComposerClose: () => void;
   replyMode: EmailReplyMode;
   draftPrefill?: EmailDraftPrefill | null;
   draftKey?: string;
@@ -50,7 +51,8 @@ export const EmailThreadComposer = ({
   replyContext,
   isInSidePanel,
   isComposerOpen,
-  setIsComposerOpen,
+  onComposerOpen,
+  onComposerClose,
   replyMode,
   draftPrefill,
   draftKey,
@@ -61,7 +63,7 @@ export const EmailThreadComposer = ({
 
   const handleReplySent = useCallback(
     (messageThreadId: string | null) => {
-      setIsComposerOpen(false);
+      onComposerClose();
 
       if (isDefined(messageThreadId)) {
         openRecordInSidePanel({
@@ -70,7 +72,7 @@ export const EmailThreadComposer = ({
         });
       }
     },
-    [setIsComposerOpen, openRecordInSidePanel],
+    [onComposerClose, openRecordInSidePanel],
   );
 
   const replyAllRecipients =
@@ -109,7 +111,7 @@ export const EmailThreadComposer = ({
         label: t`Reply`,
         Icon: IconArrowBackUp,
         isPrimaryCTA: !canReplyAll,
-        onClick: () => setIsComposerOpen(true, 'reply'),
+        onClick: () => onComposerOpen('reply'),
         replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
       };
 
@@ -124,7 +126,7 @@ export const EmailThreadComposer = ({
           label: t`Reply all`,
           Icon: IconArrowBackUpDouble,
           isPrimaryCTA: true,
-          onClick: () => setIsComposerOpen(true, 'replyAll'),
+          onClick: () => onComposerOpen('replyAll'),
           replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
         },
       ];
@@ -138,7 +140,7 @@ export const EmailThreadComposer = ({
       onClick: () => {
         discardPendingUploads();
         discardDraft();
-        setIsComposerOpen(false);
+        onComposerClose();
       },
       replacedEngineComponentKey: EngineComponentKey.REPLY_TO_EMAIL_THREAD,
     };
@@ -180,7 +182,8 @@ export const EmailThreadComposer = ({
     canAttachFiles,
     handleSend,
     canSendReply,
-    setIsComposerOpen,
+    onComposerOpen,
+    onComposerClose,
     openAttachmentPicker,
     discardPendingUploads,
     discardDraft,

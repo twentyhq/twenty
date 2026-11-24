@@ -1,39 +1,51 @@
-import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type EmailReplyMessage } from '@/activities/emails/types/EmailReplyMessage';
+import { type EmailReplyParticipant } from '@/activities/emails/types/EmailReplyParticipant';
 import { getUniqueReplyParticipants } from '@/activities/emails/utils/getUniqueReplyParticipants';
 import { isMessageSentByConnectedAccount } from '@/activities/emails/utils/isMessageSentByConnectedAccount';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-export const getReplyParticipants = ({
+const getCandidateReplyParticipants = ({
   message,
   connectedAccountHandle,
 }: {
-  message: Pick<EmailThreadMessageWithSender, 'sender' | 'messageParticipants'>;
+  message: EmailReplyMessage;
   connectedAccountHandle: string | null | undefined;
-}): EmailThreadMessageParticipant[] => {
+}): EmailReplyParticipant[] => {
   if (isMessageSentByConnectedAccount({ message, connectedAccountHandle })) {
-    return getUniqueReplyParticipants({
-      participants: message.messageParticipants.filter(
-        (participant) =>
-          participant.role === MessageParticipantRole.TO ||
-          participant.role === MessageParticipantRole.CC,
-      ),
-      connectedAccountHandle,
-    });
+    return message.messageParticipants.filter(
+      (participant) =>
+        participant.role === MessageParticipantRole.TO ||
+        participant.role === MessageParticipantRole.CC,
+    );
   }
 
   const replyToParticipants = message.messageParticipants.filter(
     (participant) => participant.role === MessageParticipantRole.REPLY_TO,
   );
 
-  return getUniqueReplyParticipants({
-    participants:
-      replyToParticipants.length > 0
-        ? replyToParticipants
-        : isDefined(message.sender)
-          ? [message.sender]
-          : [],
+  if (replyToParticipants.length > 0) {
+    return replyToParticipants;
+  }
+
+  if (isDefined(message.sender)) {
+    return [message.sender];
+  }
+
+  return [];
+};
+
+export const getReplyParticipants = ({
+  message,
+  connectedAccountHandle,
+}: {
+  message: EmailReplyMessage;
+  connectedAccountHandle: string | null | undefined;
+}): EmailReplyParticipant[] =>
+  getUniqueReplyParticipants({
+    participants: getCandidateReplyParticipants({
+      message,
+      connectedAccountHandle,
+    }),
     connectedAccountHandle,
   });
-};

@@ -1,16 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { type EmailReplyParticipant } from '@/activities/emails/types/EmailReplyParticipant';
 
 export const getUniqueReplyParticipants = ({
   participants,
   connectedAccountHandle,
   excludedParticipants = [],
 }: {
-  participants: EmailThreadMessageParticipant[];
+  participants: EmailReplyParticipant[];
   connectedAccountHandle: string | null | undefined;
-  excludedParticipants?: EmailThreadMessageParticipant[];
-}): EmailThreadMessageParticipant[] => {
+  excludedParticipants?: EmailReplyParticipant[];
+}): EmailReplyParticipant[] => {
   const seenHandles = new Set<string>(
     excludedParticipants.map((participant) => participant.handle.toLowerCase()),
   );

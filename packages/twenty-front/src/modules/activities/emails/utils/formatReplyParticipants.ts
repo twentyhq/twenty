@@ -1,8 +1,8 @@
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
-import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { type EmailReplyParticipant } from '@/activities/emails/types/EmailReplyParticipant';
 
 export const formatReplyParticipants = (
-  participants: EmailThreadMessageParticipant[],
+  participants: EmailReplyParticipant[],
 ): string =>
   participants
     .map((participant) =>

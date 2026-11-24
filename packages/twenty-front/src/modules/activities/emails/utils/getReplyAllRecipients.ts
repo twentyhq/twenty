@@ -1,4 +1,4 @@
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type EmailReplyMessage } from '@/activities/emails/types/EmailReplyMessage';
 import { formatReplyParticipants } from '@/activities/emails/utils/formatReplyParticipants';
 import { getReplyParticipants } from '@/activities/emails/utils/getReplyParticipants';
 import { getUniqueReplyParticipants } from '@/activities/emails/utils/getUniqueReplyParticipants';
@@ -10,7 +10,7 @@ export const getReplyAllRecipients = ({
   message,
   connectedAccountHandle,
 }: {
-  message: Pick<EmailThreadMessageWithSender, 'sender' | 'messageParticipants'>;
+  message: EmailReplyMessage;
   connectedAccountHandle: string | null | undefined;
 }): { to: string; cc: string } | null => {
   const getParticipantsWithRole = (role: MessageParticipantRole) =>

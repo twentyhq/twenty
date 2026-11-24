@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type EmailReplyMessage } from '@/activities/emails/types/EmailReplyMessage';
 
 export const isMessageSentByConnectedAccount = ({
   message,
   connectedAccountHandle,
 }: {
-  message: Pick<EmailThreadMessageWithSender, 'sender'>;
+  message: Pick<EmailReplyMessage, 'sender'>;
   connectedAccountHandle: string | null | undefined;
 }): boolean =>
   isNonEmptyString(connectedAccountHandle) &&

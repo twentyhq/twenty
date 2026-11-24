@@ -1,4 +1,4 @@
-import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { type EmailReplyMessage } from '@/activities/emails/types/EmailReplyMessage';
 import { formatReplyParticipants } from '@/activities/emails/utils/formatReplyParticipants';
 import { getReplyParticipants } from '@/activities/emails/utils/getReplyParticipants';
 
@@ -6,7 +6,7 @@ export const getReplyToRecipients = ({
   message,
   connectedAccountHandle,
 }: {
-  message: Pick<EmailThreadMessageWithSender, 'sender' | 'messageParticipants'>;
+  message: EmailReplyMessage;
   connectedAccountHandle: string | null | undefined;
 }): string =>
   formatReplyParticipants(
