@@ -1698,6 +1698,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'rowLevelPermissionRuleUniversalIdentifier',
     },
+    sourceFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'sourceFieldMetadataUniversalIdentifier',
+    },
   },
   objectPermission: {
     roleId: {
@@ -1793,6 +1798,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty:
         'workspaceMemberRelationFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty:
+        'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterValues: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
     },
     deletedAt: {
       toCompare: true,
@@ -2499,6 +2515,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     position: {
       toCompare: true,
       toStringify: false,
@@ -2655,11 +2677,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    lastPublishedVersionId: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     lastPublishedCoreWorkflowVersionId: {
       toCompare: true,
       toStringify: false,
@@ -2704,11 +2721,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'coreWorkflowUniversalIdentifier',
     },
     workflowId: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    workspaceWorkflowVersionId: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,

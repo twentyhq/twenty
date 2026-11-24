@@ -8,13 +8,17 @@ export const fromFlatViewToViewDto = (flatView: FlatView): ViewDTO => {
     metadataName: 'view',
     flatEntity: flatView,
   });
-  const { createdAt, updatedAt, deletedAt, ...rest } = effectiveFlatView;
+  const {
+    createdAt,
+    updatedAt,
+    deletedAt: _deletedAt,
+    ...rest
+  } = effectiveFlatView;
 
   return {
     ...rest,
     visibility: getViewVisibilityFromIsPrivate(rest.isPrivate),
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),
-    deletedAt: deletedAt ? new Date(deletedAt) : null,
   };
 };

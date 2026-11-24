@@ -119,17 +119,16 @@ export const NavigationMenuSectionMenuContent = ({
           {reorderOptions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
           ))}
-          {tabs.length > 0 && (
-            <NavigationMenuItemSelectableItem
-              item={{
-                id: 'move-to-tab',
-                label: t`Move to tab`,
-                Icon: IconFolderSymlink,
-                hasSubMenu: true,
-                onClick: () => goToPage('tabs'),
-              }}
-            />
-          )}
+          <NavigationMenuItemSelectableItem
+            item={{
+              id: 'move-to-tab',
+              label: t`Move to tab`,
+              Icon: IconFolderSymlink,
+              isDisabled: tabOptions.every((option) => option.isDisabled),
+              hasSubMenu: true,
+              onClick: () => goToPage('tabs'),
+            }}
+          />
           <NavigationMenuItemSelectableItem
             item={{
               id: 'remove',

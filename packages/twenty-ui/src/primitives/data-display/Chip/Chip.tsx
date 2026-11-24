@@ -19,6 +19,7 @@ export const Chip = ({
   color = 'primary',
   shape = 'square',
   weight = 'regular',
+  padding,
   onClick,
   clickable = isDefined(onClick),
   startElement,
@@ -46,7 +47,16 @@ export const Chip = ({
   return useRender({
     render,
     ref,
-    state: { size, variant, color, shape, weight, clickable, truncate },
+    state: {
+      size,
+      variant,
+      color,
+      shape,
+      weight,
+      padding,
+      clickable,
+      truncate,
+    },
     props: {
       ...props,
       onClick,

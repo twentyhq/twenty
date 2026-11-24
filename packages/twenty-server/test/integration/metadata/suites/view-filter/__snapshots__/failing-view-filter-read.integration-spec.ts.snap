@@ -44,28 +44,6 @@ exports[`View Filter read should fail when the view filter is deleted 2`] = `
 }
 `;
 
-exports[`View Filter read should fail when the view filter is soft-deleted 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "View filter (id: <id>) not found",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`View Filter read should fail when the view filter is soft-deleted 2`] = `
-{
-  "code": "VIEW_FILTER_NOT_FOUND",
-  "error": "Error",
-  "messages": [
-    "View filter (id: <id>) not found",
-  ],
-  "statusCode": 404,
-}
-`;
-
 exports[`View Filter read should fail when the view of the view filter is deleted 1`] = `
 {
   "extensions": {
@@ -78,28 +56,6 @@ exports[`View Filter read should fail when the view of the view filter is delete
 `;
 
 exports[`View Filter read should fail when the view of the view filter is deleted 2`] = `
-{
-  "code": "VIEW_FILTER_NOT_FOUND",
-  "error": "Error",
-  "messages": [
-    "View filter (id: <id>) not found",
-  ],
-  "statusCode": 404,
-}
-`;
-
-exports[`View Filter read should fail when the view of the view filter is soft-deleted 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "userFriendlyMessage": "An error occurred.",
-  },
-  "message": "View filter (id: <id>) not found",
-  "name": "NotFoundError",
-}
-`;
-
-exports[`View Filter read should fail when the view of the view filter is soft-deleted 2`] = `
 {
   "code": "VIEW_FILTER_NOT_FOUND",
   "error": "Error",

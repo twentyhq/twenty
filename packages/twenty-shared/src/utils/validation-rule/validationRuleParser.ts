@@ -143,6 +143,23 @@ validationRuleParser.binaryOps['>='] = compareDefinedValues(
 validationRuleParser.binaryOps.in = (value: unknown, list: unknown) =>
   Array.isArray(list) && list.includes(value);
 
+const toConcatenableValue = (value: unknown) =>
+  isValidationRuleValueDefined(value) ? value : '';
+
+validationRuleParser.binaryOps['||'] = (left: unknown, right: unknown) =>
+  Array.isArray(left) && Array.isArray(right)
+    ? [...left, ...right]
+    : `${toConcatenableValue(left)}${toConcatenableValue(right)}`;
+
+// Counts code points and treats null as empty, as the SQL formula compiler does
+validationRuleParser.unaryOps.length = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value.length;
+  }
+
+  return isValidationRuleValueDefined(value) ? [...String(value)].length : 0;
+};
+
 validationRuleParser.functions = Object.fromEntries(
   Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
     name,

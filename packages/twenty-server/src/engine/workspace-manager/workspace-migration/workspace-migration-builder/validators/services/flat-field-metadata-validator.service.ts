@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
-import { isFieldMetadataTypeWithDefaultValue } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  isFieldMetadataTypeWithDefaultValue,
+} from 'twenty-shared/types';
 import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -14,7 +17,9 @@ import { FlatFieldMetadataRelationPropertiesToCompare } from 'src/engine/metadat
 import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-name-synced-with-label.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
+import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
+import { validateFlatFieldMetadataNameReadByFormulas } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-read-by-formulas.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util';
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -215,6 +220,11 @@ export class FlatFieldMetadataValidatorService {
           universalFlatObjectMetadata: flatObjectMetadata,
           buildOptions,
         }),
+        ...validateFlatFieldMetadataNameReadByFormulas({
+          universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
+          name: flatFieldMetadataToValidate.name,
+          universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        }),
       );
     }
 
@@ -248,6 +258,17 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataDisabledFieldPermissionActions(
         flatFieldMetadataToValidate,
       ),
+      ...validateFlatFieldMetadataFormula({
+        flatFieldMetadataToValidate,
+        universalFlatObjectMetadataMaps: flatObjectMetadataMaps,
+        universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        existingUniversalSettings:
+          existingFlatFieldMetadataToUpdate.universalSettings,
+        isFormulaFieldEnabled:
+          additionalCacheDataMaps.featureFlagsMap[
+            FeatureFlagKey.IS_FORMULA_FIELD_ENABLED
+          ] ?? false,
+      }),
     );
 
     const fieldMetadataTypeValidationErrors =
@@ -491,6 +512,17 @@ export class FlatFieldMetadataValidatorService {
       ...validateFlatFieldMetadataDisabledFieldPermissionActions(
         flatFieldMetadataToValidate,
       ),
+      ...validateFlatFieldMetadataFormula({
+        flatFieldMetadataToValidate,
+        universalFlatObjectMetadataMaps: flatObjectMetadataMaps,
+        universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        pendingUniversalFlatFieldMetadataMaps:
+          remainingFlatEntityMapsToValidate,
+        isFormulaFieldEnabled:
+          additionalCacheDataMaps.featureFlagsMap[
+            FeatureFlagKey.IS_FORMULA_FIELD_ENABLED
+          ] ?? false,
+      }),
     );
 
     validationResult.errors.push(

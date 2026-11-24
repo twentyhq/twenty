@@ -113,15 +113,42 @@ type NotDefinedSettings = {
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type SettingsAssertions = [
   Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<RatingFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<SelectFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<MultiSelectFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<PositionFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RawJsonFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<ActorFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<UUIDFieldMetadata, NotDefinedSettings>>,
-  Expect<HasAllProperties<BooleanFieldMetadata, NotDefinedSettings>>,
 
+  Expect<
+    HasAllProperties<
+      SelectFieldMetadata,
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.SELECT]
+        >;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      RatingFieldMetadata,
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.RATING]
+        >;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      BooleanFieldMetadata,
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.BOOLEAN]
+        >;
+      }
+    >
+  >,
   Expect<
     HasAllProperties<
       TextFieldMetadata,

@@ -69,6 +69,7 @@ import {
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const APPLICATION_REGISTRATION_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -552,6 +553,7 @@ export class ApplicationRegistrationResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   async isConfigured(
     @Parent() registration: ApplicationRegistrationEntity,
     @Context() context: { loaders: IDataloaders },
@@ -565,6 +567,7 @@ export class ApplicationRegistrationResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   logoUrl(
     @Parent() registration: ApplicationRegistrationEntity,
   ): string | null {
@@ -574,6 +577,7 @@ export class ApplicationRegistrationResolver {
   }
 
   @ResolveField(() => [String])
+  @UseGuards(NoPermissionGuard)
   galleryImagesUrls(
     @Parent() registration: ApplicationRegistrationEntity,
   ): string[] {
