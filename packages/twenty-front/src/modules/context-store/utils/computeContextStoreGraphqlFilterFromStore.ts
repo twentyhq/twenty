@@ -52,11 +52,11 @@ export const computeContextStoreGraphqlFilterFromStore = ({
     }),
   );
 
-  const currentView = store.get(
-    viewFromViewIdFamilySelector.selectorFamily({
-      viewId: currentViewId ?? '',
-    }),
-  );
+  const currentView = isDefined(currentViewId)
+    ? store.get(
+        viewFromViewIdFamilySelector.selectorFamily({ viewId: currentViewId }),
+      )
+    : undefined;
 
   return computeContextStoreFilters({
     contextStoreTargetedRecordsRule: store.get(
