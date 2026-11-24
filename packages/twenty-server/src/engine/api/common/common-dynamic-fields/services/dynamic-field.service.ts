@@ -213,41 +213,45 @@ export class DynamicFieldService {
     const sourceFilterByDynamicFieldFilter = new Map<
       Record<string, unknown>,
       ObjectRecordFilter
-    >();
+    >(
+      await Promise.all(
+        dynamicFieldFilters.map(
+          async ({
+            flatObjectMetadata: dynamicFieldFlatObjectMetadata,
+            dynamicFieldName,
+            dynamicFieldFilter,
+            relationTargetFlatObjectMetadata,
+          }) => {
+            const dynamicFieldResolver =
+              this.dynamicFieldResolverRegistry.findOrThrow(
+                dynamicFieldFlatObjectMetadata,
+              );
+            const context = await loadContext(dynamicFieldResolver);
+            const resolvedDynamicFieldFilter = isDefined(
+              relationTargetFlatObjectMetadata,
+            )
+              ? {
+                  in: await this.findMatchingRelationTargetIds({
+                    ...dynamicFieldMetadataArgs,
+                    filter: dynamicFieldFilter,
+                    flatObjectMetadata: relationTargetFlatObjectMetadata,
+                  }),
+                }
+              : dynamicFieldFilter;
 
-    for (const {
-      flatObjectMetadata: dynamicFieldFlatObjectMetadata,
-      dynamicFieldName,
-      dynamicFieldFilter,
-      relationTargetFlatObjectMetadata,
-    } of dynamicFieldFilters) {
-      const dynamicFieldResolver =
-        this.dynamicFieldResolverRegistry.findOrThrow(
-          dynamicFieldFlatObjectMetadata,
-        );
-      const context = await loadContext(dynamicFieldResolver);
-      const resolvedDynamicFieldFilter = isDefined(
-        relationTargetFlatObjectMetadata,
-      )
-        ? {
-            in: await this.findMatchingRelationTargetIds({
-              ...dynamicFieldMetadataArgs,
-              filter: dynamicFieldFilter,
-              flatObjectMetadata: relationTargetFlatObjectMetadata,
-            }),
-          }
-        : dynamicFieldFilter;
-
-      sourceFilterByDynamicFieldFilter.set(
-        dynamicFieldFilter,
-        this.computeSourceFilterOrThrow({
-          dynamicFieldResolver,
-          dynamicFieldName,
-          dynamicFieldFilter: resolvedDynamicFieldFilter,
-          context,
-        }),
-      );
-    }
+            return [
+              dynamicFieldFilter,
+              this.computeSourceFilterOrThrow({
+                dynamicFieldResolver,
+                dynamicFieldName,
+                dynamicFieldFilter: resolvedDynamicFieldFilter,
+                context,
+              }),
+            ] as const;
+          },
+        ),
+      ),
+    );
 
     return mapFilters(({ dynamicFieldFilter }) =>
       sourceFilterByDynamicFieldFilter.get(dynamicFieldFilter),

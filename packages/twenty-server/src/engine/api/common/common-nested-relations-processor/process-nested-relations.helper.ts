@@ -305,39 +305,43 @@ export class ProcessNestedRelationsHelper {
     const perParentLimit = Math.min(relationSelection.first ?? limit, limit);
 
     const { relationResults, valuesByParentRecordId } =
-      await relationQueryLimiter(() =>
-        relationType === RelationType.ONE_TO_MANY &&
-        isDefined(targetRelation) &&
-        isDynamicField(targetRelation)
-          ? this.findRelationsThroughDynamicField({
-              referenceQueryBuilder: targetObjectQueryBuilder,
-              dynamicJoinColumnName: fieldMetadataTargetRelationColumnName,
-              ids: relationIds,
-              perParentLimit,
-              targetObjectMetadata,
-              relationSelection,
-              relationQueryParser,
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-              authContext,
-              loadDynamicFieldContext,
-            })
-          : this.findRelations({
-              referenceQueryBuilder: targetObjectQueryBuilder,
-              targetObjectRepository,
-              column:
-                relationType === RelationType.ONE_TO_MANY
-                  ? `"${fieldMetadataTargetRelationColumnName}"`
-                  : 'id',
-              ids: relationIds,
-              relationType,
-              parentRecordsCount: parentObjectRecords.length,
-              targetObjectNameSingular,
-              relationSelection,
-              relationQueryParser,
-              perParentLimit,
-            }),
-      );
+      await relationQueryLimiter(() => {
+        if (
+          relationType === RelationType.ONE_TO_MANY &&
+          isDefined(targetRelation) &&
+          isDynamicField(targetRelation)
+        ) {
+          return this.findRelationsThroughDynamicField({
+            referenceQueryBuilder: targetObjectQueryBuilder,
+            dynamicJoinColumnName: fieldMetadataTargetRelationColumnName,
+            ids: relationIds,
+            perParentLimit,
+            targetObjectMetadata,
+            relationSelection,
+            relationQueryParser,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            authContext,
+            loadDynamicFieldContext,
+          });
+        }
+
+        return this.findRelations({
+          referenceQueryBuilder: targetObjectQueryBuilder,
+          targetObjectRepository,
+          column:
+            relationType === RelationType.ONE_TO_MANY
+              ? `"${fieldMetadataTargetRelationColumnName}"`
+              : 'id',
+          ids: relationIds,
+          relationType,
+          parentRecordsCount: parentObjectRecords.length,
+          targetObjectNameSingular,
+          relationSelection,
+          relationQueryParser,
+          perParentLimit,
+        });
+      });
 
     const nestedRelationsAggregatedValues =
       await this.processNestedRelationsWithLimiter({
