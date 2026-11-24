@@ -5,6 +5,7 @@ import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
 
 import { AiChatSkeletonLoader } from '@/ai-chat/components/AiChatSkeletonLoader';
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { InboxThreadListFetchMoreTrigger } from '@/inbox/components/InboxThreadListFetchMoreTrigger';
 import { NavigationDrawerInboxThreadSection } from '@/inbox/components/NavigationDrawerInboxThreadSection';
 import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
@@ -17,7 +18,6 @@ import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
-import { useNavigationMenuAiChatThreadClick } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatThreadClick';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -35,7 +35,14 @@ export const NavigationMenuAiChatRecentsSection = ({
     'AiChatRecents',
   );
   const currentThreadId = useAiChatPageThreadId();
-  const { handleThreadClick } = useNavigationMenuAiChatThreadClick();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const { handleThreadClick } = useAiChatThreadClick(
+    isAiChatInboxEnabled
+      ? { shouldOpenInFullPage: true }
+      : { resetNavigationStack: true },
+  );
   const isDirectMessageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
   );
