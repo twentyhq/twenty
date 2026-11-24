@@ -7,6 +7,8 @@ export type MarketplaceApp = {
   category: string;
   logoUrl?: string;
   sourcePackage?: string;
+  // The first gallery image, shown as the card's band.
+  coverUrl?: string;
 };
 
 export type MarketplaceAppContentKind =

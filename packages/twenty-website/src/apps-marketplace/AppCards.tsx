@@ -1,6 +1,7 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { LocalizedLink } from '@/platform/i18n/LocalizedLink';
 import {
@@ -18,6 +19,7 @@ import {
   typeRampDeclarations,
 } from '@/tokens';
 
+import { AppDefaultCover } from './AppDefaultCover';
 import { AppIcon } from './AppIcon';
 import { type MarketplaceApp } from './marketplace-app';
 
@@ -71,31 +73,20 @@ const Card = styled(LocalizedLink)`
   }
 `;
 
-// No app sends a cover yet: every card shows the default one, a wave in the
-// site's grey dashes. The image is three bands wide: each column of the grid
-// shows another third, so neighbouring cards differ.
-const DEFAULT_COVER_URL = '/images/apps/card-cover.webp';
-
+// The app's own cover when it has one, else the default one.
 const Banner = styled.div`
   border-bottom: 1px solid ${semanticColor.line};
   height: ${spacing(28)};
   overflow: hidden;
+  position: relative;
 `;
 
 const BannerImage = styled.img`
   display: block;
   height: 100%;
   object-fit: cover;
-  object-position: left center;
+  object-position: center top;
   width: 100%;
-
-  li:nth-child(3n + 2) & {
-    object-position: center;
-  }
-
-  li:nth-child(3n) & {
-    object-position: right center;
-  }
 `;
 
 const Content = styled.div`
@@ -150,7 +141,11 @@ export function AppCards({ apps }: AppCardsProps) {
           <li key={app.slug}>
             <Card href={`/apps/${app.slug}`}>
               <Banner>
-                <BannerImage alt="" src={DEFAULT_COVER_URL} />
+                {isDefined(app.coverUrl) ? (
+                  <BannerImage alt="" src={app.coverUrl} />
+                ) : (
+                  <AppDefaultCover app={app} tilePx={40} />
+                )}
               </Banner>
               <Content>
                 <Top>

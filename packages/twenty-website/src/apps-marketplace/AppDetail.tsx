@@ -30,6 +30,7 @@ import {
 } from '@/ui';
 
 import { AppCards } from './AppCards';
+import { AppDefaultCover } from './AppDefaultCover';
 import { AppIcon } from './AppIcon';
 import { AppStory } from './AppStory';
 import { BETA_APP_NAMES } from './beta-app-names';
@@ -364,14 +365,16 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
     <>
       <SectionShell rhythm="section" scheme="light">
         <SectionStack>
-          {isDefined(cover) && (
-            <Cover>
+          <Cover>
+            {isDefined(cover) ? (
               <CoverImage
                 alt={i18n._(msg`${app.name} screenshot`)}
                 src={cover}
               />
-            </Cover>
-          )}
+            ) : (
+              <AppDefaultCover app={app} tilePx={72} />
+            )}
+          </Cover>
 
           <Header>
             <AppIcon app={app} sizePx={72} />

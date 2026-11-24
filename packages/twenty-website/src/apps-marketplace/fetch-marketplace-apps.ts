@@ -1,4 +1,5 @@
 import { getAppSlug } from './get-app-slug';
+import { isGeneratedCover } from './is-generated-cover';
 import { marketplaceGraphqlRequest } from './marketplace-api-fetch';
 import { type MarketplaceApp } from './marketplace-app';
 
@@ -24,6 +25,38 @@ type ApiMarketplaceApp = {
   category: string;
   logoUrl?: string | null;
   sourcePackage?: string | null;
+};
+
+// The list query has no gallery field, so each app's first image comes from
+// its detail query. Cached like every marketplace request.
+const FIND_MARKETPLACE_APP_COVER_QUERY = `
+  query PublicMarketplaceAppCover($universalIdentifier: String!) {
+    publicMarketplaceAppDetail(universalIdentifier: $universalIdentifier) {
+      galleryImages
+    }
+  }
+`;
+
+type FindMarketplaceAppCoverData = {
+  publicMarketplaceAppDetail: { galleryImages?: string[] | null };
+};
+
+// A missing cover is not an outage: the card falls back to the default band.
+const fetchCoverUrl = async (
+  universalIdentifier: string,
+): Promise<string | undefined> => {
+  try {
+    const data = await marketplaceGraphqlRequest<FindMarketplaceAppCoverData>(
+      FIND_MARKETPLACE_APP_COVER_QUERY,
+      { universalIdentifier },
+    );
+
+    return (data.publicMarketplaceAppDetail.galleryImages ?? []).find(
+      (url) => !isGeneratedCover(url),
+    );
+  } catch {
+    return undefined;
+  }
 };
 
 type FindManyMarketplaceAppsData = {
@@ -54,5 +87,10 @@ export async function fetchMarketplaceApps(): Promise<
     throw new Error('marketplace API response missing apps array');
   }
 
-  return data.publicMarketplaceApps.map(normalizeApp);
+  const apps = data.publicMarketplaceApps.map(normalizeApp);
+  const coverUrls = await Promise.all(
+    apps.map((app) => fetchCoverUrl(app.universalIdentifier)),
+  );
+
+  return apps.map((app, index) => ({ ...app, coverUrl: coverUrls[index] }));
 }

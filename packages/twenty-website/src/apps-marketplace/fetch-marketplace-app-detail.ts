@@ -1,5 +1,6 @@
 import { fetchMarketplaceApps } from './fetch-marketplace-apps';
 import { getAppSlug } from './get-app-slug';
+import { isGeneratedCover } from './is-generated-cover';
 import { marketplaceGraphqlRequest } from './marketplace-api-fetch';
 import {
   type MarketplaceAppContent,
@@ -107,7 +108,9 @@ export async function fetchMarketplaceAppDetailBySlug(
       logoUrl: detail.logoUrl ?? app.logoUrl,
       sourcePackage: detail.sourcePackage ?? undefined,
       aboutDescription: detail.aboutDescription ?? undefined,
-      screenshots: detail.galleryImages ?? [],
+      screenshots: (detail.galleryImages ?? []).filter(
+        (url) => !isGeneratedCover(url),
+      ),
       websiteUrl: detail.websiteUrl ?? undefined,
       latestAvailableVersion: detail.latestAvailableVersion ?? undefined,
       installCount: detail.installCount ?? undefined,
