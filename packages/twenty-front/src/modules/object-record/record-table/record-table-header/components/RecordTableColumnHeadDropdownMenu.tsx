@@ -145,11 +145,9 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { openEditColumnInSidePanel } =
     useOpenEditColumnInSidePanel(recordTableId);
 
-  const hasColumnActions =
-    canMoveLeft || canMoveRight || canHide || canDeleteColumn;
-  const showSeparator = (isFilterable || isSortable) && hasColumnActions;
-
   const hasMoveOrHideActions = canMoveLeft || canMoveRight || canHide;
+  const showSeparator =
+    (isFilterable || isSortable) && (hasMoveOrHideActions || canDeleteColumn);
 
   const moveAndHideItems = (
     <>

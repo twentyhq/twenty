@@ -107,33 +107,18 @@ export const RecordTableHeaderPlusButtonContent = () => {
     .toSorted(sortByProperty('label'));
 
   const fieldSections = [
-    {
-      key: 'fields',
-      label: t`Fields`,
+    { label: t`Fields`, relationType: undefined },
+    { label: t`Belongs to`, relationType: RelationType.MANY_TO_ONE },
+    { label: t`Has many`, relationType: RelationType.ONE_TO_MANY },
+  ]
+    .map(({ label, relationType }) => ({
+      label,
       fieldMetadataItems: filteredFieldMetadataItems.filter(
         (fieldMetadataItem) =>
-          !isDefined(getFieldMetadataItemRelationType(fieldMetadataItem)),
+          getFieldMetadataItemRelationType(fieldMetadataItem) === relationType,
       ),
-    },
-    {
-      key: 'parentRelations',
-      label: t`Belongs to`,
-      fieldMetadataItems: filteredFieldMetadataItems.filter(
-        (fieldMetadataItem) =>
-          getFieldMetadataItemRelationType(fieldMetadataItem) ===
-          RelationType.MANY_TO_ONE,
-      ),
-    },
-    {
-      key: 'childRelations',
-      label: t`Has many`,
-      fieldMetadataItems: filteredFieldMetadataItems.filter(
-        (fieldMetadataItem) =>
-          getFieldMetadataItemRelationType(fieldMetadataItem) ===
-          RelationType.ONE_TO_MANY,
-      ),
-    },
-  ].filter(({ fieldMetadataItems }) => isNonEmptyArray(fieldMetadataItems));
+    }))
+    .filter(({ fieldMetadataItems }) => isNonEmptyArray(fieldMetadataItems));
 
   const handleFieldMetadataItemMenuItemClick = async (
     fieldMetadataItem: FieldMetadataItem,
@@ -185,8 +170,8 @@ export const RecordTableHeaderPlusButtonContent = () => {
         )}
         <ChartSettingsDropdownSection>
           {isNonEmptyArray(fieldSections) ? (
-            fieldSections.map(({ key, label, fieldMetadataItems }, index) => (
-              <Fragment key={key}>
+            fieldSections.map(({ label, fieldMetadataItems }, index) => (
+              <Fragment key={label}>
                 {index > 0 && <Dropdown.Separator />}
                 <Dropdown.Section label={label}>
                   {fieldMetadataItems.map(renderFieldMetadataItem)}

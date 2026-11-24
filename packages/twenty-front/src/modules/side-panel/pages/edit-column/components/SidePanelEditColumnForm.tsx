@@ -186,9 +186,6 @@ export const SidePanelEditColumnForm = ({
       ? [
           {
             ...summaryColumnContent,
-            Icon: isDefined(optionSummary.aggregatedFieldMetadataItem)
-              ? getIcon(optionSummary.aggregatedFieldMetadataItem.icon)
-              : undefined,
             label: getRecordFieldSummaryLabel(optionSummary),
             operationLabel: getAggregateOperationLabel(
               optionSummary.aggregateOperation,
