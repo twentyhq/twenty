@@ -162,6 +162,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         new PutEmailIdentityDkimSigningAttributesCommand({
           EmailIdentity: input.domain,
           SigningAttributesOrigin: 'AWS_SES',
+          SigningAttributes: { NextSigningKeyLength: 'RSA_2048_BIT' },
         }),
       );
 

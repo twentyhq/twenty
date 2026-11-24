@@ -7,7 +7,7 @@ import { In } from 'typeorm';
 import { UserWorkspaceSuccessorService } from 'src/engine/core-modules/user-workspace/services/user-workspace-successor.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { getEffectiveViewIsPrivate } from 'src/engine/metadata-modules/view/utils/get-effective-view-is-private.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,7 +40,7 @@ export class ViewOwnershipTransferService {
       .filter(
         (flatView) =>
           flatView.createdByUserWorkspaceId === removedUserWorkspace.id &&
-          !isViewVisibleToUser(flatView),
+          getEffectiveViewIsPrivate(flatView) !== false,
       )
       .map((flatView) => flatView.id);
 
