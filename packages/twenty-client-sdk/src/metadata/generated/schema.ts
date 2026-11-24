@@ -874,6 +874,7 @@ export interface AutocompleteResult {
 export interface AvailableWorkspace {
     displayName?: Scalars['String']
     id: Scalars['UUID']
+    /** @deprecated Always null. Will be removed. */
     inviteHash?: Scalars['String']
     loginToken?: Scalars['String']
     logo?: Scalars['String']
@@ -1169,6 +1170,10 @@ export interface CalendarConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'CalendarConfiguration'
 }
+
+export type CalendarEventRecurrenceFrequency = 'DAILY' | 'MONTHLY' | 'WEEKLY' | 'YEARLY'
+
+export type CalendarEventRecurrenceWeekday = 'FRIDAY' | 'MONDAY' | 'SATURDAY' | 'SUNDAY' | 'THURSDAY' | 'TUESDAY' | 'WEDNESDAY'
 
 export interface CallRecordingSummaryConfiguration {
     configurationType: WidgetConfigurationType
@@ -5579,6 +5584,7 @@ export interface AutocompleteResultGenqlSelection{
 export interface AvailableWorkspaceGenqlSelection{
     displayName?: boolean | number
     id?: boolean | number
+    /** @deprecated Always null. Will be removed. */
     inviteHash?: boolean | number
     loginToken?: boolean | number
     logo?: boolean | number
@@ -5873,6 +5879,8 @@ export interface CalendarConfigurationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface CalendarEventRecurrenceInput {daysOfWeek?: (CalendarEventRecurrenceWeekday[] | null),endDate?: (Scalars['String'] | null),endOccurrenceCount?: (Scalars['Int'] | null),frequency: CalendarEventRecurrenceFrequency,interval?: (Scalars['Int'] | null)}
 
 export interface CallRecordingSummaryConfigurationGenqlSelection{
     configurationType?: boolean | number
@@ -6189,7 +6197,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],oAu
 
 export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],email: Scalars['String']}
 
-export interface CreateCalendarEventInput {addConferencing?: (Scalars['Boolean'] | null),attendees?: (Scalars['String'] | null),connectedAccountId: Scalars['String'],description?: (Scalars['String'] | null),endsAt: Scalars['String'],isFullDay?: (Scalars['Boolean'] | null),location?: (Scalars['String'] | null),sendInvitations?: (Scalars['Boolean'] | null),startsAt: Scalars['String'],timeZone?: (Scalars['String'] | null),title: Scalars['String']}
+export interface CreateCalendarEventInput {addConferencing?: (Scalars['Boolean'] | null),attendees?: (Scalars['String'] | null),connectedAccountId: Scalars['String'],description?: (Scalars['String'] | null),endsAt: Scalars['String'],isFullDay?: (Scalars['Boolean'] | null),location?: (Scalars['String'] | null),recurrence?: (CalendarEventRecurrenceInput | null),sendInvitations?: (Scalars['Boolean'] | null),startsAt: Scalars['String'],timeZone?: (Scalars['String'] | null),title: Scalars['String']}
 
 export interface CreateCalendarEventOutputGenqlSelection{
     calendarEventId?: boolean | number
@@ -13338,6 +13346,23 @@ export const enumCalendarChannelSyncStatus = {
 export const enumCalendarChannelVisibility = {
    METADATA: 'METADATA' as const,
    SHARE_EVERYTHING: 'SHARE_EVERYTHING' as const
+}
+
+export const enumCalendarEventRecurrenceFrequency = {
+   DAILY: 'DAILY' as const,
+   MONTHLY: 'MONTHLY' as const,
+   WEEKLY: 'WEEKLY' as const,
+   YEARLY: 'YEARLY' as const
+}
+
+export const enumCalendarEventRecurrenceWeekday = {
+   FRIDAY: 'FRIDAY' as const,
+   MONDAY: 'MONDAY' as const,
+   SATURDAY: 'SATURDAY' as const,
+   SUNDAY: 'SUNDAY' as const,
+   THURSDAY: 'THURSDAY' as const,
+   TUESDAY: 'TUESDAY' as const,
+   WEDNESDAY: 'WEDNESDAY' as const
 }
 
 export const enumCaptchaDriverType = {

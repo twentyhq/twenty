@@ -11,6 +11,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
@@ -42,6 +43,7 @@ export const WorkspaceSectionListDndKit = ({
   folderChildrenById,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
+  renderSection,
 }: WorkspaceSectionListDndKitProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -58,6 +60,34 @@ export const WorkspaceSectionListDndKit = ({
     parentId: containerId,
     navigationMenuItemSection: 'workspace',
   });
+  const renderListEntry = ({
+    item,
+    index,
+  }: {
+    item: NavigationMenuItem;
+    index: number;
+  }) => {
+    if (
+      item.type === NavigationMenuItemType.SECTION &&
+      isDefined(renderSection)
+    ) {
+      return renderSection(item);
+    }
+
+    return (
+      <NavigationMenuItemDisplay
+        item={item}
+        editModeProps={getEditModeProps(item)}
+        isDragging={isDragging}
+        folderChildrenById={folderChildrenById}
+        folderCount={folderCount}
+        onNavigationMenuItemClick={onNavigationMenuItemClick}
+        onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+        orphanIndex={index}
+      />
+    );
+  };
+
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -76,16 +106,7 @@ export const WorkspaceSectionListDndKit = ({
               !isLayoutCustomizationModeEnabled || workspaceDropDisabled
             }
           >
-            <NavigationMenuItemDisplay
-              item={item}
-              editModeProps={getEditModeProps(item)}
-              isDragging={isDragging}
-              folderChildrenById={folderChildrenById}
-              folderCount={folderCount}
-              onNavigationMenuItemClick={onNavigationMenuItemClick}
-              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-              orphanIndex={index}
-            />
+            {renderListEntry({ item, index })}
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}
