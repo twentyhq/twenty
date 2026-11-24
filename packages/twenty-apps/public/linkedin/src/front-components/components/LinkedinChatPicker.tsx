@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { t } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton, SearchInput } from 'twenty-ui/components/input';
@@ -17,7 +17,6 @@ import { OnMountEffect } from 'src/front-components/components/OnMountEffect';
 import { fetchLinkedinChatOptions } from 'src/front-components/utils/fetch-linkedin-chat-options.util';
 import { getUnlistedSelectedLinkedinChats } from 'src/front-components/utils/get-unlisted-selected-linkedin-chats.util';
 import { toggleLinkedinChatSelection } from 'src/front-components/utils/toggle-linkedin-chat-selection.util';
-import { type LinkedinChatOption } from 'src/types/linkedin-chat-option.type';
 import { type LinkedinChatOptionsPage } from 'src/types/linkedin-chat-options-page.type';
 import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
 
@@ -48,10 +47,6 @@ type LinkedinChatPickerState =
   | { step: 'unavailable' }
   | { step: 'ready'; page: LinkedinChatOptionsPage };
 
-const toSelectedChats = (chat: LinkedinChatOption): LinkedinSelectedChat[] => [
-  { id: chat.id, name: chat.name },
-];
-
 type LinkedinChatPickerProps = {
   selectedChats: LinkedinSelectedChat[];
   onChange: (selectedChats: LinkedinSelectedChat[]) => void;
@@ -68,28 +63,39 @@ export const LinkedinChatPicker = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [search, setSearch] = useState('');
 
-  const loadChats = async (requestedLimit: number) => {
-    try {
-      const page = await fetchLinkedinChatOptions(requestedLimit);
+  const loadChatsOrThrow = async (requestedLimit: number) => {
+    const page = await fetchLinkedinChatOptions(requestedLimit);
 
-      setLimit(requestedLimit);
-      setState({ step: 'ready', page });
+    setLimit(requestedLimit);
+    setState({ step: 'ready', page });
+  };
+
+  const loadFirstChats = async () => {
+    try {
+      await loadChatsOrThrow(limit);
     } catch {
-      setState((current) =>
-        current.step === 'ready' ? current : { step: 'unavailable' },
-      );
+      setState({ step: 'unavailable' });
     }
   };
 
   const handleRetry = async () => {
     setState({ step: 'loading' });
-    await loadChats(limit);
+    await loadFirstChats();
   };
 
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
-    await loadChats(limit + LINKEDIN_CHAT_OPTIONS_PAGE_SIZE);
-    setIsLoadingMore(false);
+
+    try {
+      await loadChatsOrThrow(limit + LINKEDIN_CHAT_OPTIONS_PAGE_SIZE);
+    } catch {
+      enqueueSnackbar({
+        message: t('Could not load more LinkedIn conversations.'),
+        variant: 'error',
+      });
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -100,28 +106,19 @@ export const LinkedinChatPicker = ({
         )
       : [];
   const selectedChatIds = new Set(selectedChats.map((chat) => chat.id));
-  const isChatSelected = (chat: LinkedinChatOption): boolean =>
-    toSelectedChats(chat).some(({ id }) => selectedChatIds.has(id));
-  const unlistedSelectedChats =
+  const visibleUnlistedSelectedChats =
     state.step === 'ready'
       ? getUnlistedSelectedLinkedinChats({
           selectedChats,
           listedChatIds: state.page.chats.map((chat) => chat.id),
-        })
+        }).filter((chat) => chat.name.toLowerCase().includes(normalizedSearch))
       : [];
-  const selectedConversationCount =
-    state.step === 'ready'
-      ? state.page.chats.filter(isChatSelected).length +
-        unlistedSelectedChats.length
-      : selectedChats.length;
-  const visibleUnlistedSelectedChats =
-    normalizedSearch === '' ? unlistedSelectedChats : [];
   const isSelectionFull =
     selectedChats.length >= LINKEDIN_SELECTED_CHATS_MAX_COUNT;
 
   return (
     <StyledContainer>
-      <OnMountEffect onMount={() => loadChats(limit)} />
+      <OnMountEffect onMount={loadFirstChats} />
       <SearchInput
         aria-label={t('Search conversations')}
         placeholder={t('Search conversations')}
@@ -153,7 +150,7 @@ export const LinkedinChatPicker = ({
           ) : (
             <StyledList role="group" aria-label={t('Conversations')}>
               {visibleChats.map((chat) => {
-                const isSelected = isChatSelected(chat);
+                const isSelected = selectedChatIds.has(chat.id);
 
                 return (
                   <ListItemButton
@@ -177,7 +174,7 @@ export const LinkedinChatPicker = ({
                       onChange(
                         toggleLinkedinChatSelection({
                           selectedChats,
-                          chats: toSelectedChats(chat),
+                          chat: { id: chat.id, name: chat.name },
                         }),
                       )
                     }
@@ -198,10 +195,7 @@ export const LinkedinChatPicker = ({
                   descriptionPlacement="end"
                   onClick={() =>
                     onChange(
-                      toggleLinkedinChatSelection({
-                        selectedChats,
-                        chats: [chat],
-                      }),
+                      toggleLinkedinChatSelection({ selectedChats, chat }),
                     )
                   }
                 >
@@ -216,9 +210,9 @@ export const LinkedinChatPicker = ({
             <Text size="sm" color="tertiary" aria-live="polite">
               {isSelectionFull
                 ? t('{count} selected, the most that can be imported', {
-                    count: selectedConversationCount,
+                    count: selectedChats.length,
                   })
-                : t('{count} selected', { count: selectedConversationCount })}
+                : t('{count} selected', { count: selectedChats.length })}
             </Text>
             {state.page.hasMore && (
               <LightButton

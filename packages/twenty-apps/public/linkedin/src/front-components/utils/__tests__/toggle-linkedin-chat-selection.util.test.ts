@@ -8,7 +8,7 @@ const GRACE = { id: 'chat-2', name: 'Grace Hopper' };
 describe('toggleLinkedinChatSelection', () => {
   it('adds a conversation with its name', () => {
     expect(
-      toggleLinkedinChatSelection({ selectedChats: [PRIYA], chats: [GRACE] }),
+      toggleLinkedinChatSelection({ selectedChats: [PRIYA], chat: GRACE }),
     ).toEqual([PRIYA, GRACE]);
   });
 
@@ -16,7 +16,7 @@ describe('toggleLinkedinChatSelection', () => {
     expect(
       toggleLinkedinChatSelection({
         selectedChats: [PRIYA, GRACE],
-        chats: [{ id: 'chat-1', name: 'Priya' }],
+        chat: { id: 'chat-1', name: 'Priya' },
       }),
     ).toEqual([GRACE]);
   });

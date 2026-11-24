@@ -2,14 +2,11 @@ import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type
 
 export const toggleLinkedinChatSelection = ({
   selectedChats,
-  chats,
+  chat,
 }: {
   selectedChats: LinkedinSelectedChat[];
-  chats: LinkedinSelectedChat[];
-}): LinkedinSelectedChat[] => {
-  const toggledChatIds = new Set(chats.map((chat) => chat.id));
-
-  return selectedChats.some((chat) => toggledChatIds.has(chat.id))
-    ? selectedChats.filter((chat) => !toggledChatIds.has(chat.id))
-    : [...selectedChats, ...chats];
-};
+  chat: LinkedinSelectedChat;
+}): LinkedinSelectedChat[] =>
+  selectedChats.some(({ id }) => id === chat.id)
+    ? selectedChats.filter(({ id }) => id !== chat.id)
+    : [...selectedChats, chat];
