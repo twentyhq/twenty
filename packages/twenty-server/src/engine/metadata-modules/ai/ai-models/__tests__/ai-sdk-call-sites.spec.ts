@@ -11,6 +11,7 @@ const POLICY_CHECKED_CALL_SITES = [
   'engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service.ts',
   'engine/metadata-modules/ai/ai-evaluation/services/native-evaluation.runner.ts',
   'engine/metadata-modules/ai/ai-generate-text/controllers/ai-generate-text.controller.ts',
+  'engine/metadata-modules/ai/ai-search-answer/services/ai-search-answer.service.ts',
 ];
 
 const MODEL_CALLING_EXPORTS = [
