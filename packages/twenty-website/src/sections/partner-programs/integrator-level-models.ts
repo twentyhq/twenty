@@ -3,11 +3,15 @@ import { paletteColorNumber } from '@/tokens';
 
 type LevelModel = Pick<HalftoneModelProps, 'modelUrl' | 'settings'>;
 
-// The /partners Services recipe: blue objects on white.
-const withShape = (modelUrl: string): LevelModel => ({
+// The /partners Services recipe: blue objects on white; the top level sits
+// on its dark card, so its object takes the yellow illustration accent.
+const withShape = (
+  modelUrl: string,
+  dashColor: number = paletteColorNumber('blue'),
+): LevelModel => ({
   modelUrl,
   settings: {
-    previewDistance: 5.4,
+    previewDistance: 3.8,
     lighting: {
       intensity: 1.8,
       fillIntensity: 0.25,
@@ -23,11 +27,11 @@ const withShape = (modelUrl: string): LevelModel => ({
     },
     halftone: {
       variant: 'band',
-      scale: 7,
+      scale: 4,
       power: 0.16,
       width: 0.62,
-      dashColor: paletteColorNumber('blue'),
-      hoverDashColor: paletteColorNumber('blue'),
+      dashColor,
+      hoverDashColor: dashColor,
     },
     animation: {
       autoRotateEnabled: true,
@@ -44,5 +48,5 @@ const withShape = (modelUrl: string): LevelModel => ({
 // Final names: the files hold stand-ins (keycap, diamond) until Thomas drops his shapes in.
 export const INTEGRATOR_LEVEL_MODELS: readonly LevelModel[] = [
   withShape('/models/integrator-level-1.glb'),
-  withShape('/models/integrator-level-2.glb'),
+  withShape('/models/integrator-level-2.glb', paletteColorNumber('yellow')),
 ];

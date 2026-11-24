@@ -57,11 +57,24 @@ const SlideInner = styled.div`
 
 type ProductStepperVisualProps = {
   activeStepIndex: number;
+  // Progress through the active step; undefined when the stepper swipes.
+  localProgress?: number;
   steps: readonly ProductStepperStep[];
+};
+
+const getStepProgress = (
+  stepNumber: number,
+  activeStepIndex: number,
+  localProgress: number,
+) => {
+  if (stepNumber < activeStepIndex) return 1;
+  if (stepNumber > activeStepIndex) return 0;
+  return localProgress;
 };
 
 export function ProductStepperVisual({
   activeStepIndex,
+  localProgress,
   steps,
 }: ProductStepperVisualProps) {
   return (
@@ -74,7 +87,18 @@ export function ProductStepperVisual({
             return (
               <Slide data-active={isActive ? '' : undefined} key={heading.id}>
                 <SlideInner>
-                  <Visual active={isActive} />
+                  <Visual
+                    active={isActive}
+                    progress={
+                      localProgress === undefined
+                        ? undefined
+                        : getStepProgress(
+                            stepNumber,
+                            activeStepIndex,
+                            localProgress,
+                          )
+                    }
+                  />
                 </SlideInner>
               </Slide>
             );

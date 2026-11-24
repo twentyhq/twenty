@@ -15,16 +15,17 @@ import {
   JsonLd,
 } from '@/platform/seo';
 import { BecomePartnerFaq } from '@/sections/faq';
-import { HeroBackdrop } from '@/sections/home-hero';
 import { Menu } from '@/sections/menu';
 import { ProductStepper } from '@/sections/product-stepper';
 import {
+  INTEGRATOR_HERO_BACKDROP,
   INTEGRATOR_STEPPER_STEPS,
   IntegratorApplyButton,
   IntegratorEarnings,
   IntegratorLevelCards,
   PARTNER_LEVELS,
   ProgramHero,
+  ProgramHeroVisual,
 } from '@/sections/partner-programs';
 import { PartnerTestimonials } from '@/sections/testimonials';
 import { Button } from '@/ui';
@@ -70,8 +71,11 @@ export default async function IntegratorProgramPage({
               />
             </>
           }
-          backdrop={
-            <HeroBackdrop imageUrl="/images/partners/hero/partners-hero-soft.webp" />
+          visual={
+            <ProgramHeroVisual
+              backdrop={INTEGRATOR_HERO_BACKDROP}
+              slot="integrator-hero"
+            />
           }
           body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
           heading={msg`Become a\n*Twenty integrator*`}

@@ -1,3 +1,4 @@
+export { INTEGRATOR_HERO_BACKDROP } from './integrator-hero-backdrop';
 export { INTEGRATOR_STEPPER_STEPS } from './integrator-stepper-steps.data';
 export { IntegratorApplyButton } from './IntegratorApplyButton';
 export { IntegratorEarnings } from './IntegratorEarnings';
