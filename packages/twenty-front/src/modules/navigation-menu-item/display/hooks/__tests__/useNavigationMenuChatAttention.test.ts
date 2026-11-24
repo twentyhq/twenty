@@ -95,6 +95,27 @@ describe('useNavigationMenuChatAttention', () => {
     expect(result.current.getTabChatAttention(null)).toBe('needs-input');
   });
 
+  it('falls back to tabs holding any chat section when no Inbox section exists', () => {
+    jest.mocked(useNavigationMenuItemsData).mockReturnValue({
+      navigationMenuItems: [],
+      workspaceNavigationMenuItems: [
+        buildSection({
+          id: 'channels-section',
+          parentId: 'chats-tab',
+          builtInSectionKey: 'aiChatChannels',
+        }),
+      ],
+      currentWorkspaceMemberId: undefined,
+      currentUserWorkspaceId: undefined,
+    });
+    mockSummary({ needsInputThreadCount: 1 });
+
+    const { result } = renderHook(() => useNavigationMenuChatAttention());
+
+    expect(result.current.getTabChatAttention('chats-tab')).toBe('needs-input');
+    expect(result.current.getTabChatAttention(null)).toBeNull();
+  });
+
   it('flags an unread mention as unread', () => {
     mockSummary({ hasUnreadMentionThread: true, unreadOpenThreadCount: 1 });
 
