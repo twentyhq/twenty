@@ -1,8 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
 import { NavigationDrawerInboxTriageSection } from '@/inbox/components/NavigationDrawerInboxTriageSection';
+import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { NavigationMenuAiAgentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection';
 import { NavigationMenuAiChatFavoritesSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection';
 import { NavigationMenuAiChatRecentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection';
@@ -20,6 +22,9 @@ export const NavigationMenuBuiltInSection = ({
   headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
   const { t } = useLingui();
+  const inboxBuiltInSection = NAVIGATION_MENU_BUILT_IN_SECTIONS.find(
+    ({ key }) => key === 'aiChatInbox',
+  );
   const { isBuiltInSectionAvailable } =
     useNavigationMenuBuiltInSectionAvailability();
 
@@ -39,7 +44,11 @@ export const NavigationMenuBuiltInSection = ({
     case 'aiChatInbox':
       return (
         <NavigationDrawerInboxTriageSection
-          label={t`Inbox`}
+          label={
+            isDefined(inboxBuiltInSection)
+              ? t(inboxBuiltInSection.label)
+              : undefined
+          }
           headerAction={headerAction}
         />
       );
