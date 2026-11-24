@@ -570,6 +570,12 @@ msgstr "{0} sense correu electrònic"
 msgid "{0} workspace members"
 msgstr "{0} membres de l'espai de treball"
 
+#. js-lingui-id: vZ4SMq
+#. placeholder {0}: entry.label
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+msgid "{0}, back"
+msgstr ""
+
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -2684,6 +2690,11 @@ msgstr "Afegeix ordenació"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "Afegeix un proveïdor d'identitats SSO"
+
+#. js-lingui-id: iC/d3X
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Add summary column"
+msgstr ""
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -5254,6 +5265,11 @@ msgstr "Comportament"
 msgid "Behind"
 msgstr "Desactualitzat"
 
+#. js-lingui-id: +68Gui
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Belongs to"
+msgstr ""
+
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Belongs to one"
@@ -5577,6 +5593,11 @@ msgstr "Suma de verificació de la compilació"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Crea relacions de molts a molts"
+
+#. js-lingui-id: Hz2eHF
+#: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
+msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
+msgstr ""
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -8546,6 +8567,11 @@ msgstr "Compta cert"
 msgid "Count unique values"
 msgstr "Compta valors únics"
 
+#. js-lingui-id: wGiHe7
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Count, total, list"
+msgstr ""
+
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 msgid "Counting recipients..."
@@ -10324,6 +10350,11 @@ msgstr "Suprimeix l'habilitat"
 msgid "Delete some {objectLabelPlural} · {throughRules}"
 msgstr "Suprimeix alguns {objectLabelPlural} · {throughRules}"
 
+#. js-lingui-id: x6UH+z
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Delete summary column"
+msgstr ""
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
@@ -11414,7 +11445,6 @@ msgid "Edit all records"
 msgstr "Edita tots els registres"
 
 #. js-lingui-id: QM4RhQ
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
 msgstr "Edita la columna"
@@ -11570,6 +11600,11 @@ msgstr "Edita les etiquetes compartides"
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
 msgstr "Edita alguns {objectLabelPlural} · {throughRules}"
+
+#. js-lingui-id: 0Ou9Le
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit summary column…"
+msgstr ""
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12318,6 +12353,7 @@ msgid "Enter JSON array"
 msgstr "Introdueix una matriu JSON"
 
 #. js-lingui-id: uV9utd
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
 msgstr ""
@@ -14103,6 +14139,7 @@ msgstr "Permisos a nivell de camp"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/page-layout/hooks/useCreatePendingFieldsWidgetViews.ts
 #: src/modules/page-layout/utils/createDefaultFieldsWidget.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14373,11 +14410,6 @@ msgstr "Filtra la línia de temps"
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
 msgstr "Filtra els fluxos de treball"
-
-#. js-lingui-id: 03Qqf9
-#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
-msgid "Filtered"
-msgstr "Filtrat"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -15445,6 +15477,7 @@ msgid "Has attachments"
 msgstr "Té adjunts"
 
 #. js-lingui-id: MvwlmR
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
 msgstr "En té molts"
@@ -21332,6 +21365,7 @@ msgstr "Cap resposta del servidor"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
@@ -26593,6 +26627,8 @@ msgstr "SDK"
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -29557,6 +29593,11 @@ msgstr "Resumeix aquesta vista"
 msgid "Summarize what changed on Acme this week"
 msgstr "Resumeix què ha canviat a Acme aquesta setmana"
 
+#. js-lingui-id: dXoieq
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Summary"
+msgstr ""
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -30845,6 +30886,11 @@ msgstr "No s'ha pogut obrir aquest xat. Proveu de seleccionar-lo de nou."
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
 msgstr "Aquest xat ja no està disponible."
+
+#. js-lingui-id: GsXQeq
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
+msgstr ""
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
