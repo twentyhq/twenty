@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { getDomainFromEmail, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -32,7 +32,6 @@ import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbou
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { buildOutboundThreadingHeaders } from 'src/modules/messaging/message-outbound-manager/utils/build-outbound-threading-headers.util';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
