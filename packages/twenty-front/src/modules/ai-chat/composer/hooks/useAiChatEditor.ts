@@ -5,7 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
-import { isPrimaryPointerTouch } from '@/ai-chat/composer/utils/isPrimaryPointerTouch';
+import { handleAiChatEditorKeyDown } from '@/ai-chat/composer/utils/handleAiChatEditorKeyDown';
 import { serializeAiChatEditorDraft } from '@/ai-chat/composer/utils/serializeAiChatEditorDraft';
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai-chat/composer/constants/AiChatEditorProfile';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
@@ -18,11 +18,9 @@ import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatCompo
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { getAiChatAssistantMentionSearchResults } from '@/ai-chat/composer/utils/getAiChatAssistantMentionSearchResults';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
-import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -70,32 +68,8 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
-      handleKeyDown: (view, event) => {
-        if (event.key === 'Enter' && !event.shiftKey) {
-          // Touch keyboards have no Shift+Enter, so return inserts a new line and the send button sends
-          if (isPrimaryPointerTouch()) {
-            return false;
-          }
-
-          const isSuggestionMenuOpen = [
-            MENTION_SUGGESTION_PLUGIN_KEY,
-            SKILL_SUGGESTION_PLUGIN_KEY,
-          ].some(
-            (pluginKey) => pluginKey.getState(view.state)?.active === true,
-          );
-          if (isSuggestionMenuOpen) {
-            return false;
-          }
-
-          event.preventDefault();
-          onSend({
-            element: view.dom,
-            text: view.state.doc.textContent,
-          });
-          return true;
-        }
-        return false;
-      },
+      handleKeyDown: (view, event) =>
+        handleAiChatEditorKeyDown({ view, event, onSend }),
       handlePaste: (_view, event) => {
         const clipboardData = event.clipboardData;
 
