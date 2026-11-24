@@ -25,7 +25,6 @@ export const WarnSuspendedWorkspaceEmail = ({
 }: WarnSuspendedWorkspaceEmailProps) => {
   const i18n = createI18nInstance(locale);
   const daysLeft = inactiveDaysBeforeDelete - daysSinceInactive;
-  const dayOrDays = daysLeft > 1 ? 'days' : 'day';
   const remainingDays = daysLeft > 0 ? daysLeft : 0;
 
   return (
@@ -47,8 +46,8 @@ export const WarnSuspendedWorkspaceEmail = ({
         <br />
         <br />
         <Trans
-          id="Reactivate it within the next {remainingDays} {dayOrDays} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
-          values={{ remainingDays, dayOrDays }}
+          id="Reactivate it within the next {remainingDays, plural, one {# day} other {# days}} and you'll pick up exactly where you left off, with every record, view and setting right where you left it."
+          values={{ remainingDays }}
         />
         <br />
         <br />
