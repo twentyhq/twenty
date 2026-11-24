@@ -147,7 +147,7 @@ export const WorkflowDiagramDefaultEdgeEditable = ({
               >
                 <IconPlus />
               </LightIconButton>
-              {deletable !== false && (
+              {(!isDefined(deletable) || deletable) && (
                 <LightIconButton
                   size="xs"
                   emphasis="subtle"

@@ -84,6 +84,7 @@ export class GraphQLConfigService implements GqlOptionsFactory<
       autoSchemaFile: true,
       include: [CoreEngineModule, ModulesModule],
       resolverSchemaScope: 'core',
+      fieldResolverEnhancers: ['guards'],
       buildSchemaOptions: {},
       resolvers: { JSON: GraphQLJSON },
       plugins: plugins,

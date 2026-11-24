@@ -5,6 +5,7 @@ import { IconFilter, IconTrash } from 'twenty-ui/icon';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CoreAgentEditionCommands } from '@/object-core/commands/components/CoreAgentEditionCommands';
 import { CoreAgentPageCommands } from '@/object-core/commands/components/CoreAgentPageCommands';
+import { CoreAgentTestCommand } from '@/object-core/commands/components/CoreAgentTestCommand';
 import { CoreAgentsDeleteCommand } from '@/object-core/commands/components/CoreAgentsDeleteCommand';
 import { CoreAgentsIndexCommands } from '@/object-core/commands/components/CoreAgentsIndexCommands';
 import { CoreAgentsSeeTurnsCommand } from '@/object-core/commands/components/CoreAgentsSeeTurnsCommand';
@@ -48,6 +49,8 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
 
   const {
     selectedCoreAgentIds,
+    testCommandLabel: coreAgentsTestCommandLabel,
+    shouldDisplayTestCommand: shouldDisplayCoreAgentsTestCommand,
     seeTurnsCommandLabel: coreAgentsSeeTurnsCommandLabel,
     shouldDisplaySeeTurnsCommand: shouldDisplayCoreAgentsSeeTurnsCommand,
     deleteCommandLabel: coreAgentsDeleteCommandLabel,
@@ -137,6 +140,12 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
           />
           <CoreAgentPageCommands />
         </>
+      )}
+      {section === 'SELECTION' && shouldDisplayCoreAgentsTestCommand && (
+        <CoreAgentTestCommand
+          agentId={selectedCoreAgentIds[0]}
+          label={coreAgentsTestCommandLabel}
+        />
       )}
       {section === 'SELECTION' && shouldDisplayCoreAgentsSeeTurnsCommand && (
         <CoreAgentsSeeTurnsCommand

@@ -916,11 +916,6 @@ const createSettingsRouteElements = ({
         path={SettingsPath.WorkspaceBlocklist}
         element={<SettingsWorkspaceBlocklist />}
       />
-      <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-      <Route
-        path={SettingsPath.BillingPlans}
-        element={<SettingsBillingPlans />}
-      />
       <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
       <Route
         path={SettingsPath.UsageUserDetail}
@@ -959,6 +954,19 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.LegalDpaNew}
         element={<SettingsLegalDpaNew />}
+      />
+    </Route>
+    <Route
+      element={
+        <SettingsProtectedRouteWrapper
+          settingsPermission={PermissionFlagType.BILLING}
+        />
+      }
+    >
+      <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+      <Route
+        path={SettingsPath.BillingPlans}
+        element={<SettingsBillingPlans />}
       />
     </Route>
     <Route

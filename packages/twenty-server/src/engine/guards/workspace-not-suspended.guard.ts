@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { isWorkspaceSuspended } from 'src/engine/core-modules/workspace/utils/is-workspace-suspended.util';
 import { ALLOW_SUSPENDED_WORKSPACE_KEY } from 'src/engine/guards/constants/allow-suspended-workspace-key.constant';
+import { isGraphqlFieldResolverContext } from 'src/engine/guards/utils/is-graphql-field-resolver-context.util';
 import { getRequest } from 'src/utils/extract-request';
 
 @Injectable()
@@ -18,6 +19,11 @@ export class WorkspaceNotSuspendedGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    // The root operation it resolves under already went through this guard
+    if (isGraphqlFieldResolverContext(context)) {
+      return true;
+    }
+
     const request = getRequest(context);
 
     if (!isWorkspaceSuspended(request?.workspace)) {
