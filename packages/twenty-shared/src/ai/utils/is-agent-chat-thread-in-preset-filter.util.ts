@@ -3,6 +3,7 @@ import { AgentChatThreadConversationType } from '@/ai/types/AgentChatThreadConve
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { isDefined } from '@/utils/validation/isDefined';
 
+// Old inbox tabs only, removed once the inbox list reads saved views (twentyhq/core-team-issues#3209)
 export const isAgentChatThreadInPresetFilter = ({
   thread,
   inboxStatus,
