@@ -1,3 +1,5 @@
+// TODO: replace this list with isWorkEmail from twenty-sdk/email (#31308)
+// once twenty-sdk 2.63.0 is published.
 export const FREE_EMAIL_PROVIDER_DOMAINS = [
   'gmail.com',
   'googlemail.com',
