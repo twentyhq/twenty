@@ -1,4 +1,5 @@
 import { type ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -14,8 +15,12 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import {
+  ErrorCode,
+  ForbiddenError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  runGuardedFieldQuery,
   runGuardedQuery,
   runGuardedRestRequest,
 } from 'src/engine/guards/__tests__/run-guarded-query.test-util';
@@ -29,6 +34,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/permissions/permissions.exception';
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
 import { ApplicationGrantRoleLookupService } from 'src/engine/core-modules/application/application-grant-role-lookup/services/application-grant-role-lookup.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -757,6 +763,109 @@ describe('AccessPolicyGuard', () => {
       expect(result.errors?.[0]?.extensions?.code).toBe(
         ErrorCode.UNAUTHENTICATED,
       );
+    });
+  });
+
+  describe('on a GraphQL field resolver', () => {
+    const USER_SESSIONS_ONLY_GUARD = AccessPolicyGuard(
+      buildPrincipalOnlyPolicy({
+        ...REFUSE_EVERY_PRINCIPAL,
+        userSession: true,
+      }),
+    );
+
+    it('should let an accepted principal resolve the field', async () => {
+      const result = await runGuardedFieldQuery({
+        guard: USER_SESSIONS_ONLY_GUARD,
+        request: REQUEST_BY_PRINCIPAL_VARIANT['userSession.standard'],
+        providers: [ACCESS_POLICY_SERVICE_PROVIDER],
+      });
+
+      expect(result.errors).toBeUndefined();
+      expect(result.data?.parent).toEqual({
+        id: 'parent-id',
+        guardedField: 'ok',
+      });
+    });
+
+    it('should refuse a principal the same way as on a root operation', async () => {
+      const query = {
+        guard: USER_SESSIONS_ONLY_GUARD,
+        request: REQUEST_BY_PRINCIPAL_VARIANT.apiKey,
+        providers: [ACCESS_POLICY_SERVICE_PROVIDER],
+      };
+
+      const fieldResult = await runGuardedFieldQuery(query);
+      const rootResult = await runGuardedQuery(query);
+
+      const fieldError = fieldResult.errors?.[0];
+      const rootError = rootResult.errors?.[0];
+
+      expect(fieldResult.errors).toHaveLength(1);
+      expect(fieldError?.path).toEqual(['parent', 'guardedField']);
+      expect(fieldError?.message).toBe(AUTH_PRINCIPAL_REFUSED_MESSAGE);
+      expect(fieldError?.originalError).toBeInstanceOf(ForbiddenException);
+      expect(rootError?.originalError).toBeInstanceOf(ForbiddenException);
+      expect(fieldError?.message).toBe(rootError?.message);
+      expect(fieldError?.extensions).toEqual(rootError?.extensions);
+    });
+
+    it('should report a request without credentials as UNAUTHENTICATED', async () => {
+      const result = await runGuardedFieldQuery({
+        guard: AccessPolicyGuard(
+          buildPrincipalOnlyPolicy(ACCEPT_EVERY_PRINCIPAL),
+        ),
+        request: { workspace },
+        providers: [ACCESS_POLICY_SERVICE_PROVIDER],
+      });
+
+      expect(result.errors).toHaveLength(1);
+      expect(result.errors?.[0]?.extensions?.code).toBe(
+        ErrorCode.UNAUTHENTICATED,
+      );
+    });
+
+    it('should turn a missing permission flag into the FORBIDDEN error a root operation gets from its filter', async () => {
+      const guard = AccessPolicyGuard({
+        authPrincipals: ACCEPT_EVERY_PRINCIPAL,
+        requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+      });
+      const providers = [
+        {
+          provide: AccessPolicyService,
+          useValue: await buildAccessPolicyServiceWithMocks({
+            settingPermissionsService: {
+              hasPermissionFlag: jest.fn().mockResolvedValue(false),
+            },
+          }),
+        },
+        { provide: APP_FILTER, useClass: PermissionsGraphqlApiExceptionFilter },
+      ];
+      const request = {
+        user,
+        workspace: activeWorkspace,
+        userWorkspaceId: 'user-workspace-id',
+        tokenType: JwtTokenTypeEnum.ACCESS,
+      };
+
+      const fieldResult = await runGuardedFieldQuery({
+        guard,
+        request,
+        providers,
+      });
+      const rootResult = await runGuardedQuery({ guard, request, providers });
+
+      const fieldError = fieldResult.errors?.[0];
+      const rootError = rootResult.errors?.[0];
+
+      expect(fieldError?.originalError).toBeInstanceOf(ForbiddenError);
+      expect(fieldError?.extensions).toMatchObject({
+        code: ErrorCode.FORBIDDEN,
+        subCode: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+      expect(rootError?.originalError).toBeInstanceOf(ForbiddenError);
+      expect(fieldError?.message).toBe(rootError?.message);
+      expect(fieldError?.extensions).toEqual(rootError?.extensions);
     });
   });
 
