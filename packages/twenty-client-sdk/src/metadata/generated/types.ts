@@ -15448,9 +15448,6 @@ export default {
             ]
         },
         "UpdateViewFieldGroupInputUpdates": {
-            "deletedAt": [
-                4
-            ],
             "isVisible": [
                 1
             ],
@@ -16744,9 +16741,6 @@ export default {
             "createdByUserWorkspaceId": [
                 564
             ],
-            "deletedAt": [
-                225
-            ],
             "groupLoadLimit": [
                 2
             ],
@@ -16863,9 +16857,6 @@ export default {
             "createdAt": [
                 225
             ],
-            "deletedAt": [
-                225
-            ],
             "fieldMetadataId": [
                 564
             ],
@@ -16923,9 +16914,6 @@ export default {
         },
         "ViewFieldGroup": {
             "createdAt": [
-                225
-            ],
-            "deletedAt": [
                 225
             ],
             "id": [
@@ -17120,9 +17108,6 @@ export default {
             "createdAt": [
                 225
             ],
-            "deletedAt": [
-                225
-            ],
             "fieldMetadataId": [
                 564
             ],
@@ -17164,9 +17149,6 @@ export default {
             "createdAt": [
                 225
             ],
-            "deletedAt": [
-                225
-            ],
             "id": [
                 564
             ],
@@ -17196,9 +17178,6 @@ export default {
         "ViewFilterOperand": {},
         "ViewGroup": {
             "createdAt": [
-                225
-            ],
-            "deletedAt": [
                 225
             ],
             "fieldValue": [
@@ -17231,9 +17210,6 @@ export default {
         "ViewPresetFilter": {},
         "ViewSort": {
             "createdAt": [
-                225
-            ],
-            "deletedAt": [
                 225
             ],
             "direction": [
