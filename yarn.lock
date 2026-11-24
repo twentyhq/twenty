@@ -45007,6 +45007,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"timezones-ical-library@npm:3.0.0":
+  version: 3.0.0
+  resolution: "timezones-ical-library@npm:3.0.0"
+  checksum: 10c0/0a1a4a975a983efea5c8afa2739c0b3aff60fafb433cb9defdc09201970780694d81597916c8f2c3492faab1d93ef69a4ed58f51aba023b9c8df7cae528bfc3d
+  languageName: node
+  linkType: hard
+
 "tiny-inflate@npm:^1.0.0, tiny-inflate@npm:^1.0.3":
   version: 1.0.3
   resolution: "tiny-inflate@npm:1.0.3"
@@ -46196,6 +46203,7 @@ __metadata:
     tar: "npm:^7.5.9"
     temporal-polyfill: "npm:^0.3.0"
     testcontainers: "npm:12.1.0"
+    timezones-ical-library: "npm:3.0.0"
     ts-jest: "npm:^29.1.1"
     ts-node: "npm:10.9.1"
     tsconfig-paths: "npm:^4.2.0"
