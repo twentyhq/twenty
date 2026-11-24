@@ -5,7 +5,11 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
+import {
+  getFieldMetadataFormulaEvaluation,
+  isDefined,
+  isMorphRelationHead,
+} from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -38,7 +42,9 @@ import {
   UniversalUpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
+import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
 import { computeForeignKeyOnDelete } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/compute-foreign-key-on-delete.util';
+import { getDeferredStoredFormulaFieldsComputation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/get-deferred-stored-formula-fields-computation.util';
 import { fromUniversalSettingsToFlatFieldMetadataSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-flat-field-metadata-settings.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -134,6 +140,43 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       update,
       rebuildSearchVector: action.rebuildSearchVector,
     };
+  }
+
+  override getDeferredOperation({
+    flatAction: { entityId, update },
+    allFlatEntityMaps: { flatFieldMetadataMaps },
+  }: WorkspaceMigrationActionRunnerContext<FlatUpdateFieldAction>) {
+    if (!isDefined(update.settings)) {
+      return undefined;
+    }
+
+    // The maps still hold the field as it was before this update
+    const existingFlatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow(
+      {
+        flatEntityId: entityId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      },
+    );
+
+    if (
+      isFieldMetadataFormulaUnchanged({
+        settings: update.settings,
+        existingSettings: existingFlatFieldMetadata.settings,
+      }) &&
+      getFieldMetadataFormulaEvaluation({ settings: update.settings }) ===
+        getFieldMetadataFormulaEvaluation({
+          settings: existingFlatFieldMetadata.settings,
+        })
+    ) {
+      return undefined;
+    }
+
+    return getDeferredStoredFormulaFieldsComputation({
+      flatFieldMetadata: {
+        ...existingFlatFieldMetadata,
+        settings: update.settings,
+      },
+    });
   }
 
   async executeForMetadata(
