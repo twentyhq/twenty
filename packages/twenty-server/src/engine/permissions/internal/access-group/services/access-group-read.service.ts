@@ -87,33 +87,19 @@ export class AccessGroupReadService {
   }): Promise<number[][]> {
     const accessGroups =
       await this.buildPrincipalsRelatedRecordPathAccessGroups(request);
-    const accessGroupsShowingFields = sourceFields.map(
-      ({ sourceObjectMetadataId, sourceFieldMetadataId }) =>
-        accessGroups.filter(
-          ({ objectMetadataId, unreadableFieldIds }) =>
-            isDefined(sourceObjectMetadataId) &&
-            (objectMetadataId !== sourceObjectMetadataId ||
-              !unreadableFieldIds.includes(sourceFieldMetadataId)),
-        ),
-    );
-    const groupHashes = [
-      ...new Set(
-        accessGroupsShowingFields.flatMap((accessGroupsShowingField) =>
-          accessGroupsShowingField.map(({ groupHash }) => groupHash),
-        ),
-      ),
-    ];
-    const compactIdByGroupHash = isNonEmptyArray(groupHashes)
-      ? await this.accessGroupReadRepository.findCompactIdByGroupHash({
-          workspaceId: request.principals.workspaceId,
-          groupHashes,
-        })
-      : new Map<string, number>();
 
-    return accessGroupsShowingFields.map((accessGroupsShowingField) =>
-      accessGroupsShowingField
-        .map(({ groupHash }) => compactIdByGroupHash.get(groupHash))
-        .filter(isDefined),
+    return Promise.all(
+      sourceFields.map(({ sourceObjectMetadataId, sourceFieldMetadataId }) =>
+        this.findCompactIds({
+          workspaceId: request.principals.workspaceId,
+          accessGroups: accessGroups.filter(
+            ({ objectMetadataId, unreadableFieldIds }) =>
+              isDefined(sourceObjectMetadataId) &&
+              (objectMetadataId !== sourceObjectMetadataId ||
+                !unreadableFieldIds.includes(sourceFieldMetadataId)),
+          ),
+        }),
+      ),
     );
   }
 
