@@ -38,7 +38,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
     label: msg`Customizable sidebar`,
-    description: msg`Show sidebar tabs and sections.`,
+    description: msg`Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place.`,
   },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
