@@ -246,10 +246,10 @@ export class SignInUpService {
       });
     }
 
-    await this.workspaceInvitationService.deleteWorkspaceInvitation(
-      params.invitation.id,
-      invitationValidation.workspace.id,
-    );
+    await this.workspaceInvitationService.deleteWorkspaceInvitation({
+      appTokenId: params.invitation.id,
+      workspaceId: invitationValidation.workspace.id,
+    });
 
     await this.userService.markEmailAsVerified(updatedUser.id);
 

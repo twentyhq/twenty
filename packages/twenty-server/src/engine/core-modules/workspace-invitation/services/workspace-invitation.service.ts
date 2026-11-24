@@ -235,7 +235,13 @@ export class WorkspaceInvitationService {
     );
   }
 
-  async deleteWorkspaceInvitation(appTokenId: string, workspaceId: string) {
+  async deleteWorkspaceInvitation({
+    appTokenId,
+    workspaceId,
+  }: {
+    appTokenId: string;
+    workspaceId: string;
+  }) {
     const appToken = await this.appTokenRepository.findOne({
       where: {
         id: appTokenId,

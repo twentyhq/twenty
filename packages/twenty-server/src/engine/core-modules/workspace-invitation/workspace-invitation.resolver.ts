@@ -83,10 +83,10 @@ export class WorkspaceInvitationResolver {
     @Args('appTokenId') appTokenId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.workspaceInvitationService.deleteWorkspaceInvitation(
+    return this.workspaceInvitationService.deleteWorkspaceInvitation({
       appTokenId,
       workspaceId,
-    );
+    });
   }
 
   @Mutation(() => SendInvitationsDTO)
