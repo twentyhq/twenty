@@ -1,0 +1,102 @@
+type LinkRecord = {
+  id: string;
+  name?: string;
+  telegramUserId?: string;
+  telegramUsername?: string;
+  workspaceMemberId?: string | null;
+};
+
+type EqualityFilter = Record<string, { eq: string }>;
+
+type FakeQuery = {
+  telegramUserLinks?: { __args: { filter: EqualityFilter } };
+  workspaceMembers?: { __args: { filter: EqualityFilter } };
+};
+
+type FakeMutation = {
+  createTelegramUserLink?: { __args: { data: Omit<LinkRecord, 'id'> } };
+  updateTelegramUserLink?: {
+    __args: { id: string; data: Omit<LinkRecord, 'id'> };
+  };
+  destroyTelegramUserLink?: { __args: { id: string } };
+};
+
+const toConnection = <TNode>(nodes: TNode[]) => ({
+  edges: nodes.map((node) => ({ node })),
+  pageInfo: { hasNextPage: false, endCursor: null },
+});
+
+export const createCoreClientFake = ({
+  links = [],
+  workspaceMemberIds = [],
+}: {
+  links?: LinkRecord[];
+  workspaceMemberIds?: string[];
+} = {}) => {
+  const state = { links: [...links], createdCount: 0 };
+
+  return {
+    state,
+    client: {
+      query: async (query: FakeQuery) => {
+        if (query.workspaceMembers) {
+          const { id } = query.workspaceMembers.__args.filter;
+
+          return {
+            workspaceMembers: toConnection(
+              workspaceMemberIds
+                .filter((memberId) => memberId === id.eq)
+                .map((memberId) => ({ id: memberId })),
+            ),
+          };
+        }
+
+        const filter = Object.entries(
+          query.telegramUserLinks?.__args.filter ?? {},
+        );
+
+        return {
+          telegramUserLinks: toConnection(
+            state.links.filter((link) =>
+              filter.every(
+                ([field, { eq }]) => link[field as keyof LinkRecord] === eq,
+              ),
+            ),
+          ),
+        };
+      },
+      mutation: async (mutation: FakeMutation) => {
+        if (mutation.createTelegramUserLink) {
+          const { data } = mutation.createTelegramUserLink.__args;
+
+          if (
+            state.links.some(
+              (link) => link.telegramUserId === data.telegramUserId,
+            )
+          ) {
+            throw new Error('duplicate key value violates unique constraint');
+          }
+
+          state.createdCount += 1;
+          state.links.push({ id: `link-${state.createdCount}`, ...data });
+        }
+
+        if (mutation.updateTelegramUserLink) {
+          const { id, data } = mutation.updateTelegramUserLink.__args;
+
+          state.links = state.links.map((link) =>
+            link.id === id ? { ...link, ...data } : link,
+          );
+        }
+
+        if (mutation.destroyTelegramUserLink) {
+          const { id } = mutation.destroyTelegramUserLink.__args;
+
+          state.links = state.links.filter((link) => link.id !== id);
+        }
+
+        return {};
+      },
+    },
+  };
+};
