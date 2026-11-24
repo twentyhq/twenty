@@ -1,3 +1,5 @@
+import { type StringFilter, type UUIDFilter } from 'twenty-shared/types';
+
 import { DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-dynamic-fields/constants/dynamic-field-no-match-sentinel-id.constant';
 import { type ChannelAssociationSource } from 'src/modules/connected-account/dynamic-fields/types/channel-association-source.type';
 import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/dynamic-fields/utils/compute-channel-id-filter-from-source-filter.util';
@@ -20,7 +22,7 @@ const computeChannelIds = ({
   dynamicFieldFilter,
 }: {
   dynamicFieldName: string;
-  dynamicFieldFilter: Record<string, unknown>;
+  dynamicFieldFilter: StringFilter & UUIDFilter;
 }) =>
   computeChannelIdFilterFromSourceFilter({
     channelIdColumnName: 'messageChannelId',
@@ -30,7 +32,7 @@ const computeChannelIds = ({
   }).messageChannelId.in;
 
 describe('computeChannelIdFilterFromSourceFilter', () => {
-  it.each([
+  it.each<[StringFilter & UUIDFilter, string[]]>([
     [{ eq: 'tim' }, ['tim-channel']],
     [{ in: ['tim', 'jony'] }, ['tim-channel', 'jony-channel']],
     [{ neq: 'tim' }, ['jony-channel']],
