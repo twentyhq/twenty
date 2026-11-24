@@ -258,10 +258,12 @@ export class ConnectionProviderConnectedAccountService {
       );
     }
 
-    this.emitBilled({
-      connectedAccount: chargeOutcome.persisted,
-      connectionProviderDisplayName: provider.displayName,
-    });
+    if (chargeOutcome.isCharged) {
+      this.emitBilled({
+        connectedAccount: chargeOutcome.persisted,
+        connectionProviderDisplayName: provider.displayName,
+      });
+    }
 
     return chargeOutcome.persisted;
   }
