@@ -2677,11 +2677,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    lastPublishedVersionId: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     lastPublishedCoreWorkflowVersionId: {
       toCompare: true,
       toStringify: false,
@@ -2726,11 +2721,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'coreWorkflowUniversalIdentifier',
     },
     workflowId: {
-      toCompare: false,
-      toStringify: false,
-      universalProperty: undefined,
-    },
-    workspaceWorkflowVersionId: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,

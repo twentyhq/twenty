@@ -1,4 +1,3 @@
-import { generatePath } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -27,15 +26,6 @@ const getAvailableWorkspacePathname = (
 ) => {
   if (isDefined(availableWorkspace.loginToken)) {
     return AppPath.Verify;
-  }
-
-  if (
-    isDefined(availableWorkspace.personalInviteToken) &&
-    isDefined(availableWorkspace.inviteHash)
-  ) {
-    return generatePath(AppPath.Invite, {
-      workspaceInviteHash: availableWorkspace.inviteHash,
-    });
   }
 
   return AppPath.SignInUp;
