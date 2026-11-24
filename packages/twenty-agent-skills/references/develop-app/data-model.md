@@ -117,7 +117,7 @@ Export each field's identifier as a named constant and import it from the other 
 
 ### Rollup Fields
 
-A `FieldType.ROLLUP` field summarizes the records behind a `ONE_TO_MANY` relation of its object (count, sum, average, min or max) and is computed by the server, never written by the app. It needs `universalSettings` with `relationFieldMetadataUniversalIdentifier`, `aggregateOperation`, and `aggregatedFieldMetadataUniversalIdentifier` (null for `COUNT`), plus optional static `filters`. The build rejects a rollup without `universalSettings` or with `isUnique: true`. Rollups are behind the `IS_ROLLUP_FIELD_ENABLED` feature flag; see the apps data docs for the full settings shape.
+A `FieldType.ROLLUP` field summarizes the records behind a `ONE_TO_MANY` relation of its object (count, sum, average, min or max) and is computed by the server, never written by the app. It needs `universalSettings` with `relationFieldMetadataUniversalIdentifier`, `aggregateOperation`, and `aggregatedFieldMetadataUniversalIdentifier` (null for `COUNT`), the `resultType` the operation produces, and optional static `filters`. The build rejects a rollup without `universalSettings` or with `isUnique: true`. Rollups are behind the `IS_ROLLUP_FIELD_ENABLED` feature flag; see the apps data docs for the full settings shape.
 
 ## Roles And Permissions
 
