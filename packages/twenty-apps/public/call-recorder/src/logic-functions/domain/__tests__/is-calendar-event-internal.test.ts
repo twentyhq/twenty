@@ -56,12 +56,26 @@ describe('isCalendarEventInternal', () => {
     ).toBe(false);
   });
 
-  it('is external when a participant has no address', () => {
+  it('ignores a participant with no address', () => {
     expect(
       isInternal({
         participants: [{ handle: undefined, isWorkspaceMember: false }],
       }),
-    ).toBe(false);
+    ).toBe(true);
+  });
+
+  it('ignores a booked Google meeting room', () => {
+    expect(
+      isInternal({
+        participants: [
+          { handle: 'ada@acme.com', isWorkspaceMember: true },
+          {
+            handle: 'c_1883abc@resource.calendar.google.com',
+            isWorkspaceMember: false,
+          },
+        ],
+      }),
+    ).toBe(true);
   });
 
   it.each([
