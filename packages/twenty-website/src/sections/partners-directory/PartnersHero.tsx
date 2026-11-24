@@ -7,12 +7,10 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
-import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { GUTTER, HERO_COMPOSITION, mediaUp, RHYTHM, spacing } from '@/tokens';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { PartnersGlobe } from './PartnersGlobe';
-import { PARTNERS_HERO_BACKDROP } from './partners-hero-backdrop';
 
 // A banner: the top of a large globe, cut by the hero's bottom edge and, on
 // narrow screens, by the screen's sides. Its height follows the globe, so the
@@ -32,23 +30,6 @@ const GlobeBanner = styled.div`
     margin-bottom: calc(-1 * ${spacing(RHYTHM.hero.bottom.md)});
     margin-inline: calc(-1 * ${spacing(GUTTER.md)});
   }
-`;
-
-// The rings around the globe, sized and placed from the globe itself so they
-// keep clear of it at every width. The source is drawn for this box
-// (hero_pattern.py, shape « halo »): globe centre at 50% / 115.5% of the box,
-// radius 70% of its height, box ratio 3600 / 1250.
-const RibbonsField = styled.div`
-  --partners-rings-height: calc(var(--partners-globe-size) / 1.4);
-  height: var(--partners-rings-height);
-  left: 50%;
-  pointer-events: none;
-  position: absolute;
-  top: calc(
-    var(--partners-globe-size) * 0.47 - var(--partners-rings-height) * 1.155
-  );
-  transform: translateX(-50%);
-  width: calc(var(--partners-rings-height) * 2.88);
 `;
 
 const GlobeBox = styled.div`
@@ -120,12 +101,6 @@ export function PartnersHero({ actions, partners }: PartnersHeroProps) {
         <Actions>{actions}</Actions>
       </Copy>
       <GlobeBanner aria-hidden>
-        <RibbonsField>
-          <HalftoneImageBackdrop
-            imageUrl={PARTNERS_HERO_BACKDROP.imageUrl}
-            settings={PARTNERS_HERO_BACKDROP.settings}
-          />
-        </RibbonsField>
         <GlobeBox>
           <PartnersGlobe partners={partners} />
         </GlobeBox>
