@@ -59,6 +59,7 @@
       "files": [
         "src/sdk/logic-function/**/*.ts",
         "src/sdk/billing/**/*.ts",
+        "src/sdk/email/**/*.ts",
         "src/sdk/utils/**/*.ts",
         "src/sdk/front-component/**/*.{ts,tsx}"
       ],

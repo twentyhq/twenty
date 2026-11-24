@@ -3,8 +3,6 @@
   "devDependencies": {
     "@nx/jest": "24.0.6",
     "@nx/react": "24.0.6",
-    "@nx/storybook": "24.0.6",
-    "@nx/web": "24.0.6",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@yarnpkg/types": "^4.0.0",
