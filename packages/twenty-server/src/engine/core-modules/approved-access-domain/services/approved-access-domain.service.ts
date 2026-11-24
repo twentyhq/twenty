@@ -4,7 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { SendApprovedAccessDomainValidation, renderEmail } from 'twenty-emails';
 import { FileFolder, SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  getDomainFromEmail,
+  getSettingsPath,
+  isDefined,
+  isWorkDomain,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
@@ -32,8 +37,6 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-import { isWorkDomain } from 'src/utils/is-work-email';
 
 const APPROVED_ACCESS_DOMAIN_TOKEN_EXPIRES_IN = '7d';
 

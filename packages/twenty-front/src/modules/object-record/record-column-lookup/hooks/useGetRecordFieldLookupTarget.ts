@@ -5,7 +5,7 @@ import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// For lists of columns; a single column reads recordFieldLookupTargetFamilySelector
+// For loading lookup columns; rendering a column reads useRecordFieldColumnKind
 export const useGetRecordFieldLookupTarget = () => {
   const isLookupColumnsEnabled = useAtomStateValue(
     isLookupColumnsEnabledSelector,

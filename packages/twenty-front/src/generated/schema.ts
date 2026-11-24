@@ -76,8 +76,6 @@ export type CoreWorkflowDto = {
   name?: Maybe<Scalars['String']['output']>;
   statuses: Array<CoreWorkflowStatus>;
   updatedAt: Scalars['String']['output'];
-  /** @deprecated Use isPrivate instead */
-  visibility: WorkflowVisibility;
   workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -486,8 +484,6 @@ export type Mutation = {
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
   updateCoreWorkflowVersionStep: WorkflowAction;
   updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
-  /** @deprecated Use updateCoreWorkflow with isPrivate instead */
-  updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
   updateWorkflowRunStep: WorkflowAction;
 };
 
@@ -624,11 +620,6 @@ export type MutationUpdateCoreWorkflowVersionStepArgs = {
 
 export type MutationUpdateCoreWorkflowVersionTriggerArgs = {
   input: UpdateCoreWorkflowVersionTriggerInput;
-};
-
-
-export type MutationUpdateCoreWorkflowVisibilityArgs = {
-  input: UpdateCoreWorkflowVisibilityInput;
 };
 
 
@@ -1079,11 +1070,6 @@ export type UpdateCoreWorkflowVersionTriggerInput = {
   trigger: Scalars['JSON']['input'];
 };
 
-export type UpdateCoreWorkflowVisibilityInput = {
-  coreWorkflowId: Scalars['UUID']['input'];
-  visibility: WorkflowVisibility;
-};
-
 export type UpdateWorkflowRunStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON']['input'];
@@ -1172,8 +1158,3 @@ export type WorkflowVersionTrigger = {
   __typename?: 'WorkflowVersionTrigger';
   trigger?: Maybe<Scalars['JSON']['output']>;
 };
-
-export enum WorkflowVisibility {
-  PRIVATE = 'PRIVATE',
-  WORKSPACE = 'WORKSPACE'
-}

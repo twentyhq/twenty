@@ -412,6 +412,16 @@ msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "یک هدف یادداشت"
 
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "یک رابطه چندشکلی یک‌به‌چند را نمی‌توان مستقیماً مقایسه کرد؛ برای مقایسه یک فیلد از رکوردهای آن، از طریق رابطه اقدام کنید"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "یک رابطه یک‌به‌چند فقط از عملوندهای IS_EMPTY و IS_NOT_EMPTY پشتیبانی می‌کند؛ برای مقایسه یک فیلد از رکوردهای آن، از طریق رابطه اقدام کنید"
+
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "A page layout navigation menu item can only point to a standalone page"
@@ -3123,6 +3133,11 @@ msgstr "گفت‌وگوهای مرتبط با مخاطب"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "گفت‌وگوهای مرتبط با فرصت"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "بررسی خالی بودن یک رابطهٔ یک‌به‌چند، به پیمایش‌های رابطه در گزاره‌های مجوز سطح ردیف نیاز دارد"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -15568,6 +15583,13 @@ msgstr "این مجوز شیء از قبل برای نقش تنظیم شده ا�
 msgid "This operand is not supported for this field"
 msgstr "این عملگر برای این فیلد پشتیبانی نمی‌شود"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "این عملوند برای این رابطه پشتیبانی نمی‌شود"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15864,11 @@ msgstr "این گردش کار از قبل وجود دارد"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "این گردش کار از قبل وجود دارد."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "این شناسه گردش کار با بیش از یک گردش کار مطابقت دارد."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17576,6 +17603,16 @@ msgstr "نتوانستیم اتصال را آغاز کنیم. لطفاً دوب�
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "نتوانستیم این کلید را تأیید کنیم. آن را بررسی کنید، یا اگر سرویس از کار افتاده است، بعداً دوباره تلاش کنید."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "نتوانستیم هزینه این برنامه را دریافت کنیم. روش پرداخت خود را به‌روزرسانی کنید و دوباره تلاش کنید."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "نتوانستیم هزینه این اتصال را دریافت کنیم. روش پرداخت خود را به‌روزرسانی کنید و دوباره تلاش کنید."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

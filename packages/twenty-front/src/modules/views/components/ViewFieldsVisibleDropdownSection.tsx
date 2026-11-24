@@ -6,8 +6,7 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
-import { ScopedRelationAliasesContext } from '@/object-record/record-column-scope/contexts/ScopedRelationAliasesContext';
+import { useGetRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useGetRecordFieldColumnKind';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -45,8 +44,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
-  const scopedRelationAliases = useContext(ScopedRelationAliasesContext);
+  const getRecordFieldColumnKind = useGetRecordFieldColumnKind();
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -124,18 +122,9 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   const { fieldMetadataItem } = getFieldMetadataItemByIdOrThrow(
                     recordField.fieldMetadataItemId,
                   );
-                  const scopedRelationAlias = scopedRelationAliases.find(
-                    ({ recordFieldId }) => recordFieldId === recordField.id,
-                  );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
-                    lookupTarget:
-                      getRecordFieldLookupTarget({
-                        recordField,
-                        fieldMetadataItem,
-                      }) ?? scopedRelationAlias?.lookupTarget,
-                    isScopedRelationColumn: isDefined(scopedRelationAlias),
-                    summary: scopedRelationAlias?.summary,
+                    columnKind: getRecordFieldColumnKind(recordField.id),
                     customLabel: recordField.label,
                   });
 

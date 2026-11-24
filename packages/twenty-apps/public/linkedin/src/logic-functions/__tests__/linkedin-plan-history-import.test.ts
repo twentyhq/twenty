@@ -119,6 +119,27 @@ describe('linkedinPlanHistoryImportHandler', () => {
     });
   });
 
+  it('hands the conversations the member selected to the import jobs without reading them', async () => {
+    mocks.kvStore.set(STATE_KEY, {
+      ...RUNNING_STATE,
+      importPolicy: 'SELECTED',
+    });
+    mocks.kvStore.set('linkedin-settings:connection-id', {
+      importPolicy: 'SELECTED',
+      selectedChats: buildChatIds(25).map((id) => ({ id, name: id })),
+    });
+
+    await expect(linkedinPlanHistoryImportHandler(PAYLOAD)).resolves.toEqual({
+      status: 'PLANNED',
+      chunkCount: 2,
+    });
+
+    expect(getStoredChatIds(0)).toEqual(buildChatIds(20));
+    expect(getStoredChatIds(1)).toEqual(buildChatIds(5, 20));
+    expect(mocks.listUnipileInboxIds).not.toHaveBeenCalled();
+    expect(mocks.listUnipileChats).not.toHaveBeenCalled();
+  });
+
   it('starts the import chain on the first page only', async () => {
     mockChatPages([20, 20, 5]);
 
