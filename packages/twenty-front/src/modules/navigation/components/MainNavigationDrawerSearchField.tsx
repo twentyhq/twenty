@@ -44,9 +44,7 @@ export const MainNavigationDrawerSearchField = () => {
 
   return (
     <InputGroup
-      render={
-        <StyledSearchButton type="button" onClick={openSidePanelMenu} />
-      }
+      render={<StyledSearchButton type="button" onClick={openSidePanelMenu} />}
       startElement={<IconSearch size={theme.icon.size.md} aria-hidden />}
       endElement={<Shortcut shortcut={['Mod', 'K']} />}
     >
