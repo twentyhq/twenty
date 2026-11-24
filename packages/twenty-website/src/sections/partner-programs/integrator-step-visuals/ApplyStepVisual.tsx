@@ -3,24 +3,29 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import {
+  IconBuilding,
+  IconCode,
+  IconForms,
+  IconSend,
+  IconUsers,
+} from '@tabler/icons-react';
 
-import { DURATION, EASING, REDUCED_MOTION } from '@/tokens';
+import { color, DURATION, EASING, REDUCED_MOTION } from '@/tokens';
 import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
 
 import { STEP_CARD_CHROME } from './step-card-chrome';
 
 const {
-  Card,
-  CardBody,
-  CardHeader,
-  Label,
+  Panel,
+  PanelHeader,
+  Row,
+  RowLabel,
+  RowValue,
   Stage,
-  Value,
   scrub,
   timelineDelay,
 } = STEP_CARD_CHROME;
-const shell = PRODUCT_STEPPER_SCENE.shell;
-const accent = PRODUCT_STEPPER_SCENE.layout.accent;
 const green = PRODUCT_STEPPER_SCENE.workflow.green;
 
 // Each value types in after the previous one, then the form is sent. On
@@ -31,20 +36,8 @@ const TYPE_DURATION_MS = 500;
 const SEND_DELAY_MS = 3 * TYPE_STAGGER_MS + 300;
 const TIMELINE_MS = SEND_DELAY_MS + 300;
 
-const FormField = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
-
-// The field being typed in takes the accent border, like a focused input.
-const Input = styled.div`
-  background: ${shell.cardBackground};
-  border: 1px solid ${shell.borderMedium};
-  border-radius: 4px;
-  min-height: 38px;
-  padding: 8px 12px;
-
+// The row being typed in lights up, like the home panels' hovered row.
+const FieldRow = styled(Row)`
   &[data-index='1'] {
     --d: ${TYPE_STAGGER_MS}ms;
   }
@@ -60,16 +53,23 @@ const Input = styled.div`
 
   @keyframes applyFocus {
     0% {
-      border-color: ${accent};
+      background: ${color('graphite')};
     }
     100% {
-      border-color: ${shell.borderMedium};
+      background: ${color('charcoal')};
     }
   }
 
   ${REDUCED_MOTION} {
     animation: none !important;
   }
+`;
+
+const Field = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 `;
 
 // Typed in: the value is uncovered left to right in steps, like keystrokes.
@@ -95,23 +95,12 @@ const Typed = styled.span`
   }
 `;
 
-// The button holds both labels in one cell and crossfades Submit to Sent.
-const SubmitButton = styled.div`
-  align-self: flex-end;
-  background: ${accent};
-  border-radius: 4px;
-  color: ${shell.background};
-  display: grid;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 16px;
+// The send row: blue, then green once sent; both labels share one cell.
+const SubmitRow = styled(Row)`
+  background: ${color('blue')};
+  color: ${color('white')};
 
   --d: ${SEND_DELAY_MS}ms;
-
-  & > span {
-    grid-area: 1 / 1;
-    text-align: center;
-  }
 
   [data-active] & {
     animation: applySent ${DURATION.md} ${EASING.gentle} both;
@@ -129,7 +118,16 @@ const SubmitButton = styled.div`
   }
 `;
 
-const SubmitLabel = styled.span`
+const SubmitLabels = styled.span`
+  display: grid;
+
+  & > span {
+    color: ${color('white')};
+    grid-area: 1 / 1;
+  }
+`;
+
+const SubmitLabel = styled(RowLabel)`
   [data-active] & {
     animation: applyFadeOut ${DURATION.xs} ${EASING.gentle} both;
     animation-delay: ${timelineDelay};
@@ -146,7 +144,7 @@ const SubmitLabel = styled.span`
   }
 `;
 
-const SentLabel = styled.span`
+const SentLabel = styled(RowLabel)`
   opacity: 0;
 
   [data-active] & {
@@ -165,10 +163,27 @@ const SentLabel = styled.span`
   }
 `;
 
+// The partner form's fields, filled in, each with its icon in one of the
+// site's accents.
 const FIELDS = [
-  { label: msg`Company`, value: msg`Northwind Studio` },
-  { label: msg`Clients on Twenty`, value: msg`12` },
-  { label: msg`What you built`, value: msg`Custom objects, workflows, an app` },
+  {
+    Icon: IconBuilding,
+    tint: color('green'),
+    label: msg`Company`,
+    value: msg`Northwind Studio`,
+  },
+  {
+    Icon: IconUsers,
+    tint: color('pink'),
+    label: msg`Clients on Twenty`,
+    value: msg`12`,
+  },
+  {
+    Icon: IconCode,
+    tint: color('yellow'),
+    label: msg`What you built`,
+    value: msg`Custom objects, workflows, an app`,
+  },
 ];
 
 export function ApplyStepVisual({
@@ -186,25 +201,30 @@ export function ApplyStepVisual({
       data-active={active ? '' : undefined}
       {...scrub(progress, TIMELINE_MS)}
     >
-      <Card>
-        <CardHeader>{i18n._(msg`Partner application`)}</CardHeader>
-        <CardBody>
-          {FIELDS.map(({ label, value }, index) => (
-            <FormField key={label.id}>
-              <Label>{i18n._(label)}</Label>
-              <Input data-index={index}>
-                <Value>
-                  <Typed>{i18n._(value)}</Typed>
-                </Value>
-              </Input>
-            </FormField>
-          ))}
-          <SubmitButton>
+      <Panel>
+        <PanelHeader>
+          <IconForms size={20} stroke={1.5} />
+          {i18n._(msg`Partner application`)}
+        </PanelHeader>
+        {FIELDS.map(({ Icon, label, tint, value }, index) => (
+          <FieldRow data-index={index} key={label.id}>
+            <Icon color={tint} size={20} stroke={1.5} />
+            <Field>
+              <RowLabel>{i18n._(label)}</RowLabel>
+              <RowValue>
+                <Typed>{i18n._(value)}</Typed>
+              </RowValue>
+            </Field>
+          </FieldRow>
+        ))}
+        <SubmitRow>
+          <IconSend size={20} stroke={1.5} />
+          <SubmitLabels>
             <SubmitLabel>{i18n._(msg`Submit`)}</SubmitLabel>
             <SentLabel>{i18n._(msg`Sent`)}</SentLabel>
-          </SubmitButton>
-        </CardBody>
-      </Card>
+          </SubmitLabels>
+        </SubmitRow>
+      </Panel>
     </Stage>
   );
 }
