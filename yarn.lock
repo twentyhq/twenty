@@ -11576,26 +11576,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/cypress@npm:24.0.6":
-  version: 24.0.6
-  resolution: "@nx/cypress@npm:24.0.6"
-  dependencies:
-    "@nx/devkit": "npm:24.0.6"
-    "@nx/eslint": "npm:24.0.6"
-    "@nx/js": "npm:24.0.6"
-    "@phenomnomnominal/tsquery": "npm:~6.2.0"
-    semver: "npm:^7.6.3"
-    tree-kill: "npm:^1.2.2"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    cypress: ">= 13 < 17"
-  peerDependenciesMeta:
-    cypress:
-      optional: true
-  checksum: 10c0/6d8c5f2e40ee4aac3d934711af3e54939462a4705e7a773457277fd923deab2150e158635b921fde739517131850fe83b2b2de9f2fac78c7b46832b2a604ab3d
-  languageName: node
-  linkType: hard
-
 "@nx/devkit@npm:24.0.6":
   version: 24.0.6
   resolution: "@nx/devkit@npm:24.0.6"
@@ -11802,27 +11782,6 @@ __metadata:
     babel-plugin-react-compiler:
       optional: true
   checksum: 10c0/2e183a9604f9b1af0217043e2e7d3da7009d40ba756acfffa45126858581fc09b72161a59b955599251bf3d7edb9f05b32c68549dd8cfa64d25ec1a4a3012437
-  languageName: node
-  linkType: hard
-
-"@nx/storybook@npm:24.0.6":
-  version: 24.0.6
-  resolution: "@nx/storybook@npm:24.0.6"
-  dependencies:
-    "@nx/cypress": "npm:24.0.6"
-    "@nx/devkit": "npm:24.0.6"
-    "@nx/eslint": "npm:24.0.6"
-    "@nx/js": "npm:24.0.6"
-    "@phenomnomnominal/tsquery": "npm:~6.2.0"
-    semver: "npm:^7.6.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@nx/web": 24.0.6
-    storybook: ">=8.0.0 <11.0.0"
-  peerDependenciesMeta:
-    "@nx/web":
-      optional: true
-  checksum: 10c0/bcca494f047b25b0b04a5c7ec911f56bdb56022daa56e3e92b95d4baf08ad13b61b9892fdfa6c3eb625e53d2c24f75f921297cf53f1ab88032c2b60aa7ea543c
   languageName: node
   linkType: hard
 
@@ -45971,8 +45930,6 @@ __metadata:
   dependencies:
     "@nx/jest": "npm:24.0.6"
     "@nx/react": "npm:24.0.6"
-    "@nx/storybook": "npm:24.0.6"
-    "@nx/web": "npm:24.0.6"
     "@types/react": "npm:^19.2.0"
     "@types/react-dom": "npm:^19.2.0"
     "@yarnpkg/types": "npm:^4.0.0"
