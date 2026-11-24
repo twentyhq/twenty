@@ -36,6 +36,7 @@ import { ApplicationTranslationCatalogService } from 'src/engine/metadata-module
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const VIEW_FIELD_GROUP_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -62,6 +63,7 @@ export class ViewFieldGroupResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async name(
     @Parent() viewFieldGroup: ViewFieldGroupDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -217,6 +219,7 @@ export class ViewFieldGroupResolver {
   }
 
   @ResolveField(() => [ViewFieldDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFields(
     @Parent() viewFieldGroup: ViewFieldGroupDTO,
     @Context() context: { loaders: IDataloaders },

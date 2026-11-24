@@ -30,6 +30,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { PAGE_LAYOUT_TAB_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout-tab/constants/page-layout-tab-read-access-policy.constant';
 import { PAGE_LAYOUT_TAB_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/page-layout-tab/constants/page-layout-tab-write-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => PageLayoutTabDTO)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
@@ -42,6 +43,7 @@ export class PageLayoutTabResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async title(
     @Parent() tab: PageLayoutTabDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,

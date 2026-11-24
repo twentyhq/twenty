@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Logger, UseFilters, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UsePipes, UseGuards } from '@nestjs/common';
 import { Parent, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -14,6 +14,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => BillingSubscriptionItemDTO)
 @UsePipes(ResolverValidationPipe)
@@ -26,6 +27,7 @@ export class BillingSubscriptionItemCapResolver {
   ) {}
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   async hasReachedCurrentPeriodCap(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
     @AuthWorkspace({ allowUndefined: true })

@@ -82,6 +82,7 @@ import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/acc
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const USER_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -200,6 +201,7 @@ export class UserResolver {
   @ResolveField(() => GraphQLJSONObject, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async userVars(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -231,6 +233,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceMemberDTO, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async workspaceMember(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -278,6 +281,7 @@ export class UserResolver {
   @ResolveField(() => [WorkspaceMemberDTO], {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async workspaceMembers(
     @Parent() _user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -349,6 +353,7 @@ export class UserResolver {
   @ResolveField(() => [DeletedWorkspaceMemberDTO], {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async deletedWorkspaceMembers(
     @Parent() _user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -370,11 +375,13 @@ export class UserResolver {
   @ResolveField(() => Boolean, {
     name: 'hasPassword',
   })
+  @UseGuards(NoPermissionGuard)
   hasPassword(@Parent() user: UserEntity): boolean {
     return isDefined(user.passwordHash);
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   canAccessFullAdminPanel(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -392,6 +399,7 @@ export class UserResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   canImpersonate(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -411,6 +419,7 @@ export class UserResolver {
   @ResolveField(() => String, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   supportUserHash(
     @Parent() parent: UserEntity,
     @AuthIsUserSession() isUserSession: boolean,
@@ -649,6 +658,7 @@ export class UserResolver {
   @ResolveField(() => OnboardingStatus, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async onboardingStatus(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -667,6 +677,7 @@ export class UserResolver {
   @ResolveField(() => OnboardingStatus, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async previousOnboardingStatus(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -685,6 +696,7 @@ export class UserResolver {
   @ResolveField(() => Boolean, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async isWorkspaceCreator(
     @Parent() user: UserEntity,
     @AuthWorkspace({ allowUndefined: true })
@@ -703,6 +715,7 @@ export class UserResolver {
   @ResolveField(() => WorkspaceEntity, {
     nullable: true,
   })
+  @UseGuards(NoPermissionGuard)
   async currentWorkspace(
     @AuthWorkspace({ allowUndefined: true })
     workspace: WorkspaceEntity | undefined,
@@ -719,6 +732,7 @@ export class UserResolver {
   @ResolveField(() => [UserWorkspaceEntity], {
     nullable: false,
   })
+  @UseGuards(NoPermissionGuard)
   async workspaces(
     @Parent() user: UserEntity,
     @AuthIsUserSession() isUserSession: boolean,
@@ -735,6 +749,7 @@ export class UserResolver {
     name: 'userWorkspaces',
     nullable: false,
   })
+  @UseGuards(NoPermissionGuard)
   async userWorkspacesField(
     @Parent() user: UserEntity,
     @AuthIsUserSession() isUserSession: boolean,
@@ -747,6 +762,7 @@ export class UserResolver {
   }
 
   @ResolveField(() => AvailableWorkspaces)
+  @UseGuards(NoPermissionGuard)
   async availableWorkspaces(
     @AuthUser() user: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
