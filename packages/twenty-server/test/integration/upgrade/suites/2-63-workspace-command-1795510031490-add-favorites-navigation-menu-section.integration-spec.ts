@@ -2,7 +2,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795508233619-add-favorites-navigation-menu-section.command';
+import { type AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795510031490-add-favorites-navigation-menu-section.command';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
