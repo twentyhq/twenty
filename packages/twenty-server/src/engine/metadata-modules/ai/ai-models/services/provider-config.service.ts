@@ -7,7 +7,6 @@ import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-model
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
-import { getNativeAiSdkPackage } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-ai-sdk-package.util';
 import { mergeCustomProvidersIntoCatalog } from 'src/engine/metadata-modules/ai/ai-models/utils/merge-custom-providers-into-catalog.util';
 
 @Injectable()
@@ -31,19 +30,14 @@ export class ProviderConfigService {
     const catalog = this.resolveTemplates(rawCatalog);
 
     // dropping custom entries, rather than filtering the merged map, also restores catalog providers a same-named custom entry shadowed
-    const providers = includeCustomProviders
-      ? mergeCustomProvidersIntoCatalog({
-          catalog,
-          custom: this.twentyConfigService.get('AI_PROVIDERS'),
-        })
-      : catalog;
+    if (!includeCustomProviders) {
+      return catalog;
+    }
 
-    return Object.fromEntries(
-      Object.entries(providers).map(([name, config]) => [
-        name,
-        { ...config, npm: getNativeAiSdkPackage(config) },
-      ]),
-    );
+    return mergeCustomProvidersIntoCatalog({
+      catalog,
+      custom: this.twentyConfigService.get('AI_PROVIDERS'),
+    });
   }
 
   private resolveTemplates(providers: AiProvidersConfig): AiProvidersConfig {
