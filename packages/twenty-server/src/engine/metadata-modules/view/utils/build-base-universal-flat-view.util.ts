@@ -1,5 +1,5 @@
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
-import { ViewOpenRecordIn, ViewVisibility } from 'twenty-shared/types';
+import { ViewOpenRecordIn } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -53,7 +53,7 @@ export const buildBaseUniversalFlatView = ({
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
     position,
     universalIdentifier,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect,

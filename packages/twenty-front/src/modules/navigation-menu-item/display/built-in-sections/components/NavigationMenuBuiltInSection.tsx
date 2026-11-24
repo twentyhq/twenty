@@ -6,7 +6,7 @@ import { NavigationMenuAiAgentsSection } from '@/navigation-menu-item/display/bu
 import { NavigationMenuAiChatFavoritesSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection';
 import { NavigationMenuAiChatRecentsSection } from '@/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatRecentsSection';
 import { FavoritesSectionDispatcher } from '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher';
-import { useAreAiChatSectionsAvailable } from '@/navigation-menu-item/display/hooks/useAreAiChatSectionsAvailable';
+import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuBuiltInSectionProps = {
@@ -18,18 +18,19 @@ export const NavigationMenuBuiltInSection = ({
   section,
   headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
-  const areAiChatSectionsAvailable = useAreAiChatSectionsAvailable();
+  const { isBuiltInSectionAvailable } =
+    useNavigationMenuBuiltInSectionAvailability();
 
   if (section.builtInSectionKey === 'favorites') {
     return <FavoritesSectionDispatcher />;
   }
 
-  if (section.builtInSectionKey === 'aiAgents') {
-    return <NavigationMenuAiAgentsSection headerAction={headerAction} />;
+  if (!isBuiltInSectionAvailable(section.builtInSectionKey)) {
+    return null;
   }
 
-  if (!areAiChatSectionsAvailable) {
-    return null;
+  if (section.builtInSectionKey === 'aiAgents') {
+    return <NavigationMenuAiAgentsSection headerAction={headerAction} />;
   }
 
   switch (section.builtInSectionKey) {

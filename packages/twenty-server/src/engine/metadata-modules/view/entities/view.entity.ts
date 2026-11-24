@@ -33,6 +33,7 @@ import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 
 import { ADD_VIEW_GROUP_LOAD_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-view-group-load-limit-upgrade-command-name.constant';
 import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
 import { ADD_VIEW_SHOULD_DISPLAY_GROUPS_AS_TABS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-view-should-display-groups-as-tabs-upgrade-command-name.constant';
+import { ADD_VIEW_IS_PRIVATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-view-is-private-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -58,7 +59,7 @@ export type ViewOverrides = {
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: SerializedRelation | null;
   calendarEndFieldMetadataId?: SerializedRelation | null;
-  visibility?: ViewVisibility;
+  isPrivate?: boolean;
   mainGroupByFieldMetadataId?: SerializedRelation | null;
   shouldHideEmptyGroups?: boolean;
   shouldDisplayGroupsAsTabs?: boolean;
@@ -262,13 +263,22 @@ export class ViewEntity
   @Column({ nullable: true, type: 'text', default: null })
   anyFieldFilterValue: string | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_VIEW_IS_PRIVATE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'boolean', nullable: false, default: false })
+  isPrivate: boolean;
+
   @Column({
     type: 'enum',
     enum: Object.values(ViewVisibility),
     nullable: false,
     default: ViewVisibility.WORKSPACE,
+    select: false,
+    insert: false,
+    update: false,
   })
-  visibility: ViewVisibility;
+  visibility: WasRemovedInUpgrade<ViewVisibility>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,

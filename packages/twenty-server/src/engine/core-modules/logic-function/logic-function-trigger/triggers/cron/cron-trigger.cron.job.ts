@@ -145,7 +145,7 @@ export class CronTriggerCronJob {
                 payload: {},
               },
               {
-                retryLimit: 10,
+                retryLimit: logicFunction.retryLimit ?? 10,
                 backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
                 workspaceId: activeWorkspace.id,
                 applicationUniversalIdentifier: application.universalIdentifier,

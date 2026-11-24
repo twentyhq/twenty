@@ -140,7 +140,10 @@ export class ApplicationJobService {
           applicationUniversalIdentifier: application.universalIdentifier,
         })),
         {
-          retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+          retryLimit:
+            input.retryLimit ??
+            flatLogicFunction.retryLimit ??
+            ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
           priority: ENQUEUE_JOB_PRIORITY,
           ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),

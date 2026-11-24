@@ -14,10 +14,16 @@ import {
 
 import { ADD_RELATED_RECORD_PATH_TABLE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-related-record-path-table-upgrade-command-name.constant';
 import { ADD_RELATED_RECORD_PATH_IS_INHERENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-55/add-related-record-path-is-inherent-upgrade-command-name.constant';
+import { RELATED_RECORD_PATH_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/related-record-path-overridable-entity-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+
+export type RelatedRecordPathOverrides = {
+  isInherent?: boolean;
+  isActive?: boolean;
+};
 
 @Entity({ name: 'relatedRecordPath', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -54,7 +60,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'thirdFieldMetadataId',
 ])
 export class RelatedRecordPathEntity
-  extends SyncableEntity
+  extends OverridableEntity<RelatedRecordPathOverrides>
   implements Required<RelatedRecordPathEntity>
 {
   @PrimaryGeneratedColumn('uuid')
@@ -102,3 +108,12 @@ export class RelatedRecordPathEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
+
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    RELATED_RECORD_PATH_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(RelatedRecordPathEntity.prototype, 'overrides');
+WasIntroducedInUpgrade({
+  upgradeCommandName:
+    RELATED_RECORD_PATH_OVERRIDABLE_ENTITY_UPGRADE_COMMAND_NAME,
+})(RelatedRecordPathEntity.prototype, 'isActive');

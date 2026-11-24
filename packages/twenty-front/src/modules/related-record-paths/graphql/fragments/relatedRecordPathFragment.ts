@@ -8,5 +8,6 @@ export const RELATED_RECORD_PATH_FRAGMENT = gql`
     secondFieldMetadataId
     thirdFieldMetadataId
     isInherent
+    isActive
   }
 `;
