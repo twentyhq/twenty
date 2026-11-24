@@ -1,0 +1,2 @@
+export const DROP_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME =
+  '2.64.0_DropWorkflowVisibilityFastInstanceCommand_1795439685598';

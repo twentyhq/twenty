@@ -4,7 +4,6 @@ import {
   FieldMetadataType,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -105,7 +104,7 @@ const buildExistingFlatView = ({
     isCompact: false,
     isActive: true,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     createdAt: existingViewGroup.createdAt,
     updatedAt: existingViewGroup.updatedAt,

@@ -135,25 +135,26 @@ export const SidePanelEditColumnForm = ({
 
   const isSummary = isDefined(aggregateOperation);
 
-  const summary = isSummary
-    ? getRecordFieldSummary({
-        aggregateOperation,
-        relationTargetFieldMetadataId,
-        relationObjectMetadataItem,
-      })
-    : undefined;
-
   const columnHeader = getRecordFieldColumnHeader({
     fieldMetadataItem,
-    lookupTarget:
-      !isSummary && isDefined(selectedLookupTargetFieldMetadataItem)
+    columnKind: isSummary
+      ? {
+          kind: 'summary',
+          summary: getRecordFieldSummary({
+            aggregateOperation,
+            relationTargetFieldMetadataId,
+            relationObjectMetadataItem,
+          }),
+        }
+      : isDefined(selectedLookupTargetFieldMetadataItem)
         ? {
-            lookupTargetFieldMetadataItem:
-              selectedLookupTargetFieldMetadataItem,
+            kind: 'scopedLookup',
+            lookupTarget: {
+              lookupTargetFieldMetadataItem:
+                selectedLookupTargetFieldMetadataItem,
+            },
           }
-        : undefined,
-    isScopedRelationColumn: true,
-    summary,
+        : { kind: 'scopedRecords' },
   });
 
   // A join object's fields are not what its column lists, so it can only count its records
