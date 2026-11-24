@@ -467,6 +467,25 @@ export interface ApplicationAuthorization {
     __typename: 'ApplicationAuthorization'
 }
 
+export interface ApplicationBillingPrice {
+    amountCents: Scalars['Int']
+    billingPeriod: ApplicationBillingPricePeriod
+    currency: ApplicationBillingPriceCurrency
+    label: Scalars['String']
+    per?: ApplicationBillingPriceUnit
+    type: ApplicationBillingPriceType
+    universalIdentifier: Scalars['String']
+    __typename: 'ApplicationBillingPrice'
+}
+
+export type ApplicationBillingPriceCurrency = 'USD'
+
+export type ApplicationBillingPricePeriod = 'MONTHLY'
+
+export type ApplicationBillingPriceType = 'RECURRING'
+
+export type ApplicationBillingPriceUnit = 'CONNECTED_ACCOUNT' | 'WORKSPACE_MEMBER'
+
 export interface ApplicationCapabilityGrant {
     grantedCapabilities: Scalars['String'][]
     id: Scalars['UUID']
@@ -2183,6 +2202,7 @@ export interface MarketplaceApp {
 export interface MarketplaceAppDetail {
     aboutDescription?: Scalars['String']
     author?: Scalars['String']
+    billingPrices: ApplicationBillingPrice[]
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
     connectUrl?: Scalars['String']
@@ -5124,6 +5144,18 @@ export interface ApplicationAuthorizationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationBillingPriceGenqlSelection{
+    amountCents?: boolean | number
+    billingPeriod?: boolean | number
+    currency?: boolean | number
+    label?: boolean | number
+    per?: boolean | number
+    type?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationCapabilityGrantGenqlSelection{
     grantedCapabilities?: boolean | number
     id?: boolean | number
@@ -7138,6 +7170,7 @@ export interface MarketplaceAppGenqlSelection{
 export interface MarketplaceAppDetailGenqlSelection{
     aboutDescription?: boolean | number
     author?: boolean | number
+    billingPrices?: ApplicationBillingPriceGenqlSelection
     billsCredits?: boolean | number
     category?: boolean | number
     connectUrl?: boolean | number
@@ -10299,6 +10332,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     
 
 
+    const ApplicationBillingPrice_possibleTypes: string[] = ['ApplicationBillingPrice']
+    export const isApplicationBillingPrice = (obj?: { __typename?: any } | null): obj is ApplicationBillingPrice => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationBillingPrice"')
+      return ApplicationBillingPrice_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ApplicationCapabilityGrant_possibleTypes: string[] = ['ApplicationCapabilityGrant']
     export const isApplicationCapabilityGrant = (obj?: { __typename?: any } | null): obj is ApplicationCapabilityGrant => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationCapabilityGrant"')
@@ -13170,6 +13211,23 @@ export const enumAnalyticsType = {
 export const enumAppKeyValueScope = {
    SERVER: 'SERVER' as const,
    WORKSPACE: 'WORKSPACE' as const
+}
+
+export const enumApplicationBillingPriceCurrency = {
+   USD: 'USD' as const
+}
+
+export const enumApplicationBillingPricePeriod = {
+   MONTHLY: 'MONTHLY' as const
+}
+
+export const enumApplicationBillingPriceType = {
+   RECURRING: 'RECURRING' as const
+}
+
+export const enumApplicationBillingPriceUnit = {
+   CONNECTED_ACCOUNT: 'CONNECTED_ACCOUNT' as const,
+   WORKSPACE_MEMBER: 'WORKSPACE_MEMBER' as const
 }
 
 export const enumApplicationExportCoverageStatus = {

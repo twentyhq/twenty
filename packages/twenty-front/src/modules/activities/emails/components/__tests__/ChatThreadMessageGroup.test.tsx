@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
@@ -53,6 +53,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [buildMessage({})],
         }}
       />,
@@ -61,11 +62,16 @@ describe('ChatThreadMessageGroup', () => {
     expect(screen.getByText('See you tomorrow')).toBeInTheDocument();
   });
 
-  it('shows the time and sent receipt of outgoing messages only', () => {
+  it('shows the time on every message and the sent receipt on outgoing ones', () => {
     const message = buildMessage({ receivedAt: '2026-11-07T10:07:00.000Z' });
     const { rerender } = renderWithProviders(
       <ChatThreadMessageGroup
-        group={{ id: 'group-id', isOutgoing: true, messages: [message] }}
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          isFirstOfDay: false,
+          messages: [message],
+        }}
       />,
     );
 
@@ -74,12 +80,81 @@ describe('ChatThreadMessageGroup', () => {
 
     rerender(
       <ChatThreadMessageGroup
-        group={{ id: 'group-id', isOutgoing: false, messages: [message] }}
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          isFirstOfDay: false,
+          messages: [message],
+        }}
       />,
     );
 
-    expect(screen.queryByText(/10:07/)).not.toBeInTheDocument();
+    expect(screen.getByText(/10:07/)).toBeInTheDocument();
     expect(screen.queryByRole('img', { name: 'Sent' })).not.toBeInTheDocument();
+  });
+
+  it('shows one time for messages sent within the same minute', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: true,
+          isFirstOfDay: false,
+          messages: [
+            buildMessage({
+              id: 'first-message-id',
+              text: 'On my way',
+              receivedAt: '2026-11-07T10:07:00.000Z',
+            }),
+            buildMessage({
+              id: 'second-message-id',
+              text: 'Five minutes',
+              receivedAt: '2026-11-07T10:07:30.000Z',
+            }),
+            buildMessage({
+              id: 'third-message-id',
+              text: 'Here',
+              receivedAt: '2026-11-07T10:12:00.000Z',
+            }),
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getAllByRole('time')).toHaveLength(2);
+    expect(screen.getAllByRole('img', { name: 'Sent' })).toHaveLength(2);
+    expect(
+      within(screen.getByText('On my way').closest('div')!).queryByRole('time'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the time of a message that only holds files', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          isFirstOfDay: false,
+          messages: [
+            buildMessage({
+              text: '',
+              receivedAt: '2026-11-07T10:07:00.000Z',
+              attachments: asAttachments([
+                {
+                  fileId: 'image-file-id',
+                  label: 'photo.png',
+                  extension: '.png',
+                  url: 'https://files.test/photo.png',
+                },
+              ]),
+            }),
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByRole('img', { name: 'photo.png' })).toBeInTheDocument();
+    expect(screen.getByText(/10:07/)).toBeInTheDocument();
   });
 
   it('renders image, video and audio attachments as media', () => {
@@ -88,6 +163,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: false,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               text: '',
@@ -137,6 +213,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               attachments: asAttachments([
@@ -165,6 +242,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               text: '',
@@ -194,6 +272,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: false,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               sender: {
@@ -216,6 +295,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               text: '',
@@ -246,6 +326,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               text: '',
@@ -286,6 +367,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               attachments: asAttachments([
@@ -313,6 +395,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: false,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
@@ -337,6 +420,7 @@ describe('ChatThreadMessageGroup', () => {
         group={{
           id: 'group-id',
           isOutgoing: true,
+          isFirstOfDay: false,
           messages: [
             buildMessage({
               text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
@@ -350,5 +434,26 @@ describe('ChatThreadMessageGroup', () => {
     expect(
       screen.queryByText(FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED),
     ).not.toBeInTheDocument();
+  });
+
+  it('shows when a message whose body is masked was received', () => {
+    renderWithProviders(
+      <ChatThreadMessageGroup
+        group={{
+          id: 'group-id',
+          isOutgoing: false,
+          isFirstOfDay: false,
+          messages: [
+            buildMessage({
+              text: FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED,
+              receivedAt: '2026-11-07T10:07:00.000Z',
+            }),
+          ],
+        }}
+      />,
+    );
+
+    expect(screen.getByText('Not shared')).toBeInTheDocument();
+    expect(screen.getByText(/10:07/)).toBeInTheDocument();
   });
 });
