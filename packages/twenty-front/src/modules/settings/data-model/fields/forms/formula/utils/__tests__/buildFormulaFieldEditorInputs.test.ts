@@ -67,10 +67,15 @@ describe('buildFormulaFieldEditorInputs', () => {
     const jobTitleFieldMetadataItem = personObjectMetadataItem.fields.find(
       ({ name }) => name === 'jobTitle',
     );
+
+    if (!isDefined(jobTitleFieldMetadataItem)) {
+      throw new Error('The person mock has no jobTitle field');
+    }
+
     const { editorFields } = buildFormulaFieldEditorInputs({
       objectMetadataItem: personObjectMetadataItem,
       objectMetadataItems,
-      fieldMetadataId: jobTitleFieldMetadataItem?.id,
+      fieldMetadataId: jobTitleFieldMetadataItem.id,
     });
     const paths = editorFields.map(({ path }) => path);
 
