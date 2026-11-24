@@ -2,17 +2,21 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
-import { color, spacing } from '@/tokens';
 
 import { partnerBaseRegion } from './partner-base-region';
-import { REGION_MAP_WINDOW } from './region-map-window.data';
+import { PLACE_POINT_FEATURED_SCALE, placePointClassName } from './place-point';
+import { projectOnGlobeCard } from './project-on-globe-card';
+import { REGION_CARD_VIEW } from './region-card-view.data';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 
-// The map image's own frame (2400 / 787), centred and covering its box as
+// The cover still's own frame (976 × 320).
+const COVER_ASPECT = 976 / 320;
+
+// The still's frame, centred and covering its box as
 // the image does: a narrower box loses the map's sides, a wider one (the
 // profile's full-bleed band) its top and bottom, and the point follows.
 const MapFrame = styled.div`
-  aspect-ratio: 2400 / 787;
+  aspect-ratio: ${COVER_ASPECT};
   left: 50%;
   min-height: 100%;
   min-width: 100%;
@@ -22,33 +26,22 @@ const MapFrame = styled.div`
   transform: translate(-50%, -50%);
 `;
 
-// A white dot, cut out of the region's dashes by a black edge, ringed in
-// white: it stays readable whatever the region's accent.
+// The cover's place point, as the profile's globe shows its partner:
+// featured, a quarter larger, its ring pulsing.
 const Point = styled.span`
-  background-color: ${color('white')};
-  border: 2px solid ${color('black')};
-  border-radius: 50%;
-  height: ${spacing(4)};
   position: absolute;
-  transform: translate(-50%, -50%);
-  width: ${spacing(4)};
-
-  &::after {
-    border: 1px solid ${color('white')};
-    border-radius: 50%;
-    content: '';
-    inset: calc(-1 * ${spacing(2)});
-    position: absolute;
-  }
+  transform: translate(-50%, -50%) scale(${PLACE_POINT_FEATURED_SCALE});
 `;
 
 type RegionMapPointProps = {
   partner: MarketplacePartner;
 };
 
-// Where the partner is based, on its region's map (the directory card cover
-// and the profile band show the same map). Only a known city or country gets a
-// point: a region's centre is not a place.
+// Where the partner is based, on its region's cover: a still of the profile's
+// globe in the region's card view (region-card-view.data.ts, rendered to
+// public/images/partners/regions/<region>-cover.webp, 976 × 320), the point
+// projected the same way. Only a
+// known city or country gets a point: a region's centre is not a place.
 export function RegionMapPoint({ partner }: RegionMapPointProps) {
   const coordinates = resolvePartnerCoordinates(
     partner.city ?? '',
@@ -58,18 +51,31 @@ export function RegionMapPoint({ partner }: RegionMapPointProps) {
     return null;
   }
 
-  const [west, east, south, north] =
-    REGION_MAP_WINDOW[partnerBaseRegion(partner)];
-  const [longitude, latitude] = coordinates;
-  const left = ((longitude - west) / (east - west)) * 100;
-  const top = ((north - latitude) / (north - south)) * 100;
-  if (left < 0 || left > 100 || top < 0 || top > 100) {
+  const view = REGION_CARD_VIEW[partnerBaseRegion(partner)];
+  const projected = projectOnGlobeCard(
+    coordinates,
+    view.center,
+    view.zoom,
+    COVER_ASPECT,
+  );
+  if (
+    !isDefined(projected) ||
+    projected.left < 0 ||
+    projected.left > 100 ||
+    projected.top < 0 ||
+    projected.top > 100
+  ) {
     return null;
   }
+  const { left, top } = projected;
 
   return (
     <MapFrame>
-      <Point style={{ left: `${left}%`, top: `${top}%` }} />
+      <Point
+        className={placePointClassName}
+        data-featured=""
+        style={{ left: `${left}%`, top: `${top}%` }}
+      />
     </MapFrame>
   );
 }

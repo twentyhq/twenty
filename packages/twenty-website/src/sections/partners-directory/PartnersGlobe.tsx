@@ -22,7 +22,14 @@ import {
   spacing,
 } from '@/tokens';
 
-import { GLOBE_VIEW } from './globe-view';
+import {
+  GLOBE_FACING_ZOOM,
+  GLOBE_FOV_DEGREES,
+  GLOBE_RADIUS,
+  GLOBE_VIEW,
+  globeFacingCameraDistance,
+} from './globe-view';
+import { PLACE_POINT_FEATURED_SCALE, placePointClassName } from './place-point';
 import { PartnerMark } from './PartnerMark';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 
@@ -31,8 +38,8 @@ import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 // partner at its city. One partner at a time shows its name.
 const LAND_MASK_URL = '/images/partners/hero/land-mask.png';
 
-const RADIUS = 2;
-const FOV_DEGREES = 30;
+const RADIUS = GLOBE_RADIUS;
+const FOV_DEGREES = GLOBE_FOV_DEGREES;
 // The sphere's silhouette fills the square box exactly.
 const CAMERA_DISTANCE = RADIUS / Math.sin((FOV_DEGREES / 2) * (Math.PI / 180));
 const AUTO_SPIN = 0.0008;
@@ -172,19 +179,15 @@ const Placed = styled.div`
 
 // A partner's place: a small blue dot ringed in white, with a wider hit
 // area. The one showing its tag sends out a slow ring.
+// Positioned and hit-tested here; its look is the shared place point.
 const GlobePoint = styled.span`
-  background-color: ${color('blue')};
-  border: 2px solid ${color('white')};
-  border-radius: 50%;
   cursor: pointer;
-  height: ${spacing(3)};
   left: 0;
   pointer-events: auto;
   position: absolute;
   top: 0;
   transform: translate(-50%, -50%) scale(var(--point-scale, 1));
   transition: transform ${DURATION.sm} ${EASING.standard};
-  width: ${spacing(3)};
 
   &::before {
     content: '';
@@ -192,33 +195,8 @@ const GlobePoint = styled.span`
     position: absolute;
   }
 
-  &[data-featured]::after {
-    animation: globePointRing 1.8s ${EASING.standard} infinite;
-    border: 1px solid ${color('blue')};
-    border-radius: 50%;
-    content: '';
-    inset: -2px;
-    position: absolute;
-  }
-
-  @keyframes globePointRing {
-    from {
-      opacity: 0.8;
-      transform: scale(1);
-    }
-    to {
-      opacity: 0;
-      transform: scale(3);
-    }
-  }
-
   ${REDUCED_MOTION} {
     transition: none;
-
-    &[data-featured]::after {
-      animation: none;
-      opacity: 0;
-    }
   }
 `;
 
@@ -267,23 +245,26 @@ type PartnersGlobeProps = {
   // A profile turns the globe to its partner's place, [longitude, latitude],
   // and holds it there in place of the hero's slow spin.
   facing?: readonly [number, number];
+  // How close a facing globe ends, in globe heights per frame height.
+  facingZoom?: number;
   partners: readonly MarketplacePartner[];
 };
 
 // How fast a profile's globe settles on its partner, and how far off it starts.
 const FACING_EASE = 0.03;
 const FACING_START_OFFSET = 40 * DEGREES;
-// A profile opens on the whole globe, then the camera closes in until the
-// globe stands at this many times the frame's height: the partner's region.
-const FACING_ZOOM = 2.5;
+// A profile opens on the whole globe, then the camera closes in on the
+// partner's region (GLOBE_FACING_ZOOM).
 const FACING_ZOOM_EASE = 0.025;
-const FACING_CAMERA_DISTANCE =
-  RADIUS /
-  Math.sin(Math.atan(FACING_ZOOM * Math.tan((FOV_DEGREES / 2) * DEGREES)));
+// The hero lights the globe from the left; a profile lights it nearly from the
+// front, so the region it faces, in the middle, is the lit part.
+const HERO_LIGHT = [-0.7, 0.55, 0.6] as const;
+const FACING_LIGHT = [-0.3, 0.35, 0.9] as const;
 
 export function PartnersGlobe({
   accent = 'blue',
   facing,
+  facingZoom = GLOBE_FACING_ZOOM,
   partners,
 }: PartnersGlobeProps) {
   const frameRef = useRef<HTMLDivElement>(null);
@@ -357,7 +338,11 @@ export function PartnersGlobe({
     const toneMaterial = new THREE.ShaderMaterial({
       uniforms: {
         uLand: { value: landTexture },
-        uLight: { value: new THREE.Vector3(-0.7, 0.55, 0.6) },
+        uLight: {
+          value: new THREE.Vector3(
+            ...(isDefined(facing) ? FACING_LIGHT : HERO_LIGHT),
+          ),
+        },
         uLandBase: { value: HALFTONE.landBase },
         uLandLit: { value: HALFTONE.landLit },
         uOcean: { value: HALFTONE.ocean },
@@ -401,10 +386,9 @@ export function PartnersGlobe({
       ? facingSpin + (reducedMotion ? 0 : FACING_START_OFFSET)
       : GLOBE_VIEW.pose.rotationY;
     let velocity = AUTO_SPIN;
+    const facingDistance = globeFacingCameraDistance(facingZoom);
     let cameraDistance =
-      isDefined(facing) && reducedMotion
-        ? FACING_CAMERA_DISTANCE
-        : CAMERA_DISTANCE;
+      isDefined(facing) && reducedMotion ? facingDistance : CAMERA_DISTANCE;
     let dragging = false;
     let lastX = 0;
     const canvas = renderer.domElement;
@@ -481,8 +465,7 @@ export function PartnersGlobe({
       if (!dragging && isDefined(facingSpin)) {
         // a profile's globe eases onto its partner and stays there
         spin += (facingSpin - spin) * (reducedMotion ? 1 : FACING_EASE);
-        cameraDistance +=
-          (FACING_CAMERA_DISTANCE - cameraDistance) * FACING_ZOOM_EASE;
+        cameraDistance += (facingDistance - cameraDistance) * FACING_ZOOM_EASE;
         camera.position.z = cameraDistance;
       } else if (!dragging) {
         // a hovered point stays under the cursor
@@ -561,7 +544,7 @@ export function PartnersGlobe({
           point.toggleAttribute('data-featured', index === featured);
           point.style.setProperty(
             '--point-scale',
-            index === featured ? '1.25' : '1',
+            index === featured ? String(PLACE_POINT_FEATURED_SCALE) : '1',
           );
         }
         element.style.setProperty('--x', `${entry.x.toFixed(1)}px`);
@@ -605,7 +588,7 @@ export function PartnersGlobe({
       renderer.dispose();
       canvas.remove();
     };
-  }, [accent, facing, globePartners]);
+  }, [accent, facing, facingZoom, globePartners]);
 
   return (
     <Frame ref={frameRef}>
@@ -618,6 +601,7 @@ export function PartnersGlobe({
             }}
           >
             <GlobePoint
+              className={placePointClassName}
               onPointerEnter={() => {
                 hoveredRef.current = index;
               }}

@@ -55,9 +55,9 @@ const Card = styled.article`
   }
 `;
 
-// The partner's region: the profile band's map, same source, framing and
-// point, with a halftone sized for the card (<region>-card.webp) so the dots
-// stay crisp instead of blurring when the band's still is shrunk.
+// The partner's region: a still of the profile's globe in the region's card
+// view (region-card-view.data.ts), in the region's colour, with the
+// partner's place on it.
 const Cover = styled.div`
   background-color: ${color('black')};
   border-bottom: 1px solid ${semanticColor.line};
@@ -177,7 +177,7 @@ export function PartnerCard({ partner }: PartnerCardProps) {
           alt=""
           fill
           sizes="(max-width: 768px) 100vw, 420px"
-          src={`/images/partners/regions/${partnerBaseRegion(partner).toLowerCase()}-card.webp`}
+          src={`/images/partners/regions/${partnerBaseRegion(partner).toLowerCase()}-cover.webp`}
           style={{ objectFit: 'cover' }}
         />
         <RegionMapPoint partner={partner} />
