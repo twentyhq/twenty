@@ -20,9 +20,7 @@ import { type IngestMessageParticipant, ingestMessages, kv } from "twenty-sdk/lo
 import { isDefined } from "twenty-sdk/utils";
 import { findOrCreateWhatsAppMessageChannelOrThrow } from "src/logic-functions/data/find-or-create-whatsapp-message-channel-or-throw.util";
 import { parseWhatsAppTimestamp } from "src/logic-functions/data/parse-whatsapp-timestamp.util";
-import { buildWhatsAppAdReferralRecordInput } from "src/logic-functions/data/build-whatsapp-ad-referral-record-input.util";
-import { createWhatsAppAdReferralOpportunity } from "src/logic-functions/data/create-whatsapp-ad-referral-opportunity.util";
-import { getAdReferralSettings } from "src/logic-functions/data/get-ad-referral-settings.util";
+import { recordWhatsAppAdReferral } from "src/logic-functions/data/record-whatsapp-ad-referral.util";
 import { findWhatsAppCampaignIdsInThread } from "src/logic-functions/data/find-whatsapp-campaign-ids-in-thread.util";
 import { scheduleWhatsAppCampaignRefresh } from "src/logic-functions/data/schedule-whatsapp-campaign-refresh.util";
 import { resolveWhatsAppThreadExternalId } from "src/logic-functions/data/resolve-whatsapp-thread-external-id.util";
@@ -254,6 +252,14 @@ const handler = async ({
       return;
     }
   }
+
+  // before the ingest, because a retry after a successful ingest stops at the already-imported check
+  const referral = 'referral' in messages ? messages.referral : undefined;
+
+  if (!isSentByBusiness && isDefined(referral)) {
+    await recordWhatsAppAdReferral({ client: coreClient, referral, personId: customerPersonId, referredAt: sentAt });
+  }
+
   const attachments = isDefined(file)
     ? [await uploadWhatsAppMediaAttachmentOnce({ accessToken, messageId: messages.id, file })]
     : undefined;
@@ -272,32 +278,6 @@ const handler = async ({
 
   if (isDefined(attachments)) {
     await kv.delete(`${WHATSAPP_KV_KEY_PREFIXES.messageAttachment}${messages.id}`);
-  }
-
-  // the first message from a Click-to-WhatsApp ad carries the ad it came from
-  const referral = 'referral' in messages ? messages.referral : undefined;
-
-  if (!isSentByBusiness && isDefined(referral)) {
-    const adReferralInput = buildWhatsAppAdReferralRecordInput({
-      referral,
-      personId: customerPersonId,
-      referredAt: sentAt,
-    });
-    const { isOpportunityCreated } = await getAdReferralSettings();
-    const opportunityId = isOpportunityCreated
-      ? await createWhatsAppAdReferralOpportunity({
-          client: coreClient,
-          personId: customerPersonId,
-          adHeadline: adReferralInput.headline,
-        })
-      : null;
-
-    await coreClient.mutation({
-      createWhatsAppAdReferral: {
-        __args: { data: { ...adReferralInput, opportunityId } },
-        id: true,
-      },
-    });
   }
 
   // a customer reply counts towards the campaigns that reached this conversation
