@@ -101,6 +101,7 @@ const getReaderVisibility = () => {
   const callerScope = getPrivatableEntityCallerScope();
 
   return {
+    callerScope,
     readerUserWorkspaceId:
       callerScope.type === 'sharedAndOwned'
         ? callerScope.userWorkspaceId
@@ -176,7 +177,7 @@ export class CoreWorkflowListService {
       workspaceCustomApplicationId,
     });
 
-    const callerScope = getPrivatableEntityCallerScope();
+    const { callerScope, readerUserWorkspaceId } = getReaderVisibility();
 
     const [coreWorkflows, coreWorkflowVersions] = await Promise.all([
       this.coreWorkflowRepository.find(workspaceId, {
@@ -314,10 +315,7 @@ export class CoreWorkflowListService {
             isPrivate: workflow.isPrivate,
             canChangeVisibility: canChangeCoreWorkflowVisibility({
               createdByUserWorkspaceId: workflow.createdByUserWorkspaceId,
-              userWorkspaceId:
-                callerScope.type === 'sharedAndOwned'
-                  ? callerScope.userWorkspaceId
-                  : undefined,
+              userWorkspaceId: readerUserWorkspaceId ?? undefined,
             }),
             createdAt: workflow.createdAt.toISOString(),
             updatedAt: workflow.updatedAt.toISOString(),
