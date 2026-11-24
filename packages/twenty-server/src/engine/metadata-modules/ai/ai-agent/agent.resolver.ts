@@ -30,6 +30,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { AGENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-read-access-policy.constant';
 import { AGENT_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-write-access-policy.constant';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -47,6 +48,7 @@ export class AgentResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() agent: AgentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -38,6 +38,7 @@ export const metadataModuleFactory = async (
     autoSchemaFile: true,
     include: [MetadataGraphQLApiModule, ModulesModule],
     resolverSchemaScope: 'metadata',
+    fieldResolverEnhancers: ['guards'],
     buildSchemaOptions: {
       orphanedTypes: [ClientConfig],
     },

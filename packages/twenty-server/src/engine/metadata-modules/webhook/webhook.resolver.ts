@@ -18,6 +18,7 @@ import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modul
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -79,6 +80,7 @@ export class WebhookResolver {
   }
 
   @ResolveField(() => RoleDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async role(
     @Parent() webhook: WebhookDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
