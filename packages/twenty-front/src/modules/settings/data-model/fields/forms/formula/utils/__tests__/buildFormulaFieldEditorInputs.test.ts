@@ -3,29 +3,29 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
+const COMPANY_FORMULA_SETTINGS_BY_FIELD_NAME: Record<string, unknown> = {
+  employees: { formula: { expression: 'arrayLength(tagline)' } },
+  idealCustomerProfile: {
+    formula: { expression: 'count(people) > 10', evaluation: 'STORED' },
+  },
+};
+
 const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
   (objectMetadataItem) => ({
     ...objectMetadataItem,
-    fields: objectMetadataItem.fields.map((fieldMetadataItem) =>
-      objectMetadataItem.nameSingular !== 'company'
-        ? fieldMetadataItem
-        : fieldMetadataItem.name === 'employees'
-          ? {
-              ...fieldMetadataItem,
-              settings: { formula: { expression: 'arrayLength(tagline)' } },
-            }
-          : fieldMetadataItem.name === 'idealCustomerProfile'
-            ? {
-                ...fieldMetadataItem,
-                settings: {
-                  formula: {
-                    expression: 'count(people) > 10',
-                    evaluation: 'STORED',
-                  },
-                },
-              }
-            : fieldMetadataItem,
-    ),
+    fields: objectMetadataItem.fields.map((fieldMetadataItem) => {
+      const formulaSettings =
+        COMPANY_FORMULA_SETTINGS_BY_FIELD_NAME[fieldMetadataItem.name];
+
+      if (
+        objectMetadataItem.nameSingular !== 'company' ||
+        !isDefined(formulaSettings)
+      ) {
+        return fieldMetadataItem;
+      }
+
+      return { ...fieldMetadataItem, settings: formulaSettings };
+    }),
   }),
 );
 

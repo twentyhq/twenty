@@ -1,7 +1,4 @@
-import {
-  FORMULA_AGGREGATE_FUNCTION_NAMES,
-  VALIDATION_RULE_FUNCTIONS,
-} from 'twenty-shared/constants';
+import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
 import { type ValidationRuleExpressionToken } from 'twenty-shared/types';
 import {
   isDefined,
@@ -14,16 +11,17 @@ import {
   type ValidationRuleExpressionHighlightKind,
 } from '@/validation-rules/types/ValidationRuleExpressionHighlight';
 
-const FUNCTION_NAMES = [
-  ...Object.keys(VALIDATION_RULE_FUNCTIONS),
-  ...FORMULA_AGGREGATE_FUNCTION_NAMES,
-];
+const VALIDATION_RULE_FUNCTION_NAMES = Object.keys(VALIDATION_RULE_FUNCTIONS);
 const KEYWORD_NAMES = VALIDATION_RULE_KEYWORDS.map(({ name }) => name);
 const OPERATOR_CHARACTERS = '=!<>+-*/%?:|&';
 
-const getHighlightKind = (
-  token: ValidationRuleExpressionToken,
-): ValidationRuleExpressionHighlightKind | null => {
+const getHighlightKind = ({
+  token,
+  functionNames,
+}: {
+  token: ValidationRuleExpressionToken;
+  functionNames: string[];
+}): ValidationRuleExpressionHighlightKind | null => {
   switch (token.type) {
     case 'string':
     case 'unclosedString':
@@ -31,7 +29,7 @@ const getHighlightKind = (
     case 'number':
       return 'number';
     case 'path':
-      if (FUNCTION_NAMES.includes(token.text)) {
+      if (functionNames.includes(token.text)) {
         return 'function';
       }
 
@@ -45,9 +43,10 @@ const getHighlightKind = (
 
 export const computeValidationRuleExpressionHighlights = (
   expression: string,
+  functionNames: string[] = VALIDATION_RULE_FUNCTION_NAMES,
 ): ValidationRuleExpressionHighlight[] =>
   tokenizeValidationRuleExpression(expression).flatMap((token) => {
-    const kind = getHighlightKind(token);
+    const kind = getHighlightKind({ token, functionNames });
 
     return isDefined(kind)
       ? [{ kind, start: token.start, end: token.end }]

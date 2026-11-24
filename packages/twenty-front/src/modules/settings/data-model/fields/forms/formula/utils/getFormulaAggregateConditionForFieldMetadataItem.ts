@@ -12,13 +12,16 @@ const getDefaultConditionValue = (
     return 'true';
   }
 
+  if (
+    fieldMetadataItem.type !== FieldMetadataType.SELECT &&
+    fieldMetadataItem.type !== FieldMetadataType.MULTI_SELECT
+  ) {
+    return '';
+  }
+
   const firstOptionValue = fieldMetadataItem.options?.[0]?.value;
 
-  return (fieldMetadataItem.type === FieldMetadataType.SELECT ||
-    fieldMetadataItem.type === FieldMetadataType.MULTI_SELECT) &&
-    isNonEmptyString(firstOptionValue)
-    ? firstOptionValue
-    : '';
+  return isNonEmptyString(firstOptionValue) ? firstOptionValue : '';
 };
 
 export const getFormulaAggregateConditionForFieldMetadataItem = ({

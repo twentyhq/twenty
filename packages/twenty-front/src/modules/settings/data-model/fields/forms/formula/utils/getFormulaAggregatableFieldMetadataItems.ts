@@ -42,7 +42,6 @@ const getAggregatableFieldMetadataTypes = ({
     : [];
 };
 
-// The fields of the related records whose aggregate fits in a field of the given type
 export const getFormulaAggregatableFieldMetadataItems = <
   TFieldMetadataItem extends Pick<
     FieldMetadataItem,

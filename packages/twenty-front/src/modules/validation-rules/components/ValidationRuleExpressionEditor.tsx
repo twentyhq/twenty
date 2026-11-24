@@ -196,7 +196,10 @@ export const ValidationRuleExpressionEditor = ({
         placeholder: t`Type a field name or a function`,
       }),
       ValidationRuleFieldNode,
-      ValidationRuleExpressionExtension.configure({ getFieldNodeAttributes }),
+      ValidationRuleExpressionExtension.configure({
+        getFieldNodeAttributes,
+        functionNames: functionDefinitions?.map(({ name }) => name),
+      }),
     ],
     content: initialContent,
     onUpdate: ({ editor: updatedEditor }) => {
