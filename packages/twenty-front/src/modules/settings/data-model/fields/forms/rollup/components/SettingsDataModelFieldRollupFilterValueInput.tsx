@@ -3,6 +3,7 @@ import { type RollupSettingsFormFilter } from '@/settings/data-model/fields/form
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
+import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getFieldMetadataValueType, parseJson } from 'twenty-shared/utils';
 
@@ -21,6 +22,9 @@ export const SettingsDataModelFieldRollupFilterValueInput = ({
 }: SettingsDataModelFieldRollupFilterValueInputProps) => {
   const { t } = useLingui();
   const fieldType = getFieldMetadataValueType(fieldMetadataItem);
+  const valueAsString = isString(filter.value)
+    ? filter.value
+    : JSON.stringify(filter.value);
 
   if (fieldType === FieldMetadataType.BOOLEAN) {
     return (
@@ -30,7 +34,7 @@ export const SettingsDataModelFieldRollupFilterValueInput = ({
         dropdownWidth={120}
         needIconCheck={false}
         disabled={disabled}
-        value={filter.value}
+        value={valueAsString}
         onChange={onChange}
         options={[
           { label: t`True`, value: 'true' },
@@ -44,7 +48,7 @@ export const SettingsDataModelFieldRollupFilterValueInput = ({
     fieldType === FieldMetadataType.SELECT ||
     fieldType === FieldMetadataType.MULTI_SELECT
   ) {
-    const [selectedOptionValue = ''] = parseJson<string[]>(filter.value) ?? [];
+    const [selectedOptionValue = ''] = parseJson<string[]>(valueAsString) ?? [];
 
     return (
       <Select<string>
@@ -70,7 +74,7 @@ export const SettingsDataModelFieldRollupFilterValueInput = ({
       type={fieldType === FieldMetadataType.NUMBER ? 'number' : 'text'}
       placeholder={t`Value`}
       disabled={disabled}
-      value={filter.value}
+      value={valueAsString}
       onChange={onChange}
     />
   );
