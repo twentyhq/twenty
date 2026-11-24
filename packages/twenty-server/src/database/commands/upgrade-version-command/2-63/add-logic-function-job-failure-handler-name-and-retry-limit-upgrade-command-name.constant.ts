@@ -1,0 +1,2 @@
+export const ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME =
+  '2.63.0_AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand_1795507394217';

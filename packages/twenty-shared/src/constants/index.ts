@@ -39,6 +39,7 @@ export type { DocumentationSupportedLanguage } from './DocumentationSupportedLan
 export { DOCUMENTATION_SUPPORTED_LANGUAGES } from './DocumentationSupportedLanguages';
 export { EMAIL_DRAFTING_PROVIDERS } from './EmailDraftingProviders';
 export { EMAIL_IMAGE_MIME_TYPES } from './EmailImageMimeTypes';
+export { NEWLINE_SEPARATED_EMAIL_PROVIDER_DOMAINS } from './EmailProviderDomains';
 export { EMAIL_SENDING_PROVIDERS } from './EmailSendingProviders';
 export type { EnterpriseInstanceType } from './EnterpriseInstanceType';
 export { ENTERPRISE_INSTANCE_TYPE } from './EnterpriseInstanceType';
