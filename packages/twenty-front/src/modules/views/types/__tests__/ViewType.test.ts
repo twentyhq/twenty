@@ -6,6 +6,7 @@ import {
 
 import {
   IconCalendar,
+  IconInbox,
   IconLayoutKanban,
   IconList,
   IconListDetails,
@@ -18,6 +19,7 @@ describe('view type icon mapping', () => {
     [ViewType.KANBAN, IconLayoutKanban, 'IconLayoutKanban'],
     [ViewType.CALENDAR, IconCalendar, 'IconCalendar'],
     [ViewType.LIST, IconList, 'IconList'],
+    [ViewType.INBOX, IconInbox, 'IconInbox'],
     [ViewType.FIELDS_WIDGET, IconListDetails, 'IconListDetails'],
     [ViewType.TABLE_WIDGET, IconTable, 'IconTable'],
     [ViewType.KANBAN_WIDGET, IconLayoutKanban, 'IconLayoutKanban'],

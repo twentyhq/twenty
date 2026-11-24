@@ -1,11 +1,10 @@
 import { type ObjectRecordBaseEvent } from 'twenty-sdk/define';
 
-import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functions/types/calendar-event-participant-for-database-event.type';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
-export const getCalendarEventIdsFromParticipantEvents = (
+export const getCalendarEventIdsFromDatabaseEvents = (
   events: Pick<
-    ObjectRecordBaseEvent<CalendarEventParticipantForDatabaseEvent>,
+    ObjectRecordBaseEvent<{ calendarEventId?: string | null }>,
     'properties'
   >[],
 ): string[] =>

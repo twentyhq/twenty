@@ -2651,7 +2651,8 @@ export enum FeatureFlagKey {
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
-  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED',
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED = 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 }
 
 export type Field = {
@@ -7163,6 +7164,8 @@ export type RowLevelPermissionPredicate = {
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
   workspaceMemberRelationFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFilterFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFilterValues?: Maybe<Array<Scalars['String']['output']>>;
   workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7245,6 +7248,8 @@ export type RowLevelPermissionRulePredicateInput = {
   value?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   workspaceMemberRelationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberRelationFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberRelationFilterValues?: InputMaybe<Array<Scalars['String']['input']>>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -9124,6 +9129,7 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   CALENDAR_WIDGET = 'CALENDAR_WIDGET',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
+  INBOX = 'INBOX',
   KANBAN = 'KANBAN',
   KANBAN_WIDGET = 'KANBAN_WIDGET',
   LIST = 'LIST',

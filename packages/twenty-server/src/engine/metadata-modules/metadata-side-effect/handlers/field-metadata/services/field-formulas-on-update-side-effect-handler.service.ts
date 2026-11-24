@@ -38,7 +38,7 @@ export class FieldFormulasOnUpdateSideEffectHandlerService extends MetadataSideE
 
     const fieldOperations =
       allFlatEntityOperationRecordByMetadataName.fieldMetadata;
-    // Every renamed field of the batch, so each handler call yields the same complete rewrite
+    // Gathered from the whole batch so each handler call yields the same complete rewrite
     const newFieldNameByUniversalIdentifier = new Map(
       Object.values(fieldOperations?.flatEntityToUpdate ?? {})
         .filter(isDefined)

@@ -95,7 +95,10 @@ export default defineApplication({
       isSecret: false,
       type: FieldType.SELECT,
       scope: 'USER',
-      options: MEMBER_RECORDING_PREFERENCE_OPTIONS,
+      options: MEMBER_RECORDING_PREFERENCE_OPTIONS.map(({ label, value }) => ({
+        label: label.message,
+        value,
+      })),
       value: DEFAULT_MEMBER_RECORDING_PREFERENCE,
     },
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
