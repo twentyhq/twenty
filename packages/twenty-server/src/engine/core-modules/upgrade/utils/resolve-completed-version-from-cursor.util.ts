@@ -19,7 +19,7 @@ export const resolveCompletedVersionFromCursor = ({
   const cursorIndex = stepNames.indexOf(cursor.name);
 
   if (cursorIndex === -1) {
-    const lastStepName = stepNames.at(-1);
+    const lastStepName = stepNames[stepNames.length - 1];
 
     if (!isDefined(lastStepName)) {
       return null;
