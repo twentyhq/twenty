@@ -17,6 +17,11 @@ type RecordEventBatch = Pick<
   'workspaceId' | 'objectMetadata' | 'events'
 >;
 
+type MarkDirtyParameters = RecordEventBatch & {
+  watchPlans: StoredFormulaWatchPlans;
+  isRecordUpdate: boolean;
+};
+
 @Injectable()
 export class StoredFormulaFieldRecordEventListener {
   constructor(
@@ -24,48 +29,54 @@ export class StoredFormulaFieldRecordEventListener {
     private readonly storedFormulaFieldDirtyRecordService: StoredFormulaFieldDirtyRecordService,
   ) {}
 
+  // A new or restored record has stored formulas that were never computed, or went stale while it was deleted
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
   async handleRecordsAdded(batch: RecordEventBatch): Promise<void> {
-    const watchPlans = await this.getWatchPlans(batch.workspaceId);
-
-    // A new or restored record has stored formulas that were never computed, or went stale while it was deleted
-    await this.markOwnRecordsDirty({
-      ...batch,
-      watchPlans,
+    await this.markRecordsDirty(batch, {
       isRecordUpdate: false,
-    });
-    await this.markRelatedRecordsDirty({
-      ...batch,
-      watchPlans,
-      isRecordUpdate: false,
+      includeOwnRecords: true,
     });
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleRecordsRemoved(batch: RecordEventBatch): Promise<void> {
-    await this.markRelatedRecordsDirty({
-      ...batch,
-      watchPlans: await this.getWatchPlans(batch.workspaceId),
+    await this.markRecordsDirty(batch, {
       isRecordUpdate: false,
+      includeOwnRecords: false,
     });
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleRecordsUpdated(batch: RecordEventBatch): Promise<void> {
-    const watchPlans = await this.getWatchPlans(batch.workspaceId);
+    await this.markRecordsDirty(batch, {
+      isRecordUpdate: true,
+      includeOwnRecords: true,
+    });
+  }
 
-    await this.markOwnRecordsDirty({
-      ...batch,
-      watchPlans,
-      isRecordUpdate: true,
-    });
-    await this.markRelatedRecordsDirty({
-      ...batch,
-      watchPlans,
-      isRecordUpdate: true,
-    });
+  private async markRecordsDirty(
+    batch: RecordEventBatch,
+    {
+      isRecordUpdate,
+      includeOwnRecords,
+    }: { isRecordUpdate: boolean; includeOwnRecords: boolean },
+  ): Promise<void> {
+    const watchPlans = getStoredFormulaWatchPlans(
+      await this.workspaceCacheService.getOrRecompute(batch.workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMapsOrm',
+      ]),
+    );
+    const markDirtyParameters = { ...batch, watchPlans, isRecordUpdate };
+
+    await Promise.all([
+      includeOwnRecords
+        ? this.markOwnRecordsDirty(markDirtyParameters)
+        : undefined,
+      this.markRelatedRecordsDirty(markDirtyParameters),
+    ]);
   }
 
   private async markOwnRecordsDirty({
@@ -74,10 +85,7 @@ export class StoredFormulaFieldRecordEventListener {
     events,
     watchPlans: { watchedOwnFieldNamesByObjectMetadataId },
     isRecordUpdate,
-  }: RecordEventBatch & {
-    watchPlans: StoredFormulaWatchPlans;
-    isRecordUpdate: boolean;
-  }): Promise<void> {
+  }: MarkDirtyParameters): Promise<void> {
     const watchedOwnFieldNames =
       watchedOwnFieldNamesByObjectMetadataId[objectMetadata.id];
 
@@ -90,7 +98,7 @@ export class StoredFormulaFieldRecordEventListener {
         ({ properties: { updatedFields } }) =>
           !isRecordUpdate ||
           (updatedFields ?? []).some((fieldName) =>
-            watchedOwnFieldNames.includes(fieldName),
+            watchedOwnFieldNames.has(fieldName),
           ),
       )
       .map(({ recordId }) => recordId);
@@ -112,10 +120,7 @@ export class StoredFormulaFieldRecordEventListener {
     events,
     watchPlans: { relatedRecordWatchPlansByObjectMetadataId },
     isRecordUpdate,
-  }: RecordEventBatch & {
-    watchPlans: StoredFormulaWatchPlans;
-    isRecordUpdate: boolean;
-  }): Promise<void> {
+  }: MarkDirtyParameters): Promise<void> {
     const watchPlans =
       relatedRecordWatchPlansByObjectMetadataId[objectMetadata.id];
 
@@ -139,17 +144,6 @@ export class StoredFormulaFieldRecordEventListener {
             recordIds,
           }),
       ),
-    );
-  }
-
-  private async getWatchPlans(
-    workspaceId: string,
-  ): Promise<StoredFormulaWatchPlans> {
-    return getStoredFormulaWatchPlans(
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMapsOrm',
-      ]),
     );
   }
 }

@@ -2,12 +2,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { findFlatFieldMetadataByName } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-flat-field-metadata-by-name.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FormulaSqlAggregationSourceResolver } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-expression-to-sql.util';
 import { resolveFormulaAggregatedRelation } from 'src/engine/metadata-modules/formula-field/utils/resolve-formula-aggregated-relation.util';
+import { quoteTable } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export const buildFormulaSqlAggregationSourceResolver = ({
   flatObjectMetadata,
@@ -20,16 +20,13 @@ export const buildFormulaSqlAggregationSourceResolver = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   schemaName: string;
 }): FormulaSqlAggregationSourceResolver => {
-  const flatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
-  );
-
   return (relationFieldName) => {
     const aggregatedRelation = resolveFormulaAggregatedRelation({
-      relationFlatFieldMetadata: flatFieldMetadatas.find(
-        ({ name }) => name === relationFieldName,
-      ),
+      relationFlatFieldMetadata: findFlatFieldMetadataByName({
+        fieldName: relationFieldName,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     });
@@ -39,9 +36,12 @@ export const buildFormulaSqlAggregationSourceResolver = ({
     }
 
     return {
-      tableSql: `${escapeIdentifier(schemaName)}.${escapeIdentifier(
-        computeObjectTargetTable(aggregatedRelation.relatedFlatObjectMetadata),
-      )}`,
+      tableSql: quoteTable({
+        schemaName,
+        tableName: computeObjectTargetTable(
+          aggregatedRelation.relatedFlatObjectMetadata,
+        ),
+      }),
       joinColumnName: aggregatedRelation.joinColumnName,
     };
   };

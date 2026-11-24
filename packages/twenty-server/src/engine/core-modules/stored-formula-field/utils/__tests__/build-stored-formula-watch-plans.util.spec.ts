@@ -17,11 +17,11 @@ describe('buildStoredFormulaWatchPlans', () => {
           {
             objectMetadataId: 'supplier-object',
             joinColumnName: 'supplierId',
-            watchedFieldNames: ['supplierId', 'price', 'quantity'],
+            watchedFieldNames: new Set(['supplierId', 'price', 'quantity']),
           },
         ],
       },
-      watchedOwnFieldNamesByObjectMetadataId: { 'supplier-object': [] },
+      watchedOwnFieldNamesByObjectMetadataId: { 'supplier-object': new Set() },
     });
   });
 });

@@ -6,7 +6,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { BACKFILL_STORED_FORMULA_FIELDS_JOB_NAME } from 'src/engine/core-modules/stored-formula-field/constants/backfill-stored-formula-fields-job-name.constant';
-import { STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-backfill-batches-per-job.constant';
 import { StoredFormulaFieldComputationService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-computation.service';
 import { type BackfillStoredFormulaFieldsJobData } from 'src/engine/core-modules/stored-formula-field/types/backfill-stored-formula-fields-job-data.type';
 
@@ -22,10 +21,7 @@ export class BackfillStoredFormulaFieldsJob {
   async handle(jobData: BackfillStoredFormulaFieldsJobData): Promise<void> {
     const nextAfterRecordId =
       await this.storedFormulaFieldComputationService.recomputeStoredFormulaFieldsOfNextRecords(
-        {
-          ...jobData,
-          batchCount: STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB,
-        },
+        jobData,
       );
 
     if (!isDefined(nextAfterRecordId)) {

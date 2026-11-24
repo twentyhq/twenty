@@ -28,15 +28,13 @@ export const findStaleStoredFormulaRecordIdsByObjectMetadataId = ({
     joinColumnName,
     watchedFieldNames,
   } of watchPlans) {
-    const watchedFieldNameSet = new Set(watchedFieldNames);
-
     for (const { properties } of events) {
       const { before, after, updatedFields } = properties;
 
       if (
         isRecordUpdate &&
         !(updatedFields ?? []).some((fieldName) =>
-          watchedFieldNameSet.has(fieldName),
+          watchedFieldNames.has(fieldName),
         )
       ) {
         continue;

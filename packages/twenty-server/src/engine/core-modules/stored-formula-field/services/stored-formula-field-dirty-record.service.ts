@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -33,17 +33,18 @@ export class StoredFormulaFieldDirtyRecordService {
     }
 
     await this.cacheStorageService.setAdd(
-      this.getDirtyRecordIdsKey({ workspaceId, objectMetadataId }),
+      this.getKey('dirty-record-ids', { workspaceId, objectMetadataId }),
       recordIds,
     );
 
     // Saves the enqueue round trips on every batch while a recompute is pending
-    const scheduledMarker = await this.cacheStorageService.acquireLock({
-      key: this.getRecomputeScheduledKey({ workspaceId, objectMetadataId }),
-      ttl: STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS,
-    });
+    const isFirstMarkSinceLastRun = await this.cacheStorageService.setIfAbsent(
+      this.getKey('recompute-scheduled', { workspaceId, objectMetadataId }),
+      true,
+      STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS,
+    );
 
-    if (isDefined(scheduledMarker)) {
+    if (isFirstMarkSinceLastRun) {
       await this.scheduleRecompute({ workspaceId, objectMetadataId });
     }
   }
@@ -55,18 +56,18 @@ export class StoredFormulaFieldDirtyRecordService {
   }: RecomputeDirtyStoredFormulaRecordsJobData & { size: number }): Promise<
     string[]
   > {
-    const dirtyRecordIdsKey = this.getDirtyRecordIdsKey({
+    const dirtyRecordIdsKey = this.getKey('dirty-record-ids', {
       workspaceId,
       objectMetadataId,
     });
-    const processingRecordIdsKey = this.getProcessingRecordIdsKey({
+    const processingRecordIdsKey = this.getKey('processing-record-ids', {
       workspaceId,
       objectMetadataId,
     });
 
     // Cleared before popping so ids added from now on schedule another run
     await this.cacheStorageService.del(
-      this.getRecomputeScheduledKey({ workspaceId, objectMetadataId }),
+      this.getKey('recompute-scheduled', { workspaceId, objectMetadataId }),
     );
 
     // Ids left by a run that died before completing go back in the queue
@@ -100,7 +101,7 @@ export class StoredFormulaFieldDirtyRecordService {
     recordIds: string[];
   }): Promise<void> {
     await this.cacheStorageService.setRemove(
-      this.getProcessingRecordIdsKey({ workspaceId, objectMetadataId }),
+      this.getKey('processing-record-ids', { workspaceId, objectMetadataId }),
       recordIds,
     );
   }
@@ -124,24 +125,16 @@ export class StoredFormulaFieldDirtyRecordService {
     );
   }
 
-  private getRecomputeScheduledKey({
-    workspaceId,
-    objectMetadataId,
-  }: RecomputeDirtyStoredFormulaRecordsJobData): string {
-    return `recompute-scheduled:${workspaceId}:${objectMetadataId}`;
-  }
-
-  private getProcessingRecordIdsKey({
-    workspaceId,
-    objectMetadataId,
-  }: RecomputeDirtyStoredFormulaRecordsJobData): string {
-    return `processing-record-ids:${workspaceId}:${objectMetadataId}`;
-  }
-
-  private getDirtyRecordIdsKey({
-    workspaceId,
-    objectMetadataId,
-  }: RecomputeDirtyStoredFormulaRecordsJobData): string {
-    return `dirty-record-ids:${workspaceId}:${objectMetadataId}`;
+  private getKey(
+    prefix:
+      | 'dirty-record-ids'
+      | 'processing-record-ids'
+      | 'recompute-scheduled',
+    {
+      workspaceId,
+      objectMetadataId,
+    }: RecomputeDirtyStoredFormulaRecordsJobData,
+  ): string {
+    return `${prefix}:${workspaceId}:${objectMetadataId}`;
   }
 }

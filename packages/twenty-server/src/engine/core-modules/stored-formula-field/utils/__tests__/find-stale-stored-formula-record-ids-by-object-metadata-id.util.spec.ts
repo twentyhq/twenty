@@ -4,7 +4,7 @@ const WATCH_PLANS = [
   {
     objectMetadataId: 'project-object-id',
     joinColumnName: 'projectId',
-    watchedFieldNames: ['projectId', 'estimate', 'isDone'],
+    watchedFieldNames: new Set(['projectId', 'estimate', 'isDone']),
   },
 ];
 

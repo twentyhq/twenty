@@ -407,4 +407,29 @@ describe('Stored formula fields', () => {
       gadgetCount: 1,
     });
   });
+
+  it('should backfill a query-time formula once an edit makes it stored', async () => {
+    const [{ id: averagePriceFieldMetadataId }] =
+      await global.testDataSource.query(
+        `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'averagePrice'`,
+        [supplierObjectMetadataId],
+      );
+
+    await updateOneFieldMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: averagePriceFieldMetadataId,
+        updatePayload: {
+          settings: {
+            formula: { expression: 'count(gadgets, gadgets.quantity > 0)' },
+          },
+        },
+      },
+      gqlFields: 'id',
+    });
+
+    expect(await findSupplier(firstSupplierId)).toMatchObject({
+      averagePrice: 1,
+    });
+  });
 });

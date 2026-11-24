@@ -3,20 +3,32 @@ import { Injectable } from '@nestjs/common';
 import chunk from 'lodash.chunk';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-backfill-batches-per-job.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-batch-size.constant';
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
 import { buildStoredFormulaColumnExpressions } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-column-expressions.util';
 import { buildStoredFormulaRecordUpdate } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-record-update.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const RECORD_ALIAS = escapeIdentifier(COMPUTED_COLUMN_RECORD_ALIAS);
+const RECORD_ID_COLUMN = quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, 'id');
+
+const STORED_FORMULA_FIELD_BACKFILL_PAGE_SIZE =
+  STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE *
+  STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB;
+
+type RecomputeRecordsBatchParameters = {
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+  columnExpressions: StoredFormulaColumnExpression[];
+  recordIds: string[];
+  shouldSkipEventEmission: boolean;
+};
 
 @Injectable()
 export class StoredFormulaFieldComputationService {
@@ -41,16 +53,11 @@ export class StoredFormulaFieldComputationService {
         return;
       }
 
-      for (const recordIdsBatch of chunk(
+      await this.recomputeRecordsInBatches({
+        ...resolvedColumnExpressions,
         recordIds,
-        STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE,
-      )) {
-        await this.recomputeRecordsBatch({
-          ...resolvedColumnExpressions,
-          recordIds: recordIdsBatch,
-          shouldSkipEventEmission: false,
-        });
-      }
+        shouldSkipEventEmission: false,
+      });
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -60,13 +67,11 @@ export class StoredFormulaFieldComputationService {
     objectMetadataId,
     formulaFieldMetadataIds,
     afterRecordId,
-    batchCount,
   }: {
     workspaceId: string;
     objectMetadataId: string;
     formulaFieldMetadataIds: string[];
     afterRecordId: string | null;
-    batchCount: number;
   }): Promise<string | null> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const resolvedColumnExpressions = this.resolveColumnExpressions({
@@ -85,12 +90,12 @@ export class StoredFormulaFieldComputationService {
         )
         .createQueryBuilder(COMPUTED_COLUMN_RECORD_ALIAS)
         .withStoredColumnsOnly()
-        .select(`${RECORD_ALIAS}."id"`, 'id')
-        .orderBy(`${RECORD_ALIAS}."id"`, 'ASC')
-        .limit(STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE * batchCount);
+        .select(`${RECORD_ID_COLUMN}`, 'id')
+        .orderBy(`${RECORD_ID_COLUMN}`, 'ASC')
+        .limit(STORED_FORMULA_FIELD_BACKFILL_PAGE_SIZE);
 
       if (isDefined(afterRecordId)) {
-        recordIdsQueryBuilder.where(`${RECORD_ALIAS}."id" > :afterRecordId`, {
+        recordIdsQueryBuilder.where(`${RECORD_ID_COLUMN} > :afterRecordId`, {
           afterRecordId,
         });
       }
@@ -99,21 +104,15 @@ export class StoredFormulaFieldComputationService {
         await recordIdsQueryBuilder.getRawMany<{ id: string }>()
       ).map(({ id }) => id);
 
-      for (const recordIdsBatch of chunk(
+      await this.recomputeRecordsInBatches({
+        ...resolvedColumnExpressions,
         recordIds,
-        STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE,
-      )) {
-        await this.recomputeRecordsBatch({
-          ...resolvedColumnExpressions,
-          recordIds: recordIdsBatch,
-          // A full pass would otherwise fire an update event, webhook and workflow per record
-          shouldSkipEventEmission: true,
-        });
-      }
+        // A full pass would otherwise fire an update event, webhook and workflow per record
+        shouldSkipEventEmission: true,
+      });
 
       const hasMoreRecords =
-        recordIds.length ===
-        STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE * batchCount;
+        recordIds.length === STORED_FORMULA_FIELD_BACKFILL_PAGE_SIZE;
 
       if (!hasMoreRecords) {
         return null;
@@ -161,17 +160,27 @@ export class StoredFormulaFieldComputationService {
       : undefined;
   }
 
+  private async recomputeRecordsInBatches({
+    recordIds,
+    ...batchParameters
+  }: RecomputeRecordsBatchParameters): Promise<void> {
+    for (const recordIdsBatch of chunk(
+      recordIds,
+      STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE,
+    )) {
+      await this.recomputeRecordsBatch({
+        ...batchParameters,
+        recordIds: recordIdsBatch,
+      });
+    }
+  }
+
   private async recomputeRecordsBatch({
     flatObjectMetadata,
     columnExpressions,
     recordIds,
     shouldSkipEventEmission,
-  }: {
-    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
-    columnExpressions: StoredFormulaColumnExpression[];
-    recordIds: string[];
-    shouldSkipEventEmission: boolean;
-  }): Promise<void> {
+  }: RecomputeRecordsBatchParameters): Promise<void> {
     const recordRepository =
       this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
         flatObjectMetadata.nameSingular,
@@ -180,13 +189,13 @@ export class StoredFormulaFieldComputationService {
     const staleValuesQueryBuilder = recordRepository
       .createQueryBuilder(COMPUTED_COLUMN_RECORD_ALIAS)
       .withStoredColumnsOnly()
-      .select(`${RECORD_ALIAS}."id"`, 'id')
-      .where(`${RECORD_ALIAS}."id" IN (:...recordIds)`, { recordIds })
+      .select(`${RECORD_ID_COLUMN}`, 'id')
+      .where(`${RECORD_ID_COLUMN} IN (:...recordIds)`, { recordIds })
       .andWhere(
         `(${columnExpressions
           .map(
             ({ columnName, expression }) =>
-              `${RECORD_ALIAS}.${escapeIdentifier(columnName)} IS DISTINCT FROM ${expression}`,
+              `${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName)} IS DISTINCT FROM ${expression}`,
           )
           .join(' OR ')})`,
       );

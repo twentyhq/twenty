@@ -4,7 +4,10 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { type StoredFormulaWatchPlans } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
+import {
+  type StoredFormulaRelatedRecordWatchPlan,
+  type StoredFormulaWatchPlans,
+} from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -18,15 +21,14 @@ export const buildStoredFormulaWatchPlans = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
 }): StoredFormulaWatchPlans => {
-  const watchedFieldNamesByPlanKey = new Map<
+  const relatedRecordWatchPlanByPlanKey = new Map<
     string,
-    {
-      relatedObjectMetadataId: string;
-      objectMetadataId: string;
-      joinColumnName: string;
-      watchedFieldNames: Set<string>;
-    }
+    StoredFormulaRelatedRecordWatchPlan & { watchedFieldNames: Set<string> }
   >();
+  const relatedRecordWatchPlansByObjectMetadataId: Record<
+    string,
+    StoredFormulaRelatedRecordWatchPlan[]
+  > = {};
   const watchedOwnFieldNamesByObjectMetadataId: Record<
     string,
     Set<string>
@@ -76,50 +78,28 @@ export const buildStoredFormulaWatchPlans = ({
 
       const { relatedFlatObjectMetadata, joinColumnName } = aggregatedRelation;
       const planKey = `${relatedFlatObjectMetadata.id}:${objectMetadataId}:${joinColumnName}`;
-      const plan = watchedFieldNamesByPlanKey.get(planKey) ?? {
-        relatedObjectMetadataId: relatedFlatObjectMetadata.id,
-        objectMetadataId,
-        joinColumnName,
-        watchedFieldNames: new Set([joinColumnName]),
-      };
+      let plan = relatedRecordWatchPlanByPlanKey.get(planKey);
+
+      if (!isDefined(plan)) {
+        plan = {
+          objectMetadataId,
+          joinColumnName,
+          watchedFieldNames: new Set([joinColumnName]),
+        };
+        relatedRecordWatchPlanByPlanKey.set(planKey, plan);
+        (relatedRecordWatchPlansByObjectMetadataId[
+          relatedFlatObjectMetadata.id
+        ] ??= []).push(plan);
+      }
 
       if (isDefined(memberSegment) && isDefined(boundFieldName)) {
         plan.watchedFieldNames.add(boundFieldName);
       }
-
-      watchedFieldNamesByPlanKey.set(planKey, plan);
     }
-  }
-
-  const relatedRecordWatchPlansByObjectMetadataId: StoredFormulaWatchPlans['relatedRecordWatchPlansByObjectMetadataId'] =
-    {};
-
-  for (const {
-    relatedObjectMetadataId,
-    objectMetadataId,
-    joinColumnName,
-    watchedFieldNames,
-  } of watchedFieldNamesByPlanKey.values()) {
-    relatedRecordWatchPlansByObjectMetadataId[relatedObjectMetadataId] = [
-      ...(relatedRecordWatchPlansByObjectMetadataId[relatedObjectMetadataId] ??
-        []),
-      {
-        objectMetadataId,
-        joinColumnName,
-        watchedFieldNames: [...watchedFieldNames],
-      },
-    ];
   }
 
   return {
     relatedRecordWatchPlansByObjectMetadataId,
-    watchedOwnFieldNamesByObjectMetadataId: Object.fromEntries(
-      Object.entries(watchedOwnFieldNamesByObjectMetadataId).map(
-        ([objectMetadataId, watchedOwnFieldNames]) => [
-          objectMetadataId,
-          [...watchedOwnFieldNames],
-        ],
-      ),
-    ),
+    watchedOwnFieldNamesByObjectMetadataId,
   };
 };
