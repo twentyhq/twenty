@@ -10,6 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { POP_DIRTY_RECORDS_INTO_PROCESSING_SCRIPT } from 'src/engine/core-modules/stored-formula-field/constants/pop-dirty-records-into-processing-script.constant';
 import { RECOMPUTE_DIRTY_STORED_FORMULA_RECORDS_JOB_NAME } from 'src/engine/core-modules/stored-formula-field/constants/recompute-dirty-stored-formula-records-job-name.constant';
+import { STORED_FORMULA_FIELD_RECOMPUTE_RUN_TTL_MS } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-run-ttl-ms.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-debounce-ms.constant';
 import { type RecomputeDirtyStoredFormulaRecordsJobData } from 'src/engine/core-modules/stored-formula-field/types/recompute-dirty-stored-formula-records-job-data.type';
 
@@ -135,6 +136,35 @@ export class StoredFormulaFieldDirtyRecordService {
     );
   }
 
+  // One run per object at a time, so a run never takes back the ids of another run in progress
+  async acquireRecomputeRun({
+    workspaceId,
+    objectMetadataId,
+  }: RecomputeDirtyStoredFormulaRecordsJobData): Promise<boolean> {
+    return this.cacheStorageService.setIfAbsent(
+      this.getKey({
+        prefix: 'recompute-running',
+        workspaceId,
+        objectMetadataId,
+      }),
+      true,
+      STORED_FORMULA_FIELD_RECOMPUTE_RUN_TTL_MS,
+    );
+  }
+
+  async releaseRecomputeRun({
+    workspaceId,
+    objectMetadataId,
+  }: RecomputeDirtyStoredFormulaRecordsJobData): Promise<void> {
+    await this.cacheStorageService.del(
+      this.getKey({
+        prefix: 'recompute-running',
+        workspaceId,
+        objectMetadataId,
+      }),
+    );
+  }
+
   async scheduleRecompute({
     workspaceId,
     objectMetadataId,
@@ -162,7 +192,8 @@ export class StoredFormulaFieldDirtyRecordService {
     prefix:
       | 'dirty-record-ids'
       | 'processing-record-ids'
-      | 'recompute-scheduled';
+      | 'recompute-scheduled'
+      | 'recompute-running';
   }): string {
     return `${prefix}:${workspaceId}:${objectMetadataId}`;
   }
