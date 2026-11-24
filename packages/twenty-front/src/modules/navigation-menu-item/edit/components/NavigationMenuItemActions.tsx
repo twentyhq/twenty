@@ -108,53 +108,6 @@ export const NavigationMenuItemActions = ({
         };
     }
   };
-  const actions: NavigationMenuItemOption[] = [
-    {
-      id: 'up',
-      label: t`Move up`,
-      Icon: IconChevronUp,
-      isDisabled: index <= 0,
-      onClick: () => run(() => moveUp(item.id)),
-    },
-    {
-      id: 'down',
-      label: t`Move down`,
-      Icon: IconChevronDown,
-      isDisabled: index < 0 || index === siblings.length - 1,
-      onClick: () => run(() => moveDown(item.id)),
-    },
-    {
-      id: 'folder',
-      label: moveToLabel,
-      Icon: IconFolderSymlink,
-      isDisabled: isFolder && !isMovingAcrossTabs,
-      hasSubMenu: true,
-      onClick: () => goToPage('folders'),
-    },
-    {
-      id: 'before',
-      label: t`Add item before`,
-      Icon: IconRowInsertTop,
-      hasSubMenu: true,
-      onClick: () =>
-        onAdd({ parentId: item.parentId ?? undefined, position: index }),
-    },
-    {
-      id: 'after',
-      label: t`Add item after`,
-      Icon: IconRowInsertBottom,
-      hasSubMenu: true,
-      onClick: () =>
-        onAdd({ parentId: item.parentId ?? undefined, position: index + 1 }),
-    },
-    {
-      id: 'remove',
-      label: t`Remove from sidebar`,
-      Icon: IconTrash,
-      accent: 'danger',
-      onClick: () => run(() => remove(item.id)),
-    },
-  ];
   const getCrossTabMoveOptions = (): NavigationMenuItemOption[] =>
     getNavigationMenuItemMoveDestinations({
       items: workspaceNavigationMenuItems,
@@ -185,6 +138,55 @@ export const NavigationMenuItemActions = ({
   const folders = isMovingAcrossTabs
     ? getCrossTabMoveOptions()
     : getContainerMoveOptions();
+  const actions: NavigationMenuItemOption[] = [
+    {
+      id: 'up',
+      label: t`Move up`,
+      Icon: IconChevronUp,
+      isDisabled: index <= 0,
+      onClick: () => run(() => moveUp(item.id)),
+    },
+    {
+      id: 'down',
+      label: t`Move down`,
+      Icon: IconChevronDown,
+      isDisabled: index < 0 || index === siblings.length - 1,
+      onClick: () => run(() => moveDown(item.id)),
+    },
+    {
+      id: 'folder',
+      label: moveToLabel,
+      Icon: IconFolderSymlink,
+      isDisabled:
+        (isFolder && !isMovingAcrossTabs) ||
+        folders.every((option) => option.isDisabled),
+      hasSubMenu: true,
+      onClick: () => goToPage('folders'),
+    },
+    {
+      id: 'before',
+      label: t`Add item before`,
+      Icon: IconRowInsertTop,
+      hasSubMenu: true,
+      onClick: () =>
+        onAdd({ parentId: item.parentId ?? undefined, position: index }),
+    },
+    {
+      id: 'after',
+      label: t`Add item after`,
+      Icon: IconRowInsertBottom,
+      hasSubMenu: true,
+      onClick: () =>
+        onAdd({ parentId: item.parentId ?? undefined, position: index + 1 }),
+    },
+    {
+      id: 'remove',
+      label: t`Remove from sidebar`,
+      Icon: IconTrash,
+      accent: 'danger',
+      onClick: () => run(() => remove(item.id)),
+    },
+  ];
   return (
     <>
       <Dropdown.Page id="root">

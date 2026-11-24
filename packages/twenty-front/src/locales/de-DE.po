@@ -564,12 +564,6 @@ msgstr "{0} ohne E-Mail-Adresse"
 msgid "{0} workspace members"
 msgstr "{0} Arbeitsbereichsmitglieder"
 
-#. js-lingui-id: elMxkj
-#. placeholder {0}: tab.name
-#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
-msgid "{0}, {unreadOpenThreadCount} unread"
-msgstr "{0}, {unreadOpenThreadCount} ungelesen"
-
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
 #. placeholder {0}: relationFieldMetadataItem.label
@@ -583,12 +577,6 @@ msgstr "{0}, {unreadOpenThreadCount} ungelesen"
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
 msgid "{0}, back to fields"
 msgstr "{0}, zurück zu Feldern"
-
-#. js-lingui-id: VxMSt6
-#. placeholder {0}: tab.name
-#: src/modules/navigation/components/MainNavigationDrawerSidebarTab.tsx
-msgid "{0}, unread"
-msgstr "{0}, ungelesen"
 
 #. js-lingui-id: kofqAN
 #. placeholder {0}: selectedResolvedTier.label
@@ -1303,6 +1291,16 @@ msgstr "{stepNumber}. Kalender"
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
 msgid "{storedToolName} (not available to you)"
 msgstr "{storedToolName} (für Sie nicht verfügbar)"
+
+#. js-lingui-id: VfeUjs
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
+msgid "{tabName}, needs your input"
+msgstr ""
+
+#. js-lingui-id: REc4fO
+#: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
+msgid "{tabName}, unread"
+msgstr ""
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2475,6 +2473,16 @@ msgstr "Artikel hinzufügen"
 msgid "Add Item"
 msgstr "Element hinzufügen"
 
+#. js-lingui-id: 1e37Dl
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Add item after"
+msgstr ""
+
+#. js-lingui-id: w7mkyz
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+msgid "Add item before"
+msgstr ""
+
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2485,16 +2493,6 @@ msgstr "Link hinzufügen"
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
 msgstr "MCP-Server hinzufügen"
-
-#. js-lingui-id: JbORSt
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-msgid "Add menu item after"
-msgstr "Menüpunkt danach hinzufügen"
-
-#. js-lingui-id: DKlI/M
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
-msgid "Add menu item before"
-msgstr "Menüpunkt davor hinzufügen"
 
 #. js-lingui-id: q5ruxx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -3758,6 +3756,11 @@ msgstr "Alphabetisch"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in sidebar"
 msgstr "Bereits in der Seitenleiste"
+
+#. js-lingui-id: CaKZeT
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
+msgid "Already in this section"
+msgstr ""
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5259,6 +5262,21 @@ msgstr "Guthaben Ihrem Arbeitsbereich in Rechnung stellen"
 msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
 msgstr "Stellen Sie die von installierten Apps angegebenen Preise über das Workspace-Abonnement in Rechnung. Der Preis wird vor der Installation noch nicht angezeigt."
 
+#. js-lingui-id: WVxikw
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month"
+msgstr ""
+
+#. js-lingui-id: 9nZzfz
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per account"
+msgstr ""
+
+#. js-lingui-id: iOQoBV
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Bill your workspace {amount} / month per member"
+msgstr ""
+
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Billed monthly"
@@ -5314,11 +5332,6 @@ msgstr "Fehler bei der Abrechnungsportal-Sitzung. Bitte versuchen Sie es erneut 
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Billing stays {upcomingIntervalAdjective}. To switch to {selectedIntervalAdjective} billing, confirm this change first, then switch the billing interval as a second step."
 msgstr "Die Abrechnung bleibt {upcomingIntervalAdjective}. Um zur {selectedIntervalAdjective} Abrechnung zu wechseln, bestätigen Sie zuerst diese Änderung und ändern Sie dann in einem zweiten Schritt das Abrechnungsintervall."
-
-#. js-lingui-id: 75WIQJ
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Bills credits"
-msgstr "Stellt Guthaben in Rechnung"
 
 #. js-lingui-id: 8kIU+G
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -8144,6 +8157,7 @@ msgid "Copy to clipboard"
 msgstr "In die Zwischenablage kopieren"
 
 #. js-lingui-id: RTxUjI
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Copy to Clipboard"
 msgstr "In die Zwischenablage kopieren"
@@ -9436,6 +9450,7 @@ msgid "Customize record page"
 msgstr "Datensatzseite anpassen"
 
 #. js-lingui-id: hxjpaE
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
@@ -13708,6 +13723,11 @@ msgstr "Tools konnten nicht synchronisiert werden"
 msgid "Failed to synchronize the marketplace catalog."
 msgstr "Der Marktplatzkatalog konnte nicht synchronisiert werden."
 
+#. js-lingui-id: UUsjVV
+#: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
+msgid "Failed to test agent"
+msgstr ""
+
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
@@ -16269,8 +16289,14 @@ msgstr "Inaktive Skill-Optionen"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
+#: src/modules/views/types/ViewType.ts
 msgid "Inbox"
 msgstr "Posteingang"
+
+#. js-lingui-id: UXZcgx
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Inbox object names"
+msgstr ""
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17801,6 +17827,11 @@ msgstr "Jedem Mitglied die Entscheidung selbst überlassen"
 msgid "Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes."
 msgstr "Gruppierte Tabellen- und Listenansichten zeigen ihre Gruppen als Registerkarten an, jeweils eine Gruppe gleichzeitig. Aktivieren Sie dies, nachdem das Instanz-Upgrade abgeschlossen ist."
 
+#. js-lingui-id: livXRh
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "Let members connect their own accounts"
+msgstr ""
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
@@ -19143,6 +19174,7 @@ msgstr "Wird zusammengeführt..."
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 #: src/modules/log-console/components/LogConsoleDetailPanel.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogColumns.tsx
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 #: src/modules/settings/event-logs/utils/getColumnsForEventLogTable.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/send-chat-message-action/components/WorkflowEditActionSendChatMessage.tsx
@@ -19153,6 +19185,11 @@ msgstr "Nachricht"
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "Message {recipientName}"
 msgstr "Nachricht an {recipientName}"
+
+#. js-lingui-id: +nYs0G
+#: src/modules/chat/components/ChatMessageFloatingActions.tsx
+msgid "Message actions"
+msgstr ""
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -20010,6 +20047,7 @@ msgstr "Nie, weder durch Twenty noch durch Anbieter"
 
 #. js-lingui-id: isRobC
 #: src/modules/ai-chat/messages/components/AiChatMessage.tsx
+#: src/modules/chat/components/ChatMessageDaySeparator.tsx
 #: src/modules/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerNewForm.tsx
@@ -22726,6 +22764,11 @@ msgstr "Organisationslizenz"
 msgid "Organization license activated successfully"
 msgstr "Organisationslizenz erfolgreich aktiviert"
 
+#. js-lingui-id: 50DOI7
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
+msgstr ""
+
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
 msgid "Organizer"
@@ -23045,6 +23088,11 @@ msgstr "Seitenaufrufe"
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 msgid "Pages"
 msgstr "Seiten"
+
+#. js-lingui-id: wl6crM
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Paid app"
+msgstr ""
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -26087,6 +26135,11 @@ msgstr "Code ausführen, um Dateien und Daten zu analysieren"
 msgid "Run Function"
 msgstr "Funktion ausführen"
 
+#. js-lingui-id: gdJPPW
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Run test"
+msgstr ""
+
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "Run this tool for real?"
@@ -28154,11 +28207,6 @@ msgstr "Anzeigen bei"
 msgid "Show only rows with errors"
 msgstr "Nur Zeilen mit Fehlern anzeigen"
 
-#. js-lingui-id: KefbEP
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Show sidebar tabs and sections."
-msgstr "Seitenleisten-Registerkarten und -Abschnitte anzeigen."
-
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
@@ -28211,6 +28259,11 @@ msgstr "Seitenbereich"
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "Side Panel"
 msgstr "Seitenpanel"
+
+#. js-lingui-id: QWUT9V
+#: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
+msgid "Sidebar actions"
+msgstr ""
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29386,6 +29439,11 @@ msgstr "Fasse diesen Datensatz und seine jüngsten Aktivitäten zusammen."
 msgid "Summarize this view"
 msgstr "Diese Ansicht zusammenfassen"
 
+#. js-lingui-id: mLm1b0
+#: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
+msgid "Summarize what changed on Acme this week"
+msgstr ""
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -29822,6 +29880,7 @@ msgid "Terms of Service"
 msgstr "Nutzungsbedingungen"
 
 #. js-lingui-id: NnH3pK
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode.tsx
@@ -29834,6 +29893,19 @@ msgstr "Nutzungsbedingungen"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Test"
 msgstr "Test"
+
+#. js-lingui-id: jra4Ko
+#: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
+#: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
+msgid "Test agent"
+msgstr ""
+
+#. js-lingui-id: AriIhI
+#: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
+#: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
+#: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
+msgid "Test Agent"
+msgstr ""
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -29905,6 +29977,7 @@ msgid "Text Colors"
 msgstr "Textfarben"
 
 #. js-lingui-id: lyaiTc
+#: src/modules/chat/components/ChatMessageCopyAction.tsx
 #: src/modules/ui/input/components/LightCopyIconButton.tsx
 msgid "Text copied to clipboard"
 msgstr "Text in die Zwischenablage kopiert"
@@ -31178,6 +31251,7 @@ msgid "To"
 msgstr "An"
 
 #. js-lingui-id: ecUA8p
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx
@@ -31753,10 +31827,10 @@ msgstr "Verwandeln Sie den KI-Tab in einen Posteingang, um Chats zu priorisieren
 msgid "Turns"
 msgstr "Interaktionen"
 
-#. js-lingui-id: ZKeDcZ
+#. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
-msgid "Turns appear here once a workflow or an app uses this agent"
-msgstr "Interaktionen werden hier angezeigt, sobald ein Workflow oder eine App diesen Agenten verwendet"
+msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
+msgstr ""
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33059,6 +33133,11 @@ msgstr "Verwenden Sie nur Buchstaben, Zahlen, Unterstriche, Punkte oder Bindestr
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Verwenden Sie unsere API oder fügen Sie Ihr erstes {objectLabel} manuell hinzu"
+
+#. js-lingui-id: TTyUsT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
+msgstr ""
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -34854,6 +34933,7 @@ msgid "Yes, I saw it"
 msgstr "Ja, ich habe sie gesehen"
 
 #. js-lingui-id: y/0uwd
+#: src/modules/chat/utils/getChatMessageDayLabel.ts
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 #: src/modules/log-console/components/LogConsoleTimeRangeDropdown.tsx

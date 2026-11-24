@@ -144,6 +144,18 @@ describe('compileFormulaExpression', () => {
     });
   });
 
+  it('should reject a composite field read without naming its part', () => {
+    expect(compile('amount * 2')).toMatchObject({
+      isValid: false,
+      errorCode: 'COMPOSITE_FIELD_WITHOUT_PART',
+      errorParams: { path: 'amount', subfieldName: 'amountMicros' },
+    });
+  });
+
+  it('should accept a part of a composite field', () => {
+    expect(compile('amount.amountMicros * 2')).toMatchObject({ isValid: true });
+  });
+
   it('should reject a to-many relation read outside an aggregate', () => {
     expect(compile('arrayLength(pointOfContacts)')).toMatchObject({
       isValid: false,

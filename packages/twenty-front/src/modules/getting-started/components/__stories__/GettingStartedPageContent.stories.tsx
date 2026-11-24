@@ -767,6 +767,7 @@ const buildFeaturedAppDetail = (
   requestedCapabilities: [],
   requestedIframeMediaPermissions: [],
   billsCredits: false,
+  billingPrices: [],
   objects: [],
   roles: [],
 });

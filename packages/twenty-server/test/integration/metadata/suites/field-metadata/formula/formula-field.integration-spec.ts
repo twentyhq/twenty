@@ -592,6 +592,54 @@ describe('Formula fields', () => {
     ]);
   });
 
+  it('should write the records whose filter compares to a formula through a field reference', async () => {
+    const response = await makeGraphqlApiRequest({
+      query: gql`
+        mutation UpdateFormulaGadgets($id: UUID!) {
+          updateFormulaGadgets(
+            filter: { id: { eq: $id }, price: { ltField: "total" } }
+            data: { name: "Widget" }
+          ) {
+            name
+          }
+        }
+      `,
+      variables: { id: gadgetId },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.updateFormulaGadgets).toEqual([
+      { name: 'Widget' },
+    ]);
+  });
+
+  it('should return the computed formula of a destroyed record', async () => {
+    const createResponse = await makeGraphqlApiRequest({
+      query: gql`
+        mutation {
+          createFormulaGadget(data: { name: "Doomed", price: 2, quantity: 3 }) {
+            id
+          }
+        }
+      `,
+    });
+    const destroyResponse = await makeGraphqlApiRequest({
+      query: gql`
+        mutation DestroyFormulaGadget($id: UUID!) {
+          destroyFormulaGadget(id: $id) {
+            total
+          }
+        }
+      `,
+      variables: { id: createResponse.body.data.createFormulaGadget.id },
+    });
+
+    expect(destroyResponse.body.errors).toBeUndefined();
+    expect(destroyResponse.body.data.destroyFormulaGadget).toEqual({
+      total: 6,
+    });
+  });
+
   it.each([
     {
       reason: 'an unknown field',
@@ -704,5 +752,27 @@ describe('Formula fields', () => {
         quantity: expect.any(String),
       },
     });
+  });
+
+  it('should refuse renaming a field a formula reads to a reserved name', async () => {
+    const [{ id: quantityFieldMetadataId }] = await global.testDataSource.query(
+      `SELECT "id" FROM core."fieldMetadata" WHERE "objectMetadataId" = $1 AND "name" = 'quantity'`,
+      [gadgetObjectMetadataId],
+    );
+    const { errors } = await updateOneFieldMetadata({
+      expectToFail: true,
+      input: {
+        idToUpdate: quantityFieldMetadataId,
+        updatePayload: { name: 'now' },
+      },
+      gqlFields: 'id',
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      JSON.stringify(
+        'A formula reads this field, so it cannot be named "now"',
+      ).slice(1, -1),
+    );
+    expect(await findGadget('total')).toEqual({ total: 125 });
   });
 });

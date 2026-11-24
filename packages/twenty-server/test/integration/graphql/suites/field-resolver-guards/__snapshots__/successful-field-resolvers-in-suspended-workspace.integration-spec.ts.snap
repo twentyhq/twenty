@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field resolvers in a suspended workspace should still refuse a root not allowed in a suspended workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "WORKSPACE_SUSPENDED",
+    "userFriendlyMessage": "This workspace is suspended. Choose a plan to reactivate it.",
+  },
+  "message": "Workspace is suspended",
+  "name": "ForbiddenError",
+}
+`;
