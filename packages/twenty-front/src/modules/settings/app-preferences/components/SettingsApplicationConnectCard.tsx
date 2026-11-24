@@ -22,9 +22,7 @@ export const SettingsApplicationConnectCard = ({
 }: SettingsApplicationConnectCardProps) => {
   const { startNewAppConnection } = useStartNewAppConnection({
     applicationId,
-    connectionProviderName: connectionProvider.name,
-    connectionProviderType: connectionProvider.type,
-    connectedAccountPrices: connectionProvider.connectedAccountPrices,
+    connectionProvider,
     redirectLocation,
   });
 
@@ -44,11 +42,7 @@ export const SettingsApplicationConnectCard = ({
       />
       <SettingsApplicationConnectionBillingValidationModal
         applicationId={applicationId}
-        connectionProviderName={connectionProvider.name}
-        connectionProviderType={connectionProvider.type}
-        connectionProviderDisplayName={connectionProvider.displayName}
-        connectionProviderLogoUrl={connectionProvider.logoUrl}
-        connectedAccountPrices={connectionProvider.connectedAccountPrices}
+        connectionProvider={connectionProvider}
         redirectLocation={redirectLocation}
       />
     </>

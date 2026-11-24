@@ -17,7 +17,6 @@ import { type IframeMediaPermission } from 'twenty-shared/types';
 import { ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
 import { MarketplaceAppObjectDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-object.dto';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
-import { ApplicationBillingPriceDTO } from 'src/engine/core-modules/application/dtos/application-billing-price.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 
@@ -144,8 +143,8 @@ export class MarketplaceAppDetailDTO {
   @Field(() => Boolean)
   billsCredits: boolean;
 
-  @Field(() => [ApplicationBillingPriceDTO])
-  billingPrices: ApplicationBillingPriceDTO[];
+  @Field(() => Boolean)
+  hasBillingPrices: boolean;
 
   @IsOptional()
   @Field(() => ApplicationContentDTO, { nullable: true })

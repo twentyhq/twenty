@@ -16,7 +16,7 @@ export class ApplicationBillingPriceService {
   ) {}
 
   shouldShowApplicationPrices(): boolean {
-    return this.twentyConfigService.get('IS_BILLING_ENABLED');
+    return this.twentyConfigService.isBillingEnabled();
   }
 
   async findConnectedAccountPrices({

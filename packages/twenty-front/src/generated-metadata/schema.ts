@@ -631,13 +631,30 @@ export type ApplicationAuthorization = {
 export type ApplicationBillingPrice = {
   __typename?: 'ApplicationBillingPrice';
   amountCents: Scalars['Int']['output'];
-  billingPeriod: Scalars['String']['output'];
-  currency: Scalars['String']['output'];
+  billingPeriod: ApplicationBillingPricePeriod;
+  currency: ApplicationBillingPriceCurrency;
   label: Scalars['String']['output'];
-  per?: Maybe<Scalars['String']['output']>;
-  type: Scalars['String']['output'];
+  per?: Maybe<ApplicationBillingPriceUnit>;
+  type: ApplicationBillingPriceType;
   universalIdentifier: Scalars['String']['output'];
 };
+
+export enum ApplicationBillingPriceCurrency {
+  USD = 'USD'
+}
+
+export enum ApplicationBillingPricePeriod {
+  MONTHLY = 'MONTHLY'
+}
+
+export enum ApplicationBillingPriceType {
+  RECURRING = 'RECURRING'
+}
+
+export enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT = 'CONNECTED_ACCOUNT',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
+}
 
 export type ApplicationCapabilityGrant = {
   __typename?: 'ApplicationCapabilityGrant';
@@ -3389,7 +3406,6 @@ export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
   aboutDescription?: Maybe<Scalars['String']['output']>;
   author?: Maybe<Scalars['String']['output']>;
-  billingPrices: Array<ApplicationBillingPrice>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
   connectUrl?: Maybe<Scalars['String']['output']>;
@@ -3398,6 +3414,7 @@ export type MarketplaceAppDetail = {
   description?: Maybe<Scalars['String']['output']>;
   emailSupport?: Maybe<Scalars['String']['output']>;
   galleryImages: Array<Scalars['String']['output']>;
+  hasBillingPrices: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   installCount: Scalars['Int']['output'];
   isListed: Scalars['Boolean']['output'];

@@ -4,7 +4,13 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
-import { ConnectedAccountScope } from '~/generated-metadata/graphql';
+import {
+  ApplicationBillingPriceCurrency,
+  ApplicationBillingPricePeriod,
+  ApplicationBillingPriceType,
+  ApplicationBillingPriceUnit,
+  ConnectedAccountScope,
+} from '~/generated-metadata/graphql';
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
@@ -221,10 +227,10 @@ describe('SettingsApplicationConnectionsSection', () => {
               universalIdentifier: 'price-1',
               label: 'Per connected account',
               amountCents: 700,
-              currency: 'USD',
-              billingPeriod: 'MONTHLY',
-              type: 'RECURRING',
-              per: 'CONNECTED_ACCOUNT',
+              currency: ApplicationBillingPriceCurrency.USD,
+              billingPeriod: ApplicationBillingPricePeriod.MONTHLY,
+              type: ApplicationBillingPriceType.RECURRING,
+              per: ApplicationBillingPriceUnit.CONNECTED_ACCOUNT,
             },
           ],
         },

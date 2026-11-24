@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
+import { type ApplicationConnectionProvider } from '~/generated-metadata/graphql';
 
 const StyledFooter = styled.div`
   display: flex;
@@ -15,29 +15,22 @@ const StyledFooter = styled.div`
 
 type SettingsApplicationAddConnectionButtonProps = {
   applicationId: string;
-  connectionProviderName: string;
-  connectionProviderType: string;
-  connectionProviderDisplayName: string;
-  connectionProviderLogoUrl: string | null;
-  connectedAccountPrices: ApplicationBillingPrice[];
+  connectionProvider: Pick<
+    ApplicationConnectionProvider,
+    'name' | 'type' | 'displayName' | 'logoUrl' | 'connectedAccountPrices'
+  >;
   redirectLocation?: string;
 };
 
 export const SettingsApplicationAddConnectionButton = ({
   applicationId,
-  connectionProviderName,
-  connectionProviderType,
-  connectionProviderDisplayName,
-  connectionProviderLogoUrl,
-  connectedAccountPrices,
+  connectionProvider,
   redirectLocation,
 }: SettingsApplicationAddConnectionButtonProps) => {
   const { t } = useLingui();
   const { startNewAppConnection } = useStartNewAppConnection({
     applicationId,
-    connectionProviderName,
-    connectionProviderType,
-    connectedAccountPrices,
+    connectionProvider,
     redirectLocation,
   });
 
@@ -51,11 +44,7 @@ export const SettingsApplicationAddConnectionButton = ({
       >{t`Add connection`}</Button>
       <SettingsApplicationConnectionBillingValidationModal
         applicationId={applicationId}
-        connectionProviderName={connectionProviderName}
-        connectionProviderType={connectionProviderType}
-        connectionProviderDisplayName={connectionProviderDisplayName}
-        connectionProviderLogoUrl={connectionProviderLogoUrl}
-        connectedAccountPrices={connectedAccountPrices}
+        connectionProvider={connectionProvider}
         redirectLocation={redirectLocation}
       />
     </StyledFooter>

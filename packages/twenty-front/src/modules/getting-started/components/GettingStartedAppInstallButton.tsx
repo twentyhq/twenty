@@ -86,7 +86,7 @@ export const GettingStartedAppInstallButton = ({
             marketplaceAppDetail.requestedIframeMediaPermissions
           }
           billsCredits={marketplaceAppDetail.billsCredits}
-          billingPrices={marketplaceAppDetail.billingPrices}
+          hasBillingPrices={marketplaceAppDetail.hasBillingPrices}
           isListed={marketplaceAppDetail.isListed}
           onAuthorize={install}
           isInstalling={isInstalling}

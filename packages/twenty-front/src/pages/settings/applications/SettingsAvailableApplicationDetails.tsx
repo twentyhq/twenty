@@ -24,11 +24,7 @@ import { useQuery } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
@@ -206,7 +202,7 @@ export const SettingsAvailableApplicationDetails = () => {
           undefined
         }
         pricingDescription={detail.pricingDescription ?? undefined}
-        isPaid={detail.billsCredits || isNonEmptyArray(detail.billingPrices)}
+        isPaid={detail.billsCredits || detail.hasBillingPrices}
         screenshots={
           builtInApplicationContent?.illustrations ?? detail.galleryImages
         }
@@ -300,7 +296,7 @@ export const SettingsAvailableApplicationDetails = () => {
           detail?.requestedIframeMediaPermissions
         }
         billsCredits={detail?.billsCredits}
-        billingPrices={detail?.billingPrices}
+        hasBillingPrices={detail?.hasBillingPrices}
         isListed={detail?.isListed}
         onAuthorize={install}
         isInstalling={isInstalling}

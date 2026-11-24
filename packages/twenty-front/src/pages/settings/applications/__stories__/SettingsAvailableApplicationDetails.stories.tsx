@@ -48,18 +48,7 @@ const LINKEDIN_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarket
     requestedCapabilities: [],
     requestedIframeMediaPermissions: [],
     billsCredits: false,
-    billingPrices: [
-      {
-        __typename: 'ApplicationBillingPrice',
-        universalIdentifier: '20202020-7c1d-4e2f-8a3b-000000000002',
-        label: 'Per connected account',
-        type: 'RECURRING',
-        billingPeriod: 'MONTHLY',
-        amountCents: 700,
-        currency: 'USD',
-        per: 'CONNECTED_ACCOUNT',
-      },
-    ],
+    hasBillingPrices: true,
     objects: [],
     roles: [],
   };
