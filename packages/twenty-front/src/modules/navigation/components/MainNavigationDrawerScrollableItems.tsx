@@ -27,14 +27,6 @@ const WorkspaceSectionDispatcher = lazy(() =>
   ),
 );
 
-const NavigationMenuContainerContent = lazy(() =>
-  import('@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent').then(
-    (module) => ({
-      default: module.NavigationMenuContainerContent,
-    }),
-  ),
-);
-
 const NavigationMenuTabContent = lazy(() =>
   import('@/navigation-menu-item/display/containers/components/NavigationMenuTabContent').then(
     (module) => ({
@@ -63,7 +55,7 @@ export const MainNavigationDrawerScrollableItems = () => {
         <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
           <NavigationMenuTabContent
             key={activeNavigationMenuTab.id}
-            tab={activeNavigationMenuTab}
+            containerId={activeNavigationMenuTab.id}
           />
         </Suspense>
       </StyledScrollableItemsContainer>
@@ -77,7 +69,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
         {!isCustomizableSidebarEnabled && <FavoritesSectionDispatcher />}
         {isCustomizableSidebarEnabled ? (
-          <NavigationMenuContainerContent containerId={null} />
+          <NavigationMenuTabContent containerId={null} />
         ) : (
           <WorkspaceSectionDispatcher />
         )}

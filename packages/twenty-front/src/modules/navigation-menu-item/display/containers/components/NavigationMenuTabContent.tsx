@@ -11,14 +11,13 @@ import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSideba
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuTabContentProps = {
-  tab: Pick<NavigationMenuItem, 'id'>;
+  containerId: string | null;
 };
 
 export const NavigationMenuTabContent = ({
-  tab,
+  containerId,
 }: NavigationMenuTabContentProps) => {
   const { t } = useLingui();
   const canCustomizeSidebar = useCanCustomizeSidebar();
@@ -26,17 +25,17 @@ export const NavigationMenuTabContent = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { topLevelItems } = useNavigationMenuContainerItems(tab.id);
+  const { topLevelItems } = useNavigationMenuContainerItems(containerId);
   const sections = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.SECTION,
-    containerId: tab.id,
+    containerId,
   });
 
   const isEmptyTab = topLevelItems.length === 0 && sections.length === 0;
 
   return (
     <>
-      <NavigationMenuContainerContent containerId={tab.id} />
+      <NavigationMenuContainerContent containerId={containerId} />
       {!isLayoutCustomizationModeEnabled &&
         isEmptyTab &&
         canCustomizeSidebar && (
