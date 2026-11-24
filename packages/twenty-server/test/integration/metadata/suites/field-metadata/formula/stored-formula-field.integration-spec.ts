@@ -106,7 +106,13 @@ describe('Stored formula fields', () => {
       })
     ).createStoredFormulaGadget.id;
 
-  const updateGadget = (id: string, data: Record<string, unknown>) =>
+  const updateGadget = ({
+    id,
+    data,
+  }: {
+    id: string;
+    data: Record<string, unknown>;
+  }) =>
     runGraphqlOperation({
       query: `mutation UpdateGadget($id: UUID!, $data: StoredFormulaGadgetUpdateInput!) {
         updateStoredFormulaGadget(id: $id, data: $data) { id }
@@ -284,13 +290,13 @@ describe('Stored formula fields', () => {
   });
 
   it('should recompute when an aggregated or filtered field changes', async () => {
-    await updateGadget(firstGadgetId, { price: 20 });
+    await updateGadget({ id: firstGadgetId, data: { price: 20 } });
 
     expect(await findSupplier(firstSupplierId)).toMatchObject({
       stockValue: 20,
     });
 
-    await updateGadget(firstGadgetId, { quantity: 0 });
+    await updateGadget({ id: firstGadgetId, data: { quantity: 0 } });
 
     expect(await findSupplier(firstSupplierId)).toMatchObject({
       stockValue: null,
@@ -311,7 +317,10 @@ describe('Stored formula fields', () => {
   });
 
   it('should recompute both records when a related record moves', async () => {
-    await updateGadget(firstGadgetId, { supplierId: secondSupplierId });
+    await updateGadget({
+      id: firstGadgetId,
+      data: { supplierId: secondSupplierId },
+    });
 
     expect(await findSupplier(firstSupplierId)).toMatchObject({
       gadgetCount: 1,

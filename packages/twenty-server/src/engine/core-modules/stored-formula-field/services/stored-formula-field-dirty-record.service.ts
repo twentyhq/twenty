@@ -103,8 +103,7 @@ export class StoredFormulaFieldDirtyRecordService {
     );
   }
 
-  // Covers a stalled job rerun while its first worker is still running: the rerun
-  // would otherwise take back the ids that worker is processing
+  // Keeps a stalled job's rerun from taking back the ids its still-running first worker holds
   async acquireRecomputeRun({
     workspaceId,
     objectMetadataId,

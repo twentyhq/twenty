@@ -19,7 +19,7 @@ const getHighlightKind = ({
   token,
   functionNames,
 }: {
-  token: ValidationRuleExpressionToken;
+  token: Pick<ValidationRuleExpressionToken, 'type' | 'text'>;
   functionNames: string[];
 }): ValidationRuleExpressionHighlightKind | null => {
   switch (token.type) {
@@ -41,10 +41,13 @@ const getHighlightKind = ({
   }
 };
 
-export const computeValidationRuleExpressionHighlights = (
-  expression: string,
-  functionNames: string[] = VALIDATION_RULE_FUNCTION_NAMES,
-): ValidationRuleExpressionHighlight[] =>
+export const computeValidationRuleExpressionHighlights = ({
+  expression,
+  functionNames = VALIDATION_RULE_FUNCTION_NAMES,
+}: {
+  expression: string;
+  functionNames?: string[];
+}): ValidationRuleExpressionHighlight[] =>
   tokenizeValidationRuleExpression(expression).flatMap((token) => {
     const kind = getHighlightKind({ token, functionNames });
 

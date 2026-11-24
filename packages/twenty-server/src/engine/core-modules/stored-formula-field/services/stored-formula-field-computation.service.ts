@@ -167,7 +167,6 @@ export class StoredFormulaFieldComputationService {
       : undefined;
   }
 
-  // Returns the ids of the records written
   private async recomputeRecordsInBatches({
     recordIds,
     ...batchParameters

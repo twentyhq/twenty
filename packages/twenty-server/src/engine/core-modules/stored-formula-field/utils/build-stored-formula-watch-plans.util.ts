@@ -56,11 +56,13 @@ export const buildStoredFormulaWatchPlans = ({
 
     return plan;
   };
-  const findBoundFlatFieldMetadata = (universalIdentifier: string) =>
-    findFlatEntityByUniversalIdentifier({
-      flatEntityMaps: flatFieldMetadataMaps,
-      universalIdentifier,
-    });
+  const findBoundFlatFieldMetadata = (universalIdentifier?: string) =>
+    isDefined(universalIdentifier)
+      ? findFlatEntityByUniversalIdentifier({
+          flatEntityMaps: flatFieldMetadataMaps,
+          universalIdentifier,
+        })
+      : undefined;
 
   for (const { objectMetadataId, settings } of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
@@ -76,18 +78,13 @@ export const buildStoredFormulaWatchPlans = ({
 
     for (const [path, universalIdentifier] of Object.entries(bindings)) {
       const [rootSegment, memberSegment] = path.split('.');
-      const rootUniversalIdentifier = isDefined(rootSegment)
-        ? bindings[rootSegment]
-        : undefined;
-      const aggregatedRelation = isDefined(rootUniversalIdentifier)
-        ? resolveFormulaAggregatedRelation({
-            relationFlatFieldMetadata: findBoundFlatFieldMetadata(
-              rootUniversalIdentifier,
-            ),
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          })
-        : undefined;
+      const aggregatedRelation = resolveFormulaAggregatedRelation({
+        relationFlatFieldMetadata: findBoundFlatFieldMetadata(
+          bindings[rootSegment ?? ''],
+        ),
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
       const boundFieldName =
         findBoundFlatFieldMetadata(universalIdentifier)?.name;
 

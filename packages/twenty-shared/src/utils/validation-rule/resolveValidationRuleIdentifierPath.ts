@@ -182,7 +182,7 @@ export const resolveValidationRuleIdentifierPath = ({
   const isToManyRelation =
     rootField.type === FieldMetadataType.RELATION &&
     rootField.relationType === RelationType.ONE_TO_MANY;
-  // A one-to-many path resolves here, and only aggregates over it may read it
+  // Only an aggregate over the relation may read a one-to-many path
   const isReadableRelation =
     rootField.type === FieldMetadataType.RELATION &&
     (rootField.relationType === RelationType.MANY_TO_ONE || isToManyRelation);

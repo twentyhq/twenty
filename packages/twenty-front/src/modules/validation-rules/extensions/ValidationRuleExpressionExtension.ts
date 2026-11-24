@@ -108,10 +108,10 @@ export const ValidationRuleExpressionExtension =
             decorations: ({ doc }) =>
               DecorationSet.create(
                 doc,
-                computeValidationRuleExpressionHighlights(
-                  getValidationRuleEditorText(doc),
+                computeValidationRuleExpressionHighlights({
+                  expression: getValidationRuleEditorText(doc),
                   functionNames,
-                ).flatMap(({ kind, start, end }) => {
+                }).flatMap(({ kind, start, end }) => {
                   const from = getValidationRuleEditorPositionFromTextOffset(
                     doc,
                     start,

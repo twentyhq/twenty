@@ -4,7 +4,10 @@ describe('computeValidationRuleExpressionHighlights', () => {
   it('should colour only the function names it is given', () => {
     const expression = 'count(tasks)';
     const toHighlightedTexts = (functionNames?: string[]) =>
-      computeValidationRuleExpressionHighlights(expression, functionNames).map(
+      computeValidationRuleExpressionHighlights({
+        expression,
+        functionNames,
+      }).map(
         ({ kind, start, end }) => `${kind}:${expression.slice(start, end)}`,
       );
 
@@ -16,7 +19,7 @@ describe('computeValidationRuleExpressionHighlights', () => {
     const expression = 'isDefined(amount) and stage != "WON" or employees > 3';
 
     expect(
-      computeValidationRuleExpressionHighlights(expression).map(
+      computeValidationRuleExpressionHighlights({ expression }).map(
         ({ kind, start, end }) => `${kind}:${expression.slice(start, end)}`,
       ),
     ).toEqual([

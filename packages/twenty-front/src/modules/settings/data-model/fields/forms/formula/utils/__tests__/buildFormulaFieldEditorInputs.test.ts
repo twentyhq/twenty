@@ -1,9 +1,12 @@
 import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
+import { type FieldMetadataFormula } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
-const COMPANY_FORMULA_SETTINGS_BY_FIELD_NAME: Record<string, unknown> = {
+const COMPANY_FORMULA_SETTINGS_BY_FIELD_NAME: Partial<
+  Record<string, { formula: FieldMetadataFormula }>
+> = {
   employees: { formula: { expression: 'arrayLength(tagline)' } },
   idealCustomerProfile: {
     formula: { expression: 'count(people) > 10', evaluation: 'STORED' },

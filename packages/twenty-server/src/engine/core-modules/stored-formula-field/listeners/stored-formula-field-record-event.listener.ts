@@ -17,10 +17,11 @@ type RecordEventBatch = Pick<
   'workspaceId' | 'objectMetadata' | 'events'
 >;
 
-type MarkDirtyParameters = RecordEventBatch & {
-  watchPlans: StoredFormulaWatchPlans;
-  isRecordUpdate: boolean;
-};
+type MarkDirtyParameters<TWatchPlanName extends keyof StoredFormulaWatchPlans> =
+  RecordEventBatch & {
+    watchPlans: Pick<StoredFormulaWatchPlans, TWatchPlanName>;
+    isRecordUpdate: boolean;
+  };
 
 @Injectable()
 export class StoredFormulaFieldRecordEventListener {
@@ -90,7 +91,7 @@ export class StoredFormulaFieldRecordEventListener {
     events,
     watchPlans: { watchedOwnFieldNamesByObjectMetadataId },
     isRecordUpdate,
-  }: MarkDirtyParameters): Promise<void> {
+  }: MarkDirtyParameters<'watchedOwnFieldNamesByObjectMetadataId'>): Promise<void> {
     const watchedOwnFieldNames =
       watchedOwnFieldNamesByObjectMetadataId[objectMetadata.id];
 
@@ -125,7 +126,7 @@ export class StoredFormulaFieldRecordEventListener {
     events,
     watchPlans: { relatedRecordWatchPlansByObjectMetadataId },
     isRecordUpdate,
-  }: MarkDirtyParameters): Promise<void> {
+  }: MarkDirtyParameters<'relatedRecordWatchPlansByObjectMetadataId'>): Promise<void> {
     const watchPlans =
       relatedRecordWatchPlansByObjectMetadataId[objectMetadata.id];
 
