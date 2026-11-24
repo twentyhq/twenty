@@ -1698,6 +1698,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'rowLevelPermissionRuleUniversalIdentifier',
     },
+    sourceFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'sourceFieldMetadataUniversalIdentifier',
+    },
   },
   objectPermission: {
     roleId: {
@@ -1793,6 +1798,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty:
         'workspaceMemberRelationFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty:
+        'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterValues: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
     },
     deletedAt: {
       toCompare: true,
@@ -2494,6 +2510,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       isOverridable: true,
     },
     color: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    description: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,

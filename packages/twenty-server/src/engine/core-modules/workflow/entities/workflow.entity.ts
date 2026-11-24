@@ -27,6 +27,7 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { type PrivatableEntity } from 'src/engine/permissions/metadata-permissions/types/privatable-entity.type';
 
 @Entity({ name: 'workflow', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -39,7 +40,7 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
   'isPrivate',
   'createdByUserWorkspaceId',
 ])
-export class WorkflowEntity extends SyncableEntity {
+export class WorkflowEntity extends SyncableEntity implements PrivatableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -69,7 +70,7 @@ export class WorkflowEntity extends SyncableEntity {
   @Column({ type: 'uuid', nullable: true })
   lastPublishedCoreWorkflowVersionId: string | null;
 
-  // Enforced where ids resolve (CoreWorkflowIdResolutionService), so a private workflow's versions and steps are unreachable too.
+  // Enforced where ids resolve (CoreWorkflowAccessService), so a private workflow's versions and steps are unreachable too.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_IS_PRIVATE_UPGRADE_COMMAND_NAME,
   })
