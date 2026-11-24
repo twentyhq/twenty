@@ -121,6 +121,19 @@ export const buildFormulaComputedColumnShapes = ({
         },
       ];
 
+      const findCompiledExpression = (
+        compositePropertyName: string | undefined,
+      ): string | undefined => {
+        if (!compilation.isValid) {
+          return undefined;
+        }
+
+        return compilation.expressions.find(
+          (compiledExpression) =>
+            compiledExpression.compositePropertyName === compositePropertyName,
+        )?.expression;
+      };
+
       return columns.map(
         ({ columnName, columnFieldMetadataType, compositePropertyName }) => {
           const columnType = fieldMetadataTypeToColumnType(
@@ -130,13 +143,7 @@ export const buildFormulaComputedColumnShapes = ({
           return {
             columnName,
             sqlType: columnType === ENUM_COLUMN_TYPE ? enumSqlType : columnType,
-            expression: compilation.isValid
-              ? compilation.expressions.find(
-                  (compiledExpression) =>
-                    compiledExpression.compositePropertyName ===
-                    compositePropertyName,
-                )?.expression
-              : undefined,
+            expression: findCompiledExpression(compositePropertyName),
             dependencies: [...dependencyByKey.values()],
           };
         },
