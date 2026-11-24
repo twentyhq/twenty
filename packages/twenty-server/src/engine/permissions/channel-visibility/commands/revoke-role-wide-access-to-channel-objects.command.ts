@@ -14,6 +14,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
+import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -43,7 +44,7 @@ const NO_RECORDS_PERMISSIONS = {
 @Command({
   name: 'channel-visibility:revoke-role-wide-access',
   description:
-    'Revoke the role wide access of user roles to message and calendar objects, and to message attachments, in workspaces enforcing channel visibility through individual roles',
+    'Revoke the role wide access of user roles to message and calendar objects, and to message attachments, in workspaces enforcing channel visibility through individual roles, then schedule their individual roles sync',
 })
 export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -51,6 +52,7 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,
   ) {
     super(workspaceIteratorService);
   }
@@ -343,6 +345,12 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
           `Failed to revoke role wide access to channel objects for workspace ${workspaceId}`,
         );
       }
+    }
+
+    if (!options.dryRun) {
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+        workspaceId,
+      );
     }
   }
 }
