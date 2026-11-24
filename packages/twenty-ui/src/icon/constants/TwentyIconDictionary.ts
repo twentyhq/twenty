@@ -49,6 +49,16 @@ export const TWENTY_ICON_DICTIONARY = [
     avoidWhen: 'Representing a record instance or the complete data model.',
   },
   {
+    key: 'all-objects',
+    label: 'All Objects',
+    category: 'data-model',
+    iconName: 'IconDatabase',
+    tablerName: 'database',
+    keywords: ['all objects', 'every object', 'object defaults'],
+    useWhen: 'Representing a setting that applies to every object at once.',
+    avoidWhen: 'Representing one object or the data model schema.',
+  },
+  {
     key: 'field',
     label: 'Field',
     category: 'data-model',

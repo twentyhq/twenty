@@ -35,14 +35,14 @@ const StyledRow = styled.div`
 const StyledUploadArea = styled.div<{ hasFiles: boolean; hasPicker: boolean }>`
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
-  border-bottom-left-radius: ${themeCssVariables.border.radius.sm};
+  border-bottom-left-radius: ${themeCssVariables.border.radius.md};
   border-bottom-right-radius: ${({ hasPicker }) =>
-    hasPicker ? '0' : themeCssVariables.border.radius.sm};
+    hasPicker ? '0' : themeCssVariables.border.radius.md};
   border-right: ${({ hasPicker }) =>
     hasPicker ? 'none' : `1px solid ${themeCssVariables.border.color.medium}`};
-  border-top-left-radius: ${themeCssVariables.border.radius.sm};
+  border-top-left-radius: ${themeCssVariables.border.radius.md};
   border-top-right-radius: ${({ hasPicker }) =>
-    hasPicker ? '0' : themeCssVariables.border.radius.sm};
+    hasPicker ? '0' : themeCssVariables.border.radius.md};
   display: flex;
   flex: 1;
   flex-direction: column;

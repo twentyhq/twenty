@@ -9,7 +9,6 @@ import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -43,7 +42,7 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
 
   const { label, Icon } = getObjectOperationsSummary({
     operations: enabledSelectedOperations,
-    isAdvanced: enabledSelectedOperations.length > 1,
+    isAdvanced: false,
   });
 
   const selectControl = (
@@ -66,8 +65,9 @@ export const SettingsRolePermissionsObjectOperationsSelect = ({
         {selectControl}
       </Dropdown.Trigger>
       <DropdownContent
-        width={GenericDropdownContentWidth.ExtraLarge}
+        width="var(--anchor-width)"
         align="end"
+        sideOffset={4}
         aria-label={t`Allowed actions`}
       >
         <Dropdown.SelectionGroup

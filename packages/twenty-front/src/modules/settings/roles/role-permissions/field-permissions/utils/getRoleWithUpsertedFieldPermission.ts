@@ -1,20 +1,29 @@
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { produce } from 'immer';
+import { isDefined } from 'twenty-shared/utils';
 import { type FieldPermission } from '~/generated-metadata/graphql';
 
 export const getRoleWithUpsertedFieldPermission = (
   role: RoleWithPartialMembers,
   fieldPermissionToUpsert: FieldPermission,
 ) => {
+  const fieldPermissionsKey = isDefined(
+    fieldPermissionToUpsert.rowLevelPermissionPredicateGroupId,
+  )
+    ? 'rowLevelPermissionFieldPermissions'
+    : 'fieldPermissions';
+
   return produce(role, (draftRole) => {
-    if (!isNonEmptyArray(draftRole.fieldPermissions)) {
-      draftRole.fieldPermissions = [fieldPermissionToUpsert];
+    const fieldPermissions = draftRole[fieldPermissionsKey];
+
+    if (!isNonEmptyArray(fieldPermissions)) {
+      draftRole[fieldPermissionsKey] = [fieldPermissionToUpsert];
 
       return;
     }
 
-    const indexOfExistingFieldPermission = draftRole.fieldPermissions.findIndex(
+    const indexOfExistingFieldPermission = fieldPermissions.findIndex(
       (fieldPermissionToFind) =>
         fieldPermissionToFind.fieldMetadataId ===
           fieldPermissionToUpsert.fieldMetadataId &&
@@ -23,10 +32,10 @@ export const getRoleWithUpsertedFieldPermission = (
     );
 
     if (indexOfExistingFieldPermission > -1) {
-      draftRole.fieldPermissions[indexOfExistingFieldPermission] =
+      fieldPermissions[indexOfExistingFieldPermission] =
         fieldPermissionToUpsert;
     } else {
-      draftRole.fieldPermissions.push(fieldPermissionToUpsert);
+      fieldPermissions.push(fieldPermissionToUpsert);
     }
 
     return draftRole;

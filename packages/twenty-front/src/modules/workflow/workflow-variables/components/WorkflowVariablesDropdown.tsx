@@ -10,28 +10,14 @@ import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
-import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useTheme } from 'twenty-ui/theme';
+import { VariablePickerTrigger } from '@/ui/input/components/VariablePickerTrigger';
 import { useLingui } from '@lingui/react/macro';
-
-const StyledDropdownVariableButtonContainer = styled.div<{
-  disabled?: boolean;
-}>`
-  align-items: center;
-  border-bottom-right-radius: ${themeCssVariables.border.radius.sm};
-  border-top-right-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.tertiary};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[2]};
-  user-select: none;
-`;
 
 type WorkflowVariablesDropdownProps = {
   disabled?: boolean;
@@ -97,7 +83,7 @@ export const WorkflowVariablesDropdown = ({
         delay={TooltipDelay.mediumDelay}
         sideOffset={5}
       >
-        <StyledDropdownVariableButtonContainer
+        <VariablePickerTrigger
           disabled={true}
           data-variable-picker-disabled-anchor={dropdownId}
         >
@@ -105,7 +91,7 @@ export const WorkflowVariablesDropdown = ({
             size={theme.icon.size.md}
             color={theme.font.color.light}
           />
-        </StyledDropdownVariableButtonContainer>
+        </VariablePickerTrigger>
       </Tooltip>
     );
   }
@@ -126,7 +112,7 @@ export const WorkflowVariablesDropdown = ({
       <Dropdown.Trigger
         aria-label={t`Insert variable`}
         nativeButton={false}
-        render={<StyledDropdownVariableButtonContainer />}
+        render={<VariablePickerTrigger />}
       >
         <IconVariablePlus size={theme.icon.size.md} />
       </Dropdown.Trigger>

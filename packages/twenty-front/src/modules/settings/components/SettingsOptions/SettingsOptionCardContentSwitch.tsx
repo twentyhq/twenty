@@ -26,11 +26,17 @@ const StyledSettingsCardDescriptionText = styled.span`
   display: block;
 `;
 
-const StyledSettingsCardSwitchButtonContainer = styled.span`
+const StyledSettingsCardTrailingContainer = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[3]};
   margin-left: auto;
+`;
+
+const StyledSettingsCardSwitchButtonContainer = styled.span`
+  align-items: center;
+  display: flex;
 `;
 
 type SettingsOptionCardContentSwitchProps = {
@@ -41,6 +47,7 @@ type SettingsOptionCardContentSwitchProps = {
   disabled?: boolean;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  adornment?: React.ReactNode;
 };
 
 export const SettingsOptionCardContentSwitch = ({
@@ -51,6 +58,7 @@ export const SettingsOptionCardContentSwitch = ({
   disabled = false,
   checked,
   onChange,
+  adornment,
 }: SettingsOptionCardContentSwitchProps) => {
   const switchId = useId();
   const titleId = `${switchId}-title`;
@@ -89,17 +97,22 @@ export const SettingsOptionCardContentSwitch = ({
               </StyledSettingsCardDescription>
             )}
           </StyledSettingsCardTextContainer>
-          <Card.Control render={<StyledSettingsCardSwitchButtonContainer />}>
-            <Switch
-              id={switchId}
-              aria-labelledby={titleId}
-              aria-describedby={hasDescription ? descriptionId : undefined}
-              checked={checked}
-              onCheckedChange={onChange}
-              disabled={disabled}
-              size="sm"
-            />
-          </Card.Control>
+          <StyledSettingsCardTrailingContainer>
+            {isDefined(adornment) && (
+              <Card.Control render={<span />}>{adornment}</Card.Control>
+            )}
+            <Card.Control render={<StyledSettingsCardSwitchButtonContainer />}>
+              <Switch
+                id={switchId}
+                aria-labelledby={titleId}
+                aria-describedby={hasDescription ? descriptionId : undefined}
+                checked={checked}
+                onCheckedChange={onChange}
+                disabled={disabled}
+                size="sm"
+              />
+            </Card.Control>
+          </StyledSettingsCardTrailingContainer>
         </StyledSettingsCardSwitchContent>
       </Card.Content>
       {divider && <SettingsCardSeparator />}

@@ -17,12 +17,12 @@ const StyledFilterRow = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: row;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledOperandSelectContainer = styled.div`
   text-transform: lowercase;
-  width: ${themeCssVariables.spacing[13]};
+  width: 100px;
 `;
 
 type SettingsRoleRuleConditionFilterRowProps = {

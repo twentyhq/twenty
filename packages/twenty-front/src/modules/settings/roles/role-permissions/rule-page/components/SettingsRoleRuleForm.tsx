@@ -22,10 +22,10 @@ import {
   isRecordFilterValueValid,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
-import { styled } from '@linaria/react';
 import { IconCheck, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { useTheme } from 'twenty-ui/theme';
+import { Section } from 'twenty-ui/components/layout';
 import { useQuery } from '@apollo/client/react';
 import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import {
@@ -33,11 +33,6 @@ import {
   FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-
-const StyledTrailingActions = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
 
 type SettingsRoleRuleFormProps = {
   roleId: string;
@@ -111,7 +106,11 @@ export const SettingsRoleRuleForm = ({
 
   const ruleBreadcrumbLinks = [
     { children: objectLabelPlural },
-    { children: isRuleSaved ? t`Rule` : t`New rule` },
+    {
+      children: isRuleSaved
+        ? t`Record-level permission`
+        : t`New record-level permission`,
+    },
   ];
 
   const breadcrumbLinks =
@@ -177,27 +176,17 @@ export const SettingsRoleRuleForm = ({
       links={breadcrumbLinks}
       secondaryBar={
         <SettingsWizardStepBar
-          label={t`Row-level permission`}
+          label={t`Record-level permission`}
           onBack={handleBack}
           trailing={
-            <StyledTrailingActions>
-              {isRuleSaved && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  startIcon={<IconTrash />}
-                  onClick={handleDeleteRule}
-                >{t`Delete rule`}</Button>
-              )}
-              <NavigationButton
-                size="sm"
-                to={finishButtonPath}
-                disabled={isFinishDisabled}
-                variant="solid"
-                color="accent"
-                startIcon={<IconCheck />}
-              >{t`Finish`}</NavigationButton>
-            </StyledTrailingActions>
+            <NavigationButton
+              size="sm"
+              to={finishButtonPath}
+              disabled={isFinishDisabled}
+              variant="solid"
+              color="accent"
+              startIcon={<IconCheck />}
+            >{t`Finish`}</NavigationButton>
           }
         />
       }
@@ -215,6 +204,21 @@ export const SettingsRoleRuleForm = ({
             objectMetadataItem={objectMetadataItem}
             rule={rule}
           />
+        )}
+        {isRuleSaved && (
+          <Section.Root>
+            <Section.Header
+              title={t`Danger zone`}
+              description={t`Remove this record-level permission from the role.`}
+            />
+            <Button
+              startIcon={<IconTrash />}
+              size="sm"
+              variant="outline"
+              color="danger"
+              onClick={handleDeleteRule}
+            >{t`Delete record-level permission`}</Button>
+          </Section.Root>
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>

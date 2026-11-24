@@ -13,6 +13,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
+  type FieldPermission,
   type Role,
   CreateOneRoleDocument,
   GetRolesDocument,
@@ -97,6 +98,49 @@ export const useSaveDraftRoleToDB = ({
     dirtyFieldPermissions: dirtyFields.fieldPermissions ?? [],
     persistedFieldPermissions: settingsPersistedRole?.fieldPermissions ?? [],
   });
+
+  const draftPredicateGroupIds = new Set(
+    (draftRole.rowLevelPermissionPredicateGroups ?? []).map(({ id }) => id),
+  );
+
+  const ruleFieldPermissionsToUpsert = getFieldPermissionsToUpsert({
+    dirtyFieldPermissions: dirtyFields.rowLevelPermissionFieldPermissions ?? [],
+    persistedFieldPermissions:
+      settingsPersistedRole?.rowLevelPermissionFieldPermissions ?? [],
+  }).filter(
+    ({ rowLevelPermissionPredicateGroupId }) =>
+      isDefined(rowLevelPermissionPredicateGroupId) &&
+      draftPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
+  );
+
+  const upsertFieldPermissionsForRole = async ({
+    targetRoleId,
+    fieldPermissions,
+  }: {
+    targetRoleId: string;
+    fieldPermissions: FieldPermission[];
+  }) => {
+    if (!isNonEmptyArray(fieldPermissions)) {
+      return;
+    }
+
+    await upsertFieldPermissions({
+      variables: {
+        upsertFieldPermissionsInput: {
+          roleId: targetRoleId,
+          fieldPermissions: fieldPermissions.map((fieldPermission) => ({
+            objectMetadataId: fieldPermission.objectMetadataId,
+            fieldMetadataId: fieldPermission.fieldMetadataId,
+            rowLevelPermissionPredicateGroupId:
+              fieldPermission.rowLevelPermissionPredicateGroupId,
+            canReadFieldValue: fieldPermission.canReadFieldValue,
+            canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
+          })),
+        },
+      },
+      refetchQueries: [getOperationName(GET_ROLES) ?? ''],
+    });
+  };
 
   const createNewRole = async () => {
     const { data } = await createRole({
@@ -213,27 +257,19 @@ export const useSaveDraftRoleToDB = ({
       await upsertObjectPermissionsForRole(roleId);
     }
 
-    if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
-      await upsertFieldPermissions({
-        variables: {
-          upsertFieldPermissionsInput: {
-            roleId: roleId,
-            fieldPermissions:
-              fieldPermissionsToUpsert.map((fieldPermission) => ({
-                objectMetadataId: fieldPermission.objectMetadataId,
-                fieldMetadataId: fieldPermission.fieldMetadataId,
-                canReadFieldValue: fieldPermission.canReadFieldValue,
-                canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
-              })) ?? [],
-          },
-        },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-      });
-    }
+    await upsertFieldPermissionsForRole({
+      targetRoleId: roleId,
+      fieldPermissions: fieldPermissionsToUpsert,
+    });
 
     if (shouldUpsertRowLevelPermissionRules) {
       await upsertRowLevelPermissionRulesForRole(roleId);
     }
+
+    await upsertFieldPermissionsForRole({
+      targetRoleId: roleId,
+      fieldPermissions: ruleFieldPermissionsToUpsert,
+    });
 
     return roleId;
   };
@@ -292,27 +328,19 @@ export const useSaveDraftRoleToDB = ({
       await upsertObjectPermissionsForRole(targetRoleId);
     }
 
-    if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
-      await upsertFieldPermissions({
-        variables: {
-          upsertFieldPermissionsInput: {
-            roleId: targetRoleId,
-            fieldPermissions:
-              fieldPermissionsToUpsert.map((fieldPermission) => ({
-                objectMetadataId: fieldPermission.objectMetadataId,
-                fieldMetadataId: fieldPermission.fieldMetadataId,
-                canReadFieldValue: fieldPermission.canReadFieldValue,
-                canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
-              })) ?? [],
-          },
-        },
-        refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-      });
-    }
+    await upsertFieldPermissionsForRole({
+      targetRoleId: targetRoleId,
+      fieldPermissions: fieldPermissionsToUpsert,
+    });
 
     if (shouldUpsertRowLevelPermissionRules) {
       await upsertRowLevelPermissionRulesForRole(targetRoleId);
     }
+
+    await upsertFieldPermissionsForRole({
+      targetRoleId: targetRoleId,
+      fieldPermissions: ruleFieldPermissionsToUpsert,
+    });
   };
 
   const assignEntitiesToRole = async (targetRoleId: string) => {

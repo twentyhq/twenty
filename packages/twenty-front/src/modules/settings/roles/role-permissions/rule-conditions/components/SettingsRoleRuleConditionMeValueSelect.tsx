@@ -255,6 +255,7 @@ export const SettingsRoleRuleConditionMeValueSelect = ({
           onValueChange={setSearchInput}
         />
       </Field.Root>
+      <Dropdown.Separator />
       <Dropdown.Section>
         {filteredMenuItems.map((item) => (
           <Dropdown.OptionItem

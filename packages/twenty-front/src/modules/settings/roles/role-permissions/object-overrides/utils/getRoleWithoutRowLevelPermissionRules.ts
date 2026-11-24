@@ -44,5 +44,11 @@ export const getRoleWithoutRowLevelPermissionRules = ({
         !isDefined(rowLevelPermissionPredicateGroupId) ||
         !removedPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
     ),
+    rowLevelPermissionFieldPermissions:
+      role.rowLevelPermissionFieldPermissions?.filter(
+        ({ rowLevelPermissionPredicateGroupId }) =>
+          !isDefined(rowLevelPermissionPredicateGroupId) ||
+          !removedPredicateGroupIds.has(rowLevelPermissionPredicateGroupId),
+      ),
   };
 };
