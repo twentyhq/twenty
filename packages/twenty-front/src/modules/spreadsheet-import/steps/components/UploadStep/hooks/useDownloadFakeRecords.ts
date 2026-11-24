@@ -141,7 +141,8 @@ export const useDownloadFakeRecords = () => {
   const downloadSample = () => {
     const { headerRow, bodyRows } = buildTableWithFakeRecords();
     const csvContent = formatToCsvContent([headerRow, ...bodyRows]);
-    const blob = new Blob(csvContent, { type: 'text/csv' });
+    // UTF-8 BOM so Excel detects the encoding of translated headers
+    const blob = new Blob(['\uFEFF', ...csvContent], { type: 'text/csv' });
     saveAs(blob, `${objectMetadataItem.labelPlural.toLowerCase()}-sample.csv`);
   };
 
