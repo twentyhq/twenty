@@ -24,6 +24,7 @@ import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/over
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 import {
   ViewException,
   ViewExceptionCode,
@@ -78,9 +79,19 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
 
   const {
     translations: rawTranslations,
-    ...updateViewInputWithoutTranslations
+    isPrivate: rawIsPrivate,
+    visibility,
+    ...updateViewInputWithoutTranslationsAndPrivacy
   } = rawUpdateViewInput;
   const translations = rawTranslations ?? [];
+  const isPrivate = resolveViewIsPrivateFromInput({
+    isPrivate: rawIsPrivate,
+    visibility,
+  });
+  const updateViewInputWithoutTranslations = {
+    ...updateViewInputWithoutTranslationsAndPrivacy,
+    ...(isDefined(isPrivate) && { isPrivate }),
+  };
 
   const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
     translations,
@@ -221,12 +232,9 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.universalOverrides = null;
   }
 
-  // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
-  // This prevents the view from disappearing for the user making the change
   if (
-    isDefined(rawUpdateViewInput.visibility) &&
-    rawUpdateViewInput.visibility === 'UNLISTED' &&
-    existingFlatViewToUpdate.visibility === 'WORKSPACE' &&
+    isPrivate &&
+    !existingFlatViewToUpdate.isPrivate &&
     isDefined(userWorkspaceId)
   ) {
     flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
