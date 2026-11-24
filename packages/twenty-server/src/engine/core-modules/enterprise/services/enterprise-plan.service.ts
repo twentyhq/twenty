@@ -394,6 +394,8 @@ export class EnterprisePlanService implements OnModuleInit {
       return false;
     }
 
+    this.refreshKeyPayload();
+
     if (!isDefined(this.cachedKeyPayload)) {
       return false;
     }
