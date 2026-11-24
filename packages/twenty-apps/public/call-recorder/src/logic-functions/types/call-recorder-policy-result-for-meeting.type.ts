@@ -4,4 +4,5 @@ export type CallRecorderPolicyResultForMeeting = {
   calendarEventIds: string[];
   requestingCalendarEventIds: string[];
   calendarEventIdsWithRecordingOn: string[];
+  calendarEventIdsWithAutoRecording: string[];
 };

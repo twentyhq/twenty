@@ -6,6 +6,7 @@ import { type UnipileUser } from 'src/unipile/types/unipile-user.type';
 
 export const createLinkedinCounterpartResolver = (
   unipileAccountId: string,
+  { deadlineAtMs }: { deadlineAtMs?: number } = {},
 ): LinkedinCounterpartResolver => {
   const resolvedCounterpartById = new Map<string, UnipileUser>();
 
@@ -20,6 +21,7 @@ export const createLinkedinCounterpartResolver = (
     const counterpart = await withLinkedinPublicIdentifier({
       unipileAccountId,
       user,
+      deadlineAtMs,
       shouldLookUp: isDefined(shouldLookUp)
         ? async () => {
             isLookupDeclined = !(await shouldLookUp());

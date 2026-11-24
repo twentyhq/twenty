@@ -11,6 +11,11 @@ input ActivateWorkspaceInput {
   displayName: String
 }
 
+input AddAgentChatThreadParticipantsInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]!
+}
+
 input AddQuerySubscriptionInput {
   eventStreamId: String!
   operationSignature: JSON!
@@ -1995,6 +2000,7 @@ input CreateViewInput {
   icon: String!
   id: UUID
   isCompact: Boolean = false
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -2008,10 +2014,11 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -2309,6 +2316,7 @@ enum EngineComponentKey {
   GO_TO_WORKFLOWS
   HIDE_DELETED_RECORDS
   IMPORT_RECORDS
+  MANAGE_AI_CHAT_PARTICIPANTS
   MARK_AI_CHAT_AS_DONE
   MARK_AI_CHAT_AS_READ
   MARK_AI_CHAT_AS_UNREAD
@@ -3533,6 +3541,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  addAgentChatThreadParticipants(input: AddAgentChatThreadParticipantsInput!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
@@ -5877,6 +5886,7 @@ input UpdateViewInput {
   icon: String
   id: UUID
   isCompact: Boolean
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -5892,7 +5902,7 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6428,6 +6438,7 @@ type View {
   isActive: Boolean!
   isCompact: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -6438,6 +6449,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
@@ -6449,7 +6461,7 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility!
+  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6636,6 +6648,16 @@ enum ViewKey {
 enum ViewOpenRecordIn {
   RECORD_PAGE
   SIDE_PANEL
+}
+
+enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE
+  INBOX_CHANNEL_OPEN
+  INBOX_CHANNEL_SNOOZED
+  INBOX_DONE
+  INBOX_MENTIONS
+  INBOX_OPEN
+  INBOX_SNOOZED
 }
 
 type ViewSort {
