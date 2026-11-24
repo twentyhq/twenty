@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: jest.fn(),
@@ -8,6 +9,8 @@ jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(),
 }));
+
+const Wrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
 
 describe('useAttachments', () => {
   afterEach(() => {
@@ -21,7 +24,7 @@ describe('useAttachments', () => {
     ];
     const mockTargetableObject = {
       id: '1',
-      targetObjectNameSingular: 'SomeObject',
+      targetObjectNameSingular: 'person',
     };
 
     const useFindManyRecordsMock = jest.requireMock(
@@ -35,7 +38,9 @@ describe('useAttachments', () => {
     });
     useIsFeatureEnabledMock.useIsFeatureEnabled.mockReturnValue(false);
 
-    const { result } = renderHook(() => useAttachments(mockTargetableObject));
+    const { result } = renderHook(() => useAttachments(mockTargetableObject), {
+      wrapper: Wrapper,
+    });
 
     expect(result.current.attachments).toEqual(mockAttachments);
   });
@@ -43,7 +48,7 @@ describe('useAttachments', () => {
   it('handles case when there are no attachments', () => {
     const mockTargetableObject = {
       id: '1',
-      targetObjectNameSingular: 'SomeObject',
+      targetObjectNameSingular: 'person',
     };
 
     const useFindManyRecordsMock = jest.requireMock(
@@ -55,7 +60,9 @@ describe('useAttachments', () => {
     useFindManyRecordsMock.useFindManyRecords.mockReturnValue({ records: [] });
     useIsFeatureEnabledMock.useIsFeatureEnabled.mockReturnValue(false);
 
-    const { result } = renderHook(() => useAttachments(mockTargetableObject));
+    const { result } = renderHook(() => useAttachments(mockTargetableObject), {
+      wrapper: Wrapper,
+    });
 
     expect(result.current.attachments).toEqual([]);
   });

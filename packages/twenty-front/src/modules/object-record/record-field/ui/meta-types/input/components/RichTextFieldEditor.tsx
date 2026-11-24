@@ -3,8 +3,8 @@ import { useAtom, useStore } from 'jotai';
 
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { useAttachmentSync } from '@/activities/files/hooks/useAttachmentSync';
+import { useAttachmentTargetJoinColumnName } from '@/activities/files/hooks/useAttachmentTargetJoinColumnName';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { AdvancedTextEditorBlockHandle } from '@/advanced-text-editor/components/AdvancedTextEditorBlockHandle';
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
@@ -93,17 +93,17 @@ export const RichTextFieldEditor = ({
 
   const focusId = `${recordId}-${fieldName}`;
 
-  const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: objectNameSingular,
-  });
+  const attachmentTargetJoinColumnName =
+    useAttachmentTargetJoinColumnName(objectNameSingular);
+
+  const canAttachFiles = isDefined(attachmentTargetJoinColumnName);
 
   const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: StandardObjectNameSingular.Attachment,
-    filter: {
-      [attachmentTargetFieldIdName]: {
-        eq: recordId,
-      },
-    },
+    filter: canAttachFiles
+      ? { [attachmentTargetJoinColumnName]: { eq: recordId } }
+      : undefined,
+    skip: !canAttachFiles,
   });
 
   const { syncAttachments } = useAttachmentSync(attachments);
@@ -253,9 +253,9 @@ export const RichTextFieldEditor = ({
       onUpdate: handleEditorUpdate,
       onFocus: handleEditorFocus,
       onBlur: handleEditorBlur,
-      onImageUpload: handleUploadFile,
+      onImageUpload: canAttachFiles ? handleUploadFile : undefined,
       onImageUploadError: handleUploadFileError,
-      onFileUpload: handleUploadFile,
+      onFileUpload: canAttachFiles ? handleUploadFile : undefined,
       onFileUploadError: handleUploadFileError,
     },
     [recordId, isRecordFieldReadOnly, draftResyncKey],

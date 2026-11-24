@@ -1,12 +1,13 @@
 import { type Attachment } from '@/activities/files/types/Attachment';
+import { useAttachmentTargetJoinColumnName } from '@/activities/files/hooks/useAttachmentTargetJoinColumnName';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { StandardObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 export const useAttachments = (targetableObject: ActivityTargetableObject) => {
-  const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
-    nameSingular: targetableObject.targetObjectNameSingular,
-  });
+  const attachmentTargetJoinColumnName = useAttachmentTargetJoinColumnName(
+    targetableObject.targetObjectNameSingular,
+  );
 
   const {
     records: attachments,
@@ -14,16 +15,15 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
     totalCount,
   } = useFindManyRecords<Attachment>({
     objectNameSingular: StandardObjectNameSingular.Attachment,
-    filter: {
-      [targetableObjectFieldIdName]: {
-        eq: targetableObject.id,
-      },
-    },
+    filter: isDefined(attachmentTargetJoinColumnName)
+      ? { [attachmentTargetJoinColumnName]: { eq: targetableObject.id } }
+      : undefined,
     orderBy: [
       {
         createdAt: 'DescNullsFirst',
       },
     ],
+    skip: !isDefined(attachmentTargetJoinColumnName),
   });
 
   return {
