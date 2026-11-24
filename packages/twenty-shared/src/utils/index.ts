@@ -93,6 +93,7 @@ export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTim
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
+export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {

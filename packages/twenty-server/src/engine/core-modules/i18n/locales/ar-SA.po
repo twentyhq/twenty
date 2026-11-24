@@ -15650,7 +15650,7 @@ msgstr "هذه الخطة غير متاحة."
 #. js-lingui-id: oGIo+g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
 msgid "This preset filter is not available on this object"
-msgstr ""
+msgstr "عامل التصفية المُعد مسبقًا هذا غير متاح على هذا الكائن"
 
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -17437,7 +17437,7 @@ msgstr "لم يتم العثور على طريقة العرض لعنصر واج�
 #. js-lingui-id: s4TNbU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
 msgid "View preset filter must belong to the view object"
-msgstr ""
+msgstr "يجب أن ينتمي عامل تصفية العرض المُعد مسبقًا إلى كائن العرض"
 
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
