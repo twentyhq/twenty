@@ -9,9 +9,37 @@ import {
 } from 'twenty-ui/icon';
 
 import { getNavigationMenuItemMovedPosition } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMovedPosition';
+import { sortNavigationMenuContainerChildren } from '@/navigation-menu-item/common/utils/sortNavigationMenuContainerChildren';
+import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { type NavigationMenuItemOption } from '@/navigation-menu-item/edit/types/NavigationMenuItemOption';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+const getNavigationMenuContainerChildrenInPositionOrder = <
+  TItem extends Pick<NavigationMenuItem, 'parentId' | 'type' | 'position'>,
+>({
+  items,
+  containerId,
+}: {
+  items: TItem[];
+  containerId: string | null;
+}): TItem[] => {
+  const children = items.filter(
+    (item) =>
+      (item.parentId ?? null) === containerId &&
+      item.type !== NavigationMenuItemType.TAB,
+  );
+
+  return sortNavigationMenuContainerChildren({
+    items: children.filter(
+      (child) => child.type !== NavigationMenuItemType.SECTION,
+    ),
+    sections: children.filter(
+      (child) => child.type === NavigationMenuItemType.SECTION,
+    ),
+  });
+};
 
 export const useNavigationMenuContainerReorderOptions = ({
   itemId,
@@ -25,7 +53,18 @@ export const useNavigationMenuContainerReorderOptions = ({
   onMoved: () => void;
 }): NavigationMenuItemOption[] => {
   const { t } = useLingui();
-  const siblings = useWorkspaceNavigationMenuContainers({ type, containerId });
+  const containers = useWorkspaceNavigationMenuContainers({
+    type,
+    containerId,
+  });
+  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
+  const siblings =
+    type === NavigationMenuItemType.SECTION
+      ? getNavigationMenuContainerChildrenInPositionOrder({
+          items: workspaceNavigationMenuItems,
+          containerId,
+        })
+      : containers;
   const { updateItem } = useNavigationMenuItemEditController('workspace');
   const isHorizontal = type === NavigationMenuItemType.TAB;
 

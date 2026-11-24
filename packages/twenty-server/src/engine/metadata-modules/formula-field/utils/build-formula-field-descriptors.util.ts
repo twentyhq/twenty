@@ -1,0 +1,71 @@
+import {
+  type FieldMetadataType,
+  RelationType,
+  type ValidationRuleFieldDescriptor,
+} from 'twenty-shared/types';
+import { isDefined, isFormulaFieldMetadata } from 'twenty-shared/utils';
+
+type FormulaFieldDescriptorSource = {
+  name: string;
+  type: FieldMetadataType;
+  universalIdentifier: string;
+};
+
+type FormulaFieldDescriptorSourceReader<
+  TFlatFieldMetadata extends FormulaFieldDescriptorSource,
+> = {
+  getSettings: (flatFieldMetadata: TFlatFieldMetadata) => object | null;
+  findRelationTargetFlatFieldMetadatas: (
+    flatFieldMetadata: TFlatFieldMetadata,
+  ) => TFlatFieldMetadata[];
+};
+
+const toScalarFieldDescriptor = ({
+  name,
+  type,
+  universalIdentifier,
+}: FormulaFieldDescriptorSource): ValidationRuleFieldDescriptor => ({
+  name,
+  type,
+  universalIdentifier,
+});
+
+// A formula reads stored values only, so formula fields are left out on both sides of a lookup
+export const buildFormulaFieldDescriptors = <
+  TFlatFieldMetadata extends FormulaFieldDescriptorSource,
+>({
+  flatFieldMetadatas,
+  getSettings,
+  findRelationTargetFlatFieldMetadatas,
+}: {
+  flatFieldMetadatas: TFlatFieldMetadata[];
+} & FormulaFieldDescriptorSourceReader<TFlatFieldMetadata>): ValidationRuleFieldDescriptor[] => {
+  const isStored = (flatFieldMetadata: TFlatFieldMetadata) =>
+    !isFormulaFieldMetadata({ settings: getSettings(flatFieldMetadata) });
+
+  return flatFieldMetadatas.filter(isStored).map((flatFieldMetadata) => {
+    const settings = getSettings(flatFieldMetadata);
+    const relationType =
+      isDefined(settings) && 'relationType' in settings
+        ? settings.relationType
+        : undefined;
+
+    if (relationType === RelationType.ONE_TO_MANY) {
+      return { ...toScalarFieldDescriptor(flatFieldMetadata), relationType };
+    }
+
+    if (relationType !== RelationType.MANY_TO_ONE) {
+      return toScalarFieldDescriptor(flatFieldMetadata);
+    }
+
+    return {
+      ...toScalarFieldDescriptor(flatFieldMetadata),
+      relationType,
+      relationTargetFields: findRelationTargetFlatFieldMetadatas(
+        flatFieldMetadata,
+      )
+        .filter(isStored)
+        .map(toScalarFieldDescriptor),
+    };
+  });
+};

@@ -68,25 +68,60 @@ export class AccessGroupReadService {
   async findPrincipalsRelatedRecordPathAccessGroupCompactIds(
     request: PermissionsObjectAccessRequest,
   ): Promise<number[]> {
+    return this.findCompactIds({
+      workspaceId: request.principals.workspaceId,
+      accessGroups:
+        await this.buildPrincipalsRelatedRecordPathAccessGroups(request),
+    });
+  }
+
+  async findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields({
+    request,
+    sourceFields,
+  }: {
+    request: PermissionsObjectAccessRequest;
+    sourceFields: {
+      sourceObjectMetadataId: string | null;
+      sourceFieldMetadataId: string;
+    }[];
+  }): Promise<number[][]> {
+    const accessGroups =
+      await this.buildPrincipalsRelatedRecordPathAccessGroups(request);
+
+    return Promise.all(
+      sourceFields.map(({ sourceObjectMetadataId, sourceFieldMetadataId }) =>
+        this.findCompactIds({
+          workspaceId: request.principals.workspaceId,
+          accessGroups: accessGroups.filter(
+            ({ objectMetadataId, unreadableFieldIds }) =>
+              isDefined(sourceObjectMetadataId) &&
+              (objectMetadataId !== sourceObjectMetadataId ||
+                !unreadableFieldIds.includes(sourceFieldMetadataId)),
+          ),
+        }),
+      ),
+    );
+  }
+
+  private async buildPrincipalsRelatedRecordPathAccessGroups(
+    request: PermissionsObjectAccessRequest,
+  ): Promise<AccessGroupWithoutCompactId[]> {
     if (!canRelatedRecordPathExtendAccess(request)) {
       return [];
     }
 
-    const { workspaceId } = request.principals;
     const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+      await this.workspaceCacheService.getOrRecompute(
+        request.principals.workspaceId,
+        ['flatFieldMetadataMaps'],
+      );
 
-    return this.findCompactIds({
-      workspaceId,
-      accessGroups: buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
-        request,
-        workspaceMembers: [
-          await this.findPrincipalWorkspaceMember(request.principals),
-        ].filter(isDefined),
-        flatFieldMetadataMaps,
-      }),
+    return buildPrincipalsRelatedRecordPathAccessGroupsOrThrow({
+      request,
+      workspaceMembers: [
+        await this.findPrincipalWorkspaceMember(request.principals),
+      ].filter(isDefined),
+      flatFieldMetadataMaps,
     });
   }
 

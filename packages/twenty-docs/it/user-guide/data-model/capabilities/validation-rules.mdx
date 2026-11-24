@@ -55,7 +55,7 @@ Utilizza nomi di campi come `employees`, anziché etichette visualizzate come **
 | `true`, `false`                                                      | Confronta campi booleani.                      |
 | `now`                                                                | Utilizza la data e l'ora del salvataggio.      |
 
-Racchiudi il testo tra virgolette singole o doppie e usa le parentesi per raggruppare le condizioni. Usa `and` e `or` anziché `&&` e `||`.
+Racchiudi il testo tra virgolette singole o doppie e usa le parentesi per raggruppare le condizioni. Usa `and` e `or` anziché `&&` e `||`: `||` unisce due valori in un unico testo, ignorando un valore non impostato, come fa `concat`.
 
 ### Verifica i valori mancanti
 
@@ -78,6 +78,17 @@ Per rendere obbligatorio un campo, usa `not isEmpty(fieldName)`. Funziona anche 
 | `dateTrunc(date, unit)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Ottiene l'inizio dell'unità che contiene la data, in UTC. Le settimane iniziano di lunedì.                                                                                                                                                     |
 | `datePart(date, part)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Ottiene una parte della data come numero, in UTC: `"YEAR"`, `"QUARTER"`, `"MONTH"`, `"WEEK"`, `"DAY"`, `"DAY_OF_WEEK"` (1 è lunedì), `"HOUR"` o `"MINUTE"`.                                                                                    |
 | `isInRelativeDateRange(date, direction, amount, unit)`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Verifica se una data rientra in un periodo calcolato a partire da oggi, in UTC. `direction` è `"PAST"`, `"NEXT"` o `"THIS"`, `unit` è `"DAY"`, `"WEEK"`, `"MONTH"`, `"QUARTER"` o `"YEAR"`. `"PAST"` e `"NEXT"` escludono il periodo corrente. |
+
+### Calcolare i valori
+
+| Funzione                                             | Usa                                                                                        |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `if(condition, valueIfTrue, valueIfFalse)`           | Ottiene il secondo valore quando la condizione è vera, altrimenti il terzo.                |
+| `coalesce(value, ...fallbacks)`                      | Ottiene il primo valore impostato.                                                         |
+| `concat(value, ...values)`                           | Unisce i valori in un unico testo. I valori non impostati vengono ignorati.                |
+| `lower(text)`, `upper(text)`                         | Modifica la distinzione tra maiuscole e minuscole di un testo.                             |
+| `min(number, ...numbers)`, `max(number, ...numbers)` | Ottiene il numero più piccolo o più grande. I valori che non sono numeri vengono ignorati. |
+| `roundTo(number, decimals)`                          | Arrotonda un numero a un dato numero di decimali.                                          |
 
 `daysSince(date)` è stato rimosso. Usa `dateDiff(date, now, 'DAY')` al suo posto.
 

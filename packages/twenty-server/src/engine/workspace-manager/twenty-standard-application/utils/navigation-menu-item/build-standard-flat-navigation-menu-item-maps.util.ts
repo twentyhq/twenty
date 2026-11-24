@@ -27,10 +27,11 @@ const FLAT_NAVIGATION_MENU_ITEM_NAMES = [
 
 const FOLDERS = [
   {
-    folderName: 'workflowsFolder',
+    folderName: 'automationsFolder',
     itemNames: [
-      'workflowsFolderAllWorkflows',
-      'workflowsFolderAllWorkflowRuns',
+      'automationsFolderAllWorkflows',
+      'automationsFolderAllWorkflowRuns',
+      'automationsFolderAllAgents',
     ],
   },
   {
@@ -56,6 +57,25 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     ...createEmptyFlatEntityMaps(),
     byUserWorkspaceIdAndParentId: {},
   };
+
+  const favoritesSectionDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem: createStandardNavigationMenuItemSectionFlatMetadata(
+      {
+        universalIdentifier: favoritesSectionDefinition.universalIdentifier,
+        name: null,
+        builtInSectionKey: favoritesSectionDefinition.builtInSectionKey,
+        position: favoritesSectionDefinition.position,
+        navigationMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      },
+    ),
+    flatNavigationMenuItemMaps,
+  });
 
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;

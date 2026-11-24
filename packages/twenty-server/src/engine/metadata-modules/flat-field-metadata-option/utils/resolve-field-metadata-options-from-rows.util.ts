@@ -14,7 +14,10 @@ export type FieldMetadataOptionRowForOptions = Pick<
   'universalIdentifier' | 'value' | 'label' | 'color' | 'position'
 > &
   Partial<
-    Pick<FieldMetadataOptionEntity, 'overrides' | 'isActive' | 'applicationId'>
+    Pick<
+      FieldMetadataOptionEntity,
+      'description' | 'overrides' | 'isActive' | 'applicationId'
+    >
   >;
 
 const isOwnedByAnotherApplicationThanField = ({
@@ -72,6 +75,7 @@ export const resolveFieldMetadataOptionsFromRows = ({
         value,
         label,
         color,
+        description,
         position,
         isActive,
         applicationId,
@@ -83,6 +87,7 @@ export const resolveFieldMetadataOptionsFromRows = ({
       label,
       position: hasSharedPosition ? index : position,
       ...(isDefined(color) ? { color } : {}),
+      ...(isDefined(description) ? { description } : {}),
       ...(isFieldMetadataOptionActive({ isActive }) ? {} : { isActive: false }),
       ...(isOwnedByAnotherApplicationThanField({
         optionApplicationId: applicationId,

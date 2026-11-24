@@ -275,6 +275,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [FeatureFlagDTO], { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async featureFlags(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<FeatureFlagDTO[]> {
@@ -288,6 +289,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   async isInternalImportEnabled(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<boolean> {
@@ -304,6 +306,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => AiDataPolicyDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async aiDataPolicy(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<AiDataPolicyDTO | null> {
@@ -337,6 +340,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [BillingSubscriptionEntity])
+  @UseGuards(NoPermissionGuard)
   async billingSubscriptions(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingSubscriptionEntity[] | undefined> {
@@ -354,6 +358,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async inviteHash(
     @Parent() workspace: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
@@ -379,6 +384,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => RoleDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async defaultRole(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<RoleDTO | null> {
@@ -390,6 +396,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => ApplicationDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async workspaceCustomApplication(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<ApplicationDTO | null> {
@@ -411,6 +418,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [ApplicationDTO])
+  @UseGuards(NoPermissionGuard)
   async installedApplications(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<ApplicationDTO[]> {
@@ -423,6 +431,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingSubscriptionEntity | undefined> {
@@ -436,6 +445,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   async isTrialAvailable(
     @Parent() workspace: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: AuthContextUser | undefined,
@@ -455,6 +465,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => BillingCustomerEntity, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async billingCustomer(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<BillingCustomerEntity | null> {
@@ -466,6 +477,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Number)
+  @UseGuards(NoPermissionGuard)
   async workspaceMembersCount(
     @Parent() workspace: WorkspaceEntity,
   ): Promise<number | undefined> {
@@ -473,6 +485,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async logo(@Parent() workspace: WorkspaceEntity): Promise<string> {
     if (!isDefined(workspace.logoFileId)) {
       return '';
@@ -486,6 +499,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [BillingEntitlementDTO])
+  @UseGuards(NoPermissionGuard)
   billingEntitlements(@Parent() workspace: WorkspaceEntity) {
     return this.billingSubscriptionService.getWorkspaceEntitlements(
       workspace.id,
@@ -493,21 +507,25 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   hasValidSignedEnterpriseKey(): boolean {
     return this.enterprisePlanService.hasValidSignedEnterpriseKey();
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   hasValidEnterpriseValidityToken(): boolean {
     return this.enterprisePlanService.hasValidEnterpriseValidityToken();
   }
 
   @ResolveField(() => WorkspaceUrlsDTO)
+  @UseGuards(NoPermissionGuard)
   workspaceUrls(@Parent() workspace: WorkspaceEntity) {
     return this.workspaceDomainsService.getWorkspaceUrls(workspace);
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   isGoogleAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
       workspace.isGoogleAuthEnabled &&
@@ -516,11 +534,13 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   workspaceCustomApplicationId(@Parent() workspace: WorkspaceEntity) {
     return workspace.workspaceCustomApplicationId;
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   isMicrosoftAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
       workspace.isMicrosoftAuthEnabled &&
@@ -529,6 +549,7 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => Boolean)
+  @UseGuards(NoPermissionGuard)
   isPasswordAuthEnabled(@Parent() workspace: WorkspaceEntity) {
     return (
       workspace.isPasswordAuthEnabled &&
@@ -537,12 +558,9 @@ export class WorkspaceResolver {
   }
 
   @ResolveField(() => [ViewDTO])
-  async views(
-    @Parent() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
-  ): Promise<ViewDTO[]> {
-    return this.viewService.findByWorkspaceId(workspace.id, userWorkspaceId);
+  @UseGuards(NoPermissionGuard)
+  async views(@Parent() workspace: WorkspaceEntity): Promise<ViewDTO[]> {
+    return this.viewService.findByWorkspaceId(workspace.id);
   }
 
   @Query(() => PublicWorkspaceDataDTO)

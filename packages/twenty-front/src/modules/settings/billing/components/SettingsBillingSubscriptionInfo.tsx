@@ -148,7 +148,7 @@ export const SettingsBillingSubscriptionInfo = ({
   };
 
   const hasPermissionToEndTrialPeriod = useHasPermissionFlag(
-    PermissionFlagType.WORKSPACE,
+    PermissionFlagType.BILLING,
   );
 
   const {
