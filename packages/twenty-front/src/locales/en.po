@@ -2125,6 +2125,11 @@ msgstr "Add a {objectLabelSingular}"
 msgid "Add a card below to update your billing details and retry your payment."
 msgstr "Add a card below to update your billing details and retry your payment."
 
+#. js-lingui-id: vzJ7AQ
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
+msgid "Add a description"
+msgstr "Add a description"
+
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Add a fallback value to avoid empty personalization"
@@ -2359,6 +2364,11 @@ msgstr "Add custom endpoints, private gateways, or additional regions."
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "Add Custom Provider"
+
+#. js-lingui-id: PGPGsL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Add description"
+msgstr "Add description"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -10464,6 +10474,8 @@ msgstr "Describe what you want the AI to do..."
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
@@ -11338,6 +11350,11 @@ msgstr "Edit column"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Edit data structure and fields"
 msgstr "Edit data structure and fields"
+
+#. js-lingui-id: O32mmL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Edit description"
+msgstr "Edit description"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -24385,6 +24402,11 @@ msgstr "Read the system prompts to understand how the AI works"
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Read the system prompts to understand how the AI works (~{0} tokens)"
 
+#. js-lingui-id: SIPs3V
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
+msgstr "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
+
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
@@ -34226,6 +34248,11 @@ msgstr "Widget"
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Widget Settings"
 msgstr "Widget Settings"
+
+#. js-lingui-id: 0LuHF2
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Widget visibility rule tree"
+msgstr "Widget visibility rule tree"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts

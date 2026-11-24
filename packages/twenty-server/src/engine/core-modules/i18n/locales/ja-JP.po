@@ -10496,6 +10496,16 @@ msgstr "商談ステージ"
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
 msgstr "オプション「{optionLabel}」はフィールドに含まれているため、削除できません。代わりに無効化してください。"
 
+#. js-lingui-id: xTWr3W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
+msgstr ""
+
+#. js-lingui-id: cCRBHe
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" has an invalid description"
+msgstr ""
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
