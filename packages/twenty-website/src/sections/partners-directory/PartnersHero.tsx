@@ -9,7 +9,7 @@ import { type ReactNode } from 'react';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
 import { HalftoneImageBackdrop } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
 import { GUTTER, HERO_COMPOSITION, mediaUp, RHYTHM, spacing } from '@/tokens';
-import { Body, GuideCrosshair, Heading, HeadingPair, SectionShell } from '@/ui';
+import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 import { PartnersGlobe } from './PartnersGlobe';
 import { PARTNERS_HERO_BACKDROP } from './partners-hero-backdrop';
@@ -101,18 +101,7 @@ export function PartnersHero({ actions, partners }: PartnersHeroProps) {
   const { i18n } = useLingui();
 
   return (
-    <SectionShell
-      background={
-        // The hero closes on a hairline with the + under the globe.
-        <GuideCrosshair
-          crossX="50%"
-          crossY="calc(100% - 1px)"
-          verticalLines={false}
-        />
-      }
-      rhythm="hero"
-      scheme="muted"
-    >
+    <SectionShell rhythm="hero" scheme="muted">
       <Copy data-halftone-exclude="">
         <HeadingPair>
           <HeadingMeasure>
