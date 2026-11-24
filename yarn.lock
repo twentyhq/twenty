@@ -105,6 +105,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/groq@npm:4.0.54":
+  version: 4.0.54
+  resolution: "@ai-sdk/groq@npm:4.0.54"
+  dependencies:
+    "@ai-sdk/provider": "npm:4.0.21"
+    "@ai-sdk/provider-utils": "npm:5.0.53"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/7d81332deb470fd08e6802706284dc0fe9a51cfee09558806c278a675468b3ef76dbc6626c8bc839cd9828287d67e2f08d88a18e09cb1b68745225698c5b5f46
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/mistral@npm:^4.0.56":
   version: 4.0.56
   resolution: "@ai-sdk/mistral@npm:4.0.56"
@@ -45995,6 +46007,7 @@ __metadata:
     "@ai-sdk/anthropic": "npm:^4.0.71"
     "@ai-sdk/azure": "npm:^4.0.89"
     "@ai-sdk/google": "npm:^4.0.87"
+    "@ai-sdk/groq": "npm:4.0.54"
     "@ai-sdk/mistral": "npm:^4.0.56"
     "@ai-sdk/openai": "npm:^4.0.83"
     "@ai-sdk/openai-compatible": "npm:^3.0.62"
