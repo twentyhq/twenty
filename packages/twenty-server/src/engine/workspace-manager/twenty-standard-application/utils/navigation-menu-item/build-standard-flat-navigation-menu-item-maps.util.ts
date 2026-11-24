@@ -70,12 +70,15 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndParentId: {},
   };
 
-  const addBuiltInSection = (
+  const addBuiltInSection = ({
+    sectionName,
+    parent,
+  }: {
     sectionName:
       | (typeof HOME_BUILT_IN_SECTION_NAMES)[number]
-      | (typeof CHATS_TAB_SECTION_NAMES)[number],
-    parent?: FlatNavigationMenuItem,
-  ) => {
+      | (typeof CHATS_TAB_SECTION_NAMES)[number];
+    parent?: FlatNavigationMenuItem;
+  }) => {
     const sectionDefinition = STANDARD_NAVIGATION_MENU_ITEMS[sectionName];
 
     addFlatNavigationMenuItemToMapsAndUpdateIndex({
@@ -96,7 +99,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
   };
 
   for (const sectionName of HOME_BUILT_IN_SECTION_NAMES) {
-    addBuiltInSection(sectionName);
+    addBuiltInSection({ sectionName });
   }
 
   const chatsTabDefinition = STANDARD_NAVIGATION_MENU_ITEMS.chatsTab;
@@ -121,7 +124,7 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
   });
 
   for (const sectionName of CHATS_TAB_SECTION_NAMES) {
-    addBuiltInSection(sectionName, chatsTab);
+    addBuiltInSection({ sectionName, parent: chatsTab });
   }
 
   const workspaceSectionDefinition =
