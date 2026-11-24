@@ -1,84 +1,112 @@
 import {
   AGENT_CHAT_THREAD_PRESET_FILTER,
-  AgentChatThreadConversationType,
+  type AgentChatInboxAction,
+  type AgentChatInboxState,
+  type AgentChatThreadConversationType,
   computeViewPresetFilterGqlFilter,
   getAgentChatThreadInboxStatus,
   isAgentChatThreadInPresetFilter,
-  type AgentChatInboxState,
 } from 'twenty-shared/ai';
 import {
   type RecordGqlOperationFilter,
   ViewPresetFilter,
 } from 'twenty-shared/types';
+import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/graphql-test-assertions.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import {
   SCHEMA,
+  SNOOZE_IN_CHANNEL,
+  buildFutureSnoozedUntil,
   findChannelThreadIds,
+  runInboxAction,
+  runThreadMutation,
   setUpChatChannelTests,
+  simulateNewMessageActivity,
 } from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
+import { addParticipants } from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 
-const { JANE } = WORKSPACE_MEMBER_DATA_SEED_IDS;
+const { JANE, JONY } = WORKSPACE_MEMBER_DATA_SEED_IDS;
 
-const ACTIVITY = new Date('2026-01-01T12:00:00.000Z');
-const BEFORE_ACTIVITY = new Date('2026-01-01T11:00:00.000Z');
-const AFTER_ACTIVITY = new Date('2026-01-01T13:00:00.000Z');
-const SNOOZED_UNTIL = new Date('2030-01-01T00:00:00.000Z');
+type ThreadStateStep = (threadId: string) => Promise<unknown>;
 
-type ThreadState = {
-  conversationType: AgentChatThreadConversationType;
-  lastActivityAt: Date | null;
-  filedAt: Date | null;
-  snoozedUntil: Date | null;
-  isSubscribed: boolean;
-  lastMentionedAt: Date | null;
-  mentionsResolvedAt: Date | null;
-};
+const runMemberAction =
+  (action: AgentChatInboxAction): ThreadStateStep =>
+  async (threadId) =>
+    assertGraphQLSuccessfulResponse(
+      await runInboxAction(
+        action,
+        threadId,
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        action === 'SNOOZE' ? buildFutureSnoozedUntil() : null,
+      ),
+    );
 
-const OPEN: ThreadState = {
-  conversationType: AgentChatThreadConversationType.STANDARD,
-  lastActivityAt: ACTIVITY,
-  filedAt: null,
-  snoozedUntil: null,
-  isSubscribed: true,
-  lastMentionedAt: null,
-  mentionsResolvedAt: null,
-};
+const markAsDoneInChannel: ThreadStateStep = async (threadId) =>
+  assertGraphQLSuccessfulResponse(
+    await runThreadMutation('markAgentChatThreadAsDoneInChannel', threadId),
+  );
 
-const THREAD_STATES: ThreadState[] = [
-  OPEN,
-  { ...OPEN, filedAt: AFTER_ACTIVITY },
-  { ...OPEN, filedAt: ACTIVITY },
-  { ...OPEN, filedAt: BEFORE_ACTIVITY },
-  { ...OPEN, filedAt: AFTER_ACTIVITY, snoozedUntil: SNOOZED_UNTIL },
-  { ...OPEN, filedAt: BEFORE_ACTIVITY, snoozedUntil: SNOOZED_UNTIL },
-  { ...OPEN, lastActivityAt: null },
-  { ...OPEN, lastActivityAt: null, filedAt: AFTER_ACTIVITY },
-  {
-    ...OPEN,
-    lastActivityAt: null,
-    filedAt: AFTER_ACTIVITY,
-    snoozedUntil: SNOOZED_UNTIL,
-  },
-  { ...OPEN, isSubscribed: false },
-  { ...OPEN, isSubscribed: false, filedAt: BEFORE_ACTIVITY },
-  { ...OPEN, lastMentionedAt: AFTER_ACTIVITY },
-  {
-    ...OPEN,
-    lastMentionedAt: AFTER_ACTIVITY,
-    mentionsResolvedAt: BEFORE_ACTIVITY,
-  },
-  {
-    ...OPEN,
-    lastMentionedAt: BEFORE_ACTIVITY,
-    mentionsResolvedAt: AFTER_ACTIVITY,
-  },
-  { ...OPEN, filedAt: AFTER_ACTIVITY, lastMentionedAt: AFTER_ACTIVITY },
-  {
-    ...OPEN,
-    conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-  },
+const snoozeInChannel: ThreadStateStep = async (threadId) =>
+  assertGraphQLSuccessfulResponse(
+    await makeMetadataApiRequest({
+      query: SNOOZE_IN_CHANNEL,
+      variables: { threadId, snoozedUntil: buildFutureSnoozedUntil() },
+    }),
+  );
+
+const mentionJane: ThreadStateStep = (threadId) =>
+  addParticipants({
+    threadId,
+    workspaceMemberIds: [JANE],
+    workspaceMemberId: JONY,
+  });
+
+// No mutation leaves a chat without activity, or filed at the very instant of its last activity
+const setLastActivityAt =
+  (lastActivityAt: 'NONE' | 'AT_MEMBER_FILING' | 'AT_CHANNEL_FILING') =>
+  (threadId: string) =>
+    global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" thread
+       SET "lastActivityAt" = CASE $2::text
+         WHEN 'AT_CHANNEL_FILING' THEN thread."channelArchivedAt"
+         WHEN 'AT_MEMBER_FILING' THEN (
+           SELECT participant."archivedAt"
+           FROM ${SCHEMA}."agentChatThreadParticipant" participant
+           WHERE participant."threadId" = thread.id AND participant."workspaceMemberId" = $3
+         )
+       END
+       WHERE thread.id = $1`,
+      [threadId, lastActivityAt, JANE],
+    );
+
+const MEMBER_THREAD_STATES: ThreadStateStep[][] = [
+  [],
+  [runMemberAction('ARCHIVE')],
+  [runMemberAction('ARCHIVE'), simulateNewMessageActivity],
+  [runMemberAction('SNOOZE')],
+  [runMemberAction('SNOOZE'), simulateNewMessageActivity],
+  [runMemberAction('UNSUBSCRIBE')],
+  [mentionJane],
+  [mentionJane, runMemberAction('READ')],
+  [setLastActivityAt('NONE')],
+  [runMemberAction('ARCHIVE'), setLastActivityAt('NONE')],
+  [runMemberAction('SNOOZE'), setLastActivityAt('NONE')],
+  [runMemberAction('ARCHIVE'), setLastActivityAt('AT_MEMBER_FILING')],
+];
+
+const CHANNEL_THREAD_STATES: ThreadStateStep[][] = [
+  [],
+  [markAsDoneInChannel],
+  [markAsDoneInChannel, simulateNewMessageActivity],
+  [snoozeInChannel],
+  [snoozeInChannel, simulateNewMessageActivity],
+  [setLastActivityAt('NONE')],
+  [markAsDoneInChannel, setLastActivityAt('NONE')],
+  [snoozeInChannel, setLastActivityAt('NONE')],
+  [markAsDoneInChannel, setLastActivityAt('AT_CHANNEL_FILING')],
 ];
 
 type LoadedThread = {
@@ -119,39 +147,16 @@ const findThreadIds = async (
 describe('Chat view preset filters through the record API', () => {
   const { createChannel, createThreadInChannel } = setUpChatChannelTests();
 
-  const createThreadsInEveryState = async () => {
+  const createThreadsInStates = async (threadStates: ThreadStateStep[][]) => {
     const channelId = await createChannel();
     const threadIds: string[] = [];
 
-    for (const threadState of THREAD_STATES) {
+    for (const threadStateSteps of threadStates) {
       const threadId = await createThreadInChannel(channelId);
 
-      await global.testDataSource.query(
-        `UPDATE ${SCHEMA}."agentChatThread"
-         SET "conversationType" = $2, "lastActivityAt" = $3, "channelArchivedAt" = $4, "channelSnoozedUntil" = $5
-         WHERE id = $1`,
-        [
-          threadId,
-          threadState.conversationType,
-          threadState.lastActivityAt,
-          threadState.filedAt,
-          threadState.snoozedUntil,
-        ],
-      );
-      await global.testDataSource.query(
-        `UPDATE ${SCHEMA}."agentChatThreadParticipant"
-         SET "archivedAt" = $3, "snoozedUntil" = $4, "isSubscribed" = $5, "lastMentionedAt" = $6, "mentionsResolvedAt" = $7
-         WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
-        [
-          threadId,
-          JANE,
-          threadState.filedAt,
-          threadState.snoozedUntil,
-          threadState.isSubscribed,
-          threadState.lastMentionedAt,
-          threadState.mentionsResolvedAt,
-        ],
-      );
+      for (const threadStateStep of threadStateSteps) {
+        await threadStateStep(threadId);
+      }
 
       threadIds.push(threadId);
     }
@@ -160,10 +165,10 @@ describe('Chat view preset filters through the record API', () => {
   };
 
   it('lists the same chats as the inbox tabs for each personal preset', async () => {
-    const { threadIds } = await createThreadsInEveryState();
+    const { threadIds } = await createThreadsInStates(MEMBER_THREAD_STATES);
     const threads = await findThreads({ id: { in: threadIds } });
 
-    expect(threads).toHaveLength(THREAD_STATES.length);
+    expect(threads).toHaveLength(MEMBER_THREAD_STATES.length);
 
     for (const [viewPresetFilter, tabPresetFilter] of [
       [ViewPresetFilter.INBOX_OPEN, AGENT_CHAT_THREAD_PRESET_FILTER.OPEN],
@@ -209,7 +214,7 @@ describe('Chat view preset filters through the record API', () => {
   });
 
   it('lists the same chats as the channel status query for each channel preset', async () => {
-    const { channelId } = await createThreadsInEveryState();
+    const { channelId } = await createThreadsInStates(CHANNEL_THREAD_STATES);
 
     for (const [viewPresetFilter, status] of [
       [ViewPresetFilter.INBOX_CHANNEL_OPEN, 'OPEN'],
