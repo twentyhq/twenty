@@ -17,6 +17,7 @@ import { type BackfillApplicationGrantRolesCommand } from 'src/database/commands
 import { type ApplicationGrantRoleService } from 'src/engine/core-modules/application/application-grant-role/services/application-grant-role.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 jest.setTimeout(120000);
 
@@ -96,6 +97,15 @@ describe('2-57 workspace command - backfill application grants (integration)', (
           }))!,
       ),
     );
+
+    // Versions before 2.63 also wrote defaultRoleId, which this command reads
+    await globalThis.testDataSource.query(
+      'UPDATE core."application" SET "defaultRoleId" = "requestedRoleId" WHERE id = ANY($1)',
+      [applicationIds],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatApplicationMaps']);
 
     const applicationGrantRoleService =
       getAppProviderByClassName<ApplicationGrantRoleService>(
