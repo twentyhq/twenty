@@ -7,6 +7,8 @@ import { WHATSAPP_KV_KEY_PREFIXES } from 'src/constants/whatsapp-kv-key-prefixes
 import { createWhatsAppCampaignSkips } from 'src/logic-functions/data/create-whatsapp-campaign-skips.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { getCurrentWorkspaceMemberIdOrThrow } from 'src/logic-functions/data/get-current-workspace-member-id-or-throw.util';
+import { buildDeterministicUuid } from 'src/logic-functions/data/build-deterministic-uuid.util';
+import { findWhatsAppCampaignSkipPersonIds } from 'src/logic-functions/data/find-whatsapp-campaign-skip-person-ids.util';
 import { findWhatsAppTemplateRecipientPeopleOrThrow } from 'src/logic-functions/data/find-whatsapp-template-recipient-people-or-throw.util';
 import { resolveWhatsAppCampaignRecipient } from 'src/logic-functions/data/resolve-whatsapp-campaign-recipient.util';
 import { type SendCampaignMessagePayload } from 'src/logic-functions/types/send-campaign-message-payload.type';
@@ -103,27 +105,44 @@ export const launchWhatsAppCampaign = async ({
     };
   }
 
-  const { createWhatsAppCampaign } = await new CoreApiClient().mutation({
-    createWhatsAppCampaign: {
-      __args: {
-        data: {
-          name: `${whatsAppTemplate.name} · ${new Date(sendAt ?? Date.now()).toISOString().slice(0, 16).replace('T', ' ')} UTC`,
-          templateId: content.templateId,
-          queuedCount: recipientPersonIds.length,
-          skippedCount,
-          sendParameters: content,
-          ...(isDefined(sendAt) ? { scheduledAt: sendAt } : {}),
-        },
-      },
-      id: true,
-    },
+  // the campaign ID follows from the request, so a retry interrupted before the result was saved resumes it
+  const campaignId = buildDeterministicUuid(`whatsapp-campaign:${memberRequestId}`);
+  const appClient = new CoreApiClient();
+  const { whatsAppCampaign: existingCampaign } = await appClient.query({
+    whatsAppCampaign: { __args: { filter: { id: { eq: campaignId } } }, id: true },
   });
 
-  await createWhatsAppCampaignSkips({ campaignId: createWhatsAppCampaign.id, skips });
+  if (!isDefined(existingCampaign)) {
+    await appClient.mutation({
+      createWhatsAppCampaign: {
+        __args: {
+          data: {
+            id: campaignId,
+            name: `${whatsAppTemplate.name} · ${new Date(sendAt ?? Date.now()).toISOString().slice(0, 16).replace('T', ' ')} UTC`,
+            templateId: content.templateId,
+            queuedCount: recipientPersonIds.length,
+            skippedCount,
+            sendParameters: content,
+            ...(isDefined(sendAt) ? { scheduledAt: sendAt } : {}),
+          },
+        },
+        id: true,
+      },
+    });
+  }
+
+  const existingSkipPersonIds = isDefined(existingCampaign)
+    ? await findWhatsAppCampaignSkipPersonIds(campaignId)
+    : new Set<string>();
+
+  await createWhatsAppCampaignSkips({
+    campaignId,
+    skips: skips.filter(({ person }) => !existingSkipPersonIds.has(person.id)),
+  });
 
   await enqueueLogicFunctionJobs<SendCampaignMessagePayload>({
     logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_CAMPAIGN_MESSAGE_UNIVERSAL_IDENTIFIER,
-    payloads: recipientPersonIds.map((personId) => ({ ...content, campaignId: createWhatsAppCampaign.id, personId })),
+    payloads: recipientPersonIds.map((personId) => ({ ...content, campaignId, personId })),
     getJobKey: ({ personId }) => `${memberRequestId}:${personId}`,
     ...(delayMs > 0 ? { delayMs } : {}),
   });
@@ -133,7 +152,7 @@ export const launchWhatsAppCampaign = async ({
     queuedCount: recipientPersonIds.length,
     skippedCount,
     skippedCountByReason,
-    campaignId: createWhatsAppCampaign.id,
+    campaignId,
   };
 
   await kv.set(requestKey, result);
