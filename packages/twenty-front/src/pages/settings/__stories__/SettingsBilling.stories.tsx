@@ -1,5 +1,4 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { graphql, HttpResponse } from 'msw';
 import { expect, within } from 'storybook/test';
 
 import { SettingsPath } from 'twenty-shared/types';
@@ -41,50 +40,14 @@ export const Default: Story = {
   },
 };
 
-export const BillingEmailOfWorkspaceMember: Story = {
+export const BillingEmail: Story = {
   decorators: [PermissionFlagsDecorator],
   parameters: { permissionFlags: [PermissionFlagType.BILLING] },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(await canvas.findByText(mockedUserData.email)).toBeVisible();
     await expect(
-      canvas.queryByRole('button', { name: 'Change email' }),
-    ).not.toBeInTheDocument();
-  },
-};
-
-export const BillingEmailNotMember: Story = {
-  decorators: [PermissionFlagsDecorator],
-  parameters: {
-    permissionFlags: [PermissionFlagType.BILLING],
-    msw: {
-      handlers: [
-        graphql.query('BillingEmail', () => {
-          return HttpResponse.json({
-            data: {
-              billingEmail: {
-                __typename: 'BillingEmail',
-                email: 'jane@acme.com',
-                isWorkspaceMemberEmail: false,
-              },
-            },
-          });
-        }),
-        ...graphqlMocks.handlers,
-      ],
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expect(
-      await canvas.findByText(
-        "Invoices go to jane@acme.com, who isn't a member of this workspace",
-      ),
-    ).toBeVisible();
-    await expect(
-      canvas.getByRole('button', { name: 'Change email' }),
+      await canvas.findByRole('button', { name: mockedUserData.email }),
     ).toBeVisible();
   },
 };

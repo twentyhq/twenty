@@ -1116,11 +1116,6 @@ type BillingCustomer {
   userCreditsFallback: UserCreditsFallback!
 }
 
-type BillingEmail {
-  email: String
-  isWorkspaceMemberEmail: Boolean!
-}
-
 type BillingEndTrialPeriod {
   """
   Billing portal URL for payment method update (returned when no payment method exists)
@@ -4493,7 +4488,7 @@ type Query {
   applicationRegistrationTarballUrl(id: String!): String
   applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
   barChartData(input: BarChartDataInput!): BarChartData!
-  billingEmail: BillingEmail!
+  billingEmail: String
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!

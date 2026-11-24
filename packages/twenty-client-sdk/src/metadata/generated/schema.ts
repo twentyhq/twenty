@@ -978,12 +978,6 @@ export interface BillingCustomer {
     __typename: 'BillingCustomer'
 }
 
-export interface BillingEmail {
-    email?: Scalars['String']
-    isWorkspaceMemberEmail: Scalars['Boolean']
-    __typename: 'BillingEmail'
-}
-
 export interface BillingEndTrialPeriod {
     /** Billing portal URL for payment method update (returned when no payment method exists) */
     billingPortalUrl?: Scalars['String']
@@ -3286,7 +3280,7 @@ export interface Query {
     applicationRegistrationTarballUrl?: Scalars['String']
     applicationSdkClientChecksums?: SdkClientChecksums
     barChartData: BarChartData
-    billingEmail: BillingEmail
+    billingEmail?: Scalars['String']
     billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
@@ -5682,13 +5676,6 @@ export interface BillingCustomerGenqlSelection{
     hasPaymentMethod?: boolean | number
     id?: boolean | number
     userCreditsFallback?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingEmailGenqlSelection{
-    email?: boolean | number
-    isWorkspaceMemberEmail?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8294,7 +8281,7 @@ export interface QueryGenqlSelection{
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
-    billingEmail?: BillingEmailGenqlSelection
+    billingEmail?: boolean | number
     billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })
@@ -10715,14 +10702,6 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isBillingCustomer = (obj?: { __typename?: any } | null): obj is BillingCustomer => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
       return BillingCustomer_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const BillingEmail_possibleTypes: string[] = ['BillingEmail']
-    export const isBillingEmail = (obj?: { __typename?: any } | null): obj is BillingEmail => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingEmail"')
-      return BillingEmail_possibleTypes.includes(obj.__typename)
     }
     
 

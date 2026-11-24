@@ -29,7 +29,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type BillingStatusTone = 'blue' | 'gray' | 'orange' | 'red' | 'sky';
@@ -151,7 +150,9 @@ type SettingsBillingSubscriptionInfoCardProps = {
   displayedSubscriptionDate?: string;
   headerActions: ReactNode;
   includedPerSeatItems: IncludedBillingFieldProps[];
+  isBillingEmailActionDisabled: boolean;
   isSubscriptionActionDisabled: boolean;
+  onBillingEmailClick: () => void;
   onSwitchToMonthly: () => void;
   onSwitchToYearly: () => void;
   planLabel: string;
@@ -183,7 +184,9 @@ export const SettingsBillingSubscriptionInfoCard = ({
   displayedSubscriptionDate,
   headerActions,
   includedPerSeatItems,
+  isBillingEmailActionDisabled,
   isSubscriptionActionDisabled,
+  onBillingEmailClick,
   onSwitchToMonthly,
   onSwitchToYearly,
   planLabel,
@@ -271,7 +274,13 @@ export const SettingsBillingSubscriptionInfoCard = ({
           )}
           {isDefined(billingEmail) && (
             <BillingFieldRow label={t`Billing email`} Icon={IconMail}>
-              <OverflowingTextWithTooltip text={billingEmail} />
+              <SettingsTextLink
+                title={t`Change billing email`}
+                onClick={onBillingEmailClick}
+                disabled={isBillingEmailActionDisabled}
+              >
+                {billingEmail}
+              </SettingsTextLink>
             </BillingFieldRow>
           )}
         </StyledSettingsBillingCardFieldList>

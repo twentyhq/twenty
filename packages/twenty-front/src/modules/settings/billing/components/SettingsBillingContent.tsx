@@ -2,7 +2,6 @@ import { useLingui } from '@lingui/react/macro';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingCreditsSection } from '@/settings/billing/components/SettingsBillingCreditsSection';
-import { SettingsBillingEmailNotMemberBanner } from '@/settings/billing/components/SettingsBillingEmailNotMemberBanner';
 import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/SettingsBillingSubscriptionInfo';
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
@@ -72,16 +71,9 @@ export const SettingsBillingContent = () => {
     fetchPolicy: 'cache-and-network',
     skip: !hasPermissionToManageBilling || !hasNotCanceledCurrentSubscription,
   });
-  const billingEmail = billingEmailData?.billingEmail.email;
-  const displayBillingEmailNotMemberBanner =
-    isDefined(billingEmail) &&
-    billingEmailData?.billingEmail.isWorkspaceMemberEmail === false;
 
   return (
     <SettingsPageContainer>
-      {displayBillingEmailNotMemberBanner && (
-        <SettingsBillingEmailNotMemberBanner billingEmail={billingEmail} />
-      )}
       {displayTrialNoPaymentMethodCard && currentBillingSubscription && (
         <SettingsBillingTrialNoPaymentMethodBanner
           currentBillingSubscription={currentBillingSubscription}
@@ -91,7 +83,7 @@ export const SettingsBillingContent = () => {
         currentWorkspace &&
         currentBillingSubscription && (
           <SettingsBillingSubscriptionInfo
-            billingEmail={billingEmail}
+            billingEmail={billingEmailData?.billingEmail}
             currentWorkspace={currentWorkspace}
             currentBillingSubscription={currentBillingSubscription}
             onManageBilling={openBillingPortal}

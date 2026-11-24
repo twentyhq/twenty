@@ -581,11 +581,7 @@ export const graphqlMocks = {
     graphql.query(getOperationName(BILLING_EMAIL) ?? '', () => {
       return HttpResponse.json({
         data: {
-          billingEmail: {
-            __typename: 'BillingEmail',
-            email: mockedUserData.email,
-            isWorkspaceMemberEmail: true,
-          },
+          billingEmail: mockedUserData.email,
         },
       });
     }),

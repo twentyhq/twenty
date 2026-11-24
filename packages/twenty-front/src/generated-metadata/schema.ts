@@ -1200,12 +1200,6 @@ export type BillingCustomer = {
   userCreditsFallback: UserCreditsFallback;
 };
 
-export type BillingEmail = {
-  __typename?: 'BillingEmail';
-  email?: Maybe<Scalars['String']['output']>;
-  isWorkspaceMemberEmail: Scalars['Boolean']['output'];
-};
-
 export type BillingEndTrialPeriod = {
   __typename?: 'BillingEndTrialPeriod';
   /** Billing portal URL for payment method update (returned when no payment method exists) */
@@ -6309,7 +6303,7 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
-  billingEmail: BillingEmail;
+  billingEmail?: Maybe<Scalars['String']['output']>;
   billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;
