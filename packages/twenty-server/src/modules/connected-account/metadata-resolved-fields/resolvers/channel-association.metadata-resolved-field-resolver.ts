@@ -13,6 +13,7 @@ import { type ChannelAssociationChannelRow } from 'src/modules/connected-account
 import { type ChannelAssociationMetadataResolvedFieldContext } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-metadata-resolved-field-context.type';
 import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/metadata-resolved-fields/utils/compute-channel-id-filter-from-source-filter.util';
 
+// TODO(charles): drop the accountOwnerId and handle columns and index once 2.63 leaves the cross-upgrade window
 export abstract class ChannelAssociationMetadataResolvedFieldResolver implements MetadataResolvedFieldResolverInstance<
   ChannelAssociationMetadataResolvedFieldContext,
   StringFilter & UUIDFilter

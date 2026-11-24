@@ -14,10 +14,8 @@ import { type MetadataResolvedFieldResolverInstance } from 'src/engine/api/commo
 
 @Injectable()
 export class MetadataResolvedFieldResolverRegistry implements OnModuleInit {
-  private readonly metadataResolvedFieldResolverByObjectUniversalIdentifier = new Map<
-    string,
-    MetadataResolvedFieldResolverInstance
-  >();
+  private readonly metadataResolvedFieldResolverByObjectUniversalIdentifier =
+    new Map<string, MetadataResolvedFieldResolverInstance>();
 
   constructor(private readonly discoveryService: DiscoveryService) {}
 
@@ -27,13 +25,17 @@ export class MetadataResolvedFieldResolverRegistry implements OnModuleInit {
         !isDefined(metatype) ||
         !isDefined(instance) ||
         !isDefined(
-          Reflect.getMetadata(METADATA_RESOLVED_FIELD_RESOLVER_METADATA_KEY, metatype),
+          Reflect.getMetadata(
+            METADATA_RESOLVED_FIELD_RESOLVER_METADATA_KEY,
+            metatype,
+          ),
         )
       ) {
         continue;
       }
 
-      const metadataResolvedFieldResolver: MetadataResolvedFieldResolverInstance = instance;
+      const metadataResolvedFieldResolver: MetadataResolvedFieldResolverInstance =
+        instance;
 
       this.metadataResolvedFieldResolverByObjectUniversalIdentifier.set(
         metadataResolvedFieldResolver.objectUniversalIdentifier,

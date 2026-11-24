@@ -46,6 +46,7 @@ export const getDefaultFlatFieldMetadata = ({
     isSystemSideEffect,
     isUnique: createFieldInput.isUnique ?? false,
     isSearchable: createFieldInput.isSearchable ?? false,
+    isMetadataResolved: false,
     isAuditLogged:
       createFieldInput.isAuditLogged ??
       isAuditLoggableFieldType(createFieldInput.type),

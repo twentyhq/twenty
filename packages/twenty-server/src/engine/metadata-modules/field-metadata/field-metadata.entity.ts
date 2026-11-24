@@ -28,6 +28,7 @@ import { ADD_FIELD_METADATA_DISABLED_FIELD_PERMISSION_ACTIONS_UPGRADE_COMMAND_NA
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_FIELD_METADATA_IS_AUDIT_LOGGED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-field-metadata-is-audit-logged-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
+import { ADD_FIELD_METADATA_IS_METADATA_RESOLVED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/add-field-metadata-is-metadata-resolved-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { AssignIfIsGivenFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/assign-if-is-given-field-metadata-type.type';
@@ -196,6 +197,13 @@ export class FieldMetadataEntity<
   })
   @Column({ nullable: false, default: true, type: 'boolean' })
   isAuditLogged: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_FIELD_METADATA_IS_METADATA_RESOLVED_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isMetadataResolved: boolean;
 
   @Column({ nullable: true, type: 'uuid' })
   relationTargetFieldMetadataId: AssignTypeIfIsMorphOrRelationFieldMetadataType<

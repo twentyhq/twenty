@@ -340,6 +340,7 @@ import { AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstan
 import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523227174-add-source-field-to-field-permission';
 import { AddInboxViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795526052553-add-inbox-view-type';
 import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-slow-1795536145181-add-user-workspace-default-avatar-file-id';
+import { AddIsMetadataResolvedToFieldMetadataSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-slow-1795562996271-add-is-metadata-resolved-to-field-metadata';
 import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795538016002-drop-legacy-workflow-version-id-columns';
 
 export const INSTANCE_COMMANDS = [
@@ -684,4 +685,5 @@ export const INSTANCE_COMMANDS = [
   AddInboxViewTypeFastInstanceCommand,
   AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand,
   DropLegacyWorkflowVersionIdColumnsFastInstanceCommand,
+  AddIsMetadataResolvedToFieldMetadataSlowInstanceCommand,
 ];

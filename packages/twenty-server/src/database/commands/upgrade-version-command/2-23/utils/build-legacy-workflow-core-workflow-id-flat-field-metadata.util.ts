@@ -45,6 +45,7 @@ export const buildLegacyWorkflowCoreWorkflowIdFlatFieldMetadata = ({
   isUnique: false,
   isSearchable: false,
   isAuditLogged: true,
+  isMetadataResolved: false,
   isUIEditable: false,
   disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,

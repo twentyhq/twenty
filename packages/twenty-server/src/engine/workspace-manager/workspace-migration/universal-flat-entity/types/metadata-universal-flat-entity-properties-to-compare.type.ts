@@ -41,6 +41,7 @@ type Assertions = [
       | 'isUnique'
       | 'isSearchable'
       | 'isAuditLogged'
+      | 'isMetadataResolved'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
       | 'disabledFieldPermissionActions'

@@ -6,7 +6,10 @@ import { MetadataResolvedFieldService } from 'src/engine/api/common/common-metad
 
 @Module({
   imports: [DiscoveryModule],
-  providers: [MetadataResolvedFieldResolverRegistry, MetadataResolvedFieldService],
+  providers: [
+    MetadataResolvedFieldResolverRegistry,
+    MetadataResolvedFieldService,
+  ],
   exports: [MetadataResolvedFieldService],
 })
 export class MetadataResolvedFieldModule {}

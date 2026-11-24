@@ -34,6 +34,7 @@ export type CreateStandardFieldArgs<
     isNullable?: boolean;
     isUnique?: boolean;
     isUIEditable?: boolean;
+    isMetadataResolved?: boolean;
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -64,6 +65,7 @@ export const createStandardFieldFlatMetadata = <
     isNullable = true,
     isUnique = false,
     isUIEditable = true,
+    isMetadataResolved = false,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -101,6 +103,7 @@ export const createStandardFieldFlatMetadata = <
     isUnique,
     isSearchable: searchFields.some((searchField) => searchField.name === name),
     isAuditLogged: isAuditLoggableFieldType(type),
+    isMetadataResolved,
     isUIEditable,
     disabledFieldPermissionActions:
       partialSystemFlatFieldMetadata?.disabledFieldPermissionActions ?? null,

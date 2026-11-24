@@ -41,6 +41,7 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     isUnique: false,
     isSearchable: false,
     isAuditLogged: true,
+    isMetadataResolved: false,
     isUIEditable: true,
     isLabelSyncedWithName: false,
     isSystem: false,

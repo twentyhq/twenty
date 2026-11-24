@@ -481,6 +481,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconAt',
         isNullable: true,
         isUIEditable: false,
+        isMetadataResolved: true,
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -506,6 +507,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconUserCircle',
         isNullable: true,
         isUIEditable: false,
+        isMetadataResolved: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'accountOwnerForMessageChannelMessageAssociations',
         settings: {

@@ -351,6 +351,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       icon: 'IconAt',
       isNullable: true,
       isUIEditable: false,
+      isMetadataResolved: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -376,6 +377,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       icon: 'IconUserCircle',
       isNullable: true,
       isUIEditable: false,
+      isMetadataResolved: true,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'accountOwnerForCalendarChannelEventAssociations',
       settings: {

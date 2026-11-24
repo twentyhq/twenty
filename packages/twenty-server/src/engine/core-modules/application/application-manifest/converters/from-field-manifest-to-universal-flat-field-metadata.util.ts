@@ -140,6 +140,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
       objectLabelIdentifierFieldMetadataUniversalIdentifier,
       objectIsSearchable,
     }),
+    isMetadataResolved: false,
     isAuditLogged:
       fieldManifest.isAuditLogged ??
       isAuditLoggableFieldType(fieldManifest.type),

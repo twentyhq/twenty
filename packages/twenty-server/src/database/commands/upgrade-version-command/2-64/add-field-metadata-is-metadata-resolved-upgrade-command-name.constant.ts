@@ -1,0 +1,2 @@
+export const ADD_FIELD_METADATA_IS_METADATA_RESOLVED_UPGRADE_COMMAND_NAME =
+  '2.64.0_AddIsMetadataResolvedToFieldMetadataSlowInstanceCommand_1795562996271';

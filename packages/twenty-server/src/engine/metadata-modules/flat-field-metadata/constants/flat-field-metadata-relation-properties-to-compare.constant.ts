@@ -10,6 +10,7 @@ export const FLAT_FIELD_METADATA_RELATION_PROPERTIES_TO_COMPARE = [
   'universalSettings',
   'isUIEditable',
   'isAuditLogged',
+  'isMetadataResolved',
   'isNullable',
   'disabledFieldPermissionActions',
   'isLabelSyncedWithName',

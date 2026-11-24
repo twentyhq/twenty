@@ -139,7 +139,9 @@ export const mapMetadataResolvedFieldFilters = ({
       });
 
       if (isDefined(mappedMetadataResolvedFieldFilter)) {
-        mappedMetadataResolvedFieldFilters.push(mappedMetadataResolvedFieldFilter);
+        mappedMetadataResolvedFieldFilters.push(
+          mappedMetadataResolvedFieldFilter,
+        );
         continue;
       }
     }

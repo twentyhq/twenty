@@ -534,7 +534,10 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: {},
     workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
-    knownGaps: {},
+    knownGaps: {
+      isMetadataResolved:
+        'no manifest slot; only standard fields backed by a server resolver are resolved from metadata',
+    },
   },
   {
     metadataName: 'index',

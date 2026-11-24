@@ -25,6 +25,7 @@ export const buildNameFlatFieldMetadataForCustomObject = ({
     isUnique: false,
     isSearchable: true,
     isAuditLogged: true,
+    isMetadataResolved: false,
     universalIdentifier: getFieldUniversalIdentifier({
       applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadataUniversalIdentifier,

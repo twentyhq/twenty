@@ -47,7 +47,11 @@ export const computeChannelIdFilterFromSourceFilter = ({
 }): ObjectRecordFilter => {
   const channelIds = channelAssociationSources
     .filter((source) =>
-      isSourceMatchingFilter({ source, metadataResolvedFieldName, metadataResolvedFieldFilter }),
+      isSourceMatchingFilter({
+        source,
+        metadataResolvedFieldName,
+        metadataResolvedFieldFilter,
+      }),
     )
     .map(({ channelId }) => channelId);
 

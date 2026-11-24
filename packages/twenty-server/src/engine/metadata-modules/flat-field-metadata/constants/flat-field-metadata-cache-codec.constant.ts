@@ -22,6 +22,7 @@ export const FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY = {
   id: '$c',
   isActive: '$d',
   isAuditLogged: '$O',
+  isMetadataResolved: '$X',
   isLabelSyncedWithName: '$e',
   isNullable: '$f',
   isSystem: '$g',

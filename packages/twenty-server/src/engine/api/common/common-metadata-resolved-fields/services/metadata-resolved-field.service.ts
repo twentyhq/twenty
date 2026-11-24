@@ -51,8 +51,9 @@ export class MetadataResolvedFieldService {
 
     return (metadataResolvedFieldResolver) => {
       const loadingContext =
-        loadingContextByMetadataResolvedFieldResolver.get(metadataResolvedFieldResolver) ??
-        metadataResolvedFieldResolver.loadContext({ workspaceId });
+        loadingContextByMetadataResolvedFieldResolver.get(
+          metadataResolvedFieldResolver,
+        ) ?? metadataResolvedFieldResolver.loadContext({ workspaceId });
 
       loadingContextByMetadataResolvedFieldResolver.set(
         metadataResolvedFieldResolver,
@@ -84,19 +85,25 @@ export class MetadataResolvedFieldService {
         flatFieldMetadataMaps,
       });
 
-    if (selectedMetadataResolvedFieldColumnNames.length === 0 || records.length === 0) {
+    if (
+      selectedMetadataResolvedFieldColumnNames.length === 0 ||
+      records.length === 0
+    ) {
       return;
     }
 
     const metadataResolvedFieldResolver =
-      this.metadataResolvedFieldResolverRegistry.findOrThrow(flatObjectMetadata);
+      this.metadataResolvedFieldResolverRegistry.findOrThrow(
+        flatObjectMetadata,
+      );
     const context = await loadContext(metadataResolvedFieldResolver);
 
     for (const record of records) {
-      const metadataResolvedFieldValues = metadataResolvedFieldResolver.computeValues({
-        record,
-        context,
-      });
+      const metadataResolvedFieldValues =
+        metadataResolvedFieldResolver.computeValues({
+          record,
+          context,
+        });
 
       for (const metadataResolvedFieldColumnName of selectedMetadataResolvedFieldColumnNames) {
         record[metadataResolvedFieldColumnName] =
@@ -153,11 +160,12 @@ export class MetadataResolvedFieldService {
       }
 
       if (isDefined(relationSelection.filter)) {
-        relationSelection.filter = await this.rewriteMetadataResolvedFieldFilters({
-          ...metadataResolvedFieldMetadataArgs,
-          filter: relationSelection.filter,
-          flatObjectMetadata: targetFlatObjectMetadata,
-        });
+        relationSelection.filter =
+          await this.rewriteMetadataResolvedFieldFilters({
+            ...metadataResolvedFieldMetadataArgs,
+            filter: relationSelection.filter,
+            flatObjectMetadata: targetFlatObjectMetadata,
+          });
       }
 
       await this.prepareSelection({
@@ -244,7 +252,8 @@ export class MetadataResolvedFieldService {
               this.computeSourceFilterOrThrow({
                 metadataResolvedFieldResolver,
                 metadataResolvedFieldName,
-                metadataResolvedFieldFilter: resolvedMetadataResolvedFieldFilter,
+                metadataResolvedFieldFilter:
+                  resolvedMetadataResolvedFieldFilter,
                 context,
               }),
             ] as const;
@@ -254,7 +263,9 @@ export class MetadataResolvedFieldService {
     );
 
     return mapFilters(({ metadataResolvedFieldFilter }) =>
-      sourceFilterByMetadataResolvedFieldFilter.get(metadataResolvedFieldFilter),
+      sourceFilterByMetadataResolvedFieldFilter.get(
+        metadataResolvedFieldFilter,
+      ),
     );
   }
 

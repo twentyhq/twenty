@@ -4,7 +4,8 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 export type MetadataResolvedFieldResolverInstance<
   TContext = unknown,
-  TMetadataResolvedFieldFilter extends NonNullable<LeafFilter> = NonNullable<LeafFilter>,
+  TMetadataResolvedFieldFilter extends NonNullable<LeafFilter> =
+    NonNullable<LeafFilter>,
 > = {
   readonly objectUniversalIdentifier: string;
   readonly sourceColumnNames: readonly string[];
