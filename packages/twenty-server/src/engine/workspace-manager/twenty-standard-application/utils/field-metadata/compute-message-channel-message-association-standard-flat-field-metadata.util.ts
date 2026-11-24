@@ -345,6 +345,31 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
       twentyStandardApplicationId,
       now,
     }),
+    isRead: createStandardFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        fieldName: 'isRead',
+        type: FieldMetadataType.BOOLEAN,
+        label: i18nLabel(
+          msg({ message: `Read`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Whether the channel owner has read the message`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: true,
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
     messageChannelId: createStandardFieldFlatMetadata({
       objectName,
       workspaceId,
