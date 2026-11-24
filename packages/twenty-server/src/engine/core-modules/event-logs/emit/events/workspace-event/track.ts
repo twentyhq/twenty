@@ -11,8 +11,7 @@ export const genericTrackSchema = baseEventSchema.extend({
 export type GenericTrackEvent<E extends string = string> = {
   type: 'track';
   event: E;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  properties: any;
+  properties: Record<string, unknown>;
   timestamp: string;
   version: string;
   userId?: string;

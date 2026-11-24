@@ -23,7 +23,7 @@ export const NAVIGATION_MENU_BUILT_IN_SECTIONS = [
   },
   {
     key: 'aiChatInbox',
-    label: msg`Triage`,
+    label: msg`Inbox`,
     Icon: IconInbox,
     color: 'blue',
     isAi: true,

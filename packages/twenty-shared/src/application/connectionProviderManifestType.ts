@@ -9,8 +9,14 @@ type ConnectionProviderManifestBase = SyncableEntityOptions & {
   displayName: string;
   logo?: string;
   scope?: ConnectionProviderScope;
+  identifyAccountLogicFunctionUniversalIdentifier?: string;
+  onConnectLogicFunctionUniversalIdentifier?: string;
+  onDisconnectLogicFunctionUniversalIdentifier?: string;
+  /** @deprecated Use `identifyAccountLogicFunctionUniversalIdentifier` instead. */
   identifyAccountLogicFunction?: SyncableEntityOptions;
+  /** @deprecated Use `onConnectLogicFunctionUniversalIdentifier` instead. */
   onConnectLogicFunction?: SyncableEntityOptions;
+  /** @deprecated Use `onDisconnectLogicFunctionUniversalIdentifier` instead. */
   onDisconnectLogicFunction?: SyncableEntityOptions;
 };
 

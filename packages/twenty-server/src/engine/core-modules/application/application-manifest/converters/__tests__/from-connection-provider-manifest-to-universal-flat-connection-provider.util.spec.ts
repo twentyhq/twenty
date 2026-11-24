@@ -239,4 +239,55 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
     expect(result.oauthConfig?.tokenRequestContentType).toBe('json');
     expect(result.oauthConfig?.usePkce).toBe(true);
   });
+
+  it('reads references written as universal identifiers and prefers them over the deprecated form', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: {
+          universalIdentifier: PROVIDER_UID,
+          name: 'linkedin',
+          displayName: 'LinkedIn',
+          type: 'custom',
+          custom: {
+            authorizeLogicFunctionUniversalIdentifier:
+              'f1f1f1f1-f1f1-4f1f-f1f1-f1f1f1f1f1f1',
+            callbackLogicFunctionUniversalIdentifier:
+              'f2f2f2f2-f2f2-4f2f-f2f2-f2f2f2f2f2f2',
+          },
+          onConnectLogicFunctionUniversalIdentifier:
+            'f3f3f3f3-f3f3-4f3f-f3f3-f3f3f3f3f3f3',
+          onConnectLogicFunction: {
+            universalIdentifier: 'f4f4f4f4-f4f4-4f4f-f4f4-f4f4f4f4f4f4',
+          },
+        },
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.customConfig).toEqual({
+      authorizeLogicFunctionUniversalIdentifier:
+        'f1f1f1f1-f1f1-4f1f-f1f1-f1f1f1f1f1f1',
+      callbackLogicFunctionUniversalIdentifier:
+        'f2f2f2f2-f2f2-4f2f-f2f2-f2f2f2f2f2f2',
+    });
+    expect(result.onConnectLogicFunctionUniversalIdentifier).toBe(
+      'f3f3f3f3-f3f3-4f3f-f3f3-f3f3f3f3f3f3',
+    );
+  });
+
+  it('leaves the custom config empty for a provider without authorize or callback logic function, for the validator to refuse', () => {
+    expect(
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: {
+          universalIdentifier: PROVIDER_UID,
+          name: 'linkedin',
+          displayName: 'LinkedIn',
+          type: 'custom',
+          custom: {},
+        },
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      }).customConfig,
+    ).toBeNull();
+  });
 });
