@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -278,26 +279,45 @@ export class MatchParticipantService<
 
     await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
       async (transactionScope) => {
-        const participantRepository = this.getParticipantRepository({
+        const workspaceMemberEmails = (
+          await getWorkspaceRepositoryWithOptionalTransaction<WorkspaceMemberWorkspaceEntity>(
+            {
+              objectMetadataName: 'workspaceMember',
+              transactionScope,
+              workspaceOrmManager: this.workspaceOrmManager,
+              shouldBypassPermissionChecks: true,
+            },
+          ).find({
+            where: { id: In(participantMatching.workspaceMemberIds) },
+            select: { userEmail: true },
+          })
+        )
+          .map((workspaceMember) => workspaceMember.userEmail)
+          .filter(isNonEmptyString);
+
+        if (!isNonEmptyArray(workspaceMemberEmails)) {
+          return;
+        }
+
+        const participantsWithWorkspaceMemberEmail =
+          await this.getParticipantRepository({
+            objectMetadataName,
+            transactionScope,
+          }).find({
+            where: { handle: In(workspaceMemberEmails) },
+          });
+
+        const participantsToRematch = await this.withoutAppChannelParticipants({
+          participants: participantsWithWorkspaceMemberEmail,
           objectMetadataName,
+          workspaceId,
           transactionScope,
         });
 
-        const participants = await participantRepository.find({
-          where: {
-            workspaceMemberId: In(participantMatching.workspaceMemberIds),
-          },
-        });
-
-        const rematchedParticipants = participants.map((participant) => ({
-          ...participant,
-          workspaceMemberId: null,
-        })) as ParticipantWorkspaceEntity[];
-
         await this.matchParticipants({
           matchWith: 'workspaceMemberOnly',
-          participants: rematchedParticipants,
-          sourceRecordIds: this.getSourceRecordIds(rematchedParticipants),
+          participants: participantsToRematch,
+          sourceRecordIds: this.getSourceRecordIds(participantsToRematch),
           objectMetadataName,
           transactionScope,
         });
