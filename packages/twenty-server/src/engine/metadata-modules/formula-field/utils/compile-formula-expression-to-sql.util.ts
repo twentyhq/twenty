@@ -10,7 +10,7 @@ import {
   compileFormulaSqlBinaryOperatorOrThrow,
   compileFormulaSqlUnaryOperatorOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-operator.util';
-import { buildTextLiteralValue } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
+import { buildTextLiteralValueOrThrow } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
 
 type FormulaSqlStackEntry =
   | { kind: 'path'; path: string }
@@ -25,7 +25,7 @@ const NOW_PATH = 'now';
 
 const compileLiteralOrThrow = (literal: unknown): FormulaSqlValue => {
   if (isString(literal)) {
-    return buildTextLiteralValue(literal);
+    return buildTextLiteralValueOrThrow(literal);
   }
 
   if (isBoolean(literal)) {
