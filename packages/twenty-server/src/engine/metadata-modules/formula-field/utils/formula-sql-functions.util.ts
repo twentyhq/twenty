@@ -2,7 +2,11 @@ import {
   EXPRESSION_DATE_PARTS,
   EXPRESSION_DATE_UNITS,
 } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  relativeDateFilterDirectionSchema,
+  relativeDateFilterUnitSchema,
+} from 'twenty-shared/utils';
 
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
@@ -26,11 +30,12 @@ import {
 type FormulaSqlFunction = {
   minimumArgumentCount: number;
   maximumArgumentCount: number;
-  compile: (formulaSqlValues: FormulaSqlValue[]) => FormulaSqlValue;
+  compile: (
+    formulaSqlValues: FormulaSqlValue[],
+    usage: string,
+  ) => FormulaSqlValue;
 };
 
-const RELATIVE_DATE_DIRECTIONS = ['PAST', 'NEXT', 'THIS'];
-const RELATIVE_DATE_UNITS = ['SECOND', ...EXPRESSION_DATE_UNITS];
 const DATE_PART_SQL_FIELDS: Record<
   (typeof EXPRESSION_DATE_PARTS)[number],
   string
@@ -165,6 +170,28 @@ const compileRelativeDateRange = ({
   return `COALESCE(${amountSql} >= 1 AND ${timestamp} >= ${start} AND ${timestamp} < ${end}, FALSE)`;
 };
 
+const buildTextCaseFunction = (
+  sqlFunctionName: 'lower' | 'upper',
+): FormulaSqlFunction => ({
+  minimumArgumentCount: 1,
+  maximumArgumentCount: 1,
+  compile: ([text], usage) => ({
+    sql: `${sqlFunctionName}(${assertFormulaSqlTypeOrThrow({ value: text, type: 'text', usage }).sql})`,
+    type: 'text',
+  }),
+});
+
+const buildNumberListFunction = (
+  sqlFunctionName: 'LEAST' | 'GREATEST',
+): FormulaSqlFunction => ({
+  minimumArgumentCount: 1,
+  maximumArgumentCount: Infinity,
+  compile: (formulaSqlValues, usage) => ({
+    sql: `${sqlFunctionName}(${formulaSqlValues.map((value) => assertFormulaSqlTypeOrThrow({ value, type: 'number', usage }).sql).join(', ')})`,
+    type: 'number',
+  }),
+});
+
 const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   isDefined: {
     minimumArgumentCount: 1,
@@ -185,14 +212,14 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   isNonEmptyString: {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
-    compile: ([value]) => {
+    compile: ([value], usage) => {
       if (
         value.type !== 'text' &&
         value.type !== 'date' &&
         value.type !== 'dateTime'
       ) {
         throw new FormulaSqlCompilationException({
-          message: `isNonEmptyString needs text, but got ${describeFormulaSqlType(value.type)}`,
+          message: `${usage} needs text, but got ${describeFormulaSqlType(value.type)}`,
         });
       }
 
@@ -205,11 +232,11 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   includes: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([container, value]) => {
+    compile: ([container, value], usage) => {
       const searchedText = assertFormulaSqlTypeOrThrow({
         value,
         type: 'text',
-        usage: 'includes',
+        usage,
       });
 
       if (container.type === 'textArray') {
@@ -220,7 +247,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
       }
 
       return {
-        sql: `COALESCE(strpos(${assertFormulaSqlTypeOrThrow({ value: container, type: 'text', usage: 'includes' }).sql}, ${searchedText.sql}) > 0, FALSE)`,
+        sql: `COALESCE(strpos(${assertFormulaSqlTypeOrThrow({ value: container, type: 'text', usage }).sql}, ${searchedText.sql}) > 0, FALSE)`,
         type: 'boolean',
       };
     },
@@ -228,22 +255,22 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   arrayLength: {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
-    compile: ([list]) => ({
-      sql: `COALESCE(cardinality(${assertFormulaSqlTypeOrThrow({ value: list, type: 'textArray', usage: 'arrayLength' }).sql}), 0)::numeric`,
+    compile: ([list], usage) => ({
+      sql: `COALESCE(cardinality(${assertFormulaSqlTypeOrThrow({ value: list, type: 'textArray', usage }).sql}), 0)::numeric`,
       type: 'number',
     }),
   },
   dateDiff: {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
-    compile: ([from, to, unit]) => ({
+    compile: ([from, to, unit], usage) => ({
       sql: compileDateDifference({
-        from: toDateLikeValueOrThrow({ value: from, usage: 'dateDiff' }),
-        to: toDateLikeValueOrThrow({ value: to, usage: 'dateDiff' }),
+        from: toDateLikeValueOrThrow({ value: from, usage }),
+        to: toDateLikeValueOrThrow({ value: to, usage }),
         unit: getFormulaSqlUnitOrThrow({
           value: unit,
           units: EXPRESSION_DATE_UNITS,
-          usage: 'dateDiff',
+          usage,
         }),
       }),
       type: 'number',
@@ -252,22 +279,22 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   dateAdd: {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
-    compile: ([date, amount, unitValue]) => {
+    compile: ([date, amount, unitValue], usage) => {
       const dateLikeValue = toDateLikeValueOrThrow({
         value: date,
-        usage: 'dateAdd',
+        usage,
       });
       const unit = getFormulaSqlUnitOrThrow({
         value: unitValue,
         units: EXPRESSION_DATE_UNITS,
-        usage: 'dateAdd',
+        usage,
       });
       const interval = buildFormulaSqlInterval({
         unit,
         amountSql: assertFormulaSqlTypeOrThrow({
           value: amount,
           type: 'number',
-          usage: 'dateAdd',
+          usage,
         }).sql,
       });
 
@@ -283,10 +310,10 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   dateTrunc: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([date, unit]) => {
+    compile: ([date, unit], usage) => {
       const dateLikeValue = toDateLikeValueOrThrow({
         value: date,
-        usage: 'dateTrunc',
+        usage,
       });
 
       return fromUtcTimestamp({
@@ -294,7 +321,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
           unit: getFormulaSqlUnitOrThrow({
             value: unit,
             units: EXPRESSION_DATE_UNITS,
-            usage: 'dateTrunc',
+            usage,
           }),
           timestampSql: toUtcTimestamp(dateLikeValue),
         }),
@@ -305,18 +332,18 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   datePart: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([date, part]) => {
+    compile: ([date, part], usage) => {
       const sqlField =
         DATE_PART_SQL_FIELDS[
           getFormulaSqlUnitOrThrow({
             value: part,
             units: EXPRESSION_DATE_PARTS,
-            usage: 'datePart',
+            usage,
           })
         ];
 
       return {
-        sql: `EXTRACT(${sqlField} FROM ${toUtcTimestamp(toDateLikeValueOrThrow({ value: date, usage: 'datePart' }))})`,
+        sql: `EXTRACT(${sqlField} FROM ${toUtcTimestamp(toDateLikeValueOrThrow({ value: date, usage }))})`,
         type: 'number',
       };
     },
@@ -324,16 +351,16 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   if: {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
-    compile: ([condition, valueIfTrue, valueIfFalse]) => {
+    compile: ([condition, valueIfTrue, valueIfFalse], usage) => {
       const [unifiedValueIfTrue, unifiedValueIfFalse] =
         unifyFormulaSqlValuesOrThrow({
           left: valueIfTrue,
           right: valueIfFalse,
-          usage: 'if',
+          usage,
         });
 
       return {
-        sql: `(CASE WHEN ${assertFormulaSqlTypeOrThrow({ value: condition, type: 'boolean', usage: 'if' }).sql} THEN ${unifiedValueIfTrue.sql} ELSE ${unifiedValueIfFalse.sql} END)`,
+        sql: `(CASE WHEN ${assertFormulaSqlTypeOrThrow({ value: condition, type: 'boolean', usage }).sql} THEN ${unifiedValueIfTrue.sql} ELSE ${unifiedValueIfFalse.sql} END)`,
         type: unifiedValueIfTrue.type,
       };
     },
@@ -341,8 +368,8 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   coalesce: {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
-    compile: (formulaSqlValues) => {
-      const unifiedValues = unifyAll({ formulaSqlValues, usage: 'coalesce' });
+    compile: (formulaSqlValues, usage) => {
+      const unifiedValues = unifyAll({ formulaSqlValues, usage });
 
       return {
         sql: `COALESCE(${unifiedValues.map(({ sql }) => sql).join(', ')})`,
@@ -353,77 +380,49 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   concat: {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
-    compile: (formulaSqlValues) => ({
+    compile: (formulaSqlValues, usage) => ({
       sql: `(${formulaSqlValues
-        .map((value) => toTextOperandOrThrow({ value, usage: 'concat' }))
+        .map((value) => toTextOperandOrThrow({ value, usage }))
         .join(' || ')})`,
       type: 'text',
       isNeverNull: true,
     }),
   },
-  lower: {
-    minimumArgumentCount: 1,
-    maximumArgumentCount: 1,
-    compile: ([text]) => ({
-      sql: `lower(${assertFormulaSqlTypeOrThrow({ value: text, type: 'text', usage: 'lower' }).sql})`,
-      type: 'text',
-    }),
-  },
-  upper: {
-    minimumArgumentCount: 1,
-    maximumArgumentCount: 1,
-    compile: ([text]) => ({
-      sql: `upper(${assertFormulaSqlTypeOrThrow({ value: text, type: 'text', usage: 'upper' }).sql})`,
-      type: 'text',
-    }),
-  },
-  min: {
-    minimumArgumentCount: 1,
-    maximumArgumentCount: Infinity,
-    compile: (formulaSqlValues) => ({
-      sql: `LEAST(${formulaSqlValues.map((value) => assertFormulaSqlTypeOrThrow({ value, type: 'number', usage: 'min' }).sql).join(', ')})`,
-      type: 'number',
-    }),
-  },
-  max: {
-    minimumArgumentCount: 1,
-    maximumArgumentCount: Infinity,
-    compile: (formulaSqlValues) => ({
-      sql: `GREATEST(${formulaSqlValues.map((value) => assertFormulaSqlTypeOrThrow({ value, type: 'number', usage: 'max' }).sql).join(', ')})`,
-      type: 'number',
-    }),
-  },
+  lower: buildTextCaseFunction('lower'),
+  upper: buildTextCaseFunction('upper'),
+  min: buildNumberListFunction('LEAST'),
+  max: buildNumberListFunction('GREATEST'),
   roundTo: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([number, decimals]) => ({
-      sql: `round(${assertFormulaSqlTypeOrThrow({ value: number, type: 'number', usage: 'roundTo' }).sql}, LEAST(GREATEST(trunc(${toNumberOperandOrThrow({ value: decimals, usage: 'roundTo' })}), 0), 20)::integer)`,
+    compile: ([number, decimals], usage) => ({
+      sql: `round(${assertFormulaSqlTypeOrThrow({ value: number, type: 'number', usage }).sql}, LEAST(GREATEST(trunc(${toNumberOperandOrThrow({ value: decimals, usage })}), 0), 20)::integer)`,
       type: 'number',
     }),
   },
   isInRelativeDateRange: {
     minimumArgumentCount: 4,
     maximumArgumentCount: 4,
-    compile: ([date, direction, amount, unit]) => ({
+    compile: ([date, direction, amount, unit], usage) => ({
       sql: compileRelativeDateRange({
         date: toDateLikeValueOrThrow({
           value: date,
-          usage: 'isInRelativeDateRange',
+          usage,
         }),
         direction: getFormulaSqlUnitOrThrow({
           value: direction,
-          units: RELATIVE_DATE_DIRECTIONS,
-          usage: 'isInRelativeDateRange',
+          units: relativeDateFilterDirectionSchema.options,
+          usage,
         }),
         amountSql: assertFormulaSqlTypeOrThrow({
           value: amount,
           type: 'number',
-          usage: 'isInRelativeDateRange',
+          usage,
         }).sql,
         unit: getFormulaSqlUnitOrThrow({
           value: unit,
-          units: RELATIVE_DATE_UNITS,
-          usage: 'isInRelativeDateRange',
+          units: relativeDateFilterUnitSchema.options,
+          usage,
         }),
       }),
       type: 'boolean',
@@ -458,5 +457,5 @@ export const compileFormulaSqlFunctionOrThrow = ({
     });
   }
 
-  return compile(formulaSqlValues);
+  return compile(formulaSqlValues, name);
 };

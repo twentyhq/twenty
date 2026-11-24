@@ -12,6 +12,7 @@ import {
   type FormulaSourceUniversalFlatFieldMetadata,
   type FormulaSourceUniversalFlatObjectMetadata,
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
+import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 // Bindings are server-owned, and kept while the expression is unchanged so a broken formula still records what it read
@@ -56,16 +57,10 @@ export const setFormulaFieldBindings = <
   const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
     settings: universalSettings,
   });
-  const isUnchanged =
-    expression ===
-      getFieldMetadataFormulaExpression({
-        settings: existingUniversalSettings,
-      }) &&
-    currencyCodeExpression ===
-      getFieldMetadataFormulaCurrencyCodeExpression({
-        settings: existingUniversalSettings,
-      });
-  const existingBindings = isUnchanged
+  const existingBindings = isFieldMetadataFormulaUnchanged({
+    settings: universalSettings,
+    existingSettings: existingUniversalSettings,
+  })
     ? getFieldMetadataFormulaBindings({ settings: existingUniversalSettings })
     : undefined;
 

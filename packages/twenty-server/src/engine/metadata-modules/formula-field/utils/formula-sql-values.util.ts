@@ -1,5 +1,6 @@
 import { isDefined, parseExpressionDate } from 'twenty-shared/utils';
 
+import { escapeLiteral } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import {
   type FormulaSqlType,
@@ -19,9 +20,6 @@ const FORMULA_SQL_TYPE_LABELS: Record<FormulaSqlType, string> = {
 export const describeFormulaSqlType = (type: FormulaSqlType): string =>
   FORMULA_SQL_TYPE_LABELS[type];
 
-export const toSqlTextLiteral = (text: string): string =>
-  `'${text.replace(/'/g, "''")}'`;
-
 export const buildTextLiteralValue = (text: string): FormulaSqlValue => {
   if (text.includes('\u0000')) {
     throw new FormulaSqlCompilationException({
@@ -30,7 +28,7 @@ export const buildTextLiteralValue = (text: string): FormulaSqlValue => {
   }
 
   return {
-    sql: `${toSqlTextLiteral(text)}::text`,
+    sql: `${escapeLiteral(text)}::text`,
     type: 'text',
     isNeverNull: true,
     textLiteral: text,
@@ -123,11 +121,11 @@ export const toDateLikeValue = (
 
   return expressionDate.isDateOnly
     ? {
-        sql: `${toSqlTextLiteral(expressionDate.date.toString())}::date`,
+        sql: `${escapeLiteral(expressionDate.date.toString())}::date`,
         type: 'date',
       }
     : {
-        sql: `${toSqlTextLiteral(expressionDate.dateTime.toInstant().toString())}::timestamptz`,
+        sql: `${escapeLiteral(expressionDate.dateTime.toInstant().toString())}::timestamptz`,
         type: 'dateTime',
       };
 };

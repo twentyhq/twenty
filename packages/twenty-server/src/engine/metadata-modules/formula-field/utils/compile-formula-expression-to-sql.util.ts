@@ -21,13 +21,9 @@ export type FormulaSqlReferenceResolver = (
   path: string,
 ) => FormulaSqlValue | undefined;
 
-export type FormulaSqlCompilationResult =
-  | { isValid: true; value: FormulaSqlValue }
-  | { isValid: false; errorMessage: string };
-
 const NOW_PATH = 'now';
 
-const compileLiteral = (literal: unknown): FormulaSqlValue => {
+const compileLiteralOrThrow = (literal: unknown): FormulaSqlValue => {
   if (isString(literal)) {
     return buildTextLiteralValue(literal);
   }
@@ -101,7 +97,7 @@ const compileInstructions = ({
   for (const { type, value } of instructions) {
     switch (type) {
       case 'INUMBER':
-        stack.push({ kind: 'value', value: compileLiteral(value) });
+        stack.push({ kind: 'value', value: compileLiteralOrThrow(value) });
         break;
       case 'IVAR':
         stack.push({ kind: 'path', path: String(value) });
@@ -199,25 +195,26 @@ const compileInstructions = ({
   return result;
 };
 
-export const compileFormulaExpressionToSql = ({
+// Parser errors carry the message to show, so they are reported like compilation errors
+export const compileFormulaExpressionToSqlOrThrow = ({
   expression,
   resolveReference,
 }: {
   expression: string;
   resolveReference: FormulaSqlReferenceResolver;
-}): FormulaSqlCompilationResult => {
+}): FormulaSqlValue => {
   try {
-    return {
-      isValid: true,
-      value: compileInstructions({
-        instructions: parseExpressionInstructions(expression),
-        resolveReference,
-      }),
-    };
+    return compileInstructions({
+      instructions: parseExpressionInstructions(expression),
+      resolveReference,
+    });
   } catch (error) {
-    return {
-      isValid: false,
-      errorMessage: error instanceof Error ? error.message : String(error),
-    };
+    if (error instanceof FormulaSqlCompilationException) {
+      throw error;
+    }
+
+    throw new FormulaSqlCompilationException({
+      message: error instanceof Error ? error.message : String(error),
+    });
   }
 };
