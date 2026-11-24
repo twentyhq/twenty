@@ -71,7 +71,7 @@ export default async function IntegratorProgramPage({
               />
             </>
           }
-          visual={
+          backdrop={
             <ProgramHeroVisual
               backdrop={INTEGRATOR_HERO_BACKDROP}
               slot="integrator-hero"

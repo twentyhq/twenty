@@ -4,17 +4,12 @@ import {
   HalftoneImageBackdrop,
   type HalftoneImageBackdropProps,
 } from '@/platform/visuals/rigs/HalftoneImageBackdrop';
-import { radius } from '@/tokens';
-
-// WhyTwentyVisual's fixed 462px stage, holding one halftone artwork rendered
-// live like the home hero bridge. Decorative — the hero heading carries the
-// meaning — so the whole frame is hidden from assistive tech.
+// Fills ProgramHero's stage with one halftone artwork rendered live like the
+// home hero bridge. Decorative — the hero heading carries the meaning — so the
+// whole frame is hidden from assistive tech.
 const VisualFrame = styled.div`
-  border-radius: ${radius(1)};
-  height: 462px;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
+  inset: 0;
+  position: absolute;
 `;
 
 type ProgramHeroVisualProps = {

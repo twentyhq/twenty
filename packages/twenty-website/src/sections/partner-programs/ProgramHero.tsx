@@ -16,7 +16,7 @@ const IntroStack = styled.div`
   width: 100%;
 
   & > * + * {
-    margin-top: ${spacing(8)};
+    margin-top: ${spacing(HERO_COMPOSITION.introGapSpacing)};
   }
 `;
 
@@ -27,6 +27,10 @@ const VisualStage = styled.div`
   width: 100%;
 `;
 
+const BackdropRoom = styled.div`
+  height: ${HERO_COMPOSITION.backdropRoomPx}px;
+`;
+
 const GradientBackdrop = styled.div`
   background: ${GRADIENT.heroGlow};
   inset: 0 -20%;
@@ -34,13 +38,13 @@ const GradientBackdrop = styled.div`
 `;
 
 const HeadingMeasure = styled.div`
-  max-width: 672px;
+  max-width: ${HERO_COMPOSITION.headingMeasurePx}px;
   width: 100%;
 `;
 
 const BodyMeasure = styled.div`
   margin-inline: auto;
-  max-width: 443px;
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
 `;
 
 const CtaRow = styled.div`
@@ -96,7 +100,11 @@ export function ProgramHero({
         </HeadingPair>
         <CtaRow>{actions}</CtaRow>
       </IntroStack>
-      <VisualStage>{visual}</VisualStage>
+      {isDefined(visual) ? (
+        <VisualStage>{visual}</VisualStage>
+      ) : (
+        isDefined(backdrop) && <BackdropRoom />
+      )}
     </SectionShell>
   );
 }
