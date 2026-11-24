@@ -24,7 +24,7 @@ export const buildMemberFieldKey = ({
   }
 
   const relationKey = isDefined(workspaceMemberRelationFilterFieldMetadataId)
-    ? `${workspaceMemberRelationFieldMetadataId}[${workspaceMemberRelationFilterFieldMetadataId}=${[...(workspaceMemberRelationFilterValues ?? [])].sort().join('|')}]`
+    ? `${workspaceMemberRelationFieldMetadataId}[${workspaceMemberRelationFilterFieldMetadataId}=${JSON.stringify([...(workspaceMemberRelationFilterValues ?? [])].sort())}]`
     : workspaceMemberRelationFieldMetadataId;
 
   return `${relationKey}>${memberFieldKey}`;
