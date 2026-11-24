@@ -3,4 +3,5 @@ export type BackfillRollupFieldsJobData = {
   objectMetadataId: string;
   rollupFieldMetadataIds?: string[];
   afterRecordId: string | null;
+  deduplicationId?: string;
 };

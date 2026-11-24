@@ -28,10 +28,17 @@ export class ReconcileRollupFieldsJob {
     );
 
     for (const objectMetadataId of objectMetadataIdsWithRollups) {
+      // Chained backfill jobs keep this id, so a reconcile still running the next night is not started twice
+      const deduplicationId = `rollup-field-reconcile:${workspaceId}:${objectMetadataId}`;
+
       await this.messageQueueService.add<BackfillRollupFieldsJobData>(
         BACKFILL_ROLLUP_FIELDS_JOB_NAME,
-        { workspaceId, objectMetadataId, afterRecordId: null },
-        { workspaceId, isWorkspaceJob: true },
+        { workspaceId, objectMetadataId, afterRecordId: null, deduplicationId },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+          deduplication: { id: deduplicationId, keepLastIfActive: true },
+        },
       );
     }
   }

@@ -19,7 +19,7 @@ import {
 } from 'twenty-shared/types';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { ReconcileRollupFieldsCronJob } from 'src/engine/core-modules/rollup-field/crons/reconcile-rollup-fields.cron.job';
+import { RECONCILE_ROLLUP_FIELDS_JOB_NAME } from 'src/engine/core-modules/rollup-field/constants/reconcile-rollup-fields-job-name.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -251,7 +251,7 @@ describe('Rollup field live update', () => {
     });
   });
 
-  it('catches up with a write that emitted no event when the reconcile cron runs', async () => {
+  it('catches up with a write that emitted no event when the rollups are reconciled', async () => {
     await global.testDataSource.query(
       `UPDATE "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."_rollupTask" SET "estimate" = 42 WHERE "id" = $1`,
       [FIRST_TASK_ID],
@@ -262,10 +262,10 @@ describe('Rollup field live update', () => {
     });
 
     await enqueueJobAndDrain({
-      queue: MessageQueue.cronQueue,
-      jobName: ReconcileRollupFieldsCronJob.name,
-      data: {},
-      scope: { isSystemJob: true },
+      queue: MessageQueue.rollupFieldQueue,
+      jobName: RECONCILE_ROLLUP_FIELDS_JOB_NAME,
+      data: { workspaceId: SEED_APPLE_WORKSPACE_ID },
+      scope: { workspaceId: SEED_APPLE_WORKSPACE_ID, isWorkspaceJob: true },
     });
 
     expect(await findProject(FIRST_PROJECT_ID)).toMatchObject({
