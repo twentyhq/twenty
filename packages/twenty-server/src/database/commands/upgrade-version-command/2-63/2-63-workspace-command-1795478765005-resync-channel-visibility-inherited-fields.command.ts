@@ -6,7 +6,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795475465278)
+@RegisteredWorkspaceCommand('2.63.0', 1795478765005)
 @Command({
   name: 'upgrade:2-63:resync-channel-visibility-inherited-fields',
   description:

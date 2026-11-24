@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { AddChannelTargetRelatedRecordPathsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795449569000-add-channel-target-related-record-paths.command';
 import { AddChannelAssociationAccountOwnerAndHandleCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795432675597-add-channel-association-account-owner-and-handle.command';
-import { ResyncChannelVisibilityInheritedFieldsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795475465278-resync-channel-visibility-inherited-fields.command';
+import { ResyncChannelVisibilityInheritedFieldsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795478765005-resync-channel-visibility-inherited-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';

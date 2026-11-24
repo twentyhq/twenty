@@ -329,8 +329,10 @@ import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/comma
 import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429429999-add-view-field-label';
 import { AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795439034166-add-conditional-availability-to-page-layout-widget';
 import { RelatedRecordPathOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795470470000-related-record-path-overridable-entity';
-import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795474659387-add-source-field-to-field-permission';
-import { AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795475493818-add-source-field-foreign-key-to-field-permission';
+import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477704494-add-view-is-private';
+import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795477704495-backfill-view-is-private-overrides';
+import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478765003-add-source-field-to-field-permission';
+import { AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478765004-add-source-field-foreign-key-to-field-permission';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -662,6 +664,8 @@ export const INSTANCE_COMMANDS = [
   AddViewFieldLabelFastInstanceCommand,
   AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand,
   RelatedRecordPathOverridableEntityFastInstanceCommand,
+  AddViewIsPrivateFastInstanceCommand,
+  BackfillViewIsPrivateOverridesSlowInstanceCommand,
   AddSourceFieldToFieldPermissionFastInstanceCommand,
   AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand,
 ];
