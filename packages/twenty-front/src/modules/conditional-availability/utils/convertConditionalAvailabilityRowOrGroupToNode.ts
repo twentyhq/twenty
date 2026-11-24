@@ -1,5 +1,5 @@
-import { type ConditionalAvailabilityRowTreeChild } from '@/conditional-availability/types/ConditionalAvailabilityRowTreeChild';
-import { getConditionalAvailabilityRowOperatorComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityRowOperatorComparisonOperator';
+import { type ConditionalAvailabilityRowOrGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowOrGroup';
+import { getConditionalAvailabilityRowComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityRowComparisonOperator';
 import { getConditionalAvailabilitySubjectVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilitySubjectVariablePath';
 import { getConditionalAvailabilityValueListLogicalOperator } from '@/conditional-availability/utils/getConditionalAvailabilityValueListLogicalOperator';
 import {
@@ -7,30 +7,29 @@ import {
   joinConditionalAvailabilityNodes,
 } from 'twenty-shared/conditional-availability';
 
-export const convertConditionalAvailabilityRowTreeChildToNode = ({
-  child,
+export const convertConditionalAvailabilityRowOrGroupToNode = ({
+  rowOrGroup,
 }: {
-  child: ConditionalAvailabilityRowTreeChild;
+  rowOrGroup: ConditionalAvailabilityRowOrGroup;
 }): ConditionalAvailabilityNode => {
-  if (child.type === 'group') {
+  if (rowOrGroup.type === 'group') {
     return joinConditionalAvailabilityNodes({
-      nodes: child.children.map((groupChild) =>
-        convertConditionalAvailabilityRowTreeChildToNode({ child: groupChild }),
+      nodes: rowOrGroup.children.map((child) =>
+        convertConditionalAvailabilityRowOrGroupToNode({ rowOrGroup: child }),
       ),
-      logicalOperator: child.logicalOperator,
+      logicalOperator: rowOrGroup.logicalOperator,
     });
   }
 
-  const comparisonOperator =
-    getConditionalAvailabilityRowOperatorComparisonOperator({
-      operator: child.operator,
-    });
+  const comparisonOperator = getConditionalAvailabilityRowComparisonOperator({
+    operator: rowOrGroup.operator,
+  });
   const variablePath = getConditionalAvailabilitySubjectVariablePath({
-    subject: child.subject,
+    subject: rowOrGroup.subject,
   });
 
   return joinConditionalAvailabilityNodes({
-    nodes: child.values.map((value) => ({
+    nodes: rowOrGroup.values.map((value) => ({
       type: 'COMPARISON',
       operator: comparisonOperator,
       left: { type: 'VARIABLE', path: variablePath },

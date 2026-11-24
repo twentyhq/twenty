@@ -2,7 +2,7 @@ import { type ConditionalAvailabilityRowOperator } from '@/conditional-availabil
 import { type ConditionalAvailabilityComparisonOperator } from 'twenty-shared/conditional-availability';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-export const getConditionalAvailabilityRowOperatorComparisonOperator = ({
+export const getConditionalAvailabilityRowComparisonOperator = ({
   operator,
 }: {
   operator: ConditionalAvailabilityRowOperator;

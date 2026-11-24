@@ -1,6 +1,6 @@
 import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
 import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
-import { convertConditionalAvailabilityNodeToRowTreeChild } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToRowTreeChild';
+import { convertConditionalAvailabilityNodeToRowOrGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToRowOrGroup';
 import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
 import {
   type ConditionalAvailabilityMetadataName,
@@ -22,7 +22,7 @@ export const getConditionalAvailabilityEditorStateFromNode = ({
     return { mode: 'everyone' };
   }
 
-  const rowOrGroup = convertConditionalAvailabilityNodeToRowTreeChild({ node });
+  const rowOrGroup = convertConditionalAvailabilityNodeToRowOrGroup({ node });
 
   if (!isDefined(rowOrGroup)) {
     return { mode: 'unsupportedRule' };

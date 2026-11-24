@@ -1,6 +1,6 @@
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
-import { removeConditionalAvailabilityRowTreeChild } from '@/conditional-availability/utils/removeConditionalAvailabilityRowTreeChild';
+import { removeConditionalAvailabilityRowOrGroup } from '@/conditional-availability/utils/removeConditionalAvailabilityRowOrGroup';
 import { updateConditionalAvailabilityRow } from '@/conditional-availability/utils/updateConditionalAvailabilityRow';
 import { updateConditionalAvailabilityRowGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityRowGroup';
 import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
@@ -81,7 +81,7 @@ describe('validateConditionalAvailabilityEditorState', () => {
   it('should refuse a row without value, then accept the rows once that row has a value', () => {
     expect(validateRowTree(ROW_TREE)).toEqual({
       status: 'invalid',
-      reason: 'incompleteRows',
+      reason: 'invalidRows',
     });
 
     const rowTreeWithMobileDevice = updateConditionalAvailabilityRow({
@@ -101,9 +101,9 @@ describe('validateConditionalAvailabilityEditorState', () => {
   });
 
   it('should drop a group with its last row', () => {
-    const rowTreeWithoutDeviceRow = removeConditionalAvailabilityRowTreeChild({
+    const rowTreeWithoutDeviceRow = removeConditionalAvailabilityRowOrGroup({
       rowGroup: ROW_TREE,
-      childId: DEVICE_ROW_WITHOUT_VALUE.id,
+      rowOrGroupId: DEVICE_ROW_WITHOUT_VALUE.id,
     });
 
     expect(rowTreeWithoutDeviceRow.children).toEqual([ROLE_ROW]);

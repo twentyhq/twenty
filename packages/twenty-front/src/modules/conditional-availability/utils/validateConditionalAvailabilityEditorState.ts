@@ -1,7 +1,7 @@
 import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
 import { type ConditionalAvailabilityEditorStateValidation } from '@/conditional-availability/types/ConditionalAvailabilityEditorStateValidation';
-import { convertConditionalAvailabilityRowTreeChildToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowTreeChildToNode';
-import { isConditionalAvailabilityRowTreeChildComplete } from '@/conditional-availability/utils/isConditionalAvailabilityRowTreeChildComplete';
+import { convertConditionalAvailabilityRowOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowOrGroupToNode';
+import { isConditionalAvailabilityRowOrGroupValid } from '@/conditional-availability/utils/isConditionalAvailabilityRowOrGroupValid';
 import {
   type ConditionalAvailabilityMetadataName,
   validateConditionalAvailabilityNode,
@@ -27,12 +27,12 @@ export const validateConditionalAvailabilityEditorState = ({
         return { status: 'invalid', reason: 'noRow' };
       }
 
-      if (!isConditionalAvailabilityRowTreeChildComplete({ child: rowTree })) {
-        return { status: 'invalid', reason: 'incompleteRows' };
+      if (!isConditionalAvailabilityRowOrGroupValid({ rowOrGroup: rowTree })) {
+        return { status: 'invalid', reason: 'invalidRows' };
       }
 
-      const node = convertConditionalAvailabilityRowTreeChildToNode({
-        child: rowTree,
+      const node = convertConditionalAvailabilityRowOrGroupToNode({
+        rowOrGroup: rowTree,
       });
 
       return validateConditionalAvailabilityNode({ node, metadataName }).isValid

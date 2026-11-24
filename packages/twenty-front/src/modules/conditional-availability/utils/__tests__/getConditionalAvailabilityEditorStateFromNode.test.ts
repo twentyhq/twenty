@@ -1,4 +1,4 @@
-import { convertConditionalAvailabilityRowTreeChildToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowTreeChildToNode';
+import { convertConditionalAvailabilityRowOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowOrGroupToNode';
 import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
 import {
   buildDeviceConditionalAvailability,
@@ -72,7 +72,7 @@ const getRowTreeOrThrow = (node: ConditionalAvailabilityNode) => {
   assertIsDefinedOrThrow(rowTree);
 
   expect(
-    convertConditionalAvailabilityRowTreeChildToNode({ child: rowTree }),
+    convertConditionalAvailabilityRowOrGroupToNode({ rowOrGroup: rowTree }),
   ).toEqual(node);
 
   return rowTree;

@@ -1,47 +1,46 @@
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
-import { type ConditionalAvailabilityRowTreeChild } from '@/conditional-availability/types/ConditionalAvailabilityRowTreeChild';
-import { getConditionalAvailabilityRowOperatorComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityRowOperatorComparisonOperator';
+import { type ConditionalAvailabilityRowOrGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowOrGroup';
+import { getConditionalAvailabilityRowComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityRowComparisonOperator';
 import { getConditionalAvailabilityRowOperatorValueShape } from '@/conditional-availability/utils/getConditionalAvailabilityRowOperatorValueShape';
 import { getConditionalAvailabilitySubjectRowOperators } from '@/conditional-availability/utils/getConditionalAvailabilitySubjectRowOperators';
 import { getConditionalAvailabilityValueListLogicalOperator } from '@/conditional-availability/utils/getConditionalAvailabilityValueListLogicalOperator';
 import { type ConditionalAvailabilityLogicalOperator } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
 
-export const mergeConditionalAvailabilityRowTreeChildren = ({
-  previousChild,
-  child,
+export const mergeConditionalAvailabilityRows = ({
+  previousRowOrGroup,
+  rowOrGroup,
   logicalOperator,
 }: {
-  previousChild: ConditionalAvailabilityRowTreeChild | undefined;
-  child: ConditionalAvailabilityRowTreeChild;
+  previousRowOrGroup: ConditionalAvailabilityRowOrGroup | undefined;
+  rowOrGroup: ConditionalAvailabilityRowOrGroup;
   logicalOperator: ConditionalAvailabilityLogicalOperator;
 }): ConditionalAvailabilityRow | null => {
   if (
-    previousChild?.type !== 'row' ||
-    child.type !== 'row' ||
-    previousChild.subject !== child.subject
+    previousRowOrGroup?.type !== 'row' ||
+    rowOrGroup.type !== 'row' ||
+    previousRowOrGroup.subject !== rowOrGroup.subject
   ) {
     return null;
   }
 
-  const comparisonOperator =
-    getConditionalAvailabilityRowOperatorComparisonOperator({
-      operator: child.operator,
-    });
+  const comparisonOperator = getConditionalAvailabilityRowComparisonOperator({
+    operator: rowOrGroup.operator,
+  });
 
   const valueListOperator = getConditionalAvailabilitySubjectRowOperators({
-    subject: child.subject,
+    subject: rowOrGroup.subject,
   }).find(
     (operator) =>
-      getConditionalAvailabilityRowOperatorComparisonOperator({ operator }) ===
+      getConditionalAvailabilityRowComparisonOperator({ operator }) ===
         comparisonOperator &&
       getConditionalAvailabilityRowOperatorValueShape({ operator }) === 'list',
   );
 
   if (
     !isDefined(valueListOperator) ||
-    getConditionalAvailabilityRowOperatorComparisonOperator({
-      operator: previousChild.operator,
+    getConditionalAvailabilityRowComparisonOperator({
+      operator: previousRowOrGroup.operator,
     }) !== comparisonOperator ||
     getConditionalAvailabilityValueListLogicalOperator({
       comparisonOperator,
@@ -51,8 +50,8 @@ export const mergeConditionalAvailabilityRowTreeChildren = ({
   }
 
   return {
-    ...previousChild,
+    ...previousRowOrGroup,
     operator: valueListOperator,
-    values: [...previousChild.values, ...child.values],
+    values: [...previousRowOrGroup.values, ...rowOrGroup.values],
   };
 };

@@ -4,5 +4,5 @@ export type ConditionalAvailabilityEditorStateValidation =
   | { status: 'valid'; node: ConditionalAvailabilityNode | null }
   | {
       status: 'invalid';
-      reason: 'unsupportedRule' | 'noRow' | 'incompleteRows' | 'invalidNode';
+      reason: 'unsupportedRule' | 'noRow' | 'invalidRows' | 'invalidNode';
     };

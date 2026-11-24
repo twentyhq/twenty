@@ -2,7 +2,7 @@ import { type ConditionalAvailabilityRow } from '@/conditional-availability/type
 import { type ConditionalAvailabilityRowOperator } from '@/conditional-availability/types/ConditionalAvailabilityRowOperator';
 import { getConditionalAvailabilityRowOperatorValueShape } from '@/conditional-availability/utils/getConditionalAvailabilityRowOperatorValueShape';
 
-export const changeConditionalAvailabilityRowOperator = ({
+export const updateConditionalAvailabilityRowOperator = ({
   row,
   operator,
 }: {

@@ -2,7 +2,7 @@ import { CONDITIONAL_AVAILABILITY_SUBJECTS } from '@/conditional-availability/co
 import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
 import { getConditionalAvailabilitySubjectRowOperators } from '@/conditional-availability/utils/getConditionalAvailabilitySubjectRowOperators';
 import { getConditionalAvailabilitySubjectVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilitySubjectVariablePath';
-import { getConditionalAvailabilityRowOperatorComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityRowOperatorComparisonOperator';
+import { getConditionalAvailabilityRowComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityRowComparisonOperator';
 import { isString } from '@sniptt/guards';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,7 +42,7 @@ export const convertConditionalAvailabilityComparisonNodeToRow = ({
     subject,
   }).find(
     (candidateOperator) =>
-      getConditionalAvailabilityRowOperatorComparisonOperator({
+      getConditionalAvailabilityRowComparisonOperator({
         operator: candidateOperator,
       }) === comparisonOperator,
   );
