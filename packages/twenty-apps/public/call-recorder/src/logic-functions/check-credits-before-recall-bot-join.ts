@@ -8,7 +8,7 @@ export default defineLogicFunction({
     CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'check-credits-before-recall-bot-join',
   description:
-    'Shortly before a scheduled Recall bot joins, cancels it when the workspace has no credits, otherwise sends it the current recorder settings.',
+    'Shortly before a scheduled Recall bot joins, cancels it when the meeting should no longer be recorded or the workspace has no credits, otherwise sends it the current recorder settings.',
   timeoutSeconds: 250,
   handler: handlePreJoinCreditCheckJob,
 });

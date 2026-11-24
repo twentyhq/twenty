@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { reconcileCallRecordingMeeting } from 'src/logic-functions/flows/reconcile-call-recording-meeting.util';
 import {
   checkCreditsBeforeRecallBotJoin,
   type CheckCreditsBeforeRecallBotJoinResult,
@@ -20,13 +21,18 @@ export const handlePreJoinCreditCheckJob = async (
     return { status: 'skipped', reason: 'invalid pre-join credit check job' };
   }
 
+  // The job may fire days after the run that enqueued it, so it must not borrow that run's user.
+  const client = new CoreApiClient({
+    runAs: 'application',
+    fetch: fetchWithTimeout,
+  });
+
   try {
+    // A member may have changed which meetings they record since the bot was scheduled.
+    await reconcileCallRecordingMeeting({ client, callRecordingId });
+
     return await checkCreditsBeforeRecallBotJoin({
-      // The job may fire days after the run that enqueued it, so it must not borrow that run's user.
-      client: new CoreApiClient({
-        runAs: 'application',
-        fetch: fetchWithTimeout,
-      }),
+      client,
       callRecordingId,
       bookedJoinAt: getString(body?.bookedJoinAt),
       now: new Date(),
