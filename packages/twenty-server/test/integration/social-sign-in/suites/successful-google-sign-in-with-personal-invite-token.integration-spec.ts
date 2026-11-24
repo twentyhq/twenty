@@ -21,7 +21,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
-describe('Google sign-in with a personal invite token (integration)', () => {
+describe('Google sign-in with a personal invite token should succeed', () => {
   const httpMock = setupHttpMock(...googleTokenHandlers());
 
   const invitedEmail = `invited-${randomUUID()}@example.com`;
@@ -29,39 +29,19 @@ describe('Google sign-in with a personal invite token (integration)', () => {
   let inviteToken: string;
   let accessToken: string | undefined;
 
-  beforeAll(async () => {
-    invitedRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
-  });
-
-  beforeEach(async () => {
-    inviteToken = `personal-invite-token-${randomUUID()}`;
-
-    await seedWorkspaceInvitation({
-      email: invitedEmail,
-      value: inviteToken,
-      expiresAt: new Date(Date.now() + ONE_HOUR_IN_MS),
-      roleId: invitedRoleId,
-    });
-  });
-
-  afterEach(async () => {
-    await deleteWorkspaceInvitationsByEmail({ email: invitedEmail });
-
-    if (isDefined(accessToken)) {
-      await deleteSsoUser({ accessToken });
-      accessToken = undefined;
-    }
-  });
-
-  it('joins with the invited role and consumes the invitation when the account email differs from the invited one', async () => {
-    const accountEmail = `alias-${randomUUID()}@example.com`;
-
+  const signInAndExpectInvitedMemberOfApple = async ({
+    accountEmail,
+    withInviteToken,
+  }: {
+    accountEmail: string;
+    withInviteToken: boolean;
+  }) => {
     httpMock.use(...googleIdentityHandlers(accountEmail));
 
     const verifyUrl = await signInWithSocialProvider({
       path: '/auth/google',
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      inviteToken,
+      inviteToken: withInviteToken ? inviteToken : undefined,
     });
 
     expect(verifyUrl.searchParams.get('errorMessage')).toBeNull();
@@ -90,55 +70,43 @@ describe('Google sign-in with a personal invite token (integration)', () => {
     expect(
       await findWorkspaceInvitationsByEmail({ email: invitedEmail }),
     ).toEqual([]);
+  };
+
+  beforeAll(async () => {
+    invitedRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
   });
 
-  it('refuses an account whose email differs from the invited one without the personal invite token', async () => {
-    httpMock.use(
-      ...googleIdentityHandlers(`alias-${randomUUID()}@example.com`),
-    );
+  beforeEach(async () => {
+    inviteToken = `personal-invite-token-${randomUUID()}`;
 
-    const verifyUrl = await signInWithSocialProvider({
-      path: '/auth/google',
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    await seedWorkspaceInvitation({
+      email: invitedEmail,
+      value: inviteToken,
+      expiresAt: new Date(Date.now() + ONE_HOUR_IN_MS),
+      roleId: invitedRoleId,
     });
-
-    expect(verifyUrl.searchParams.get('loginToken')).toBeNull();
-    expect(verifyUrl.searchParams.get('errorMessage')).toBe(
-      'User does not have access to this workspace',
-    );
-    expect(
-      await findWorkspaceInvitationsByEmail({ email: invitedEmail }),
-    ).toHaveLength(1);
   });
 
-  it('refuses a personal invite token another account already used', async () => {
-    httpMock.use(
-      ...googleIdentityHandlers(`alias-${randomUUID()}@example.com`),
-    );
+  afterEach(async () => {
+    await deleteWorkspaceInvitationsByEmail({ email: invitedEmail });
 
-    accessToken = await exchangeLoginToken(
-      await signInWithSocialProvider({
-        path: '/auth/google',
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        inviteToken,
-      }),
-    );
+    if (isDefined(accessToken)) {
+      await deleteSsoUser({ accessToken });
+      accessToken = undefined;
+    }
+  });
 
-    assertIsDefinedOrThrow(accessToken);
-
-    httpMock.use(
-      ...googleIdentityHandlers(`alias-${randomUUID()}@example.com`),
-    );
-
-    const verifyUrl = await signInWithSocialProvider({
-      path: '/auth/google',
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      inviteToken,
+  it('when the account email differs from the invited one and the invite token is present', async () => {
+    await signInAndExpectInvitedMemberOfApple({
+      accountEmail: `alias-${randomUUID()}@example.com`,
+      withInviteToken: true,
     });
+  });
 
-    expect(verifyUrl.searchParams.get('loginToken')).toBeNull();
-    expect(verifyUrl.searchParams.get('errorMessage')).toBe(
-      'User does not have access to this workspace',
-    );
+  it('when the invited account signs in without the invite token', async () => {
+    await signInAndExpectInvitedMemberOfApple({
+      accountEmail: invitedEmail,
+      withInviteToken: false,
+    });
   });
 });

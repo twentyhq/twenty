@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Microsoft sign-in with a personal invite token should fail when another account already used the invite token 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
+
+exports[`Microsoft sign-in with a personal invite token should fail when the account is not the invited one and the invite token is missing 1`] = `
+{
+  "errorMessage": "User does not have access to this workspace",
+  "loginToken": null,
+  "pathname": "/verify",
+}
+`;
