@@ -12,7 +12,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { getEffectiveViewIsPrivate } from 'src/engine/metadata-modules/view/utils/get-effective-view-is-private.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallMetadataWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
@@ -152,7 +152,7 @@ export class CallWebhookJobsForMetadataJob {
 
         return (
           isDefined(parentFlatView) &&
-          isViewVisibleToUser(parentFlatView, undefined)
+          getEffectiveViewIsPrivate(parentFlatView) === false
         );
       });
     }

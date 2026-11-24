@@ -1698,6 +1698,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'rowLevelPermissionRuleUniversalIdentifier',
     },
+    sourceFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'sourceFieldMetadataUniversalIdentifier',
+    },
   },
   objectPermission: {
     roleId: {

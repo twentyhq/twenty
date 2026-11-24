@@ -762,6 +762,16 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "워크스페이스 멤버"
 
+#. js-lingui-id: EAIj51
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a field and at least one value"
+msgstr ""
+
+#. js-lingui-id: mZ5k8L
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a workspace member relation"
+msgstr ""
+
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
@@ -3154,6 +3164,11 @@ msgstr "재정의할 기존 타임라인 활동 유형을 선택하세요."
 msgid "Choose one person or one role to share with."
 msgstr "공유할 한 명의 사용자 또는 하나의 역할을 선택하세요."
 
+#. js-lingui-id: 8+4T+u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field and the values to keep on the related records"
+msgstr ""
+
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
@@ -3163,6 +3178,11 @@ msgstr "관련 레코드에서 읽을 필드를 선택하세요"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
 msgstr "이 타임라인 활동 유형을 발생시키는 객체를 선택하세요."
+
+#. js-lingui-id: fr9dvq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the relation of the workspace member to filter"
+msgstr ""
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5693,6 +5713,11 @@ msgstr "필드 \"{workspaceMemberFieldName}\"은(는) workspaceMember 객체의 
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
 msgstr "필드 \"{workspaceMemberRelationFieldName}\"은 workspaceMember 객체의 일대다 관계가 아닙니다"
 
+#. js-lingui-id: yfFA+h
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
+msgstr ""
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6141,6 +6166,11 @@ msgstr "\"{0}\"에 대한 필터가 존재하지 않는 옵션 {invalidValuesTex
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "이 필드 유형에서는 필터 연산자를 지원하지 않습니다."
+
+#. js-lingui-id: twPawb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Filter the related records on one of their select, text or boolean fields"
+msgstr ""
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10495,6 +10525,16 @@ msgstr "기회 단계"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
 msgstr "옵션 \"{optionLabel}\"은 필드에 포함되어 있어 제거할 수 없습니다. 대신 비활성화하세요."
+
+#. js-lingui-id: xTWr3W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
+msgstr ""
+
+#. js-lingui-id: cCRBHe
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" has an invalid description"
+msgstr ""
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -18339,6 +18379,12 @@ msgstr "워크스페이스 멤버 레코드 페이지 필드"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
 msgstr "워크스페이스 멤버 관계 필드 메타데이터를 찾을 수 없습니다"
+
+#. js-lingui-id: L8uUWk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation filter field metadata not found"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
