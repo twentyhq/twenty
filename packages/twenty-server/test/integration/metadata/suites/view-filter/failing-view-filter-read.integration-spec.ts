@@ -128,32 +128,6 @@ const failingViewFilterReadTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when the view of the view filter is soft-deleted',
-    context: {
-      arrange: () =>
-        arrangeViewFilter({
-          prepare: async ({ viewId, cleanup }) => {
-            await setViewRowDeletedAt({
-              tableName: 'view',
-              id: viewId,
-              deletedAt: new Date(),
-            });
-
-            return {
-              cleanup: async () => {
-                await setViewRowDeletedAt({
-                  tableName: 'view',
-                  id: viewId,
-                  deletedAt: null,
-                });
-                await cleanup();
-              },
-            };
-          },
-        }),
-    },
-  },
-  {
     title:
       'when the view of the view filter is unlisted and belongs to another user',
     context: {

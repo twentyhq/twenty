@@ -11,6 +11,11 @@ input ActivateWorkspaceInput {
   displayName: String
 }
 
+input AddAgentChatThreadParticipantsInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]!
+}
+
 input AddQuerySubscriptionInput {
   eventStreamId: String!
   operationSignature: JSON!
@@ -585,6 +590,33 @@ type ApplicationAuthorization {
   scopes: [String!]
   userId: UUID!
   workspaceId: UUID!
+}
+
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: ApplicationBillingPricePeriod!
+  currency: ApplicationBillingPriceCurrency!
+  label: String!
+  per: ApplicationBillingPriceUnit
+  type: ApplicationBillingPriceType!
+  universalIdentifier: String!
+}
+
+enum ApplicationBillingPriceCurrency {
+  USD
+}
+
+enum ApplicationBillingPricePeriod {
+  MONTHLY
+}
+
+enum ApplicationBillingPriceType {
+  RECURRING
+}
+
+enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT
+  WORKSPACE_MEMBER
 }
 
 type ApplicationCapabilityGrant {
@@ -1995,6 +2027,7 @@ input CreateViewInput {
   icon: String!
   id: UUID
   isCompact: Boolean = false
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -2008,10 +2041,11 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -2309,6 +2343,7 @@ enum EngineComponentKey {
   GO_TO_WORKFLOWS
   HIDE_DELETED_RECORDS
   IMPORT_RECORDS
+  MANAGE_AI_CHAT_PARTICIPANTS
   MARK_AI_CHAT_AS_DONE
   MARK_AI_CHAT_AS_READ
   MARK_AI_CHAT_AS_UNREAD
@@ -2506,6 +2541,7 @@ enum FeatureFlagKey {
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
@@ -2516,6 +2552,7 @@ enum FeatureFlagKey {
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED
 }
 
 type Field {
@@ -3213,6 +3250,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String
@@ -3533,6 +3571,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  addAgentChatThreadParticipants(input: AddAgentChatThreadParticipantsInput!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
@@ -3800,6 +3839,7 @@ type Mutation {
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
+  updateRelatedRecordPath(input: UpdateRelatedRecordPathInput!): RelatedRecordPath!
   updateSkill(input: UpdateSkillInput!): Skill!
   updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
@@ -4678,6 +4718,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isActive: Boolean!
   isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
@@ -4776,6 +4817,8 @@ type RowLevelPermissionPredicate {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: String
+  workspaceMemberRelationFilterFieldMetadataId: String
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -4856,6 +4899,8 @@ input RowLevelPermissionRulePredicateInput {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberRelationFilterFieldMetadataId: UUID
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -5713,6 +5758,12 @@ input UpdatePageLayoutWithTabsInput {
   type: PageLayoutType!
 }
 
+input UpdateRelatedRecordPathInput {
+  id: UUID!
+  isActive: Boolean
+  isInherent: Boolean
+}
+
 input UpdateRoleInput {
   """The id of the role to update"""
   id: UUID!
@@ -5869,6 +5920,7 @@ input UpdateViewInput {
   icon: String
   id: UUID
   isCompact: Boolean
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -5884,7 +5936,7 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6420,6 +6472,7 @@ type View {
   isActive: Boolean!
   isCompact: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -6430,6 +6483,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
@@ -6441,7 +6495,7 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility!
+  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6630,6 +6684,16 @@ enum ViewOpenRecordIn {
   SIDE_PANEL
 }
 
+enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE
+  INBOX_CHANNEL_OPEN
+  INBOX_CHANNEL_SNOOZED
+  INBOX_DONE
+  INBOX_MENTIONS
+  INBOX_OPEN
+  INBOX_SNOOZED
+}
+
 type ViewSort {
   createdAt: DateTime!
   deletedAt: DateTime
@@ -6652,6 +6716,7 @@ enum ViewType {
   CALENDAR
   CALENDAR_WIDGET
   FIELDS_WIDGET
+  INBOX
   KANBAN
   KANBAN_WIDGET
   LIST

@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewVisibility } from 'twenty-shared/types';
 
 import { SettingPermissionsService } from 'src/engine/permissions/setting-permissions.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view/services/view-entity-lookup.service';
@@ -32,11 +31,11 @@ export class ViewAccessService {
   async canUserModifyView({
     viewId,
     accessContext,
-    nextVisibility,
+    nextIsPrivate,
   }: {
     viewId: string | null;
     accessContext: ViewAccessContext;
-    nextVisibility?: ViewVisibility;
+    nextIsPrivate?: boolean;
   }): Promise<boolean> {
     // A missing view or child entity is let through so the service throws
     // its entity-specific NOT_FOUND error instead of a generic one
@@ -56,22 +55,21 @@ export class ViewAccessService {
     await this.assertCanModifyViewOrThrow({
       view,
       accessContext,
-      nextVisibility,
+      nextIsPrivate,
     });
 
     return true;
   }
 
   async canUserCreateView({
-    visibility,
+    isPrivate,
     accessContext,
   }: {
-    visibility: ViewVisibility;
+    isPrivate: boolean;
     accessContext: ViewAccessContext;
   }): Promise<boolean> {
-    // An UNLISTED view belongs to the user who created it, so a principal that
-    // is not a user - an API key or an application - has no owner to record
-    if (visibility === ViewVisibility.UNLISTED) {
+    // Only a user can own a private view; API keys and applications cannot
+    if (isPrivate) {
       if (!isDefined(accessContext.userWorkspaceId)) {
         this.throwCreatePermissionDenied();
       }
@@ -138,20 +136,19 @@ export class ViewAccessService {
   private async assertCanModifyViewOrThrow({
     view,
     accessContext,
-    nextVisibility,
+    nextIsPrivate,
   }: {
-    view: Pick<ViewDTO, 'visibility' | 'createdByUserWorkspaceId'>;
+    view: Pick<ViewDTO, 'isPrivate' | 'createdByUserWorkspaceId'>;
     accessContext: ViewAccessContext;
-    nextVisibility?: ViewVisibility;
+    nextIsPrivate?: boolean;
   }): Promise<void> {
     const isOwnUnlistedView =
-      view.visibility === ViewVisibility.UNLISTED &&
+      view.isPrivate &&
       isDefined(accessContext.userWorkspaceId) &&
       view.createdByUserWorkspaceId === accessContext.userWorkspaceId;
 
     // Publishing an unlisted view creates a workspace view, so it needs VIEWS
-    const isStayingUnlisted =
-      !isDefined(nextVisibility) || nextVisibility === ViewVisibility.UNLISTED;
+    const isStayingUnlisted = !isDefined(nextIsPrivate) || nextIsPrivate;
 
     if (isOwnUnlistedView && isStayingUnlisted) {
       return;

@@ -270,6 +270,8 @@ const buildDesiredGrantRoleUniversalFlatEntityMaps = ({
                   source.fieldMetadataUniversalIdentifier,
                 rowLevelPermissionPredicateGroupUniversalIdentifier: null,
                 rowLevelPermissionRuleUniversalIdentifier: null,
+                sourceFieldMetadataUniversalIdentifier:
+                  source.sourceFieldMetadataUniversalIdentifier,
                 canReadFieldValue: source.canReadFieldValue ?? null,
                 canUpdateFieldValue: source.canUpdateFieldValue ?? null,
               },

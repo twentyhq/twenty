@@ -1736,7 +1736,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recordings[0].externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toEqual([botId]);
       expect(recall.bots.size).toBe(0);
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
     });
 
     it('cancels the bot of a meeting whose calendar event was destroyed', async () => {
@@ -2594,7 +2594,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.recordingRequestStatus).toBe('CANCELED');
       expect(callRecording.externalBotId).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
     });
 
     it('cancels a meeting in a mixed batch before active follow-up enqueueing fails', async () => {
@@ -3952,7 +3952,9 @@ describe('call recorder app lifecycle (integration)', () => {
         ),
       );
 
-      expect(preferences.every((preference) => preference === 'AUTO')).toBe(true);
+      expect(preferences.every((preference) => preference === 'AUTO')).toBe(
+        true,
+      );
       expect(
         await findCallRecordings({ calendarEventId: { in: calendarEventIds } }),
       ).toHaveLength(1);
@@ -4153,7 +4155,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('clears an On set by hand on a meeting that already ended', async () => {
+    it('keeps an On set by hand on a meeting that already ended', async () => {
       const calendarEventId = await createCalendarEvent({
         startsAt: hoursAgo(3),
         endsAt: hoursAgo(2),
@@ -4168,7 +4170,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(result).toEqual(expect.objectContaining({ reconciled: true }));
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
@@ -4176,7 +4178,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('clears an On set by hand while the workspace recording switch is off', async () => {
+    it('keeps an On set by hand while the workspace recording switch is off', async () => {
       vi.stubEnv(
         CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME,
         'false',
@@ -4194,7 +4196,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(result).toEqual(expect.objectContaining({ reconciled: true }));
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
@@ -4236,11 +4238,21 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('clears an On the meeting no longer earns', async () => {
-      const { calendarEventId, callRecordingId } =
-        await scheduleRecordingThroughCalendarReconciliation(applicationClient);
+    it('clears an Auto the meeting no longer earns', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      await reconcileCallRecorderForCalendarEventIds({
+        client: applicationClient,
+        calendarEventIds: [calendarEventId],
+      });
+
+      const [{ id: callRecordingId }] = await findCallRecordings({
+        calendarEventId: { in: [calendarEventId] },
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       await client.mutation({
         updateCalendarEvent: {
@@ -4536,11 +4548,17 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.size).toBe(0);
     });
 
-    it('clears the Recording Bot preference of the meetings it paused', async () => {
-      const { calendarEventId } =
-        await scheduleRecordingThroughCalendarReconciliation();
+    it('clears the Auto of the meetings it paused', async () => {
+      const calendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
 
-      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('AUTO');
 
       turnRecordingOff();
       await syncCalendarBotSchedulingHandler();
@@ -4568,10 +4586,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
-      vi.stubEnv(
-        'TWENTY_APP_APPLICATION_ACCESS_TOKEN',
-        applicationAccessToken,
-      );
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
       await client.mutation({
         updateCalendarEvent: {

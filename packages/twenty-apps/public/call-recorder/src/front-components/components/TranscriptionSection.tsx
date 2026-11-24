@@ -7,7 +7,7 @@ import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-re
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from 'src/front-components/components/SettingsOptionCardContentSwitch';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
-import { TranscriptProviderControl } from 'src/front-components/components/TranscriptProviderControl';
+import { SettingsSelectControl } from 'src/front-components/components/SettingsSelectControl';
 import {
   CALL_RECORDER_SUMMARY_ENABLED_ROW,
   CALL_RECORDER_SUMMARY_PROMPT_FIELD,
@@ -87,7 +87,7 @@ export const TranscriptionSection = () => {
             description={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.description}
             divider
           >
-            <TranscriptProviderControl
+            <SettingsSelectControl
               value={providerValue}
               options={CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS}
               labelledBy={providerTitleId}
