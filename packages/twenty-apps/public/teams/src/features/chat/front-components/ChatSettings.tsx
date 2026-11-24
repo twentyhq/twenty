@@ -10,7 +10,6 @@ export const ChatSettings = () => {
   const { settingValue, isSaving, hasSaveError, updateSetting } =
     useFeatureSetting({
       variableKey: CHAT_ENABLED_APPLICATION_VARIABLE_KEY,
-      isAvailable: true,
     });
 
   const isChatEnabled = settingValue === 'true';
@@ -27,7 +26,6 @@ export const ChatSettings = () => {
         description={t(
           'Use the Teams assistant and messaging workflows in this workspace.',
         )}
-        isAvailable
         isEnabled={isChatEnabled}
         isSaving={isSaving}
         hasSaveError={hasSaveError}
