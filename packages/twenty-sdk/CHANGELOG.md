@@ -16,6 +16,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Deprecated
 
+- **References written as `{ universalIdentifier }` on connection providers, messaging providers and MCP servers.** Write them as a universal identifier instead, like every other reference in an app: `identifyAccountLogicFunctionUniversalIdentifier`, `onConnectLogicFunctionUniversalIdentifier`, `onDisconnectLogicFunctionUniversalIdentifier`, `custom.authorizeLogicFunctionUniversalIdentifier` and `custom.callbackLogicFunctionUniversalIdentifier` on `defineConnectionProvider`; `connectionProviderUniversalIdentifier`, `sendMessageLogicFunctionUniversalIdentifier` and `markThreadAsReadLogicFunctionUniversalIdentifier` on `defineMessagingProvider`; `connectionProviderUniversalIdentifier` on `defineMcpServer`. The object form (`onConnectLogicFunction: { universalIdentifier }` and so on) keeps working and is marked `@deprecated`. When both are set, the universal identifier wins. The CLI writes both forms into the built manifest, so an app using the new spelling still syncs to a server older than 2.63.
+
 - **`databaseEventTriggerSettings`, the `payloads` argument of `enqueueJobs` and the `jobIds` field of its result are now marked `@deprecated`.** They keep working. Use `eventTriggerSettings`, the `jobs` argument and the `jobs` result field instead. `enqueueJob` was already marked.
 
 ### Changed
