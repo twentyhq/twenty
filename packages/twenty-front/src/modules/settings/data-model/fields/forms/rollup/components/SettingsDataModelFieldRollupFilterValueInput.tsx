@@ -11,7 +11,7 @@ import {
 } from 'twenty-shared/utils';
 
 type SettingsDataModelFieldRollupFilterValueInputProps = {
-  filter: RollupSettingsFormFilter;
+  filter: Pick<RollupSettingsFormFilter, 'id' | 'value'>;
   fieldMetadataItem: FieldMetadataItem;
   disabled?: boolean;
   onChange: (value: string) => void;
