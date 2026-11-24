@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { NavigationDrawerInboxChannelsSection } from '@/inbox/components/NavigationDrawerInboxChannelsSection';
@@ -18,6 +19,7 @@ export const NavigationMenuBuiltInSection = ({
   section,
   headerAction,
 }: NavigationMenuBuiltInSectionProps) => {
+  const { t } = useLingui();
   const { isBuiltInSectionAvailable } =
     useNavigationMenuBuiltInSectionAvailability();
 
@@ -35,7 +37,12 @@ export const NavigationMenuBuiltInSection = ({
 
   switch (section.builtInSectionKey) {
     case 'aiChatInbox':
-      return <NavigationDrawerInboxTriageSection headerAction={headerAction} />;
+      return (
+        <NavigationDrawerInboxTriageSection
+          label={t`Inbox`}
+          headerAction={headerAction}
+        />
+      );
     case 'aiChatFavorites':
       return (
         <NavigationMenuAiChatFavoritesSection headerAction={headerAction} />

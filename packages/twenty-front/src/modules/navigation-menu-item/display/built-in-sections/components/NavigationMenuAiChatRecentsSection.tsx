@@ -17,8 +17,6 @@ import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationMenuAiChatRecentsSectionProps = {
   headerAction?: ReactNode;
@@ -36,9 +34,6 @@ export const NavigationMenuAiChatRecentsSection = ({
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: true,
   });
-  const isDirectMessageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED,
-  );
   const { threads, inboxThreadList } = useInboxThreadList(
     INBOX_RECENT_THREAD_LIST_SOURCE,
   );
@@ -46,7 +41,7 @@ export const NavigationMenuAiChatRecentsSection = ({
   const recentThreads = filterInboxRecentThreads({
     threads,
     favoriteThreads: inboxFavoriteThreads,
-    isDirectMessageEnabled,
+    isDirectMessageEnabled: false,
   });
 
   if (recentThreads.length === 0 && !isDefined(headerAction)) {
