@@ -34,6 +34,7 @@ export class ChannelVisibilityRuleSyncListener {
         [
           FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
           FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+          FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
         ].includes(key),
       )
     ) {

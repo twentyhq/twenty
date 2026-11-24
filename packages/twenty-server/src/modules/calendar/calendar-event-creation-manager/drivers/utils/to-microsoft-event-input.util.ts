@@ -1,5 +1,7 @@
 import { type Event } from '@microsoft/microsoft-graph-types';
+import { isDefined } from 'twenty-shared/utils';
 
+import { toMicrosoftEventRecurrence } from 'src/modules/calendar/calendar-event-creation-manager/drivers/utils/to-microsoft-event-recurrence.util';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
 
 // Microsoft Graph interprets `dateTime` as a wall-clock time in the supplied
@@ -70,6 +72,13 @@ export const toMicrosoftEventInput = (input: CalendarEventToCreate): Event => {
   if (input.addConferencing) {
     event.isOnlineMeeting = true;
     event.onlineMeetingProvider = 'teamsForBusiness';
+  }
+
+  if (isDefined(input.recurrence)) {
+    event.recurrence = toMicrosoftEventRecurrence({
+      recurrence: input.recurrence,
+      timeZone: input.timeZone,
+    });
   }
 
   return event;

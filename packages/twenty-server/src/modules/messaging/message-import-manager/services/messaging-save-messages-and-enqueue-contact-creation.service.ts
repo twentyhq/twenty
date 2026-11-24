@@ -6,7 +6,8 @@ import {
   MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined, isNonEmptyArray, isWorkEmail } from 'twenty-shared/utils';
 import { Any, In, IsNull } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -15,6 +16,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   CreateCompanyAndContactJob,
@@ -24,6 +26,7 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
+import { computeChannelAssociationSource } from 'src/modules/connected-account/utils/compute-channel-association-source.util';
 import { MessagingMessageAttachmentService } from 'src/modules/messaging/message-import-manager/services/messaging-message-attachment.service';
 import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
@@ -34,7 +37,6 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
@@ -46,6 +48,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
     private readonly messageAttachmentService: MessagingMessageAttachmentService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation({
@@ -71,6 +74,20 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
   > {
     const handleAliases = connectedAccount.handleAliases || [];
     const authContext = buildSystemAuthContext(workspaceId);
+    const { flatFieldMetadataMaps, flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+        'flatWorkspaceMemberMaps',
+      ]);
+    const associationSource = computeChannelAssociationSource({
+      accountOwnerFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageChannelMessageAssociation.fields.accountOwner
+          .universalIdentifier,
+      channel: messageChannel,
+      flatFieldMetadataMaps,
+      flatWorkspaceMemberMaps,
+      userWorkspaceId: connectedAccount.userWorkspaceId,
+    });
 
     const savedMessagesResult =
       await this.workspaceOrmManager.executeTransactionInWorkspaceContext(
@@ -81,12 +98,13 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             messageExternalIdToMessageThreadIdMap,
             refetchedMessageChannelMessageAssociationIds,
             sentDraftMessageIds,
-          } = await this.messageService.saveMessagesWithinTransaction(
-            messagesToSave,
-            messageChannel.id,
+          } = await this.messageService.saveMessagesWithinTransaction({
+            messages: messagesToSave,
+            messageChannelId: messageChannel.id,
             transactionScope,
             workspaceId,
-          );
+            associationSource,
+          });
 
           const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
             messagesToSave.flatMap((message) => {

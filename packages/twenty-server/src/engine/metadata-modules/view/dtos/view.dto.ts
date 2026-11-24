@@ -9,6 +9,7 @@ import {
   AggregateOperations,
   ViewCalendarLayout,
   ViewOpenRecordIn,
+  ViewPresetFilter,
   ViewType,
   ViewVisibility,
   ViewKey,
@@ -30,6 +31,7 @@ registerEnumType(ViewType, { name: 'ViewType' });
 registerEnumType(ViewKey, { name: 'ViewKey' });
 registerEnumType(ViewCalendarLayout, { name: 'ViewCalendarLayout' });
 registerEnumType(ViewVisibility, { name: 'ViewVisibility' });
+registerEnumType(ViewPresetFilter, { name: 'ViewPresetFilter' });
 
 @ObjectType('View')
 export class ViewDTO {
@@ -108,6 +110,9 @@ export class ViewDTO {
   @Field(() => String, { nullable: true })
   anyFieldFilterValue?: string | null;
 
+  @Field(() => ViewPresetFilter, { nullable: true })
+  presetFilter?: ViewPresetFilter | null;
+
   @Field(() => ViewCalendarLayout, { nullable: true })
   calendarLayout: ViewCalendarLayout | null;
 
@@ -138,8 +143,12 @@ export class ViewDTO {
   @Field(() => [ViewFieldGroupDTO])
   viewFieldGroups?: ViewFieldGroupDTO[];
 
+  @Field(() => Boolean, { nullable: false })
+  isPrivate: boolean;
+
   @Field(() => ViewVisibility, {
     nullable: false,
+    deprecationReason: 'Use isPrivate instead',
   })
   visibility: ViewVisibility;
 

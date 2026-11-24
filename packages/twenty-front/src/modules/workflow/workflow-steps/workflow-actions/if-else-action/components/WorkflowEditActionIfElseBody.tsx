@@ -55,7 +55,7 @@ export const WorkflowEditActionIfElseBody = ({
   const branches = action.settings.input.branches;
   const stepFilterGroups = action.settings.input.stepFilterGroups ?? [];
   const stepFilters = action.settings.input.stepFilters ?? [];
-  const isReadonly = actionOptions.readonly === true;
+  const isReadonly = actionOptions.readonly ?? false;
 
   const { createStep } = useCreateStep();
   const { getUpdatableWorkflowVersion } =
@@ -117,7 +117,7 @@ export const WorkflowEditActionIfElseBody = ({
   };
 
   const onFilterSettingsUpdate = async (newFilterSettings: FilterSettings) => {
-    if (isReadonly) {
+    if (actionOptions.readonly) {
       return;
     }
 
@@ -165,7 +165,7 @@ export const WorkflowEditActionIfElseBody = ({
       event.stopPropagation();
     }
 
-    if (isReadonly) {
+    if (actionOptions.readonly) {
       return;
     }
 

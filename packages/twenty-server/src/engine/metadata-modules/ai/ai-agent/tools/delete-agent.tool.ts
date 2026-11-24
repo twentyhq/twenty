@@ -73,7 +73,6 @@ export class DeleteAgentTool extends BaseTool<typeof deleteAgentInputSchema> {
     const agent = await this.agentService.deleteOneAgent({
       id: input.id,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
     });
 
     return {

@@ -141,6 +141,15 @@ An upgrade command is frozen once released: self-hosters can jump several versio
 
 A command should also not reach into runtime services to do its work. Their behavior changes with every release; the command's must not.
 
+## Adding a server-only column to a composite field
+
+A server-only column sits next to a composite field's own columns and is read only by the server, like the `fileIds` of a rich text field. It is listed in `SERVER_ONLY_COMPOSITE_COLUMNS` and never declared on the composite type: every API surface derives from that type, so declaring it would expose it. It is named `<field>_<column>`; a field name is alphanumeric, so the underscore keeps it apart from the columns of every field, including fields that already exist.
+
+Code that reads the column serves every workspace as soon as it deploys, while a workspace command adds the column one workspace at a time. Split the change across two releases:
+
+1. **Release N: provision the column.** List it in `SERVER_ONLY_COMPOSITE_COLUMNS`, so field creation, rename and deletion handle it, and add a workspace command that adds it to existing fields. Nothing reads or writes it.
+2. **Release N+1: use it.** The code that reads or writes the column must not ship in release N.
+
 ## Execution Order
 
 Within a given version of Twenty, the upgrade pipeline runs commands in this order, sorted by timestamp within each group:

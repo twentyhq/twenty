@@ -106,7 +106,7 @@ function formatResultRecursively<T>(
 
   const { fieldIdByName, fieldIdByJoinColumnName } = objectCache.fieldMaps;
 
-  const newData: object = {};
+  const newData: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs =
@@ -148,7 +148,6 @@ function formatResultRecursively<T>(
         );
       }
 
-      // @ts-expect-error legacy noImplicitAny
       newData[key] = formatResultRecursively(
         value,
         targetObjectMetadata,
@@ -160,24 +159,26 @@ function formatResultRecursively<T>(
     if (isDefined(compositePropertyArgs)) {
       const { parentField, ...compositeProperty } = compositePropertyArgs;
 
-      // @ts-expect-error legacy noImplicitAny
-      if (!newData[parentField]) {
-        // @ts-expect-error legacy noImplicitAny
-        newData[parentField] = {};
-      }
+      const existingParentValue = newData[parentField];
+      const parentValue = isPlainObject(existingParentValue)
+        ? existingParentValue
+        : {};
 
-      // @ts-expect-error legacy noImplicitAny
-      newData[parentField][compositeProperty.name] = isNull(value)
-        ? transformCompositeFieldNullValue(
-            value,
-            compositeProperty.name,
-            fieldMetadata,
-          )
-        : formatCompositeFieldValue(
-            value,
-            compositeProperty.name,
-            fieldMetadata,
-          );
+      newData[parentField] = parentValue;
+
+      Object.assign(parentValue, {
+        [compositeProperty.name]: isNull(value)
+          ? transformCompositeFieldNullValue(
+              value,
+              compositeProperty.name,
+              fieldMetadata,
+            )
+          : formatCompositeFieldValue(
+              value,
+              compositeProperty.name,
+              fieldMetadata,
+            ),
+      });
       continue;
     }
 
@@ -186,7 +187,6 @@ function formatResultRecursively<T>(
       fieldMetadata.type,
     );
 
-    // @ts-expect-error legacy noImplicitAny
     newData[key] = formattedFieldValue;
   }
 
@@ -196,7 +196,6 @@ function formatResultRecursively<T>(
   );
 
   for (const dateTimeField of objectCache.dateTimeFieldMetadataItems) {
-    // @ts-expect-error legacy noImplicitAny
     const rawUpdatedDateTime = newData[dateTimeField.name] as
       | string
       | Date
@@ -213,7 +212,6 @@ function formatResultRecursively<T>(
       rawUpdatedDateTime instanceof Date ||
       isPlainObject(rawUpdatedDateTime)
     ) {
-      // @ts-expect-error legacy noImplicitAny
       newData[dateTimeField.name] = isString(rawUpdatedDateTime)
         ? new Date(rawUpdatedDateTime)
         : rawUpdatedDateTime;

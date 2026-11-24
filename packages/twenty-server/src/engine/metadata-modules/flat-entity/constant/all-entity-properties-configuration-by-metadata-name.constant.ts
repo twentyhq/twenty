@@ -410,6 +410,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    presetFilter: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     calendarLayout: {
       toCompare: true,
       toStringify: false,
@@ -428,7 +433,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
-    visibility: {
+    isPrivate: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -593,6 +598,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'relationTargetFieldMetadataUniversalIdentifier',
     },
+    relationScope: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: 'universalRelationScope',
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     deletedAt: {
       toCompare: true,
       toStringify: false,
@@ -713,6 +729,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     timeoutSeconds: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    jobFailureHandlerName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    retryLimit: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -1201,6 +1227,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    conditionalAvailability: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     isActive: {
       isOverridable: true,
       toCompare: true,
@@ -1666,6 +1698,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'rowLevelPermissionRuleUniversalIdentifier',
     },
+    sourceFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'sourceFieldMetadataUniversalIdentifier',
+    },
   },
   objectPermission: {
     roleId: {
@@ -1761,6 +1798,17 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty:
         'workspaceMemberRelationFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty:
+        'workspaceMemberRelationFilterFieldMetadataUniversalIdentifier',
+    },
+    workspaceMemberRelationFilterValues: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
     },
     deletedAt: {
       toCompare: true,
@@ -2467,6 +2515,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
     position: {
       toCompare: true,
       toStringify: false,
@@ -2519,6 +2573,18 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     isInherent: {
       toCompare: true,
       toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    isActive: {
+      isOverridable: true,
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    overrides: {
+      toCompare: true,
+      toStringify: true,
       universalProperty: undefined,
     },
     createdAt: {

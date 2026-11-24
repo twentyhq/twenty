@@ -27,6 +27,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
+import { getViewVisibilityFromIsPrivate } from 'src/engine/metadata-modules/view/utils/get-view-visibility-from-is-private.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -49,6 +50,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 import { VIEW_WRITE_BY_VISIBILITY_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-write-by-visibility-access-policy.constant';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -60,6 +62,7 @@ export class ViewResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async name(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -90,11 +93,20 @@ export class ViewResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() view: ViewDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): boolean {
     return view.applicationId === workspace.workspaceCustomApplicationId;
+  }
+
+  @ResolveField(() => ViewVisibility, {
+    deprecationReason: 'Use isPrivate instead',
+  })
+  @UseGuards(NoPermissionGuard)
+  visibility(@Parent() view: Pick<ViewDTO, 'isPrivate'>): ViewVisibility {
+    return getViewVisibilityFromIsPrivate(view.isPrivate);
   }
 
   // A workspace-custom view can point at a standard object, so the label resolves against the object's application
@@ -142,8 +154,6 @@ export class ViewResolver {
   @AllowSuspendedWorkspace()
   async getViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
@@ -153,16 +163,11 @@ export class ViewResolver {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
-        userWorkspaceId,
         viewTypes,
       );
     }
 
-    return this.viewService.findByWorkspaceId(
-      workspace.id,
-      userWorkspaceId,
-      viewTypes,
-    );
+    return this.viewService.findByWorkspaceId(workspace.id, viewTypes);
   }
 
   @Query(() => ViewDTO, { nullable: true })
@@ -170,13 +175,10 @@ export class ViewResolver {
   async getView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    return this.viewService.findByIdVisibleToUserOrThrow({
+    return this.viewService.findByIdVisibleToCallerOrThrow({
       id,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -191,10 +193,6 @@ export class ViewResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
-
-    input.visibility = visibility;
-
     return await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,
@@ -285,92 +283,80 @@ export class ViewResolver {
   }
 
   @ResolveField(() => [ViewFieldDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFields(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFieldsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
   @ResolveField(() => [ViewFilterDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFilters(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFiltersByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
   @ResolveField(() => [ViewFilterGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFilterGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFilterGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
   @ResolveField(() => [ViewSortDTO])
+  @UseGuards(NoPermissionGuard)
   async viewSorts(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewSortsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
   @ResolveField(() => [ViewGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
   @ResolveField(() => [ViewFieldGroupDTO])
+  @UseGuards(NoPermissionGuard)
   async viewFieldGroups(
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFieldGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 }

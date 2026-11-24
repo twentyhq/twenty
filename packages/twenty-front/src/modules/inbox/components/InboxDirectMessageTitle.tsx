@@ -7,6 +7,7 @@ import { Avatar } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatMemberPresence } from '@/ai-chat/threads/components/AiChatMemberPresence';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -18,6 +19,7 @@ const StyledTitle = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+  padding-block: ${themeCssVariables.spacing[1]};
 `;
 
 type InboxDirectMessageTitleProps = {
@@ -52,13 +54,15 @@ export const InboxDirectMessageTitle = ({
 
   return (
     <StyledTitle>
-      <Avatar
-        name={peerName}
-        src={peerWorkspaceMember?.avatarUrl}
-        colorSeed={peerWorkspaceMemberId ?? threadId}
-        shape="circle"
-        size="md"
-      />
+      <AiChatMemberPresence workspaceMemberId={peerWorkspaceMemberId}>
+        <Avatar
+          name={peerName}
+          src={peerWorkspaceMember?.avatarUrl}
+          colorSeed={peerWorkspaceMemberId ?? threadId}
+          shape="circle"
+          size="md"
+        />
+      </AiChatMemberPresence>
       <OverflowingTextWithTooltip text={peerName} />
     </StyledTitle>
   );

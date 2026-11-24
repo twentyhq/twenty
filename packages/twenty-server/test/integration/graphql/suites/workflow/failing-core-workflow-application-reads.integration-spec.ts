@@ -15,7 +15,6 @@ import {
 import { findCoreWorkflowById } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-by-id.util';
 import { findCoreWorkflowByWorkspaceWorkflowId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-by-workspace-workflow-id.util';
 import { findCoreWorkflowVersionById } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-version-by-id.util';
-import { findCoreWorkflowVersionByWorkspaceWorkflowVersionId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-version-by-workspace-workflow-version-id.util';
 import { findCoreWorkflowVersionsByCoreWorkflowId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-versions-by-core-workflow-id.util';
 import { findCoreWorkflowVersionsByWorkspaceWorkflowId } from 'test/integration/graphql/suites/workflow/utils/find-core-workflow-versions-by-workspace-workflow-id.util';
 import { findCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/find-core-workflows.util';
@@ -29,7 +28,6 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -189,11 +187,11 @@ describe('Core workflow reads through an application should fail', () => {
       },
       workspaceWorkflow: await createMemberCoreWorkflow({
         name: `${RUN_PREFIX} workspace workflow`,
-        visibility: WorkflowVisibility.WORKSPACE,
+        isPrivate: false,
       }),
       privateWorkflow: await createMemberCoreWorkflow({
         name: `${RUN_PREFIX} private workflow`,
-        visibility: WorkflowVisibility.PRIVATE,
+        isPrivate: true,
       }),
     };
   }, 120000);
@@ -347,21 +345,6 @@ describe('Core workflow reads through an application should fail', () => {
               });
 
             expect(data.coreWorkflowVersions).toEqual([]);
-          });
-
-          it('should not find the workflow version', async () => {
-            const { data } =
-              await findCoreWorkflowVersionByWorkspaceWorkflowVersionId({
-                input: {
-                  workspaceWorkflowVersionId:
-                    memberWorkflowContext.workflow(globalTestContext)
-                      .workspaceWorkflowVersionId,
-                },
-                token: await buildCallerToken(),
-                expectToFail: false,
-              });
-
-            expect(data.coreWorkflowVersion).toBeNull();
           });
         },
       );

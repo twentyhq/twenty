@@ -5,10 +5,6 @@ const styles = {
     & {
       animation: animated-container-animatedContainerFadeIn
         calc(var(--t-animation-duration-fast) * 1s) ease;
-      transition: transform calc(var(--t-animation-duration-fast) * 1s) ease;
-    }
-    &:hover {
-      transform: scale(1.04);
     }
 
     @keyframes animated-container-animatedContainerFadeIn {

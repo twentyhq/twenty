@@ -31,7 +31,7 @@ export const computeRecordPageViewFieldForExistingObject = ({
 
   if (
     !isDefined(recordPageFlatView) ||
-    recordPageFlatView.isSystemSideEffect !== true ||
+    !recordPageFlatView.isSystemSideEffect ||
     isDefined(recordPageFlatView.deletedAt)
   ) {
     return undefined;
@@ -146,6 +146,8 @@ export const computeRecordPageViewFieldForExistingObject = ({
     position,
     aggregateOperation: null,
     relationTargetFieldMetadataUniversalIdentifier: null,
+    universalRelationScope: null,
+    label: null,
     isActive: true,
     isSystemSideEffect: true,
     isCanonical: true,
