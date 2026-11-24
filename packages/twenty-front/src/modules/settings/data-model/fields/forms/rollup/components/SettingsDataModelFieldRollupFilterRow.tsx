@@ -68,12 +68,13 @@ export const SettingsDataModelFieldRollupFilterRow = ({
           );
 
           if (isDefined(selectedFieldMetadataItem)) {
-            onChange(
-              getRollupFilterForFieldMetadataItem({
+            onChange({
+              ...getRollupFilterForFieldMetadataItem({
                 filterId: filter.id,
                 fieldMetadataItem: selectedFieldMetadataItem,
               }),
-            );
+              filterGroupId: filter.filterGroupId,
+            });
           }
         }}
         options={filterableFieldMetadataItems.map((field) => ({

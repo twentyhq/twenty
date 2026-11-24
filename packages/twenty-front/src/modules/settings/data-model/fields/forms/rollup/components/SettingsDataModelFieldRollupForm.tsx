@@ -9,6 +9,7 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { SettingsDataModelFieldRollupFilterRow } from '@/settings/data-model/fields/forms/rollup/components/SettingsDataModelFieldRollupFilterRow';
 import { ROLLUP_AGGREGATE_OPERATION_SELECT_OPTIONS } from '@/settings/data-model/fields/forms/rollup/constants/RollupAggregateOperationSelectOptions';
 import { getRollupAggregatableFieldMetadataItems } from '@/settings/data-model/fields/forms/rollup/utils/getRollupAggregatableFieldMetadataItems';
+import { getRollupAggregatedFieldMetadataIdForOperation } from '@/settings/data-model/fields/forms/rollup/utils/getRollupAggregatedFieldMetadataIdForOperation';
 import { getRollupFilterForFieldMetadataItem } from '@/settings/data-model/fields/forms/rollup/utils/getRollupFilterForFieldMetadataItem';
 import { getRollupFilterableFieldMetadataItems } from '@/settings/data-model/fields/forms/rollup/utils/getRollupFilterableFieldMetadataItems';
 import { getRollupRelationFieldMetadataItems } from '@/settings/data-model/fields/forms/rollup/utils/getRollupRelationFieldMetadataItems';
@@ -34,17 +35,25 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 export const settingsDataModelFieldRollupFormSchema = z.object({
+  // Loose objects keep the settings this form does not edit (filter groups,
+  // decimals, sub-field filters) when saving a rollup created elsewhere
   settings: z
-    .object({
+    .looseObject({
       relationFieldMetadataId: z.uuid(),
       aggregateOperation: z.enum(ROLLUP_AGGREGATE_OPERATIONS),
       aggregatedFieldMetadataId: z.uuid().nullable(),
       filters: z.array(
-        z.object({
+        z.looseObject({
           id: z.uuid(),
           fieldMetadataId: z.uuid(),
           operand: z.enum(ViewFilterOperand),
-          value: z.string(),
+          value: z.union([
+            z.string(),
+            z.array(z.string()),
+            z.boolean(),
+            z.number(),
+            z.record(z.string(), z.unknown()),
+          ]),
         }),
       ),
     })
@@ -93,6 +102,7 @@ export const SettingsDataModelFieldRollupForm = ({
       name="settings"
       control={control}
       defaultValue={{
+        ...fieldMetadataItem?.settings,
         relationFieldMetadataId:
           fieldMetadataItem?.settings?.relationFieldMetadataId ??
           relationFieldMetadataItems[0]?.id ??
@@ -145,6 +155,7 @@ export const SettingsDataModelFieldRollupForm = ({
                     aggregatedFieldMetadataId: null,
                     aggregateOperation: AggregateOperations.COUNT,
                     filters: [],
+                    filterGroups: [],
                   })
                 }
                 options={relationFieldMetadataItems.map((relationField) => ({
@@ -167,26 +178,19 @@ export const SettingsDataModelFieldRollupForm = ({
                 needIconCheck={false}
                 disabled={disabled}
                 value={value.aggregateOperation}
-                onChange={(aggregateOperation) => {
-                  const nextAggregatableFieldMetadataItems =
-                    getRollupAggregatableFieldMetadataItems({
-                      fieldMetadataItems: relatedFieldMetadataItems,
-                      aggregateOperation,
-                    });
-
+                onChange={(aggregateOperation) =>
                   onChange({
                     ...value,
                     aggregateOperation,
                     aggregatedFieldMetadataId:
-                      aggregateOperation === AggregateOperations.COUNT
-                        ? null
-                        : (nextAggregatableFieldMetadataItems.find(
-                            ({ id }) => id === value.aggregatedFieldMetadataId,
-                          )?.id ??
-                          nextAggregatableFieldMetadataItems[0]?.id ??
-                          null),
-                  });
-                }}
+                      getRollupAggregatedFieldMetadataIdForOperation({
+                        aggregateOperation,
+                        currentAggregatedFieldMetadataId:
+                          value.aggregatedFieldMetadataId,
+                        relatedFieldMetadataItems,
+                      }),
+                  })
+                }
                 options={ROLLUP_AGGREGATE_OPERATION_SELECT_OPTIONS.map(
                   (option) => ({ ...option, label: t(option.label) }),
                 )}
