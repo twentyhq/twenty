@@ -22,7 +22,7 @@ const serializeWorkspaceMemberRelation = ({
   | 'workspaceMemberRelationFieldMetadataId'
   | 'workspaceMemberRelationFilterFieldMetadataId'
   | 'workspaceMemberRelationFilterValues'
->): (string | string[])[] => {
+>): string[] => {
   if (!isDefined(workspaceMemberRelationFieldMetadataId)) {
     return [];
   }
@@ -34,7 +34,7 @@ const serializeWorkspaceMemberRelation = ({
   return [
     workspaceMemberRelationFieldMetadataId,
     workspaceMemberRelationFilterFieldMetadataId,
-    [...(workspaceMemberRelationFilterValues ?? [])].sort(),
+    JSON.stringify([...(workspaceMemberRelationFilterValues ?? [])].sort()),
   ];
 };
 
