@@ -1,59 +1,107 @@
-import {
-  FRONT_DOCUMENT_CALLERS,
-  type FrontDocumentCaller,
-  type FrontDocumentName,
-} from 'test/integration/graphql/suites/field-resolver-guards/utils/front-document-callers.util';
+import { arrangeMemberWithPermissionFlags } from 'test/integration/graphql/utils/arrange-member-with-permission-flags.util';
+import { arrangeWorkspaceCustomApplicationToken } from 'test/integration/graphql/utils/arrange-workspace-custom-application-token.util';
 import { readFrontMetadataDocument } from 'test/integration/graphql/utils/read-front-metadata-document.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-const CALLERS_EVERY_DOCUMENT_ADMITS = [
-  FRONT_DOCUMENT_CALLERS.admin,
-  FRONT_DOCUMENT_CALLERS.memberWithoutPermissionFlags,
-  FRONT_DOCUMENT_CALLERS.guest,
-];
-
-const ADMITTED_CALLERS_BY_DOCUMENT: Record<
-  FrontDocumentName,
-  FrontDocumentCaller[]
-> = {
-  GetCurrentUser: CALLERS_EVERY_DOCUMENT_ADMITS,
-  ObjectMetadataItems: [
-    ...CALLERS_EVERY_DOCUMENT_ADMITS,
-    FRONT_DOCUMENT_CALLERS.apiKey,
-    FRONT_DOCUMENT_CALLERS.userBoundApplicationToken,
-    FRONT_DOCUMENT_CALLERS.unboundApplicationToken,
-  ],
-  FindAllViews: [
-    ...CALLERS_EVERY_DOCUMENT_ADMITS,
-    FRONT_DOCUMENT_CALLERS.apiKey,
-    FRONT_DOCUMENT_CALLERS.userBoundApplicationToken,
-    FRONT_DOCUMENT_CALLERS.unboundApplicationToken,
-  ],
+type Caller = {
+  title: string;
+  isUserSession: boolean;
+  getToken: () => Promise<string>;
 };
 
 describe('Front documents should resolve every field for an admitted caller', () => {
-  describe.each(Object.entries(ADMITTED_CALLERS_BY_DOCUMENT))(
-    'the %s document of twenty-front',
-    (documentName, callers) => {
-      it.each(callers)('should answer $title', async ({ arrange }) => {
-        const caller = await arrange();
+  let memberWithoutPermissionFlags: Awaited<
+    ReturnType<typeof arrangeMemberWithPermissionFlags>
+  >;
 
-        try {
-          const response = await makeMetadataApiRequest(
-            {
-              query: readFrontMetadataDocument(
-                documentName as FrontDocumentName,
-              ),
-            },
-            caller.token,
-          );
+  beforeAll(async () => {
+    memberWithoutPermissionFlags = await arrangeMemberWithPermissionFlags({
+      permissionFlagKeys: [],
+    });
+  });
 
-          expect(response.body.errors).toBeUndefined();
-          expect(response.body.data).toBeDefined();
-          expect(response.body.data).not.toBeNull();
-        } finally {
-          await caller.cleanup();
-        }
+  afterAll(async () => {
+    await memberWithoutPermissionFlags.cleanup();
+  });
+
+  const CALLERS: Caller[] = [
+    {
+      title: 'an admin',
+      isUserSession: true,
+      getToken: async () => APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    },
+    {
+      title: 'a member whose role holds no permission flag',
+      isUserSession: true,
+      getToken: async () => memberWithoutPermissionFlags.token,
+    },
+    {
+      title: 'a guest',
+      isUserSession: true,
+      getToken: async () => APPLE_PHIL_GUEST_ACCESS_TOKEN,
+    },
+    {
+      title: 'an API key',
+      isUserSession: false,
+      getToken: async () => API_KEY_ACCESS_TOKEN,
+    },
+    {
+      title: 'an application token bound to a user',
+      isUserSession: false,
+      getToken: () =>
+        arrangeWorkspaceCustomApplicationToken({ isBoundToUser: true }),
+    },
+    {
+      title: 'an application token without user',
+      isUserSession: false,
+      getToken: () =>
+        arrangeWorkspaceCustomApplicationToken({ isBoundToUser: false }),
+    },
+  ];
+
+  const expectDocumentToResolve = async ({
+    documentName,
+    token,
+  }: {
+    documentName: Parameters<typeof readFrontMetadataDocument>[0];
+    token: string;
+  }) => {
+    const response = await makeMetadataApiRequest(
+      { query: readFrontMetadataDocument(documentName) },
+      token,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data).toBeDefined();
+    expect(response.body.data).not.toBeNull();
+  };
+
+  it.each(CALLERS.filter(({ isUserSession }) => isUserSession))(
+    'should answer GetCurrentUser for $title',
+    async ({ getToken }) => {
+      await expectDocumentToResolve({
+        documentName: 'GetCurrentUser',
+        token: await getToken(),
+      });
+    },
+  );
+
+  it.each(CALLERS)(
+    'should answer ObjectMetadataItems for $title',
+    async ({ getToken }) => {
+      await expectDocumentToResolve({
+        documentName: 'ObjectMetadataItems',
+        token: await getToken(),
+      });
+    },
+  );
+
+  it.each(CALLERS)(
+    'should answer FindAllViews for $title',
+    async ({ getToken }) => {
+      await expectDocumentToResolve({
+        documentName: 'FindAllViews',
+        token: await getToken(),
       });
     },
   );
