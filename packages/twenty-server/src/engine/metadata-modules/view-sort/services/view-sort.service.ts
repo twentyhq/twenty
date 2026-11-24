@@ -325,7 +325,6 @@ export class ViewSortService {
 
     if (
       !isDefined(flatViewSort) ||
-      flatViewSort.deletedAt !== null ||
       !isDefined(
         findFlatViewAvailableToUser({
           viewId: flatViewSort.viewId,

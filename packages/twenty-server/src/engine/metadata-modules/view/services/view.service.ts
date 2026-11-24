@@ -333,10 +333,7 @@ export class ViewService {
       return fromFlatViewToViewDto(deactivatedFlatView);
     }
 
-    return fromFlatViewToViewDto({
-      ...existingFlatView,
-      deletedAt: now,
-    });
+    return fromFlatViewToViewDto(existingFlatView);
   }
 
   private async getFilteredFlatViews({
@@ -421,7 +418,7 @@ export class ViewService {
       flatEntityMaps: flatViewMaps,
     });
 
-    if (!isDefined(flatView) || flatView.deletedAt !== null) {
+    if (!isDefined(flatView)) {
       return null;
     }
 
@@ -460,44 +457,32 @@ export class ViewService {
       viewDto.viewFields = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFieldIds,
         flatEntityMaps: flatViewFieldMaps,
-      })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
-        .map(fromFlatViewFieldToViewFieldDto);
+      }).map(fromFlatViewFieldToViewFieldDto);
 
       viewDto.viewFieldGroups = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFieldGroupIds,
         flatEntityMaps: flatViewFieldGroupMaps,
-      })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
-        .map(fromFlatViewFieldGroupToViewFieldGroupDto);
+      }).map(fromFlatViewFieldGroupToViewFieldGroupDto);
 
       viewDto.viewFilters = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFilterIds,
         flatEntityMaps: flatViewFilterMaps,
-      })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
-        .map(fromFlatViewFilterToViewFilterDto);
+      }).map(fromFlatViewFilterToViewFilterDto);
 
       viewDto.viewFilterGroups = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewFilterGroupIds,
         flatEntityMaps: flatViewFilterGroupMaps,
-      })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
-        .map(fromFlatViewFilterGroupToViewFilterGroupDto);
+      }).map(fromFlatViewFilterGroupToViewFilterGroupDto);
 
       viewDto.viewSorts = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewSortIds,
         flatEntityMaps: flatViewSortMaps,
-      })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
-        .map(fromFlatViewSortToViewSortDto);
+      }).map(fromFlatViewSortToViewSortDto);
 
       viewDto.viewGroups = findManyFlatEntityByIdInFlatEntityMaps({
         flatEntityIds: flatView.viewGroupIds,
         flatEntityMaps: flatViewGroupMaps,
-      })
-        .filter((flatEntity) => flatEntity.deletedAt === null)
-        .map(fromFlatViewGroupToViewGroupDto);
+      }).map(fromFlatViewGroupToViewGroupDto);
 
       return viewDto;
     });
@@ -578,7 +563,7 @@ export class ViewService {
       flatEntityMaps: flatViewMaps,
     });
 
-    if (!isDefined(flatView) || flatView.deletedAt !== null) {
+    if (!isDefined(flatView)) {
       return null;
     }
 
@@ -665,7 +650,6 @@ export class ViewService {
         'viewGroups',
         'viewFilterGroups',
       ],
-      withDeleted: true,
     });
 
     return view || null;

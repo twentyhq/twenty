@@ -2,7 +2,6 @@ import {
   Check,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -259,7 +258,7 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })

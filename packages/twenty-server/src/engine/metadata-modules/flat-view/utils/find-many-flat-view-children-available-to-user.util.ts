@@ -43,13 +43,10 @@ export const findManyFlatViewChildrenAvailableToUser = <
           isViewAvailableToUser({ flatView, userWorkspaceId }),
       );
 
-  return flatViews
-    .filter(isDefined)
-    .flatMap((flatView) =>
-      findManyFlatEntityByIdInFlatEntityMaps({
-        flatEntityIds: flatView[flatViewChildIdsKey],
-        flatEntityMaps: flatViewChildMaps,
-      }),
-    )
-    .filter((flatViewChild) => flatViewChild.deletedAt === null);
+  return flatViews.filter(isDefined).flatMap((flatView) =>
+    findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: flatView[flatViewChildIdsKey],
+      flatEntityMaps: flatViewChildMaps,
+    }),
+  );
 };

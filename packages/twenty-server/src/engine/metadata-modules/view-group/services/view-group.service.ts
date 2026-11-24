@@ -315,10 +315,7 @@ export class ViewGroupService {
       );
     }
 
-    return fromFlatViewGroupToViewGroupDto({
-      ...existingFlatViewGroup,
-      deletedAt: new Date().toISOString(),
-    });
+    return fromFlatViewGroupToViewGroupDto(existingFlatViewGroup);
   }
 
   async findByWorkspaceId({
@@ -405,7 +402,6 @@ export class ViewGroupService {
 
     if (
       !isDefined(flatViewGroup) ||
-      flatViewGroup.deletedAt !== null ||
       !isDefined(
         findFlatViewAvailableToUser({
           viewId: flatViewGroup.viewId,

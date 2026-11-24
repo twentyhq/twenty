@@ -78,11 +78,7 @@ export const validateFlatViewCreation = ({
             flatEntityMaps: optimisticFlatViewMaps,
           });
 
-          return (
-            isDefined(flatView) &&
-            flatView.key === reservedViewKey &&
-            !isDefined(flatView.deletedAt)
-          );
+          return isDefined(flatView) && flatView.key === reservedViewKey;
         },
       );
 
