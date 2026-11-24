@@ -121,6 +121,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         : {
             ...updateWithResolvedForeignKeys,
             settings: fromUniversalSettingsToFlatFieldMetadataSettings({
+              fieldMetadataType: flatFieldMetadata.type,
               universalSettings,
               allFieldIdToBeCreatedInActionByUniversalIdentifierMap: new Map(),
               flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,

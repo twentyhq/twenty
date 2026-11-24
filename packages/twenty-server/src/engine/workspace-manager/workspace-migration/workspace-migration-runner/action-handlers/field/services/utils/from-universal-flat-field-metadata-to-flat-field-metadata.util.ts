@@ -100,6 +100,7 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
   }
 
   const settings = fromUniversalSettingsToFlatFieldMetadataSettings({
+    fieldMetadataType: universalFlatFieldMetadata.type,
     universalSettings,
     allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
     flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,

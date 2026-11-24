@@ -12,8 +12,5 @@ export const getRollupSettingsFieldMetadataIds = ({
   [
     relationFieldMetadataId,
     aggregatedFieldMetadataId,
-    ...filters.flatMap((filter) => [
-      filter.fieldMetadataId,
-      filter.relationTargetFieldMetadataId,
-    ]),
+    ...filters.map(({ fieldMetadataId }) => fieldMetadataId),
   ].filter(isDefined);
