@@ -110,7 +110,7 @@ export const LinkedinChatPicker = ({
     state.step === 'ready'
       ? getUnlistedSelectedLinkedinChats({
           selectedChats,
-          listedChatIds: state.page.chats.map((chat) => chat.id),
+          listedChatIds: state.page.chats.flatMap((chat) => chat.chatIds),
         }).filter((chat) => chat.name.toLowerCase().includes(normalizedSearch))
       : [];
   const isSelectionFull =
@@ -150,7 +150,9 @@ export const LinkedinChatPicker = ({
           ) : (
             <StyledList role="group" aria-label={t('Conversations')}>
               {visibleChats.map((chat) => {
-                const isSelected = selectedChatIds.has(chat.id);
+                const isSelected = chat.chatIds.some((chatId) =>
+                  selectedChatIds.has(chatId),
+                );
 
                 return (
                   <ListItemButton
@@ -159,7 +161,11 @@ export const LinkedinChatPicker = ({
                     aria-checked={isSelected}
                     indicator="checkbox"
                     selected={isSelected}
-                    disabled={!isSelected && isSelectionFull}
+                    disabled={
+                      !isSelected &&
+                      selectedChats.length + chat.chatIds.length >
+                        LINKEDIN_SELECTED_CHATS_MAX_COUNT
+                    }
                     startIcon={chat.isGroup ? <IconUsers /> : <IconUser />}
                     description={
                       isDefined(chat.lastMessageAt)
@@ -174,7 +180,10 @@ export const LinkedinChatPicker = ({
                       onChange(
                         toggleLinkedinChatSelection({
                           selectedChats,
-                          chat: { id: chat.id, name: chat.name },
+                          chats: chat.chatIds.map((chatId) => ({
+                            id: chatId,
+                            name: chat.name,
+                          })),
                         }),
                       )
                     }
@@ -195,7 +204,10 @@ export const LinkedinChatPicker = ({
                   descriptionPlacement="end"
                   onClick={() =>
                     onChange(
-                      toggleLinkedinChatSelection({ selectedChats, chat }),
+                      toggleLinkedinChatSelection({
+                        selectedChats,
+                        chats: [chat],
+                      }),
                     )
                   }
                 >

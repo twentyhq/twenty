@@ -12,6 +12,7 @@ export const buildLinkedinChatOption = (
 
   return {
     id: chat.id,
+    chatIds: [chat.id],
     name: isNonEmptyString(subject) ? subject : chat.id,
     isGroup: isLinkedinGroupChat(chat),
     lastMessageAt: chat.last_message_timestamp,

@@ -7,7 +7,7 @@ import { LINKEDIN_CHAT_OPTIONS_MAX_COUNT } from 'src/constants/linkedin-chat-opt
 import { LINKEDIN_CHAT_OPTIONS_PAGE_SIZE } from 'src/constants/linkedin-chat-options-page-size.constant';
 import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-route-paths.constant';
 import { LINKEDIN_LIST_CHATS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { buildLinkedinChatOption } from 'src/logic-functions/utils/build-linkedin-chat-option.util';
+import { buildLinkedinChatOptions } from 'src/logic-functions/utils/build-linkedin-chat-options.util';
 import { findOwnLinkedinConnection } from 'src/logic-functions/utils/find-own-linkedin-connection.util';
 import { type LinkedinChatOptionsPage } from 'src/types/linkedin-chat-options-page.type';
 import { listMostRecentUnipileChats } from 'src/unipile/utils/list-most-recent-unipile-chats.util';
@@ -45,7 +45,7 @@ export const linkedinListChatsHandler = async (
   });
 
   return {
-    chats: chats.map(buildLinkedinChatOption),
+    chats: buildLinkedinChatOptions(chats),
     hasMore: chats.length === limit && limit < LINKEDIN_CHAT_OPTIONS_MAX_COUNT,
   };
 };
