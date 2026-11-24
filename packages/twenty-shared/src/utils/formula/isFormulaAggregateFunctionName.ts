@@ -1,7 +1,9 @@
-import { FORMULA_AGGREGATE_FUNCTIONS } from '@/constants/FormulaAggregateFunctions';
+import { FORMULA_AGGREGATE_FUNCTION_NAMES } from '@/constants/FormulaAggregateFunctionNames';
 import { type FormulaAggregateFunctionName } from '@/types/FormulaAggregateFunctionName';
 
 export const isFormulaAggregateFunctionName = (
   name: string,
 ): name is FormulaAggregateFunctionName =>
-  Object.keys(FORMULA_AGGREGATE_FUNCTIONS).includes(name);
+  FORMULA_AGGREGATE_FUNCTION_NAMES.some(
+    (functionName) => functionName === name,
+  );

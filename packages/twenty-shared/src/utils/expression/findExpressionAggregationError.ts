@@ -1,3 +1,4 @@
+import { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from '@/constants/FormulaAggregateMaximumArgumentCount';
 import { type ExpressionInstruction } from '@/types/ExpressionInstruction';
 import { type FormulaAggregateFunctionName } from '@/types/FormulaAggregateFunctionName';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
@@ -24,8 +25,6 @@ class ExpressionAggregationException extends Error {
     super(aggregationError.errorMessage);
   }
 }
-
-const AGGREGATE_MAXIMUM_ARGUMENT_COUNT = 2;
 
 const throwAggregationError = (
   aggregationError: ExpressionAggregationError,
@@ -117,7 +116,7 @@ const walkInstructions = ({
 
     if (
       !isRelationArgumentValid ||
-      argumentEntries.length > AGGREGATE_MAXIMUM_ARGUMENT_COUNT
+      argumentEntries.length > FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT
     ) {
       return throwAggregationError({
         errorMessage: `${functionName}() needs a relation, for example count(tasks) or sum(deals.amount)`,

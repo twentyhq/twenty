@@ -1,4 +1,5 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
+import { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from 'twenty-shared/constants';
 import { type ExpressionInstruction } from 'twenty-shared/types';
 import {
   isDefined,
@@ -51,8 +52,6 @@ const compileLiteralOrThrow = (literal: unknown): FormulaSqlValue => {
     message: `"${String(literal)}" is not supported in a formula`,
   });
 };
-
-const AGGREGATE_MAXIMUM_ARGUMENT_COUNT = 2;
 
 const compileInstructions = ({
   instructions,
@@ -141,7 +140,7 @@ const compileInstructions = ({
       });
     }
 
-    if (argumentEntries.length > AGGREGATE_MAXIMUM_ARGUMENT_COUNT) {
+    if (argumentEntries.length > FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT) {
       throw new FormulaSqlCompilationException({
         message: `${name}() takes a relation and a condition`,
       });

@@ -9,18 +9,9 @@ import {
   assertFormulaSqlTypeOrThrow,
   describeFormulaSqlType,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
+import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
-
-const SQL_AGGREGATE_FUNCTIONS: Record<
-  Exclude<FormulaAggregateFunctionName, 'count'>,
-  string
-> = {
-  sum: 'SUM',
-  avg: 'AVG',
-  min: 'MIN',
-  max: 'MAX',
-};
 
 const assertAggregatedValueOrThrow = ({
   functionName,
@@ -66,9 +57,7 @@ export const compileFormulaSqlAggregateOrThrow = ({
   aggregatedValue?: FormulaSqlValue;
   condition?: FormulaSqlValue;
 }): FormulaSqlValue => {
-  const alias = escapeIdentifier(
-    getFormulaSqlAggregateAlias(relationFieldName),
-  );
+  const alias = getFormulaSqlAggregateAlias(relationFieldName);
   const conditionSql = isDefined(condition)
     ? ` AND (${
         assertFormulaSqlTypeOrThrow({
@@ -78,7 +67,7 @@ export const compileFormulaSqlAggregateOrThrow = ({
         }).sql
       })`
     : '';
-  const fromSql = `FROM ${aggregationSource.tableSql} AS ${alias} WHERE ${alias}.${escapeIdentifier(aggregationSource.joinColumnName)} = ${escapeIdentifier(COMPUTED_COLUMN_RECORD_ALIAS)}."id" AND ${alias}."deletedAt" IS NULL${conditionSql}`;
+  const fromSql = `FROM ${aggregationSource.tableSql} AS ${escapeIdentifier(alias)} WHERE ${quoteColumn(alias, aggregationSource.joinColumnName)} = ${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, 'id')} AND ${quoteColumn(alias, 'deletedAt')} IS NULL${conditionSql}`;
 
   if (functionName === 'count') {
     return {
@@ -100,7 +89,7 @@ export const compileFormulaSqlAggregateOrThrow = ({
   });
 
   return {
-    sql: `(SELECT ${SQL_AGGREGATE_FUNCTIONS[functionName]}(${sql}) ${fromSql})`,
+    sql: `(SELECT ${functionName.toUpperCase()}(${sql}) ${fromSql})`,
     type,
   };
 };

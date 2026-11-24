@@ -1,7 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
-import { FORMULA_AGGREGATE_FUNCTIONS } from '@/constants/FormulaAggregateFunctions';
+import { FORMULA_AGGREGATE_FUNCTION_NAMES } from '@/constants/FormulaAggregateFunctionNames';
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
@@ -157,10 +157,7 @@ const evaluateAggregate = () => null;
 
 validationRuleParser.functions = {
   ...Object.fromEntries(
-    Object.keys(FORMULA_AGGREGATE_FUNCTIONS).map((name) => [
-      name,
-      evaluateAggregate,
-    ]),
+    FORMULA_AGGREGATE_FUNCTION_NAMES.map((name) => [name, evaluateAggregate]),
   ),
   ...Object.fromEntries(
     Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [

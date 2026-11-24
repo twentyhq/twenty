@@ -1,4 +1,4 @@
-import { type FORMULA_AGGREGATE_FUNCTIONS } from '@/constants/FormulaAggregateFunctions';
+import { type FORMULA_AGGREGATE_FUNCTION_NAMES } from '@/constants/FormulaAggregateFunctionNames';
 
 export type FormulaAggregateFunctionName =
-  keyof typeof FORMULA_AGGREGATE_FUNCTIONS;
+  (typeof FORMULA_AGGREGATE_FUNCTION_NAMES)[number];
