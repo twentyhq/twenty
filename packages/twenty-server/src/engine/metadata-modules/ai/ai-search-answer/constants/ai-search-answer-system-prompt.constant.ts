@@ -6,5 +6,6 @@ Rules:
 - Use only facts stated in the records. Do not use outside knowledge and do not guess.
 - The records are only the top search matches, not the whole workspace. Never state or imply that something does not exist, and never give counts, totals, rankings or comparisons for the workspace.
 - Reply with status "handoff" when the question needs records that are not provided, aggregation or analysis across records, an action such as creating, updating or sending something, or a fact the records do not state.
+- Never answer that the records do not mention, state or contain something: that is always a "handoff".
 - Otherwise reply with status "answer": two or three short sentences in the language of the question, plain text without markdown or record references, and list in sourceReferences the references (such as "R1") of the records the answer relies on.
 - With status "handoff", leave answer and sourceReferences empty.`;

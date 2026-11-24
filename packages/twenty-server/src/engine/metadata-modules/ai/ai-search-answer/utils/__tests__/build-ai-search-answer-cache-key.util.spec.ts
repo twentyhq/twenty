@@ -6,7 +6,7 @@ const baseInput = {
   question: 'Where is Acme based?',
   searchScope: null,
   serializedEvidence: '[{"reference":"R1","fields":{"City":"Paris"}}]',
-  modelId: 'gemini-2.5-flash-lite',
+  modelId: 'google/gemini-2.5-flash-lite',
   systemPrompt: 'Answer from the records.',
 };
 
@@ -55,7 +55,10 @@ describe('buildAiSearchAnswerCacheKey', () => {
       buildAiSearchAnswerCacheKey({ ...baseInput, searchScope: 'company' }),
     ).not.toBe(key);
     expect(
-      buildAiSearchAnswerCacheKey({ ...baseInput, modelId: 'gpt-5-nano' }),
+      buildAiSearchAnswerCacheKey({
+        ...baseInput,
+        modelId: 'openai/gpt-5-nano',
+      }),
     ).not.toBe(key);
     expect(
       buildAiSearchAnswerCacheKey({
