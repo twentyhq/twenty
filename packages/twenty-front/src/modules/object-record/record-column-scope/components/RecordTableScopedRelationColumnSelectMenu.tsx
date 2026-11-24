@@ -49,7 +49,7 @@ export const RecordTableScopedRelationColumnSelectMenu = ({
           {
             getRecordFieldColumnHeader({
               fieldMetadataItem: relationFieldMetadataItem,
-              isScopedRelationColumn: true,
+              columnKind: { kind: 'scopedRecords' },
             }).label
           }
         </Dropdown.ActionItem>

@@ -10806,6 +10806,12 @@ msgstr "親のビューフィルターグループが見つかりません"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId と folderId は一致している必要があります。folderId は非推奨です。parentId を使用してください。"
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "参加者"
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

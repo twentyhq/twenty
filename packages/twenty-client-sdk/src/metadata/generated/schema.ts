@@ -1567,7 +1567,7 @@ export interface EmailsConfiguration {
     __typename: 'EmailsConfiguration'
 }
 
-export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EMAIL_PAGE_STYLE' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'MERGE_WITH_RECORD' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
+export type EngineComponentKey = 'ACTIVATE_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'ADD_TO_FAVORITES' | 'ADD_TO_MESSAGE_LIST' | 'ADD_VIEW_TO_MESSAGE_LIST' | 'ASK_AI' | 'ASSIGN_AI_CHAT' | 'CANCEL_DASHBOARD_LAYOUT' | 'CANCEL_MESSAGE_CAMPAIGN' | 'COMPOSE_CAMPAIGN' | 'COMPOSE_EMAIL' | 'CREATE_NEW_RECORD' | 'CREATE_NEW_VIEW' | 'DEACTIVATE_WORKFLOW' | 'DELETE_MULTIPLE_RECORDS' | 'DELETE_RECORDS' | 'DELETE_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'DESTROY_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DISCARD_DRAFT_WORKFLOW' | 'DUPLICATE_DASHBOARD' | 'DUPLICATE_MESSAGE_CAMPAIGN' | 'DUPLICATE_MESSAGE_LIST' | 'DUPLICATE_WORKFLOW' | 'EDIT_DASHBOARD_LAYOUT' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EMAIL_BLOCK_SETTINGS' | 'EMAIL_PAGE_STYLE' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS' | 'EXPORT_RECORDS' | 'EXPORT_VIEW' | 'FRONT_COMPONENT_RENDERER' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_NOTES' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_PEOPLE' | 'GO_TO_RUNS' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_WORKFLOWS' | 'HIDE_DELETED_RECORDS' | 'IMPORT_RECORDS' | 'MANAGE_AI_CHAT_PARTICIPANTS' | 'MARK_AI_CHAT_AS_DONE' | 'MARK_AI_CHAT_AS_READ' | 'MARK_AI_CHAT_AS_UNREAD' | 'MERGE_MULTIPLE_RECORDS' | 'MERGE_WITH_RECORD' | 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'NAVIGATION' | 'NEW_AI_CHAT' | 'REMOVE_FROM_FAVORITES' | 'REOPEN_AI_CHAT' | 'REPLY_TO_EMAIL_THREAD' | 'RESTORE_MULTIPLE_RECORDS' | 'RESTORE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RETRY_WORKFLOW_RUN' | 'SAVE_DASHBOARD_LAYOUT' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_DELETED_RECORDS' | 'SEE_RUNS_WORKFLOW' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'SEND_MESSAGE_CAMPAIGN' | 'SEND_MESSAGE_CAMPAIGN_TEST' | 'SHARE_RECORD' | 'SNOOZE_AI_CHAT' | 'STOP_WORKFLOW_RUN' | 'SUBSCRIBE_TO_AI_CHAT' | 'TEST_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'TOGGLE_WORKFLOW_VISIBILITY' | 'TRIGGER_WORKFLOW_VERSION' | 'UNSUBSCRIBE_FROM_AI_CHAT' | 'UPDATE_MULTIPLE_RECORDS' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'VIEW_PREVIOUS_AI_CHATS'
 
 export interface EnqueueJobResult {
     enqueued: Scalars['Boolean']
@@ -2445,6 +2445,7 @@ export interface Mutation {
     activateSkill: Skill
     activateWorkspace: Workspace
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
+    addAgentChatThreadParticipants: Scalars['UUID'][]
     addQueryToEventStream: Scalars['Boolean']
     approveApplicationIframeMediaPermissions: Application
     archiveInboxThread: Scalars['Boolean']
@@ -4235,6 +4236,7 @@ export interface View {
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn: ViewOpenRecordIn
     position: Scalars['Float']
+    presetFilter?: ViewPresetFilter
     shouldDisplayGroupsAsTabs?: Scalars['Boolean']
     shouldHideEmptyGroups: Scalars['Boolean']
     type: ViewType
@@ -4387,6 +4389,8 @@ export interface ViewGroup {
 export type ViewKey = 'INDEX'
 
 export type ViewOpenRecordIn = 'RECORD_PAGE' | 'SIDE_PANEL'
+
+export type ViewPresetFilter = 'INBOX_CHANNEL_DONE' | 'INBOX_CHANNEL_OPEN' | 'INBOX_CHANNEL_SNOOZED' | 'INBOX_DONE' | 'INBOX_MENTIONS' | 'INBOX_OPEN' | 'INBOX_SNOOZED'
 
 export interface ViewSort {
     createdAt: Scalars['DateTime']
@@ -4641,6 +4645,8 @@ export interface AccessGroupPropagationProgressGenqlSelection{
 export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
 displayName?: (Scalars['String'] | null)}
+
+export interface AddAgentChatThreadParticipantsInput {threadId: Scalars['UUID'],workspaceMemberIds: Scalars['UUID'][]}
 
 export interface AddQuerySubscriptionInput {eventStreamId: Scalars['String'],operationSignature: Scalars['JSON'],queryId: Scalars['String']}
 
@@ -6234,7 +6240,7 @@ export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scala
 
 export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),presetFilter?: (ViewPresetFilter | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
@@ -7383,6 +7389,7 @@ export interface MutationGenqlSelection{
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
+    addAgentChatThreadParticipants?: { __args: {input: AddAgentChatThreadParticipantsInput} }
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
     approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
     archiveInboxThread?: { __args: {input: ArchiveInboxThreadInput} }
@@ -9587,6 +9594,7 @@ export interface ViewGenqlSelection{
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn?: boolean | number
     position?: boolean | number
+    presetFilter?: boolean | number
     shouldDisplayGroupsAsTabs?: boolean | number
     shouldHideEmptyGroups?: boolean | number
     type?: boolean | number
@@ -13370,6 +13378,7 @@ export const enumEngineComponentKey = {
    GO_TO_WORKFLOWS: 'GO_TO_WORKFLOWS' as const,
    HIDE_DELETED_RECORDS: 'HIDE_DELETED_RECORDS' as const,
    IMPORT_RECORDS: 'IMPORT_RECORDS' as const,
+   MANAGE_AI_CHAT_PARTICIPANTS: 'MANAGE_AI_CHAT_PARTICIPANTS' as const,
    MARK_AI_CHAT_AS_DONE: 'MARK_AI_CHAT_AS_DONE' as const,
    MARK_AI_CHAT_AS_READ: 'MARK_AI_CHAT_AS_READ' as const,
    MARK_AI_CHAT_AS_UNREAD: 'MARK_AI_CHAT_AS_UNREAD' as const,
@@ -13951,6 +13960,16 @@ export const enumViewKey = {
 export const enumViewOpenRecordIn = {
    RECORD_PAGE: 'RECORD_PAGE' as const,
    SIDE_PANEL: 'SIDE_PANEL' as const
+}
+
+export const enumViewPresetFilter = {
+   INBOX_CHANNEL_DONE: 'INBOX_CHANNEL_DONE' as const,
+   INBOX_CHANNEL_OPEN: 'INBOX_CHANNEL_OPEN' as const,
+   INBOX_CHANNEL_SNOOZED: 'INBOX_CHANNEL_SNOOZED' as const,
+   INBOX_DONE: 'INBOX_DONE' as const,
+   INBOX_MENTIONS: 'INBOX_MENTIONS' as const,
+   INBOX_OPEN: 'INBOX_OPEN' as const,
+   INBOX_SNOOZED: 'INBOX_SNOOZED' as const
 }
 
 export const enumViewSortDirection = {

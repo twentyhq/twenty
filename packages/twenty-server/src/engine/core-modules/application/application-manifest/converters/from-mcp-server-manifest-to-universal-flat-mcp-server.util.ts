@@ -1,4 +1,7 @@
-import { type McpServerManifest } from 'twenty-shared/application';
+import {
+  type McpServerManifest,
+  normalizeMcpServerManifest,
+} from 'twenty-shared/application';
 
 import { type UniversalFlatMcpServer } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-mcp-server.type';
 
@@ -17,7 +20,8 @@ export const fromMcpServerManifestToUniversalFlatMcpServer = ({
   label: mcpServerManifest.label,
   url: mcpServerManifest.url,
   connectionProviderUniversalIdentifier:
-    mcpServerManifest.connectionProvider?.universalIdentifier ?? null,
+    normalizeMcpServerManifest(mcpServerManifest)
+      .connectionProviderUniversalIdentifier ?? null,
   isActive: true,
   tools: [],
   toolsSyncedAt: null,

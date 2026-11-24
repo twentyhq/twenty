@@ -15,9 +15,9 @@ import {
 } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 import { type EnqueueJobsInput } from 'twenty-shared/application';
+import { LOGIC_FUNCTION_MAX_RETRY_LIMIT } from 'twenty-shared/logic-function';
 
 import { ENQUEUE_JOB_MAX_DELAY_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-max-delay-ms.constant';
-import { ENQUEUE_JOB_MAX_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-max-retry-limit.constant';
 import { ENQUEUE_JOB_MIN_DELAY_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-delay-ms.constant';
 import { ENQUEUE_JOB_MIN_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-retry-limit.constant';
 import { MAX_JOBS_PER_ENQUEUE } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-enqueue.constant';
@@ -50,7 +50,7 @@ export class EnqueueJobsInputDTO implements EnqueueJobsInput {
 
   @IsInt()
   @Min(ENQUEUE_JOB_MIN_RETRY_LIMIT)
-  @Max(ENQUEUE_JOB_MAX_RETRY_LIMIT)
+  @Max(LOGIC_FUNCTION_MAX_RETRY_LIMIT)
   @IsOptional()
   @Field(() => Int, { nullable: true })
   retryLimit?: number;

@@ -3,7 +3,7 @@ import { type ContextStoreViewType } from '@/context-store/types/ContextStoreVie
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { ScopedRelationAliasesProvider } from '@/object-record/record-column-scope/components/ScopedRelationAliasesProvider';
+import { RecordFieldColumnsProvider } from '@/object-record/record-column-scope/components/RecordFieldColumnsProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
@@ -186,9 +186,9 @@ export const RecordTableWidgetProvider = ({
                 widgetId={widgetId}
                 objectMetadataItem={objectMetadataItem}
               />
-              <ScopedRelationAliasesProvider>
+              <RecordFieldColumnsProvider>
                 {children}
-              </ScopedRelationAliasesProvider>
+              </RecordFieldColumnsProvider>
             </RecordComponentInstanceContextsWrapper>
           </ViewComponentInstanceContext.Provider>
         </RecordIndexContextProvider>

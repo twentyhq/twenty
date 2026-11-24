@@ -1,7 +1,8 @@
+import { isWorkEmail } from 'twenty-shared/utils';
+
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-blocklisted-events.util';
 import { filterOutInternalEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-out-internal-events.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 export const filterEventsAndReturnEventsToRemove = ({
   primaryHandle,
