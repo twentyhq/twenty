@@ -2,7 +2,7 @@ import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatTh
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useConditionalAvailabilityGlobalContext } from '@/conditional-availability/hooks/useConditionalAvailabilityGlobalContext';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
 import { getCommandMenuContextApiObjectPermissions } from '@/command-menu-item/utils/getCommandMenuContextApiObjectPermissions';
@@ -24,8 +24,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -201,13 +199,8 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const featureFlags = getWorkspaceFeatureFlagsMap(
-    currentWorkspace?.featureFlags,
-  );
-
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const { featureFlags, permissionFlags } =
+    useConditionalAvailabilityGlobalContext();
 
   const currentUser = useAtomStateValue(currentUserState);
   const canImpersonate = currentUser?.canImpersonate === true;
@@ -235,7 +228,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectPermissions,
     selectedRecords,
     featureFlags,
-    permissionFlags: permissionFlagMap,
+    permissionFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
     canImpersonate,

@@ -28,15 +28,14 @@ export const getConditionalAvailabilityEditorStateFromNode = ({
     return { mode: 'unsupportedRule' };
   }
 
-  const rowTree: ConditionalAvailabilityRowGroup =
-    rowOrGroup.type === 'group'
-      ? rowOrGroup
-      : {
-          type: 'group',
-          id: v4(),
-          logicalOperator: doNotTranslate('AND'),
-          children: [rowOrGroup],
-        };
+  const rowGroupAroundSingleRow: ConditionalAvailabilityRowGroup = {
+    type: 'group',
+    id: v4(),
+    logicalOperator: doNotTranslate('AND'),
+    children: [rowOrGroup],
+  };
+  const rowTree =
+    rowOrGroup.type === 'group' ? rowOrGroup : rowGroupAroundSingleRow;
 
   const hasGroupInsideGroup = rowTree.children.some(
     (child) =>

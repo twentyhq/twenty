@@ -1,6 +1,6 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useConditionalAvailabilityGlobalContext } from '@/conditional-availability/hooks/useConditionalAvailabilityGlobalContext';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
@@ -14,9 +14,7 @@ import { resolveCommandMenuItemPinning } from '@/command-menu-item/utils/resolve
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { useMemo } from 'react';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
 import {
@@ -32,8 +30,8 @@ export const StandalonePageCommandMenu = () => {
   const isLayoutCustomizationAllowedOnCurrentPage =
     useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const { featureFlags, permissionFlags } =
+    useConditionalAvailabilityGlobalContext();
   const currentUser = useAtomStateValue(currentUserState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -43,10 +41,6 @@ export const StandalonePageCommandMenu = () => {
     useAtomStateValue(commandMenuTargetObjectPermissionsSelector);
 
   const commandMenuContextApi = useMemo<CommandMenuContextApi>(() => {
-    const featureFlags = getWorkspaceFeatureFlagsMap(
-      currentWorkspace?.featureFlags,
-    );
-
     return {
       pageType: ContextStorePageType.Standalone,
       isInSidePanel: false,
@@ -59,7 +53,7 @@ export const StandalonePageCommandMenu = () => {
       objectPermissions: EMPTY_COMMAND_MENU_CONTEXT_API.objectPermissions,
       selectedRecords: [],
       featureFlags,
-      permissionFlags: permissionFlagMap,
+      permissionFlags,
       targetObjectReadPermissions,
       targetObjectWritePermissions,
       canImpersonate: currentUser?.canImpersonate === true,
@@ -70,8 +64,8 @@ export const StandalonePageCommandMenu = () => {
       currentView: null,
     };
   }, [
-    currentWorkspace?.featureFlags,
-    permissionFlagMap,
+    featureFlags,
+    permissionFlags,
     currentUser?.canImpersonate,
     currentUser?.canAccessFullAdminPanel,
     isLayoutCustomizationModeEnabled,

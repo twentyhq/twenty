@@ -77,7 +77,7 @@
       "ignore": [
         "src/locales/generated/**",
         ".eloqnt/config.ts",
-        "src/modules/conditional-availability/**"
+        "src/modules/conditional-availability/utils/**"
       ],
       "ignoreDependencies": [
         "@babel/preset-typescript",
