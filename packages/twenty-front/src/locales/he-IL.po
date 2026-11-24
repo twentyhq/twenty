@@ -16352,6 +16352,7 @@ msgid "Inactive Skill Options"
 msgstr "אפשרויות מיומנות לא פעילה"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -31699,7 +31700,6 @@ msgstr "תרגומים"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "מיון"
 
