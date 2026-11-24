@@ -43,7 +43,6 @@ const assertAggregatedValueOrThrow = ({
   return aggregatedValue;
 };
 
-// A correlated subquery over the related records that are not soft deleted
 export const compileFormulaSqlAggregateOrThrow = ({
   functionName,
   relationFieldName,

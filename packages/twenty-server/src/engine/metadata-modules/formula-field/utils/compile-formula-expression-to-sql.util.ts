@@ -111,8 +111,7 @@ const compileInstructions = ({
   const popValuesOrThrow = (count: number): FormulaSqlValue[] =>
     popEntriesOrThrow(count).map(toValueOrThrow);
 
-  // Undefined for min and max of plain values, which stay scalar functions
-  const compileAggregate = ({
+  const compileAggregateOrThrow = ({
     name,
     argumentEntries,
   }: {
@@ -244,7 +243,10 @@ const compileInstructions = ({
         stack.push({
           kind: 'value',
           value:
-            compileAggregate({ name: functionEntry.path, argumentEntries }) ??
+            compileAggregateOrThrow({
+              name: functionEntry.path,
+              argumentEntries,
+            }) ??
             compileFormulaSqlFunctionOrThrow({
               name: functionEntry.path,
               formulaSqlValues: argumentEntries.map(toValueOrThrow),

@@ -15,11 +15,11 @@ import { isDefined } from '@/utils/validation/isDefined';
 export const compileExpression = ({
   expression,
   fields,
-  allowAggregates = false,
+  shouldAllowAggregates = false,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
-  allowAggregates?: boolean;
+  shouldAllowAggregates?: boolean;
 }): ValidationRuleCompilationResult => {
   if (expression.trim().length === 0) {
     return {
@@ -88,7 +88,7 @@ export const compileExpression = ({
     const resolution = resolveValidationRuleIdentifierPath({
       path,
       fields,
-      allowToManyRelations: allowAggregates,
+      shouldAllowToManyRelations: shouldAllowAggregates,
     });
 
     if (!resolution.isResolved) {
@@ -110,7 +110,7 @@ export const compileExpression = ({
   const aggregationError = findExpressionAggregationError({
     instructions: parsedExpression.tokens,
     toManyRelationNameByPath,
-    allowAggregates,
+    shouldAllowAggregates,
   });
 
   if (isDefined(aggregationError)) {

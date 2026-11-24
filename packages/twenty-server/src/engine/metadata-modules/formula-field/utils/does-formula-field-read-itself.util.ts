@@ -3,7 +3,6 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-// Follows the formulas a formula reads, which only stored formulas can be, back to the formula itself
 export const doesFormulaFieldReadItself = ({
   universalIdentifier,
   universalSettings,

@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ValidationRuleErrorCode,
@@ -56,7 +57,7 @@ export const getValidationRuleErrorMessage = ({
     case 'AGGREGATE_NOT_ALLOWED':
       return t`${functionName}() reads related records, which only a formula can do`;
     case 'INVALID_AGGREGATE_ARGUMENT':
-      return relationFieldName.length > 0
+      return isNonEmptyString(relationFieldName)
         ? t`The condition of ${functionName}() cannot read "${relationFieldName}"`
         : t`${functionName}() needs a relation, for example count(tasks) or sum(deals.amount)`;
     case 'NESTED_AGGREGATE':

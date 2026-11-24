@@ -129,11 +129,11 @@ const resolvePreviousValuePath = ({
 export const resolveValidationRuleIdentifierPath = ({
   path,
   fields,
-  allowToManyRelations = false,
+  shouldAllowToManyRelations = false,
 }: {
   path: string;
   fields: ValidationRuleFieldDescriptor[];
-  allowToManyRelations?: boolean;
+  shouldAllowToManyRelations?: boolean;
 }): ResolveValidationRuleIdentifierPathResult => {
   const [rootSegment, ...memberSegments] = path.split('.');
 
@@ -187,7 +187,7 @@ export const resolveValidationRuleIdentifierPath = ({
   const isReadableRelation =
     rootField.type === FieldMetadataType.RELATION &&
     (rootField.relationType === RelationType.MANY_TO_ONE ||
-      (allowToManyRelations && isToManyRelation));
+      (shouldAllowToManyRelations && isToManyRelation));
 
   if (!isReadableRelation || !isDefined(rootField.relationTargetFields)) {
     return {
