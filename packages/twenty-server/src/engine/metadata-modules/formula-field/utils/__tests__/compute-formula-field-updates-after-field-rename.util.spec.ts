@@ -28,6 +28,18 @@ const computeRenamedExpressions = (
     ]),
   );
 
+const buildStockValueSettings = (priceFieldName: string) => ({
+  formula: {
+    expression: `sum(gadgets.${priceFieldName}, gadgets.quantity > 0)`,
+    bindings: {
+      gadgets: 'supplier-gadgets-uid',
+      [`gadgets.${priceFieldName}`]: 'gadget-price-uid',
+      'gadgets.quantity': 'gadget-quantity-uid',
+    },
+    evaluation: 'STORED',
+  },
+});
+
 describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
   it('should rewrite the formulas of the object that read the renamed field', () => {
     expect(
@@ -43,6 +55,35 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
             unitPrice: 'gadget-price-uid',
             quantity: 'gadget-quantity-uid',
           },
+        },
+      },
+      'supplier-stock-value-uid': buildStockValueSettings('unitPrice'),
+    });
+  });
+
+  it('should rewrite the aggregates that read through a renamed one-to-many relation', () => {
+    expect(
+      computeRenamedExpressions({
+        renamedFieldUniversalIdentifier: 'supplier-gadgets-uid',
+        newFieldName: 'products',
+      }),
+    ).toEqual({
+      'supplier-gadget-count-uid': {
+        formula: {
+          expression: 'count(products)',
+          bindings: { products: 'supplier-gadgets-uid' },
+          evaluation: 'STORED',
+        },
+      },
+      'supplier-stock-value-uid': {
+        formula: {
+          expression: 'sum(products.price, products.quantity > 0)',
+          bindings: {
+            products: 'supplier-gadgets-uid',
+            'products.price': 'gadget-price-uid',
+            'products.quantity': 'gadget-quantity-uid',
+          },
+          evaluation: 'STORED',
         },
       },
     });
@@ -115,15 +156,17 @@ describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
           'gadget-total-uid': EXISTING_FIELDS['gadget-total-uid'],
         },
       }),
-    ).toEqual({});
+    ).toEqual({
+      'supplier-stock-value-uid': buildStockValueSettings('unitPrice'),
+    });
   });
 
-  it('should leave formulas untouched when the new name is reserved', () => {
+  it('should leave formulas untouched when the new name is reserved, but not where it follows a relation', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'gadget-price-uid',
         newFieldName: 'now',
       }),
-    ).toEqual({});
+    ).toEqual({ 'supplier-stock-value-uid': buildStockValueSettings('now') });
   });
 });

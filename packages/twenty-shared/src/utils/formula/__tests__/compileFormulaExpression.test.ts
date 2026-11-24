@@ -114,7 +114,9 @@ describe('compileFormulaExpression', () => {
   });
 
   it('should read min and max of a relation as aggregates', () => {
-    expect(compile('dateDiff(max(tasks.dueAt), now, "DAY")')).toMatchObject({
+    expect(
+      compile('dateDiff(min(tasks.dueAt), max(tasks.dueAt), "DAY")'),
+    ).toMatchObject({
       isValid: true,
       bindings: { 'tasks.dueAt': 'task-due-at' },
     });
@@ -123,6 +125,22 @@ describe('compileFormulaExpression', () => {
   it('should keep min and max of plain values as scalar functions', () => {
     expect(compile('max(amount.amountMicros, 0)')).toMatchObject({
       isValid: true,
+    });
+  });
+
+  it('should reject now in a formula that aggregates', () => {
+    expect(compile('dateDiff(max(tasks.dueAt), now, "DAY")')).toMatchObject({
+      isValid: false,
+      errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
+      errorParams: { path: 'now' },
+    });
+  });
+
+  it('should reject a lookup in a formula that aggregates', () => {
+    expect(compile('count(tasks) || company.name')).toMatchObject({
+      isValid: false,
+      errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
+      errorParams: { path: 'company.name' },
     });
   });
 

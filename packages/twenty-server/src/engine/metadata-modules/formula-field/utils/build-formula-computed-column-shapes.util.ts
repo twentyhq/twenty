@@ -3,8 +3,8 @@ import {
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
-  isFormulaFieldMetadata,
   isFormulaFieldMetadataType,
+  isQueryTimeFormulaFieldMetadata,
 } from 'twenty-shared/utils';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -44,7 +44,7 @@ export const buildFormulaComputedColumnShapes = ({
   const formulaFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  ).filter(isFormulaFieldMetadata);
+  ).filter(isQueryTimeFormulaFieldMetadata);
 
   if (formulaFlatFieldMetadatas.length === 0) {
     return { computedColumnShapes: [], computedLookupShapes: [] };

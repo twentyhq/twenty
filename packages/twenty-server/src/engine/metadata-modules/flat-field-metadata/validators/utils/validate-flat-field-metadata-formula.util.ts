@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   getFieldMetadataFormulaCurrencyCodeExpression,
@@ -17,9 +17,11 @@ import {
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
 import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
+import { doesFormulaFieldReadItself } from 'src/engine/metadata-modules/formula-field/utils/does-formula-field-read-itself.util';
 import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type FormulaSourceUniversalFlatFieldMetadataMaps = {
   byUniversalIdentifier: Partial<
@@ -224,6 +226,18 @@ export const validateFlatFieldMetadataFormula = ({
     resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
       fields,
     }),
+    // Only the types are checked here, so any table stands for the related records
+    resolveAggregationSource: (relationFieldName) =>
+      fields.some(
+        (field) =>
+          field.name === relationFieldName &&
+          field.relationType === RelationType.ONE_TO_MANY,
+      )
+        ? {
+            tableSql: escapeIdentifier(relationFieldName),
+            joinColumnName: 'id',
+          }
+        : undefined,
   });
 
   if (!sqlCompilation.isValid) {
@@ -232,6 +246,32 @@ export const validateFlatFieldMetadataFormula = ({
         errorMessage: sqlCompilation.errorMessage,
         value: expression,
       }),
+    ];
+  }
+
+  if (
+    doesFormulaFieldReadItself({
+      universalIdentifier,
+      universalSettings,
+      findUniversalSettings: (fieldUniversalIdentifier) =>
+        (
+          pendingUniversalFlatFieldMetadataMaps?.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ] ??
+          universalFlatFieldMetadataMaps.byUniversalIdentifier[
+            fieldUniversalIdentifier
+          ]
+        )?.universalSettings,
+    })
+  ) {
+    return [
+      {
+        code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+        message:
+          'A formula cannot read its own value, directly or through other formulas',
+        userFriendlyMessage: msg`A formula cannot read its own value, directly or through other formulas`,
+        value: expression,
+      },
     ];
   }
 

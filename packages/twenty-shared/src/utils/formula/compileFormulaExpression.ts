@@ -1,9 +1,13 @@
+import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
+import { RelationType } from '@/types/RelationType';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { compileExpression } from '@/utils/expression/compileExpression';
 import { createExpressionEvaluator } from '@/utils/expression/createExpressionEvaluator';
+import { getFormulaEvaluationFromBindings } from '@/utils/formula/getFormulaEvaluationFromBindings';
 import { isDefined } from '@/utils/validation/isDefined';
 import { isValidationRulePreviousValuePath } from '@/utils/validation-rule/isValidationRulePreviousValuePath';
+import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 
 export const compileFormulaExpression = ({
   expression,
@@ -33,6 +37,40 @@ export const compileFormulaExpression = ({
       errorCode: 'PREVIOUS_VALUE_IN_FORMULA',
       errorParams: { path: previousValuePath },
     };
+  }
+
+  if (
+    getFormulaEvaluationFromBindings({
+      bindings: compilation.bindings,
+      fields,
+    }) === 'STORED'
+  ) {
+    const toOneRelationNames = new Set(
+      fields
+        .filter(({ relationType }) => relationType === RelationType.MANY_TO_ONE)
+        .map(({ name }) => name),
+    );
+    const unsupportedPath = parseValidationRuleExpression(expression)
+      .variables({ withMembers: true })
+      .find((path) => {
+        const [rootSegment, ...memberSegments] = path.split('.');
+
+        return (
+          rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME ||
+          (isDefined(rootSegment) &&
+            toOneRelationNames.has(rootSegment) &&
+            memberSegments.length > 0)
+        );
+      });
+
+    if (isDefined(unsupportedPath)) {
+      return {
+        isValid: false,
+        errorMessage: `A formula that aggregates related records is stored, so it cannot read "${unsupportedPath}". Aggregate in this field and read it from another formula.`,
+        errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
+        errorParams: { path: unsupportedPath },
+      };
+    }
   }
 
   const emptyRecordEvaluation = createExpressionEvaluator({

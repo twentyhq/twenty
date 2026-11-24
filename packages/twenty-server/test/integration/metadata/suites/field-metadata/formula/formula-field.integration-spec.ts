@@ -606,10 +606,24 @@ describe('Formula fields', () => {
       message: 'Invalid formula: Unknown field "total"',
     },
     {
-      reason: 'a rollup over a to-many relation',
+      reason: 'a to-many relation read outside an aggregate',
       type: FieldMetadataType.NUMBER,
       expression: 'arrayLength(noteTargets)',
-      message: 'Invalid formula: "noteTargets" is not a to-one relation',
+      message:
+        'Invalid formula: "noteTargets" has many records: read it inside count(), sum(), avg(), min() or max()',
+    },
+    {
+      reason: 'now in a formula that aggregates related records',
+      type: FieldMetadataType.NUMBER,
+      expression: 'count(noteTargets) + datePart(now, "DAY")',
+      message:
+        'Invalid formula: A formula that aggregates related records is stored, so it cannot read "now"',
+    },
+    {
+      reason: 'a sum of values that are not numbers',
+      type: FieldMetadataType.NUMBER,
+      expression: 'sum(noteTargets.id)',
+      message: 'Invalid formula: sum() needs a number, but got text',
     },
     {
       reason: 'a value of another type than the field',

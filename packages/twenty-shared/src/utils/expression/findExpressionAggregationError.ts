@@ -1,8 +1,8 @@
-import { FORMULA_AGGREGATE_FUNCTIONS } from '@/constants/FormulaAggregateFunctions';
 import { type ExpressionInstruction } from '@/types/ExpressionInstruction';
 import { type FormulaAggregateFunctionName } from '@/types/FormulaAggregateFunctionName';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
+import { isFormulaAggregateFunctionName } from '@/utils/formula/isFormulaAggregateFunctionName';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type ExpressionAggregationError = {
@@ -26,11 +26,6 @@ class ExpressionAggregationException extends Error {
 }
 
 const AGGREGATE_MAXIMUM_ARGUMENT_COUNT = 2;
-
-const isFormulaAggregateFunctionName = (
-  name: string,
-): name is FormulaAggregateFunctionName =>
-  Object.keys(FORMULA_AGGREGATE_FUNCTIONS).includes(name);
 
 const throwAggregationError = (
   aggregationError: ExpressionAggregationError,

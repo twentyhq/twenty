@@ -1,9 +1,15 @@
 import { isBoolean, isNumber, isString } from '@sniptt/guards';
 import { type ExpressionInstruction } from 'twenty-shared/types';
-import { isDefined, parseExpressionInstructions } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFormulaAggregateFunctionName,
+  parseExpressionInstructions,
+} from 'twenty-shared/utils';
 
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
+import { type FormulaSqlAggregationSource } from 'src/engine/metadata-modules/formula-field/types/formula-sql-aggregation-source.type';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
+import { compileFormulaSqlAggregateOrThrow } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-aggregate.util';
 import { compileFormulaSqlMembershipOrThrow } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-membership.util';
 import { compileFormulaSqlFunctionOrThrow } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-functions.util';
 import {
@@ -20,6 +26,10 @@ type FormulaSqlStackEntry =
 export type FormulaSqlReferenceResolver = (
   path: string,
 ) => FormulaSqlValue | undefined;
+
+export type FormulaSqlAggregationSourceResolver = (
+  relationFieldName: string,
+) => FormulaSqlAggregationSource | undefined;
 
 const NOW_PATH = 'now';
 
@@ -41,12 +51,16 @@ const compileLiteralOrThrow = (literal: unknown): FormulaSqlValue => {
   });
 };
 
+const AGGREGATE_MAXIMUM_ARGUMENT_COUNT = 2;
+
 const compileInstructions = ({
   instructions,
   resolveReference,
+  resolveAggregationSource,
 }: {
   instructions: ExpressionInstruction[];
   resolveReference: FormulaSqlReferenceResolver;
+  resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): FormulaSqlValue => {
   const stack: FormulaSqlStackEntry[] = [];
 
@@ -91,8 +105,58 @@ const compileInstructions = ({
   const popValueOrThrow = (): FormulaSqlValue =>
     toValueOrThrow(popEntryOrThrow());
 
+  const popEntriesOrThrow = (count: number): FormulaSqlStackEntry[] =>
+    Array.from({ length: count }, popEntryOrThrow).reverse();
+
   const popValuesOrThrow = (count: number): FormulaSqlValue[] =>
-    Array.from({ length: count }, popValueOrThrow).reverse();
+    popEntriesOrThrow(count).map(toValueOrThrow);
+
+  // Undefined for min and max of plain values, which stay scalar functions
+  const compileAggregate = ({
+    name,
+    argumentEntries,
+  }: {
+    name: string;
+    argumentEntries: FormulaSqlStackEntry[];
+  }): FormulaSqlValue | undefined => {
+    if (!isFormulaAggregateFunctionName(name)) {
+      return undefined;
+    }
+
+    const [relationEntry, conditionEntry] = argumentEntries;
+    const [relationFieldName] =
+      relationEntry?.kind === 'path' ? relationEntry.path.split('.') : [];
+    const aggregationSource = isDefined(relationFieldName)
+      ? resolveAggregationSource?.(relationFieldName)
+      : undefined;
+
+    if (!isDefined(relationEntry) || !isDefined(aggregationSource)) {
+      if (name === 'min' || name === 'max') {
+        return undefined;
+      }
+
+      throw new FormulaSqlCompilationException({
+        message: `${name}() needs a relation with many records`,
+      });
+    }
+
+    if (argumentEntries.length > AGGREGATE_MAXIMUM_ARGUMENT_COUNT) {
+      throw new FormulaSqlCompilationException({
+        message: `${name}() takes a relation and a condition`,
+      });
+    }
+
+    return compileFormulaSqlAggregateOrThrow({
+      functionName: name,
+      relationFieldName,
+      aggregationSource,
+      aggregatedValue:
+        name === 'count' ? undefined : toValueOrThrow(relationEntry),
+      condition: isDefined(conditionEntry)
+        ? toValueOrThrow(conditionEntry)
+        : undefined,
+    });
+  };
 
   for (const { type, value } of instructions) {
     switch (type) {
@@ -123,7 +187,11 @@ const compileInstructions = ({
 
         stack.push({
           kind: 'value',
-          value: compileInstructions({ instructions: value, resolveReference }),
+          value: compileInstructions({
+            instructions: value,
+            resolveReference,
+            resolveAggregationSource,
+          }),
         });
         break;
       case 'IARRAY':
@@ -164,7 +232,7 @@ const compileInstructions = ({
         break;
       }
       case 'IFUNCALL': {
-        const formulaSqlValues = popValuesOrThrow(Number(value));
+        const argumentEntries = popEntriesOrThrow(Number(value));
         const functionEntry = popEntryOrThrow();
 
         if (functionEntry.kind !== 'path') {
@@ -175,10 +243,12 @@ const compileInstructions = ({
 
         stack.push({
           kind: 'value',
-          value: compileFormulaSqlFunctionOrThrow({
-            name: functionEntry.path,
-            formulaSqlValues,
-          }),
+          value:
+            compileAggregate({ name: functionEntry.path, argumentEntries }) ??
+            compileFormulaSqlFunctionOrThrow({
+              name: functionEntry.path,
+              formulaSqlValues: argumentEntries.map(toValueOrThrow),
+            }),
         });
         break;
       }
@@ -203,14 +273,17 @@ const compileInstructions = ({
 export const compileFormulaExpressionToSqlOrThrow = ({
   expression,
   resolveReference,
+  resolveAggregationSource,
 }: {
   expression: string;
   resolveReference: FormulaSqlReferenceResolver;
+  resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
 }): FormulaSqlValue => {
   try {
     return compileInstructions({
       instructions: parseExpressionInstructions(expression),
       resolveReference,
+      resolveAggregationSource,
     });
   } catch (error) {
     if (error instanceof FormulaSqlCompilationException) {
