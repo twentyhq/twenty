@@ -91,8 +91,7 @@ export default defineApplication({
       universalIdentifier:
         CALL_RECORDER_MEMBER_RECORDING_PREFERENCE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       label: 'Meetings to record',
-      description:
-        'Which of the meetings on your calendars the recorder joins on its own. A meeting is recorded when any member who has it on a calendar chose to record it. The Recording Bot field of a meeting overrides this for that meeting.',
+      description: 'Which of your meetings the recorder joins on its own.',
       isSecret: false,
       type: FieldType.SELECT,
       scope: 'USER',
