@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { t } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton, SearchInput } from 'twenty-ui/components/input';
@@ -67,28 +67,39 @@ export const WhatsappChatPicker = ({
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [search, setSearch] = useState('');
 
-  const loadChats = async (requestedLimit: number) => {
-    try {
-      const page = await fetchWhatsappChatOptions(requestedLimit);
+  const loadChatsOrThrow = async (requestedLimit: number) => {
+    const page = await fetchWhatsappChatOptions(requestedLimit);
 
-      setLimit(requestedLimit);
-      setState({ step: 'ready', page });
+    setLimit(requestedLimit);
+    setState({ step: 'ready', page });
+  };
+
+  const loadFirstChats = async () => {
+    try {
+      await loadChatsOrThrow(limit);
     } catch {
-      setState((current) =>
-        current.step === 'ready' ? current : { step: 'unavailable' },
-      );
+      setState({ step: 'unavailable' });
     }
   };
 
   const handleRetry = async () => {
     setState({ step: 'loading' });
-    await loadChats(limit);
+    await loadFirstChats();
   };
 
   const handleLoadMore = async () => {
     setIsLoadingMore(true);
-    await loadChats(limit + WHATSAPP_CHAT_OPTIONS_PAGE_SIZE);
-    setIsLoadingMore(false);
+
+    try {
+      await loadChatsOrThrow(limit + WHATSAPP_CHAT_OPTIONS_PAGE_SIZE);
+    } catch {
+      enqueueSnackbar({
+        message: t('Could not load more WhatsApp conversations.'),
+        variant: 'error',
+      });
+    } finally {
+      setIsLoadingMore(false);
+    }
   };
 
   const normalizedSearch = search.trim().toLowerCase();
@@ -113,14 +124,15 @@ export const WhatsappChatPicker = ({
       ? state.page.chats.filter(isChatSelected).length +
         unlistedSelectedChats.length
       : selectedChats.length;
-  const visibleUnlistedSelectedChats =
-    normalizedSearch === '' ? unlistedSelectedChats : [];
+  const visibleUnlistedSelectedChats = unlistedSelectedChats.filter((chat) =>
+    chat.name.toLowerCase().includes(normalizedSearch),
+  );
   const isSelectionFull =
     selectedChats.length >= WHATSAPP_SELECTED_CHATS_MAX_COUNT;
 
   return (
     <StyledContainer>
-      <OnMountEffect onMount={() => loadChats(limit)} />
+      <OnMountEffect onMount={loadFirstChats} />
       <SearchInput
         aria-label={t('Search conversations')}
         placeholder={t('Search conversations')}
