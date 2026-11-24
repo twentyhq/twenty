@@ -1,3 +1,5 @@
+import { type CalendarEventParticipant } from 'src/logic-functions/types/calendar-event-participant.type';
+
 // Domain read shape: wire composites are flattened and absence is undefined.
 export type CallRecorderPolicyCalendarEventInput = {
   id: string;
@@ -8,4 +10,6 @@ export type CallRecorderPolicyCalendarEventInput = {
   conferenceLinkUrl: string | undefined;
   callRecorderPreference: string | undefined;
   calendarChannelIds: string[];
+  participants: CalendarEventParticipant[];
+  hasUnlistedParticipants: boolean;
 };
