@@ -1,17 +1,22 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
+import { msg, plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { useMemo } from 'react';
 
 import { MENU_HEIGHT_PX, radius, semanticColor, spacing } from '@/tokens';
 import {
   Body,
   Eyebrow,
+  FilterBar,
+  FilterEmptyState,
+  type FilterFacet,
   Heading,
   SectionIntro,
   SectionShell,
   SectionStack,
+  useUrlFilters,
 } from '@/ui';
 
 import { AppCards } from './AppCards';
@@ -28,6 +33,11 @@ const FEATURED_APP_NAMES: readonly string[] = [
 const Header = styled.div`
   max-width: 640px;
   scroll-margin-top: ${MENU_HEIGHT_PX}px;
+`;
+
+// The partners directory's spacing between the filters and the results.
+const Results = styled.div`
+  margin-top: ${spacing(6)};
 `;
 
 const EmptyState = styled.div`
@@ -55,6 +65,40 @@ export function AppsCatalogue({ apps, isUnavailable }: AppsCatalogueProps) {
       featuredRank(left) - featuredRank(right) ||
       left.name.localeCompare(right.name),
   );
+
+  // Categories come from the API, so the allowed values are derived once per
+  // catalogue: useUrlFilters keys its parsing on this object's identity.
+  const categories = useMemo(
+    () =>
+      [...new Set(apps.map((app) => app.category))]
+        .filter((category) => category.length > 0)
+        .toSorted((left, right) => left.localeCompare(right)),
+    [apps],
+  );
+  const filterValues = useMemo(() => ({ category: categories }), [categories]);
+  const { clearAll, hasAny, selected, toggle } = useUrlFilters(filterValues);
+
+  const visibleApps = ordered.filter(
+    (app) =>
+      selected.category.size === 0 || selected.category.has(app.category),
+  );
+
+  const facets: FilterFacet[] = [
+    {
+      key: 'category',
+      label: i18n._(msg`Category`),
+      options: categories.map((category) => ({
+        label: category,
+        value: category,
+      })),
+      selected: selected.category,
+    },
+  ];
+
+  const total = apps.length;
+  const resultCount = hasAny
+    ? i18n._(msg`${visibleApps.length} of ${total} apps`)
+    : i18n._(msg`${plural(total, { one: '# app', other: '# apps' })}`);
 
   return (
     <SectionShell rhythm="section" scheme="light">
@@ -85,7 +129,25 @@ export function AppsCatalogue({ apps, isUnavailable }: AppsCatalogueProps) {
             </Body>
           </EmptyState>
         ) : (
-          <AppCards apps={ordered} />
+          <div>
+            <FilterBar
+              ariaLabel={i18n._(msg`Filter apps`)}
+              facets={facets}
+              onClearAll={clearAll}
+              onToggle={toggle}
+              resultCount={resultCount}
+            />
+            <Results>
+              {visibleApps.length === 0 ? (
+                <FilterEmptyState
+                  onClearAll={clearAll}
+                  title={i18n._(msg`No apps match your filters`)}
+                />
+              ) : (
+                <AppCards apps={visibleApps} />
+              )}
+            </Results>
+          </div>
         )}
       </SectionStack>
     </SectionShell>
