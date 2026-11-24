@@ -1,3 +1,4 @@
+import { isDynamicField } from 'twenty-shared/metadata';
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, type GraphQLScalarType } from 'graphql';
@@ -19,11 +20,11 @@ export type AggregationField = {
 };
 
 export const getAvailableAggregationsFromObjectFields = (
-  fields: Pick<OrmFlatFieldMetadata, 'name' | 'type'>[],
+  fields: Pick<OrmFlatFieldMetadata, 'name' | 'type' | 'universalIdentifier'>[],
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {
-      if (field.type === FieldMetadataType.RELATION) {
+      if (field.type === FieldMetadataType.RELATION || isDynamicField(field)) {
         return acc;
       }
 

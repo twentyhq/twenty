@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDynamicField } from 'twenty-shared/metadata';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isEmptyObject, isValidUuid } from 'twenty-shared/utils';
 
@@ -33,6 +34,8 @@ import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggr
 import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/common/utils/get-target-object-metadata.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { DynamicFieldService } from 'src/engine/api/common/common-dynamic-fields/services/dynamic-field.service';
+import { type DynamicFieldContextLoader } from 'src/engine/api/common/common-dynamic-fields/types/dynamic-field-context-loader.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -64,7 +67,10 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
 
 @Injectable()
 export class ProcessNestedRelationsHelper {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly dynamicFieldService: DynamicFieldService,
+  ) {}
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
@@ -72,6 +78,9 @@ export class ProcessNestedRelationsHelper {
     return await this.processNestedRelationsWithLimiter(
       args,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
+      this.dynamicFieldService.createContextLoader(
+        args.authContext.workspace.id,
+      ),
     );
   }
 
@@ -90,7 +99,16 @@ export class ProcessNestedRelationsHelper {
       repository,
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
+    loadDynamicFieldContext: DynamicFieldContextLoader,
   ): Promise<CommonRelationsAggregatedValues> {
+    await this.dynamicFieldService.assignDynamicFieldValuesToRecords({
+      loadContext: loadDynamicFieldContext,
+      flatObjectMetadata: parentObjectMetadataItem,
+      flatFieldMetadataMaps,
+      selection,
+      records: parentObjectRecords,
+    });
+
     const processRelationTasks = getRelationSelectionEntries(selection).map(
       async ({ key, relationSelection }) =>
         [
@@ -107,6 +125,7 @@ export class ProcessNestedRelationsHelper {
             useReplica,
             repository,
             relationQueryLimiter,
+            loadDynamicFieldContext,
           }),
         ] as const,
     );
@@ -126,6 +145,7 @@ export class ProcessNestedRelationsHelper {
     useReplica,
     repository,
     relationQueryLimiter,
+    loadDynamicFieldContext,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -138,6 +158,7 @@ export class ProcessNestedRelationsHelper {
     useReplica: boolean;
     repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
+    loadDynamicFieldContext: DynamicFieldContextLoader;
   }): Promise<CommonRelationAggregatedValues> {
     const emptyAggregatedValues: CommonRelationAggregatedValues = {
       valuesByParentRecordId: {},
@@ -273,27 +294,46 @@ export class ProcessNestedRelationsHelper {
             : (targetRelationName as string),
       });
 
+    const relationQueryParser = new CommonQueryParser({
+      flatObjectMetadata: targetObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
+    const perParentLimit = Math.min(relationSelection.first ?? limit, limit);
+
     const { relationResults, valuesByParentRecordId } =
       await relationQueryLimiter(() =>
-        this.findRelations({
-          referenceQueryBuilder: targetObjectQueryBuilder,
-          targetObjectRepository,
-          column:
-            relationType === RelationType.ONE_TO_MANY
-              ? `"${fieldMetadataTargetRelationColumnName}"`
-              : 'id',
-          ids: relationIds,
-          relationType,
-          parentRecordsCount: parentObjectRecords.length,
-          targetObjectNameSingular,
-          relationSelection,
-          relationQueryParser: new CommonQueryParser({
-            flatObjectMetadata: targetObjectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          }),
-          perParentLimit: Math.min(relationSelection.first ?? limit, limit),
-        }),
+        relationType === RelationType.ONE_TO_MANY &&
+        isDefined(targetRelation) &&
+        isDynamicField(targetRelation)
+          ? this.findRelationsThroughDynamicField({
+              referenceQueryBuilder: targetObjectQueryBuilder,
+              dynamicJoinColumnName: fieldMetadataTargetRelationColumnName,
+              ids: relationIds,
+              perParentLimit,
+              targetObjectMetadata,
+              relationSelection,
+              relationQueryParser,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              authContext,
+              loadDynamicFieldContext,
+            })
+          : this.findRelations({
+              referenceQueryBuilder: targetObjectQueryBuilder,
+              targetObjectRepository,
+              column:
+                relationType === RelationType.ONE_TO_MANY
+                  ? `"${fieldMetadataTargetRelationColumnName}"`
+                  : 'id',
+              ids: relationIds,
+              relationType,
+              parentRecordsCount: parentObjectRecords.length,
+              targetObjectNameSingular,
+              relationSelection,
+              relationQueryParser,
+              perParentLimit,
+            }),
       );
 
     const nestedRelationsAggregatedValues =
@@ -310,6 +350,7 @@ export class ProcessNestedRelationsHelper {
           repository,
         },
         relationQueryLimiter,
+        loadDynamicFieldContext,
       );
 
     // After the nested load: a to-one relation is assigned as a copy, so nested rows must already be on it
@@ -556,6 +597,123 @@ export class ProcessNestedRelationsHelper {
     const result = await hydrationQueryBuilder.getMany();
 
     return { relationResults: result, valuesByParentRecordId };
+  }
+
+  private async findRelationsThroughDynamicField({
+    referenceQueryBuilder,
+    dynamicJoinColumnName,
+    ids,
+    perParentLimit,
+    targetObjectMetadata,
+    relationSelection,
+    relationQueryParser,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    authContext,
+    loadDynamicFieldContext,
+  }: {
+    referenceQueryBuilder: WorkspaceSelectQueryBuilder;
+    dynamicJoinColumnName: string;
+    ids: string[];
+    perParentLimit: number;
+    targetObjectMetadata: FlatObjectMetadata;
+    relationSelection: Pick<
+      CommonRelationSelection,
+      'selection' | 'filter' | 'orderBy'
+    >;
+    relationQueryParser: CommonQueryParser;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    authContext: WorkspaceAuthContext;
+    loadDynamicFieldContext: DynamicFieldContextLoader;
+  }): Promise<{
+    relationResults: ObjectRecord[];
+    valuesByParentRecordId: CommonRelationAggregatedValues['valuesByParentRecordId'];
+  }> {
+    if (ids.length === 0) {
+      return { relationResults: [], valuesByParentRecordId: {} };
+    }
+
+    const dynamicFieldMetadataArgs = {
+      authContext,
+      flatObjectMetadata: targetObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    };
+    const selection: CommonSelection = {
+      columns: {
+        ...relationSelection.selection.columns,
+        [dynamicJoinColumnName]: true,
+      },
+      aggregates: {},
+      relations: {},
+    };
+
+    await this.dynamicFieldService.prepareSelection({
+      ...dynamicFieldMetadataArgs,
+      selection,
+    });
+
+    const targetObjectNameSingular = targetObjectMetadata.nameSingular;
+    const select = {
+      ...referenceQueryBuilder.getFindOptions().select,
+      ...buildColumnsToSelect({
+        selection,
+        flatObjectMetadata: targetObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    };
+    const relationResults: ObjectRecord[] = [];
+
+    for (const parentId of ids) {
+      const sourceFilter =
+        await this.dynamicFieldService.rewriteDynamicFieldFilters({
+          ...dynamicFieldMetadataArgs,
+          filter: { [dynamicJoinColumnName]: { eq: parentId } },
+          loadContext: loadDynamicFieldContext,
+        });
+      const recordFilter = isDefined(relationSelection.filter)
+        ? { and: [relationSelection.filter, sourceFilter] }
+        : sourceFilter;
+      const queryBuilder = referenceQueryBuilder
+        .clone()
+        .setFindOptions({ select });
+
+      relationQueryParser.applyFilterToBuilder({
+        queryBuilder,
+        objectNameSingular: targetObjectNameSingular,
+        recordFilter,
+      });
+      relationQueryParser.applyDeletedAtToBuilder({
+        queryBuilder,
+        recordFilter,
+      });
+
+      if (isDefined(relationSelection.orderBy)) {
+        relationQueryParser.applyOrderToBuilder({
+          queryBuilder,
+          orderBy: relationSelection.orderBy,
+          objectNameSingular: targetObjectNameSingular,
+        });
+      }
+
+      const parentRelationResults: ObjectRecord[] = await queryBuilder
+        .take(perParentLimit)
+        .getMany();
+
+      relationResults.push(...parentRelationResults);
+    }
+
+    await this.dynamicFieldService.assignDynamicFieldValuesToRecords({
+      loadContext: loadDynamicFieldContext,
+      flatObjectMetadata: targetObjectMetadata,
+      flatFieldMetadataMaps,
+      selection,
+      records: relationResults,
+    });
+
+    return { relationResults, valuesByParentRecordId: {} };
   }
 
   private async findRelationRecordIdsLimitedPerParent({

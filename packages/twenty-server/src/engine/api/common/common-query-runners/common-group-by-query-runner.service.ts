@@ -125,7 +125,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatFieldMetadataOptionMaps,
-      workspaceId: authContext.workspace.id,
+      authContext,
       commonQueryParser,
       permissionsPrincipals,
     });
@@ -330,7 +330,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps,
-    workspaceId,
+    authContext,
     commonQueryParser,
     permissionsPrincipals,
   }: {
@@ -341,7 +341,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
-    workspaceId: string;
+    authContext: CommonExtendedQueryRunnerContext['authContext'];
     commonQueryParser: CommonQueryParser;
     permissionsPrincipals: CommonExtendedQueryRunnerContext['permissionsPrincipals'];
   }): Promise<void> {
@@ -360,8 +360,16 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
             objectMetadataId: flatObjectMetadata.id,
           }),
         appliedFilters,
-        workspaceId,
+        workspaceId: authContext.workspace.id,
       });
+      appliedFilters =
+        await this.dynamicFieldService.rewriteDynamicFieldFilters({
+          authContext,
+          filter: appliedFilters,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        });
     }
 
     commonQueryParser.applyFilterToBuilder({

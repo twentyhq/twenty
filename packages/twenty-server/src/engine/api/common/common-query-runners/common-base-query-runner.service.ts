@@ -2,7 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -64,6 +64,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { getApiType } from 'src/engine/core-modules/usage/storage/api-request-context.storage';
 import { buildUsageSpendersFromAuthContext } from 'src/engine/core-modules/usage/utils/build-usage-spenders-from-auth-context.util';
+import { DynamicFieldService } from 'src/engine/api/common/common-dynamic-fields/services/dynamic-field.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -122,6 +123,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly applicationRepeatedEventRecorderService: ApplicationRepeatedEventRecorderService;
   @Inject()
   protected readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
+  @Inject()
+  protected readonly dynamicFieldService: DynamicFieldService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -156,6 +159,14 @@ export abstract class CommonBaseQueryRunnerService<
     const selectedFieldsResult = commonQueryParser.parseSelectedFields(
       args.selectedFields,
     );
+
+    await this.dynamicFieldService.prepareSelection({
+      authContext,
+      selection: selectedFieldsResult,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     const processedArgs = {
       ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
@@ -266,7 +277,20 @@ export abstract class CommonBaseQueryRunnerService<
         computedArgs as WorkspacePreQueryHookPayload<CommonQueryNames>,
       )) as CommonInput<Args>;
 
-    return hookedArgs;
+    if (!('filter' in hookedArgs) || !isPlainObject(hookedArgs.filter)) {
+      return hookedArgs;
+    }
+
+    return {
+      ...hookedArgs,
+      filter: await this.dynamicFieldService.rewriteDynamicFieldFilters({
+        authContext,
+        filter: hookedArgs.filter,
+        flatObjectMetadata,
+        flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+      }),
+    };
   }
 
   private async executeQueryAndEnrichResults(

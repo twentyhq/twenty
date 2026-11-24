@@ -1,3 +1,4 @@
+import { isDynamicField } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -415,6 +416,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
     ).filter(isDefined)) {
       if (
         !isMorphOrRelationFlatFieldMetadata(field) ||
+        isDynamicField(field) ||
         field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
         !resolveEffectiveFlatEntityProperty({
           metadataName: 'fieldMetadata',

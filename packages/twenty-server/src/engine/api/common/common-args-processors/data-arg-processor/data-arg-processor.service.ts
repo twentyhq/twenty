@@ -1,3 +1,4 @@
+import { isDynamicField } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -154,6 +155,14 @@ export class DataArgProcessorService {
             `Field metadata not found for field ${key}`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+          );
+        }
+
+        if (isDynamicField(fieldMetadata)) {
+          throw new CommonQueryRunnerException(
+            `Field ${key} is dynamic and cannot be written.`,
+            CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
+            { userFriendlyMessage: msg`"${key}" cannot be edited.` },
           );
         }
 

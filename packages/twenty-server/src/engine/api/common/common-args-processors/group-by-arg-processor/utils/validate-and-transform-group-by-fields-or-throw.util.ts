@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { isDynamicField } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
@@ -54,6 +56,14 @@ const getFieldMetadataForGroupByOrThrow = ({
       `Unidentified field in groupBy: ${fieldName}`,
       CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  if (isDynamicField(fieldMetadata)) {
+    throw new CommonQueryRunnerException(
+      `Field "${fieldName}" is dynamic and cannot be grouped by`,
+      CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: msg`Grouping by "${fieldName}" is not supported` },
     );
   }
 

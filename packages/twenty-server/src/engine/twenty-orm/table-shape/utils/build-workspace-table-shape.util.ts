@@ -1,3 +1,4 @@
+import { isDynamicField } from 'twenty-shared/metadata';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -40,6 +41,10 @@ export const buildWorkspaceTableShape = ({
   const relationShapeByFieldName: Record<string, WorkspaceRelationShape> = {};
 
   for (const flatFieldMetadata of flatFieldMetadatas) {
+    if (isDynamicField(flatFieldMetadata)) {
+      continue;
+    }
+
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       const relationType = flatFieldMetadata.settings?.relationType;
 

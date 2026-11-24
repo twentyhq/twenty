@@ -7,6 +7,7 @@ import { AddStandardInboxViewsCommand } from 'src/database/commands/upgrade-vers
 import { RenameWorkflowsNavigationFolderToAutomationsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538639852-rename-workflows-navigation-folder-to-automations.command';
 import { AddWorkflowsAndAgentsGoToCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538640852-add-workflows-and-agents-go-to-command-menu-items.command';
 import { RemoveChannelAssociationAccountOwnerAndHandleCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795541015901-remove-channel-association-account-owner-and-handle.command';
+import { AddChannelAssociationDynamicAccountOwnerAndHandleCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795542028209-add-channel-association-dynamic-account-owner-and-handle.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RenameWorkflowsNavigationFolderToAutomationsCommand,
     AddWorkflowsAndAgentsGoToCommandMenuItemsCommand,
     RemoveChannelAssociationAccountOwnerAndHandleCommand,
+    AddChannelAssociationDynamicAccountOwnerAndHandleCommand,
   ],
 })
 export class V2_64_UpgradeVersionCommandModule {}

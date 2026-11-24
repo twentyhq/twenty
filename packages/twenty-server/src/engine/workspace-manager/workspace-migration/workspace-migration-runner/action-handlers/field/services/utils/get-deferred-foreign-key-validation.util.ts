@@ -1,3 +1,4 @@
+import { isDynamicField } from 'twenty-shared/metadata';
 import { RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -30,7 +31,8 @@ export const getDeferredForeignKeyValidation = ({
       (createdFlatFieldMetadata) =>
         isMorphOrRelationFlatFieldMetadata(createdFlatFieldMetadata) &&
         createdFlatFieldMetadata.settings?.relationType ===
-          RelationType.MANY_TO_ONE,
+          RelationType.MANY_TO_ONE &&
+        !isDynamicField(createdFlatFieldMetadata),
     );
 
   if (!isDefined(flatFieldMetadata)) {

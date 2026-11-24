@@ -1,3 +1,4 @@
+import { isDynamicField } from 'twenty-shared/metadata';
 import {
   type CompositeType,
   compositeTypeDefinitions,
@@ -62,7 +63,7 @@ export function processFieldMetadataForColumnNameMapping(
       flatEntityId: fieldMetadataId,
     });
 
-    if (isMorphRelationHead(fieldMetadata)) {
+    if (isMorphRelationHead(fieldMetadata) || isDynamicField(fieldMetadata)) {
       continue;
     }
 

@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { isDynamicField } from 'twenty-shared/metadata';
 import {
   type CompositeProperty,
   FieldMetadataType,
@@ -250,6 +252,16 @@ export const resolveOrderByLeaves = ({
         flatObjectMetadata,
         flatFieldMetadata: fieldMetadata,
       });
+
+      if (isDynamicField(fieldMetadata)) {
+        throw new CommonQueryRunnerException(
+          `Field "${fieldName}" is dynamic and cannot be sorted on`,
+          CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+          {
+            userFriendlyMessage: msg`Sorting by "${fieldName}" is not supported`,
+          },
+        );
+      }
 
       if (
         isReferencedByFieldName &&
