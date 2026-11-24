@@ -1,10 +1,11 @@
+import { isWorkEmail } from 'twenty-shared/utils';
+
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { filterOutBlocklistedMessages } from 'src/modules/messaging/message-import-manager/utils/filter-out-blocklisted-messages.util';
 import { filterOutIcsAttachments } from 'src/modules/messaging/message-import-manager/utils/filter-out-ics-attachments.util';
 import { filterOutInternals } from 'src/modules/messaging/message-import-manager/utils/filter-out-internals.util';
 import { filterOutUnsubscribeRequests } from 'src/modules/messaging/message-import-manager/utils/filter-out-unsubscribe-requests.util';
 import { isExcludedGroupEmailMessage } from 'src/modules/messaging/message-import-manager/utils/is-excluded-group-email-message.util';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 export const filterEmails = (
   primaryHandle: string,

@@ -1,0 +1,15 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { ViewPresetFilter } from 'twenty-shared/types';
+
+const CHAT_OBJECT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.agentChatThread.universalIdentifier;
+
+export const VIEW_PRESET_FILTER_OBJECT_UNIVERSAL_IDENTIFIER = {
+  [ViewPresetFilter.INBOX_OPEN]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+  [ViewPresetFilter.INBOX_SNOOZED]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+  [ViewPresetFilter.INBOX_DONE]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+  [ViewPresetFilter.INBOX_MENTIONS]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+  [ViewPresetFilter.INBOX_CHANNEL_OPEN]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+  [ViewPresetFilter.INBOX_CHANNEL_SNOOZED]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+  [ViewPresetFilter.INBOX_CHANNEL_DONE]: CHAT_OBJECT_UNIVERSAL_IDENTIFIER,
+} as const satisfies Record<ViewPresetFilter, string>;

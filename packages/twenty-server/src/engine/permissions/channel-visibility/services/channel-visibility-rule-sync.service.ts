@@ -15,10 +15,11 @@ import {
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { buildChannelVisibilityObjectRecordsPermissions } from 'src/engine/permissions/channel-visibility/utils/build-channel-visibility-object-records-permissions.util';
 import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
+import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const { message, calendarEvent } = STANDARD_OBJECTS;
+const { message, messageThread, calendarEvent } = STANDARD_OBJECTS;
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
@@ -54,9 +55,19 @@ export class ChannelVisibilityRuleSyncService {
         'flatWorkspaceMemberMaps',
       ]);
 
-    const userWorkspaceIds = isChannelVisibilityRlsEnabled(featureFlagsMap)
-      ? Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId)
-      : [];
+    const holders: WorkspaceMemberIndividualRoleHolder[] =
+      isChannelVisibilityRlsEnabled(featureFlagsMap)
+        ? [
+            ...Object.keys(flatWorkspaceMemberMaps.idByUserWorkspaceId).map(
+              (userWorkspaceId) => ({
+                type: 'userWorkspace' as const,
+                userWorkspaceId,
+              }),
+            ),
+            // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+            { type: 'apiKeys' as const },
+          ]
+        : [];
 
     const [messageChannels, calendarChannels] = await Promise.all([
       this.messageChannelRepository.find({
@@ -71,12 +82,12 @@ export class ChannelVisibilityRuleSyncService {
 
     await this.workspaceMemberIndividualRoleService.syncIndividualRoles({
       workspaceId,
-      individualRoles: userWorkspaceIds.map((userWorkspaceId) => ({
-        userWorkspaceId,
+      individualRoles: holders.map((holder) => ({
+        holder,
         recordsPermissions: {
           objects: [
             buildChannelVisibilityObjectRecordsPermissions({
-              userWorkspaceId,
+              holder,
               channels: messageChannels,
               objectUniversalIdentifier: message.universalIdentifier,
               associationRelationFieldUniversalIdentifier:
@@ -98,7 +109,7 @@ export class ChannelVisibilityRuleSyncService {
               },
             }),
             buildChannelVisibilityObjectRecordsPermissions({
-              userWorkspaceId,
+              holder,
               channels: calendarChannels,
               objectUniversalIdentifier: calendarEvent.universalIdentifier,
               associationRelationFieldUniversalIdentifier:
@@ -111,12 +122,14 @@ export class ChannelVisibilityRuleSyncService {
                 [MessageChannelVisibility.METADATA]: [
                   calendarEvent.fields.title.universalIdentifier,
                   calendarEvent.fields.description.universalIdentifier,
+                  calendarEvent.fields.callRecordings.universalIdentifier,
                 ],
               },
             }),
             ...[
               ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
               STANDARD_OBJECTS.attachment.universalIdentifier,
+              STANDARD_OBJECTS.callRecording.universalIdentifier,
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
             })),
@@ -129,6 +142,15 @@ export class ChannelVisibilityRuleSyncService {
             canDestroyAllRecords: false,
           })),
         },
+        unreadableNestedFields: [
+          {
+            objectUniversalIdentifier: messageThread.universalIdentifier,
+            fieldUniversalIdentifier:
+              messageThread.fields.subject.universalIdentifier,
+            sourceFieldUniversalIdentifier:
+              message.fields.subject.universalIdentifier,
+          },
+        ],
       })),
     });
   }

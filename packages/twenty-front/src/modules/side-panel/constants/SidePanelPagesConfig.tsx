@@ -2,6 +2,7 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelCoreAgentDataAccessPage } from '@/object-core/agents/components/SidePanelCoreAgentDataAccessPage';
 import { SidePanelCoreAgentFiltersPage } from '@/object-core/agents/components/SidePanelCoreAgentFiltersPage';
+import { SidePanelCoreAgentTestPage } from '@/object-core/agents/components/SidePanelCoreAgentTestPage';
 import { SidePanelCoreAgentToolsPage } from '@/object-core/agents/components/SidePanelCoreAgentToolsPage';
 import { SidePanelCoreAgentTriggerPage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerPage';
 import { SidePanelCoreAgentTriggerTypePage } from '@/object-core/agents/components/SidePanelCoreAgentTriggerTypePage';
@@ -25,6 +26,8 @@ import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/comp
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { SidePanelAddAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage';
+import { SidePanelAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
@@ -128,10 +131,16 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.AgentCoreTrigger, <SidePanelCoreAgentTriggerPage />],
   [SidePanelPages.AgentCoreDataAccess, <SidePanelCoreAgentDataAccessPage />],
   [SidePanelPages.AgentCoreTools, <SidePanelCoreAgentToolsPage />],
+  [SidePanelPages.AgentCoreTest, <SidePanelCoreAgentTestPage />],
   [SidePanelPages.WorkflowVersions, <SidePanelCoreWorkflowVersionsPage />],
   [SidePanelPages.WorkflowVersion, <SidePanelCoreWorkflowVersionPage />],
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],
   [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeAiChatPage />],
   [SidePanelPages.AssignAiChat, <SidePanelAssignAiChatPage />],
+  [SidePanelPages.AiChatParticipants, <SidePanelAiChatParticipantsPage />],
+  [
+    SidePanelPages.AddAiChatParticipants,
+    <SidePanelAddAiChatParticipantsPage />,
+  ],
   [SidePanelPages.EditColumn, <SidePanelEditColumnPage />],
 ]);

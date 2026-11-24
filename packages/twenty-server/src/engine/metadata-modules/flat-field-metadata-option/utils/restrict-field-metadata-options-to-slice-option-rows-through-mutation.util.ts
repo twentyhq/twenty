@@ -71,11 +71,19 @@ export const restrictFieldMetadataOptionsToSliceOptionRowsThroughMutation = ({
           options: flatFieldMetadata.options,
         },
         fieldMetadataOptionRows: fieldMetadataOptionRows.map(
-          ({ universalIdentifier, value, label, color, position }) => ({
+          ({
             universalIdentifier,
             value,
             label,
             color,
+            description,
+            position,
+          }) => ({
+            universalIdentifier,
+            value,
+            label,
+            color,
+            description,
             position,
           }),
         ),

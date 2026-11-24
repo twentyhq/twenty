@@ -1,7 +1,9 @@
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { PageLayoutTabLayoutMode, WidgetType } from 'twenty-shared/types';
 
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-update-page-layout-widget-input-to-flat-page-layout-widget-to-update-or-throw.util';
+import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
@@ -39,15 +41,22 @@ const buildFormFieldWidget = (
     ...overrides,
   }) as FlatPageLayoutWidget;
 
+const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
+
 const updateWidget = ({
   existingWidget,
   isActive,
+  update,
 }: {
   existingWidget: FlatPageLayoutWidget;
-  isActive: boolean;
+  isActive?: boolean;
+  update?: UpdatePageLayoutWidgetInput;
 }) =>
   fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow({
-    updatePageLayoutWidgetInput: { id: WIDGET_ID, update: { isActive } },
+    updatePageLayoutWidgetInput: {
+      id: WIDGET_ID,
+      update: { isActive, ...update },
+    },
     flatPageLayoutWidgetMaps: {
       byUniversalIdentifier: { [WIDGET_ID]: existingWidget },
       universalIdentifierById: { [WIDGET_ID]: WIDGET_ID },
@@ -148,5 +157,58 @@ describe('fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThrow',
 
     expect(updatedWidget.isActive).toBe(false);
     expect(updatedWidget.overrides).toBeNull();
+  });
+
+  describe('conditionalAvailability', () => {
+    const buildWorkspaceOwnedWidget = ({
+      conditionalAvailability,
+    }: Pick<FlatPageLayoutWidget, 'conditionalAvailability'>) =>
+      buildFormFieldWidget({
+        applicationUniversalIdentifier:
+          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+        isSystemSideEffect: false,
+        conditionalDisplay: null,
+        conditionalAvailabilityExpression: null,
+        conditionalAvailability,
+      });
+
+    it('stores the tree sent with the update', () => {
+      const updatedWidget = updateWidget({
+        existingWidget: buildWorkspaceOwnedWidget({
+          conditionalAvailability: null,
+        }),
+        update: { conditionalAvailability: DEVICE_IS_MOBILE },
+      });
+
+      expect(updatedWidget.conditionalAvailability).toEqual(DEVICE_IS_MOBILE);
+    });
+
+    it('clears the stored tree when the update sends null', () => {
+      const updatedWidget = updateWidget({
+        existingWidget: buildWorkspaceOwnedWidget({
+          conditionalAvailability: DEVICE_IS_MOBILE,
+        }),
+        update: { conditionalAvailability: null },
+      });
+
+      expect(updatedWidget.conditionalAvailability).toBeNull();
+    });
+
+    it('stores the expression and the tree when both are sent', () => {
+      const updatedWidget = updateWidget({
+        existingWidget: buildWorkspaceOwnedWidget({
+          conditionalAvailability: null,
+        }),
+        update: {
+          conditionalAvailabilityExpression: 'device == "MOBILE"',
+          conditionalAvailability: DEVICE_IS_MOBILE,
+        },
+      });
+
+      expect(updatedWidget.conditionalAvailabilityExpression).toBe(
+        'device == "MOBILE"',
+      );
+      expect(updatedWidget.conditionalAvailability).toEqual(DEVICE_IS_MOBILE);
+    });
   });
 });

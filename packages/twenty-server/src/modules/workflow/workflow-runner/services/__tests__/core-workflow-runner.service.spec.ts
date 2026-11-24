@@ -64,21 +64,22 @@ const buildService = (triggerType: WorkflowTriggerType) => {
       findCoreWorkflowById: jest
         .fn()
         .mockImplementation(
-          async (_workspaceId, coreWorkflowId: keyof typeof WORKFLOWS) => ({
+          async ({
+            coreWorkflowId,
+          }: {
+            coreWorkflowId: keyof typeof WORKFLOWS;
+          }) => ({
             ...WORKFLOWS[coreWorkflowId],
             workspaceWorkflowId: null,
             name: coreWorkflowId,
           }),
         ),
-    } as never,
-    {
       findCoreVersionById: jest
         .fn()
         .mockImplementation(async (_workspaceId, versionId: string) => ({
           id: versionId,
           coreWorkflowId: versionId.replace('version-of-', ''),
           workflowId: null,
-          workspaceWorkflowVersionId: null,
           triggers: [{ type: triggerType }],
           steps: [],
         })),

@@ -4,7 +4,7 @@ export const BUTTON_GROUP_PROP_DESCRIPTIONS = {
   attached:
     'Join adjacent controls. Set to false for independently rounded buttons with a 2px gap.',
   framed:
-    'Add a translucent frame with padding and concentric corners. Button sizes and appearance remain independent unless set on the group.',
+    'Add an opaque frame with a border, a light shadow, padding and concentric round corners. Button sizes and appearance remain independent unless set on the group.',
   variant:
     'Default surface treatment for children without an explicit variant.',
   color:

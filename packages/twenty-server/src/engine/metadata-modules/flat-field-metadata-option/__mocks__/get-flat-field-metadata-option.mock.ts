@@ -21,6 +21,7 @@ export const getFlatFieldMetadataOptionMock = (
     applicationUniversalIdentifier: faker.string.uuid(),
     label: overrides.value,
     color: null,
+    description: null,
     isActive: true,
     overrides: null,
     createdAt,

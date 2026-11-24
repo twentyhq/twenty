@@ -11,7 +11,7 @@ type AiChatMessageAuthorHeaderProps = {
   messageId: string;
   role: ExtendedUIMessage['role'];
   metadata: ExtendedUIMessage['metadata'];
-  createdAt: Date | string;
+  createdAt?: Date | string;
 };
 
 export const AiChatMessageAuthorHeader = ({

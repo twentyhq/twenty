@@ -35,7 +35,6 @@ import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
-import { getCoreWorkflowVisibilityFromIsPrivate } from 'src/engine/core-modules/workflow/utils/get-core-workflow-visibility-from-is-private.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -535,9 +534,9 @@ export class CoreWorkflowMutationWorkspaceService {
     name?: string;
     isPrivate?: boolean;
   }): Promise<CoreWorkflowDTO> {
-    const applicationId =
-      await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
-        workspaceId,
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
       );
 
     const createdAt = new Date().toISOString();
@@ -550,17 +549,11 @@ export class CoreWorkflowMutationWorkspaceService {
       isSystem: false,
       isPrivate: isPrivate ?? false,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
-      lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
       versionDefinitionHash: null,
       createdAt,
       updatedAt: createdAt,
     };
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     await this.runCoreWorkflowMigration({
       workspaceId,
@@ -610,13 +603,10 @@ export class CoreWorkflowMutationWorkspaceService {
       id: coreWorkflow.id,
       name: coreWorkflow.name,
       statuses: [WorkflowStatus.DRAFT],
-      applicationId,
+      applicationId: workspaceCustomFlatApplication.id,
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,
       isPrivate: coreWorkflow.isPrivate,
-      visibility: getCoreWorkflowVisibilityFromIsPrivate(
-        coreWorkflow.isPrivate,
-      ),
       canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt,
       updatedAt: coreWorkflow.updatedAt,

@@ -303,6 +303,17 @@ const buildCalendarEvent = (
   ...overrides,
 });
 
+const buildMemberVariables = ({
+  userWorkspaceId,
+  value,
+}: {
+  userWorkspaceId: string;
+  value: string;
+}) => ({
+  userWorkspaceId,
+  variables: [{ key: 'CALL_RECORDER_MEMBER_RECORDING_PREFERENCE', value }],
+});
+
 const buildFakeCoreApiClient = (
   fixture: FakeCoreApiClientFixture,
 ): FakeCoreApiClient => new FakeCoreApiClient(fixture);
@@ -328,6 +339,12 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
           id: 'calendar-channel-1',
           connectedAccount: { userWorkspaceId: 'user-workspace-1' },
         },
+      ],
+      myUserApplicationVariables: [
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-1',
+          value: 'ALL',
+        }),
       ],
     });
     fetchMock.mockReset();
@@ -448,6 +465,94 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(recallBotCreateCalls()).toHaveLength(1);
   });
 
+  it('marks a blank preference Auto when it books a bot', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.calendarEvents[0].callRecorderPreference).toBe('AUTO');
+  });
+
+  it('leaves an On set by hand as it is when it books a bot', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: 'ON' })],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.calendarEvents[0].callRecorderPreference).toBe('ON');
+  });
+
+  it('clears an Auto once the meeting no longer earns a bot', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [
+        buildCalendarEvent({
+          isCanceled: true,
+          callRecorderPreference: 'AUTO',
+        }),
+      ],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
+  });
+
+  it.each([
+    ['is canceled', { isCanceled: true }],
+    [
+      'starts beyond the scheduling horizon',
+      {
+        startsAt: '2026-01-08T13:00:00.000Z',
+        endsAt: '2026-01-08T14:00:00.000Z',
+      },
+    ],
+  ])(
+    'keeps an On set by hand on a meeting that %s',
+    async (_situation, calendarEventOverrides) => {
+      const client = buildFakeCoreApiClient({
+        calendarEvents: [
+          buildCalendarEvent({
+            ...calendarEventOverrides,
+            callRecorderPreference: 'ON',
+          }),
+        ],
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: ['calendar-event-1'],
+        now: NOW,
+      });
+
+      expect(recallBotCreateCalls()).toEqual([]);
+      expect(client.calendarEvents[0].callRecorderPreference).toBe('ON');
+    },
+  );
+
   it('books no bot for a meeting with no preference that is on no member calendar', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
@@ -467,6 +572,36 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(result).toEqual([expect.objectContaining({ action: 'SKIPPED' })]);
     expect(recallBotCreateCalls()).toEqual([]);
     expect(client.callRecordings).toEqual([]);
+  });
+
+  it('books no bot for a meeting whose member chose to record none', async () => {
+    metadataQueryMock.mockResolvedValue({
+      calendarChannels: [
+        {
+          id: 'calendar-channel-1',
+          connectedAccount: { userWorkspaceId: 'user-workspace-1' },
+        },
+      ],
+      myUserApplicationVariables: [
+        buildMemberVariables({
+          userWorkspaceId: 'user-workspace-1',
+          value: 'NONE',
+        }),
+      ],
+    });
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([expect.objectContaining({ action: 'SKIPPED' })]);
+    expect(recallBotCreateCalls()).toEqual([]);
+    expect(client.calendarEvents[0].callRecorderPreference).toBeNull();
   });
 
   it('books a bot for a meeting on no member calendar once its preference is ON', async () => {
@@ -675,7 +810,10 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   it('clears recordingOn before an enqueue failure and re-arms the canceled request on retry', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [
-        buildCalendarEvent({ isCanceled: true, callRecorderPreference: 'ON' }),
+        buildCalendarEvent({
+          isCanceled: true,
+          callRecorderPreference: 'AUTO',
+        }),
       ],
       callRecordings: [
         {

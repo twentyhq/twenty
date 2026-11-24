@@ -283,4 +283,29 @@ describe('buildRecordInputFromFilter', () => {
 
     expect(result).toEqual({});
   });
+
+  it('should skip filters on fields the role cannot edit', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_TEXT,
+          type: FieldMetadataType.TEXT,
+          operand: ViewFilterOperand.CONTAINS,
+          value: 'Acme',
+        }),
+        createFilter({
+          id: 'filter-id-2',
+          fieldMetadataId: FIELD_ID_NUMBER,
+          type: FieldMetadataType.NUMBER,
+          operand: ViewFilterOperand.IS,
+          value: '42',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      uneditableFields: [FIELD_ID_TEXT],
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({ revenue: 42 });
+  });
 });
