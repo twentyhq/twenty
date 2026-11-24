@@ -267,7 +267,6 @@ describe('Rollup field live update', () => {
       }),
     );
 
-    // Takes the dirty parent like a recompute would, then never completes it
     const takenRecordIds =
       await getAppProviderByClassName<RollupFieldDirtyRecordService>(
         'RollupFieldDirtyRecordService',
