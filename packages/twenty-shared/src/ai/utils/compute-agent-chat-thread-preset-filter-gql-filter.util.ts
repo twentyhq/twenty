@@ -12,7 +12,7 @@ type PresetFilterArgs = {
   workspaceMemberId: string;
 };
 
-// Glue with the old inbox tabs: the view preset each tab reads, removed with the tabs (twentyhq/core-team-issues#3209)
+// TODO(@bosiraphael): remove with the old inbox tabs; maps each tab to the view preset it reads (twentyhq/core-team-issues#3209)
 const VIEW_PRESET_FILTER_BY_AGENT_CHAT_THREAD_PRESET_FILTER: Record<
   AgentChatThreadPresetFilter,
   ViewPresetFilter
@@ -28,7 +28,7 @@ const VIEW_PRESET_FILTER_BY_AGENT_CHAT_THREAD_PRESET_FILTER: Record<
   [AGENT_CHAT_THREAD_PRESET_FILTER.DONE]: ViewPresetFilter.INBOX_DONE,
 };
 
-// Glue with the old inbox tabs, removed once the inbox list reads saved views (twentyhq/core-team-issues#3209)
+// TODO(@bosiraphael): remove once the inbox list reads saved views; glue with the old inbox tabs (twentyhq/core-team-issues#3209)
 export const computeAgentChatThreadPresetFilterGqlFilter = ({
   presetFilter,
   workspaceMemberId,

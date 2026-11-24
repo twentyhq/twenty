@@ -4,7 +4,7 @@ import {
 } from '@/ai/constants/agent-chat-thread-preset-filter.const';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
-// Glue with the old inbox tabs: saved view filters replace these conditions once the inbox list reads views (twentyhq/core-team-issues#3209)
+// TODO(@bosiraphael): remove once the inbox list reads saved views; their saved filters replace these conditions (twentyhq/core-team-issues#3209)
 export const turnAgentChatThreadPresetFilterIntoThreadFieldsRecordGqlOperationFilter =
   ({
     presetFilter,
