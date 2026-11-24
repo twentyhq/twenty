@@ -901,6 +901,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'no manifest slot yet for a predicate reached through a relation',
       workspaceMemberRelationFieldMetadataUniversalIdentifier:
         WORKSPACE_MEMBER_RELATION_GAP,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier:
+        WORKSPACE_MEMBER_RELATION_GAP,
+      workspaceMemberRelationFilterValues: WORKSPACE_MEMBER_RELATION_GAP,
       rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
