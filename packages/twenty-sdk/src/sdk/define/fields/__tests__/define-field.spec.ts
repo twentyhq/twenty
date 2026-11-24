@@ -298,5 +298,26 @@ describe('defineField', () => {
         `Field "Attachments" of type ${FieldMetadataType.FILES} cannot be unique`,
       );
     });
+
+    it('should return errors for a ROLLUP field without settings set as unique', () => {
+      const config = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '550e8400-e29b-41d4-a716-446655440002',
+        type: FieldMetadataType.ROLLUP,
+        name: 'openOpportunityCount',
+        label: 'Open opportunities',
+        isUnique: true,
+      };
+
+      const result = defineField(config as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          'Field "Open opportunities" is a ROLLUP type and must have universalSettings',
+          `Field "Open opportunities" of type ${FieldMetadataType.ROLLUP} cannot be unique`,
+        ]),
+      );
+    });
   });
 });

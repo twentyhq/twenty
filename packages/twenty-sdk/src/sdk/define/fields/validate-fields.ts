@@ -73,10 +73,20 @@ export const validateFields = (
     errors.push(...getSelectOptionErrors(field));
 
     if (
+      field.type === FieldMetadataType.ROLLUP &&
+      !isDefined(field.universalSettings)
+    ) {
+      errors.push(
+        `Field "${field.label}" is a ROLLUP type and must have universalSettings`,
+      );
+    }
+
+    if (
       field.isUnique === true &&
       (field.type === FieldMetadataType.RELATION ||
         field.type === FieldMetadataType.MORPH_RELATION ||
-        field.type === FieldMetadataType.FILES)
+        field.type === FieldMetadataType.FILES ||
+        field.type === FieldMetadataType.ROLLUP)
     ) {
       errors.push(
         `Field "${field.label}" of type ${field.type} cannot be unique`,

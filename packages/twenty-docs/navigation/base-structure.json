@@ -50,6 +50,7 @@
                 "user-guide/data-model/capabilities/objects",
                 "user-guide/data-model/capabilities/fields",
                 "user-guide/data-model/capabilities/relation-fields",
+                "user-guide/data-model/capabilities/rollup-fields",
                 "user-guide/data-model/capabilities/validation-rules"
               ]
             },

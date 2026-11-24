@@ -1,0 +1,49 @@
+---
+title: Rollup Fields
+description: Count or calculate over the records linked to a record.
+---
+
+## What Is a Rollup Field?
+
+A rollup field summarizes the records behind one of an object's relations. On Companies, for example, a rollup can show the number of open opportunities of each company, the date of its last meeting, or the total estimate of its tasks.
+
+A rollup is a field like any other: it shows in tables and record pages, and you can filter and sort views by it. You cannot edit it: Twenty keeps it up to date.
+
+<Note>
+  Rollup fields are being rolled out and may not be enabled on your workspace yet.
+</Note>
+
+## Create a Rollup Field
+
+1. Go to **Settings → Data Model** and select the object that should show the result, such as Companies.
+2. Click **+ New Field** and choose **Rollup**.
+3. Under **Related records**, pick the relation to summarize, such as Opportunities.
+4. Under **Calculation**, pick what to compute:
+   - **Count**: the number of related records.
+   - **Sum** and **Average**: of a number field.
+   - **Min** and **Max**: of a number, date or date and time field.
+5. For every calculation but Count, pick the **Field** of the related records to calculate on.
+6. Optionally, add **Filters** to only count or calculate on some related records, such as opportunities whose stage is not Customer.
+7. Click **Save**.
+
+Twenty computes the field for every existing record in the background. Large objects can take a few minutes.
+
+## How Rollups Stay Up to Date
+
+A rollup is recalculated a few seconds after a related record is created, edited, moved to another record, deleted or restored. The new value appears in open tabs without reloading.
+
+A record without any related record shows 0 for a count and an empty value for the other calculations. Deleted records are never counted.
+
+Twenty also recalculates every rollup once a night, which catches changes made outside the app, such as some imports.
+
+## Limits
+
+- A rollup goes through a relation that lists several records. To show a value of a single related record, add a lookup column instead.
+- Filters compare to fixed values. Filters relative to today, such as "in the past 30 days", are not available yet.
+- A rollup cannot calculate on currency fields yet.
+- An object can have up to 10 rollup fields.
+- A rollup follows the permissions of the field itself. It counts every related record, including the ones a person cannot see.
+
+## When a Field It Uses Is Deleted
+
+Deleting the relation, the field a rollup calculates on, or a field one of its filters uses also deletes the rollup. Renaming a select option updates the rollup's filters automatically.
