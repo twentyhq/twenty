@@ -3564,7 +3564,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Add a translucent frame with padding and concentric corners. Button sizes and appearance remain independent unless set on the group."
+        "description": "Add an opaque frame with a border, a light shadow, padding and concentric round corners. Button sizes and appearance remain independent unless set on the group."
       },
       {
         "name": "render",
@@ -11574,6 +11574,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Maximum rendered chip width in pixels, including its leading and trailing padding and any outline border."
+      },
+      {
+        "name": "padding",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline padding on each side: `sm` is 4px and `md` is 8px. When omitted, the variant sets it."
       },
       {
         "name": "render",

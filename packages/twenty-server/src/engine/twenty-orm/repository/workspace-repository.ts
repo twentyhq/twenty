@@ -1401,7 +1401,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       insertedIds,
     ).getMany<ObjectRecord>({ noFormatting: true });
 
-    const formattedAfter = this.formatResult<ObjectRecord[]>(recordsAfter);
+    const formattedAfter = this.formatEventRecords(recordsAfter);
 
     for (const action of [
       DatabaseEventAction.CREATED,
@@ -1516,14 +1516,50 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     data?: Partial<ObjectRecord>;
     shouldWriteAtLeastOneRecord?: boolean;
   }): Promise<ObjectRecord[]> {
+    if (args.kind === 'delete') {
+      return this.runDeleteReturningComputedColumns(args);
+    }
+
     const writtenRecords = await this.runMutationOnStoredColumns(args);
 
-    return args.kind === 'delete'
-      ? writtenRecords
-      : this.readComputedColumns({
-          records: writtenRecords,
+    return this.readComputedColumns({
+      records: writtenRecords,
+      columnNames: args.columnsToReturn,
+    });
+  }
+
+  // A destroyed row can no longer be computed, so its computed columns are read before the delete
+  private async runDeleteReturningComputedColumns(
+    args: Parameters<WorkspaceRepository<TEntity>['runMutation']>[0],
+  ): Promise<ObjectRecord[]> {
+    if (this.getComputedColumnNames(args.columnsToReturn).length === 0) {
+      return this.runMutationOnStoredColumns(args);
+    }
+
+    const targetRecords = await args.selectQueryBuilder
+      .clone()
+      .select(`${args.selectQueryBuilder.alias}.id`, 'id')
+      .getRawMany<ObjectRecord>();
+    const computedRecordById = new Map(
+      (
+        await this.readComputedColumns({
+          records: targetRecords,
           columnNames: args.columnsToReturn,
-        });
+        })
+      ).map((computedRecord) => [computedRecord.id, computedRecord]),
+    );
+    const deletedRecords = await this.runMutationOnStoredColumns(args);
+
+    return deletedRecords.map((deletedRecord) => ({
+      ...deletedRecord,
+      ...computedRecordById.get(deletedRecord.id),
+    }));
+  }
+
+  private getComputedColumnNames(columnNames: string[]): string[] {
+    return (this.options.tableShape.computedColumnShapes ?? [])
+      .map(({ columnName }) => columnName)
+      .filter((columnName) => columnNames.includes(columnName));
   }
 
   // RETURNING only sees stored columns, so computed ones are read back from the written records
@@ -1534,11 +1570,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     records: ObjectRecord[];
     columnNames: string[];
   }): Promise<ObjectRecord[]> {
-    const computedColumnNames = (
-      this.options.tableShape.computedColumnShapes ?? []
-    )
-      .map(({ columnName }) => columnName)
-      .filter((columnName) => columnNames.includes(columnName));
+    const computedColumnNames = this.getComputedColumnNames(columnNames);
 
     if (computedColumnNames.length === 0 || records.length === 0) {
       return records;
@@ -1981,9 +2013,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const actions = MUTATION_EVENT_ACTIONS_BY_KIND[kind];
 
-    const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+    const formattedBefore = this.formatEventRecords(recordsBefore);
     const formattedAfter = isDefined(recordsAfter)
-      ? this.formatResult<ObjectRecord[]>(recordsAfter)
+      ? this.formatEventRecords(recordsAfter)
       : undefined;
 
     for (const action of actions) {
@@ -2004,6 +2036,31 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         );
       }
     }
+  }
+
+  // Event snapshots read stored columns, where a computed column holds no meaningful value
+  private formatEventRecords(records: ObjectRecord[]): ObjectRecord[] {
+    const computedFieldNames = new Set(
+      (this.options.tableShape.computedColumnShapes ?? []).map(
+        ({ columnName }) =>
+          this.options.tableShape.columnShapeByColumnName[columnName]
+            ?.fieldName,
+      ),
+    );
+    const formattedRecords = this.formatResult<ObjectRecord[]>(records);
+
+    if (computedFieldNames.size === 0) {
+      return formattedRecords;
+    }
+
+    return formattedRecords.map((record) => ({
+      ...Object.fromEntries(
+        Object.entries(record).filter(
+          ([fieldName]) => !computedFieldNames.has(fieldName),
+        ),
+      ),
+      id: record.id,
+    }));
   }
 
   private async onBeforeExecute(

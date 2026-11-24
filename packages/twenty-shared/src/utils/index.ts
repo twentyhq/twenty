@@ -95,9 +95,11 @@ export { truncateTowardZero } from './expression-date/truncateTowardZero';
 export { compileExpression } from './expression/compileExpression';
 export { createExpressionEvaluator } from './expression/createExpressionEvaluator';
 export { findExpressionAggregationError } from './expression/findExpressionAggregationError';
+export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { parseExpressionInstructions } from './expression/parseExpressionInstructions';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
+export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -428,6 +430,7 @@ export { getValidationRulePreviousValueFieldPath } from './validation-rule/getVa
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
+export { isValidationRuleFunctionName } from './validation-rule/isValidationRuleFunctionName';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';

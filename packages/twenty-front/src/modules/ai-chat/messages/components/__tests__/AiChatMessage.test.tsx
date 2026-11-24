@@ -57,8 +57,8 @@ jest.mock('@/ai-chat/messages/components/AiChatErrorRenderer', () => ({
   AiChatErrorRenderer: ({ error }: { error: Error }) => <>{error.message}</>,
 }));
 
-jest.mock('@/ui/input/components/LightCopyIconButton', () => ({
-  LightCopyIconButton: () => null,
+jest.mock('~/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({ copyToClipboard: jest.fn() }),
 }));
 
 jest.mock('@/ai-chat/messages/utils/scrollToAiChatMessage', () => ({
@@ -297,7 +297,7 @@ describe('AiChatMessage', () => {
     });
 
     expect(screen.getByText('Julia Martin')).toBeInTheDocument();
-    expect(screen.getAllByText(/ago$/)).toHaveLength(1);
+    expect(screen.getAllByRole('time')).toHaveLength(1);
   });
 
   it('keeps the current member message time outside the inbox', () => {
@@ -354,7 +354,7 @@ describe('AiChatMessage', () => {
       screen.getByText('Draft the October newsletter'),
     ).toBeInTheDocument();
     expect(screen.getByText('Unknown sender')).toBeInTheDocument();
-    expect(screen.getByText(/ago$/)).toBeInTheDocument();
+    expect(screen.getByRole('time')).toBeInTheDocument();
   });
 
   it('hides a reply Ada chose not to send', () => {

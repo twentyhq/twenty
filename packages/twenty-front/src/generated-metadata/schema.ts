@@ -61,6 +61,7 @@ export type Agent = {
   responseFormat?: Maybe<Scalars['JSON']['output']>;
   roleId?: Maybe<Scalars['UUID']['output']>;
   triggers: Array<Scalars['JSON']['output']>;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -632,6 +633,34 @@ export type ApplicationAuthorization = {
   userId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
 };
+
+export type ApplicationBillingPrice = {
+  __typename?: 'ApplicationBillingPrice';
+  amountCents: Scalars['Int']['output'];
+  billingPeriod: ApplicationBillingPricePeriod;
+  currency: ApplicationBillingPriceCurrency;
+  label: Scalars['String']['output'];
+  per?: Maybe<ApplicationBillingPriceUnit>;
+  type: ApplicationBillingPriceType;
+  universalIdentifier: Scalars['String']['output'];
+};
+
+export enum ApplicationBillingPriceCurrency {
+  USD = 'USD'
+}
+
+export enum ApplicationBillingPricePeriod {
+  MONTHLY = 'MONTHLY'
+}
+
+export enum ApplicationBillingPriceType {
+  RECURRING = 'RECURRING'
+}
+
+export enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT = 'CONNECTED_ACCOUNT',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
+}
 
 export type ApplicationCapabilityGrant = {
   __typename?: 'ApplicationCapabilityGrant';
@@ -2642,6 +2671,7 @@ export enum FeatureFlagKey {
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
@@ -3386,6 +3416,7 @@ export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
   aboutDescription?: Maybe<Scalars['String']['output']>;
   author?: Maybe<Scalars['String']['output']>;
+  billingPrices: Array<ApplicationBillingPrice>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
   connectUrl?: Maybe<Scalars['String']['output']>;

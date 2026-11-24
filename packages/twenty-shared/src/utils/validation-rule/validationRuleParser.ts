@@ -152,6 +152,15 @@ validationRuleParser.binaryOps['||'] = (left: unknown, right: unknown) =>
     ? [...left, ...right]
     : `${toConcatenableValue(left)}${toConcatenableValue(right)}`;
 
+// Counts code points and treats null as empty, as the SQL formula compiler does
+validationRuleParser.unaryOps.length = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value.length;
+  }
+
+  return isValidationRuleValueDefined(value) ? [...String(value)].length : 0;
+};
+
 // An aggregate has no value on a single record: the server computes it from the related records
 const evaluateAggregate = () => null;
 

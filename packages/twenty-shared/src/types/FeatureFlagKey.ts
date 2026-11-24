@@ -28,4 +28,5 @@ export enum FeatureFlagKey {
   IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
   // TODO(@neo773): on means the workspace reads widget visibility rules from conditionalAvailability only; remove with the two legacy rule columns
   IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED = 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED',
+  IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
 }

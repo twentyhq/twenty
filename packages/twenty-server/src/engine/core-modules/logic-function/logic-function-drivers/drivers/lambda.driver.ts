@@ -6,6 +6,7 @@ import {
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
 
+import { NON_PERSISTED_EXECUTOR_NAME_PREFIXES } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/non-persisted-executor-name-prefixes';
 import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
 import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
@@ -17,6 +18,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { HTTP_EGRESS_UNAVAILABLE_ERROR_CODE } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
 import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
+import { getLambdaExecutorFunctionName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-executor-function-name.util';
 import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import {
   type LogicFunctionDeleteApplicationResourcesParams,
@@ -45,7 +47,7 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { type ExecutableFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/executable-flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 
 export {
@@ -109,7 +111,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     return this.toolFunctions.buildDependencies(params);
   }
 
-  async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
+  async delete(flatLogicFunction: ExecutableFlatLogicFunction): Promise<void> {
     await this.executorManager.delete(flatLogicFunction);
   }
 
@@ -122,6 +124,8 @@ export class LambdaDriver implements LogicFunctionDriver {
         workspaceId,
         applicationUniversalIdentifier,
       }),
+      executorNamePrefix:
+        NON_PERSISTED_EXECUTOR_NAME_PREFIXES.WORKFLOW_CODE_STEP,
     });
 
     await this.layerManager.deleteSdkLayer({
@@ -137,7 +141,7 @@ export class LambdaDriver implements LogicFunctionDriver {
   }
 
   async getInstalledBundleChecksum(
-    flatLogicFunction: FlatLogicFunction,
+    flatLogicFunction: ExecutableFlatLogicFunction,
   ): Promise<string | null> {
     return this.executorManager.getInstalledBundleChecksum(flatLogicFunction);
   }
@@ -209,7 +213,7 @@ export class LambdaDriver implements LogicFunctionDriver {
 
       const payloadString = JSON.stringify(executorPayload);
       const params: InvokeCommandInput = {
-        FunctionName: flatLogicFunction.id,
+        FunctionName: getLambdaExecutorFunctionName(flatLogicFunction),
         Payload: payloadString,
         LogType: LogType.Tail,
       };
