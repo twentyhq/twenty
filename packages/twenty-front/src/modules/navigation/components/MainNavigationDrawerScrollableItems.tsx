@@ -75,7 +75,7 @@ export const MainNavigationDrawerScrollableItems = () => {
       <NavigationDrawerOpenedSection />
       <GettingStartedOpenedSection />
       <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
-        <FavoritesSectionDispatcher />
+        {!isCustomizableSidebarEnabled && <FavoritesSectionDispatcher />}
         {isCustomizableSidebarEnabled ? (
           <NavigationMenuContainerContent containerId={null} />
         ) : (
