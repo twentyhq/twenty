@@ -24,7 +24,7 @@ import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/sch
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
 import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
-import { fetchOwnerUserWorkspaceIdByCalendarChannelId } from 'src/logic-functions/data/fetch-owner-user-workspace-id-by-calendar-channel-id.util';
+import { fetchCalendarChannelOwnerByCalendarChannelId } from 'src/logic-functions/data/fetch-calendar-channel-owner-by-calendar-channel-id.util';
 import { clearCalendarEventsAutoRecording } from 'src/logic-functions/data/clear-calendar-events-auto-recording.util';
 import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
@@ -95,10 +95,10 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     getUniqueSortedIds(calendarEventIds),
   );
   const [
-    ownerUserWorkspaceIdByCalendarChannelId,
+    calendarChannelOwnerByCalendarChannelId,
     memberRecordingPreferenceByUserWorkspaceId,
   ] = await Promise.all([
-    fetchOwnerUserWorkspaceIdByCalendarChannelId(),
+    fetchCalendarChannelOwnerByCalendarChannelId(),
     fetchMemberRecordingPreferenceByUserWorkspaceId(),
   ]);
   const affectedMeetingKeys = new Set<string>();
@@ -107,7 +107,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     (calendarEvent) =>
       buildCallRecorderPolicyResult({
         calendarEvent,
-        ownerUserWorkspaceIdByCalendarChannelId,
+        calendarChannelOwnerByCalendarChannelId,
         memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),
@@ -155,7 +155,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       calendarEvent.id,
       buildCallRecorderPolicyResult({
         calendarEvent,
-        ownerUserWorkspaceIdByCalendarChannelId,
+        calendarChannelOwnerByCalendarChannelId,
         memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),
