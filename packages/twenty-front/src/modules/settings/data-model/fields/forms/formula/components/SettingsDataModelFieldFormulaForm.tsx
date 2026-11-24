@@ -44,7 +44,7 @@ export const settingsDataModelFieldFormulaFormSchema = z.object({
 
 const FORMULA_FUNCTION_DEFINITIONS = getFormulaFunctionDefinitions();
 
-type SettingsDataModelFieldFormulaFormValues = z.infer<
+export type SettingsDataModelFieldFormulaFormValues = z.infer<
   typeof settingsDataModelFieldFormulaFormSchema
 >;
 

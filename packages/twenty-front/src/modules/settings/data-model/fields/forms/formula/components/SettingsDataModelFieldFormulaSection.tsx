@@ -5,6 +5,7 @@ import { isFormulaFieldMetadataType } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { SettingsDataModelFieldFormulaAggregateBuilder } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaAggregateBuilder';
 import { SettingsDataModelFieldFormulaForm } from '@/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
@@ -56,6 +57,10 @@ export const SettingsDataModelFieldFormulaSection = ({
           existingFieldMetadataId={existingFieldMetadataId}
           name="formula"
           ariaLabel={t`Formula`}
+        />
+        <SettingsDataModelFieldFormulaAggregateBuilder
+          objectMetadataItem={objectMetadataItem}
+          fieldType={fieldType}
         />
       </Section.Root>
       {fieldType === FieldMetadataType.CURRENCY && (
