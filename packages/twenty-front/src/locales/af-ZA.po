@@ -30055,7 +30055,7 @@ msgstr "Die velde hieronder is nou as veranderlikes in die volgende stappe beski
 #. js-lingui-id: UbUlij
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The first value that is set, or nothing when none is."
-msgstr ""
+msgstr "Die eerste waarde wat gestel is, of niks indien geen waarde gestel is nie."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -30070,7 +30070,7 @@ msgstr "Die ikoon wat jou werkvloeiproses in die opdragmenu sal vertoon"
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "Die grootste van die getalle. Waardes wat nie getalle is nie, word geïgnoreer."
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30157,7 +30157,7 @@ msgstr "Die aantal volle eenhede vanaf die eerste datum tot die tweede, negatief
 #. js-lingui-id: wmIQo4
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number rounded to a number of decimals."
-msgstr ""
+msgstr "Die getal afgerond tot 'n aantal desimale."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -30197,7 +30197,7 @@ msgstr "Die rol wat aan hierdie webhook gekoppel is."
 #. js-lingui-id: eHwsp0
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The second value when the condition is true, otherwise the third."
-msgstr ""
+msgstr "Die tweede waarde wanneer die voorwaarde waar is, andersins die derde."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -30222,7 +30222,7 @@ msgstr "Die gedeelde e-posadres wat jy wil gebruik."
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "Die kleinste van die getalle. Waardes wat nie getalle is nie, word geïgnoreer."
 
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30232,12 +30232,12 @@ msgstr "Die begin van die eenheid wat die datum bevat, in UTC. Weke begin op Maa
 #. js-lingui-id: hdgKJ2
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in lower case."
-msgstr ""
+msgstr "Die teks in kleinletters."
 
 #. js-lingui-id: P/EZTH
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in upper case."
-msgstr ""
+msgstr "Die teks in hoofletters."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30289,7 +30289,7 @@ msgstr "Die waarde wat 'n veld voor die opdatering gehad het. Leeg wanneer die r
 #. js-lingui-id: cXlUXr
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The values joined as one text. Values that are not set are skipped."
-msgstr ""
+msgstr "Die waardes saamgevoeg as een teks. Waardes wat nie gestel is nie, word oorgeslaan."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

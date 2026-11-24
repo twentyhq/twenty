@@ -30055,7 +30055,7 @@ msgstr "Câmpurile de mai jos sunt acum disponibile ca variabile în pașii urm�
 #. js-lingui-id: UbUlij
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The first value that is set, or nothing when none is."
-msgstr ""
+msgstr "Prima valoare care este setată sau nimic dacă nu este setată niciuna."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -30070,7 +30070,7 @@ msgstr "Pictograma pe care declanșatorul fluxului de lucru o va afișa în meni
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "Cel mai mare dintre numere. Valorile care nu sunt numere sunt ignorate."
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30157,7 +30157,7 @@ msgstr "Numărul de unități întregi de la prima dată la a doua, negativ atun
 #. js-lingui-id: wmIQo4
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number rounded to a number of decimals."
-msgstr ""
+msgstr "Numărul rotunjit la un anumit număr de zecimale."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -30197,7 +30197,7 @@ msgstr "Rolul asociat acestui webhook."
 #. js-lingui-id: eHwsp0
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The second value when the condition is true, otherwise the third."
-msgstr ""
+msgstr "A doua valoare când condiția este adevărată, altfel a treia."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -30222,7 +30222,7 @@ msgstr "Adresa de e-mail partajată pe care doriți să o utilizați."
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "Cel mai mic dintre numere. Valorile care nu sunt numere sunt ignorate."
 
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30232,12 +30232,12 @@ msgstr "Începutul unității care conține data, în UTC. Săptămânile încep
 #. js-lingui-id: hdgKJ2
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in lower case."
-msgstr ""
+msgstr "Textul cu litere mici."
 
 #. js-lingui-id: P/EZTH
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in upper case."
-msgstr ""
+msgstr "Textul cu litere mari."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30289,7 +30289,7 @@ msgstr "Valoarea pe care o avea un câmp înainte de actualizare. Goală când e
 #. js-lingui-id: cXlUXr
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The values joined as one text. Values that are not set are skipped."
-msgstr ""
+msgstr "Valorile reunite într-un singur text. Valorile care nu sunt setate sunt omise."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

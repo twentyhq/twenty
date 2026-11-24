@@ -30055,7 +30055,7 @@ msgstr "Quyidagi maydonlar endi keyingi qadamlarda o‘zgaruvchilar sifatida mav
 #. js-lingui-id: UbUlij
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The first value that is set, or nothing when none is."
-msgstr ""
+msgstr "Oʻrnatilgan birinchi qiymat yoki hech biri oʻrnatilmagan bo‘lsa, hech narsa."
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -30070,7 +30070,7 @@ msgstr "Ish jarayoni tetiklagichi buyruqlar menyusida ko‘rsatadigan belgi"
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "Sonlarning eng kattasi. Son bo‘lmagan qiymatlar e’tiborga olinmaydi."
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30157,7 +30157,7 @@ msgstr "Birinchi sanadan ikkinchi sanagacha bo‘lgan butun birliklar soni; ikki
 #. js-lingui-id: wmIQo4
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number rounded to a number of decimals."
-msgstr ""
+msgstr "O‘nlik xonalar soniga yaxlitlangan son."
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -30197,7 +30197,7 @@ msgstr "Ushbu vebxukka biriktirilgan rol."
 #. js-lingui-id: eHwsp0
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The second value when the condition is true, otherwise the third."
-msgstr ""
+msgstr "Shart rost bo‘lgandagi ikkinchi qiymat, aks holda uchinchi qiymat."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -30222,7 +30222,7 @@ msgstr "Siz foydalanmoqchi bo‘lgan umumiy elektron pochta manzili."
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "Sonlarning eng kichigi. Son bo‘lmagan qiymatlar e’tiborga olinmaydi."
 
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30232,12 +30232,12 @@ msgstr "UTC bo‘yicha sanani o‘z ichiga olgan birlikning boshlanishi. Haftala
 #. js-lingui-id: hdgKJ2
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in lower case."
-msgstr ""
+msgstr "Kichik harflardagi matn."
 
 #. js-lingui-id: P/EZTH
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in upper case."
-msgstr ""
+msgstr "Katta harflardagi matn."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30289,7 +30289,7 @@ msgstr "Yangilanishdan oldin maydon ega bo‘lgan qiymat. Yozuv yaratilganda bo�
 #. js-lingui-id: cXlUXr
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The values joined as one text. Values that are not set are skipped."
-msgstr ""
+msgstr "Bitta matn sifatida birlashtirilgan qiymatlar. O‘rnatilmagan qiymatlar o‘tkazib yuboriladi."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx

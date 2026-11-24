@@ -30055,7 +30055,7 @@ msgstr "以下のフィールドは、次のステップで変数として利用
 #. js-lingui-id: UbUlij
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The first value that is set, or nothing when none is."
-msgstr ""
+msgstr "設定されている最初の値。設定されている値がない場合は何も返しません。"
 
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
@@ -30070,7 +30070,7 @@ msgstr "ワークフロートリガーでコマンドメニューに表示する
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "数値の中で最大の値。数値でない値は無視されます。"
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30157,7 +30157,7 @@ msgstr "最初の日付から次の日付までの整数単位数です。次の
 #. js-lingui-id: wmIQo4
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number rounded to a number of decimals."
-msgstr ""
+msgstr "指定した小数点以下の桁数に丸められた数値。"
 
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
@@ -30197,7 +30197,7 @@ msgstr "このWebhookに関連付けられたロール。"
 #. js-lingui-id: eHwsp0
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The second value when the condition is true, otherwise the third."
-msgstr ""
+msgstr "条件が true の場合の2番目の値、それ以外の場合は3番目の値。"
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -30222,7 +30222,7 @@ msgstr "使用したい共有メールアドレスです。"
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
-msgstr ""
+msgstr "数値の中で最小のものです。数値ではない値は無視されます。"
 
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30232,12 +30232,12 @@ msgstr "UTC で、日付を含む単位の開始時点です。週は月曜日�
 #. js-lingui-id: hdgKJ2
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in lower case."
-msgstr ""
+msgstr "小文字のテキストです。"
 
 #. js-lingui-id: P/EZTH
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The text in upper case."
-msgstr ""
+msgstr "大文字のテキストです。"
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30289,7 +30289,7 @@ msgstr "更新前のフィールドの値。レコード作成時は空です。
 #. js-lingui-id: cXlUXr
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The values joined as one text. Values that are not set are skipped."
-msgstr ""
+msgstr "単一のテキストとして結合された値です。設定されていない値はスキップされます。"
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
