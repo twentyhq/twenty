@@ -11,7 +11,7 @@ import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
+import { viewPickerIsPrivateComponentState } from '@/views/view-picker/states/viewPickerIsPrivateComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,8 +51,8 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerModeComponentState,
   );
 
-  const viewPickerVisibilityCallbackState = useAtomComponentStateCallbackState(
-    viewPickerVisibilityComponentState,
+  const viewPickerIsPrivateCallbackState = useAtomComponentStateCallbackState(
+    viewPickerIsPrivateComponentState,
   );
 
   const { createViewFromCurrentView } = useCreateViewFromCurrentView();
@@ -72,7 +72,7 @@ export const useCreateViewFromCurrentState = () => {
     );
 
     const viewPickerMode = store.get(viewPickerModeCallbackState);
-    const visibility = store.get(viewPickerVisibilityCallbackState);
+    const isPrivate = store.get(viewPickerIsPrivateCallbackState);
 
     const shouldCopyFiltersAndSortsAndAggregate =
       viewPickerMode === 'create-from-current';
@@ -89,7 +89,7 @@ export const useCreateViewFromCurrentState = () => {
           type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
         calendarFieldMetadataId,
         calendarEndFieldMetadataId: null,
-        visibility,
+        isPrivate,
       },
       shouldCopyFiltersAndSortsAndAggregate,
     );
@@ -111,7 +111,7 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerSelectedIconCallbackState,
     viewPickerTypeCallbackState,
     viewPickerModeCallbackState,
-    viewPickerVisibilityCallbackState,
+    viewPickerIsPrivateCallbackState,
   ]);
 
   return { createViewFromCurrentState };
