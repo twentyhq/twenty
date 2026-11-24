@@ -150,8 +150,6 @@ export class ViewResolver {
   @AllowSuspendedWorkspace()
   async getViews(
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
     @Args('objectMetadataId', { type: () => String, nullable: true })
     objectMetadataId?: string,
     @Args('viewTypes', { type: () => [ViewType], nullable: true })
@@ -161,16 +159,11 @@ export class ViewResolver {
       return this.viewService.findByObjectMetadataId(
         workspace.id,
         objectMetadataId,
-        userWorkspaceId,
         viewTypes,
       );
     }
 
-    return this.viewService.findByWorkspaceId(
-      workspace.id,
-      userWorkspaceId,
-      viewTypes,
-    );
+    return this.viewService.findByWorkspaceId(workspace.id, viewTypes);
   }
 
   @Query(() => ViewDTO, { nullable: true })
@@ -178,13 +171,10 @@ export class ViewResolver {
   async getView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    return this.viewService.findByIdVisibleToUserOrThrow({
+    return this.viewService.findByIdVisibleToCallerOrThrow({
       id,
       workspaceId: workspace.id,
-      userWorkspaceId,
     });
   }
 
@@ -293,13 +283,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFieldsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
@@ -308,13 +295,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFiltersByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
@@ -323,13 +307,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFilterGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
@@ -338,13 +319,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewSortsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
@@ -353,13 +331,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 
@@ -368,13 +343,10 @@ export class ViewResolver {
     @Parent() view: ViewDTO,
     @Context() context: { loaders: IDataloaders },
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     return context.loaders.viewFieldGroupsByViewIdLoader.load({
       workspaceId: workspace.id,
       viewId: view.id,
-      userWorkspaceId,
     });
   }
 }

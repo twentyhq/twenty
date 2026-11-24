@@ -29,8 +29,8 @@ import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/fla
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
-import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -115,43 +115,36 @@ export type ObjectMetadataLoaderPayload = {
 export type ViewFieldGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type ViewFieldsByViewFieldGroupIdLoaderPayload = {
   workspaceId: string;
   viewFieldGroupId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type ViewFieldsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type ViewFiltersByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type ViewSortsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type ViewGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type ViewFilterGroupsByViewIdLoaderPayload = {
   workspaceId: string;
   viewId: string;
-  userWorkspaceId: string | undefined;
 };
 
 export type WorkspaceMembersByRoleIdLoaderPayload = {
@@ -726,11 +719,10 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatViewAvailableToUser({
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatViewVisibleToCaller({
           viewId: viewId,
           flatViewMaps,
-          userWorkspaceId,
         });
 
         if (!isDefined(flatView)) {
@@ -810,7 +802,7 @@ export class DataloaderService {
           .push(fromFlatViewFieldToViewFieldDto(flatViewField));
       }
 
-      return dataLoaderParams.map(({ viewFieldGroupId, userWorkspaceId }) => {
+      return dataLoaderParams.map(({ viewFieldGroupId }) => {
         const flatViewFieldGroup = findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: viewFieldGroupId,
           flatEntityMaps: flatViewFieldGroupMaps,
@@ -820,10 +812,9 @@ export class DataloaderService {
           return [];
         }
 
-        const flatView = findFlatViewAvailableToUser({
+        const flatView = findFlatViewVisibleToCaller({
           viewId: flatViewFieldGroup.viewId,
           flatViewMaps,
-          userWorkspaceId,
         });
 
         if (!isDefined(flatView)) {
@@ -850,11 +841,10 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId, userWorkspaceId }) => {
-        const flatView = findFlatViewAvailableToUser({
+      return dataLoaderParams.map(({ viewId }) => {
+        const flatView = findFlatViewVisibleToCaller({
           viewId: viewId,
           flatViewMaps,
-          userWorkspaceId,
         });
 
         if (!isDefined(flatView)) {
@@ -892,13 +882,12 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        findManyFlatViewChildrenAvailableToUser({
+      return dataLoaderParams.map(({ viewId }) =>
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewFilterMaps,
           flatViewChildIdsKey: 'viewFilterIds',
           viewId,
-          userWorkspaceId,
         }).map(fromFlatViewFilterToViewFilterDto),
       );
     });
@@ -919,13 +908,12 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        findManyFlatViewChildrenAvailableToUser({
+      return dataLoaderParams.map(({ viewId }) =>
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewSortMaps,
           flatViewChildIdsKey: 'viewSortIds',
           viewId,
-          userWorkspaceId,
         }).map(fromFlatViewSortToViewSortDto),
       );
     });
@@ -946,13 +934,12 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        findManyFlatViewChildrenAvailableToUser({
+      return dataLoaderParams.map(({ viewId }) =>
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewGroupMaps,
           flatViewChildIdsKey: 'viewGroupIds',
           viewId,
-          userWorkspaceId,
         }).map(fromFlatViewGroupToViewGroupDto),
       );
     });
@@ -973,13 +960,12 @@ export class DataloaderService {
           },
         );
 
-      return dataLoaderParams.map(({ viewId, userWorkspaceId }) =>
-        findManyFlatViewChildrenAvailableToUser({
+      return dataLoaderParams.map(({ viewId }) =>
+        findManyFlatViewChildrenVisibleToCaller({
           flatViewMaps,
           flatViewChildMaps: flatViewFilterGroupMaps,
           flatViewChildIdsKey: 'viewFilterGroupIds',
           viewId,
-          userWorkspaceId,
         }).map(fromFlatViewFilterGroupToViewFilterGroupDto),
       );
     });

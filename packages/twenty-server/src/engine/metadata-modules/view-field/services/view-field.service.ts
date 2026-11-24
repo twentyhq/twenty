@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -292,10 +292,8 @@ export class ViewFieldService {
 
   async findByWorkspaceId({
     workspaceId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFieldDTO[]> {
     const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -309,10 +307,9 @@ export class ViewFieldService {
       .filter(isDefined)
       .filter((field) =>
         isDefined(
-          findFlatViewAvailableToUser({
+          findFlatViewVisibleToCaller({
             viewId: field.viewId,
             flatViewMaps,
-            userWorkspaceId,
           }),
         ),
       )
@@ -323,11 +320,9 @@ export class ViewFieldService {
   async findByViewId({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFieldDTO[]> {
     const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -339,10 +334,9 @@ export class ViewFieldService {
 
     if (
       !isDefined(
-        findFlatViewAvailableToUser({
+        findFlatViewVisibleToCaller({
           viewId: viewId,
           flatViewMaps,
-          userWorkspaceId,
         }),
       )
     ) {
@@ -359,11 +353,9 @@ export class ViewFieldService {
   async findByIdOrThrow({
     id,
     workspaceId,
-    userWorkspaceId,
   }: {
     id: string;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFieldDTO> {
     const { flatViewFieldMaps, flatViewMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -395,10 +387,9 @@ export class ViewFieldService {
 
     if (
       !isDefined(
-        findFlatViewAvailableToUser({
+        findFlatViewVisibleToCaller({
           viewId: flatViewField.viewId,
           flatViewMaps,
-          userWorkspaceId,
         }),
       )
     ) {
