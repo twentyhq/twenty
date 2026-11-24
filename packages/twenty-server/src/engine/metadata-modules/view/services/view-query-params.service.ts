@@ -45,18 +45,15 @@ export class ViewQueryParamsService {
     viewId,
     workspaceId,
     currentWorkspaceMemberId,
-    currentUserWorkspaceId,
   }: {
     viewId: string;
     workspaceId: string;
     currentWorkspaceMemberId?: string;
-    currentUserWorkspaceId?: string;
   }): Promise<ViewQueryParams> {
     const view =
-      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+      await this.viewService.findByIdWithRelationsVisibleToCallerOrThrow({
         id: viewId,
         workspaceId,
-        userWorkspaceId: currentUserWorkspaceId,
       });
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =

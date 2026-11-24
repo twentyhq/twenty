@@ -52,13 +52,13 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app that returns a stable id for the
   // upstream account, run before the tokens are saved. See "Identify the
   // connected account".
-  // identifyAccountLogicFunction: { universalIdentifier: '2f1e0d9c-...-...' },
+  // identifyAccountLogicFunctionUniversalIdentifier: '2f1e0d9c-...-...',
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
-  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-...-...',
   // Optional: a logic function in this app to run right after a connection is
   // removed. See "Run a logic function on disconnect".
-  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
+  // onDisconnectLogicFunctionUniversalIdentifier: '4d5e6f70-...-...',
 });
 ```
 
@@ -121,18 +121,14 @@ export default defineConnectionProvider({
   displayName: 'Front',
   type: 'api-key',
   scope: 'WORKSPACE',
-  identifyAccountLogicFunction: {
-    universalIdentifier: '16801854-29d2-4a90-9d56-333210647bcd',
-  },
-  onConnectLogicFunction: {
-    universalIdentifier: '53bc562a-2932-4452-bbda-4de8345a2cef',
-  },
+  identifyAccountLogicFunctionUniversalIdentifier: '16801854-29d2-4a90-9d56-333210647bcd',
+  onConnectLogicFunctionUniversalIdentifier: '53bc562a-2932-4452-bbda-4de8345a2cef',
 });
 ```
 
 **Adăugați conexiune** și **Reconectați** deschid o pagină de setări în care membrul lipește cheia. Twenty o stochează criptată în conexiune, iar `getConnection` o returnează ca `accessToken`, cu `providerType: 'api-key'`. Twenty nu o reîmprospătează și nu o revocă niciodată: când serviciul o respinge, apelați `reportConnectionAuthFailure` pentru ca membrului să i se solicite să se reconecteze cu una nouă.
 
-Declarați o funcție `identifyAccountLogicFunction` (vedeți "Identificați contul conectat"). Aceasta rulează cu cheia lipită ca `accessToken` înainte ca orice să fie salvat, astfel încât un apel la endpointul "cine sunt eu" al serviciului verifică atât cheia, cât și denumește conexiunea. Dacă generează o excepție, cheia este respinsă, iar membrul vede eroarea. Fără aceasta, orice cheie nevidă este salvată, iar conexiunea este denumită după e-mailul membrului.
+Declară un `identifyAccountLogicFunctionUniversalIdentifier` (consultă "Identifică contul conectat"). Aceasta rulează cu cheia lipită ca `accessToken` înainte ca orice să fie salvat, astfel încât un apel la endpointul "cine sunt eu" al serviciului verifică atât cheia, cât și denumește conexiunea. Dacă generează o excepție, cheia este respinsă, iar membrul vede eroarea. Fără aceasta, orice cheie nevidă este salvată, iar conexiunea este denumită după e-mailul membrului.
 
 Furnizorii de chei API sunt incluși în Twenty 2.59.0: declarați `"engines": { "twenty": ">=2.59.0" }` în `package.json` al aplicației dvs.
 
@@ -152,20 +148,18 @@ export default defineConnectionProvider({
   type: 'custom',
   scope: 'USER',
   custom: {
-    authorizeLogicFunction: {
-      universalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
-    },
-    callbackLogicFunction: {
-      universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
-    },
+    authorizeLogicFunctionUniversalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
+    callbackLogicFunctionUniversalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
   },
-  onConnectLogicFunction: {
-    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
-  },
+  onConnectLogicFunctionUniversalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
 });
 ```
 
-**Adăugarea conexiunii** și **Reconectarea** funcționează ca pentru OAuth. Twenty verifică dacă membrul se poate conecta, semnează o stare cu durată scurtă de viață pentru încercare și rulează `authorizeLogicFunction` cu un `callbackUrl` care o conține. Returnați unde să fie trimis utilizatorul:
+<Note>
+Referințele la o funcție logică sau la un furnizor de conexiune sunt scrise ca `...UniversalIdentifier: '\<uuid>'`. Forma anterioară de obiect `{ universalIdentifier: '\<uuid>' }` (de exemplu, `onConnectLogicFunction: { universalIdentifier }`) este învechită: este încă acceptată, dar va fi eliminată într-o versiune viitoare.
+</Note>
+
+**Adăugarea conexiunii** și **Reconectarea** funcționează ca pentru OAuth. Twenty verifică dacă membrul se poate conecta, semnează o stare cu durată scurtă pentru încercare și rulează funcția logică de autorizare cu un `callbackUrl` care o include. Returnați unde să fie trimis utilizatorul:
 
 ```ts src/logic-functions/handlers/linkedin-authorize-handler.ts
 import { type AuthorizeConnectionPayload } from 'twenty-sdk/logic-function';
@@ -200,7 +194,7 @@ export const linkedinAuthorizeHandler = async ({
 };
 ```
 
-Transmiteți `callbackUrl` serviciului fără modificări. Twenty o acceptă ca redirecționare din browser (`GET`) și ca notificare de la server (`POST`) și rulează `callbackLogicFunction` pentru fiecare solicitare cu metoda sa, parametrii de interogare (fără `state`), antetele, corpul analizat și `rawBody` (octeții exacți ai solicitării, `null` pentru `GET`). Returnează contul pe care îl dovedește cererea sau `null` atunci când nu conține niciunul — de obicei, când browserul revine, în timp ce ID-ul contului este transmis prin notificare:
+Transmiteți `callbackUrl` serviciului fără modificări. Twenty o acceptă ca redirecționare în browser (`GET`) și ca notificare de server (`POST`) și rulează funcția logică de callback pentru fiecare solicitare cu metoda acesteia, parametrii de interogare (fără `state`), anteturile, corpul analizat și `rawBody` (octeții exacți ai solicitării, `null` pentru `GET`). Returnează contul pe care îl dovedește cererea sau `null` atunci când nu conține niciunul — de obicei, când browserul revine, în timp ce ID-ul contului este transmis prin notificare:
 
 ```ts src/logic-functions/handlers/linkedin-callback-handler.ts
 import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
@@ -261,9 +255,9 @@ Callback-ul returnează:
 | `handle`            | Etichetă opțională afișată pentru conexiune. Implicit, este adresa de e-mail a membrului.                                                        |
 | `accessToken`       | Token opțional per cont, stocat criptat și returnat de `getConnection`. Omiteți-l când aplicația dvs. apelează serviciul cu propria cheie.       |
 
-Ambele funcții rulează în timp ce membrul așteaptă o redirecționare, astfel încât timpul lor de expirare este limitat la 10 secunde. O eroare sau un rezultat returnat nevalid anulează conexiunea: nu se salvează nimic și `onConnectLogicFunction` nu rulează. `onConnectLogicFunction` rulează când o conexiune este creată, reconectată sau restaurată, dar nu rulează din nou când serviciul raportează un cont deja conectat. Starea expiră după o oră, astfel încât o notificare sosită mai târziu este respinsă. Serviciile reîncearcă frecvent notificările: o repetare pentru un cont deja conectat actualizează acea conexiune, astfel încât returnarea din nou a aceluiași cont este sigură.
+Ambele funcții rulează în timp ce membrul așteaptă o redirecționare, astfel încât timpul lor de expirare este limitat la 10 secunde. Un eșec sau un rezultat returnat nevalid anulează conexiunea: nimic nu este salvat, iar funcția logică on-connect nu rulează. Funcția logică on-connect rulează când o conexiune este creată, reconectată sau restaurată, dar nu din nou când serviciul raportează un cont deja conectat. Starea expiră după o oră, astfel încât o notificare sosită mai târziu este respinsă. Serviciile reîncearcă frecvent notificările: o repetare pentru un cont deja conectat actualizează acea conexiune, astfel încât returnarea din nou a aceluiași cont este sigură.
 
-Twenty nu reîmprospătează și nu revocă conexiunile personalizate. Eliberați ceea ce deține serviciul pentru cont în `onDisconnectLogicFunction`.
+Twenty nu reîmprospătează și nu revocă conexiunile personalizate. Eliberează ceea ce serviciul deține pentru cont în funcția logică setată ca `onDisconnectLogicFunctionUniversalIdentifier`.
 
 `type` al unui furnizor, la fel ca `scope` al acestuia, nu se poate modifica după ce este sincronizat: pentru a muta un serviciu între `oauth`, `oauth-discovery`, `custom` și `api-key`, declarați un furnizor nou cu un `universalIdentifier` nou.
 
@@ -275,7 +269,7 @@ Furnizorii personalizați sunt disponibili în Twenty 2.52.0.
 
 Când un utilizator face clic pe **Reconnect**, nimic nu îl împiedică să autorizeze un alt cont sursă decât cel cu care a fost realizată conexiunea: spațiul de lucru Slack B în locul spațiului de lucru A, o altă organizație GitHub, un alt cont Google. Fără o modalitate de a le diferenția, Twenty ar suprascrie tokenurile lui A cu cele ale lui B, iar tot ce a construit aplicația dvs. pe baza acelei conexiuni ar începe în mod silențios să comunice cu B.
 
-Setați `identifyAccountLogicFunction` la o funcție logică din aceeași aplicație care returnează un ID stabil pentru contul asociat tokenului proaspăt emis:
+Setați `identifyAccountLogicFunctionUniversalIdentifier` la o funcție logică din aceeași aplicație care returnează un ID stabil pentru contul din spatele tokenului emis recent:
 
 ```ts src/connection-providers/slack-connection.ts
 import { defineConnectionProvider } from 'twenty-sdk/define';
@@ -290,9 +284,7 @@ export default defineConnectionProvider({
   oauth: {
     /* ... */
   },
-  identifyAccountLogicFunction: {
-    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  },
+  identifyAccountLogicFunctionUniversalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -367,7 +359,7 @@ Identificarea este disponibilă în Twenty 2.48.0. Dacă aplicația dvs. se baze
 
 <Accordion title="Rulează o funcție logică la conectare" description="Reacționează în momentul în care o conexiune este stabilită">
 
-Unii furnizori îți furnizează date în momentul conectării, pe care trebuie să le stochezi înainte ca conexiunea să poată fi utilizată — exemplul clasic este Slack, unde răspunsul OAuth identifică `team_id` al spațiului de lucru după care vor fi indexate evenimentele primite. Setează `onConnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație (prin `universalIdentifier`), iar aceasta rulează imediat după ce `ConnectedAccount` este creat.
+Unii furnizori îți furnizează date în momentul conectării, pe care trebuie să le stochezi înainte ca conexiunea să poată fi utilizată — exemplul clasic este Slack, unde răspunsul OAuth identifică `team_id` al spațiului de lucru după care vor fi indexate evenimentele primite. Setează `onConnectLogicFunctionUniversalIdentifier` pentru a face referire la o funcție logică din aceeași aplicație (prin `universalIdentifier`), iar aceasta rulează imediat după ce `ConnectedAccount` este creat.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -379,9 +371,7 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs claimSlackTeam after every successful Slack connection.
-  onConnectLogicFunction: {
-    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
-  },
+  onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
 });
 ```
 
@@ -401,7 +391,7 @@ De acolo folosește `getConnection(connectedAccountId)` pentru a citi tokenul de
 
 <Accordion title="Rulează o funcție logică la deconectare" description="Curăță resursele atunci când o conexiune este deconectată sau eliminată.">
 
-Orice revendică o aplicație la momentul conectării trebuie eliberat atunci când conexiunea este eliminată. O integrare Slack care revendică un `team_id` la conectare, de exemplu, trebuie să elibereze acea revendicare astfel încât un alt spațiu de lucru să poată conecta aceeași echipă Slack. Setează `onDisconnectLogicFunction` pentru a face referire la o funcție logică din aceeași aplicație, iar aceasta rulează când conexiunea este deconectată și din nou când este ștearsă.
+Orice revendică o aplicație la momentul conectării trebuie eliberat atunci când conexiunea este eliminată. O integrare Slack care revendică un `team_id` la conectare, de exemplu, trebuie să elibereze acea revendicare astfel încât un alt spațiu de lucru să poată conecta aceeași echipă Slack. Setează `onDisconnectLogicFunctionUniversalIdentifier` pentru a face referire la o funcție logică din aceeași aplicație, iar aceasta rulează când conexiunea este deconectată și din nou când este ștearsă.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -413,9 +403,7 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs releaseSlackTeam after every Slack disconnection.
-  onDisconnectLogicFunction: {
-    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
-  },
+  onDisconnectLogicFunctionUniversalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
 });
 ```
 
@@ -550,7 +538,7 @@ Fiecare conexiune are unul dintre două domenii de aplicare:
 
 Un furnizor are exact un domeniu de aplicare. Dacă aplicația ta are nevoie atât de o acreditare partajată, cât și de câte una pentru fiecare membru pentru același serviciu (de exemplu, un token de bot și contul propriu al fiecărui membru), declară doi furnizori.
 
-O conexiune are întotdeauna scopul furnizorului său, iar scopul unui furnizor face parte din identitatea sa: o versiune ulterioară nu poate modifica `scope` al unui furnizor existent, iar actualizarea este refuzată dacă încearcă acest lucru. Pentru a muta un serviciu dintr-un scop în altul, declarați un furnizor nou cu un `universalIdentifier` nou și eliminați-l pe cel vechi. Actualizarea elimină apoi furnizorul vechi și fiecare conexiune realizată cu acesta prin fluxul obișnuit de deconectare (`onDisconnectLogicFunction`, revocarea tokenului, curățarea canalului), iar membrii se conectează din nou prin noul furnizor.
+O conexiune are întotdeauna scopul furnizorului său, iar scopul unui furnizor face parte din identitatea sa: o versiune ulterioară nu poate modifica `scope` al unui furnizor existent, iar actualizarea este refuzată dacă încearcă acest lucru. Pentru a muta un serviciu dintr-un scop în altul, declarați un furnizor nou cu un `universalIdentifier` nou și eliminați-l pe cel vechi. Actualizarea șterge apoi vechiul furnizor și fiecare conexiune realizată cu acesta prin fluxul obișnuit de deconectare (`onDisconnectLogicFunctionUniversalIdentifier`, revocarea tokenului, curățarea canalului), iar membrii se conectează din nou prin noul furnizor.
 
 Adăugarea sau reconectarea unei conexiuni **Doar pentru mine** necesită permisiunea Aplicații utilizator, iar adăugarea sau reconectarea uneia **Partajată în spațiul de lucru** necesită permisiunea Aplicații spațiu de lucru.
 
