@@ -21,12 +21,14 @@ const buildRecordGroupDefinition = ({
   title,
   value,
   color,
+  description,
 }: {
   viewGroup: ViewGroup;
   isNoValue: boolean;
   title: string;
   value: string | null;
   color: ThemeColor | 'transparent';
+  description?: string | null;
 }): RecordGroupDefinition => ({
   id: viewGroup.id,
   type: isNoValue
@@ -35,6 +37,7 @@ const buildRecordGroupDefinition = ({
   title,
   value,
   color,
+  description,
   position: viewGroup.position,
   isVisible: viewGroup.isVisible,
 });
@@ -80,6 +83,7 @@ const mapSelectViewGroupsToRecordGroupDefinitions = (
         title: selectedOption?.label ?? t`No Value`,
         value: selectedOption?.value ?? null,
         color: selectedOption?.color ?? 'transparent',
+        description: selectedOption?.description,
       });
     })
     .filter(isDefined);
