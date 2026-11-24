@@ -410,6 +410,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    presetFilter: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     calendarLayout: {
       toCompare: true,
       toStringify: false,
@@ -428,7 +433,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
-    visibility: {
+    isPrivate: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
@@ -724,6 +729,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     timeoutSeconds: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    jobFailureHandlerName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    retryLimit: {
       toCompare: true,
       toStringify: false,
       universalProperty: undefined,
