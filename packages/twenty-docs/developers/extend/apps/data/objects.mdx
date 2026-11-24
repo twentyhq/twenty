@@ -161,7 +161,7 @@ When you read a field's `options` from the metadata API, two properties describe
 
 ### Rollup fields
 
-A `ROLLUP` field summarizes the records behind one of the object's one-to-many relations. Its `universalSettings` refer to fields by universal identifier:
+A `ROLLUP` field summarizes the records behind one of the object's one-to-many relations. Rollup fields are in beta behind the `IS_ROLLUP_FIELD_ENABLED` feature flag: installing an app that defines one fails on a workspace without the flag. Its `universalSettings` refer to fields by universal identifier:
 
 ```ts
 defineField({
