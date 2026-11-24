@@ -422,6 +422,7 @@ export class UserWorkspaceService {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatRoleTargetMaps',
         'userApplicationVariableValueMaps',
+        'flatWorkflowMaps',
       ]);
     }
   }

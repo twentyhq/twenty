@@ -2,7 +2,8 @@ import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
 } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
-import { compareFlatWorkflows } from 'src/engine/core-modules/workflow/utils/compare-flat-workflows.util';
+import { buildCoreWorkflowCursor } from 'src/engine/core-modules/workflow/utils/build-core-workflow-cursor.util';
+import { compareCoreWorkflowCursors } from 'src/engine/core-modules/workflow/utils/compare-core-workflow-cursors.util';
 
 const flatWorkflows = [
   { id: 'c', name: 'Beta', updatedAt: '2026-01-02T00:00:00.000Z' },
@@ -18,11 +19,12 @@ const sortIds = ({
   orderBy: CoreWorkflowOrderByField;
   orderByDirection: CoreWorkflowOrderByDirection;
 }) =>
-  [...flatWorkflows]
-    .sort(compareFlatWorkflows({ orderBy, orderByDirection }))
+  flatWorkflows
+    .map((flatWorkflow) => buildCoreWorkflowCursor({ flatWorkflow, orderBy }))
+    .sort(compareCoreWorkflowCursors({ orderBy, orderByDirection }))
     .map(({ id }) => id);
 
-describe('compareFlatWorkflows', () => {
+describe('compareCoreWorkflowCursors', () => {
   it('should sort by name ascending with unnamed workflows last and ids breaking ties', () => {
     expect(
       sortIds({

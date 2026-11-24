@@ -41,7 +41,8 @@ export class CoreWorkflowVersionListService {
       .filter(isDefined)
       .find(
         (flatWorkflow) =>
-          flatWorkflow.workspaceWorkflowId === workspaceWorkflowId,
+          flatWorkflow.workspaceWorkflowId ===
+          workspaceWorkflowId.toLowerCase(),
       );
 
     if (
@@ -70,7 +71,7 @@ export class CoreWorkflowVersionListService {
       flatWorkflowVersionsInCreationOrder:
         coreWorkflowVersionsByCoreWorkflowId[parentFlatWorkflow.id]
           ?.flatWorkflowVersionsInCreationOrder ?? [],
-      workspaceWorkflowId,
+      workspaceWorkflowId: parentFlatWorkflow.workspaceWorkflowId,
     });
   }
 
@@ -92,7 +93,7 @@ export class CoreWorkflowVersionListService {
       ]);
 
     const flatWorkflow = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowId,
+      flatEntityId: coreWorkflowId.toLowerCase(),
       flatEntityMaps: flatWorkflowMaps,
     });
 
@@ -109,12 +110,12 @@ export class CoreWorkflowVersionListService {
     }
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflowId] },
+      { workspaceId, userWorkspaceId, coreWorkflowIds: [flatWorkflow.id] },
     );
 
     return buildCoreWorkflowVersionSummaries({
       flatWorkflowVersionsInCreationOrder:
-        coreWorkflowVersionsByCoreWorkflowId[coreWorkflowId]
+        coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id]
           ?.flatWorkflowVersionsInCreationOrder ?? [],
       workspaceWorkflowId: flatWorkflow.workspaceWorkflowId,
     });
@@ -142,7 +143,7 @@ export class CoreWorkflowVersionListService {
     ]);
 
     const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowVersionId,
+      flatEntityId: coreWorkflowVersionId.toLowerCase(),
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 

@@ -39,10 +39,14 @@ export class WorkspaceCoreWorkflowVersionsByCoreWorkflowIdCacheService extends W
         continue;
       }
 
-      flatWorkflowVersionsByCoreWorkflowId.set(coreWorkflowId, [
-        ...(flatWorkflowVersionsByCoreWorkflowId.get(coreWorkflowId) ?? []),
-        flatWorkflowVersion,
-      ]);
+      const flatWorkflowVersions =
+        flatWorkflowVersionsByCoreWorkflowId.get(coreWorkflowId) ?? [];
+
+      flatWorkflowVersions.push(flatWorkflowVersion);
+      flatWorkflowVersionsByCoreWorkflowId.set(
+        coreWorkflowId,
+        flatWorkflowVersions,
+      );
     }
 
     return Object.fromEntries(

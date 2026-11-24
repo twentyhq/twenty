@@ -144,6 +144,22 @@ const RUN_MUTATION = `
   }
 `;
 
+const DUPLICATE_CORE_WORKFLOW_MUTATION = `
+  mutation DuplicateCoreWorkflow($input: DuplicateCoreWorkflowInput!) {
+    duplicateCoreWorkflow(input: $input) {
+      id
+    }
+  }
+`;
+
+const DELETE_CORE_WORKFLOWS_MUTATION = `
+  mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
+    deleteCoreWorkflows(input: $input) {
+      id
+    }
+  }
+`;
+
 const setIsPrivate = ({
   coreWorkflowId,
   isPrivate,
@@ -514,6 +530,54 @@ describe('core workflow visibility (e2e)', () => {
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.data?.runCoreWorkflowVersion ?? null).toBeNull();
+    });
+
+    describe('when another member sends an uppercased id', () => {
+      it('refuses to resolve it', async () => {
+        const response = await asOtherMember(CORE_WORKFLOW_BY_ID_QUERY, {
+          coreWorkflowId: coreWorkflowId.toUpperCase(),
+        });
+
+        expect(response.body.data?.coreWorkflowById ?? null).toBeNull();
+      });
+
+      it('refuses to duplicate it', async () => {
+        const response = await asOtherMember(DUPLICATE_CORE_WORKFLOW_MUTATION, {
+          input: {
+            coreWorkflowIdToDuplicate: coreWorkflowId.toUpperCase(),
+            coreWorkflowVersionIdToCopy: coreWorkflowVersionId.toUpperCase(),
+          },
+        });
+
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.data?.duplicateCoreWorkflow ?? null).toBeNull();
+      });
+
+      it('refuses to run it', async () => {
+        const response = await asOtherMember(RUN_MUTATION, {
+          input: { coreWorkflowVersionId: coreWorkflowVersionId.toUpperCase() },
+        });
+
+        expect(response.body.errors).toBeDefined();
+        expect(response.body.data?.runCoreWorkflowVersion ?? null).toBeNull();
+      });
+
+      it('refuses to delete it', async () => {
+        const response = await asOtherMember(DELETE_CORE_WORKFLOWS_MUTATION, {
+          input: { coreWorkflowIds: [coreWorkflowId.toUpperCase()] },
+        });
+
+        expect(response.body.errors).toBeDefined();
+
+        const creatorResponse = await workflowGraphqlRequest(
+          CORE_WORKFLOW_BY_ID_QUERY,
+          { coreWorkflowId },
+        );
+
+        expect(creatorResponse.body.data.coreWorkflowById).toMatchObject({
+          id: coreWorkflowId,
+        });
+      });
     });
 
     it('refuses to let another member publish it back to the workspace', async () => {

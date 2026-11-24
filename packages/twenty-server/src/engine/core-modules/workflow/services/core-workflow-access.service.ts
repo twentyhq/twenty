@@ -458,7 +458,9 @@ export class CoreWorkflowAccessService {
       ]);
 
     return findManyFlatEntityByIdInFlatEntityMaps({
-      flatEntityIds: coreWorkflowIds,
+      flatEntityIds: coreWorkflowIds.map((coreWorkflowId) =>
+        coreWorkflowId.toLowerCase(),
+      ),
       flatEntityMaps: flatWorkflowMaps,
     });
   }
@@ -476,7 +478,9 @@ export class CoreWorkflowAccessService {
       ]);
 
     return findManyFlatEntityByIdInFlatEntityMaps({
-      flatEntityIds: coreWorkflowVersionIds,
+      flatEntityIds: coreWorkflowVersionIds.map((coreWorkflowVersionId) =>
+        coreWorkflowVersionId.toLowerCase(),
+      ),
       flatEntityMaps: flatWorkflowVersionMaps,
     });
   }
