@@ -7,6 +7,7 @@ import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
+import { shouldGoBackAfterAssignAiChatComponentState } from '@/side-panel/states/shouldGoBackAfterAssignAiChatComponentState';
 
 export const useOpenAssignAiChatInSidePanel = () => {
   const { t } = useLingui();
@@ -14,12 +15,24 @@ export const useOpenAssignAiChatInSidePanel = () => {
   const { navigateSidePanelMenu } = useSidePanelMenu();
 
   const openAssignAiChatInSidePanel = useCallback(
-    (threadIds: string[]) => {
+    ({
+      threadIds,
+      shouldGoBackAfterAssign = false,
+    }: {
+      threadIds: string[];
+      shouldGoBackAfterAssign?: boolean;
+    }) => {
       const pageId = v4();
 
       store.set(
         assignAiChatThreadIdsComponentState.atomFamily({ instanceId: pageId }),
         threadIds,
+      );
+      store.set(
+        shouldGoBackAfterAssignAiChatComponentState.atomFamily({
+          instanceId: pageId,
+        }),
+        shouldGoBackAfterAssign,
       );
 
       navigateSidePanelMenu({
