@@ -137,9 +137,15 @@ export class CreateViewInput {
   mainGroupByFieldMetadataId?: string;
 
   @IsOptional()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, {
     nullable: true,
+    deprecationReason: 'Use isPrivate instead',
   })
   visibility?: ViewVisibility;
 
