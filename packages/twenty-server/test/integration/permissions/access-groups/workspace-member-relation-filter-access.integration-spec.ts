@@ -194,7 +194,7 @@ describePermissionTestWorkspace({
         expectToFail: false,
         token,
       });
-      const findObjectMetadataId = (nameSingular: string): string => {
+      const findObjectMetadataIdOrThrow = (nameSingular: string): string => {
         const objectMetadataId = objects.find(
           (object) => object.nameSingular === nameSingular,
         )?.id;
@@ -205,7 +205,7 @@ describePermissionTestWorkspace({
 
         return objectMetadataId;
       };
-      companyObjectMetadataId = findObjectMetadataId('company');
+      companyObjectMetadataId = findObjectMetadataIdOrThrow('company');
 
       const companyIdField = objects
         .find(({ nameSingular }) => nameSingular === 'company')
@@ -249,7 +249,8 @@ describePermissionTestWorkspace({
             {
               objectMetadataId: seatObjectMetadataId,
               name: 'member',
-              targetObjectMetadataId: findObjectMetadataId('workspaceMember'),
+              targetObjectMetadataId:
+                findObjectMetadataIdOrThrow('workspaceMember'),
               targetFieldLabel: 'Access record seats',
             },
           ].map(
