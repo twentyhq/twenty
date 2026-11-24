@@ -50,6 +50,7 @@ import {
   type WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
+import { buildServerOnlyCompositeColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-server-only-composite-column-definitions.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import {
@@ -483,6 +484,20 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           newColumnName: toCompositeColumnName,
         });
       }
+
+      await this.addMissingServerOnlyCompositeColumns({
+        flatFieldMetadata,
+        queryRunner,
+        schemaName,
+        tableName,
+      });
+      await this.renameServerOnlyCompositeColumns({
+        flatFieldMetadata,
+        queryRunner,
+        schemaName,
+        tableName,
+        toName,
+      });
     } else if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       if (
         flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
@@ -524,6 +539,66 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       schemaName,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,
     });
+  }
+
+  // A workspace its provisioning command has not reached lacks these columns, and renaming a missing column fails.
+  private async addMissingServerOnlyCompositeColumns({
+    flatFieldMetadata,
+    queryRunner,
+    schemaName,
+    tableName,
+  }: {
+    flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+  }) {
+    await this.workspaceSchemaManagerService.columnManager.addColumns({
+      queryRunner,
+      schemaName,
+      tableName,
+      columnDefinitions: buildServerOnlyCompositeColumnDefinitions({
+        fieldType: flatFieldMetadata.type,
+        fieldName: flatFieldMetadata.name,
+      }),
+      shouldSkipExistingColumns: true,
+    });
+  }
+
+  private async renameServerOnlyCompositeColumns({
+    flatFieldMetadata,
+    queryRunner,
+    schemaName,
+    tableName,
+    toName,
+  }: {
+    flatFieldMetadata: Pick<FlatFieldMetadata, 'type' | 'name'>;
+    queryRunner: QueryRunner;
+    schemaName: string;
+    tableName: string;
+    toName: string;
+  }) {
+    const fromColumnDefinitions = buildServerOnlyCompositeColumnDefinitions({
+      fieldType: flatFieldMetadata.type,
+      fieldName: flatFieldMetadata.name,
+    });
+    const toColumnDefinitions = buildServerOnlyCompositeColumnDefinitions({
+      fieldType: flatFieldMetadata.type,
+      fieldName: toName,
+    });
+
+    for (const [
+      index,
+      fromColumnDefinition,
+    ] of fromColumnDefinitions.entries()) {
+      await this.workspaceSchemaManagerService.columnManager.renameColumn({
+        queryRunner,
+        schemaName,
+        tableName,
+        oldColumnName: fromColumnDefinition.name,
+        newColumnName: toColumnDefinitions[index].name,
+      });
+    }
   }
 
   private async handleFieldDefaultValueUpdate({
