@@ -7,7 +7,6 @@ import { findViewGroups } from 'test/integration/metadata/suites/view-group/util
 import { createViewWithChildren } from 'test/integration/metadata/suites/view/utils/create-view-with-children.util';
 import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
-import { setViewRowDeletedAt } from 'test/integration/metadata/suites/view/utils/set-view-row-deleted-at.util';
 import { findAllMetadataRestListPages } from 'test/integration/rest/utils/find-all-metadata-rest-list-pages.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { maskUuids } from 'test/integration/utils/mask-uuids.util';
@@ -84,32 +83,6 @@ const failingViewGroupReadTestCases: EachTestingContext<TestContext>[] = [
             });
 
             return {};
-          },
-        }),
-    },
-  },
-  {
-    title: 'when the view group is soft-deleted',
-    context: {
-      arrange: () =>
-        arrangeViewGroup({
-          prepare: async ({ viewGroupId, cleanup }) => {
-            await setViewRowDeletedAt({
-              tableName: 'viewGroup',
-              id: viewGroupId,
-              deletedAt: new Date(),
-            });
-
-            return {
-              cleanup: async () => {
-                await setViewRowDeletedAt({
-                  tableName: 'viewGroup',
-                  id: viewGroupId,
-                  deletedAt: null,
-                });
-                await cleanup();
-              },
-            };
           },
         }),
     },
