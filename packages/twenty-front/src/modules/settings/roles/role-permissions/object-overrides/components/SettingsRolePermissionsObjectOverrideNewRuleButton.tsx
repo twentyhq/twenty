@@ -1,3 +1,6 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useOpenRowLevelPermissionRulePage } from '@/settings/roles/role-permissions/object-overrides/hooks/useOpenRowLevelPermissionRulePage';
+import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
@@ -5,17 +8,28 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type SettingsRolePermissionsObjectOverrideNewRuleButtonProps = {
-  objectLabelPlural: string;
+  roleId: string;
+  objectMetadataItem: EnrichedObjectMetadataItem;
   hasFullObjectAccess: boolean;
-  onClick: () => void;
 };
 
 export const SettingsRolePermissionsObjectOverrideNewRuleButton = ({
-  objectLabelPlural,
+  roleId,
+  objectMetadataItem,
   hasFullObjectAccess,
-  onClick,
 }: SettingsRolePermissionsObjectOverrideNewRuleButtonProps) => {
   const { t } = useLingui();
+  const { createRule } = useRowLevelPermissionRulesInDraftRole(roleId);
+  const { openRowLevelPermissionRulePage } = useOpenRowLevelPermissionRulePage({
+    roleId,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const objectLabelPlural = objectMetadataItem.labelPlural.toLocaleLowerCase();
+
+  const handleClick = () => {
+    openRowLevelPermissionRulePage(createRule(objectMetadataItem.id));
+  };
 
   return (
     <Tooltip
@@ -31,7 +45,7 @@ export const SettingsRolePermissionsObjectOverrideNewRuleButton = ({
           variant="outline"
           startIcon={<IconPlus />}
           disabled={hasFullObjectAccess}
-          onClick={onClick}
+          onClick={handleClick}
         >
           {t`New record-level permission`}
         </Button>

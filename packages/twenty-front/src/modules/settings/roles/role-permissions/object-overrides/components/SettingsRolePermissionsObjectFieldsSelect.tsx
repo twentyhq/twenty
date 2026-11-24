@@ -26,7 +26,7 @@ type SettingsRolePermissionsObjectFieldsSelectProps = {
   mode: 'read' | 'update';
   disabled?: boolean;
   rowLevelPermissionPredicateGroupId?: string;
-  hideWhenDisabledWithAllFields?: boolean;
+  shouldHideWhenDisabledWithAllFields?: boolean;
 };
 
 export const SettingsRolePermissionsObjectFieldsSelect = ({
@@ -35,7 +35,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
   mode,
   disabled = false,
   rowLevelPermissionPredicateGroupId,
-  hideWhenDisabledWithAllFields = false,
+  shouldHideWhenDisabledWithAllFields = false,
 }: SettingsRolePermissionsObjectFieldsSelectProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -286,7 +286,7 @@ export const SettingsRolePermissionsObjectFieldsSelect = ({
     />
   );
 
-  if (disabled && hideWhenDisabledWithAllFields && areAllFieldsAllowed) {
+  if (disabled && shouldHideWhenDisabledWithAllFields && areAllFieldsAllowed) {
     return null;
   }
 

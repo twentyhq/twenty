@@ -1,14 +1,14 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 
 export const useObjectMetadataItemsThatCanHavePermission = ({
-  includeSystemObjects = false,
-}: { includeSystemObjects?: boolean } = {}) => {
+  shouldIncludeSystemObjects = false,
+}: { shouldIncludeSystemObjects?: boolean } = {}) => {
   const {
     activeObjectMetadataItems,
     alphaSortedActiveNonSystemObjectMetadataItems,
   } = useFilteredObjectMetadataItems();
 
-  const objectMetadataItems = includeSystemObjects
+  const objectMetadataItems = shouldIncludeSystemObjects
     ? activeObjectMetadataItems
     : alphaSortedActiveNonSystemObjectMetadataItems;
 

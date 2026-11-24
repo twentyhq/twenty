@@ -7,6 +7,12 @@ import {
   SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG,
   type SettingsRoleObjectPermissionKey,
 } from '@/settings/roles/role-permissions/object-overrides/constants/SettingsRoleObjectPermissionIconConfig';
+import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
+import { useSettingsRoleObjectOverrides } from '@/settings/roles/role-permissions/object-overrides/hooks/useSettingsRoleObjectOverrides';
+import { getObjectOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperations';
+import { getObjectOperationsWithReadDependency } from '@/settings/roles/role-permissions/object-overrides/utils/getObjectOperationsWithReadDependency';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
@@ -26,10 +32,8 @@ type SettingsRolePermissionsObjectOverrideOperationRowProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   operation: SettingsRoleObjectPermissionKey;
   hint?: string | null;
-  isChecked: boolean;
   isEditable: boolean;
   isOperationEnabled: boolean;
-  onToggle: () => void;
 };
 
 export const SettingsRolePermissionsObjectOverrideOperationRow = ({
@@ -37,13 +41,40 @@ export const SettingsRolePermissionsObjectOverrideOperationRow = ({
   objectMetadataItem,
   operation,
   hint,
-  isChecked,
   isEditable,
   isOperationEnabled,
-  onToggle,
 }: SettingsRolePermissionsObjectOverrideOperationRowProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+  const { setObjectOperations } = useSettingsRoleObjectOverrides(roleId);
+  const { disabledOperations } =
+    useObjectDisabledOperations(objectMetadataItem);
+
+  const operations = getObjectOperations({
+    role: settingsDraftRole,
+    objectMetadataId: objectMetadataItem.id,
+    disabledOperations,
+  });
+  const isChecked = operations.includes(operation);
+
+  const handleToggle = () => {
+    setObjectOperations({
+      objectMetadataId: objectMetadataItem.id,
+      operations: getObjectOperationsWithReadDependency({
+        previousOperations: operations,
+        nextOperations: isChecked
+          ? operations.filter(
+              (selectedOperation) => selectedOperation !== operation,
+            )
+          : [...operations, operation],
+        disabledOperations,
+      }),
+    });
+  };
   const { Icon, label } =
     SETTINGS_ROLE_OBJECT_PERMISSION_ICON_CONFIG[operation];
 
@@ -82,7 +113,7 @@ export const SettingsRolePermissionsObjectOverrideOperationRow = ({
             aria-label={t(label)}
             checked={isChecked}
             disabled={!isEditable || !isOperationEnabled}
-            onCheckedChange={onToggle}
+            onCheckedChange={handleToggle}
           />
         </SettingsRolePermissionsObjectOverrideActionContainer>
       </TableCell>

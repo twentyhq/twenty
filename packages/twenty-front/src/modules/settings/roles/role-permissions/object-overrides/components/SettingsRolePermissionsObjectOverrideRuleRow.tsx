@@ -4,6 +4,7 @@ import { SettingsRolePermissionsObjectOverrideActionContainer } from '@/settings
 import { SettingsRolePermissionsObjectOverrideSelectContainer } from '@/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverrideSelectContainer';
 import { OBJECT_OVERRIDE_PANEL_GRID_TEMPLATE_COLUMNS } from '@/settings/roles/role-permissions/object-overrides/constants/ObjectOverridePanelGridTemplateColumns';
 import { useObjectDisabledOperations } from '@/settings/roles/role-permissions/object-overrides/hooks/useObjectDisabledOperations';
+import { useOpenRowLevelPermissionRulePage } from '@/settings/roles/role-permissions/object-overrides/hooks/useOpenRowLevelPermissionRulePage';
 import { useRowLevelPermissionRuleLabel } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRuleLabel';
 import { useRowLevelPermissionRulesInDraftRole } from '@/settings/roles/role-permissions/object-overrides/hooks/useRowLevelPermissionRulesInDraftRole';
 import { getRecordsGrantOperations } from '@/settings/roles/role-permissions/object-overrides/utils/getRecordsGrantOperations';
@@ -25,7 +26,6 @@ type SettingsRolePermissionsObjectOverrideRuleRowProps = {
   rule: RowLevelPermissionRule;
   predicates: RowLevelPermissionPredicate[];
   isEditable: boolean;
-  onOpen: () => void;
 };
 
 export const SettingsRolePermissionsObjectOverrideRuleRow = ({
@@ -34,7 +34,6 @@ export const SettingsRolePermissionsObjectOverrideRuleRow = ({
   rule,
   predicates,
   isEditable,
-  onOpen,
 }: SettingsRolePermissionsObjectOverrideRuleRowProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -42,6 +41,10 @@ export const SettingsRolePermissionsObjectOverrideRuleRow = ({
   const { setRuleOperations } = useRowLevelPermissionRulesInDraftRole(roleId);
   const { disabledOperations, disabledOperationReasons } =
     useObjectDisabledOperations(objectMetadataItem);
+  const { openRowLevelPermissionRulePage } = useOpenRowLevelPermissionRulePage({
+    roleId,
+    objectMetadataId: objectMetadataItem.id,
+  });
 
   const ruleLabel = getRuleLabel(predicates);
   const hasRuleLabel = isNonEmptyString(ruleLabel);
@@ -49,7 +52,9 @@ export const SettingsRolePermissionsObjectOverrideRuleRow = ({
   return (
     <TableRow
       gridTemplateColumns={OBJECT_OVERRIDE_PANEL_GRID_TEMPLATE_COLUMNS}
-      onClick={isEditable ? onOpen : undefined}
+      onClick={
+        isEditable ? () => openRowLevelPermissionRulePage(rule.id) : undefined
+      }
     >
       <TableCell
         color={

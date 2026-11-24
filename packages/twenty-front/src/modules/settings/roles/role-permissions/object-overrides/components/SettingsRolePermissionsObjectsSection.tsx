@@ -33,7 +33,9 @@ export const SettingsRolePermissionsObjectsSection = ({
   const { t } = useLingui();
 
   const { objectMetadataItemsThatCanHavePermission } =
-    useObjectMetadataItemsThatCanHavePermission({ includeSystemObjects: true });
+    useObjectMetadataItemsThatCanHavePermission({
+      shouldIncludeSystemObjects: true,
+    });
 
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
