@@ -9,7 +9,6 @@ import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { Temporal } from 'temporal-polyfill';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { NumberStepper } from 'twenty-ui/components/input';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -51,12 +50,12 @@ export const CalendarEventComposerRecurrenceFields = ({
     handleRecurrenceEndTypeChange,
   } = composerState;
 
-  const startDayOfMonth = Temporal.PlainDate.from(startDateInTimeZone).day;
-  const startMonthAndDay = new Intl.DateTimeFormat(i18n.locale, {
+  const startDate = Temporal.PlainDate.from(startDateInTimeZone);
+  const startDayOfMonth = startDate.day;
+  const startMonthAndDay = startDate.toLocaleString(i18n.locale, {
     month: 'long',
     day: 'numeric',
-    timeZone: doNotTranslate('UTC'),
-  }).format(new Date(`${startDateInTimeZone}T00:00:00Z`));
+  });
 
   const frequencyOptions: SelectOption<CalendarEventRecurrenceFrequency | null>[] =
     [

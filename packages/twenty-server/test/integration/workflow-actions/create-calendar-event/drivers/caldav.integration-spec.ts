@@ -357,6 +357,19 @@ describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => 
     expect(storedICalendar).toContain('TZID:Asia/Kolkata');
   }, 300000);
 
+  it('rejects a recurrence that ends before the first occurrence', async () => {
+    const createdEvent = await createCalendarEvent({
+      connectedAccountId,
+      title: `CalDAV invalid series ${randomUUID()}`,
+      startsAt: '2026-07-01T15:00:00Z',
+      endsAt: '2026-07-01T16:00:00Z',
+      recurrence: { frequency: 'DAILY', endDate: '2026-06-30' },
+    });
+
+    expect(createdEvent.success).toBe(false);
+    expect(createdEvent.error).toContain('recurrence.endDate');
+  });
+
   it('still creates the event when the invitation email cannot be sent', async () => {
     await greenmail.stop();
 
