@@ -9,6 +9,7 @@ import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/ty
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUuidPropertyInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-uuid-property-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -35,15 +36,11 @@ export class CoreWorkflowVersionListService {
         'coreWorkflowVersionsByCoreWorkflowId',
       ]);
 
-    const parentFlatWorkflow = Object.values(
-      flatWorkflowMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .find(
-        (flatWorkflow) =>
-          flatWorkflow.workspaceWorkflowId ===
-          workspaceWorkflowId.toLowerCase(),
-      );
+    const parentFlatWorkflow = findFlatEntityByUuidPropertyInFlatEntityMaps({
+      flatEntityMaps: flatWorkflowMaps,
+      propertyName: 'workspaceWorkflowId',
+      uuid: workspaceWorkflowId,
+    });
 
     if (
       !isDefined(parentFlatWorkflow) ||

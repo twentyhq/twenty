@@ -15,6 +15,7 @@ import { fromFlatWorkflowToCoreWorkflowDto } from 'src/engine/core-modules/workf
 import { isFlatWorkflowReadableByReader } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-readable-by-reader.util';
 import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/utils/get-core-workflow-current-version.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findFlatEntityByUuidPropertyInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-uuid-property-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { paginateMetadataItemsByKeyset } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-items-by-keyset.util';
@@ -186,20 +187,29 @@ export class CoreWorkflowListService {
     workspaceId: string;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
-    const [flatWorkflow] = await this.findReadableFlatWorkflows({
-      workspaceId,
-      reader,
-      matchesFlatWorkflow: (flatWorkflow) =>
-        flatWorkflow.workspaceWorkflowId === workspaceWorkflowId.toLowerCase(),
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
+      ]);
+
+    const flatWorkflow = findFlatEntityByUuidPropertyInFlatEntityMaps({
+      flatEntityMaps: flatWorkflowMaps,
+      propertyName: 'workspaceWorkflowId',
+      uuid: workspaceWorkflowId,
     });
 
-    if (!isDefined(flatWorkflow)) {
+    if (
+      !isDefined(flatWorkflow) ||
+      !isFlatWorkflowReadableByReader({ flatWorkflow, ...reader })
+    ) {
       return null;
     }
 
     return fromFlatWorkflowToCoreWorkflowDto({
       flatWorkflow,
-      statuses: flatWorkflow.statuses,
+      statuses:
+        coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id]?.statuses ?? [],
       userWorkspaceId: reader.userWorkspaceId,
     });
   }
@@ -207,11 +217,9 @@ export class CoreWorkflowListService {
   private async findReadableFlatWorkflows({
     workspaceId,
     reader,
-    matchesFlatWorkflow = () => true,
   }: {
     workspaceId: string;
     reader: CoreWorkflowReader;
-    matchesFlatWorkflow?: (flatWorkflow: FlatWorkflow) => boolean;
   }): Promise<FlatWorkflowWithStatuses[]> {
     const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -221,10 +229,8 @@ export class CoreWorkflowListService {
 
     return Object.values(flatWorkflowMaps.byUniversalIdentifier)
       .filter(isDefined)
-      .filter(
-        (flatWorkflow) =>
-          matchesFlatWorkflow(flatWorkflow) &&
-          isFlatWorkflowReadableByReader({ flatWorkflow, ...reader }),
+      .filter((flatWorkflow) =>
+        isFlatWorkflowReadableByReader({ flatWorkflow, ...reader }),
       )
       .map((flatWorkflow) => ({
         ...flatWorkflow,
