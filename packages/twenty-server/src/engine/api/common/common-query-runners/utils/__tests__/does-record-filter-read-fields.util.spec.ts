@@ -31,4 +31,19 @@ describe('doesRecordFilterReadFields', () => {
       }),
     ).toBe(false);
   });
+
+  it('should find a field compared to through a field reference', () => {
+    expect(
+      doesRecordFilterReadFields({
+        filter: { price: { gtField: 'total' } },
+        fieldNames: FORMULA_FIELD_NAMES,
+      }),
+    ).toBe(true);
+    expect(
+      doesRecordFilterReadFields({
+        filter: { company: { employees: { ltField: 'gadgets.total' } } },
+        fieldNames: FORMULA_FIELD_NAMES,
+      }),
+    ).toBe(true);
+  });
 });

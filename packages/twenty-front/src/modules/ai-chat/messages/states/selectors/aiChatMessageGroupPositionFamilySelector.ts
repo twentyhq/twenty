@@ -18,5 +18,7 @@ export const aiChatMessageGroupPositionFamilySelector =
     areEqual: (previous, next) =>
       previous.isGroupedWithPrevious === next.isGroupedWithPrevious &&
       previous.isGroupedWithNext === next.isGroupedWithNext &&
-      previous.isTimeSharedWithNext === next.isTimeSharedWithNext,
+      previous.isTimeSharedWithNext === next.isTimeSharedWithNext &&
+      previous.isFirstOfDay === next.isFirstOfDay &&
+      previous.isFollowedByNewDay === next.isFollowedByNewDay,
   });

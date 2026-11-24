@@ -3,6 +3,7 @@ import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
 import { addToExpressionDate } from '@/utils/expression-date/addToExpressionDate';
 import { computeExpressionDateDifference } from '@/utils/expression-date/computeExpressionDateDifference';
 import { reduceExpressionNumbers } from '@/utils/expression/reduceExpressionNumbers';
+import { roundExpressionNumber } from '@/utils/expression/roundExpressionNumber';
 import { getExpressionDatePart } from '@/utils/expression-date/getExpressionDatePart';
 import { truncateExpressionDate } from '@/utils/expression-date/truncateExpressionDate';
 import { isValidationRuleDateInRelativeRange } from '@/utils/validation-rule/isValidationRuleDateInRelativeRange';
@@ -89,7 +90,10 @@ export const VALIDATION_RULE_FUNCTIONS = {
     signature: 'roundTo(number, decimals)',
     evaluate: (value: unknown, decimals: unknown) =>
       isNumber(value) && isNumber(decimals)
-        ? Number(value.toFixed(Math.min(Math.max(Math.trunc(decimals), 0), 20)))
+        ? roundExpressionNumber({
+            value,
+            decimals: Math.min(Math.max(Math.trunc(decimals), 0), 20),
+          })
         : null,
   },
   isInRelativeDateRange: {

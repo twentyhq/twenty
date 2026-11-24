@@ -7,12 +7,10 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type ChatThreadMessageSenderHeaderProps = {
   sender: EmailThreadMessageParticipant;
-  receivedAt?: string | null;
 };
 
 export const ChatThreadMessageSenderHeader = ({
   sender,
-  receivedAt,
 }: ChatThreadMessageSenderHeaderProps) => {
   const displayName = getDisplayNameFromParticipant({
     participant: sender,
@@ -28,12 +26,11 @@ export const ChatThreadMessageSenderHeader = ({
           )}
           colorSeed={getEmailParticipantAvatarColorSeed(sender)}
           name={displayName}
-          size="sm"
+          size="md"
           shape="circle"
         />
       }
       name={displayName}
-      createdAt={receivedAt ?? undefined}
     />
   );
 };

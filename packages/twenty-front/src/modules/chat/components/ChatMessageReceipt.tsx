@@ -21,7 +21,7 @@ const StyledReceipt = styled.span<{ isRead: boolean }>`
     isRead
       ? themeCssVariables.color.blue
       : themeCssVariables.font.color.tertiary};
-  display: flex;
+  display: inline-flex;
 `;
 
 type ChatMessageReceiptProps = {
