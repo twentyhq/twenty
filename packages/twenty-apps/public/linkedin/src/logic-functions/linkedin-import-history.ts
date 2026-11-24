@@ -31,7 +31,7 @@ import {
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
 import { type LinkedinSettings } from 'src/types/linkedin-settings.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
-import { getUnipileChat } from 'src/unipile/utils/get-unipile-chat.util';
+import { getUnipileChatIfExists } from 'src/unipile/utils/get-unipile-chat-if-exists.util';
 import { listUnipileChatMessagesPage } from 'src/unipile/utils/list-unipile-chat-messages-page.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
@@ -123,7 +123,12 @@ export const linkedinImportHistoryHandler = async (
     matchedPersonCount: 0,
     createdPersonCount: 0,
     attachmentCount: 0,
-    skippedChatCounts: { GROUP_CHATS_OFF: 0, NO_MESSAGES: 0, NO_CONTACT: 0 },
+    skippedChatCounts: {
+      NOT_SELECTED: 0,
+      GROUP_CHATS_OFF: 0,
+      NO_MESSAGES: 0,
+      NO_CONTACT: 0,
+    },
   };
 
   const buildCurrentProgress = (): LinkedinHistoryImportProgress => ({
@@ -186,6 +191,18 @@ export const linkedinImportHistoryHandler = async (
     return { status: 'PAUSED' };
   };
 
+  const finishChat = async (): Promise<void> => {
+    if (isChatImported) {
+      importedConversationCount += 1;
+    }
+
+    processedChatCount += 1;
+    isChatImported = false;
+    chatCursor = undefined;
+
+    await saveCurrentProgress();
+  };
+
   const importChat = async ({
     listedChat,
     unipileAccountId,
@@ -202,10 +219,17 @@ export const linkedinImportHistoryHandler = async (
     const chat =
       getLinkedinChatCounterparts(listedChat).length > 0
         ? listedChat
-        : await getUnipileChat({
+        : await getUnipileChatIfExists({
             accountId: unipileAccountId,
             chatId: listedChat.id,
           });
+
+    if (!isDefined(chat)) {
+      await finishChat();
+
+      return;
+    }
+
     const counterparts = getLinkedinChatCounterparts(chat);
     const seenCursors = new Set<string>();
 
@@ -260,14 +284,7 @@ export const linkedinImportHistoryHandler = async (
       }
     } while (isDefined(chatCursor));
 
-    if (isChatImported) {
-      importedConversationCount += 1;
-    }
-
-    processedChatCount += 1;
-    isChatImported = false;
-
-    await saveCurrentProgress();
+    await finishChat();
   };
 
   try {

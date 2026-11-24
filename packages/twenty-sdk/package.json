@@ -29,6 +29,11 @@
       "import": "./dist/billing/index.mjs",
       "require": "./dist/billing/index.cjs"
     },
+    "./email": {
+      "types": "./dist/email/index.d.ts",
+      "import": "./dist/email/index.mjs",
+      "require": "./dist/email/index.cjs"
+    },
     "./define": {
       "types": "./dist/define/index.d.ts",
       "import": "./dist/define/index.mjs",
@@ -94,6 +99,9 @@
       ],
       "define": [
         "dist/define/index.d.ts"
+      ],
+      "email": [
+        "dist/email/index.d.ts"
       ],
       "front-component": [
         "dist/front-component/index.d.ts"
