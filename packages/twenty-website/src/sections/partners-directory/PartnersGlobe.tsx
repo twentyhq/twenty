@@ -39,9 +39,10 @@ const FEATURE_MS = 2800;
 const DEGREES = Math.PI / 180;
 
 const HALFTONE = {
-  cellPx: 5,
+  cellPx: 7,
   power: -1.8,
-  dotScale: 0.82,
+  // the fullest cells stretch into a dash the cell's width, so neighbours join
+  dotScale: 1,
   landBase: 0.5,
   landLit: 0.38,
   ocean: 0.47,
@@ -100,7 +101,10 @@ const HALFTONE_VERTEX = /* glsl */ `
   void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 
 // The site's halftone (halftone-pass-shader.ts): one sample per cell, the
-// tone biased by the power; here the tone sets a dot's radius, not a dash.
+// tone biased by the power, drawn as a capsule that grows with the tone: a
+// small dot where the globe is faint (the ocean), a fuller dot in between, a
+// horizontal dash where it is lit (the land), so dots and dashes mix in the
+// same rows as the hero's pattern.
 const HALFTONE_FRAGMENT = /* glsl */ `
   uniform sampler2D tScene; uniform vec2 effectResolution; uniform vec2 logicalResolution;
   uniform float cell; uniform float power; uniform float dotScale; uniform vec3 dotColor;
@@ -119,10 +123,14 @@ const HALFTONE_FRAGMENT = /* glsl */ `
     float level = clamp(tone + power * 0.2357 + near * hoverLift * onSphere, 0.0, 1.0);
     float alpha = 0.0;
     if (level > 0.0001) {
-      float r = level * dotScale;
-      float d = length(fract(frag / cell) - 0.5);
+      vec2 f = fract(frag / cell) - 0.5;
       float aa = 1.0 / cell;
-      alpha = (1.0 - smoothstep(r - aa, r + aa, d)) * smoothstep(0.02, 0.08, scene.a);
+      float roundness = 0.08 + 0.3 * level;
+      // the power leaves the lit land around 0.3-0.5: that range stretches into dashes
+      float stretch = 0.5 * dotScale * smoothstep(0.22, 0.5, level);
+      float d = length(vec2(max(abs(f.x) - stretch, 0.0), f.y));
+      alpha = (1.0 - smoothstep(roundness - aa, roundness + aa, d))
+        * smoothstep(0.02, 0.08, scene.a);
     }
     gl_FragColor = vec4(dotColor * alpha, alpha);
   }`;
