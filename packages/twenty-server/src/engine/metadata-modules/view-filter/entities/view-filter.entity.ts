@@ -2,7 +2,6 @@ import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -88,7 +87,7 @@ export class ViewFilterEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
   @ManyToOne(() => ViewEntity, (view) => view.viewFilters, {

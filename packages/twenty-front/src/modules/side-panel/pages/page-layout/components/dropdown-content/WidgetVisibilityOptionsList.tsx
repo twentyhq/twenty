@@ -4,10 +4,12 @@ import { WIDGET_VISIBILITY_DEVICES } from '@/side-panel/pages/page-layout/consta
 import { useVisibilityLabels } from '@/side-panel/pages/page-layout/hooks/useVisibilityLabels';
 import { type WidgetVisibilityDevice } from '@/side-panel/pages/page-layout/types/WidgetVisibilityDevice';
 import { getWidgetVisibilityDevice } from '@/side-panel/pages/page-layout/utils/getWidgetVisibilityDevice';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type WidgetVisibilityOptionsListProps = {
   pageLayoutId: string;
@@ -25,6 +27,9 @@ export const WidgetVisibilityOptionsList = ({
 }: WidgetVisibilityOptionsListProps) => {
   const { t } = useLingui();
   const visibilityLabels = useVisibilityLabels();
+  const isWidgetConditionalAvailabilityEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED,
+  );
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
@@ -48,7 +53,10 @@ export const WidgetVisibilityOptionsList = ({
     <Dropdown.Section>
       <Dropdown.SelectionGroup
         aria-label={t`Visibility restriction`}
-        value={getWidgetVisibilityDevice(widget)}
+        value={getWidgetVisibilityDevice({
+          widget,
+          isWidgetConditionalAvailabilityEnabled,
+        })}
       >
         {WIDGET_VISIBILITY_DEVICES.map((device) => (
           <Dropdown.OptionItem

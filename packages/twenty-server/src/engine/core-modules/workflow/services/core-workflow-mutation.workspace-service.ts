@@ -549,7 +549,6 @@ export class CoreWorkflowMutationWorkspaceService {
       isSystem: false,
       isPrivate: isPrivate ?? false,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
-      lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
       versionDefinitionHash: null,
       createdAt,
