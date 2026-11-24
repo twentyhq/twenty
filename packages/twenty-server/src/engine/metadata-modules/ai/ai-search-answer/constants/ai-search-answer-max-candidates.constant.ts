@@ -1,0 +1,1 @@
+export const AI_SEARCH_ANSWER_MAX_CANDIDATES = 5;

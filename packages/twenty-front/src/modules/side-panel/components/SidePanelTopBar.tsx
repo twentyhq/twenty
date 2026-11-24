@@ -11,6 +11,7 @@ import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBa
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { useHandleSidePanelBackspace } from '@/side-panel/hooks/useHandleSidePanelBackspace';
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
+import { useSearchOrAskLabel } from '@/side-panel/hooks/useSearchOrAskLabel';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -108,6 +109,7 @@ export const SidePanelTopBar = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useLingui();
+  const searchOrAskLabel = useSearchOrAskLabel();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSidePanelSearch(event.target.value);
@@ -230,14 +232,20 @@ export const SidePanelTopBar = ({
               variant="plain"
               hasFocusRing={false}
               size="sm"
-              aria-label={t`Search`}
+              aria-label={
+                sidePanelPage === SidePanelPages.SearchRecords
+                  ? searchOrAskLabel
+                  : t`Search`
+              }
               data-testid={SIDE_PANEL_FOCUS_ID}
               ref={inputRef}
               value={sidePanelSearch}
               placeholder={
                 sidePanelPage === SidePanelPages.SearchAiChats
                   ? t`Search chat titles...`
-                  : t`Type anything...`
+                  : sidePanelPage === SidePanelPages.SearchRecords
+                    ? searchOrAskLabel
+                    : t`Type anything...`
               }
               onChange={handleSearchChange}
               onKeyDownCapture={handleInputKeyDownCapture}

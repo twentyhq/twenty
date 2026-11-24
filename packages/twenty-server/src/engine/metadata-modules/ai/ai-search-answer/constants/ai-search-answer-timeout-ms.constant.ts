@@ -1,0 +1,1 @@
+export const AI_SEARCH_ANSWER_TIMEOUT_MS = 10000;

@@ -48,10 +48,17 @@ export const useSidePanelSearchRecords = () => {
     }));
   }, [searchRecords, readableObjectMetadataItems]);
 
+  // While loading, searchRecords still holds the previous query's results
+  const areSearchResultsCurrent =
+    !loading && deferredSidePanelSearch === trimmedSidePanelSearch;
+
   return {
     error,
     loading,
     noResults: !searchResultItems.length,
     searchResultItems,
+    areSearchResultsCurrent,
+    trimmedSidePanelSearch,
+    sidePanelSearchObjectFilter,
   };
 };

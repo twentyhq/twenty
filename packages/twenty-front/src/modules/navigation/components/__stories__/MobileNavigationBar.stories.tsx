@@ -59,7 +59,7 @@ export const Default: Story = {
     await expect(await canvas.findByRole('navigation')).toBeVisible();
 
     const home = canvas.getByRole('button', { name: 'Home' });
-    const search = canvas.getByRole('button', { name: 'Search' });
+    const search = canvas.getByRole('button', { name: /^Search/ });
 
     await expect(home).toHaveAttribute('aria-current', 'page');
     await expect(home).not.toHaveAttribute('aria-pressed');

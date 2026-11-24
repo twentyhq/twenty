@@ -7,11 +7,11 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useSearchOrAskLabel } from '@/side-panel/hooks/useSearchOrAskLabel';
 import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
-import { useLingui } from '@lingui/react/macro';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
@@ -57,9 +57,9 @@ const StyledWorkspaceDropdownContainer = styled.div`
 `;
 
 export const NavigationDrawerHeader = () => {
-  const { t } = useLingui();
   const isMobile = useIsMobile();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
+  const searchOrAskLabel = useSearchOrAskLabel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
@@ -70,7 +70,7 @@ export const NavigationDrawerHeader = () => {
       emphasis="standard"
       size={isExpanded ? 'sm' : 'md'}
       onClick={openRecordsSearchPage}
-      aria-label={t`Search`}
+      aria-label={searchOrAskLabel}
     >
       <IconSearch />
     </LightIconButton>

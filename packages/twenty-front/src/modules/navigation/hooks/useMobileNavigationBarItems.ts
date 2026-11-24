@@ -164,7 +164,7 @@ export const useMobileNavigationBarItems = (): {
       }),
       {
         name: 'search',
-        label: t`Search`,
+        label: hasAiPermission ? t`Search or ask` : t`Search`,
         Icon: IconSearch,
         onClick: () => {
           closeSidePanelMenu();

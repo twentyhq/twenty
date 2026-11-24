@@ -1,21 +1,21 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { SidePanelSearchAiAnswerCard } from '@/side-panel/pages/search/components/SidePanelSearchAiAnswerCard';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
 import { SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH } from '@/side-panel/pages/search/constants/SidePanelSearchRecordPreviewWidth';
+import { useOpenSidePanelSearchRecord } from '@/side-panel/pages/search/hooks/useOpenSidePanelSearchRecord';
+import { useSidePanelSearchAiAnswer } from '@/side-panel/pages/search/hooks/useSidePanelSearchAiAnswer';
 import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecordPreviewItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppPath, StandardObjectNameSingular } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -29,13 +29,28 @@ const previewTooltipClass = css`
   padding: 0;
 `;
 
+const StyledAiAnswerContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[1]};
+`;
+
 export const SidePanelSearchRecordsPage = () => {
   const { t } = useLingui();
-  const { searchResultItems, loading, noResults, error } =
-    useSidePanelSearchRecords();
-  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
-  const { closeCommandMenu } = useCloseCommandMenu();
-  const navigate = useNavigate();
+  const {
+    searchResultItems,
+    loading,
+    noResults,
+    error,
+    areSearchResultsCurrent,
+    trimmedSidePanelSearch,
+    sidePanelSearchObjectFilter,
+  } = useSidePanelSearchRecords();
+  const { openSidePanelSearchRecord } = useOpenSidePanelSearchRecord();
+  const { answerState } = useSidePanelSearchAiAnswer({
+    question: trimmedSidePanelSearch,
+    objectFilter: sidePanelSearchObjectFilter,
+    searchResultItems,
+    areSearchResultsCurrent,
+  });
   const isMobile = useIsMobile();
 
   const selectableItemIds = useMemo(
@@ -58,31 +73,18 @@ export const SidePanelSearchRecordsPage = () => {
         loading={loading}
         noResults={noResults}
       >
+        {answerState.status !== 'idle' && (
+          <StyledAiAnswerContainer>
+            <SidePanelSearchAiAnswerCard
+              question={trimmedSidePanelSearch}
+              answerState={answerState}
+            />
+          </StyledAiAnswerContainer>
+        )}
         {searchResultItems.length > 0 && (
           <SidePanelGroup heading={t`Results`}>
             {searchResultItems.map((item) => {
-              const isTaskOrNote = [
-                StandardObjectNameSingular.Task,
-                StandardObjectNameSingular.Note,
-              ].includes(item.objectNameSingular as StandardObjectNameSingular);
-
-              const handleClick = () => {
-                if (isTaskOrNote) {
-                  openRecordInSidePanel({
-                    recordId: item.recordId,
-                    objectNameSingular:
-                      item.objectNameSingular as StandardObjectNameSingular,
-                  });
-                } else {
-                  closeCommandMenu();
-                  navigate(
-                    getAppPath(AppPath.RecordShowPage, {
-                      objectNameSingular: item.objectNameSingular,
-                      objectRecordId: item.recordId,
-                    }),
-                  );
-                }
-              };
+              const handleClick = () => openSidePanelSearchRecord(item);
 
               return (
                 <SelectableListItem
