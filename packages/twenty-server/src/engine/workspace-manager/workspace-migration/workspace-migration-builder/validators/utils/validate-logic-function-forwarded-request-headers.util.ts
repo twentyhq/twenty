@@ -13,7 +13,9 @@ type ValidateLogicFunctionForwardedRequestHeadersArgs = Partial<
     UniversalFlatLogicFunction,
     'httpRouteTriggerSettings' | 'serverRouteTriggerSettings'
   >
->;
+> & {
+  identityAssertionHeaderName?: string;
+};
 
 const isArrayOfStrings = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every(isString);
@@ -21,6 +23,7 @@ const isArrayOfStrings = (value: unknown): value is string[] =>
 export const validateLogicFunctionForwardedRequestHeaders = ({
   httpRouteTriggerSettings,
   serverRouteTriggerSettings,
+  identityAssertionHeaderName,
 }: ValidateLogicFunctionForwardedRequestHeadersArgs): FlatEntityValidationError<LogicFunctionExceptionCode>[] => {
   const httpRouteForwardedRequestHeaders: unknown =
     httpRouteTriggerSettings?.forwardedRequestHeaders ?? [];
@@ -41,10 +44,18 @@ export const validateLogicFunctionForwardedRequestHeaders = ({
   }
 
   const forwardedCredentialHeaderNames = [
-    ...httpRouteForwardedRequestHeaders.filter(isCredentialRequestHeaderName),
+    ...httpRouteForwardedRequestHeaders.filter((headerName) =>
+      isCredentialRequestHeaderName({
+        headerName,
+        identityAssertionHeaderName,
+      }),
+    ),
     ...serverRouteForwardedRequestHeaders.filter(
       (headerName) =>
-        isCredentialRequestHeaderName(headerName) &&
+        isCredentialRequestHeaderName({
+          headerName,
+          identityAssertionHeaderName,
+        }) &&
         headerName.toLowerCase() !==
           SERVER_ROUTE_FORWARDABLE_CREDENTIAL_HEADER_NAME,
     ),

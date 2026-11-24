@@ -132,21 +132,21 @@ export const useSaveRecordTableWidgetViews = () => {
                 fieldMetadataId: filter.fieldMetadataId,
                 operand: filter.operand,
                 value: filter.value,
-                viewFilterGroupId: filter.viewFilterGroupId ?? undefined,
+                viewFilterGroupId: filter.viewFilterGroupId ?? null,
                 positionInViewFilterGroup:
-                  filter.positionInViewFilterGroup ?? undefined,
-                subFieldName: filter.subFieldName ?? undefined,
+                  filter.positionInViewFilterGroup ?? null,
+                subFieldName: filter.subFieldName ?? null,
                 relationTargetFieldMetadataId:
-                  filter.relationTargetFieldMetadataId ?? undefined,
+                  filter.relationTargetFieldMetadataId ?? null,
               })),
               viewFilterGroups: widgetViewDraft.viewFilterGroups.map(
                 (group) => ({
                   id: group.id,
                   parentViewFilterGroupId:
-                    group.parentViewFilterGroupId ?? undefined,
+                    group.parentViewFilterGroupId ?? null,
                   logicalOperator: group.logicalOperator,
                   positionInViewFilterGroup:
-                    group.positionInViewFilterGroup ?? undefined,
+                    group.positionInViewFilterGroup ?? null,
                 }),
               ),
               viewSorts: widgetViewDraft.viewSorts.map((sort) => ({

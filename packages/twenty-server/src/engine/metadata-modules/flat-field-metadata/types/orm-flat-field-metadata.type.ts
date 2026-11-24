@@ -12,7 +12,7 @@ export const ORM_FLAT_FIELD_METADATA_KEYS = [
   'name',
   'label',
   'defaultValue',
-  'options',
+  'fieldMetadataOptionUniversalIdentifiers',
   'settings',
   'isNullable',
   'isUnique',

@@ -42,6 +42,11 @@ msgstr "\"{0}\" زیرفیلد معتبری از \"{1}\" نیست."
 msgid "\"{fieldName}\" received an invalid value."
 msgstr "«{fieldName}» یک مقدار نامعتبر دریافت کرد."
 
+#. js-lingui-id: fx2IXJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "\"{name}\" cannot be used in this visibility restriction"
+msgstr "«{name}» نمی‌تواند در این محدودیت نمایش استفاده شود"
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -116,6 +121,11 @@ msgstr "{hostnameCount} نام میزبان برای دامنه \"{domainName}\"
 msgid "{operationLabel} of {aggregateFieldLabel}"
 msgstr "{operationLabel} از {aggregateFieldLabel}"
 
+#. js-lingui-id: nzKj4z
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "{senderName} in {threadLabel}"
+msgstr "{senderName} در {threadLabel}"
+
 #. js-lingui-id: dmxzg7
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -128,6 +138,18 @@ msgctxt "fieldMetadata.label"
 msgid "24HRS"
 msgstr "۲۴ ساعت"
 
+#. js-lingui-id: Ubly7E
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a {parentType}"
+msgstr "یک مورد منوی ناوبری از نوع {type} نمی‌تواند داخل یک {parentType} قرار گیرد"
+
+#. js-lingui-id: /y6iPL
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-hierarchy.util.ts
+msgid "A {type} navigation menu item cannot be placed inside a built-in section"
+msgstr "یک مورد منوی پیمایش {type} نمی‌تواند درون یک بخش داخلی قرار گیرد"
+
 #. js-lingui-id: OUcoW0
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-email.service.ts
 msgid "A backup code was used to sign in to your account"
@@ -137,6 +159,12 @@ msgstr "برای ورود به حساب شما از یک کد پشتیبان ا�
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
 msgid "A built-in provider already uses this name. Choose another label."
 msgstr "یک ارائه‌دهنده داخلی از قبل از این نام استفاده می‌کند. برچسب دیگری انتخاب کنید."
+
+#. js-lingui-id: paqbMF
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A builtInSectionKey is only allowed on SECTION type"
+msgstr "یک builtInSectionKey فقط برای نوع SECTION مجاز است"
 
 #. js-lingui-id: RsTRse
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -148,6 +176,11 @@ msgstr "ارسال انبوه ایمیل به مخاطبان، همراه با �
 #: src/engine/core-modules/cache-lock/exceptions/cache-lock.exception.ts
 msgid "A cache lock error occurred."
 msgstr "یک خطای قفل کش رخ داد."
+
+#. js-lingui-id: BGPUw0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A calculation on related records cannot be sorted or limited"
+msgstr "یک محاسبه روی رکوردهای مرتبط نمی‌تواند مرتب یا محدود شود"
 
 #. js-lingui-id: BdG91f
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -186,6 +219,11 @@ msgstr "یک فیلتر نمودار فیلدی ندارد"
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
 msgstr "یک فیلتر نمودار از ویجت «{widgetTitle}» شناسه جهانی فراداده فیلد ندارد"
 
+#. js-lingui-id: pSJj6s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A column name cannot be empty"
+msgstr "نام ستون نمی‌تواند خالی باشد"
+
 #. js-lingui-id: aFbjy7
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -208,6 +246,16 @@ msgstr "ارائه‌دهنده اتصال با این نام از قبل برا
 msgid "A connection provider with this name already exists for this application."
 msgstr "ارائه‌دهنده اتصال با این نام از پیش برای این برنامه وجود دارد."
 
+#. js-lingui-id: v8qK2D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot have a related record field"
+msgstr "شمارش رکوردهای مرتبط نمی‌تواند فیلد رکورد مرتبط داشته باشد"
+
+#. js-lingui-id: J6ov1V
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "A count of related records cannot use a field"
+msgstr "شمارش رکوردهای مرتبط نمی‌تواند از یک فیلد استفاده کند"
+
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -219,6 +267,17 @@ msgstr "یک داشبورد"
 #: src/engine/core-modules/application/application-manifest/utils/to-stored-database-event-trigger-settings-or-throw.util.ts
 msgid "A database event trigger in this application is invalid."
 msgstr "یک راه‌انداز رویداد پایگاه داده در این برنامه نامعتبر است."
+
+#. js-lingui-id: RRhkpY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A deactivated field cannot be shown in a column"
+msgstr "یک فیلد غیرفعال نمی‌تواند در یک ستون نمایش داده شود"
+
+#. js-lingui-id: ef/Kdg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A deactivated field cannot be used to filter or sort related records"
+msgstr "از یک فیلد غیرفعال‌شده نمی‌توان برای فیلتر یا مرتب‌سازی رکوردهای مرتبط استفاده کرد"
 
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
@@ -277,6 +336,11 @@ msgstr "پیوند ردیابی‌شده در یک کمپین"
 msgid "A marketing email can only be sent to one recipient at a time, so each person gets their own unsubscribe link."
 msgstr "یک ایمیل بازاریابی فقط می‌تواند هر بار برای یک گیرنده ارسال شود، بنابراین هر شخص پیوند لغو اشتراک خودش را دریافت می‌کند."
 
+#. js-lingui-id: Spm4/x
+#: src/engine/metadata-modules/message-channel/services/application-message-send.service.ts
+msgid "A message needs text or at least one attachment."
+msgstr "یک پیام به متن یا حداقل یک پیوست نیاز دارد."
+
 #. js-lingui-id: gnMqGV
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -304,6 +368,18 @@ msgstr "تداخل نام رخ داد."
 msgid "A name is required for FOLDER type"
 msgstr "برای نوع FOLDER نام الزامی است"
 
+#. js-lingui-id: 7imxfs
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for SECTION type"
+msgstr "برای نوع SECTION نام الزامی است"
+
+#. js-lingui-id: yA/goz
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A name is required for TAB type"
+msgstr "نام برای نوع TAB الزامی است"
+
 #. js-lingui-id: QKjmI8
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "A navigation item cannot carry both a path and a navigation target object"
@@ -319,6 +395,11 @@ msgstr "ویجت رابطه تو در تو باید از چیدمان جدول �
 msgid "A network error occurred while accessing calendar."
 msgstr "هنگام دسترسی به تقویم، خطای شبکه رخ داد."
 
+#. js-lingui-id: EBFh6o
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "A non-canonical view field cannot use the label identifier field"
+msgstr "یک فیلد نمای غیرمتعارف نمی‌تواند از فیلد شناسه برچسب استفاده کند"
+
 #. js-lingui-id: B6P+4g
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -330,6 +411,16 @@ msgstr "یک یادداشت"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "یک هدف یادداشت"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "یک رابطه چندشکلی یک‌به‌چند را نمی‌توان مستقیماً مقایسه کرد؛ برای مقایسه یک فیلد از رکوردهای آن، از طریق رابطه اقدام کنید"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "یک رابطه یک‌به‌چند فقط از عملوندهای IS_EMPTY و IS_NOT_EMPTY پشتیبانی می‌کند؛ برای مقایسه یک فیلد از رکوردهای آن، از طریق رابطه اقدام کنید"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -395,6 +486,31 @@ msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "یک ضبط از جلسه"
 
+#. js-lingui-id: TmGFqW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record field can only be shown on a many-to-one relation field, or on a one-to-many relation field with a relation scope"
+msgstr "فیلد رکورد مرتبط فقط می‌تواند در یک فیلد رابطه چندبه‌یک، یا در یک فیلد رابطه یک‌به‌چند با دامنه رابطه نمایش داده شود"
+
+#. js-lingui-id: OWEGoP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "A related record's relation cannot be shown in a column"
+msgstr "رابطهٔ یک رکورد مرتبط نمی‌تواند در یک ستون نمایش داده شود"
+
+#. js-lingui-id: iBsZzI
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A related record's relation cannot be used to filter or sort"
+msgstr "از رابطه یک رکورد مرتبط نمی‌توان برای فیلتر یا مرتب‌سازی استفاده کرد"
+
+#. js-lingui-id: OrK1uF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "A relation scope can only be set on a one-to-many relation field"
+msgstr "دامنه رابطه فقط می‌تواند روی یک فیلد رابطه یک‌به‌چند تنظیم شود"
+
+#. js-lingui-id: +RRVJJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "A relation scope related record field can only be used on a many-to-one relation field"
+msgstr "فیلد رکورد مرتبطِ دامنه رابطه فقط می‌تواند در یک فیلد رابطه چندبه‌یک استفاده شود"
+
 #. js-lingui-id: bx1He3
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "A required configuration is missing."
@@ -440,6 +556,11 @@ msgstr "مهارتی با این نام از قبل وجود دارد"
 #: src/engine/metadata-modules/skill/skill.exception.ts
 msgid "A skill with this name already exists."
 msgstr "مهارتی با این نام از قبل وجود دارد."
+
+#. js-lingui-id: ESdD/i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "A sort can only use a related record field on a many-to-one relation field"
+msgstr "مرتب‌سازی فقط می‌تواند از فیلد رکورد مرتبط در یک فیلد رابطه چندبه‌یک استفاده کند"
 
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
@@ -504,6 +625,12 @@ msgstr "یک agentChatChannelUniversalIdentifier معتبر برای نوع AGEN
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid agentUniversalIdentifier is required for AGENT type"
 msgstr "برای نوع AGENT، یک agentUniversalIdentifier معتبر لازم است"
+
+#. js-lingui-id: s59CSo
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+#: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
+msgid "A valid builtInSectionKey is required for a built-in SECTION"
+msgstr "برای یک SECTION داخلی، یک builtInSectionKey معتبر لازم است"
 
 #. js-lingui-id: Dwa/Bm
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
@@ -573,10 +700,30 @@ msgstr "خطای فیلد نما رخ داد."
 msgid "A view field group error occurred."
 msgstr "خطایی در گروه فیلد نما رخ داد."
 
+#. js-lingui-id: Aexevl
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be empty, use null to show the default label"
+msgstr "برچسب فیلد نما نمی‌تواند خالی باشد؛ برای نمایش برچسب پیش‌فرض از null استفاده کنید"
+
+#. js-lingui-id: JmypXw
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "A view field label cannot be longer than {IDENTIFIER_MAX_CHAR_LENGTH} characters"
+msgstr "برچسب فیلد نما نمی‌تواند از {IDENTIFIER_MAX_CHAR_LENGTH} نویسه طولانی‌تر باشد"
+
+#. js-lingui-id: syBxwN
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter cannot stay in a view filter group that is being removed"
+msgstr "یک فیلتر نما نمی‌تواند در گروه فیلتر نمایی که در حال حذف شدن است باقی بماند"
+
 #. js-lingui-id: Rth998
 #: src/engine/metadata-modules/view-filter/exceptions/view-filter.exception.ts
 msgid "A view filter error occurred."
 msgstr "خطای فیلتر نما رخ داد."
+
+#. js-lingui-id: yPKHXO
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "A view filter group cannot stay under a parent group that is being removed"
+msgstr "یک گروه فیلتر نما نمی‌تواند زیر گروه والدی که در حال حذف شدن است باقی بماند"
 
 #. js-lingui-id: 2rU/w8
 #: src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception.ts
@@ -609,17 +756,16 @@ msgctxt "objectMetadata.description"
 msgid "A workflow run"
 msgstr "یک اجرای گردش کار"
 
-#. js-lingui-id: W6HvkH
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.description"
-msgid "A workflow version"
-msgstr "یک نسخه گردش کار"
-
 #. js-lingui-id: sDZaHF
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "یک عضو فضای کاری"
+
+#. js-lingui-id: /WlOrK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation needs the field to read on its related records"
+msgstr "یک رابطه عضو فضای کاری به فیلدی برای خواندن در رکوردهای مرتبط خود نیاز دارد"
 
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
@@ -672,7 +818,9 @@ msgid "Access token not found."
 msgstr "توکن دسترسی یافت نشد."
 
 #. js-lingui-id: 4MiH8E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Account Owner"
 msgstr "مالک حساب"
@@ -689,11 +837,10 @@ msgctxt "fieldMetadata.label"
 msgid "Account Owner For Companies"
 msgstr "مالک حساب برای شرکت‌ها"
 
-#. js-lingui-id: YXbAfa
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Accounts"
-msgstr "حساب‌ها"
+#. js-lingui-id: 466gwO
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "Accounts with admin panel or impersonation access cannot join a workspace through SSO. Accept the invitation with another sign-in method."
+msgstr "حساب‌هایی که به پنل مدیریت یا جعل هویت دسترسی دارند، نمی‌توانند از طریق SSO به یک فضای کاری بپیوندند. دعوت‌نامه را با روش ورود دیگری بپذیرید."
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -716,12 +863,6 @@ msgstr "فعال‌سازی"
 msgctxt "commandMenuItem.label"
 msgid "Activate Workflow"
 msgstr "فعال‌سازی گردش کار"
-
-#. js-lingui-id: AnKsxx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Active"
-msgstr "فعال"
 
 #. js-lingui-id: DWczfI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -1208,6 +1349,11 @@ msgstr "یک صادرات از قبل در این فضای کاری در حال 
 msgid "An external service took too long to respond."
 msgstr "پاسخ‌گویی یک سرویس خارجی بیش از حد طول کشید."
 
+#. js-lingui-id: CQVb7k
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "An extra column cannot show the record name"
+msgstr "یک ستون اضافی نمی‌تواند نام رکورد را نمایش دهد"
+
 #. js-lingui-id: P/8dT5
 #: src/engine/metadata-modules/index-metadata/index-field-metadata.exception.ts
 msgid "An index metadata error occurred."
@@ -1299,6 +1445,11 @@ msgstr "یک خطای غیرمنتظره رخ داد."
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
 msgid "An unknown calendar error occurred."
 msgstr "یک خطای ناشناخته تقویم رخ داد."
+
+#. js-lingui-id: 9C858c
+#: src/engine/core-modules/auth/controllers/sso-auth.controller.ts
+msgid "An unverified account already exists for this email. Verify its email or reset its password before accepting the invitation through SSO."
+msgstr "یک حساب تأییدنشده برای این ایمیل از قبل وجود دارد. پیش از پذیرفتن دعوت‌نامه از طریق SSO، ایمیل آن را تأیید کنید یا گذرواژه‌اش را بازنشانی کنید."
 
 #. js-lingui-id: fNIemA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -1521,6 +1672,14 @@ msgstr "دامنه متغیر برنامه پس از ایجاد قابل تغی�
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "برنامه ها نمی توانند این فیلدها را به روزرسانی کنند: {fieldsList}."
 
+#. js-lingui-id: Hvp/vc
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/services/application-source.service.ts
+#: src/engine/core-modules/application/application-manifest/utils/validate-application-source-inventory-or-throw.util.ts
+msgid "Apply or publish the application again to restore its application sources."
+msgstr "برای بازیابی منابع برنامه، برنامه را دوباره اعمال یا منتشر کنید."
+
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
@@ -1558,8 +1717,14 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
 msgstr "برنامه‌ها"
 
+#. js-lingui-id: 8tmqLx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Apps preferences"
+msgstr "تنظیمات برنامه‌ها"
+
 #. js-lingui-id: naCW6Z
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
 msgstr "آوریل"
 
@@ -1568,12 +1733,6 @@ msgstr "آوریل"
 msgctxt "fieldMetadata.label"
 msgid "Archive"
 msgstr "بایگانی"
-
-#. js-lingui-id: 5rUZb3
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Archived"
-msgstr "بایگانی‌شده"
 
 #. js-lingui-id: okfXhQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
@@ -1805,7 +1964,7 @@ msgid "Audit logs require ClickHouse to be configured."
 msgstr "گزارش‌های ممیزی نیاز دارند ClickHouse پیکربندی شده باشد."
 
 #. js-lingui-id: DBHTm/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "August"
 msgstr "اوت"
 
@@ -1896,6 +2055,11 @@ msgstr "Bcc"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
 msgstr "صورتحساب"
+
+#. js-lingui-id: HhE4nB
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Billing arrangement not found."
+msgstr "ترتیب صورتحساب یافت نشد."
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -2039,6 +2203,11 @@ msgstr "شرکت ها، مخاطبان و معاملات خود را از هر �
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
 msgstr "تیم خود را به Twenty بیاورید."
+
+#. js-lingui-id: pYD4lD
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Browser notifications were set up with an outdated key. Reload the page to set them up again."
+msgstr "اعلان‌های مرورگر با یک کلید قدیمی تنظیم شده‌اند. برای تنظیم دوباره آن‌ها، صفحه را بارگذاری مجدد کنید."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -2227,6 +2396,12 @@ msgctxt "fieldMetadata.label"
 msgid "Calendar Event"
 msgstr "رویداد تقویم"
 
+#. js-lingui-id: r6+1Ni
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Calendar event copies synced from this member's calendars"
+msgstr "رونوشت‌های رویداد تقویم همگام‌سازی‌شده از تقویم‌های این عضو"
+
 #. js-lingui-id: OMhck0
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
 msgid "Calendar event creation is not supported for this account."
@@ -2404,12 +2579,6 @@ msgstr "نمای تقویم باید یک فیلد تقویم داشته باش�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr "نمای تقویم باید چیدمان تقویم داشته باشد"
-
-#. js-lingui-id: 0U7DBn
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Calendars"
-msgstr "تقویم‌ها"
 
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2717,6 +2886,11 @@ msgstr "نمی‌توان گزاره را برای تغییر نقش آن از {
 msgid "Cannot remove the last admin from the workspace."
 msgstr "نمی‌توان آخرین مدیر را از فضای کاری حذف کرد."
 
+#. js-lingui-id: sPYPrv
+#: src/engine/permissions/permissions.exception.ts
+msgid "Cannot remove the last server admin. Grant server admin access to another user in the Admin Panel first."
+msgstr "نمی‌توان آخرین مدیر سرور را حذف کرد. ابتدا به کاربر دیگری در پنل مدیریت دسترسی مدیر سرور بدهید."
+
 #. js-lingui-id: iI2Fqp
 #. placeholder {0}: connectedAccount.handle
 #. placeholder {1}: emailingDomain.domain
@@ -2960,6 +3134,11 @@ msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "گفت‌وگوهای مرتبط با فرصت"
 
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "بررسی خالی بودن یک رابطهٔ یک‌به‌چند، به پیمایش‌های رابطه در گزاره‌های مجوز سطح ردیف نیاز دارد"
+
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
 msgid "Choose an active tab and a widget position matching its layout mode."
@@ -2974,6 +3153,11 @@ msgstr "یک نوع فعالیت خط زمانی موجود را برای باز
 #: src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "یک شخص یا یک نقش را برای اشتراک گذاری انتخاب کنید."
+
+#. js-lingui-id: IkeRn2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field to read on the related records"
+msgstr "فیلدی را برای خواندن در رکوردهای مرتبط انتخاب کنید"
 
 #. js-lingui-id: dRdO/y
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -3373,6 +3557,7 @@ msgstr "حساب متصل «{connectedAccountId}» هیچ کانال تقویم�
 #. js-lingui-id: /OJTzk
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
 #: src/engine/metadata-modules/connected-account/connected-account.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Connected account not found."
 msgstr "حساب متصل یافت نشد."
 
@@ -3594,8 +3779,8 @@ msgid "Core workflow id"
 msgstr "شناسه گردش کار اصلی"
 
 #. js-lingui-id: WkctC4
+#: src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
 msgstr "شناسه نسخه گردش کار اصلی"
@@ -3836,7 +4021,6 @@ msgstr "ایجادشده توسط"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Created by"
@@ -3882,7 +4066,6 @@ msgstr "ایجاد یک رکورد از شیء خصوصی به آرگومان sh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Creation date"
@@ -3918,7 +4101,6 @@ msgstr "تاریخ ایجاد"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Creation date"
@@ -4006,7 +4188,6 @@ msgstr "شیء سفارشی فاقد فیلد شناسه برچسب است."
 #. js-lingui-id: iHlVsm
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/permissions/permissions.exception.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "نقش‌های سفارشی بخشی از طرح سازمان هستند."
 
@@ -4140,7 +4321,6 @@ msgstr "قالب تاریخ"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Date when the record was deleted"
@@ -4163,12 +4343,6 @@ msgstr "غیرفعال‌سازی"
 msgctxt "commandMenuItem.label"
 msgid "Deactivate Workflow"
 msgstr "غیرفعال‌سازی گردش کار"
-
-#. js-lingui-id: GuGzWG
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Deactivated"
-msgstr "غیرفعال‌شده است."
 
 #. js-lingui-id: 3jX0AP
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -4211,7 +4385,7 @@ msgid "Deals created this month"
 msgstr "معامله‌های ایجادشده در این ماه"
 
 #. js-lingui-id: r6zgGo
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "December"
 msgstr "دسامبر"
 
@@ -4341,8 +4515,8 @@ msgid "Default Task Layout"
 msgstr "طرح‌بندی پیش‌فرض وظیفه"
 
 #. js-lingui-id: GGNmm+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
 msgid "Default value \"{defaultValue}\" must be one of the option values"
 msgstr "مقدار پیش‌فرض \"{defaultValue}\" باید یکی از مقادیر گزینه‌ها باشد."
 
@@ -4462,7 +4636,6 @@ msgstr "حذف‌شده در"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Deleted at"
@@ -4666,7 +4839,6 @@ msgstr "نقطه و ویرگول"
 
 #. js-lingui-id: Hw0zHo
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Draft"
 msgstr "پیش‌نویس"
@@ -4951,12 +5123,6 @@ msgstr "تأیید ایمیل الزامی نیست."
 msgid "Email verification not required."
 msgstr "تأیید ایمیل الزامی نیست."
 
-#. js-lingui-id: zhPcjs
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Emails"
-msgstr "ایمیل‌ها"
-
 #. js-lingui-id: nWIjgD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -5084,6 +5250,11 @@ msgstr "غنی‌سازی"
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "Enter a name between 1 and {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} characters and supported assistant appearance options."
 msgstr "نامی بین ۱ تا {AI_CHAT_ASSISTANT_DISPLAY_NAME_MAX_LENGTH} نویسه و گزینه‌های پشتیبانی‌شده برای ظاهر دستیار وارد کنید."
+
+#. js-lingui-id: 2h1oP1
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Enter an API key."
+msgstr "یک کلید API وارد کنید."
 
 #. js-lingui-id: +RIetY
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -5227,7 +5398,6 @@ msgstr "شرکت‌کنندگان رویداد"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Event target"
 msgstr "هدف رویداد"
@@ -5352,6 +5522,11 @@ msgstr "شناسه خارجی ربات"
 msgctxt "fieldMetadata.label"
 msgid "External Recording ID"
 msgstr "شناسه خارجی ضبط"
+
+#. js-lingui-id: /P9IwO
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Extra columns are not supported here"
+msgstr "ستون‌های اضافی در اینجا پشتیبانی نمی‌شوند"
 
 #. js-lingui-id: K9t/v4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -5484,9 +5659,14 @@ msgid "Feature configuration not found."
 msgstr "پیکربندی قابلیت یافت نشد."
 
 #. js-lingui-id: 4lgLew
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "February"
 msgstr "فوریه"
+
+#. js-lingui-id: OxV2Jx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" cannot be compared to workspace member field \"{workspaceMemberFieldName}\", their types are not compatible"
+msgstr "فیلد \"{fieldName}\" با فیلد عضو فضای کاری \"{workspaceMemberFieldName}\" قابل مقایسه نیست، زیرا نوع‌های آن‌ها سازگار نیستند"
 
 #. js-lingui-id: V1MVzr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -5498,11 +5678,6 @@ msgstr "فیلد \"{fieldName}\" به شیء رسیده از طریق رابطه
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "فیلد \"{fieldName}\" یک رابطه چندبه‌یک نیست و ستونی برای اتصال جهت مقایسه ندارد"
 
-#. js-lingui-id: pxJKic
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "Field \"{fieldName}\" takes a single value with operand \"{operand}\", it cannot be compared to the list held by workspace member field \"{workspaceMemberFieldName}\""
-msgstr "فیلد \"{fieldName}\" با عملگر \"{operand}\" یک مقدار تکی می‌پذیرد و نمی‌تواند با فهرست نگهداری‌شده توسط فیلد عضو فضای کاری \"{workspaceMemberFieldName}\" مقایسه شود"
-
 #. js-lingui-id: XZvE/9
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{relationFieldName}\" is not a relation"
@@ -5512,6 +5687,11 @@ msgstr "فیلد \"{relationFieldName}\" یک رابطه نیست"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "فیلد \"{workspaceMemberFieldName}\" جزو فیلدهای شیء workspaceMember نیست؛ گزاره هرگز اعمال نخواهد شد"
+
+#. js-lingui-id: moiE3i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
+msgstr "فیلد \"{workspaceMemberRelationFieldName}\" یک رابطه یک به چند از شیء workspaceMember نیست"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -5769,7 +5949,6 @@ msgstr "فیلد مورد استفاده برای جستجوی تمام‌متن
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Field used for full-text search"
@@ -5999,6 +6178,11 @@ msgstr "شناسه عضو اول پیام مستقیم"
 msgid "First friendly message"
 msgstr "اولین پیام دوستانه"
 
+#. js-lingui-id: 0QhRwZ
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "First name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "نام باید حداکثر {WORKSPACE_MEMBER_NAME_MAX_LENGTH} نویسه باشد."
+
 #. js-lingui-id: BUBVGN
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
@@ -6009,7 +6193,6 @@ msgstr "جریان"
 
 #. js-lingui-id: wMVBTa
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Flow"
@@ -6050,6 +6233,11 @@ msgstr "نام فیلدهای اقدام فرم باید یکتا باشد"
 msgid "Form action must have at least one field"
 msgstr "اقدام فرم باید حداقل یک فیلد داشته باشد"
 
+#. js-lingui-id: CjVkbV
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "Former member"
+msgstr "عضو پیشین"
+
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
 msgid "Forwarded request headers must be a list of header names"
@@ -6066,7 +6254,7 @@ msgid "forwardedRequestHeaders must be an array of strings"
 msgstr "forwardedRequestHeaders باید آرایه ای از رشته ها باشد"
 
 #. js-lingui-id: 39y5bn
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Friday"
 msgstr "جمعه"
 
@@ -6240,6 +6428,11 @@ msgstr "تابع یافت نشد."
 msgid "Function provider is busy. Try again in a few minutes."
 msgstr "ارائه‌دهنده تابع مشغول است. چند دقیقه دیگر دوباره تلاش کنید."
 
+#. js-lingui-id: xSrz+r
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Functions cannot run while the workspace is suspended."
+msgstr "توابع در حالی که فضای کاری معلق است نمی‌توانند اجرا شوند."
+
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"
@@ -6266,7 +6459,6 @@ msgstr "عمومی"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-task-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "General"
@@ -6295,12 +6487,6 @@ msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
 msgstr "رفتن به {objectLabelPlural}"
 
-#. js-lingui-id: LZngY5
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Accounts Settings"
-msgstr "رفتن به تنظیمات حساب‌ها"
-
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6313,6 +6499,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
 msgstr "رفتن به تنظیمات هوش مصنوعی"
 
+#. js-lingui-id: TndVqR
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Apps preferences"
+msgstr "رفتن به تنظیمات برنامه‌ها"
+
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6324,12 +6516,6 @@ msgstr "رفتن به تنظیمات برنامه‌ها"
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
 msgstr "رفتن به تنظیمات صورت‌حساب"
-
-#. js-lingui-id: BKhayt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Calendars Settings"
-msgstr "رفتن به تنظیمات تقویم‌ها"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6354,12 +6540,6 @@ msgstr "رفتن به تنظیمات توسعه‌دهندگان"
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
 msgstr "رفتن به تنظیمات دامنه‌ها"
-
-#. js-lingui-id: gawQTB
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Go to Emails Settings"
-msgstr "رفتن به تنظیمات ایمیل‌ها"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -6438,7 +6618,9 @@ msgstr "شناسه کاربری"
 
 #. js-lingui-id: 86G6IW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Handle"
@@ -6448,6 +6630,18 @@ msgstr "شناسه کاربری"
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
 msgid "Handle aliases are required."
 msgstr "نام‌های مستعار handle الزامی هستند."
+
+#. js-lingui-id: x9jVPQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the calendar this event was synced from"
+msgstr "شناسه تقویمی که این رویداد از آن همگام‌سازی شده است"
+
+#. js-lingui-id: fC7TD7
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Handle of the mailbox this message was synced from"
+msgstr "شناسه صندوق پستی‌ای که این پیام از آن همگام‌سازی شده است"
 
 #. js-lingui-id: icnIAm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -6558,7 +6752,6 @@ msgstr "iCal UID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "ID"
@@ -6602,7 +6795,6 @@ msgstr "شناسه"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "ID"
@@ -7106,7 +7298,7 @@ msgstr "فیلتر نامعتبر: عملگر \"{operator}\" به یک آرای�
 
 #. js-lingui-id: xxcw3g
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: \"{relationFieldName}\" can only reference the record the relation filter starts from"
 msgstr "فیلتر نامعتبر: \"{relationFieldName}\" فقط می‌تواند به رکوردی ارجاع دهد که فیلتر رابطه از آن شروع می‌شود"
 
@@ -7141,7 +7333,7 @@ msgid "Invalid filter: filtering by relation field \"{key}\" is not supported"
 msgstr "فیلتر نامعتبر: فیلتر کردن بر اساس فیلد رابطه \"{key}\" پشتیبانی نمی‌شود"
 
 #. js-lingui-id: wi8qrB
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Invalid filter: the field to compare with was not found"
 msgstr "فیلتر نامعتبر: فیلدی که باید با آن مقایسه شود پیدا نشد"
 
@@ -7695,6 +7887,11 @@ msgstr "viewUniversalIdentifier برای ویجت فیلدها نامعتبر ا
 msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
 msgstr "viewUniversalIdentifier برای ویجت فیلدهای \"{widgetTitle}\" نامعتبر است. UUID معتبری مورد انتظار است"
 
+#. js-lingui-id: PwvY87
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
+msgstr "محدودیت نمایش نامعتبر است: {untranslatedErrorMessage}"
+
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
 msgid "Invalid webhook input."
@@ -7840,7 +8037,7 @@ msgid "IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENT
 msgstr "IS_CONFIG_VARIABLES_IN_DB_ENABLED در سرور شما false است. لطفاً ENTERPRISE_KEY را به‌صورت دستی به فایل .env خود اضافه کنید."
 
 #. js-lingui-id: rjyWPb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "January"
 msgstr "ژانویه"
 
@@ -7873,18 +8070,6 @@ msgctxt "fieldMetadata.label"
 msgid "Joining"
 msgstr "در حال پیوستن"
 
-#. js-lingui-id: SPutbd
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "JSON object to provide steps"
-msgstr "شیء JSON برای ارائه مراحل"
-
-#. js-lingui-id: aXjVR4
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "JSON object to provide trigger"
-msgstr "شیء JSON برای ارائه محرک"
-
 #. js-lingui-id: eCBMag
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-response-format.util.ts
 msgid "JSON response format requires a schema"
@@ -7897,7 +8082,7 @@ msgid "JSON value for event details"
 msgstr "مقدار JSON برای جزئیات رویداد"
 
 #. js-lingui-id: u4ex5r
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "July"
 msgstr "ژوئیه"
 
@@ -7932,7 +8117,7 @@ msgid "Junction target field not found"
 msgstr "فیلد هدف اتصال یافت نشد."
 
 #. js-lingui-id: zeEQd/
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "June"
 msgstr "ژوئن"
 
@@ -8082,6 +8267,11 @@ msgctxt "fieldMetadata.label"
 msgid "Last message sender"
 msgstr "فرستنده آخرین پیام"
 
+#. js-lingui-id: bMq9eP
+#: src/engine/core-modules/user/utils/get-workspace-member-name-too-long-message.util.ts
+msgid "Last name must be at most {WORKSPACE_MEMBER_NAME_MAX_LENGTH} characters."
+msgstr "نام خانوادگی باید حداکثر {WORKSPACE_MEMBER_NAME_MAX_LENGTH} نویسه باشد."
+
 #. js-lingui-id: R2LOsP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8122,7 +8312,6 @@ msgstr "آخرین زمان تغییر پیوند"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Last time the record was changed"
@@ -8157,7 +8346,6 @@ msgstr "آخرین زمانی که رکورد تغییر کرده است"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Last update"
@@ -8447,7 +8635,7 @@ msgid "Many validation errors"
 msgstr "خطاهای اعتبارسنجی متعدد"
 
 #. js-lingui-id: hg6l4j
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
 msgstr "مارس"
 
@@ -8480,6 +8668,11 @@ msgstr "علامت گذاری به عنوان خوانده نشده"
 msgctxt "commandMenuItem.shortLabel"
 msgid "Mark as unread"
 msgstr "علامت گذاری به عنوان خوانده نشده"
+
+#. js-lingui-id: pnNfW0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "Mark thread as read logic function \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" was not found in this application"
+msgstr "تابع منطق علامت‌گذاری رشته به‌عنوان خوانده‌شده \"{markThreadAsReadLogicFunctionUniversalIdentifier}\" در این برنامه یافت نشد"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -8518,7 +8711,7 @@ msgid "maxNumberOfValues must be defined in settings and be a number greater tha
 msgstr "maxNumberOfValues باید در تنظیمات تعریف شده باشد و عددی بزرگ‌تر از 0 و کوچک‌تر یا مساوی {FILES_FIELD_MAX_NUMBER_OF_VALUES} باشد."
 
 #. js-lingui-id: 3JzsDb
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "May"
 msgstr "مه"
 
@@ -8673,6 +8866,11 @@ msgctxt "objectMetadata.labelSingular"
 msgid "Message"
 msgstr "پیام"
 
+#. js-lingui-id: 2/+56a
+#: src/engine/metadata-modules/message-channel/message-channel.exception.ts
+msgid "Message attachments could not be saved. Please retry."
+msgstr "پیوست‌های پیام ذخیره نشدند. لطفاً دوباره تلاش کنید."
+
 #. js-lingui-id: tMSida
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-thread-standard-flat-field-metadata.util.ts
@@ -8744,6 +8942,12 @@ msgstr "ارتباط‌های پیام کانال پیام"
 #: src/engine/metadata-modules/message-channel/message-channel.exception.ts
 msgid "Message channel not found."
 msgstr "کانال پیام یافت نشد."
+
+#. js-lingui-id: 7lDI1E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Message copies synced from this member's mailboxes"
+msgstr "رونوشت‌های پیام همگام‌سازی‌شده از صندوق‌های پستی این عضو"
 
 #. js-lingui-id: TkRloV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
@@ -9159,7 +9363,7 @@ msgid "Model ID cannot be empty"
 msgstr "شناسه مدل نمی‌تواند خالی باشد"
 
 #. js-lingui-id: hty0d5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Monday"
 msgstr "دوشنبه"
 
@@ -9208,7 +9412,6 @@ msgstr "اولین داشبورد من"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Name"
@@ -9352,6 +9555,11 @@ msgstr "جدید"
 msgid "New backup codes were generated for your account"
 msgstr "کدهای پشتیبان جدید برای حساب شما ایجاد شدند"
 
+#. js-lingui-id: hIQkLb
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New chat"
+msgstr "گفت‌وگوی جدید"
+
 #. js-lingui-id: y2lV0S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -9368,6 +9576,11 @@ msgstr "گفتگوی جدید"
 #: src/engine/core-modules/user/services/user.service.ts
 msgid "New email must be different from current email"
 msgstr "ایمیل جدید باید با ایمیل فعلی متفاوت باشد"
+
+#. js-lingui-id: mTBAsF
+#: src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-web-push-notification.util.ts
+msgid "New message"
+msgstr "پیام جدید"
 
 #. js-lingui-id: nXXBKB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -9517,6 +9730,11 @@ msgstr "هیچ گیرنده معتبری مشخص نشده است"
 msgid "No verified sending domain matches this from address."
 msgstr "هیچ دامنه ارسال تأییدشده‌ای با این نشانی فرستنده مطابقت ندارد."
 
+#. js-lingui-id: HoTzOf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
+msgid "Non-canonical view fields are not supported in widget views"
+msgstr "فیلدهای نمای غیرمتعارف در نماهای ویجت پشتیبانی نمی‌شوند"
+
 #. js-lingui-id: l+hUq9
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "None of the people you picked can reply in this chat. Add {AGENT_CHAT_ASSISTANT_NAME} or someone who can reply."
@@ -9550,12 +9768,6 @@ msgstr "ضبط نشده"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Not Set"
 msgstr "تنظیم نشده"
-
-#. js-lingui-id: H1P40W
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Not started"
-msgstr "شروع نشده"
 
 #. js-lingui-id: O2bgDc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -9691,7 +9903,7 @@ msgid "NoteTarget target"
 msgstr "هدف NoteTarget"
 
 #. js-lingui-id: t9QlBd
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "November"
 msgstr "نوامبر"
 
@@ -9953,7 +10165,7 @@ msgid "Objects, fields and views adapt to the way your team works."
 msgstr "اشیا، فیلدها و نماها با شیوه کار تیم شما سازگار می‌شوند."
 
 #. js-lingui-id: dzQfDY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "October"
 msgstr "اکتبر"
 
@@ -9988,10 +10200,30 @@ msgstr "یک یا چند URI بازهدایت نامعتبر هستند."
 msgid "One or more requested scopes are invalid."
 msgstr "یک یا چند محدوده درخواستی نامعتبر هستند."
 
+#. js-lingui-id: 7bNnyv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only a column linking to one record, or a filtered column of related records, can show a field of the related records"
+msgstr "فقط ستونی که به یک رکورد پیوند دارد، یا ستونی فیلترشده از رکوردهای مرتبط، می‌تواند فیلدی از رکوردهای مرتبط را نمایش دهد"
+
+#. js-lingui-id: RryrSe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only a column listing related records can filter, sort or limit them"
+msgstr "فقط ستونی که رکوردهای مرتبط را فهرست می‌کند می‌تواند آن‌ها را فیلتر، مرتب یا محدود کند"
+
 #. js-lingui-id: cgnQHj
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Only a draft or scheduled campaign can be sent."
 msgstr "فقط یک کمپین پیش‌نویس یا زمان‌بندی‌شده قابل ارسال است."
+
+#. js-lingui-id: 82FEG0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Only a field linking to one record can be sorted by a field of that record"
+msgstr "فقط فیلدی که به یک رکورد پیوند دارد می‌تواند بر اساس فیلدی از آن رکورد مرتب شود"
+
+#. js-lingui-id: FnGPJ0
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Only a field linking to one record can use a field of that record"
+msgstr "فقط فیلدی که به یک رکورد پیوند دارد می‌تواند از فیلدی از آن رکورد استفاده کند"
 
 #. js-lingui-id: v581MX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-nested-predicate-group-operation-errors.util.ts
@@ -10007,6 +10239,26 @@ msgstr "فقط کمپین زمان‌بندی‌شده یا در حال ارسا
 #: src/engine/core-modules/two-factor-authentication/services/two-factor-authentication-recovery.service.ts
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "فقط یک مدیر سرور می تواند کدهای بازیابی این عضو را مدیریت کند."
+
+#. js-lingui-id: NcQgJA
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
+msgid "Only a workspace member can change who sees a workflow"
+msgstr "فقط یک عضو فضای کاری می‌تواند تعیین کند چه کسی یک گردش کار را می‌بیند"
+
+#. js-lingui-id: yT1QOm
+#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
+msgid "Only a workspace member can create a private agent."
+msgstr "فقط یک عضو فضای کاری می‌تواند یک عامل خصوصی ایجاد کند."
+
+#. js-lingui-id: VBcVkv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only added columns can filter, sort or limit related records"
+msgstr "فقط ستون‌های افزوده‌شده می‌توانند رکوردهای مرتبط را فیلتر، مرتب یا محدود کنند"
+
+#. js-lingui-id: VrE3y3
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only added columns can show a field of the related record"
+msgstr "فقط ستون‌های افزوده‌شده می‌توانند فیلدی از رکورد مرتبط را نمایش دهند"
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -10028,6 +10280,11 @@ msgstr "فقط می‌توان برنامه‌های منتشرشده در npm �
 msgid "Only applications synced from local source can be exported."
 msgstr "فقط برنامه‌هایی که از منبع محلی همگام‌سازی شده‌اند قابل صادر کردن هستند."
 
+#. js-lingui-id: 8t36/D
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Only count, sum, average, min and max can aggregate related records"
+msgstr "فقط شمارش، جمع، میانگین، کمینه و بیشینه می‌توانند رکوردهای مرتبط را تجمیع کنند"
+
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Only error"
@@ -10037,6 +10294,16 @@ msgstr "فقط خطا"
 #: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "فقط محدودیت‌های فیلد مجاز هستند."
+
+#. js-lingui-id: KmZMUH
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Only non-canonical view fields can have a relation scope"
+msgstr "فقط فیلدهای نمای غیرمتعارف می‌توانند دامنه رابطه داشته باشند"
+
+#. js-lingui-id: Qtc9lt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+msgid "Only non-canonical view fields can show a related record field"
+msgstr "فقط فیلدهای نمای غیرمتعارف می‌توانند یک فیلد رکورد مرتبط را نمایش دهند"
 
 #. js-lingui-id: xzfBXd
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-tab-viewport-constraints.util.ts
@@ -10049,8 +10316,14 @@ msgstr "در هر زبانه فقط یک ویجت تمام‌ارتفاع مجا
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "فقط برنامه ای که مالک این عامل است می تواند ماشه های آن را تغییر دهد"
 
+#. js-lingui-id: 2ztmK7
+#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Only the member who owns an agent can change who sees it."
+msgstr "فقط عضوی که مالک یک عامل است می‌تواند مشخص کند چه کسی آن را می‌بیند."
+
 #. js-lingui-id: MPDvEo
-#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "فقط شخصی که این گردش کار را ایجاد کرده است می‌تواند تعیین کند چه کسانی آن را ببینند"
 
@@ -10217,6 +10490,12 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "مرحله فرصت"
 
+#. js-lingui-id: dciESL
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
+msgstr "گزینه \"{optionLabel}\" همراه با فیلد ارائه می‌شود و قابل حذف نیست. به‌جای آن غیرفعالش کنید."
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10233,12 +10512,6 @@ msgstr "شناسه گزینه نامعتبر است"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-input-options.util.ts
 msgid "Option id is required"
 msgstr "شناسه گزینه الزامی است"
-
-#. js-lingui-id: ove8Z3
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-option-ids-are-universal-identifiers.util.ts
-msgid "Option id must be a lowercase UUID of version 4 or later"
-msgstr "شناسه گزینه باید یک UUID نسخه ۴ یا بالاتر با حروف کوچک باشد"
 
 #. js-lingui-id: //eyK1
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-label.util.ts
@@ -10528,6 +10801,17 @@ msgstr "گروه گزاره مجوز در سطح ردیف والد یافت نش
 msgid "Parent view filter group not found"
 msgstr "گروه فیلتر نمای والد یافت نشد"
 
+#. js-lingui-id: Nvm/cW
+#: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
+msgid "parentId and folderId must match. folderId is deprecated, use parentId."
+msgstr "parentId و folderId باید مطابقت داشته باشند. folderId منسوخ شده است؛ از parentId استفاده کنید."
+
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "شرکت‌کنندگان"
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -10816,6 +11100,11 @@ msgctxt "fieldMetadata.label"
 msgid "Phones"
 msgstr "تلفن‌ها"
 
+#. js-lingui-id: WPKlX/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "Pick a field of the related records to calculate on"
+msgstr "یک فیلد از رکوردهای مرتبط را برای محاسبه انتخاب کنید"
+
 #. js-lingui-id: 99/eie
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Pick a list in the To field first."
@@ -10947,7 +11236,6 @@ msgstr "نقطه تماس"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Position"
@@ -10992,6 +11280,11 @@ msgstr "مقدار گزاره برای این عملوند معتبر نیست"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicates reaching a field through a relation are not enabled for this workspace"
 msgstr "گزاره‌هایی که از طریق یک رابطه به فیلدی می‌رسند برای این فضای کاری فعال نیستند"
+
+#. js-lingui-id: v5akl/
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reading the current member through a relation are not enabled for this workspace"
+msgstr "گزاره‌های خواندن عضو فعلی از طریق یک رابطه برای این فضای کاری فعال نیستند"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -11272,6 +11565,11 @@ msgctxt "fieldMetadata.label"
 msgid "Read and write"
 msgstr "خواندن و نوشتن"
 
+#. js-lingui-id: qYjUEb
+#: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+msgid "Read File"
+msgstr "خواندن فایل"
+
 #. js-lingui-id: xrwkkT
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11421,6 +11719,16 @@ msgctxt "fieldMetadata.description"
 msgid "Recording summary"
 msgstr "خلاصه ضبط"
 
+#. js-lingui-id: vyBbUK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Records cannot be sorted by a deactivated field"
+msgstr "رکوردها را نمی‌توان بر اساس یک فیلد غیرفعال مرتب کرد"
+
+#. js-lingui-id: PbYQoA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "Records cannot be sorted by a relation of the related record"
+msgstr "رکوردها را نمی‌توان بر اساس رابطه‌ای از رکورد مرتبط مرتب کرد"
+
 #. js-lingui-id: BlbWk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -11446,8 +11754,8 @@ msgid "Reference to the core workflow row"
 msgstr "ارجاع به ردیف اصلی گردش کار"
 
 #. js-lingui-id: avBuTv
+#: src/database/commands/upgrade-version-command/2-22/utils/build-legacy-workflow-version-core-workflow-version-id-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
 msgstr "ارجاع به ردیف اصلی workflowVersion"
@@ -11543,6 +11851,36 @@ msgstr "شیء مسیر رکورد مرتبط یافت نشد"
 msgid "Related record paths require the Organization plan."
 msgstr "مسیرهای رکورد مرتبط به طرح سازمان نیاز دارند."
 
+#. js-lingui-id: Kch20t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records can only be filtered or sorted by their own fields"
+msgstr "رکوردهای مرتبط فقط می‌توانند بر اساس فیلدهای خودشان فیلتر یا مرتب شوند"
+
+#. js-lingui-id: GIT0tY
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Related records cannot be filtered or sorted by a list of records"
+msgstr "رکوردهای مرتبط نمی‌توانند بر اساس یک فهرست از رکوردها فیلتر یا مرتب شوند"
+
+#. js-lingui-id: IyP1Db
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Related records filter groups are invalid"
+msgstr "گروه‌های فیلتر رکوردهای مرتبط نامعتبر هستند"
+
+#. js-lingui-id: HbwlWt
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Related records filters are invalid"
+msgstr "فیلترهای رکوردهای مرتبط نامعتبر هستند"
+
+#. js-lingui-id: SV7HLW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Related records sort direction should be ascending or descending"
+msgstr "جهت مرتب‌سازی رکوردهای مرتبط باید صعودی یا نزولی باشد"
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11588,20 +11926,20 @@ msgid "Relation field target metadata not found"
 msgstr "فراداده هدف فیلد رابطه یافت نشد."
 
 #. js-lingui-id: HmNKeM
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"
 msgstr "فیلتر رابطه نادرست پیکربندی شده است"
 
 #. js-lingui-id: 1RF4/e
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filter is not supported here"
 msgstr "فیلتر رابطه در اینجا پشتیبانی نمی‌شود"
 
 #. js-lingui-id: L8AY9P
 #: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
-#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
+#: src/engine/api/common/common-query-parsers/common-query-filter/common-query-filter-field.parser.ts
 msgid "Relation filters can only traverse one relation deep"
 msgstr "فیلترهای رابطه فقط می‌توانند یک سطح از رابطه را پیمایش کنند"
 
@@ -11609,6 +11947,66 @@ msgstr "فیلترهای رابطه فقط می‌توانند یک سطح از 
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Relation is not enabled for this field."
 msgstr "رابطه برای این فیلد فعال نیست."
+
+#. js-lingui-id: 7ZohXD
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope can only have one root filter group"
+msgstr "دامنه رابطه فقط می‌تواند یک گروه فیلتر ریشه داشته باشد"
+
+#. js-lingui-id: cvmKqs
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields cannot be one-to-many relations"
+msgstr "فیلدهای دامنه رابطه نمی‌توانند رابطه‌های یک‌به‌چند باشند"
+
+#. js-lingui-id: 9w3/Xr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must be active"
+msgstr "فیلدهای دامنه رابطه باید فعال باشند"
+
+#. js-lingui-id: NmTkV8
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "Relation scope fields must belong to the relation target object"
+msgstr "فیلدهای دامنه رابطه باید به شیء هدف رابطه تعلق داشته باشند"
+
+#. js-lingui-id: ZTDFle
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group has an invalid logical operator"
+msgstr "گروه فیلتر دامنه رابطه یک عملگر منطقی نامعتبر دارد"
+
+#. js-lingui-id: tY8Auj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group ids must be unique UUIDs"
+msgstr "شناسه‌های گروه فیلتر دامنه رابطه باید UUIDهای یکتا باشند"
+
+#. js-lingui-id: /OizQh
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter group not found"
+msgstr "گروه فیلتر دامنه رابطه پیدا نشد"
+
+#. js-lingui-id: LHu9vR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter group parent not found"
+msgstr "والد گروه فیلتر دامنه رابطه پیدا نشد"
+
+#. js-lingui-id: FrK0wr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter-groups.util.ts
+msgid "Relation scope filter groups can only be nested one level deep"
+msgstr "گروه‌های فیلتر دامنه رابطه فقط می‌توانند در یک سطح تو در تو باشند"
+
+#. js-lingui-id: aNv4KU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-filter.util.ts
+msgid "Relation scope filter ids must be unique UUIDs"
+msgstr "شناسه‌های فیلتر دامنه رابطه باید UUIDهای یکتا باشند"
+
+#. js-lingui-id: cc0+ro
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "Relation scope limit must be an integer between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
+msgstr "حد دامنه رابطه باید یک عدد صحیح بین 1 و {QUERY_MAX_RECORDS_FROM_RELATION} باشد"
+
+#. js-lingui-id: xeyqWP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-sort.util.ts
+msgid "Relation scope sort has an invalid direction"
+msgstr "مرتب‌سازی دامنه رابطه یک جهت نامعتبر دارد"
 
 #. js-lingui-id: naAbIC
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-flat-field-metadata.util.ts
@@ -11735,10 +12133,10 @@ msgstr "درخواست‌شده"
 msgid "Requested file range cannot be served."
 msgstr "محدوده فایل درخواست‌شده قابل ارائه نیست."
 
-#. js-lingui-id: WIwnbY
+#. js-lingui-id: ke+MID
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
-msgid "Required fields and relations cannot be restricted on a row level permission rule."
-msgstr "فیلدها و روابط الزامی را نمی‌توان در یک قانون مجوز سطح ردیف محدود کرد."
+msgid "Required fields and morph relations cannot be restricted on a row level permission rule."
+msgstr "فیلدهای الزامی و روابط morph را نمی‌توان در قانون مجوز در سطح ردیف محدود کرد."
 
 #. js-lingui-id: pvmev1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-short-link-standard-flat-field-metadata.util.ts
@@ -11869,6 +12267,11 @@ msgctxt "fieldMetadata.label"
 msgid "Role"
 msgstr "نقش"
 
+#. js-lingui-id: hYcnrj
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" cannot be assigned"
+msgstr "نقش \"{roleLabel}\" قابل انتساب نیست"
+
 #. js-lingui-id: QbW1ho
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11909,6 +12312,11 @@ msgstr "نقش «{roleLabel}» نمی‌تواند به وب‌هوک‌ها ا�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
 msgstr "نقش \"{roleLabel}\" قابل تخصیص نیست: نقش‌های سفارشی به طرح سازمان نیاز دارند"
+
+#. js-lingui-id: aMDMRk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
+msgid "Role \"{roleLabel}\" is held by the system and cannot be assigned"
+msgstr "نقش \"{roleLabel}\" توسط سیستم نگه داشته شده است و قابل انتساب نیست"
 
 #. js-lingui-id: 3heof5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-agent-target.util.ts
@@ -12181,6 +12589,11 @@ msgstr "قانون مجوز در سطح ردیف برای به‌روزرسان�
 msgid "Row level permission rule with this universal identifier already exists"
 msgstr "قانون مجوز در سطح ردیف با این شناسه جهانی از قبل وجود دارد"
 
+#. js-lingui-id: JYBCym
+#: src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util.ts
+msgid "Row level records permissions that hide or lock fields need at least one predicate group."
+msgstr "مجوزهای رکورد در سطح ردیف که فیلدها را پنهان یا قفل می‌کنند، به دست‌کم یک گروه گزاره نیاز دارند."
+
 #. js-lingui-id: 2feo6q
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -12188,6 +12601,7 @@ msgid "Rule"
 msgstr "قانون"
 
 #. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Rules through a relation are not enabled for this workspace"
 msgstr "قوانین از طریق یک رابطه برای این فضای کاری فعال نیستند"
@@ -12197,12 +12611,6 @@ msgstr "قوانین از طریق یک رابطه برای این فضای کا
 msgctxt "fieldMetadata.label"
 msgid "Running"
 msgstr "در حال اجرا"
-
-#. js-lingui-id: 6ZqFBn
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Runs"
-msgstr "اجراها"
 
 #. js-lingui-id: smyL3I
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-run-views.util.ts
@@ -12226,7 +12634,7 @@ msgid "Sample records must only contain selected fields and id."
 msgstr "رکوردهای نمونه باید فقط شامل فیلدهای انتخاب‌شده و id باشند."
 
 #. js-lingui-id: +5kO8P
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Saturday"
 msgstr "شنبه"
 
@@ -12368,7 +12776,6 @@ msgstr "بردار جستجو"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Search vector"
@@ -12414,13 +12821,11 @@ msgstr "مشاهده {objectLabelPlural} حذف‌شده"
 
 #. js-lingui-id: VGVS7x
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Runs"
 msgstr "مشاهده اجراها"
 
 #. js-lingui-id: iWhqvt
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Runs"
@@ -12428,13 +12833,11 @@ msgstr "مشاهده اجراها"
 
 #. js-lingui-id: cyovqN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Versions"
 msgstr "مشاهده نسخه‌ها"
 
 #. js-lingui-id: VsCNJG
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Versions History"
@@ -12442,13 +12845,11 @@ msgstr "مشاهده تاریخچه نسخه‌ها"
 
 #. js-lingui-id: gIacCF
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Workflow"
 msgstr "مشاهده گردش کار"
 
 #. js-lingui-id: kRmDjY
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
@@ -12586,7 +12987,7 @@ msgid "Sent with errors"
 msgstr "ارسال‌شده با خطا"
 
 #. js-lingui-id: hgvbYY
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
 msgstr "سپتامبر"
 
@@ -13315,9 +13716,21 @@ msgid "Summary"
 msgstr "خلاصه"
 
 #. js-lingui-id: DBC3t5
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Sunday"
 msgstr "یکشنبه"
+
+#. js-lingui-id: uHrdjd
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Calendar Events"
+msgstr "رویدادهای تقویم همگام‌سازی‌شده"
+
+#. js-lingui-id: ZgRRP1
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Synced Messages"
+msgstr "پیام‌های همگام‌سازی‌شده"
 
 #. js-lingui-id: D+NlUC
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -13345,7 +13758,6 @@ msgstr "سیستم"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-opportunity-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-person-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-run-view-field-groups.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workflow-version-view-field-groups.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-workspace-member-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "System"
@@ -13724,6 +14136,12 @@ msgstr "عامل مورد نظر برای اجرای این مرحله پیدا 
 msgid "The agent you are looking for could not be found. It may have been deleted or you may not have access to it."
 msgstr "عاملی که به دنبال آن هستید یافت نشد. ممکن است حذف شده باشد یا به آن دسترسی نداشته باشید."
 
+#. js-lingui-id: tAbBpJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-option-validator.service.ts
+msgid "The API value of option \"{optionLabel}\" comes with the field and cannot be changed."
+msgstr "مقدار API گزینه \"{optionLabel}\" همراه با فیلد ارائه می‌شود و قابل تغییر نیست."
+
 #. js-lingui-id: Z4AMcp
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 #: src/engine/core-modules/application/application.exception.ts
@@ -13892,7 +14310,6 @@ msgstr "ایجادکننده پیوند"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The creator of the record"
@@ -13903,6 +14320,12 @@ msgstr "ایجادکننده رکورد"
 msgctxt "fieldMetadata.description"
 msgid "The date the message was received"
 msgstr "تاریخی که پیام دریافت شد"
+
+#. js-lingui-id: ptmnKb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-field-metadata-default-value-option-cross-entity.util.ts
+msgid "The default option cannot be deactivated"
+msgstr "گزینه پیش‌فرض را نمی‌توان غیرفعال کرد"
 
 #. js-lingui-id: nCXfEw
 #: src/engine/metadata-modules/role/role.service.ts
@@ -13982,6 +14405,13 @@ msgstr "فیلد \"{field}\" قابل به‌روزرسانی نیست. لطفا
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The field configured for this widget could not be found."
 msgstr "فیلد پیکربندی‌شده برای این ویجت یافت نشد."
+
+#. js-lingui-id: 0J6BFZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "The field must belong to the related object"
+msgstr "فیلد باید متعلق به شیء مرتبط باشد"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -14080,6 +14510,11 @@ msgstr "تابع منطقی که حساب متصل را شناسایی می‌ک
 msgid "The logic function that starts the connection was not found."
 msgstr "تابع منطقی آغازکننده اتصال پیدا نشد."
 
+#. js-lingui-id: F49vqQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
+msgid "The logic function this messaging provider marks threads as read with was not found in its application."
+msgstr "تابع منطقی که این ارائه‌دهنده پیام‌رسانی با آن رشته‌ها را به‌عنوان خوانده‌شده علامت‌گذاری می‌کند، در برنامه آن یافت نشد."
+
 #. js-lingui-id: usqJwo
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-messaging-provider-validator.service.ts
 msgid "The logic function this messaging provider sends with was not found in its application."
@@ -14132,6 +14567,11 @@ msgstr "اعضایی که در رشته نوشته‌اند"
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The nested relation field configured for this widget could not be found."
 msgstr "فیلد رابطه تو در تو پیکربندی‌شده برای این ویجت یافت نشد."
+
+#. js-lingui-id: MD4f/q
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
+msgid "The number of related records to show is out of range"
+msgstr "تعداد رکوردهای مرتبط برای نمایش خارج از محدوده است"
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -14246,6 +14686,59 @@ msgstr "ارائه‌دهنده موقتاً در دسترس نیست. لطفا�
 #: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
 msgid "The received email content is no longer available."
 msgstr "محتوای ایمیل دریافتی دیگر در دسترس نیست."
+
+#. js-lingui-id: dXHirT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "The related record field cannot be a relation"
+msgstr "فیلد رکورد مرتبط نمی‌تواند یک رابطه باشد"
+
+#. js-lingui-id: MBEG9i
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The related record field does not support this aggregate operation"
+msgstr "فیلد رکورد مرتبط از این عملیات تجمیع پشتیبانی نمی‌کند"
+
+#. js-lingui-id: X5MbyB
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "The related record field must be active"
+msgstr "فیلد رکورد مرتبط باید فعال باشد"
+
+#. js-lingui-id: pm7NPy
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-sort-relation-target.util.ts
+msgid "The related record field must belong to the relation target object"
+msgstr "فیلد رکورد مرتبط باید متعلق به شیء هدف رابطه باشد"
+
+#. js-lingui-id: bb3jnG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "The related record field of a column owned by an application cannot be changed"
+msgstr "فیلد رکورد مرتبطِ یک ستون متعلق به یک برنامه را نمی‌توان تغییر داد"
+
+#. js-lingui-id: uHtomZ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "The relation scope of a column owned by an application cannot be changed"
+msgstr "دامنه رابطه ستونی که متعلق به یک برنامه است قابل تغییر نیست"
+
+#. js-lingui-id: Tl0b2t
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "The relation scope of an aggregate cannot have sorts or a limit"
+msgstr "دامنه رابطه یک تجمیع نمی‌تواند مرتب‌سازی یا محدودیت داشته باشد"
+
+#. js-lingui-id: c0bu85
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field cannot be a relation"
+msgstr "فیلد رکورد مرتبطِ دامنه رابطه نمی‌تواند یک رابطه باشد"
+
+#. js-lingui-id: zJWJeQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must be active"
+msgstr "فیلد رکورد مرتبطِ دامنه رابطه باید فعال باشد"
+
+#. js-lingui-id: WY2/RN
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/resolve-flat-view-field-relation-scope-field-reference.util.ts
+msgid "The relation scope related record field must belong to the relation target object"
+msgstr "فیلد رکورد مرتبطِ دامنه رابطه باید به شیء هدف رابطه تعلق داشته باشد"
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -14428,18 +14921,6 @@ msgstr "فیلد انتخاب گردش کار باید به یک فیلد موج
 msgid "The workflow uses connected account {handle}, which is not connected and shared in this workspace."
 msgstr "گردش کار از حساب متصل {handle} استفاده می‌کند که در این فضای کاری متصل و به‌اشتراک‌گذاشته‌شده نیست."
 
-#. js-lingui-id: 3uACdY
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow version name"
-msgstr "نام نسخه گردش کار"
-
-#. js-lingui-id: KJxGJb
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "The workflow version status"
-msgstr "وضعیت نسخه گردش کار"
-
 #. js-lingui-id: VyvnL/
 #: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
 msgid "The Workspace app dependencies changed during the build. Try creating the component again."
@@ -14473,7 +14954,6 @@ msgstr "وابستگی‌های برنامه Workspace در حین ساخت تغ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The workspace member who last updated the record"
@@ -14555,6 +15035,11 @@ msgstr "این عامل هیچ فیلد خروجی ندارد. حداقل یک �
 msgid "This agent is archived."
 msgstr "این عامل بایگانی شده است."
 
+#. js-lingui-id: IaSvAS
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This aggregate operation requires a related record field"
+msgstr "این عملیات تجمیع به یک فیلد رکورد مرتبط نیاز دارد"
+
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
@@ -14596,6 +15081,11 @@ msgstr "این برنامه به نسخه جدیدتری از سرور Twenty ن
 msgid "This app requires a newer version than this workspace has finished upgrading to. Please try again once the workspace upgrade completes."
 msgstr "این برنامه به نسخه جدیدتری نسبت به نسخه‌ای که ارتقای این فضای کاری به آن رسیده است نیاز دارد. پس از تکمیل ارتقای فضای کاری، دوباره تلاش کنید."
 
+#. js-lingui-id: MZz+Ud
+#: src/engine/core-modules/application/utils/to-application-billing-prices-or-throw.util.ts
+msgid "This application declares invalid prices"
+msgstr "این برنامه قیمت‌های نامعتبر اعلام می‌کند"
+
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
@@ -14635,6 +15125,26 @@ msgstr "این برنامه در حال ارتقا است. لطفاً پیش ا�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-scope.util.ts
 msgid "This application variable scope is not supported."
 msgstr "این محدوده متغیر برنامه پشتیبانی نمی‌شود."
+
+#. js-lingui-id: akCeIt
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This billing arrangement has invalid settings."
+msgstr "این ترتیب صورتحساب تنظیمات نامعتبری دارد."
+
+#. js-lingui-id: NsbtYx
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "This browser's push service is not supported."
+msgstr "سرویس پوش این مرورگر پشتیبانی نمی‌شود."
+
+#. js-lingui-id: ohxYfe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available for this field"
+msgstr "این محاسبه برای این فیلد در دسترس نیست"
+
+#. js-lingui-id: 4x0ihe
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-aggregate.util.ts
+msgid "This calculation is not available on related records"
+msgstr "این محاسبه برای رکوردهای مرتبط در دسترس نیست"
 
 #. js-lingui-id: c18X0M
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
@@ -14677,6 +15187,11 @@ msgstr "محتوای ایمیل این کمپین نامعتبر است."
 msgid "This campaign's list is in the trash. Restore it or pick another list in the To field."
 msgstr "فهرست این کمپین در زباله‌دان است. آن را بازیابی کنید یا در فیلد «به» فهرست دیگری انتخاب کنید."
 
+#. js-lingui-id: wicYT+
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This change would bill more members than the hard seat cap allows."
+msgstr "این تغییر باعث می‌شود برای اعضای بیشتری نسبت به سقف ثابت تعداد جایگاه‌ها صورتحساب صادر شود."
+
 #. js-lingui-id: ++V0t/
 #: src/engine/core-modules/workflow/services/core-workflow-version-write.service.ts
 msgid "This change would corrupt the workflow, it was not saved"
@@ -14708,10 +15223,25 @@ msgstr "این گفت‌وگو در یک کانال نیست."
 msgid "This code belongs to a published workflow version. Edit it from a draft."
 msgstr "این کد متعلق به یک نسخه منتشرشده گردش کار است. آن را از یک پیش‌نویس ویرایش کنید."
 
+#. js-lingui-id: t/Gj4r
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target-not-overridden.util.ts
+msgid "This column comes from an application, so the related record field it shows cannot be changed"
+msgstr "این ستون از یک برنامه می‌آید، بنابراین فیلد رکورد مرتبطی که نمایش می‌دهد را نمی‌توان تغییر داد"
+
+#. js-lingui-id: mY8Iz1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope-not-overridden.util.ts
+msgid "This column comes from an application, so the related records it shows cannot be changed"
+msgstr "این ستون از یک برنامه می‌آید، بنابراین رکوردهای مرتبطی که نمایش می‌دهد قابل تغییر نیستند"
+
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "این ستون از پیش یکتا علامت‌گذاری شده است. اگر می‌خواهید محدودیت را اینجا مدیریت کنید، ابتدا گزینه «Unique» فیلد را غیرفعال کنید."
+
+#. js-lingui-id: tEKss1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-label.util.ts
+msgid "This column name is too long"
+msgstr "نام این ستون بیش از حد طولانی است"
 
 #. js-lingui-id: /abJpu
 #: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
@@ -14813,10 +15343,10 @@ msgstr "این قابلیت تا {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} صندلی �
 msgid "This feature is not enabled."
 msgstr "این قابلیت فعال نیست."
 
-#. js-lingui-id: 2DYjsy
+#. js-lingui-id: R4bSSU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
-msgid "This field cannot be compared to a list of values"
-msgstr "این فیلد نمی‌تواند با فهرستی از مقادیر مقایسه شود"
+msgid "This field cannot be compared to this workspace member field"
+msgstr "این فیلد با این فیلد عضو فضای کاری قابل مقایسه نیست"
 
 #. js-lingui-id: MKqbeR
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -14837,6 +15367,11 @@ msgstr "این فیلد به شیء عضو فضای کاری تعلق ندارد
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-index-metadata-validator.service.ts
 msgid "This field has no database column to index."
 msgstr "این فیلد هیچ ستون پایگاه داده‌ای برای نمایه‌سازی ندارد."
+
+#. js-lingui-id: /62EJW
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field is not a one-to-many relation of the workspace member object"
+msgstr "این فیلد یک رابطه یک‌به‌چند از شیء عضو فضای کاری نیست"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -14919,6 +15454,11 @@ msgstr "این نمونه شناسه سرور را گزارش نکرد. SERVER_I
 #: src/engine/core-modules/message-queue/message-queue.exception.ts
 msgid "This job is too large to be enqueued."
 msgstr "این کار برای قرار گرفتن در صف بسیار بزرگ است."
+
+#. js-lingui-id: wU/+Ok
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of billing arrangement cannot be created or ended by hand."
+msgstr "این نوع ترتیب صورتحساب را نمی‌توان به‌صورت دستی ایجاد یا پایان داد."
 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15049,6 +15589,13 @@ msgstr "این مجوز شیء از قبل برای نقش تنظیم شده ا�
 msgid "This operand is not supported for this field"
 msgstr "این عملگر برای این فیلد پشتیبانی نمی‌شود"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "این عملوند برای این رابطه پشتیبانی نمی‌شود"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15100,6 +15647,11 @@ msgstr "این مجوز در شیء غیرفعال است و قابل اعطا �
 msgid "This plan is not available."
 msgstr "این طرح در دسترس نیست."
 
+#. js-lingui-id: oGIo+g
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "This preset filter is not available on this object"
+msgstr ""
+
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
@@ -15126,11 +15678,9 @@ msgid "This record cannot be deleted because it is still referenced by other rec
 msgstr "این رکورد قابل حذف نیست، زیرا همچنان توسط رکوردهای دیگر ارجاع داده می‌شود."
 
 #. js-lingui-id: 0arbc4
-#: src/engine/api/common/common-query-runners/common-delete-one-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-destroy-one-query-runner.service.ts
+#: src/engine/api/common/common-query-runners/common-filtered-mutation-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-find-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
-#: src/engine/api/common/common-query-runners/common-restore-one-query-runner.service.ts
 #: src/engine/api/common/common-query-runners/common-update-one-query-runner.service.ts
 msgid "This record does not exist or has been deleted."
 msgstr "این رکورد وجود ندارد یا حذف شده است."
@@ -15326,6 +15876,11 @@ msgstr "این گردش کار از قبل وجود دارد"
 msgid "This workflow already exists."
 msgstr "این گردش کار از قبل وجود دارد."
 
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "این شناسه گردش کار با بیش از یک گردش کار مطابقت دارد."
+
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
 msgid "This workflow is managed by an application and is read-only"
@@ -15365,6 +15920,11 @@ msgstr "این نسخه گردش کار برای فعال‌سازی آماده 
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
 msgstr "این فضای کاری از قبل یک اشتراک دارد."
+
+#. js-lingui-id: tLPjQC
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has an arrangement of this type over that period."
+msgstr "این فضای کاری از قبل برای آن دوره، ترتیبی از این نوع دارد."
 
 #. js-lingui-id: aJq3VL
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -15457,7 +16017,7 @@ msgid "Thread this state belongs to"
 msgstr "رشته‌ای که این وضعیت به آن تعلق دارد"
 
 #. js-lingui-id: kkDQ8m
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "پنج‌شنبه"
 
@@ -15540,12 +16100,6 @@ msgstr "فعالیت‌های خط زمانی مرتبط با اجرا"
 msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the task."
 msgstr "فعالیت‌های خط زمانی مرتبط با وظیفه."
-
-#. js-lingui-id: klDmCR
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Timeline activities linked to the version"
-msgstr "فعالیت‌های خط زمانی مرتبط با نسخه"
 
 #. js-lingui-id: ApXfXx
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -15682,6 +16236,11 @@ msgstr "تعداد زیادی نامزد مدیر یافت شد."
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "Too many attendees: {attendeeCount}. Maximum allowed is {MAX_EMAIL_RECIPIENTS}."
 msgstr "تعداد شرکت‌کنندگان بیش از حد است: {attendeeCount}. حداکثر مجاز {MAX_EMAIL_RECIPIENTS} است."
+
+#. js-lingui-id: s/8N3l
+#: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
+msgid "Too many domain validation emails sent. Please try again later."
+msgstr "ایمیل‌های اعتبارسنجی دامنه بیش از حد ارسال شده‌اند. لطفاً بعداً دوباره تلاش کنید."
 
 #. js-lingui-id: 4kqJG4
 #: src/engine/core-modules/file/file.exception.ts
@@ -15894,7 +16453,7 @@ msgid "TS_VECTOR field metadata not found"
 msgstr "فراداده فیلد TS_VECTOR یافت نشد"
 
 #. js-lingui-id: G3myU+
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Tuesday"
 msgstr "سه‌شنبه"
 
@@ -16262,7 +16821,6 @@ msgstr "آخرین به‌روزرسانی"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Updated by"
@@ -16303,18 +16861,6 @@ msgstr "استفاده قابل خواندن نبود. لطفاً بعداً د�
 #: src/engine/core-modules/usage-limit/exceptions/usage-limit.exception.ts
 msgid "Usage quota exhausted for this period."
 msgstr "سهمیه استفاده برای این دوره تمام شده است."
-
-#. js-lingui-id: xwq0b4
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "Use as Draft"
-msgstr "استفاده به‌عنوان پیش‌نویس"
-
-#. js-lingui-id: 4Pp2U8
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "Use as Draft"
-msgstr "استفاده به‌عنوان پیش‌نویس"
 
 #. js-lingui-id: on4haJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/skill-metadata/create-standard-flat-skill-metadata.util.ts
@@ -16626,30 +17172,6 @@ msgstr "مقادیر فیلدهای عضو که مجوز می‌خواند و ت
 msgid "Verify your two-factor authentication before impersonating users in another workspace."
 msgstr "پیش از جعل هویت کاربران در فضای کاری دیگر، احراز هویت دومرحله‌ای خود را تأیید کنید."
 
-#. js-lingui-id: q1On37
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version status"
-msgstr "وضعیت نسخه"
-
-#. js-lingui-id: txhQne
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version steps"
-msgstr "مراحل نسخه"
-
-#. js-lingui-id: FhKIiF
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Version trigger"
-msgstr "محرک نسخه"
-
-#. js-lingui-id: tH32bu
-#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-workflow-version-views.util.ts
-msgctxt "view.name"
-msgid "Versions"
-msgstr "نسخه‌ها"
-
 #. js-lingui-id: j8p0F8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -16912,6 +17434,11 @@ msgstr "نما پس از upsert یافت نشد"
 msgid "View not found for widget"
 msgstr "نما برای ویجت یافت نشد"
 
+#. js-lingui-id: s4TNbU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "View preset filter must belong to the view object"
+msgstr ""
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -17002,6 +17529,16 @@ msgstr "ViewId برای ایجاد یک گروه نما الزامی است."
 msgid "ViewId is required to create a view sort."
 msgstr "ViewId برای ایجاد یک مرتب‌سازی نما الزامی است."
 
+#. js-lingui-id: 6TF7+T
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction cannot be read"
+msgstr "محدودیت نمایش قابل خواندن نیست"
+
+#. js-lingui-id: N6vpsk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
+msgid "Visibility restriction has too many conditions"
+msgstr "محدودیت نمایش شرایط بیش از حدی دارد"
+
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
 msgid "Wait for event step must have a valid event"
@@ -17063,6 +17600,11 @@ msgstr "نتوانستیم اتصال را تکمیل کنیم. لطفاً دو�
 msgid "We could not identify the account you authorized. Please try again."
 msgstr "نتوانستیم حسابی را که مجاز کرده‌اید شناسایی کنیم. لطفاً دوباره تلاش کنید."
 
+#. js-lingui-id: tNDg4g
+#: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
+msgid "We could not mark this conversation as read."
+msgstr "نتوانستیم این گفتگو را به‌عنوان خوانده‌شده علامت‌گذاری کنیم."
+
 #. js-lingui-id: rj0Dtg
 #: src/engine/metadata-modules/messaging-provider/messaging-provider.exception.ts
 msgid "We could not send your message. Please try again."
@@ -17072,6 +17614,21 @@ msgstr "نتوانستیم پیام شما را ارسال کنیم. لطفاً 
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not start the connection. Please try again."
 msgstr "نتوانستیم اتصال را آغاز کنیم. لطفاً دوباره تلاش کنید."
+
+#. js-lingui-id: 3Di+o2
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We could not verify this key. Check it, or try again later if the service is down."
+msgstr "نتوانستیم این کلید را تأیید کنیم. آن را بررسی کنید، یا اگر سرویس از کار افتاده است، بعداً دوباره تلاش کنید."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "نتوانستیم هزینه این برنامه را دریافت کنیم. روش پرداخت خود را به‌روزرسانی کنید و دوباره تلاش کنید."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "نتوانستیم هزینه این اتصال را دریافت کنیم. روش پرداخت خود را به‌روزرسانی کنید و دوباره تلاش کنید."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -17147,7 +17704,7 @@ msgid "Webhook not found."
 msgstr "وب‌هوک یافت نشد."
 
 #. js-lingui-id: VAcXNz
-#: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
+#: src/engine/api/common/common-query-runners/group-by/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Wednesday"
 msgstr "چهارشنبه"
 
@@ -17514,29 +18071,11 @@ msgctxt "objectMetadata.labelPlural"
 msgid "Workflow Runs"
 msgstr "اجراهای گردش کار"
 
-#. js-lingui-id: KO7j/3
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow runs linked to the version."
-msgstr "اجراهای گردش کار که به نسخه پیوند داده شده‌اند."
-
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
 #: src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception.ts
 msgid "Workflow step not found."
 msgstr "گام گردش کار یافت نشد."
-
-#. js-lingui-id: sjVenv
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "Workflow version"
-msgstr "نسخه گردش کار"
-
-#. js-lingui-id: 0w608/
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelSingular"
-msgid "Workflow Version"
-msgstr "نسخه گردش کار"
 
 #. js-lingui-id: DGFeSW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-version-validator.service.ts
@@ -17580,12 +18119,6 @@ msgstr "نسخه گردش کار در وضعیت پیش‌نویس نیست"
 msgid "Workflow version is required for workflow trigger items"
 msgstr "نسخه گردش کار برای موارد ماشه گردش کار لازم است"
 
-#. js-lingui-id: uVOjgA
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow version linked to the run."
-msgstr "نسخه گردش کار پیوند داده‌شده به اجرا."
-
 #. js-lingui-id: LrPIBF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
 msgid "Workflow version must not be set for front component renderer items"
@@ -17614,22 +18147,10 @@ msgstr "نسخه گردش کار یافت نشد"
 msgid "Workflow version not found."
 msgstr "نسخه گردش کار یافت نشد."
 
-#. js-lingui-id: XoKTtx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.description"
-msgid "Workflow version position"
-msgstr "موقعیت نسخه گردش کار"
-
 #. js-lingui-id: 7dQ4Kg
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 msgid "Workflow version to copy not found"
 msgstr "نسخه گردش کاری که باید کپی شود یافت نشد"
-
-#. js-lingui-id: lrTHGl
-#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-msgctxt "objectMetadata.labelPlural"
-msgid "Workflow Versions"
-msgstr "نسخه‌های گردش کار"
 
 #. js-lingui-id: oxqc8m
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -17642,12 +18163,6 @@ msgstr "WorkflowRun"
 msgctxt "navigationMenuItem.name"
 msgid "Workflows"
 msgstr "گردش‌های کار"
-
-#. js-lingui-id: W5Wgz6
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-msgctxt "fieldMetadata.label"
-msgid "WorkflowVersion"
-msgstr "WorkflowVersion"
 
 #. js-lingui-id: m34s12
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-command-menu-item-validator.service.ts
@@ -17668,6 +18183,12 @@ msgstr "workflowVersionId نباید زمانی که engineComponentKey براب
 #. js-lingui-id: kRP73e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
+msgid "Workspace"
+msgstr "فضای کاری"
+
+#. js-lingui-id: 3JWXMp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Workspace"
 msgstr "فضای کاری"
 
@@ -17813,6 +18334,12 @@ msgctxt "view.name"
 msgid "Workspace Member Record Page Fields"
 msgstr "فیلدهای صفحه رکورد عضو فضای کاری"
 
+#. js-lingui-id: VWPelK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation field metadata not found"
+msgstr "فراداده فیلد رابطه عضو فضای کاری یافت نشد"
+
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -17842,6 +18369,18 @@ msgstr "عضو فضای کاری که واکنش نشان داده است؛ وق
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who sent this message"
 msgstr "عضو فضای کاری که این پیام را ارسال کرده است"
+
+#. js-lingui-id: SXhaY/
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose calendar this event was synced from"
+msgstr "عضو فضای کاری که تقویم این رویداد از آن همگام‌سازی شده است"
+
+#. js-lingui-id: 6oRXeC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member whose mailbox this message was synced from"
+msgstr "عضو فضای کاری که صندوق پستی این پیام از آن همگام‌سازی شده است"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -18125,6 +18664,11 @@ msgstr "شما مجوز دسترسی به این قابلیت را ندارید.
 msgid "You do not have permission to access this workflow."
 msgstr "شما اجازه دسترسی به این گردش کار را ندارید."
 
+#. js-lingui-id: /qkY9j
+#: src/engine/permissions/permissions.exception.ts
+msgid "You do not have permission to change this record."
+msgstr "شما اجازه تغییر این رکورد را ندارید."
+
 #. js-lingui-id: Uyi+DQ
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to connect accounts. Please contact your workspace administrator for access."
@@ -18316,10 +18860,15 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "نقش شما نمی‌تواند برخی از این رکوردها را حذف کند، بنابراین نمی‌توان آن‌ها را ادغام کرد."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/permissions/internal/principal/utils/find-user-workspace-flat-role-or-throw.util.ts
+#: src/engine/permissions/internal/principal/utils/find-user-workspace-role-ids-or-throw.util.ts
 #: src/engine/permissions/role-assignment/role-assignment-write.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "نقش شما در این فضای کاری یافت نشد. لطفاً با مدیر فضای کاری خود تماس بگیرید."
+
+#. js-lingui-id: iug+lj
+#: src/engine/core-modules/web-push/web-push.exception.ts
+msgid "Your session has expired. Sign in again to turn on browser notifications."
+msgstr "نشست شما منقضی شده است. برای فعال کردن اعلان‌های مرورگر، دوباره وارد شوید."
 
 #. js-lingui-id: 9T+AIN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts

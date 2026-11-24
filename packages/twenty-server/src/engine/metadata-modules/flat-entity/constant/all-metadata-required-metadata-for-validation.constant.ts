@@ -30,6 +30,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   viewField: {
     view: true,
     fieldMetadata: true,
+    fieldMetadataOption: true,
     objectMetadata: true,
     viewFieldGroup: true,
   },
@@ -44,6 +45,7 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   viewFilter: {
     view: true,
     fieldMetadata: true,
+    fieldMetadataOption: true,
     viewFilterGroup: true,
   },
   viewGroup: {
@@ -165,7 +167,9 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     fieldMetadata: true,
   },
   workflow: {},
-  workflowVersion: {},
+  workflowVersion: {
+    workflow: true,
+  },
   agentChatChannel: {},
   agentChatChannelRole: {
     agentChatChannel: true,

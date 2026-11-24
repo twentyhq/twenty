@@ -7,7 +7,7 @@ export const computeInsertIndexAndPosition = (
   targetIndex: number,
 ) => {
   const itemsInFolder = items
-    .filter((item) => (item.folderId ?? null) === targetFolderId)
+    .filter((item) => (item.parentId ?? null) === targetFolderId)
     .sort((a, b) => a.position - b.position);
   const insertRef = itemsInFolder[targetIndex];
   const lastInFolder = itemsInFolder[itemsInFolder.length - 1];

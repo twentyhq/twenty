@@ -29,4 +29,3 @@ export { STANDARD_PERSON_PAGE_LAYOUT_CONFIG } from './standard-person-page-layou
 export { STANDARD_TASK_PAGE_LAYOUT_CONFIG } from './standard-task-page-layout.config';
 export { STANDARD_WORKFLOW_RUN_PAGE_LAYOUT_CONFIG } from './standard-workflow-run-page-layout.config';
 export { STANDARD_WORKSPACE_MEMBER_PAGE_LAYOUT_CONFIG } from './standard-workspace-member-page-layout.config';
-export { STANDARD_WORKFLOW_VERSION_PAGE_LAYOUT_CONFIG } from './standard-workflow-version-page-layout.config';

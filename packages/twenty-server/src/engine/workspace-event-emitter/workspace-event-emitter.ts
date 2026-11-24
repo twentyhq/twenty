@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import {
   ObjectRecordCreateEvent,
   ObjectRecordDeleteEvent,
@@ -11,7 +12,7 @@ import {
   ObjectRecordRestoreEvent,
 } from 'twenty-shared/database-events';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import type { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
@@ -27,10 +28,15 @@ type ActionEventMap<T> = {
   [DatabaseEventAction.UPSERTED]: ObjectRecordUpsertEvent<T>;
 };
 
+type WithOptionalEventId<TEvent extends { eventId: string }> = Omit<
+  TEvent,
+  'eventId'
+> & { eventId?: string };
+
 export type DatabaseBatchEventInput<T, A extends keyof ActionEventMap<T>> = {
   objectMetadataNameSingular: string;
   action: A;
-  events: ActionEventMap<T>[A][];
+  events: WithOptionalEventId<ActionEventMap<T>[A]>[];
   objectMetadata: FlatObjectMetadata;
   workspaceId: string;
 };
@@ -64,7 +70,14 @@ export class WorkspaceEventEmitter {
       name: eventName,
       workspaceId,
       objectMetadata,
-      events,
+      // TypeScript cannot prove a generic event without eventId plus eventId is the event again
+      events: events.map(
+        (event) =>
+          ({
+            ...event,
+            eventId: event.eventId ?? v4(),
+          }) as ActionEventMap<T>[A],
+      ),
     };
 
     this.eventEmitter.emit(eventName, workspaceEventBatch);

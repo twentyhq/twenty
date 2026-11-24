@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
+import { isDefined, isEmptyObject, isValidUuid } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -14,15 +13,25 @@ import {
 import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
 import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
+import { getRelationSelectionEntries } from 'src/engine/api/common/utils/get-relation-selection-entries.util';
+import {
+  type CommonAggregatedValues,
+  type CommonRelationAggregatedValues,
+  type CommonRelationsAggregatedValues,
+} from 'src/engine/api/common/types/common-aggregated-values.type';
+import {
+  type CommonRelationSelection,
+  type CommonSelection,
+} from 'src/engine/api/common/types/common-selection.type';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/constants/standard-error-message.constant';
 import {
-  GraphqlQueryRunnerException,
-  GraphqlQueryRunnerExceptionCode,
-} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
-import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
-import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+  CommonQueryRunnerException,
+  CommonQueryRunnerExceptionCode,
+} from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
+import { ProcessAggregateHelper } from 'src/engine/api/common/utils/process-aggregate.helper';
+import { buildColumnsToSelect } from 'src/engine/api/common/utils/build-columns-to-select';
+import { getTargetObjectMetadataOrThrow } from 'src/engine/api/common/utils/get-target-object-metadata.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -46,16 +55,11 @@ type ProcessNestedRelationsArgs<T extends ObjectRecord = ObjectRecord> = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   parentObjectMetadataItem: FlatObjectMetadata;
   parentObjectRecords: T[];
-  // oxlint-disable-next-line typescript/no-explicit-any
-  parentObjectRecordsAggregatedValues?: Record<string, any>;
-  relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
-  aggregate?: Record<string, AggregationField>;
+  selection: CommonSelection;
   limit: number;
   authContext: WorkspaceAuthContext;
   useReplica?: boolean;
   repository?: WorkspaceRepository;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  selectedFields: Record<string, any>;
 };
 
 @Injectable()
@@ -64,8 +68,8 @@ export class ProcessNestedRelationsHelper {
 
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
-  ): Promise<void> {
-    await this.processNestedRelationsWithLimiter(
+  ): Promise<CommonRelationsAggregatedValues> {
+    return await this.processNestedRelationsWithLimiter(
       args,
       createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
     );
@@ -79,41 +83,35 @@ export class ProcessNestedRelationsHelper {
       flatFieldMetadataMaps,
       parentObjectMetadataItem,
       parentObjectRecords,
-      parentObjectRecordsAggregatedValues = {},
-      relations,
-      aggregate = {},
+      selection,
       limit,
       authContext,
       useReplica = false,
       repository,
-      selectedFields,
     }: ProcessNestedRelationsArgs<T>,
     relationQueryLimiter: ConcurrencyLimiter,
-  ): Promise<void> {
-    const processRelationTasks = Object.entries(relations).map(
-      ([sourceFieldName, nestedRelations]) =>
-        this.processRelation({
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          parentObjectMetadataItem,
-          parentObjectRecords,
-          parentObjectRecordsAggregatedValues,
-          sourceFieldName,
-          nestedRelations,
-          aggregate,
-          limit,
-          authContext,
-          useReplica,
-          repository,
-          relationQueryLimiter,
-          selectedFields:
-            selectedFields[sourceFieldName] instanceof Object
-              ? selectedFields[sourceFieldName]
-              : undefined,
-        }),
+  ): Promise<CommonRelationsAggregatedValues> {
+    const processRelationTasks = getRelationSelectionEntries(selection).map(
+      async ({ key, relationSelection }) =>
+        [
+          key,
+          await this.processRelation({
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            parentObjectMetadataItem,
+            parentObjectRecords,
+            key,
+            relationSelection,
+            limit,
+            authContext,
+            useReplica,
+            repository,
+            relationQueryLimiter,
+          }),
+        ] as const,
     );
 
-    await Promise.all(processRelationTasks);
+    return Object.fromEntries(await Promise.all(processRelationTasks));
   }
 
   private async processRelation<T extends ObjectRecord = ObjectRecord>({
@@ -121,45 +119,44 @@ export class ProcessNestedRelationsHelper {
     flatFieldMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
-    parentObjectRecordsAggregatedValues,
-    sourceFieldName,
-    nestedRelations,
-    aggregate,
+    key,
+    relationSelection,
     limit,
     authContext,
     useReplica,
     repository,
     relationQueryLimiter,
-    selectedFields,
   }: {
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     parentObjectMetadataItem: FlatObjectMetadata;
     parentObjectRecords: T[];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    parentObjectRecordsAggregatedValues: Record<string, any>;
-    sourceFieldName: string;
-    nestedRelations: FindOptionsRelations<ObjectLiteral>;
-    aggregate: Record<string, AggregationField>;
+    key: string;
+    relationSelection: CommonRelationSelection;
     limit: number;
     authContext: WorkspaceAuthContext;
     useReplica: boolean;
     repository?: WorkspaceRepository;
     relationQueryLimiter: ConcurrencyLimiter;
-    selectedFields: Record<string, unknown>;
-  }): Promise<void> {
+  }): Promise<CommonRelationAggregatedValues> {
+    const emptyAggregatedValues: CommonRelationAggregatedValues = {
+      valuesByParentRecordId: {},
+      relations: {},
+    };
+    const relationFieldName = relationSelection.fieldName;
+
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
       parentObjectMetadataItem,
     );
 
     const sourceFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMaps.fieldIdByName[sourceFieldName],
+      flatEntityId: fieldMaps.fieldIdByName[relationFieldName],
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
     if (!sourceFieldMetadata) {
-      return;
+      return emptyAggregatedValues;
     }
 
     if (
@@ -172,13 +169,13 @@ export class ProcessNestedRelationsHelper {
         FieldMetadataType.MORPH_RELATION,
       )
     ) {
-      return;
+      return emptyAggregatedValues;
     }
 
     if (!sourceFieldMetadata.settings) {
-      throw new GraphqlQueryRunnerException(
-        `Relation settings not found for field ${sourceFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
+      throw new CommonQueryRunnerException(
+        `Relation settings not found for field ${relationFieldName}`,
+        CommonQueryRunnerExceptionCode.RELATION_SETTINGS_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -189,7 +186,7 @@ export class ProcessNestedRelationsHelper {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         parentObjectMetadataItem,
-        sourceFieldName,
+        sourceFieldName: relationFieldName,
         fieldMaps,
       });
 
@@ -206,19 +203,17 @@ export class ProcessNestedRelationsHelper {
     if (await targetObjectRepository.isReadDisabled()) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,
-        parentObjectRecordsAggregatedValues,
         relationResults: [],
-        relationAggregatedFieldsResult: {},
-        sourceFieldName,
+        key,
         relatedRecordJoinColumnName: 'id',
         parentRecordJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
-          name: sourceFieldName,
+          name: relationFieldName,
         }),
         relationType,
-        selectedFields,
+        selectedColumns: relationSelection.selection.columns,
       });
 
-      return;
+      return emptyAggregatedValues;
     }
 
     let targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
@@ -226,8 +221,7 @@ export class ProcessNestedRelationsHelper {
     );
 
     const columnsToSelect: Record<string, boolean> = buildColumnsToSelect({
-      select: selectedFields,
-      relations: nestedRelations,
+      selection: relationSelection.selection,
       flatObjectMetadata: targetObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -243,22 +237,26 @@ export class ProcessNestedRelationsHelper {
     });
 
     const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
-      name: sourceFieldName,
+      name: relationFieldName,
     });
 
-    const relationIds = getUniqueRelationIds({
-      records: parentObjectRecords,
-      idField:
-        relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
+    const relationIds = await this.findRelationIds({
+      parentObjectMetadataItem,
+      parentObjectRecords,
+      relationType,
+      joinColumnName,
+      sourceFieldName: relationFieldName,
+      repository,
+      useReplica,
     });
 
     if (
       relationType === RelationType.ONE_TO_MANY &&
       !isDefined(targetRelationName)
     ) {
-      throw new GraphqlQueryRunnerException(
-        `Could not resolve target relation for one-to-many field ${sourceFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+      throw new CommonQueryRunnerException(
+        `Could not resolve target relation for one-to-many field ${relationFieldName}`,
+        CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -275,7 +273,7 @@ export class ProcessNestedRelationsHelper {
             : (targetRelationName as string),
       });
 
-    const { relationResults, relationAggregatedFieldsResult } =
+    const { relationResults, valuesByParentRecordId } =
       await relationQueryLimiter(() =>
         this.findRelations({
           referenceQueryBuilder: targetObjectQueryBuilder,
@@ -286,51 +284,92 @@ export class ProcessNestedRelationsHelper {
               : 'id',
           ids: relationIds,
           relationType,
-          perParentLimit: limit,
           parentRecordsCount: parentObjectRecords.length,
-          aggregate,
-          sourceFieldName,
           targetObjectNameSingular,
+          relationSelection,
+          relationQueryParser: new CommonQueryParser({
+            flatObjectMetadata: targetObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          }),
+          perParentLimit: Math.min(relationSelection.first ?? limit, limit),
         }),
       );
 
-    this.assignRelationResults({
-      parentRecords: parentObjectRecords,
-      parentObjectRecordsAggregatedValues,
-      relationResults,
-      relationAggregatedFieldsResult,
-      sourceFieldName,
-      relatedRecordJoinColumnName:
-        relationType === RelationType.ONE_TO_MANY
-          ? `${fieldMetadataTargetRelationColumnName}`
-          : 'id',
-      parentRecordJoinColumnName: joinColumnName,
-      relationType,
-      selectedFields,
-    });
-
-    if (Object.keys(nestedRelations).length > 0) {
+    const nestedRelationsAggregatedValues =
       await this.processNestedRelationsWithLimiter(
         {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           parentObjectMetadataItem: targetObjectMetadata,
           parentObjectRecords: relationResults as ObjectRecord[],
-          parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
-          relations: nestedRelations as Record<
-            string,
-            FindOptionsRelations<ObjectLiteral>
-          >,
-          aggregate,
+          selection: relationSelection.selection,
           limit,
           authContext,
           useReplica,
           repository,
-          selectedFields,
         },
         relationQueryLimiter,
       );
+
+    // After the nested load: a to-one relation is assigned as a copy, so nested rows must already be on it
+    this.assignRelationResults({
+      parentRecords: parentObjectRecords,
+      relationResults,
+      key,
+      relatedRecordJoinColumnName:
+        relationType === RelationType.ONE_TO_MANY
+          ? `${fieldMetadataTargetRelationColumnName}`
+          : 'id',
+      parentRecordJoinColumnName: joinColumnName,
+      relationType,
+      selectedColumns: relationSelection.selection.columns,
+    });
+
+    return {
+      valuesByParentRecordId,
+      relations: nestedRelationsAggregatedValues,
+    };
+  }
+
+  private async findRelationIds({
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    relationType,
+    joinColumnName,
+    sourceFieldName,
+    repository,
+    useReplica,
+  }: {
+    parentObjectMetadataItem: Pick<FlatObjectMetadata, 'id' | 'nameSingular'>;
+    parentObjectRecords: ObjectRecord[];
+    relationType: RelationType;
+    joinColumnName: string;
+    sourceFieldName: string;
+    repository?: WorkspaceRepository;
+    useReplica: boolean;
+  }): Promise<string[]> {
+    if (relationType !== RelationType.ONE_TO_MANY) {
+      return getUniqueRelationIds({
+        records: parentObjectRecords,
+        idField: joinColumnName,
+      });
     }
+
+    const parentObjectRepository = isDefined(repository)
+      ? repository.getRepositoryForObjectMetadataId(parentObjectMetadataItem.id)
+      : this.workspaceOrmManager.getRepository(
+          parentObjectMetadataItem.nameSingular,
+          { useReplica },
+        );
+
+    return parentObjectRepository.filterRecordIdsWithReadableRelation({
+      recordIds: getUniqueRelationIds({
+        records: parentObjectRecords,
+        idField: 'id',
+      }),
+      relationFieldName: sourceFieldName,
+    });
   }
 
   private getTargetObjectMetadata({
@@ -352,9 +391,9 @@ export class ProcessNestedRelationsHelper {
     });
 
     if (!targetFieldMetadata) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Field ${sourceFieldName} not found on object ${parentObjectMetadataItem.nameSingular}`,
-        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.FIELD_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -368,9 +407,9 @@ export class ProcessNestedRelationsHelper {
       !targetFieldMetadata.relationTargetObjectMetadataId ||
       !targetFieldMetadata.relationTargetFieldMetadataId
     ) {
-      throw new GraphqlQueryRunnerException(
+      throw new CommonQueryRunnerException(
         `Relation target object metadata id or field metadata id not found for field ${sourceFieldName}`,
-        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        CommonQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }
@@ -393,9 +432,9 @@ export class ProcessNestedRelationsHelper {
     relationType,
     perParentLimit,
     parentRecordsCount,
-    aggregate,
-    sourceFieldName,
     targetObjectNameSingular,
+    relationSelection,
+    relationQueryParser,
   }: {
     referenceQueryBuilder: WorkspaceSelectQueryBuilder;
     targetObjectRepository: WorkspaceRepository;
@@ -405,50 +444,61 @@ export class ProcessNestedRelationsHelper {
     relationType: RelationType;
     perParentLimit: number;
     parentRecordsCount: number;
-    // oxlint-disable-next-line typescript/no-explicit-any
-    aggregate: Record<string, any>;
-    sourceFieldName: string;
     targetObjectNameSingular: string;
+    relationSelection: Pick<
+      CommonRelationSelection,
+      'selection' | 'filter' | 'orderBy'
+    >;
+    relationQueryParser: CommonQueryParser;
+  }): Promise<{
     // oxlint-disable-next-line typescript/no-explicit-any
-  }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
+    relationResults: any[];
+    valuesByParentRecordId: CommonRelationAggregatedValues['valuesByParentRecordId'];
+  }> {
     if (ids.length === 0) {
-      return { relationResults: [], relationAggregatedFieldsResult: {} };
+      return { relationResults: [], valuesByParentRecordId: {} };
     }
 
-    const aggregateForRelation = aggregate[sourceFieldName];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    let relationAggregatedFieldsResult: Record<string, any> = {};
+    // Qualified so a relation join added by orderBy or filter can't make it ambiguous
+    const qualifiedColumn = `"${targetObjectNameSingular}".${column}`;
+    const columnWithoutQuotes = column.replace(/["']/g, '');
+    const { aggregates } = relationSelection.selection;
+    let valuesByParentRecordId: CommonRelationAggregatedValues['valuesByParentRecordId'] =
+      {};
 
-    if (aggregateForRelation) {
+    if (!isEmptyObject(aggregates)) {
       const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
+      this.applyNestedRelationFilterToBuilder({
+        queryBuilder: aggregateQueryBuilder,
+        targetObjectNameSingular,
+        relationSelection,
+        relationQueryParser,
+      });
+
       ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-        selectedAggregatedFields: aggregateForRelation,
+        selectedAggregatedFields: aggregates,
         queryBuilder: aggregateQueryBuilder,
         objectMetadataNameSingular: targetObjectNameSingular,
       });
 
       const aggregatedFieldsValues = await aggregateQueryBuilder
-        .addSelect(column, column.replace(/["']/g, ''))
-        .where(`${column} IN (:...ids)`, { ids })
-        .groupBy(column)
-        .getRawMany();
+        .addSelect(qualifiedColumn, columnWithoutQuotes)
+        .andWhere(`${qualifiedColumn} IN (:...ids)`, { ids })
+        .groupBy(qualifiedColumn)
+        .getRawMany<CommonAggregatedValues>();
 
-      relationAggregatedFieldsResult = aggregatedFieldsValues.reduce<
-        Record<string, unknown>
-      >((acc, item) => {
-        const columnWithoutQuotes = column.replace(/["']/g, '');
-        const key = String(item[columnWithoutQuotes]);
-        const { [column]: _, ...itemWithoutColumn } = item;
-
-        acc[key] = itemWithoutColumn;
-
-        return acc;
-      }, {});
+      valuesByParentRecordId = Object.fromEntries(
+        aggregatedFieldsValues.map(
+          ({ [columnWithoutQuotes]: parentRecordId, ...values }) => [
+            String(parentRecordId),
+            values,
+          ],
+        ),
+      );
     }
 
     const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
-    const columnWithoutQuotes = column.replace(/["']/g, '');
 
     const findOptionsWithJoinColumn = {
       ...queryBuilderOptions,
@@ -458,11 +508,11 @@ export class ProcessNestedRelationsHelper {
     if (relationType !== RelationType.ONE_TO_MANY) {
       const result = await referenceQueryBuilder
         .setFindOptions(findOptionsWithJoinColumn)
-        .where(`${column} IN (:...ids)`, { ids })
+        .where(`${qualifiedColumn} IN (:...ids)`, { ids })
         .take(perParentLimit * parentRecordsCount)
         .getMany();
 
-      return { relationResults: result, relationAggregatedFieldsResult };
+      return { relationResults: result, valuesByParentRecordId };
     }
 
     const allowedRelationRecordIds =
@@ -472,6 +522,8 @@ export class ProcessNestedRelationsHelper {
         column,
         ids,
         perParentLimit,
+        relationSelection,
+        relationQueryParser,
       });
 
     const recordIdsToHydrate =
@@ -479,12 +531,31 @@ export class ProcessNestedRelationsHelper {
         ? allowedRelationRecordIds
         : [EMPTY_RELATION_SENTINEL_RECORD_ID];
 
-    const result = await referenceQueryBuilder
+    const hydrationQueryBuilder = referenceQueryBuilder
       .setFindOptions(findOptionsWithJoinColumn)
-      .where(`id IN (:...recordIdsToHydrate)`, { recordIdsToHydrate })
-      .getMany();
+      .where(`"${targetObjectNameSingular}"."id" IN (:...recordIdsToHydrate)`, {
+        recordIdsToHydrate,
+      });
 
-    return { relationResults: result, relationAggregatedFieldsResult };
+    // The id query may have kept soft-deleted records the filter asked for
+    if (isDefined(relationSelection.filter)) {
+      relationQueryParser.applyDeletedAtToBuilder({
+        queryBuilder: hydrationQueryBuilder,
+        recordFilter: relationSelection.filter,
+      });
+    }
+
+    if (isDefined(relationSelection.orderBy)) {
+      relationQueryParser.applyOrderToBuilder({
+        queryBuilder: hydrationQueryBuilder,
+        orderBy: relationSelection.orderBy,
+        objectNameSingular: targetObjectNameSingular,
+      });
+    }
+
+    const result = await hydrationQueryBuilder.getMany();
+
+    return { relationResults: result, valuesByParentRecordId };
   }
 
   private async findRelationRecordIdsLimitedPerParent({
@@ -493,12 +564,16 @@ export class ProcessNestedRelationsHelper {
     column,
     ids,
     perParentLimit,
+    relationSelection,
+    relationQueryParser,
   }: {
     targetObjectRepository: WorkspaceRepository;
     targetObjectNameSingular: string;
     column: string;
     ids: string[];
     perParentLimit: number;
+    relationSelection: Pick<CommonRelationSelection, 'filter' | 'orderBy'>;
+    relationQueryParser: CommonQueryParser;
   }): Promise<string[]> {
     const sanitizedIds = ids.filter(isValidUuid);
 
@@ -508,8 +583,26 @@ export class ProcessNestedRelationsHelper {
 
     const perParentRecordIdsQueryBuilder = targetObjectRepository
       .createQueryBuilder(targetObjectNameSingular)
-      .select(`"${targetObjectNameSingular}"."id"`, 'id')
-      .where(`${column} = "lateralParents"."parentId"`);
+      .select(`"${targetObjectNameSingular}"."id"`, 'id');
+
+    this.applyNestedRelationFilterToBuilder({
+      queryBuilder: perParentRecordIdsQueryBuilder,
+      targetObjectNameSingular,
+      relationSelection,
+      relationQueryParser,
+    });
+
+    perParentRecordIdsQueryBuilder.andWhere(
+      `"${targetObjectNameSingular}".${column} = "lateralParents"."parentId"`,
+    );
+
+    if (isDefined(relationSelection.orderBy)) {
+      relationQueryParser.applyOrderToBuilder({
+        queryBuilder: perParentRecordIdsQueryBuilder,
+        orderBy: relationSelection.orderBy,
+        objectNameSingular: targetObjectNameSingular,
+      });
+    }
 
     await perParentRecordIdsQueryBuilder.applyRowLevelPermissions();
 
@@ -531,48 +624,65 @@ export class ProcessNestedRelationsHelper {
     return limitedRecords.map((limitedRecord) => limitedRecord.id);
   }
 
+  private applyNestedRelationFilterToBuilder({
+    queryBuilder,
+    targetObjectNameSingular,
+    relationSelection,
+    relationQueryParser,
+  }: {
+    queryBuilder: WorkspaceSelectQueryBuilder;
+    targetObjectNameSingular: string;
+    relationSelection: Pick<CommonRelationSelection, 'filter'>;
+    relationQueryParser: CommonQueryParser;
+  }): void {
+    if (!isDefined(relationSelection.filter)) {
+      return;
+    }
+
+    relationQueryParser.applyFilterToBuilder({
+      queryBuilder,
+      objectNameSingular: targetObjectNameSingular,
+      recordFilter: relationSelection.filter,
+    });
+    relationQueryParser.applyDeletedAtToBuilder({
+      queryBuilder,
+      recordFilter: relationSelection.filter,
+    });
+  }
+
   private assignRelationResults({
     parentRecords,
-    parentObjectRecordsAggregatedValues,
     relationResults,
-    relationAggregatedFieldsResult,
-    sourceFieldName,
+    key,
     relatedRecordJoinColumnName,
     parentRecordJoinColumnName,
     relationType,
-    selectedFields,
+    selectedColumns,
   }: {
     parentRecords: ObjectRecord[];
     // oxlint-disable-next-line typescript/no-explicit-any
-    parentObjectRecordsAggregatedValues: Record<string, any>;
-    // oxlint-disable-next-line typescript/no-explicit-any
     relationResults: any[];
-    // oxlint-disable-next-line typescript/no-explicit-any
-    relationAggregatedFieldsResult: Record<string, any>;
-    sourceFieldName: string;
+    key: string;
     relatedRecordJoinColumnName: string;
     parentRecordJoinColumnName: string;
     relationType: RelationType;
-    selectedFields: Record<string, unknown>;
+    selectedColumns: CommonSelection['columns'];
   }): void {
     if (relationType === RelationType.ONE_TO_MANY) {
       assignOneToManyRelationRecords({
         parentRecords,
         relationRecords: relationResults,
-        sourceFieldName,
+        sourceFieldName: key,
         relatedRecordJoinColumnName,
       });
     } else {
       assignManyToOneRelationRecords({
         parentRecords,
         relationRecords: relationResults,
-        sourceFieldName,
+        sourceFieldName: key,
         parentRecordJoinColumnName,
-        selectedFields,
+        selectedColumns,
       });
     }
-
-    parentObjectRecordsAggregatedValues[sourceFieldName] =
-      relationAggregatedFieldsResult;
   }
 }

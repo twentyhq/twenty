@@ -109,13 +109,16 @@ jest.mock('@/ui/layout/page/components/PageCardLayout', () => ({
   ),
 }));
 
-jest.mock('~/pages/object-record/RecordShowPageHeader', () => ({
-  RecordShowPageHeader: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="record-header">{children}</div>
-  ),
-}));
+jest.mock(
+  '@/object-record/record-show/components/RecordShowPageHeader',
+  () => ({
+    RecordShowPageHeader: ({ children }: { children?: React.ReactNode }) => (
+      <div data-testid="record-header">{children}</div>
+    ),
+  }),
+);
 
-jest.mock('~/pages/object-record/RecordShowPageTitle', () => ({
+jest.mock('@/object-record/record-show/components/RecordShowPageTitle', () => ({
   RecordShowPageTitle: () => <div data-testid="record-page-title" />,
 }));
 
@@ -152,19 +155,6 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.getByTestId('core-object-show-page')).toHaveTextContent(
       'workspace-workflow-1',
     );
-    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
-  });
-
-  it('sends a chat record to the chat page', () => {
-    mockObjectMetadataItems = [{ nameSingular: 'agentChatThread' }];
-    mockParameters = {
-      objectNameSingular: 'agentChatThread',
-      objectRecordId: 'chat-1',
-    };
-
-    render(<RecordShowPage />);
-
-    expect(screen.getByTestId('navigate')).toHaveTextContent('/chat/chat-1');
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
@@ -260,12 +250,30 @@ describe('RecordShowPage workspace surface composition', () => {
     expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
   });
 
-  it('preserves the canonical main page while its resource is missing', () => {
-    mockRecordResource = {
-      record: undefined,
-      loading: false,
-      error: new Error('Not found'),
-    };
+  it.each([
+    {
+      label: 'missing',
+      resource: { record: undefined, loading: false, error: undefined },
+    },
+    {
+      label: 'failed',
+      resource: {
+        record: undefined,
+        loading: false,
+        error: new Error('Not found'),
+      },
+    },
+  ])('contains a $label record resource on the main page', ({ resource }) => {
+    mockRecordResource = resource;
+
+    render(<RecordShowPage />);
+
+    expect(screen.getByTestId('route-unavailable')).toBeInTheDocument();
+    expect(screen.queryByTestId('record-renderer')).not.toBeInTheDocument();
+  });
+
+  it('keeps the main page while its record is loading', () => {
+    mockRecordResource = { record: undefined, loading: true, error: undefined };
 
     render(<RecordShowPage />);
 

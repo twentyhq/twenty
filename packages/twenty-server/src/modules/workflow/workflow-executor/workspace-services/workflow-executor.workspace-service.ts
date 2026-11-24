@@ -1,4 +1,4 @@
-import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -58,7 +58,6 @@ import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner
 import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
-import { getWorkflowUsageSpenderId } from 'src/modules/workflow/workflow-executor/utils/get-workflow-usage-spender-id.util';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -70,7 +69,7 @@ type WorkflowBillingSpenders = {
 @Injectable()
 export class WorkflowExecutorWorkspaceService {
   constructor(
-    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    private readonly coreWorkflowTriggerService: CoreWorkflowTriggerService,
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
@@ -145,10 +144,10 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     const workflow = isDefined(workflowRun.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
+      ? await this.coreWorkflowTriggerService.findCoreWorkflowById({
           workspaceId,
-          workflowRun.coreWorkflowId,
-        )
+          coreWorkflowId: workflowRun.coreWorkflowId,
+        })
       : null;
 
     if (!isDefined(workflow)) {
@@ -158,7 +157,7 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     const billingSpenders = {
-      workflowId: getWorkflowUsageSpenderId(workflow),
+      workflowId: workflow.id,
       applicationId: workflow.applicationId,
     };
 

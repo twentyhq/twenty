@@ -63,6 +63,7 @@ const buildUpdateEvent = ({
   recordId: string;
   updatedFields: ('name' | 'secret')[];
 }): ObjectRecordUpdateEvent => ({
+  eventId: 'event-1',
   recordId,
   properties: {
     updatedFields,
@@ -94,6 +95,7 @@ const filter = ({
     metadataMaps: {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: {},
       rolesPermissions: {},
     },

@@ -8,7 +8,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { buildLogicFunctionJobLimiter } from 'src/engine/core-modules/logic-function/utils/build-logic-function-job-limiter.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
 import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
@@ -137,15 +136,14 @@ export class ApplicationJobService {
             ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
           },
           jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
-          limiter: buildLogicFunctionJobLimiter({
-            logicFunctionId: flatLogicFunction.id,
-            limiter: flatLogicFunction.jobConfig?.limiter,
-          }),
           workspaceId,
           applicationUniversalIdentifier: application.universalIdentifier,
         })),
         {
-          retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
+          retryLimit:
+            input.retryLimit ??
+            flatLogicFunction.retryLimit ??
+            ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
           priority: ENQUEUE_JOB_PRIORITY,
           ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),

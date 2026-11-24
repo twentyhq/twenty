@@ -1,4 +1,4 @@
-import { MessageParticipantRole } from 'twenty-shared/types';
+import { FieldActorSource, MessageParticipantRole } from 'twenty-shared/types';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -25,6 +25,22 @@ const buildInput = (
 });
 
 describe('formatSentMessage', () => {
+  it('should carry the sending actor when one is given', () => {
+    const createdBy = {
+      source: FieldActorSource.WORKFLOW,
+      name: 'Churn win-back',
+      workspaceMemberId: null,
+      context: { workflowId: 'workflow-id' },
+    };
+
+    expect(
+      formatSentMessage({ input: buildInput({ createdBy }) }).createdBy,
+    ).toEqual(createdBy);
+    expect(formatSentMessage({ input: buildInput() })).not.toHaveProperty(
+      'createdBy',
+    );
+  });
+
   it('should mark the message as OUTGOING with the sender as FROM participant', () => {
     const message = formatSentMessage({ input: buildInput() });
 

@@ -17,7 +17,10 @@ export const getRoleNotEditableErrors = ({
 }): FlatEntityValidationError[] => {
   const errors: FlatEntityValidationError[] = [];
 
-  if (!buildOptions.isSystemBuild && !flatRole.isEditable) {
+  if (
+    !buildOptions.isSystemBuild &&
+    (!flatRole.isEditable || flatRole.isSystemSideEffect)
+  ) {
     errors.push({
       code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
       message: PermissionsExceptionMessage.ROLE_NOT_EDITABLE,

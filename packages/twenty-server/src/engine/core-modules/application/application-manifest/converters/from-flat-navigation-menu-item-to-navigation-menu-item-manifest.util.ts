@@ -26,10 +26,13 @@ export const fromFlatNavigationMenuItemToNavigationMenuItemManifest = ({
   ...(isDefined(flatNavigationMenuItem.nativePageKey)
     ? { nativePageKey: flatNavigationMenuItem.nativePageKey }
     : {}),
-  ...(isDefined(flatNavigationMenuItem.folderUniversalIdentifier)
+  ...(isDefined(flatNavigationMenuItem.builtInSectionKey)
+    ? { builtInSectionKey: flatNavigationMenuItem.builtInSectionKey }
+    : {}),
+  ...(isDefined(flatNavigationMenuItem.parentUniversalIdentifier)
     ? {
-        folderUniversalIdentifier:
-          flatNavigationMenuItem.folderUniversalIdentifier,
+        parentUniversalIdentifier:
+          flatNavigationMenuItem.parentUniversalIdentifier,
       }
     : {}),
   ...(isDefined(flatNavigationMenuItem.viewUniversalIdentifier)

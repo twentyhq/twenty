@@ -1,13 +1,14 @@
-import { ViewVisibility } from 'twenty-shared/types';
-
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 
+const OVERRIDING_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '20202020-aaaa-4aaa-8aaa-000000000001';
+
 describe('isViewVisibleToUser', () => {
-  it('allows a WORKSPACE view for anyone, including without an identity', () => {
+  it('allows a non-private view for anyone, including without an identity', () => {
     expect(
       isViewVisibleToUser(
         {
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
           createdByUserWorkspaceId: 'someone-else',
         },
         'me',
@@ -16,7 +17,7 @@ describe('isViewVisibleToUser', () => {
     expect(
       isViewVisibleToUser(
         {
-          visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
           createdByUserWorkspaceId: null,
         },
         undefined,
@@ -24,11 +25,11 @@ describe('isViewVisibleToUser', () => {
     ).toBe(true);
   });
 
-  it('allows an UNLISTED view only for its owner', () => {
+  it('allows a private view only for its owner', () => {
     expect(
       isViewVisibleToUser(
         {
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'me',
         },
         'me',
@@ -36,11 +37,11 @@ describe('isViewVisibleToUser', () => {
     ).toBe(true);
   });
 
-  it('denies an UNLISTED view to a non-owner', () => {
+  it('denies a private view to a non-owner', () => {
     expect(
       isViewVisibleToUser(
         {
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'someone-else',
         },
         'me',
@@ -48,21 +49,55 @@ describe('isViewVisibleToUser', () => {
     ).toBe(false);
   });
 
-  it('denies an UNLISTED view when there is no current identity', () => {
+  it('denies a private view when there is no current identity', () => {
     expect(
       isViewVisibleToUser(
-        { visibility: ViewVisibility.UNLISTED, createdByUserWorkspaceId: 'me' },
+        { isPrivate: true, createdByUserWorkspaceId: 'me' },
         undefined,
       ),
     ).toBe(false);
   });
 
-  it('denies an ownerless UNLISTED view to everyone', () => {
+  it('denies an ownerless private view to everyone', () => {
     expect(
       isViewVisibleToUser(
-        { visibility: ViewVisibility.UNLISTED, createdByUserWorkspaceId: null },
+        { isPrivate: true, createdByUserWorkspaceId: null },
         'me',
       ),
     ).toBe(false);
+  });
+
+  it('denies a non-private view overridden to private to a non-owner', () => {
+    expect(
+      isViewVisibleToUser(
+        {
+          isPrivate: false,
+          createdByUserWorkspaceId: 'someone-else',
+          overrides: {
+            [OVERRIDING_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              isPrivate: true,
+            },
+          },
+        },
+        'me',
+      ),
+    ).toBe(false);
+  });
+
+  it('allows a private view overridden to non-private for anyone', () => {
+    expect(
+      isViewVisibleToUser(
+        {
+          isPrivate: true,
+          createdByUserWorkspaceId: 'someone-else',
+          overrides: {
+            [OVERRIDING_APPLICATION_UNIVERSAL_IDENTIFIER]: {
+              isPrivate: false,
+            },
+          },
+        },
+        'me',
+      ),
+    ).toBe(true);
   });
 });

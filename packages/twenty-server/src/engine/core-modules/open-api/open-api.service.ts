@@ -8,7 +8,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.util';
 import {
@@ -71,11 +71,19 @@ export class OpenApiService {
   }
 
   private async getFlatObjectMetadataArray(workspaceId: string) {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatFieldMetadataOptionMaps',
+          ],
         },
       );
 
@@ -91,6 +99,7 @@ export class OpenApiService {
       flatObjectMetadataArray,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     };
   }
 
@@ -112,6 +121,7 @@ export class OpenApiService {
       flatObjectMetadataArray,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps,
     } = await this.getFlatObjectMetadataArray(workspace.id);
 
     if (!flatObjectMetadataArray.length) {
@@ -188,11 +198,12 @@ export class OpenApiService {
 
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
-      schemas: computeSchemaComponents(
-        flatObjectMetadataArray,
+      schemas: computeSchemaComponents({
+        flatObjectMetadataItems: flatObjectMetadataArray,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-      ),
+        flatFieldMetadataOptionMaps,
+      }),
       parameters: computeParameterComponents(),
       responses: {
         '400': get400ErrorResponses(),

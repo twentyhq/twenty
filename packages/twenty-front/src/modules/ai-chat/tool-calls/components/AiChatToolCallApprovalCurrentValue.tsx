@@ -1,0 +1,59 @@
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+import { AiChatToolCallApprovalFieldDisplay } from '@/ai-chat/tool-calls/components/AiChatToolCallApprovalFieldDisplay';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
+import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+
+const StyledCurrentValue = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-wrap: wrap;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+  overflow-wrap: anywhere;
+`;
+
+type AiChatToolCallApprovalCurrentValueProps = {
+  objectNameSingular: string;
+  recordId: string;
+  fieldDefinition: FieldDefinition<FieldMetadata>;
+};
+
+export const AiChatToolCallApprovalCurrentValue = ({
+  objectNameSingular,
+  recordId,
+  fieldDefinition,
+}: AiChatToolCallApprovalCurrentValueProps) => {
+  const { t } = useLingui();
+  const { fieldName } = fieldDefinition.metadata;
+  const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
+  const fieldValue = useRecordFieldValue(recordId, fieldName, fieldDefinition);
+
+  if (!isDefined(recordStore)) {
+    return null;
+  }
+
+  return (
+    <StyledCurrentValue>
+      {t`Currently:`}
+      {isFieldValueEmpty({ fieldDefinition, fieldValue }) ? (
+        t`Empty`
+      ) : (
+        <AiChatToolCallApprovalFieldDisplay
+          objectNameSingular={objectNameSingular}
+          recordId={recordId}
+          fieldDefinition={fieldDefinition}
+        />
+      )}
+    </StyledCurrentValue>
+  );
+};

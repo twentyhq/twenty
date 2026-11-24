@@ -60,6 +60,10 @@ export class CreateManyViewFieldsTool extends BaseTool<
         size: viewField.size,
         position: viewField.position,
         aggregateOperation: viewField.aggregateOperation,
+        isCanonical: viewField.isCanonical,
+        relationTargetFieldMetadataId: viewField.relationTargetFieldMetadataId,
+        relationScope: viewField.relationScope,
+        label: viewField.label,
       })),
       workspaceId,
     });

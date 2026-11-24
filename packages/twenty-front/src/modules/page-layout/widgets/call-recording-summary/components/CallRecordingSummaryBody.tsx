@@ -1,4 +1,4 @@
-import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
+import { LazyMarkdownRenderer } from '@/ai-chat/message-content/components/LazyMarkdownRenderer';
 import { CallRecordingStatusDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingStatusDisplay';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/call-recording/components/CallRecordingWidgetForbiddenDisplay';

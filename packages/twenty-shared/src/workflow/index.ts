@@ -171,6 +171,7 @@ export type {
 export type { WorkflowStepWait } from './types/WorkflowStepWait';
 export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
+export { getDefaultMcpToolInputFromJsonSchema } from './utils/getDefaultMcpToolInputFromJsonSchema';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';

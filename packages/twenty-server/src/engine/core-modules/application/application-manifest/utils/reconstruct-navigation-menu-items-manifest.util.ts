@@ -102,24 +102,24 @@ export const reconstructNavigationMenuItemsManifest = ({
     ),
   );
   const isFolderResolvable = ({
-    folderUniversalIdentifier,
+    parentUniversalIdentifier,
   }: FlatNavigationMenuItem) => {
-    if (!isDefined(folderUniversalIdentifier)) {
+    if (!isDefined(parentUniversalIdentifier)) {
       return true;
     }
 
     if (
       isDefined(
         applicationAllFlatEntityMaps.flatNavigationMenuItemMaps
-          .byUniversalIdentifier[folderUniversalIdentifier],
+          .byUniversalIdentifier[parentUniversalIdentifier],
       )
     ) {
-      return exportedUniversalIdentifiers.has(folderUniversalIdentifier);
+      return exportedUniversalIdentifiers.has(parentUniversalIdentifier);
     }
 
     return isDefined(
       allFlatEntityMaps.flatNavigationMenuItemMaps.byUniversalIdentifier[
-        folderUniversalIdentifier
+        parentUniversalIdentifier
       ],
     );
   };

@@ -529,7 +529,7 @@ export class ToolCallAnswerService {
       );
     }
 
-    const { actorContext, userId, userContext } =
+    const { actorMetadata, userId, userContext } =
       await this.agentActorContextService.buildUserAndAgentActorContext(
         userWorkspaceId,
         workspaceId,
@@ -538,7 +538,7 @@ export class ToolCallAnswerService {
     return {
       workspaceId,
       authContext,
-      actorContext,
+      actorMetadata,
       userId,
       userWorkspaceId,
       threadId,

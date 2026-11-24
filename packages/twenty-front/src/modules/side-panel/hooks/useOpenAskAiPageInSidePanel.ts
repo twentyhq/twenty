@@ -1,5 +1,5 @@
-import { agentChatUISessionStartTimeState } from '@/ai/states/agentChatUISessionStartTimeState';
-import { resetClosingAiChatInboxThread } from '@/ai/utils/resetClosingAiChatInboxThread';
+import { aiChatUISessionStartTimeState } from '@/ai-chat/states/aiChatUISessionStartTimeState';
+import { askAiSidePanelThreadIdComponentState } from '@/side-panel/states/askAiSidePanelThreadIdComponentState';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -13,14 +13,15 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IconSparkles } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
+import { isSidePanelShrinkingFromFullWidthState } from '@/side-panel/states/isSidePanelShrinkingFromFullWidthState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 export const useOpenAskAiPageInSidePanel = () => {
   const store = useStore();
   const { navigateSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const setAgentChatUISessionStartTime = useSetAtomState(
-    agentChatUISessionStartTimeState,
+  const setAiChatUISessionStartTime = useSetAtomState(
+    aiChatUISessionStartTimeState,
   );
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
@@ -28,38 +29,52 @@ export const useOpenAskAiPageInSidePanel = () => {
 
   const openAskAiPage = useCallback(
     ({
+      threadId,
       resetNavigationStack,
+      isContinuedFromFullWidth = false,
     }: {
+      threadId?: string;
       resetNavigationStack?: boolean;
+      isContinuedFromFullWidth?: boolean;
     } = {}) => {
       if (isWorkspaceSuspended || isCurrentPathAiChatPage()) {
         return;
       }
-
-      resetClosingAiChatInboxThread(store);
 
       const shouldReset =
         resetNavigationStack !== undefined
           ? resetNavigationStack
           : isSidePanelOpened;
 
-      setAgentChatUISessionStartTime(
-        (agentChatUISessionStartTime) =>
-          agentChatUISessionStartTime ?? Temporal.Now.instant(),
+      setAiChatUISessionStartTime(
+        (aiChatUISessionStartTime) =>
+          aiChatUISessionStartTime ?? Temporal.Now.instant(),
+      );
+
+      store.set(
+        isSidePanelShrinkingFromFullWidthState.atom,
+        isContinuedFromFullWidth,
+      );
+
+      const pageId = v4();
+
+      store.set(
+        askAiSidePanelThreadIdComponentState.atomFamily({ instanceId: pageId }),
+        threadId ?? null,
       );
 
       navigateSidePanelMenu({
         page: SidePanelPages.AskAI,
         pageTitle: t`Ask AI`,
         pageIcon: IconSparkles,
-        pageId: v4(),
+        pageId,
         resetNavigationStack: shouldReset,
       });
     },
     [
       navigateSidePanelMenu,
       isSidePanelOpened,
-      setAgentChatUISessionStartTime,
+      setAiChatUISessionStartTime,
       isWorkspaceSuspended,
       store,
     ],

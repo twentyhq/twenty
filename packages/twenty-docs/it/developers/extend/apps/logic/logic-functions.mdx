@@ -351,7 +351,7 @@ const handler = async (event: RoutePayload) => {
   per i dettagli di fatturazione e operativi.
 </Note>
 
-**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, il `workspaceId` deve essere un workspace in cui la funzione di destinazione è installata, altrimenti la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
+**Contratto del resolver.** Il tipo `LogicFunctionConfig` dell'SDK impone questo a tempo di compilazione: non appena imposti `serverRouteTriggerSettings`, il tuo handler è vincolato a restituire una `Response`, oppure `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (o una `Promise` di uno dei due). Nel percorso di dispatch, se l'app non è installata nel `workspaceId`, non viene eseguito nulla e la richiesta viene confermata con `200` e `{ queued: false, reason: "APPLICATION_NOT_INSTALLED" }`, quindi il provider smette di riconsegnare un evento che nessun workspace può elaborare. Se l'app è installata lì ma non dispone di alcuna funzione con quell'`targetLogicFunctionUniversalIdentifier`, la richiesta viene rifiutata con `404`. Un risultato che non corrisponde a nessuna delle due forme — incluso uno i cui identificatori non sono UUID — viene rifiutato con `502`.
 
 | Campo                                    | Tipo                 | Note                                                                         |
 | ---------------------------------------- | -------------------- | ---------------------------------------------------------------------------- |
@@ -450,7 +450,7 @@ Per le eliminazioni permanenti, usa `.destroyed`.
 | `condizione`                       | [Espressione di regola](/it/user-guide/data-model/capabilities/validation-rules#write-a-condition) facoltativa che il record deve soddisfare. `precedente.\<field>` lo legge prima di un aggiornamento. Richiede `objectUniversalIdentifier`. |
 | `batchMode`                        | Booleano facoltativo. Quando è `true`, l'handler viene chiamato una volta per ogni batch di record anziché una volta per record. Il server decide quanti record contiene un batch, fino a 200.                                                              |
 
-La compilazione non riesce quando un oggetto o un campo è sconosciuto oppure quando la condizione legge un campo che l'oggetto non possiede. Una condizione legge i campi del record stesso; una relazione molti-a-uno viene letta tramite il relativo id, ad esempio `companyId`.
+La compilazione non riesce quando un oggetto o un campo è sconosciuto oppure quando la condizione legge un campo che l'oggetto non possiede. Una condizione legge il record nel modo in cui lo restituisce l'API, come una regola di convalida: `company.id` per l'azienda correlata, `company.employees > 100` per uno dei suoi campi. I campi correlati vengono letti quando l'evento viene inviato, con le autorizzazioni dell'applicazione, quindi un record correlato che l'applicazione non può leggere viene considerato vuoto. `previous.` riguarda solo i campi del record stesso.
 
 <Note>
   Il precedente `databaseEventTriggerSettings`, con `eventName` (ad esempio
@@ -812,6 +812,17 @@ export default defineFrontComponent({
 
 Il componente viene montato non appena l'agente ha terminato lo streaming dei suoi argomenti, quindi gestisce l'intera chiamata, non solo il risultato. `toolCall.status` passa attraverso `input-available`, gli stati di approvazione quando lo strumento ne richiede una, e quindi `output-available`, `output-denied` o `output-error`; `input` è ciò che l'agente ha proposto, `output` ciò che il tuo gestore ha restituito. Esegui il rendering di ogni stato che ti interessa, poiché la riga del passaggio non è più presente per gestirli.
 
+Quando l'agente propone una chiamata che attende l'approvazione di una persona, la scheda di approvazione mostra lo stesso componente al posto degli argomenti JSON non elaborati. La scheda mantiene l'intestazione, **Rifiuta**, **Approva** e il feedback. Mentre `toolCall.status` è `approval-requested`, `input` contiene gli argomenti che **Approva** invierà e il componente può modificarli con `setToolCallArguments`:
+
+```tsx
+import { setToolCallArguments, useToolCall } from 'twenty-sdk/front-component';
+
+const toolCall = useToolCall();
+
+// Approve now runs the tool with decision DECLINE and the reason.
+setToolCallArguments({ ...toolCall?.input, decision: 'DECLINE', reason });
+```
+
 Sia `input` sia `output` sono tipizzati come `Record\<string, unknown>`, quindi restringi ogni campo prima di utilizzarlo anziché eseguire un cast. Ciò è particolarmente importante per tutto ciò che passi al DOM: un valore che inserisci in un `href` senza verificare che sia una stringa è un link controllato dall'output dello strumento.
 
 <Note>
@@ -920,6 +931,20 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
+**Indirizzi di lavoro.** `isWorkEmail(address)` da `twenty-sdk/email` distingue un indirizzo aziendale da uno personale, utilizzando lo stesso elenco di provider di posta elettronica gratuiti e temporanei usato da Twenty. Ha una propria voce perché quell'elenco pesa circa 240 KB, quindi solo le funzioni che lo importano lo includono nel bundle:
+
+```ts
+import { isWorkEmail } from 'twenty-sdk/email';
+
+isWorkEmail('ada@acme.com'); // true
+isWorkEmail('ada@gmail.com'); // false
+```
+
+Il dominio viene confrontato così come è scritto, quindi converti prima l'indirizzo in minuscolo.
+
+</Note>
+
+<Note>
   **Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono
   questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano
   impostazioni dei trigger. Consulta Hook di
@@ -961,12 +986,12 @@ export default defineHealthCheck({
 
 Il risultato è un'unione discriminata, non un booleano:
 
-| Campo         | Obbligatorio                   | Descrizione                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `stato`       | Sì                             | `OK` quando non c'è nulla da segnalare, altrimenti `SUCCESS`, `INFO`, `WARNING`, `ERROR` o `NEUTRAL`                                                                                                                                                                                                                                                                                                   |
-| `titolo`      | Per ogni stato diverso da `OK` | La prima riga del banner nella pagina delle impostazioni dell'app                                                                                                                                                                                                                                                                                                                                      |
-| `description` | No                             | Una seconda riga sotto il titolo, che indica cosa fare al riguardo                                                                                                                                                                                                                                                                                                                                     |
-| `azione`      | No                             | `{ label, location }` per il pulsante del banner. `location` indica dove reindirizza il pulsante: un percorso all'interno di Twenty, ad esempio `/settings/billing`, facoltativamente con un hash per selezionare una scheda, oppure solo un hash, ad esempio `#variables`, per passare a una scheda della tua pagina delle impostazioni; omettilo per arrivare alla scheda di configurazione dell'app |
+| Campo         | Obbligatorio                   | Descrizione                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `stato`       | Sì                             | `OK` quando non c'è nulla da segnalare, altrimenti `SUCCESS`, `INFO`, `WARNING`, `ERROR` o `NEUTRAL`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `titolo`      | Per ogni stato diverso da `OK` | La prima riga del banner nella pagina delle impostazioni dell'app                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `description` | No                             | Una seconda riga sotto il titolo, che indica cosa fare al riguardo                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `azione`      | No                             | `{ label, location }` per il pulsante del banner. `location` indica dove reindirizza il pulsante: un percorso all'interno di Twenty, ad esempio `/settings/billing`, facoltativamente con un hash per selezionare una scheda, oppure un hash da solo, ad esempio `#variables`, per passare a una scheda della tua pagina delle impostazioni. Aggiungi `/` e una sezione all'hash di quella scheda, ad esempio `#general/connections` per le connessioni dell'app, per scorrere fino a quella sezione ed evidenziarla; ometti la posizione per arrivare alla scheda di configurazione dell'app |
 
 `OK` non mostra alcun banner; ogni altro stato visualizza il titolo in un banner colorato in base allo stato, quindi scegli quello che corrisponde al grado di azione richiesto alla persona. Gli stati sono gli `ApplicationHealthStatus` di Twenty, quindi la stringa semplice e il membro enum sono intercambiabili:
 

@@ -51,10 +51,10 @@ Pick colors by role, through semantic tokens. Palette steps (`color.blue9`, `col
 | Content text, values | `font.color.primary` |
 | Supporting text, menu items, button labels | `font.color.secondary` |
 | Metadata, hints, timestamps, group labels | `font.color.tertiary` |
-| Placeholders, disabled text, decorative icons | `font.color.light` |
+| Placeholders, disabled text, decorative icons, shortcut keys | `font.color.light` |
 | Dividers | `border.color.light` |
 | Card, menu and input outlines | `border.color.medium` |
-| Strong lines: workflow edges, shortcut keys | `border.color.strong` |
+| Strong lines: workflow edges | `border.color.strong` |
 | Accent: main action, focus | `color.blue` |
 | Danger | `color.red`, `font.color.danger` |
 
@@ -203,10 +203,10 @@ Classify before placing. A **command** acts (Share, Snooze, Done, Delete); a **f
 
 ### Command menu
 
-- Every command is a row: icon, label, shortcut chips. Up and down move, Enter runs. A fold opens with → or Enter and closes with ← or Backspace.
+- Every command is a row: icon, label, shortcut. Up and down move, Enter runs. A fold opens with → or Enter and closes with ← or Backspace.
 - Sections run in this order: pinned, selection, the current object, Ask and find, create record, workspace, go to, and Ask AI as the fallback.
 - Every command stays reachable from every page, settings included. Less relevant commands sit lower; none is hidden.
-- The right side of a row holds shortcut chips and fold chevrons only. Extra meaning goes on the left, such as an app's logo as a badge on the command icon.
+- The right side of a row holds shortcuts and fold chevrons only. Extra meaning goes on the left, such as an app's logo as a badge on the command icon.
 - An installed app's commands sit together in their own section after the standard and custom ones.
 
 ### Side panel

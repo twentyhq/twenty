@@ -13,7 +13,7 @@ export const buildWorkflowAgentRunExecutionContext = ({
   turnCreatedBy: ActorMetadata;
 }): AgentRunExecutionContext => ({
   authContext: executionContext.authContext,
-  actorContext: executionContext.isActingOnBehalfOfUser
+  actorMetadata: executionContext.isActingOnBehalfOfUser
     ? executionContext.initiator
     : undefined,
   turnCreatedBy,

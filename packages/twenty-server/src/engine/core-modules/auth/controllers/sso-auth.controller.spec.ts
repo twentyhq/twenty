@@ -76,6 +76,9 @@ describe('SsoAuthController', () => {
           provide: UserService,
           useValue: {
             findUserByEmail: jest.fn(),
+            hasUserAccessToWorkspaceOrThrow: jest
+              .fn()
+              .mockResolvedValue(undefined),
             markEmailAsVerified: jest.fn().mockResolvedValue(undefined),
           },
         },

@@ -18,6 +18,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "isActive",
       "overrides",
       "isSystem",
+      "isPrivate",
+      "createdByUserWorkspaceId",
     ],
     "propertiesToStringify": [
       "responseFormat",
@@ -188,6 +190,8 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "name",
       "description",
       "timeoutSeconds",
+      "jobFailureHandlerName",
+      "retryLimit",
       "checksum",
       "sourceHandlerPath",
       "handlerName",
@@ -200,7 +204,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
-      "jobConfig",
       "builtHandlerPath",
     ],
     "propertiesToStringify": [
@@ -210,7 +213,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "serverRouteTriggerSettings",
       "toolTriggerSettings",
       "workflowActionTriggerSettings",
-      "jobConfig",
     ],
   },
   "mcpServer": {
@@ -240,14 +242,19 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     "propertiesToCompare": [
       "type",
       "position",
-      "folderUniversalIdentifier",
+      "parentUniversalIdentifier",
       "name",
       "link",
       "nativePageKey",
+      "builtInSectionKey",
       "icon",
       "color",
+      "isActive",
+      "overrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "objectMetadata": {
     "propertiesToCompare": [
@@ -323,6 +330,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "pageLayoutTabUniversalIdentifier",
       "conditionalDisplay",
       "conditionalAvailabilityExpression",
+      "conditionalAvailability",
       "isActive",
       "universalOverrides",
     ],
@@ -331,6 +339,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "universalConfiguration",
       "conditionalDisplay",
+      "conditionalAvailability",
       "universalOverrides",
     ],
   },
@@ -351,8 +360,12 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "secondFieldMetadataUniversalIdentifier",
       "thirdFieldMetadataUniversalIdentifier",
       "isInherent",
+      "isActive",
+      "overrides",
     ],
-    "propertiesToStringify": [],
+    "propertiesToStringify": [
+      "overrides",
+    ],
   },
   "role": {
     "propertiesToCompare": [
@@ -383,6 +396,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   "roleTarget": {
     "propertiesToCompare": [
       "roleUniversalIdentifier",
+      "isSystemSideEffect",
       "userWorkspaceId",
       "apiKeyId",
       "webhookUniversalIdentifier",
@@ -401,6 +415,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "relationFieldMetadataUniversalIdentifier",
       "workspaceMemberFieldMetadataUniversalIdentifier",
       "workspaceMemberSubFieldName",
+      "workspaceMemberRelationFieldMetadataUniversalIdentifier",
       "deletedAt",
       "rowLevelPermissionRuleUniversalIdentifier",
     ],
@@ -512,10 +527,11 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "kanbanAggregateOperation",
       "kanbanAggregateOperationFieldMetadataUniversalIdentifier",
       "anyFieldFilterValue",
+      "presetFilter",
       "calendarLayout",
       "calendarFieldMetadataUniversalIdentifier",
       "calendarEndFieldMetadataUniversalIdentifier",
-      "visibility",
+      "isPrivate",
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
       "shouldDisplayGroupsAsTabs",
@@ -535,12 +551,16 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "position",
       "aggregateOperation",
       "viewFieldGroupUniversalIdentifier",
+      "relationTargetFieldMetadataUniversalIdentifier",
+      "universalRelationScope",
+      "label",
       "deletedAt",
       "viewUniversalIdentifier",
       "isActive",
       "universalOverrides",
     ],
     "propertiesToStringify": [
+      "universalRelationScope",
       "universalOverrides",
     ],
   },
@@ -599,6 +619,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "direction",
       "subFieldName",
       "fieldMetadataUniversalIdentifier",
+      "relationTargetFieldMetadataUniversalIdentifier",
       "viewUniversalIdentifier",
       "deletedAt",
     ],
@@ -617,17 +638,15 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
   },
   "workflow": {
     "propertiesToCompare": [
-      "jobConfig",
       "versionDefinitionHash",
       "name",
       "isSystem",
-      "visibility",
+      "isPrivate",
+      "createdByUserWorkspaceId",
       "lastPublishedVersionId",
       "lastPublishedCoreWorkflowVersionId",
     ],
-    "propertiesToStringify": [
-      "jobConfig",
-    ],
+    "propertiesToStringify": [],
   },
   "workflowVersion": {
     "propertiesToCompare": [
@@ -635,7 +654,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "status",
       "triggers",
       "steps",
-      "coreWorkflowId",
+      "coreWorkflowUniversalIdentifier",
     ],
     "propertiesToStringify": [
       "triggers",

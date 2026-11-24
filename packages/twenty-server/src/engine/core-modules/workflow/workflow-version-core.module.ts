@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { FlatWorkflowVersionModule } from 'src/engine/metadata-modules/flat-workflow-version/flat-workflow-version.module';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
 import { WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -18,20 +15,22 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
 
 @Module({
   imports: [
-    ApplicationModule,
-    WorkspaceMigrationModule,
-    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     RecordPositionModule,
-    TypeOrmModule.forFeature([WorkflowVersionEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      WorkflowVersionEntity,
+      WorkflowEntity,
+      WorkspaceEntity,
+    ]),
     WorkspaceCacheModule,
     FlatWorkflowVersionModule,
     WorkflowMetadataReadModule,
   ],
   providers: [
     WorkspaceWorkflowAutomatedTriggerMapCacheService,
-    WorkflowVersionCoreSyncService,
+    CoreWorkflowTriggerService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
+    provideWorkspaceScopedRepository(WorkflowEntity),
   ],
-  exports: [TypeOrmModule, WorkflowVersionCoreSyncService],
+  exports: [TypeOrmModule, CoreWorkflowTriggerService],
 })
 export class WorkflowVersionCoreModule {}

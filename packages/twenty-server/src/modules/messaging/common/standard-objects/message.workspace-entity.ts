@@ -1,3 +1,5 @@
+import { type ActorMetadata } from 'twenty-shared/types';
+
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -20,5 +22,6 @@ export class MessageWorkspaceEntity extends BaseWorkspaceEntity {
   messageCampaign: EntityRelation<MessageCampaignWorkspaceEntity> | null;
   messageCampaignId: string | null;
   isDraft: boolean;
+  createdBy: ActorMetadata;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
 }

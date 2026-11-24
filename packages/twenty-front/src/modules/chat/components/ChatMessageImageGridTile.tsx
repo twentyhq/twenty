@@ -1,10 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
 import { FILE_CATEGORIES } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useStableMediaUrl } from '@/chat/hooks/useStableMediaUrl';
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 
@@ -58,10 +58,8 @@ export const ChatMessageImageGridTile = ({
   onClick,
 }: ChatMessageImageGridTileProps) => {
   const { t } = useLingui();
-  const [failedImageUrl, setFailedImageUrl] = useState<string | undefined>();
-
-  const hasImageFailedToLoad =
-    isDefined(failedImageUrl) && failedImageUrl === file.url;
+  const { mediaUrl, hasMediaFailedToLoad, handleMediaError } =
+    useStableMediaUrl(file.url);
   const hasHiddenImages = isDefined(hiddenImageCount);
 
   return (
@@ -72,14 +70,14 @@ export const ChatMessageImageGridTile = ({
       }
       onClick={onClick}
     >
-      {hasImageFailedToLoad ? (
+      {hasMediaFailedToLoad ? (
         <FileIcon fileCategory={FILE_CATEGORIES.IMAGE} />
       ) : (
         <StyledTileImage
-          src={file.url}
+          src={mediaUrl}
           alt={hasHiddenImages ? '' : file.label}
           loading="lazy"
-          onError={() => setFailedImageUrl(file.url)}
+          onError={handleMediaError}
         />
       )}
       {hasHiddenImages && (

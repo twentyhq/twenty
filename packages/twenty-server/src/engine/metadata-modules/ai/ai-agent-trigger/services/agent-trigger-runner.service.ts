@@ -211,7 +211,7 @@ export class AgentTriggerRunnerService
       trigger,
       executionContext: {
         authContext: { ...authContext, agentId: agent.id, actingAgent },
-        actorContext: createdBy,
+        actorMetadata: createdBy,
         turnCreatedBy: createdBy,
         userWorkspaceId: null,
       },

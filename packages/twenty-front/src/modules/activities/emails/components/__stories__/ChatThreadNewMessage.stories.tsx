@@ -6,6 +6,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { ChatThreadNewMessage } from '@/activities/emails/components/ChatThreadNewMessage';
 import { type ChatThreadRecipient } from '@/activities/emails/types/ChatThreadRecipient';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const RECIPIENTS: ChatThreadRecipient[] = [
   { id: 'sundar', name: 'Sundar Pichai' },
@@ -37,7 +38,11 @@ const ChatThreadNewMessageStory = () => {
 const meta: Meta<typeof ChatThreadNewMessageStory> = {
   title: 'Modules/Activities/Emails/ChatThreadNewMessage',
   component: ChatThreadNewMessageStory,
-  decorators: [ComponentDecorator, ObjectMetadataItemsDecorator],
+  decorators: [
+    ComponentDecorator,
+    ObjectMetadataItemsDecorator,
+    ToastDecorator,
+  ],
   parameters: { container: { width: 400, height: 400 } },
   beforeEach: () => {
     onSendMessage.mockClear();

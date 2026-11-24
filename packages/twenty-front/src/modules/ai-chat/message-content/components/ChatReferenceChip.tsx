@@ -1,0 +1,46 @@
+import { type ChatReferenceMatch } from 'twenty-shared/ai';
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+import { StyledChatReferenceChipContainer } from '@/ai-chat/message-content/components/StyledChatReferenceChipContainer';
+import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content/contexts/ChatReferenceNavigationEnabledContext';
+import { useChatReferenceTarget } from '@/ai-chat/message-content/hooks/useChatReferenceTarget';
+
+type ChatReferenceChipProps = {
+  reference: ChatReferenceMatch;
+};
+
+export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
+  const isNavigationEnabled = useContext(ChatReferenceNavigationEnabledContext);
+  const target = useChatReferenceTarget(reference);
+
+  if (!isDefined(target)) {
+    return <span>{reference.displayName}</span>;
+  }
+
+  if (!isDefined(target.to) || !isNavigationEnabled) {
+    return (
+      <StyledChatReferenceChipContainer>
+        <Chip variant="soft" startElement={target.leftComponent}>
+          {getChipLabel(reference.displayName).content}
+        </Chip>
+      </StyledChatReferenceChipContainer>
+    );
+  }
+
+  return (
+    <StyledChatReferenceChipContainer>
+      <LinkChip
+        to={target.to}
+        onClick={target.onClick}
+        variant="soft"
+        startElement={target.leftComponent}
+      >
+        {getChipLabel(reference.displayName).content}
+      </LinkChip>
+    </StyledChatReferenceChipContainer>
+  );
+};

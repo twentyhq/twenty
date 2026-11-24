@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  IsUUID,
   Max,
   ValidateIf,
   type ValidationError,
@@ -20,7 +21,7 @@ import {
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type LoggerOptions } from 'typeorm/logger/LoggerOptions';
 
 import { IsLambdaResourceTags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/decorators/is-lambda-resource-tags.decorator';
@@ -60,6 +61,7 @@ import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/d
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
 import { ConfigVariableType } from 'src/engine/core-modules/twenty-config/enums/config-variable-type.enum';
+import { getMissingServerAdminIdentityAssertionVariables } from 'src/engine/core-modules/twenty-config/utils/get-missing-server-admin-identity-assertion-variables.util';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import {
   ConfigVariableException,
@@ -610,6 +612,63 @@ export class ConfigVariables {
   @IsOptional()
   @IsEnum(DpaRegion)
   DPA_DEPLOYMENT_REGION: DpaRegion = DpaRegion.EU;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Id of the only workspace server admin privileges (admin panel, server-level impersonation) can be used from. Leave unset to allow them from any workspace.',
+    type: ConfigVariableType.STRING,
+    // Env-only: the admin panel must not be able to lift its own restriction.
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUUID()
+  SERVER_ADMIN_WORKSPACE_ID: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Request header carrying the signed identity assertion (a JWT) that an identity-aware proxy adds in front of the server admin workspace, for example Cf-Access-Jwt-Assertion. Setting it requires the three other SERVER_ADMIN_IDENTITY_ASSERTION variables and SERVER_ADMIN_WORKSPACE_ID: every request into that workspace must then carry an assertion issued to the email of its user.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_HEADER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'URL of the JSON Web Key Set the server admin identity assertions are signed with',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsUrl({ protocols: ['https'], require_tld: false, require_protocol: true })
+  SERVER_ADMIN_IDENTITY_ASSERTION_JWKS_URL: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Issuer the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_ISSUER: string | undefined;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description: 'Audience the server admin identity assertions must carry',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  SERVER_ADMIN_IDENTITY_ASSERTION_AUDIENCE: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
@@ -1257,6 +1316,15 @@ export class ConfigVariables {
   DEFAULT_SUBDOMAIN = 'app';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Additional subdomains no workspace can use when multi-workspace is enabled (status, internal-tools). The built-in reserved list still applies. Exact match, no patterns',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  ADDITIONAL_RESERVED_SUBDOMAINS: string[] = [];
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Page ID for Cal.com booking integration',
     isHiddenInAdminPanel: true,
@@ -1630,30 +1698,12 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Refuse jobs that would take more than their fair share of the job queue Redis memory',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_REDIS_MEMORY_FAIRNESS_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Delay the jobs that carry a limiter (workflows, logic functions) at enqueue: a burst of max, then one every durationMs / max, per workspace and application. Execution starts are not rechecked, so a paused worker can run overdue jobs together. Off: jobs are never delayed by their limiter.',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  IS_WORKER_GROUP_LIMITER_ENABLED = false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Maximum size in bytes of a single job (serialized data and options) when Redis memory fairness is enabled',
+      'Maximum size in bytes of a single job (serialized data and options)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsOptional()
-  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 5_242_880;
+  JOB_QUEUE_MAX_JOB_SIZE_BYTES = 20_971_520;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1664,7 +1714,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.3;
+  JOB_QUEUE_MEMORY_SHARE_BY_WORKSPACE_ID = 0.4;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1675,7 +1725,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @Max(1)
-  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.4;
+  JOB_QUEUE_MEMORY_SHARE_BY_APPLICATION_UNIVERSAL_IDENTIFIER = 0.6;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -2223,6 +2273,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
+      'Send AI providers a signed link to files when this server is public. Turn off when the server URL looks public but providers cannot reach it, for example behind a VPN, or when file links must not leave this server. Files are then sent as bytes.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AI_SIGNED_FILE_URLS_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
       'Storage path for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the configured storage backend at startup instead of using the built-in ai-providers.json.',
     type: ConfigVariableType.STRING,
   })
@@ -2342,42 +2401,6 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @ValidateIf((env) => env.MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION > 0)
   MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION = 5;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_LIMIT = 100;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will not be enqueued immediately.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_SOFT_THROTTLE_TTL = 60_000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Throttle limit for workflow execution. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_LIMIT = 5000;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.RATE_LIMITING,
-    description:
-      'Time-to-live for workflow execution throttle in milliseconds. Remaining will be marked as failed.',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,
@@ -2786,6 +2809,19 @@ export const validate = (config: Record<string, unknown>): ConfigVariables => {
 
   if (validationErrors.length > 0) {
     logValidatonErrors(validationErrors, 'error');
+    throw new ConfigVariableException(
+      'Config variables validation failed',
+      ConfigVariableExceptionCode.VALIDATION_FAILED,
+    );
+  }
+
+  const missingServerAdminIdentityAssertionVariables =
+    getMissingServerAdminIdentityAssertionVariables(validatedConfig);
+
+  if (isNonEmptyArray(missingServerAdminIdentityAssertionVariables)) {
+    Logger.error(
+      `The server admin identity assertion is partially configured, missing: ${missingServerAdminIdentityAssertionVariables.join(', ')}`,
+    );
     throw new ConfigVariableException(
       'Config variables validation failed',
       ConfigVariableExceptionCode.VALIDATION_FAILED,

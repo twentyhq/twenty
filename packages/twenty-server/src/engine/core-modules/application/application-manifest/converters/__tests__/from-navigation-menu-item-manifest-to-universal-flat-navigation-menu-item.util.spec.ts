@@ -25,7 +25,7 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
     expect(result.name).toBeNull();
     expect(result.viewUniversalIdentifier).toBeNull();
     expect(result.link).toBeNull();
-    expect(result.folderUniversalIdentifier).toBeNull();
+    expect(result.parentUniversalIdentifier).toBeNull();
     expect(result.targetObjectMetadataUniversalIdentifier).toBeNull();
     expect(result.targetRecordId).toBeNull();
     expect(result.userWorkspaceId).toBeNull();
@@ -40,7 +40,7 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
           name: 'Recipes Board',
           position: 1,
           viewUniversalIdentifier: 'view-uuid-1',
-          folderUniversalIdentifier: 'nav-folder-uuid-1',
+          parentUniversalIdentifier: 'nav-folder-uuid-1',
           targetObjectUniversalIdentifier: 'obj-uuid-1',
         },
         applicationUniversalIdentifier,
@@ -50,7 +50,24 @@ describe('fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem', () =
     expect(result.name).toBe('Recipes Board');
     expect(result.position).toBe(1);
     expect(result.viewUniversalIdentifier).toBe('view-uuid-1');
-    expect(result.folderUniversalIdentifier).toBe('nav-folder-uuid-1');
+    expect(result.parentUniversalIdentifier).toBe('nav-folder-uuid-1');
     expect(result.targetObjectMetadataUniversalIdentifier).toBe('obj-uuid-1');
+  });
+
+  it('should read the parent from the deprecated folderUniversalIdentifier', () => {
+    const result =
+      fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem({
+        navigationMenuItemManifest: {
+          universalIdentifier: 'nav-uuid-3',
+          type: NavigationMenuItemType.LINK,
+          position: 2,
+          link: 'https://example.com',
+          folderUniversalIdentifier: 'nav-folder-uuid-1',
+        },
+        applicationUniversalIdentifier,
+        now,
+      });
+
+    expect(result.parentUniversalIdentifier).toBe('nav-folder-uuid-1');
   });
 });

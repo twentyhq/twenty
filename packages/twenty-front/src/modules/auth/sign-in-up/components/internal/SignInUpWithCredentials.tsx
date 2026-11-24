@@ -13,8 +13,6 @@ import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/Sig
 import { StyledSsoButtonContainer } from '@/auth/sign-in-up/components/internal/SignInUpSsoButtonStyles';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod';
 import { SignInUpMode } from '@/auth/types/SignInUpMode';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { captchaState } from '@/client-config/states/captchaState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { InputHint } from '@/ui/input/components/internal/InputHint/InputHint';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -44,11 +42,7 @@ export const SignInUpWithCredentials = ({
 
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);
-  const captcha = useAtomStateValue(captchaState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
-  const isRequestingCaptchaToken = useAtomStateValue(
-    isRequestingCaptchaTokenState,
-  );
   const lastAuthenticatedMethod = useAtomStateValue(
     lastAuthenticatedMethodState,
   );
@@ -117,22 +111,15 @@ export const SignInUpWithCredentials = ({
     return t`Continue`;
   }, [signInUpMode, signInUpStep, t]);
 
-  const shouldWaitForCaptchaToken =
-    signInUpStep !== SignInUpStep.Init &&
-    isDefined(captcha?.provider) &&
-    isRequestingCaptchaToken;
-
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (isDefined(form.formState.errors['email']) || shouldWaitForCaptchaToken);
+    isDefined(form.formState.errors['email']);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen
   const isPasswordStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Password &&
-    (!form.formState.isValid ||
-      form.formState.isSubmitting ||
-      shouldWaitForCaptchaToken);
+    (!form.formState.isValid || form.formState.isSubmitting);
 
   const isSignUpBlockedByDDLLock =
     isDDLLocked &&

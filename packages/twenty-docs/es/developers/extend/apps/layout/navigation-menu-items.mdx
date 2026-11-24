@@ -35,7 +35,7 @@ export default defineNavigationMenuItem({
   | ------------------------------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
   | `NavigationMenuItemType.VIEW`        | Abre una vista guardada                              | `viewUniversalIdentifier`                                                                               |
   | `NavigationMenuItemType.LINK`        | Abre una URL externa                                 | `link`                                                                                                  |
-  | `NavigationMenuItemType.FOLDER`      | Agrupa elementos anidados bajo una etiqueta          | `name` (y los elementos secundarios hacen referencia a la carpeta mediante `folderUniversalIdentifier`) |
+  | `NavigationMenuItemType.FOLDER`      | Agrupa elementos anidados bajo una etiqueta          | `name` (y los elementos secundarios hacen referencia a la carpeta mediante `parentUniversalIdentifier`) |
   | `NavigationMenuItemType.OBJECT`      | Abre la página de índice predeterminada de un objeto | `targetObjectUniversalIdentifier`                                                                       |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Abre un diseño de página independiente               | `pageLayoutUniversalIdentifier`                                                                         |
   | `NavigationMenuItemType.NATIVE_PAGE` | Abre una página integrada                            | `nativePageKey`: `'workflows'` o `'agents'`                                                             |
@@ -48,7 +48,7 @@ export default defineNavigationMenuItem({
 
 * `icon` y `color` son opcionales y personalizan el aspecto de la entrada.
 
-* `folderUniversalIdentifier` también está disponible en cualquier elemento para anidarlo dentro de un elemento padre de tipo `FOLDER`.
+* `parentUniversalIdentifier` también está disponible en cualquier elemento para anidarlo dentro de un elemento padre de tipo `FOLDER`. El nombre anterior, `folderUniversalIdentifier`, está obsoleto, pero aún se acepta.
 
 * `twenty app pull` escribe los elementos de tu menú de navegación como archivos `defineNavigationMenuItem()`. Un elemento que un miembro del espacio de trabajo añadió a su propia barra lateral, y uno fijado a un registro, pertenecen a ese espacio de trabajo en lugar de a tu aplicación y se notifican en su lugar; consulta [lo que pull no escribe](/es/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 

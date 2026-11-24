@@ -67,6 +67,7 @@ import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/eve
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type ImpersonationLevel } from 'src/engine/core-modules/impersonation/types/impersonation-level.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
@@ -458,12 +459,14 @@ export class AuthService {
     impersonatedUserWorkspaceId,
     _impersonatorUserId,
     impersonatedUserId,
+    impersonationLevel,
   }: {
     workspaceId: string;
     impersonatorUserWorkspaceId: string;
     impersonatedUserWorkspaceId: string;
     _impersonatorUserId: string;
     impersonatedUserId: string;
+    impersonationLevel: ImpersonationLevel;
   }): Promise<AuthTokens> {
     const correlationId = randomUUID();
 
@@ -473,7 +476,7 @@ export class AuthService {
     });
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationLevel,
       action: 'attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -500,7 +503,7 @@ export class AuthService {
     );
 
     void eventLogContext.insertWorkspaceEvent(IMPERSONATION_EVENT, {
-      level: 'workspace',
+      level: impersonationLevel,
       action: 'issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });

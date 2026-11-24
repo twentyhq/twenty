@@ -12,7 +12,7 @@ export const useToggleActivityLink = ({
   targetRecord,
   activityLinkConfig,
   activityIds,
-  timelineQuery,
+  timelineQueries,
 }: {
   targetRecord: Pick<ActivityTargetableObject, 'id'>;
   activityLinkConfig: Pick<
@@ -22,7 +22,7 @@ export const useToggleActivityLink = ({
     | 'targetJoinColumnName'
   >;
   activityIds: string[];
-  timelineQuery: DocumentNode;
+  timelineQueries: DocumentNode[];
 }) => {
   const apolloCoreClient = useApolloCoreClient();
   const [pendingActivityIds, setPendingActivityIds] = useState<string[]>([]);
@@ -87,7 +87,7 @@ export const useToggleActivityLink = ({
 
       await Promise.all([
         refetch(),
-        apolloCoreClient.refetchQueries({ include: [timelineQuery] }),
+        apolloCoreClient.refetchQueries({ include: timelineQueries }),
       ]);
     } finally {
       setPendingActivityIds((currentIds) =>

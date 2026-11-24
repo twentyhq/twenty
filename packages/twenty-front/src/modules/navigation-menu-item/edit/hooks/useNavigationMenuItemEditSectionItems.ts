@@ -8,8 +8,11 @@ import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hoo
 
 export const useNavigationMenuItemEditSectionItems = (
   section: NavigationMenuItemSection,
+  containerId: string | null = null,
 ): NavigationMenuItem[] => {
-  const workspaceSectionItems = useNavigationMenuItemSectionItems();
+  const workspaceSectionItems = useNavigationMenuItemSectionItems({
+    containerId,
+  });
   const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
 
@@ -18,7 +21,7 @@ export const useNavigationMenuItemEditSectionItems = (
   }
 
   const topLevelItems = navigationMenuItemsSorted.filter(
-    (item) => !item.folderId,
+    (item) => !item.parentId,
   );
 
   return flattenNavigationMenuItemsWithFolderChildren(

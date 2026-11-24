@@ -3,4 +3,5 @@ import { type DeferredWorkspaceOperationName } from 'src/engine/workspace-manage
 export const SCHEMA_AFFECTING_DEFERRED_WORKSPACE_OPERATIONS = [
   'build_index',
   'validate_foreignKey',
+  'rebuild_object',
 ] as const satisfies readonly DeferredWorkspaceOperationName[];

@@ -42,24 +42,35 @@ Fiecare webhook trimite un HTTP POST cu un corp JSON:
 
 ```json
 {
-  "event": "person.created",
-  "data": {
-    "id": "abc12345",
-    "firstName": "Alice",
-    "lastName": "Doe",
-    "email": "alice@example.com",
-    "createdAt": "2025-02-10T15:30:45Z",
-    "createdBy": "user_123"
+  "targetUrl": "https://example.com/webhooks/twenty",
+  "eventId": "6f1c2b7e-9a4d-4f3b-8c1e-2d5a7b9c0e1f",
+  "eventName": "person.updated",
+  "objectMetadata": {
+    "id": "0d9a1c3e-5b7f-4a2c-9e8d-1f3b5c7a9e0d",
+    "nameSingular": "person"
   },
-  "timestamp": "2025-02-10T15:30:50Z"
+  "workspaceId": "3b8e1f2a-7c4d-4e9b-a6f1-5d2c8e0b4a7f",
+  "webhookId": "9e4a2d1c-3b5f-4c7e-8a9d-0f1e2b3c4d5e",
+  "eventDate": "2025-02-10T15:30:50.000Z",
+  "workspaceMemberId": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+  "record": {
+    "id": "abc12345",
+    "name": { "firstName": "Alice", "lastName": "Doe" },
+    "jobTitle": "CTO"
+  },
+  "updatedFields": ["jobTitle"]
 }
 ```
 
-| Câmp              | Descriere                                                     |
-| ----------------- | ------------------------------------------------------------- |
-| `eveniment`       | Ce s-a întâmplat (de ex., `person.created`)                   |
-| `date`            | Înregistrarea completă care a fost creată/actualizată/ștearsă |
-| `marcaj temporal` | Când a avut loc evenimentul (UTC)                             |
+| Câmp                          | Descriere                                                                                                                          |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `eventId`                     | ID unic al evenimentului. Rămâne același dacă același eveniment este livrat din nou, așadar folosiți-l pentru a ignora duplicatele |
+| `eventName`                   | Ce s-a întâmplat (de ex., `person.updated`)                                                                                        |
+| `objectMetadata`              | ID-ul și numele la singular ale obiectului înregistrării                                                                           |
+| `înregistrare`                | Înregistrarea după modificare (înainte de aceasta, pentru o înregistrare distrusă)                                                 |
+| `updatedFields`               | Câmpurile care s-au modificat, la evenimentele de actualizare                                                                      |
+| `eventDate`                   | Când a fost pregătită livrarea (UTC)                                                                                               |
+| `userId`, `workspaceMemberId` | Cine a efectuat modificarea, dacă este cunoscut                                                                                    |
 
 <Note>
 Răspundeți cu un **status HTTP 2xx** (200-299) pentru a confirma primirea. Răspunsurile non-2xx sunt înregistrate ca eșecuri de livrare.

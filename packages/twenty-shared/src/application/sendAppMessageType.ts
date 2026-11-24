@@ -5,6 +5,13 @@ export type SendAppMessageRecipient = {
   displayName: string | null;
 };
 
+export type SendAppMessageAttachment = {
+  filename: string;
+  contentType: string;
+  size: number;
+  downloadUrl: string;
+};
+
 export type SendAppMessageEmail = {
   subject: string;
   html: string;
@@ -21,6 +28,7 @@ type SendAppMessagePayloadBase = {
   text: string;
   idempotencyKey: string;
   recipients: SendAppMessageRecipient[];
+  attachments: SendAppMessageAttachment[];
 };
 
 export type SendAppMessagePayload =

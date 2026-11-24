@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 
-import { CRUD_TOOL_OPERATION_VERBS } from '@/ai/constants/CrudToolOperationVerbs';
+import { CRUD_TOOL_STATUS_LABELS } from '@/ai/constants/CrudToolStatusLabels';
 import { type ToolDisplayContext } from '@/ai/types/ToolDisplayContext';
 import { getObjectLabelForCrudOperation } from '@/ai/utils/tool-display/getObjectLabelForCrudOperation';
 import { parseCrudToolName } from '@/ai/utils/tool-display/parseCrudToolName';
@@ -29,7 +29,7 @@ export const buildCrudToolStatusMessage = ({
     objectSlug: parsedCrudToolName.objectSlug,
     objectMetadataItems: displayContext.objectMetadataItems,
   });
-  const verbs = CRUD_TOOL_OPERATION_VERBS[parsedCrudToolName.operation];
+  const verbs = CRUD_TOOL_STATUS_LABELS[parsedCrudToolName.operation];
 
   if (!isDefined(objectLabel)) {
     return null;

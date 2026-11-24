@@ -7,7 +7,11 @@ export const isViewAvailableToUser = ({
 }: {
   flatView: Pick<
     FlatView,
-    'deletedAt' | 'visibility' | 'createdByUserWorkspaceId'
+    | 'deletedAt'
+    | 'isPrivate'
+    | 'createdByUserWorkspaceId'
+    | 'overrides'
+    | 'applicationUniversalIdentifier'
   >;
   userWorkspaceId?: string;
 }): boolean =>

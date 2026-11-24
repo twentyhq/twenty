@@ -4,6 +4,7 @@ import { isNonEmptyArray, isString } from '@sniptt/guards';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   type CompositeFieldSubFieldName,
   type RecordGqlOperationFilter,
   type RowLevelPermissionPredicate,
@@ -12,6 +13,7 @@ import {
   type RowLevelRecordsPermissions,
 } from 'twenty-shared/types';
 import {
+  computeRelationGqlFieldJoinColumnName,
   convertViewFilterValueToString,
   getFilterOperandsForFilterableFieldType,
   getFilterTypeFromFieldType,
@@ -20,16 +22,22 @@ import {
   isFilterValueExpectedAsArray,
   isRecordFilterOperandExpectingValue,
   isRecordFilterValueValid,
+  isWorkspaceMemberFieldCompatibleWithRlsPredicate,
   mapRLSOperandToRecordFilterOperand,
 } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import {
+  type FlatFieldMetadataOptionMapsForOptions,
+  resolveFlatFieldMetadataOptions,
+} from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/permissions/internal/rls/constants/unsatisfiable-record-filter.constant';
 import { type RlsMemberFieldValues } from 'src/engine/permissions/internal/rls/types/rls-member-field-values.type';
-import { resolveMemberFieldValuesPredicateValue } from 'src/engine/permissions/internal/rls/utils/resolve-member-field-values-predicate-value.util';
+import { buildMemberFieldKey } from 'src/engine/permissions/internal/rls/utils/build-member-field-key.util';
+import { isRlsOneToManyEmptinessPredicate } from 'src/engine/permissions/internal/rls/utils/is-rls-one-to-many-emptiness-predicate.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -46,6 +54,7 @@ type BuildRecordFilterForRuleArgs = {
   memberFieldValues: RlsMemberFieldValues;
   currentWorkspaceMemberId?: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   isRelationHopEnabled: boolean;
 };
@@ -85,12 +94,19 @@ const findFieldMetadataOrThrow = ({
 const keepTargetFieldOptions = ({
   value,
   targetFieldMetadata,
+  flatFieldMetadataOptionMaps,
 }: {
   value: RowLevelPermissionPredicateValue;
   targetFieldMetadata: OrmFlatFieldMetadata;
+  flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMapsForOptions;
 }): RowLevelPermissionPredicateValue => {
   const optionValues = new Set(
-    (targetFieldMetadata.options ?? []).map((option) => option.value),
+    (
+      resolveFlatFieldMetadataOptions({
+        flatFieldMetadata: targetFieldMetadata,
+        flatFieldMetadataOptionMaps,
+      }) ?? []
+    ).map((option) => option.value),
   );
 
   if (
@@ -114,6 +130,7 @@ const buildPredicateRecordFilter = ({
   memberFieldValues,
   currentWorkspaceMemberId,
   flatFieldMetadataMaps,
+  flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
   isRelationHopEnabled,
 }: Omit<BuildRecordFilterForRuleArgs, 'rowLevelPermissionRule'> & {
@@ -142,25 +159,62 @@ const buildPredicateRecordFilter = ({
     );
   }
 
-  if (isDefined(predicate.relationFieldMetadataId) && !isRelationHopEnabled) {
+  if (
+    (isDefined(predicate.relationFieldMetadataId) ||
+      isDefined(predicate.workspaceMemberRelationFieldMetadataId)) &&
+    !isRelationHopEnabled
+  ) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
-  let predicateValue = predicate.value;
+  // as a view filter, emptiness on a morph target would require every target empty
+  if (
+    fieldMetadata.type === FieldMetadataType.MORPH_RELATION &&
+    !isDefined(predicate.relationFieldMetadataId) &&
+    (predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY ||
+      predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY)
+  ) {
+    return {
+      [computeRelationGqlFieldJoinColumnName({ name: fieldMetadata.name })]: {
+        is:
+          predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+            ? 'NULL'
+            : 'NOT_NULL',
+      },
+    };
+  }
 
-  if (isDefined(predicate.workspaceMemberFieldMetadataId)) {
+  if (isRlsOneToManyEmptinessPredicate({ predicate, fieldMetadata })) {
+    if (!isRelationHopEnabled) {
+      return UNSATISFIABLE_RECORD_FILTER;
+    }
+
+    const hasRelatedRecordFilter: RecordGqlOperationFilter = {
+      [fieldMetadata.name]: { id: { is: 'NOT_NULL' } },
+    };
+
+    return predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY
+      ? { not: hasRelatedRecordFilter }
+      : hasRelatedRecordFilter;
+  }
+
+  let predicateValue = predicate.value;
+  const workspaceMemberFieldMetadata = isDefined(
+    predicate.workspaceMemberFieldMetadataId,
+  )
+    ? findFieldMetadataOrThrow({
+        fieldMetadataId: predicate.workspaceMemberFieldMetadataId,
+        predicateId: predicate.id,
+        flatFieldMetadataMaps,
+        errorMessage: 'Workspace member field metadata not found',
+      })
+    : undefined;
+
+  if (isDefined(workspaceMemberFieldMetadata)) {
     predicateValue = keepTargetFieldOptions({
-      value: resolveMemberFieldValuesPredicateValue({
-        memberFieldValues,
-        predicate,
-        workspaceMemberFieldMetadata: findFieldMetadataOrThrow({
-          fieldMetadataId: predicate.workspaceMemberFieldMetadataId,
-          predicateId: predicate.id,
-          flatFieldMetadataMaps,
-          errorMessage: 'Workspace member field metadata not found',
-        }),
-      }),
+      value: memberFieldValues[buildMemberFieldKey(predicate)] ?? null,
       targetFieldMetadata: fieldMetadata,
+      flatFieldMetadataOptionMaps,
     });
 
     // Without the member's value the predicate matches nothing rather than being dropped
@@ -199,12 +253,23 @@ const buildPredicateRecordFilter = ({
     return Object.keys(recordFilter).length > 0 ? recordFilter : undefined;
   };
 
-  if (!isDefined(predicate.workspaceMemberFieldMetadataId)) {
+  if (!isDefined(workspaceMemberFieldMetadata)) {
     return buildValueRecordFilter(predicateValue);
   }
 
   if (!isRecordFilterOperandExpectingValue(operand)) {
     return buildValueRecordFilter(predicateValue);
+  }
+
+  if (
+    !isWorkspaceMemberFieldCompatibleWithRlsPredicate({
+      fieldType: fieldMetadata.type,
+      subFieldName,
+      workspaceMemberFieldType: workspaceMemberFieldMetadata.type,
+      workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+    })
+  ) {
+    return UNSATISFIABLE_RECORD_FILTER;
   }
 
   if (isFilterValueExpectedAsArray({ filterType, operand, subFieldName })) {
@@ -213,33 +278,25 @@ const buildPredicateRecordFilter = ({
     );
   }
 
-  if (Array.isArray(predicateValue) && predicateValue.length > 1) {
-    return UNSATISFIABLE_RECORD_FILTER;
-  }
-
-  const singleValue = Array.isArray(predicateValue)
-    ? predicateValue[0]
-    : predicateValue;
-
   // A member value the filter would drop or misread must not widen the rule
   if (
     !isRecordFilterValueValid({
       operand,
-      value: convertViewFilterValueToString(singleValue),
+      value: convertViewFilterValueToString(predicateValue),
     }) ||
     isDefined(
       getFilterValueValidationIssue({
         fieldType: fieldMetadata.type,
         operand,
         subFieldName,
-        value: singleValue,
+        value: predicateValue,
       }),
     )
   ) {
     return UNSATISFIABLE_RECORD_FILTER;
   }
 
-  return buildValueRecordFilter(singleValue);
+  return buildValueRecordFilter(predicateValue);
 };
 
 const combineRecordFilters = (

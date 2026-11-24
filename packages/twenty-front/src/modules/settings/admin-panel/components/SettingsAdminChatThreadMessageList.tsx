@@ -6,7 +6,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
+import { ChatReferenceNavigationEnabledContext } from '@/ai-chat/message-content/contexts/ChatReferenceNavigationEnabledContext';
 import { SettingsAdminChatMessage } from '@/settings/admin-panel/components/SettingsAdminChatMessage';
 import { type AdminChatThreadMessage } from '@/settings/admin-panel/types/AdminChatThreadMessage';
 import { isRenderableAdminChatMessagePart } from '@/settings/admin-panel/utils/isRenderableAdminChatMessagePart';

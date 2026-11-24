@@ -5,6 +5,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files-field.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceInternalImportService } from 'src/engine/core-modules/workspace/services/workspace-internal-import.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -50,11 +51,13 @@ import { MessagingProcessFolderActionsService } from 'src/modules/messaging/mess
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { MessageParticipantManagerModule } from 'src/modules/messaging/message-participant-manager/message-participant-manager.module';
 import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/messaging-monitoring.module';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 @Module({
   imports: [
+    WorkspaceCacheModule,
     FeatureFlagModule,
     FilesFieldModule,
     MessagingGmailDriverModule,
@@ -79,6 +82,7 @@ import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklis
   ],
   providers: [
     BlocklistRepository,
+    WorkspaceInternalImportService,
     provideWorkspaceScopedRepository(MessageChannelEntity),
     MessagingMessageListFetchCronCommand,
     MessagingMessagesImportCronCommand,

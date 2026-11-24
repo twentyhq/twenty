@@ -62,6 +62,12 @@ export const getApplicationContentItemSettingsPath = ({
       return isDefined(item.id)
         ? getSettingsPath(SettingsPath.RoleDetail, { roleId: item.id })
         : undefined;
+    case 'mcpServers':
+      return isDefined(item.id)
+        ? getSettingsPath(SettingsPath.AiMcpServerDetail, {
+            mcpServerId: item.id,
+          })
+        : undefined;
   }
 
   if (!isDefined(item.id) || !isDefined(installedApplicationId)) {

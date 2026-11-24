@@ -6,6 +6,7 @@ import { useReorderVisibleRecordFields } from '@/object-record/record-field/hook
 import { useUpdateRecordField } from '@/object-record/record-field/hooks/useUpdateRecordField';
 import { useUpsertRecordField } from '@/object-record/record-field/hooks/useUpsertRecordField';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { findCanonicalRecordField } from '@/object-record/record-field/utils/findCanonicalRecordField';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
@@ -97,7 +98,7 @@ export const useObjectOptionsForBoard = ({
       recordFieldToMove,
       targetRecordField,
     }: {
-      recordFieldToMove: Pick<RecordField, 'id' | 'fieldMetadataItemId'>;
+      recordFieldToMove: Pick<RecordField, 'id'>;
       targetRecordField: Pick<RecordField, 'id'>;
     }) => {
       const updatedRecordField = reorderVisibleRecordFields({
@@ -146,7 +147,7 @@ export const useObjectOptionsForBoard = ({
       updatedFieldDefinition: Pick<
         ColumnDefinition<FieldMetadata>,
         'fieldMetadataId' | 'isVisible'
-      >,
+      > & { recordFieldId?: string },
     ) => {
       const lastPosition = currentRecordFields.toSorted(
         sortByProperty('position', 'desc'),
@@ -154,11 +155,17 @@ export const useObjectOptionsForBoard = ({
 
       const shouldShowFieldMetadataItem =
         updatedFieldDefinition.isVisible === true;
-      const corresponingRecordField = currentRecordFields.find(
-        (recordFieldToFind) =>
-          recordFieldToFind.fieldMetadataItemId ===
-          updatedFieldDefinition.fieldMetadataId,
-      );
+      const corresponingRecordField = isDefined(
+        updatedFieldDefinition.recordFieldId,
+      )
+        ? currentRecordFields.find(
+            (recordFieldToFind) =>
+              recordFieldToFind.id === updatedFieldDefinition.recordFieldId,
+          )
+        : findCanonicalRecordField({
+            recordFields: currentRecordFields,
+            fieldMetadataItemId: updatedFieldDefinition.fieldMetadataId,
+          });
 
       const noExistingRecordField = !isDefined(corresponingRecordField);
 
@@ -205,7 +212,7 @@ export const useObjectOptionsForBoard = ({
         // TODO: remove after refactor
         setRecordIndexFieldDefinitions(modifiedRecordIndexFieldDefinitions);
       } else {
-        updateRecordField(updatedFieldDefinition.fieldMetadataId, {
+        updateRecordField(corresponingRecordField.id, {
           isVisible: shouldShowFieldMetadataItem,
         });
 

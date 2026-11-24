@@ -2,7 +2,7 @@ import isEqual from 'lodash.isequal';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
-import { hasRecordFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/has-record-field-value.util';
+import { hasRecordFieldValue } from 'src/engine/api/common/utils/has-record-field-value.util';
 
 // Reads return [] for empty composite sub-fields where merge utils return null
 const normalizeEmptyValues = (value: unknown): unknown => {

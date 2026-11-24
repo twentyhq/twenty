@@ -1052,6 +1052,7 @@ export class FileStorageService {
     size,
     mimeType,
     settings,
+    shouldAssertStorageStock = true,
   }: {
     from: ResourceIdentifier;
     to: ResourceIdentifier;
@@ -1060,15 +1061,18 @@ export class FileStorageService {
     size: number;
     mimeType: string;
     settings: FileSettings | null;
+    shouldAssertStorageStock?: boolean;
   }): Promise<FileEntity> {
     const { filePath } = this.validateAndBuildFileStoragePathOrThrow(to);
     const delta = { [UsageUnit.BYTE]: size, [UsageUnit.FILE]: 1 };
 
-    await this.assertStorageStockAvailable({
-      workspaceId: to.workspaceId,
-      applicationId,
-      delta,
-    });
+    if (shouldAssertStorageStock) {
+      await this.assertStorageStockAvailable({
+        workspaceId: to.workspaceId,
+        applicationId,
+        delta,
+      });
+    }
 
     await this.copy({ from, to });
 

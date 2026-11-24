@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Server-level impersonation session outside the server admin workspace should refuse a running session once its impersonator workspace is no longer the server admin workspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": {
+      "id": Any<String>,
+      "message": "Server-level impersonation is not enabled for this user or workspace.",
+    },
+  },
+  "message": "Server level impersonation not allowed",
+}
+`;

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 import { workflowFileSchema } from './workflow-file-action-schema';
 import { workflowVariableReferenceSchema } from './workflow-variable-reference-schema';
@@ -25,6 +26,7 @@ export const workflowSendEmailActionSettingsSchema =
         bcc: z.string().optional(),
       }),
       subject: z.string().optional(),
+      // Saving checks the format (validateWorkflowStepParams); past runs must still parse
       body: z
         .string()
         .optional()

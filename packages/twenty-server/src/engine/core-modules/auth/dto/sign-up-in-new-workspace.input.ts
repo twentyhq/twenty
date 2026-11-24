@@ -1,14 +1,20 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { isString } from '@sniptt/guards';
 
+import { Transform } from 'class-transformer';
 import { IsOptional, IsString, Matches, MaxLength } from 'class-validator';
-import { PARTNER_PATTERN } from 'twenty-shared/constants';
+import {
+  PARTNER_PATTERN,
+  WORKSPACE_DISPLAY_NAME_MAX_LENGTH,
+} from 'twenty-shared/constants';
 
 @InputType()
 export class SignUpInNewWorkspaceInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  @MaxLength(100)
+  @Transform(({ value }) => (isString(value) ? value.trim() : value))
+  @MaxLength(WORKSPACE_DISPLAY_NAME_MAX_LENGTH)
   displayName?: string;
 
   @Field(() => String, { nullable: true })

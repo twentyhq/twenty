@@ -2,6 +2,7 @@ import {
   type WorkflowDraftEmailAction,
   type WorkflowSendEmailAction,
 } from '@/workflow/types/Workflow';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { WorkflowEditActionEmailBase } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
@@ -86,7 +87,9 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
         bcc: '',
       },
       subject: 'Welcome to Twenty!',
-      body: 'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
+      body: serializePlainTextAsAdvancedTextEditorDocument(
+        'Dear Tim,\n\nWelcome to Twenty! We are excited to have you on board.\n\nBest regards,\nThe Team',
+      ),
       files: [],
       inReplyTo: '',
     },
@@ -157,7 +160,7 @@ const VARIABLE_SENDER_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
         bcc: '',
       },
       subject: 'Welcome to Twenty!',
-      body: 'Hello',
+      body: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       files: [],
       inReplyTo: '',
     },
@@ -187,7 +190,7 @@ const VARIABLE_SENDER_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
         bcc: '',
       },
       subject: 'Welcome to Twenty!',
-      body: 'Hello',
+      body: serializePlainTextAsAdvancedTextEditorDocument('Hello'),
       files: [],
       inReplyTo: '',
     },

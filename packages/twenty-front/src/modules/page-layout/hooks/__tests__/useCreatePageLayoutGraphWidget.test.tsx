@@ -9,6 +9,7 @@ import {
 import { buildDefaultBarChartConfiguration } from '@/page-layout/utils/buildDefaultBarChartConfiguration';
 import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
@@ -17,6 +18,7 @@ import {
   BarChartLayout,
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 import {
@@ -128,6 +130,57 @@ describe('useCreatePageLayoutGraphWidget', () => {
     expect(store.get(getCurrentLayoutsAtom())['tab-1'].desktop).toEqual([
       { i: 'mock-uuid', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 4 },
     ]);
+  });
+
+  it('should create a pie chart grouped by the selected field with the pie chart size', () => {
+    const store = createStoreWithWidgets([]);
+    const { result } = renderCreateGraphHook(store);
+
+    act(() => {
+      result.current.createPageLayoutGraphWidget({
+        graphType: GraphType.PIE,
+        fieldSelection: {
+          objectMetadataId: 'object-1',
+          groupByFieldMetadataIdX: 'field-2',
+          aggregateFieldMetadataId: 'field-1',
+        },
+      });
+    });
+
+    expect(store.get(getDraftAtom()).tabs[0].widgets[0]).toMatchObject({
+      title: 'Pie Chart 1',
+      configuration: {
+        __typename: 'PieChartConfiguration',
+        configurationType: WidgetConfigurationType.PIE_CHART,
+        groupByFieldMetadataId: 'field-2',
+        aggregateFieldMetadataId: 'field-1',
+      },
+    });
+    expect(store.get(getCurrentLayoutsAtom())['tab-1'].desktop).toEqual([
+      { i: 'mock-uuid', x: 0, y: 0, w: 4, h: 4, minW: 3, minH: 4 },
+    ]);
+  });
+
+  it('should number the title after the existing horizontal bar charts only', () => {
+    const store = createStoreWithWidgets([
+      makeBarChartWidget('vertical-chart', BarChartLayout.VERTICAL),
+      makeBarChartWidget('horizontal-chart', BarChartLayout.HORIZONTAL),
+    ]);
+    const { result } = renderCreateGraphHook(store);
+
+    act(() => {
+      result.current.createPageLayoutGraphWidget({
+        graphType: GraphType.HORIZONTAL_BAR,
+      });
+    });
+
+    expect(store.get(getDraftAtom()).tabs[0].widgets[2]).toMatchObject({
+      title: 'Horizontal Bar Chart 2',
+      configuration: {
+        __typename: 'BarChartConfiguration',
+        layout: BarChartLayout.HORIZONTAL,
+      },
+    });
   });
 
   it('should number the title after the existing vertical bar charts only', () => {

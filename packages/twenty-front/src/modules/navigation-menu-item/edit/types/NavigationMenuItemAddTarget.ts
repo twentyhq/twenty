@@ -1,4 +1,4 @@
 export type NavigationMenuItemAddTarget = {
-  folderId?: string;
+  parentId?: string;
   position?: number;
 };

@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 
-import { AGENT_CHAT_RECENT_THREAD_LIST_SOURCE } from '@/ai/constants/AgentChatRecentThreadListSource';
-import { useAgentChatThreadList } from '@/ai/hooks/useAgentChatThreadList';
-import { useLoadAgentChatThreadList } from '@/ai/hooks/useLoadAgentChatThreadList';
+import { INBOX_RECENT_THREAD_LIST_SOURCE } from '@/inbox/constants/InboxRecentThreadListSource';
+import { useInboxThreadList } from '@/inbox/hooks/useInboxThreadList';
+import { useLoadInboxThreadList } from '@/inbox/hooks/useLoadInboxThreadList';
 import { SidePanelAiChatPickerList } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList';
 import { SidePanelAiChatPickerLoadMoreFooter } from '@/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerLoadMoreFooter';
 import { aiChatPickerOpeningThreadIdComponentState } from '@/side-panel/pages/search-ai-chats/states/aiChatPickerOpeningThreadIdComponentState';
@@ -19,22 +19,22 @@ export const SidePanelAiChatPickerRecentChats = ({
   isSearchPending,
 }: SidePanelAiChatPickerRecentChatsProps) => {
   const { t } = useLingui();
-  const { threads, agentChatThreadList, isLoading } = useAgentChatThreadList(
-    AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+  const { threads, inboxThreadList, isLoading } = useInboxThreadList(
+    INBOX_RECENT_THREAD_LIST_SOURCE,
   );
   const aiChatPickerOpeningThreadId = useAtomComponentStateValue(
     aiChatPickerOpeningThreadIdComponentState,
   );
-  const { loadAgentChatThreadList } = useLoadAgentChatThreadList();
+  const { loadInboxThreadList } = useLoadInboxThreadList();
   const [isLoadingMoreChats, setIsLoadingMoreChats] = useState(false);
-  const hasNextPage = agentChatThreadList?.hasNextPage ?? false;
+  const hasNextPage = inboxThreadList?.hasNextPage ?? false;
 
   const handleLoadMore = async () => {
     setIsLoadingMoreChats(true);
 
     try {
-      await loadAgentChatThreadList({
-        source: AGENT_CHAT_RECENT_THREAD_LIST_SOURCE,
+      await loadInboxThreadList({
+        source: INBOX_RECENT_THREAD_LIST_SOURCE,
         mode: 'fetch-more',
       });
     } finally {

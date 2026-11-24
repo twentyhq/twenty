@@ -1,9 +1,5 @@
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import {
   type ApplicationContentFlatEntityMaps,
@@ -45,10 +41,11 @@ const BASE_FLAT_VIEW: FlatView = {
   mainGroupByFieldMetadataId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
+  presetFilter: null,
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   isActive: true,
   isSystemSideEffect: false,
   createdByUserWorkspaceId: null,
@@ -91,8 +88,14 @@ const BASE_FLAT_VIEW_FIELD: FlatViewField = {
   size: 150,
   position: 0,
   aggregateOperation: null,
+  relationTargetFieldMetadataId: null,
+  relationTargetFieldMetadataUniversalIdentifier: null,
+  relationScope: null,
+  universalRelationScope: null,
+  label: null,
   isActive: true,
   isSystemSideEffect: false,
+  isCanonical: true,
   overrides: null,
   createdAt: TIMESTAMP,
   updatedAt: TIMESTAMP,
@@ -140,6 +143,7 @@ const buildApplicationContentFlatEntityMaps = ({
   flatPermissionFlagMaps: createEmptyFlatEntityMaps(),
   flatRolePermissionFlagMaps: createEmptyFlatEntityMaps(),
   flatConnectionProviderMaps: createEmptyFlatEntityMaps(),
+  flatMcpServerMaps: createEmptyFlatEntityMaps(),
 });
 
 describe('buildApplicationContentFromFlatEntityMaps', () => {
@@ -157,13 +161,13 @@ describe('buildApplicationContentFromFlatEntityMaps', () => {
             ...BASE_FLAT_VIEW,
             id: 'app-unlisted-view-id',
             universalIdentifier: 'app-unlisted-view',
-            visibility: ViewVisibility.UNLISTED,
+            isPrivate: true,
           },
           {
             ...BASE_FLAT_VIEW,
             id: 'personal-view-id',
             universalIdentifier: 'personal-view',
-            visibility: ViewVisibility.UNLISTED,
+            isPrivate: true,
             createdByUserWorkspaceId: 'user-workspace-id',
           },
         ],

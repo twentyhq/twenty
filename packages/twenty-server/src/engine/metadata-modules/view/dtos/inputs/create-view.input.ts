@@ -18,6 +18,7 @@ import {
   ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewKey,
+  ViewPresetFilter,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -117,6 +118,11 @@ export class CreateViewInput {
   anyFieldFilterValue?: string;
 
   @IsOptional()
+  @IsEnum(ViewPresetFilter)
+  @Field(() => ViewPresetFilter, { nullable: true })
+  presetFilter?: ViewPresetFilter;
+
+  @IsOptional()
   @IsEnum(ViewCalendarLayout)
   @Field(() => ViewCalendarLayout, { nullable: true })
   calendarLayout?: ViewCalendarLayout;
@@ -137,9 +143,15 @@ export class CreateViewInput {
   mainGroupByFieldMetadataId?: string;
 
   @IsOptional()
+  @IsBoolean()
+  @Field(() => Boolean, { nullable: true })
+  isPrivate?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, {
     nullable: true,
+    deprecationReason: 'Use isPrivate instead',
   })
   visibility?: ViewVisibility;
 

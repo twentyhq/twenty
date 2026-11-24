@@ -4,7 +4,6 @@ import {
   FieldMetadataType,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -105,7 +104,7 @@ const buildExistingFlatView = ({
     isCompact: false,
     isActive: true,
     openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     createdAt: existingViewGroup.createdAt,
     updatedAt: existingViewGroup.updatedAt,
@@ -121,6 +120,7 @@ const buildExistingFlatView = ({
     anyFieldFilterValue: null,
     shouldHideEmptyGroups: false,
     shouldDisplayGroupsAsTabs: false,
+    presetFilter: null,
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     isSystemSideEffect: false,
@@ -182,6 +182,7 @@ const updateView = ({
       createEmptyFlatEntityMaps(),
     ),
     flatFieldMetadataMaps,
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     callerApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     workspaceCustomApplicationUniversalIdentifier:

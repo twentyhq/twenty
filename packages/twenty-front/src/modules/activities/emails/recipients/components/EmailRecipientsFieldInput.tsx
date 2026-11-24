@@ -29,6 +29,7 @@ import { EMAIL_RECIPIENT_DND_TYPE } from '@/activities/emails/recipients/constan
 import { EmailRecipientsFieldChipCell } from '@/activities/emails/recipients/components/EmailRecipientsFieldChipCell';
 import { type EmailRecipientChipDropEdge } from '@/activities/emails/recipients/types/EmailRecipientChipDropEdge';
 import { EmailRecipientSuggestionsDropdownContent } from '@/activities/emails/recipients/components/EmailRecipientSuggestionsDropdownContent';
+import { useEmailRecipientsContext } from '@/activities/emails/recipients/contexts/EmailRecipientsContext';
 import { useEmailRecipientsField } from '@/activities/emails/recipients/hooks/useEmailRecipientsField';
 import { useEmailRecipientsResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { useEmailRecipientSuggestions } from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';
@@ -107,27 +108,29 @@ const StyledInput = styled.input`
 type EmailRecipientsFieldInputProps = {
   fieldId: EmailRecipientsFieldId;
   inputRef?: RefObject<HTMLInputElement | null>;
-  // null when the drag started in another field.
-  draggedSourceIndices: number[] | null;
   label: string;
-  recipients: EmailRecipient[];
-  onChange: (recipients: EmailRecipient[]) => void;
   onSubmit?: () => void;
-  excludedSuggestionKeys?: string[];
   contextRecord?: EmailComposerContextRecord | null;
 };
 
 export const EmailRecipientsFieldInput = ({
   fieldId,
   inputRef: providedInputRef,
-  draggedSourceIndices,
   label,
-  recipients,
-  onChange,
   onSubmit,
-  excludedSuggestionKeys = [],
   contextRecord,
 }: EmailRecipientsFieldInputProps) => {
+  const { recipientsByFieldId, draggedRecipients, setFieldRecipients } =
+    useEmailRecipientsContext();
+  const recipients = recipientsByFieldId[fieldId];
+  const onChange = (nextRecipients: EmailRecipient[]) =>
+    setFieldRecipients({ fieldId, recipients: nextRecipients });
+  const draggedSourceIndices =
+    draggedRecipients?.fieldId === fieldId ? draggedRecipients.indices : null;
+  const excludedSuggestionKeys = Object.values(recipientsByFieldId)
+    .flat()
+    .map((recipient) => getEmailRecipientKey(recipient.address));
+
   const instanceId = useId();
   const focusId = `email-recipients-field-${instanceId}`;
   const suggestionsDropdownId = `${focusId}-suggestions`;

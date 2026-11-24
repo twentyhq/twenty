@@ -1,7 +1,7 @@
 import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
-import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
-import { useCanSendAgentChatMessage } from '@/ai/hooks/useCanSendAgentChatMessage';
-import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
+import { AiChatComposerActionsRow } from '@/ai-chat/components/AiChatComposerActionsRow';
+import { useCanSendAiChatMessage } from '@/ai-chat/composer/hooks/useCanSendAiChatMessage';
+import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt';
 import { GETTING_STARTED_STEP_PREVIEWS } from '@/getting-started/constants/GettingStartedStepPreviews';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -51,7 +51,7 @@ export const GettingStartedPromptAction = ({
   const [prompt, setPrompt] = useState(defaultPrompt ?? '');
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { updateGettingStarted } = useUpdateGettingStarted();
-  const canSendAgentChatMessage = useCanSendAgentChatMessage();
+  const canSendAiChatMessage = useCanSendAiChatMessage();
   const trimmedPrompt = prompt.trim();
   const StepPreview = GETTING_STARTED_STEP_PREVIEWS[actionKey];
 
@@ -88,7 +88,7 @@ export const GettingStartedPromptAction = ({
               shape="round"
               aria-label={t`Send instructions`}
               disabled={
-                !canSendAgentChatMessage || !isNonEmptyString(trimmedPrompt)
+                !canSendAiChatMessage || !isNonEmptyString(trimmedPrompt)
               }
               onClick={() => void sendPrompt()}
             >

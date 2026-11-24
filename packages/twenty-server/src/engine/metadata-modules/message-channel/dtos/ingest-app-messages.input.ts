@@ -14,6 +14,7 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
+import { MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE } from 'twenty-shared/application';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -28,8 +29,6 @@ export const INGEST_APP_MESSAGES_MAX_BATCH_SIZE = 100;
 export const MAX_APP_MESSAGE_TEXT_LENGTH = 262_144;
 
 export const MAX_APP_MESSAGE_FOLDERS_PER_MESSAGE = 32;
-
-export const MAX_APP_MESSAGE_ATTACHMENTS_PER_MESSAGE = 20;
 
 @InputType('AppMessageParticipantInput')
 export class AppMessageParticipantInput {

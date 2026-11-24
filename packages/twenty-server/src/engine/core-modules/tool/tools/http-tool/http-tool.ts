@@ -1,8 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildHttpEgressUnavailableResponse } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-http-egress-unavailable-response.util';
@@ -15,7 +12,6 @@ import { HttpRequestInputZodSchema } from 'src/engine/core-modules/tool/tools/ht
 import { type HttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-request.type';
 import { type HttpEgressResponse } from 'src/engine/core-modules/tool/tools/http-tool/types/http-egress-response.type';
 import { buildHttpToolOutput } from 'src/engine/core-modules/tool/tools/http-tool/utils/build-http-tool-output.util';
-import { executeHttpEgressRequest } from 'src/engine/core-modules/tool/tools/http-tool/utils/execute-http-egress-request.util';
 import { normalizeHttpRequestHeaderValues } from 'src/engine/core-modules/tool/tools/http-tool/utils/normalize-http-request-header-values.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -32,7 +28,6 @@ export class HttpTool implements Tool {
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly logicFunctionExecutionThrottleService: LogicFunctionExecutionThrottleService,
-    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
   ) {}
@@ -119,21 +114,8 @@ export class HttpTool implements Tool {
   private async sendRequest(
     request: HttpEgressRequest,
   ): Promise<HttpEgressResponse> {
-    const isLogicFunctionRuntimeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_HTTP_EGRESS_LAMBDA_ENABLED,
-        request.context.workspaceId,
-      );
-
-    if (isLogicFunctionRuntimeEnabled) {
-      return this.logicFunctionDriverFactory
-        .getCurrentDriver()
-        .executeHttpRequest(request);
-    }
-
-    return executeHttpEgressRequest(
-      request,
-      this.secureHttpClientService.getHttpClient(),
-    );
+    return this.logicFunctionDriverFactory
+      .getCurrentDriver()
+      .executeHttpRequest(request);
   }
 }

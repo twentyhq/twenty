@@ -7,8 +7,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { useCaptcha } from '@/client-config/hooks/useCaptcha';
+import { useGetCaptchaToken } from '@/captcha/hooks/useGetCaptchaToken';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -49,8 +48,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
   const { getAuthTokensFromTwoFactorAuthenticationRecoveryCode } = useAuth();
   const { enqueueToast } = useToast();
   const navigate = useNavigateApp();
-  const { readCaptchaToken } = useReadCaptchaToken();
-  const { isCaptchaReady } = useCaptcha();
+  const { getCaptchaToken } = useGetCaptchaToken();
   const loginToken = useAtomStateValue(loginTokenState);
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const setQrCode = useSetAtomState(qrCodeState);
@@ -58,14 +56,6 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!isCaptchaReady) {
-      enqueueToast({
-        status: 'error',
-        children: t`Captcha (anti-bot check) is still loading, try again`,
-      });
-      return;
-    }
 
     if (!isNonEmptyString(loginToken)) {
       return navigate(AppPath.SignInUp);
@@ -78,7 +68,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
         await getAuthTokensFromTwoFactorAuthenticationRecoveryCode(
           recoveryCode,
           loginToken,
-          readCaptchaToken(),
+          await getCaptchaToken(),
         );
 
       if (isDefined(provisioningUri)) {

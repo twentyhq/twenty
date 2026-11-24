@@ -148,8 +148,7 @@ describe('MCP role tools (integration)', () => {
       toolArguments: {
         roleId: adminRole.id,
         objectMetadataId: await findObjectMetadataIdByName('company'),
-        predicates: [],
-        predicateGroups: [{ logicalOperator: 'AND' }],
+        rules: [{ predicateGroups: [{ logicalOperator: 'AND' }] }],
       },
     });
 

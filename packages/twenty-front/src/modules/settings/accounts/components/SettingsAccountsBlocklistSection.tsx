@@ -23,8 +23,8 @@ export const SettingsAccountsBlocklistSection = () => {
 
   const currentWorkspaceMemberId = currentWorkspaceMember?.id ?? '';
 
-  const isInternalMessagesImportEnabled =
-    currentWorkspace?.isInternalMessagesImportEnabled ?? false;
+  const isInternalImportEnabled =
+    currentWorkspace?.isInternalImportEnabled ?? false;
 
   const { records: blocklist } = useFindManyRecords<BlocklistItem>({
     objectNameSingular: StandardObjectNameSingular.Blocklist,
@@ -69,7 +69,7 @@ export const SettingsAccountsBlocklistSection = () => {
       <Section.Header
         title={t`Blocklist`}
         description={
-          isInternalMessagesImportEnabled
+          isInternalImportEnabled
             ? t`Exclude the following people and domains from my email sync.`
             : t`Exclude the following people and domains from my email sync. Internal conversations will not be imported`
         }

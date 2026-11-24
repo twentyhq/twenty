@@ -4,7 +4,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export const navigationMenuItemInsertionPreviewState = createAtomState<{
   dropdownId: string;
   section: NavigationMenuItemSection;
-  folderId: string | null;
+  parentId: string | null;
   index: number;
 } | null>({
   key: 'navigationMenuItemInsertionPreviewState',

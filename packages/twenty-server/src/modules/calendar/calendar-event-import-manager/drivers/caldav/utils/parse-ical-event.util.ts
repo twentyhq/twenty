@@ -2,6 +2,7 @@ import * as ical from 'node-ical';
 import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { extractAttendeesFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-attendees-from-event.util';
 import { extractOrganizerFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-organizer-from-event.util';
+import { extractResourceHandlesFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-resource-handles-from-event.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const parseICalEvents = (
@@ -49,6 +50,7 @@ export const parseICalEvents = (
         status: event.status || 'CONFIRMED',
         recurringEventExternalId: recurrenceIso,
         organizerHandle: '',
+        resourceHandles: extractResourceHandlesFromEvent(event),
         conferenceLinkLabel: '',
         conferenceLinkUrl: icalDataExtractPropertyValue(event.url),
         conferenceSolution: '',

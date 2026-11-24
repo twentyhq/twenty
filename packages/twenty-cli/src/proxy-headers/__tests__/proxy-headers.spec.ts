@@ -108,7 +108,20 @@ const isProcessRunning = async (processId: number) => {
     () => '',
   );
 
-  return stat.split(') ')[1]?.[0] !== 'Z';
+  return (
+    process.platform !== 'linux' ||
+    (stat !== '' && stat.split(') ')[1]?.[0] !== 'Z')
+  );
+};
+
+const killProcessIfRunning = (processId: number) => {
+  try {
+    process.kill(processId, 'SIGKILL');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ESRCH') {
+      throw error;
+    }
+  }
 };
 
 const runJson = async (args: string[]) => {
@@ -589,7 +602,7 @@ describe('proxy headers', () => {
         );
 
         if (escapedPid > 0) {
-          process.kill(escapedPid, 'SIGKILL');
+          killProcessIfRunning(escapedPid);
         }
       }
     },
@@ -623,9 +636,7 @@ describe('proxy headers', () => {
           expect(await isProcessRunning(grandchildPid)).toBe(false);
         });
       } finally {
-        if (await isProcessRunning(grandchildPid)) {
-          process.kill(grandchildPid, 'SIGKILL');
-        }
+        killProcessIfRunning(grandchildPid);
       }
     },
     15_000,
@@ -658,9 +669,7 @@ const poll = setInterval(() => {
       try {
         expect(await isProcessRunning(stubbornPid)).toBe(false);
       } finally {
-        if (await isProcessRunning(stubbornPid)) {
-          process.kill(stubbornPid, 'SIGKILL');
-        }
+        killProcessIfRunning(stubbornPid);
       }
     },
     15_000,
@@ -687,9 +696,7 @@ const poll = setInterval(() => {
           { timeout: 5_000 },
         );
       } finally {
-        if (await isProcessRunning(verbosePid)) {
-          process.kill(verbosePid, 'SIGKILL');
-        }
+        killProcessIfRunning(verbosePid);
       }
     },
   );

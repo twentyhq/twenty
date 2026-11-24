@@ -6,8 +6,6 @@ import {
   createCoreWorkflow,
   createCoreWorkflowVersionStep,
   deleteCoreWorkflows,
-  deleteLegacyWorkspaceWorkflowRecords,
-  linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
@@ -20,7 +18,7 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
-import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
 import {
@@ -118,8 +116,6 @@ type AiAgentStep = {
 type LegacyAiStepWorkflow = {
   coreWorkflowId: string;
   coreWorkflowVersionId: string;
-  workspaceWorkflowId: string;
-  workspaceWorkflowVersionId: string;
   step: AiAgentStep;
   agentId: string;
 };
@@ -193,7 +189,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
   let conversationalWorkflow: LegacyAiStepWorkflow;
   let seededSystemAgentIds: string[];
   const coreWorkflowIds: string[] = [];
-  const workspaceWorkflowVersionIds: string[] = [];
   const agentIds: string[] = [];
 
   const runCommand = () =>
@@ -216,17 +211,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     return steps;
   };
 
-  const readWorkspaceSteps = async (
-    workspaceWorkflowVersionId: string,
-  ): Promise<AiAgentStep[]> => {
-    const [{ steps }] = await global.testDataSource.query(
-      `SELECT steps FROM ${SCHEMA}."workflowVersion" WHERE id = $1`,
-      [workspaceWorkflowVersionId],
-    );
-
-    return steps;
-  };
-
   const readAgent = async (agentId: string): Promise<{ isSystem: boolean }> => {
     const [agent] = await global.testDataSource.query(
       `SELECT "isSystem" FROM core."agent" WHERE id = $1`,
@@ -239,9 +223,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
   const readMigratedRows = async () => ({
     generateCoreSteps: await readCoreSteps(
       generateWorkflow.coreWorkflowVersionId,
-    ),
-    generateWorkspaceSteps: await readWorkspaceSteps(
-      generateWorkflow.workspaceWorkflowVersionId,
     ),
     conversationalCoreSteps: await readCoreSteps(
       conversationalWorkflow.coreWorkflowVersionId,
@@ -310,23 +291,11 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       ['flatAgentMaps', 'flatWorkflowVersionMaps'],
     );
 
-    const {
-      workspaceWorkflowId,
-      workspaceWorkflowVersionIds: [workspaceWorkflowVersionId],
-    } = await linkCoreWorkflowToLegacyWorkspaceIds({
-      coreWorkflowId,
-      withWorkspaceRecords: true,
-    });
-
-    workspaceWorkflowVersionIds.push(workspaceWorkflowVersionId);
-
     const [step] = await readCoreSteps(coreWorkflowVersionId);
 
     return {
       coreWorkflowId,
       coreWorkflowVersionId,
-      workspaceWorkflowId,
-      workspaceWorkflowVersionId,
       step,
       agentId,
     };
@@ -441,8 +410,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     );
     await deleteCoreWorkflows({ coreWorkflowIds });
 
-    await deleteLegacyWorkspaceWorkflowRecords({ workspaceWorkflowVersionIds });
-
     const remainingAgents: { id: string }[] = await global.testDataSource.query(
       `SELECT id FROM core."agent" WHERE id = ANY($1::uuid[])`,
       [agentIds],
@@ -485,9 +452,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     expect(await readCoreSteps(generateWorkflow.coreWorkflowVersionId)).toEqual(
       [inlinedStep],
     );
-    expect(
-      await readWorkspaceSteps(generateWorkflow.workspaceWorkflowVersionId),
-    ).toEqual([inlinedStep]);
     expect(await readAgent(generateWorkflow.agentId)).toMatchObject({
       isSystem: true,
     });
@@ -496,11 +460,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
   it('keeps the agent of a step with human input and makes it visible', async () => {
     expect(
       await readCoreSteps(conversationalWorkflow.coreWorkflowVersionId),
-    ).toEqual([conversationalWorkflow.step]);
-    expect(
-      await readWorkspaceSteps(
-        conversationalWorkflow.workspaceWorkflowVersionId,
-      ),
     ).toEqual([conversationalWorkflow.step]);
     expect(await readAgent(conversationalWorkflow.agentId)).toEqual({
       isSystem: false,
@@ -604,19 +563,22 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
         ],
       );
 
-    await upsertRowLevelPermissionPredicates({
+    await upsertRowLevelPermissionRules({
       expectToFail: false,
       input: {
         roleId: rowLevelRoleId,
         objectMetadataId,
-        predicates: [
+        rules: [
           {
-            fieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Acme',
+            predicates: [
+              {
+                fieldMetadataId,
+                operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                value: 'Acme',
+              },
+            ],
           },
         ],
-        predicateGroups: [],
       },
     });
 

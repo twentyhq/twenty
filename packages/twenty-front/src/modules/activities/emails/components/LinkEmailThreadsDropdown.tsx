@@ -1,5 +1,5 @@
+import { TIMELINE_THREADS_REFETCH_QUERIES } from '@/activities/emails/constants/TimelineThreadsRefetchQueries';
 import { LinkActivitiesDropdown } from '@/activities/components/LinkActivitiesDropdown';
-import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/queries/getTimelineThreadsFromObjectRecord';
 import { searchTimelineThreads } from '@/activities/emails/graphql/queries/searchTimelineThreads';
 import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
 import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
@@ -36,7 +36,7 @@ export const LinkEmailThreadsDropdown = ({
         recordActivities: data.searchTimelineThreads.recordTimelineThreads,
         otherActivities: data.searchTimelineThreads.otherTimelineThreads,
       })}
-      timelineQuery={getTimelineThreadsFromObjectRecord}
+      timelineQueries={TIMELINE_THREADS_REFETCH_QUERIES}
       getOption={(thread) => ({
         label: getTimelineThreadLabel(thread),
         description: formatToHumanReadableDate(thread.lastMessageReceivedAt),

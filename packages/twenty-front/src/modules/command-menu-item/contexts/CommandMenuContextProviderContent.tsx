@@ -23,12 +23,12 @@ import {
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useMemo } from 'react';
 import { isString } from '@sniptt/guards';
+import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/conditional-availability';
 import {
   ContextStorePageType,
   StandardObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
-import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
@@ -104,7 +104,7 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
-    const isAiChatInboxHeader =
+    const isInboxHeader =
       containerType === CommandMenuItemContainerType.ShowPageHeader &&
       commandMenuContextApi.objectMetadataItem.nameSingular ===
         StandardObjectNameSingular.AgentChatThread &&
@@ -120,11 +120,6 @@ export const CommandMenuContextProviderContent = ({
         (item) =>
           !isCoreWorkflow ||
           !WORKSPACE_DEFINITION_COMMANDS.has(item.engineComponentKey),
-      )
-      .filter(
-        (item) =>
-          item.engineComponentKey !==
-          EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
       )
       .filter(
         (item) =>
@@ -158,7 +153,7 @@ export const CommandMenuContextProviderContent = ({
             ...item,
             isPinned:
               item.isPinned ||
-              (isAiChatInboxHeader &&
+              (isInboxHeader &&
                 item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
           },
           commandMenuContextApiForAvailability,

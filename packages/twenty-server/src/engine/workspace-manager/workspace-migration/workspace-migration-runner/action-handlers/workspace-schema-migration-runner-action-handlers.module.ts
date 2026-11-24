@@ -119,6 +119,7 @@ import { DeleteAgentChatChannelRoleActionHandlerService } from 'src/engine/works
 import { CreateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/create-settings-menu-item-action-handler.service';
 import { DeleteSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/delete-settings-menu-item-action-handler.service';
 import { UpdateSettingsMenuItemActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/settings-menu-item/services/update-settings-menu-item-action-handler.service';
+import { FieldMetadataOptionEnumSchemaService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/field-metadata-option-enum-schema.service';
 import { CreateFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/create-field-metadata-option-action-handler.service';
 import { DeleteFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/delete-field-metadata-option-action-handler.service';
 import { UpdateFieldMetadataOptionActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field-metadata-option/services/update-field-metadata-option-action-handler.service';
@@ -135,6 +136,7 @@ import { UpdateSearchFieldMetadataActionHandlerService } from 'src/engine/worksp
 import { BuildIndexDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/build-index-deferred-operation-handler.service';
 import { DeleteLogicFunctionResourcesDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/delete-logic-function-resources-deferred-operation-handler.service';
 import { DeleteWorkflowRunsDeferredOperationHandlerWorkspaceService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/delete-workflow-runs-deferred-operation-handler.workspace-service';
+import { RebuildObjectDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/rebuild-object-deferred-operation-handler.service';
 import { ValidateForeignKeyDeferredOperationHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-operation-handlers/services/validate-foreign-key-deferred-operation-handler.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
@@ -149,6 +151,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
+    FieldMetadataOptionEnumSchemaService,
     CreateWorkflowActionHandlerService,
     UpdateWorkflowActionHandlerService,
     DeleteWorkflowActionHandlerService,
@@ -313,6 +316,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
     BuildIndexDeferredOperationHandlerService,
     ValidateForeignKeyDeferredOperationHandlerService,
+    RebuildObjectDeferredOperationHandlerService,
     DeleteLogicFunctionResourcesDeferredOperationHandlerService,
     DeleteWorkflowRunsDeferredOperationHandlerWorkspaceService,
   ],

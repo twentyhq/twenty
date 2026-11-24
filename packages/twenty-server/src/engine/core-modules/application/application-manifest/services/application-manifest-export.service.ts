@@ -1,3 +1,5 @@
+import { ApplicationLogicFunctionExportService } from 'src/engine/core-modules/application/application-manifest/services/application-logic-function-export.service';
+import { APPLICATION_EXPORT_FILE_BUDGET_BYTES } from 'src/engine/core-modules/application/application-manifest/constants/application-export-file-budget-bytes.constant';
 import { ApplicationPublicAssetExportService } from 'src/engine/core-modules/application/application-manifest/services/application-public-asset-export.service';
 import { Injectable } from '@nestjs/common';
 
@@ -53,6 +55,7 @@ export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationPublicAssetExportService: ApplicationPublicAssetExportService,
+    private readonly applicationLogicFunctionExportService: ApplicationLogicFunctionExportService,
     private readonly applicationFrontComponentExportService: ApplicationFrontComponentExportService,
     private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
@@ -66,12 +69,16 @@ export class ApplicationManifestExportService {
     applicationUniversalIdentifier,
     shouldIncludeDependencies = false,
     shouldIncludeSourceFiles = false,
+    shouldIncludeSourceDependencies = false,
+    shouldIncludeLogicFunctionSources = false,
     shouldIncludePublicAssets = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
     shouldIncludeDependencies?: boolean;
     shouldIncludeSourceFiles?: boolean;
+    shouldIncludeSourceDependencies?: boolean;
+    shouldIncludeLogicFunctionSources?: boolean;
     shouldIncludePublicAssets?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
@@ -144,6 +151,13 @@ export class ApplicationManifestExportService {
           { workspaceId, applicationUniversalIdentifier },
         )
       : [];
+    const fileBudget = {
+      remainingBytes: Math.max(
+        0,
+        APPLICATION_EXPORT_FILE_BUDGET_BYTES -
+          Buffer.byteLength(JSON.stringify(dependencyFiles)),
+      ),
+    };
     const {
       frontComponents,
       files: sourceFiles,
@@ -154,6 +168,8 @@ export class ApplicationManifestExportService {
         applicationUniversalIdentifier,
         applicationAllFlatEntityMaps,
         shouldIncludeSourceFiles,
+        shouldIncludeSourceDependencies,
+        fileBudget,
       },
     );
     const {
@@ -185,6 +201,20 @@ export class ApplicationManifestExportService {
             metadataName: 'pageLayout',
           }),
       });
+    const {
+      logicFunctions,
+      files: logicFunctionFiles,
+      coverage: logicFunctionsCoverage,
+    } = await this.applicationLogicFunctionExportService.exportLogicFunctions({
+      workspaceId,
+      applicationUniversalIdentifier,
+      applicationAllFlatEntityMaps,
+      shouldIncludeLogicFunctionSources,
+      fileBudget,
+      exportedFiles: sourceFiles,
+    });
+    sourceFiles.push(...logicFunctionFiles);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -242,6 +272,7 @@ export class ApplicationManifestExportService {
           workspaceId,
           applicationId: flatApplication.id,
           applicationUniversalIdentifier,
+          fileBudget,
         })
       : { publicAssets: [], files: [], coverage: [] };
 
@@ -251,13 +282,13 @@ export class ApplicationManifestExportService {
         defaultRoleUniversalIdentifier:
           findUniversalIdentifierById({
             flatEntityMaps: allFlatEntityMaps.flatRoleMaps,
-            id: flatApplication.defaultRoleId,
+            id: flatApplication.requestedRoleId,
           }) ?? PLACEHOLDER_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
       }),
       objects,
       fields,
       indexes,
-      logicFunctions: [],
+      logicFunctions,
       frontComponents,
       permissionFlags,
       roles,
@@ -294,6 +325,7 @@ export class ApplicationManifestExportService {
           reconstructedCoverage: [
             ...dataModelCoverage,
             ...frontComponentsCoverage,
+            ...logicFunctionsCoverage,
             ...rolesCoverage,
             ...viewsCoverage,
             ...pageLayoutsCoverage,
@@ -309,7 +341,9 @@ export class ApplicationManifestExportService {
       ],
       files: [
         ...(shouldIncludeDependencies ? dependencyFiles : []),
-        ...sourceFiles,
+        ...sourceFiles.filter(
+          (file) => !publicAssetFiles.some((asset) => asset.path === file.path),
+        ),
         ...publicAssetFiles,
       ],
     };

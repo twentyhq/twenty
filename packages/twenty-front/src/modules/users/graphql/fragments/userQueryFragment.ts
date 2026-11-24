@@ -39,6 +39,8 @@ export const USER_QUERY_FRAGMENT = gql`
       id
       permissionFlags
       isImpersonating
+      inboxNotificationLevel
+      isInboxNotificationPreviewEnabled
       objectRecordsPermissions {
         objectMetadataId
         canCreateAllRecords
@@ -48,6 +50,7 @@ export const USER_QUERY_FRAGMENT = gql`
         canDestroyAllRecords
         unreadableFields
         uneditableFields
+        canReadSomeRecords
         rowLevelRecordsPermissions {
           ruleId
           canCreateRecords
@@ -96,6 +99,7 @@ export const USER_QUERY_FRAGMENT = gql`
         id
       }
       installedApplications {
+        runHealthCheckOnUserPreferences
         id
         name
         description
@@ -159,7 +163,7 @@ export const USER_QUERY_FRAGMENT = gql`
       trashRetentionDays
       eventLogRetentionDays
       editableProfileFields
-      isInternalMessagesImportEnabled
+      isInternalImportEnabled
     }
     availableWorkspaces {
       ...AvailableWorkspacesFragment

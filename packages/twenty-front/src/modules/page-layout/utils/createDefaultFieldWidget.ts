@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
+import { isDefined } from 'twenty-shared/utils';
 import {
   FieldDisplayMode,
   PageLayoutTabLayoutMode,
@@ -13,6 +14,7 @@ export const createDefaultFieldWidget = ({
   title,
   fieldMetadataId,
   fieldDisplayMode = FieldDisplayMode.CARD,
+  viewId,
   objectMetadataId,
   positionIndex,
 }: {
@@ -21,6 +23,7 @@ export const createDefaultFieldWidget = ({
   title: string;
   fieldMetadataId: string;
   fieldDisplayMode?: FieldDisplayMode;
+  viewId?: string;
   objectMetadataId: string;
   positionIndex: number;
 }): PageLayoutWidget =>
@@ -34,6 +37,7 @@ export const createDefaultFieldWidget = ({
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId,
       fieldDisplayMode,
+      ...(isDefined(viewId) && { viewId }),
     },
     position: {
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,

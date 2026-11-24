@@ -26,8 +26,8 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
+import { getViewVisibilityFromIsPrivate } from 'src/engine/metadata-modules/view/utils/get-view-visibility-from-is-private.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -40,13 +40,6 @@ import { UpsertViewWidgetInput } from 'src/engine/metadata-modules/view/dtos/inp
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import {
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
@@ -103,6 +96,13 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): boolean {
     return view.applicationId === workspace.workspaceCustomApplicationId;
+  }
+
+  @ResolveField(() => ViewVisibility, {
+    deprecationReason: 'Use isPrivate instead',
+  })
+  visibility(@Parent() view: Pick<ViewDTO, 'isPrivate'>): ViewVisibility {
+    return getViewVisibilityFromIsPrivate(view.isPrivate);
   }
 
   // A workspace-custom view can point at a standard object, so the label resolves against the object's application
@@ -181,24 +181,11 @@ export class ViewResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findById(id, workspace.id);
-
-    if (!isDefined(view) || !isViewVisibleToUser(view, userWorkspaceId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          ),
-        },
-      );
-    }
-
-    return view;
+    return this.viewService.findByIdVisibleToUserOrThrow({
+      id,
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
   }
 
   @Mutation(() => ViewDTO)
@@ -212,10 +199,6 @@ export class ViewResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
-
-    input.visibility = visibility;
-
     return await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,

@@ -303,6 +303,38 @@ import { AddRowLevelPermissionRuleLinksFastInstanceCommand } from 'src/database/
 import { AddOauthDiscoveryToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794507959766-add-oauth-discovery-to-connection-provider';
 import { RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794508996000-rename-deferred-workspace-migration-action-to-deferred-workspace-operation';
 import { AddMarkThreadAsReadToMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794570405290-add-mark-thread-as-read-to-messaging-provider';
+import { AddViewFieldIsCanonicalFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794578763738-add-view-field-is-canonical';
+import { AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-slow-1794588217126-add-is-internal-import-enabled-to-workspace';
+import { BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794590652080-backfill-field-metadata-option-rows-from-stored-options';
+import { AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-59/2-59-instance-command-fast-1794606690417-add-view-field-relation-target-field-metadata-id';
+import { RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794839679151-rename-navigation-menu-item-folder-id-to-parent-id';
+import { AddTabAndSectionNavigationMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794921429000-add-tab-and-section-navigation-menu-items';
+import { AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794922746000-add-is-system-side-effect-to-role-and-role-target';
+import { AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794922746001-allow-system-side-effect-role-targets-per-user-workspace';
+import { AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794926980299-add-workflow-version-core-workflow-foreign-key';
+import { DropJobConfigFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1794932308059-drop-job-config';
+import { AddAgentPrivacyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795109265317-add-agent-privacy';
+import { AddRequestedRoleIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-fast-1794992742917-add-requested-role-id-to-application';
+import { BackfillApplicationRequestedRoleIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-60/2-60-instance-command-slow-1794992743917-backfill-application-requested-role-id';
+import { AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795006012069-add-view-sort-relation-target-field-metadata-id';
+import { AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795087899814-add-navigation-menu-item-built-in-section-key';
+import { CreateWebPushSubscriptionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163526357-create-web-push-subscription-core-table';
+import { AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795163561823-add-user-workspace-inbox-notification-settings';
+import { AddNavigationMenuItemOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795167647639-add-navigation-menu-item-overridable-entity';
+import { DropConnectedAccountVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795178831970-drop-connected-account-visibility';
+import { AddAcceptedBillingPricesToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795183195168-add-accepted-billing-prices-to-application';
+import { AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-61/2-61-instance-command-fast-1795297090000-add-workspace-member-relation-to-row-level-permission-predicate';
+import { AddWorkflowIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-62/2-62-instance-command-fast-1795368198117-add-workflow-is-private';
+import { AddViewFieldRelationScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429428999-add-view-field-relation-scope';
+import { AddViewFieldLabelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795429429999-add-view-field-label';
+import { AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795439034166-add-conditional-availability-to-page-layout-widget';
+import { RelatedRecordPathOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795470470000-related-record-path-overridable-entity';
+import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477704494-add-view-is-private';
+import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795477704495-backfill-view-is-private-overrides';
+import { RelaxWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478750333-relax-workflow-visibility';
+import { AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795507394217-add-logic-function-job-failure-handler-name-and-retry-limit';
+import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
+import { AddPresetFilterToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795514647600-add-preset-filter-to-view';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -608,4 +640,36 @@ export const INSTANCE_COMMANDS = [
   AddOauthDiscoveryToConnectionProviderFastInstanceCommand,
   RenameDeferredWorkspaceMigrationActionToDeferredWorkspaceOperationFastInstanceCommand,
   AddMarkThreadAsReadToMessagingProviderFastInstanceCommand,
+  AddViewFieldIsCanonicalFastInstanceCommand,
+  AddIsInternalImportEnabledToWorkspaceSlowInstanceCommand,
+  BackfillFieldMetadataOptionRowsFromStoredOptionsFastInstanceCommand,
+  AddViewFieldRelationTargetFieldMetadataIdFastInstanceCommand,
+  RenameNavigationMenuItemFolderIdToParentIdFastInstanceCommand,
+  AddTabAndSectionNavigationMenuItemsFastInstanceCommand,
+  AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand,
+  AllowSystemSideEffectRoleTargetsPerUserWorkspaceSlowInstanceCommand,
+  AddWorkflowVersionCoreWorkflowForeignKeySlowInstanceCommand,
+  DropJobConfigFastInstanceCommand,
+  AddRequestedRoleIdToApplicationFastInstanceCommand,
+  BackfillApplicationRequestedRoleIdSlowInstanceCommand,
+  AddViewSortRelationTargetFieldMetadataIdFastInstanceCommand,
+  AddNavigationMenuItemBuiltInSectionKeyFastInstanceCommand,
+  AddAgentPrivacyFastInstanceCommand,
+  CreateWebPushSubscriptionCoreTableFastInstanceCommand,
+  AddUserWorkspaceInboxNotificationSettingsFastInstanceCommand,
+  AddNavigationMenuItemOverridableEntityFastInstanceCommand,
+  DropConnectedAccountVisibilityFastInstanceCommand,
+  AddAcceptedBillingPricesToApplicationFastInstanceCommand,
+  AddWorkspaceMemberRelationToRowLevelPermissionPredicateFastInstanceCommand,
+  AddWorkflowIsPrivateFastInstanceCommand,
+  AddViewFieldRelationScopeFastInstanceCommand,
+  AddViewFieldLabelFastInstanceCommand,
+  AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand,
+  RelatedRecordPathOverridableEntityFastInstanceCommand,
+  AddViewIsPrivateFastInstanceCommand,
+  BackfillViewIsPrivateOverridesSlowInstanceCommand,
+  RelaxWorkflowVisibilityFastInstanceCommand,
+  AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand,
+  DropWorkflowVisibilityFastInstanceCommand,
+  AddPresetFilterToViewFastInstanceCommand,
 ];

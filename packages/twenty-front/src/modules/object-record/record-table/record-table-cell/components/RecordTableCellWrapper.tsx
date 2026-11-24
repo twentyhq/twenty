@@ -21,7 +21,7 @@ export const RecordTableCellWrapper = ({
   return (
     <RecordTableCellContext.Provider
       value={recordTableCellContextValue}
-      key={recordField.fieldMetadataItemId}
+      key={recordField.id}
     >
       <RecordTableCellFieldContextWrapper recordField={recordField}>
         {children}

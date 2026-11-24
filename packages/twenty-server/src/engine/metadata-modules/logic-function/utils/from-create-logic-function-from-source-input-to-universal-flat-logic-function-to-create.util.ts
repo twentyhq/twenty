@@ -44,6 +44,8 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       description: description ?? null,
       runtime: LogicFunctionRuntime.NODE22,
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
+      jobFailureHandlerName: null,
+      retryLimit: null,
       checksum,
       isBuildUpToDate,
       executionMode: LogicFunctionExecutionMode.LIVE,
@@ -63,7 +65,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       workflowActionTriggerSettings:
         createLogicFunctionFromSourceInput.workflowActionTriggerSettings ??
         null,
-      jobConfig: null,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,

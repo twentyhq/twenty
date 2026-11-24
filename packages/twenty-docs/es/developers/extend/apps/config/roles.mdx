@@ -20,39 +20,43 @@ export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
   label: 'My new role',
   description: 'A role that can be used in your workspace',
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canAccessAllAgentChatChannels: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: false,
-      canDestroyObjectRecords: false,
-    },
-  ],
-  fieldPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
-          .universalIdentifier,
-      canReadFieldValue: false,
-      canUpdateFieldValue: false,
-    },
-  ],
+  recordsPermissions: {
+    canReadAllRecords: false,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canReadAllRecords: true,
+        canUpdateAllRecords: true,
+        canSoftDeleteAllRecords: false,
+        canDestroyAllRecords: false,
+        unreadableFields: [
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+            .universalIdentifier,
+        ],
+      },
+    ],
+  },
   permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE_APPS],
 });
 ```
+
+`recordsPermissions` contiene todo lo que un rol puede hacer en los registros:
+
+* `canReadAllRecords`, `canCreateAllRecords`, `canUpdateAllRecords`, `canSoftDeleteAllRecords` y
+  `canDestroyAllRecords` en su nivel superior se aplican a **todos los objetos**. `canCreateAllRecords` sigue a
+  `canUpdateAllRecords` cuando no está establecido.
+* `objects` enumera lo que difiere para un objeto: las mismas cinco concesiones para todos sus registros,
+  `unreadableFields` y `uneditableFields` (identificadores universales de campos; un campo que no se puede
+  leer tampoco se puede editar), y sus [permisos de registros a nivel de fila](#row-level-security).
 
 <Note>
   `SystemPermissionFlag.USER_APPS` y `SystemPermissionFlag.WORKSPACE_APPS`
@@ -72,7 +76,18 @@ las notas al final de esta sección.
 
 Los permisos de objetos y campos determinan *a qué objetos y campos* puede acceder o modificar un rol. **Los predicados de permisos a nivel de fila** van más allá y deciden *qué registros* puede ver y sobre los que puede actuar un rol; por ejemplo, un rol de autoservicio en el que cada usuario externo ve solo sus propios registros.
 
-Declara los predicados con `rowLevelPermissionPredicates` en el rol. Como el resto del manifiesto, cada predicado tiene su propio `universalIdentifier` y hace referencia a un objeto y a un campo mediante su `universalIdentifier`, a un `operand` y, de forma opcional, a un campo `workspaceMember` cuyo valor se inyecta en tiempo de consulta, de modo que puedas expresar: "la relación de propietario del registro **es** el miembro actual del espacio de trabajo":
+Un objeto de `recordsPermissions.objects` puede restringir algunas operaciones a parte de sus registros con
+`rowLevelRecordsPermissions`, una lista de reglas. Una regla concede operaciones (`canReadRecords`,
+`canCreateRecords`, `canUpdateRecords`, `canSoftDeleteRecords`, `canDestroyRecords`) sobre los registros
+que coinciden con los predicados anidados en ella; `canCreateRecords` sigue a `canUpdateRecords` cuando
+se omite. Una regla también puede tener sus propios `unreadableFields` y
+`uneditableFields`, que se aplican a los registros con los que coincide; dicha regla necesita al menos un grupo
+de predicados.
+
+Un predicado hace referencia a un campo mediante su `universalIdentifier`, un `operand` y (opcionalmente) un
+campo workspaceMember cuyo valor se inyecta en tiempo de consulta, de modo que puedes expresar "la relación de propietario
+del registro **es** el miembro actual del espacio de trabajo". Este rol puede crear cualquier empresa, pero lee y
+actualiza solo las empresas de las que es propietario:
 
 ```ts src/roles/partner-role.ts
 import {
@@ -88,34 +103,55 @@ export default defineRole({
   label: 'Partner',
   description: 'External partner — sees only its own records',
   canBeAssignedToUsers: true,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
-      objectUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-      fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
-          .universalIdentifier,
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+        canCreateAllRecords: true,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'a9e8d7c6-5b4a-4c3d-9e2f-000000000000',
+            canReadRecords: true,
+            canUpdateRecords: true,
+            predicates: [
+              {
+                universalIdentifier: 'd0f0c1a2-3b4c-4d5e-8f60-111111111111',
+                fieldUniversalIdentifier: ACCOUNT_OWNER_FIELD_UNIVERSAL_IDENTIFIER,
+                operand: RowLevelPermissionPredicateOperand.IS,
+                workspaceMemberFieldUniversalIdentifier:
+                  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember.fields.id
+                    .universalIdentifier,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
-Debido a que los predicados se envían en el manifiesto, se crean, actualizan y eliminan junto con el rol en cada instalación y actualización; no hay ningún paso posterior a la instalación independiente que mantener sincronizado.
+Dado que estos permisos se incluyen en el manifiesto, se crean, actualizan y eliminan junto con
+el rol en cada instalación y actualización; no hay ningún paso posterior a la instalación independiente que mantener sincronizado.
+
+<Warning>
+  Una operación concedida en **todos los registros** prevalece sobre las reglas. No concedas con `can…AllRecords`,
+  en el objeto ni para todos los objetos, las operaciones que una regla pretende restringir: cuando el rol
+  conceda una para todos los objetos, establece el `can…AllRecords` del objeto en `false`. `defineRole` advierte
+  cuando una regla queda anulada de esta manera.
+</Warning>
+
+Un objeto puede declarar varias reglas. Se puede acceder a un registro para una operación en cuanto una regla que
+concede esa operación coincide con él, por lo que una regla puede permitir que un socio lea las cuentas de su región
+mientras otra le permite actualizar solo las cuentas de las que es propietario.
 
 ### Combinar predicados con grupos
 
-De forma predeterminada, los predicados de un rol se combinan con `AND`. Para combinar algunos de ellos con `OR` (o para anidar lógica), declara una entrada `rowLevelPermissionPredicateGroups` y haz que cada predicado apunte a ella mediante `predicateGroupUniversalIdentifier`. Este rol permite que un socio vea una Oportunidad de la que **es propietario** o de la que es el **punto de contacto**:
+Los predicados de una regla se combinan con `AND`. Para combinar algunos de ellos con `OR` (o para anidar
+lógica), añade `predicateGroups` a la regla: un grupo tiene un `logicalOperator`, sus propios `predicates`,
+y puede contener más `predicateGroups`. Este rol permite que un socio vea una Oportunidad de la que **es propietario**
+o de la que es el **punto de contacto**:
 
 ```ts src/roles/partner-opportunities-role.ts
 import {
@@ -134,49 +170,78 @@ export default defineRole({
   universalIdentifier: 'b2a1c0d9-8e7f-4a6b-9c5d-222222222222',
   label: 'Partner (opportunities)',
   canBeAssignedToUsers: true,
-  objectPermissions: [
-    {
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      canReadObjectRecords: true,
-    },
-  ],
-  rowLevelPermissionPredicateGroups: [
-    {
-      universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
-    },
-  ],
-  rowLevelPermissionPredicates: [
-    {
-      universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier: OPPORTUNITY.fields.owner.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-    {
-      universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
-      objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
-      fieldUniversalIdentifier:
-        OPPORTUNITY.fields.pointOfContact.universalIdentifier,
-      operand: RowLevelPermissionPredicateOperand.IS,
-      workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
-      predicateGroupUniversalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
-    },
-  ],
+  recordsPermissions: {
+    objects: [
+      {
+        objectUniversalIdentifier: OPPORTUNITY.universalIdentifier,
+        rowLevelRecordsPermissions: [
+          {
+            universalIdentifier: 'f6e5d4c3-2a1b-4e0d-8a9f-666666666666',
+            canReadRecords: true,
+            predicateGroups: [
+              {
+                universalIdentifier: 'c3b2a1d0-9f8e-4b7a-8d6c-333333333333',
+                logicalOperator:
+                  RowLevelPermissionPredicateGroupLogicalOperator.OR,
+                predicates: [
+                  {
+                    universalIdentifier: 'd4c3b2a1-0e9f-4c8b-9e7d-444444444444',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.owner.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                  {
+                    universalIdentifier: 'e5d4c3b2-1f0e-4d9c-8f8e-555555555555',
+                    fieldUniversalIdentifier:
+                      OPPORTUNITY.fields.pointOfContact.universalIdentifier,
+                    operand: RowLevelPermissionPredicateOperand.IS,
+                    workspaceMemberFieldUniversalIdentifier: CURRENT_MEMBER,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 });
 ```
 
+<Note>
+  Los servidores anteriores a Twenty 2.59 no leen `recordsPermissions`: declara `engines.twenty` como
+  `>=2.59.0` en `package.json` cuando tu aplicación no deba instalarse en ellos.
+</Note>
+
+### Propiedades obsoletas
+
+Antes de `recordsPermissions`, un rol declaraba los mismos permisos con propiedades independientes. Siguen
+funcionando, y `defineRole` muestra una advertencia de obsolescencia que nombra las que utiliza un rol. La compilación
+las envía tal como están escritas y Twenty las convierte cuando sincroniza la aplicación. Un rol no puede combinar
+`recordsPermissions` con las propiedades de concesión obsoletas:
+
+| Obsoleto                                                                                                              | Escribe en su lugar                                                                          |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `canReadAllObjectRecords`, `canUpdateAllObjectRecords`, `canSoftDeleteAllObjectRecords`, `canDestroyAllObjectRecords` | `recordsPermissions.canReadAllRecords` y los demás `can…AllRecords`                          |
+| `objectPermissions` con `canReadObjectRecords`, …                                                                     | una entrada de `recordsPermissions.objects` con `canReadAllRecords`, …                       |
+| `fieldPermissions` con `canReadFieldValue: false` / `canUpdateFieldValue: false`                                      | `unreadableFields` / `uneditableFields` en el objeto                                         |
+| `rowLevelPermissionPredicates`, `rowLevelPermissionPredicateGroups`                                                   | `rowLevelRecordsPermissions` en el objeto, con los predicados y grupos anidados en una regla |
+
+Los predicados declarados en el rol no tenían concesiones propias. Se convierten en una regla por cada
+grupo de predicados de nivel superior, y una para los predicados no agrupados de cada objeto. La regla toma las
+operaciones que el rol tenía en ese objeto, y los `can…AllRecords` del objeto se establecen en `false` para
+que los predicados sigan restringiéndolo.
+
 Notas:
 
-* Asigna a cada predicado y grupo un `universalIdentifier` estable (cualquier uuid): sirve como clave de la entidad a través de las actualizaciones, y los predicados hacen referencia a los grupos mediante él.
-* Los predicados pueden hacer referencia a objetos y campos que sean propiedad de tu aplicación o de los objetos estándar de Twenty.
+* Asigna a cada regla, predicado y grupo un `universalIdentifier` estable (cualquier uuid): sirve como clave de la entidad
+  a través de las actualizaciones.
+* Los predicados pueden hacer referencia a campos que sean propiedad de tu aplicación o de los objetos estándar de Twenty.
 * La seguridad a nivel de fila se aplica a los espacios de trabajo en el **plan Organization o superior**. En otros
-  planes, los predicados declarados en un manifiesto de app se siguen sincronizando; simplemente no se aplican.
-* La API de metadatos se comporta de manera diferente al manifiesto en este caso: sin el derecho,
-  `upsertRowLevelPermissionPredicates` se rechaza con
+  planes, las reglas declaradas en un manifiesto de aplicación siguen sincronizándose, simplemente no se aplican.
+* La API de metadatos se comporta de forma diferente que el manifiesto aquí: sin la autorización,
+  `upsertRowLevelPermissionRules` se rechaza con
   `ROW_LEVEL_PERMISSION_FEATURE_DISABLED` en lugar de sincronizarse. Por lo tanto, un espacio de trabajo en un plan que no
   incluye seguridad a nivel de fila no puede crear predicados fuera de un manifiesto de app, aunque
   el campo `rowLevelPermissionPredicates` está presente en el tipo `Role` al inspeccionar
@@ -196,16 +261,16 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
-  canReadAllObjectRecords: true,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
   canUpdateAllSettings: false,
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
-  objectPermissions: [],
-  fieldPermissions: [],
+  recordsPermissions: {
+    canReadAllRecords: true,
+    canUpdateAllRecords: false,
+    canSoftDeleteAllRecords: false,
+    canDestroyAllRecords: false,
+  },
   permissionFlagUniversalIdentifiers: [],
 });
 ```
@@ -217,7 +282,6 @@ Notas:
 * Se permite exactamente **una** llamada a `defineApplicationRole(...)` por aplicación; la compilación del manifiesto fallará si encuentra más de una.
 * Usa `defineRole()` (no `defineApplicationRole()`) para cualquier rol **adicional** que distribuya tu aplicación.
 * Configurar `defaultRoleUniversalIdentifier` explícitamente en `defineApplication()` sigue siendo compatible por motivos de retrocompatibilidad, pero está en desuso en favor de `defineApplicationRole()`. También puede nombrar un rol que su aplicación no define, como el rol predeterminado integrado de la aplicación personalizada del espacio de trabajo que conserva `twenty app pull`; en ese caso, la compilación no puede comprobar ese rol, por lo que debe existir en el espacio de trabajo de destino.
-* Un rol al que se pueden asignar miembros del espacio de trabajo o claves de API (`canBeAssignedToUsers` o `canBeAssignedToApiKeys`, ambos `true` cuando se omiten) es un rol personalizado y requiere el **plan Organization o superior**: en otros planes, se rechaza la instalación. Mantén ambos en `false` en los roles que solo tu aplicación y sus agentes asumen.
 
 ### Roles de Agente
 
@@ -226,7 +290,7 @@ El rol de aplicación es lo que un espacio de trabajo revisa al instalar tu apli
 ## Mejores prácticas
 
 * Parte del rol generado automáticamente y luego restríngeelo progresivamente; el valor predeterminado concede un acceso amplio de lectura, lo cual rara vez es lo que quieres en producción.
-* Reemplaza `objectPermissions` y `fieldPermissions` con los objetos y campos que realmente necesitan tus funciones.
+* Incluye en `recordsPermissions.objects` solo los objetos que tus funciones realmente necesitan y usa `unreadableFields` y `uneditableFields` para ocultar o bloquear los campos que no necesitan.
 * `permissionFlagUniversalIdentifiers` controla el acceso a capacidades a nivel de plataforma. Manténlos al mínimo.
 * Una marca de permiso que tu aplicación declara con `definePermissionFlag()` tiene un `permissionType`: `'tool'` (el valor predeterminado) para una capacidad que se puede conceder a un agente o a un usuario, `'settings'` para una marca que desbloquea un área de configuración.
 * Consulta un ejemplo funcional: [`examples/hello-world/src/roles/default-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/hello-world/src/roles/default-role.ts).

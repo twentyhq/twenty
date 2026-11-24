@@ -2,6 +2,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { type SdkClientGenerationLambdaFailureCode } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/sdk-client-generation-lambda.type';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum SdkClientExceptionCode {
@@ -29,14 +30,23 @@ const getSdkClientExceptionUserFriendlyMessage = (
 };
 
 export class SdkClientException extends CustomException<SdkClientExceptionCode> {
+  failureCode?: SdkClientGenerationLambdaFailureCode;
+
   constructor(
     message: string,
     code: SdkClientExceptionCode,
-    { userFriendlyMessage }: { userFriendlyMessage?: MessageDescriptor } = {},
+    {
+      userFriendlyMessage,
+      failureCode,
+    }: {
+      userFriendlyMessage?: MessageDescriptor;
+      failureCode?: SdkClientGenerationLambdaFailureCode;
+    } = {},
   ) {
     super(message, code, {
       userFriendlyMessage:
         userFriendlyMessage ?? getSdkClientExceptionUserFriendlyMessage(code),
     });
+    this.failureCode = failureCode;
   }
 }

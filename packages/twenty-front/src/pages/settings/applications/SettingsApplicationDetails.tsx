@@ -46,12 +46,14 @@ import {
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsApplicationHealthBanner } from '~/pages/settings/applications/components/SettingsApplicationHealthBanner';
+import { SettingsApplicationHealthCheckBanner } from '@/settings/applications/components/SettingsApplicationHealthCheckBanner';
+import { SettingsApplicationHealthCheckEffect } from '@/settings/applications/components/SettingsApplicationHealthCheckEffect';
+import { WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER } from '@/settings/applications/constants/WorkspaceApplicationHealthCheckRunner';
+import { useSaveApplicationVariablesAndRecheckHealth } from '@/settings/applications/hooks/useSaveApplicationVariablesAndRecheckHealth';
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { SettingsBuiltInAccountAppDetails } from '~/pages/settings/applications/SettingsBuiltInAccountAppDetails';
-import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
 import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
@@ -59,11 +61,11 @@ import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/c
 import { SettingsApplicationDetailPageLayout } from '@/settings/applications/components/SettingsApplicationDetailPageLayout';
 import { SettingsApplicationStoppedBanner } from '@/settings/applications/components/SettingsApplicationStoppedBanner';
 import { useApplicationOverview } from '@/settings/applications/hooks/useApplicationOverview';
-import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
 import { isUuidFormat } from '~/pages/settings/applications/utils/isUuidFormat';
 import { getMissingRequiredApplicationVariables } from '@/settings/applications/utils/getMissingRequiredApplicationVariables';
+import { parseTabRouteHash } from '@/ui/layout/tab-list/utils/parseTabRouteHash';
 import { getSettingsMenuItemDisplayTitle } from '~/pages/settings/applications/utils/getSettingsMenuItemDisplayTitle';
 import { useLingui } from '@lingui/react/macro';
 
@@ -190,15 +192,16 @@ export const SettingsApplicationDetails = () => {
     displayedApplicationVariables,
   });
 
-  const { healthCheckResult, runHealthCheck } = useApplicationHealthCheck({
-    applicationId,
-    healthCheckLogicFunctionId: application?.healthCheckLogicFunctionId,
-  });
+  const hasMissingRequiredVariables = isNonEmptyArray(
+    missingRequiredApplicationVariables,
+  );
 
-  const saveApplicationVariablesAndRecheckHealth = async () => {
-    await saveApplicationVariables();
-    await runHealthCheck();
-  };
+  const { saveApplicationVariablesAndRecheckHealth } =
+    useSaveApplicationVariablesAndRecheckHealth({
+      applicationId,
+      runner: WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER,
+      saveApplicationVariables,
+    });
 
   const tabs: SingleTabProps[] = [
     { id: SETTINGS_GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
@@ -243,21 +246,6 @@ export const SettingsApplicationDetails = () => {
 
   const goToConfigurationTab = isDefined(configurationTabLocation)
     ? () => redirect(configurationTabLocation)
-    : undefined;
-
-  const healthBanner = isNonEmptyArray(missingRequiredApplicationVariables)
-    ? undefined
-    : getApplicationHealthBanner({
-        healthCheckResult,
-        fallbackLocation: configurationTabLocation,
-      });
-
-  const healthBannerAction = healthBanner?.action;
-  const healthBannerButton = isDefined(healthBannerAction)
-    ? {
-        label: healthBannerAction.label,
-        onClick: () => redirect(healthBannerAction.to),
-      }
     : undefined;
 
   const renderActiveTabContent = () => {
@@ -338,7 +326,7 @@ export const SettingsApplicationDetails = () => {
 
   const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
     settingsMenuItems: workspaceSettingsMenuItems,
-    hashTabId: hash.replace('#', ''),
+    hashTabId: parseTabRouteHash(hash).tabId,
   });
 
   if (isDefined(legacyTabIdRedirect)) {
@@ -395,13 +383,21 @@ export const SettingsApplicationDetails = () => {
               onConfigure={goToConfigurationTab}
             />
           )}
-        {isDefined(healthBanner) && (
-          <SettingsApplicationHealthBanner
-            healthStatus={healthBanner.status}
-            title={healthBanner.title}
-            description={healthBanner.description}
-            action={healthBannerButton}
-          />
+        {isDefined(application) && !hasMissingRequiredVariables && (
+          <>
+            <SettingsApplicationHealthCheckEffect
+              key={`${applicationId}-${application.healthCheckLogicFunctionId}`}
+              applicationId={applicationId}
+              runner={WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER}
+            />
+            <SettingsApplicationHealthCheckBanner
+              applicationId={applicationId}
+              healthCheckFamilyState={
+                WORKSPACE_APPLICATION_HEALTH_CHECK_RUNNER.healthCheckFamilyState
+              }
+              fallbackLocation={configurationTabLocation}
+            />
+          </>
         )}
         <SettingsApplicationStoppedBanner
           applicationUniversalIdentifier={application?.universalIdentifier}

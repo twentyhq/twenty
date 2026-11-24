@@ -102,6 +102,27 @@ describe('formatMicrosoftCalendarEvents', () => {
     );
   });
 
+  it('should list resource attendees as resources', () => {
+    const [formattedEvent] = formatMicrosoftCalendarEvents([
+      {
+        ...mockMicrosoftEvent,
+        attendees: [
+          {
+            emailAddress: { address: 'person@example.com' },
+            type: 'required',
+          },
+          {
+            emailAddress: { address: 'Room@example.com' },
+            type: 'resource',
+          },
+        ],
+      },
+    ]);
+
+    expect(formattedEvent.resourceHandles).toEqual(['room@example.com']);
+    expect(formattedEvent.participants).toHaveLength(2);
+  });
+
   it('should sanitize a Microsoft Calendar event with improper exit char 0x00', () => {
     const mockMicrosoftEventWithImproperData: Event = {
       ...mockMicrosoftEvent,

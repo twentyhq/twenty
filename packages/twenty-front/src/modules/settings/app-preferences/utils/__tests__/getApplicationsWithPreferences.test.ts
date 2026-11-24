@@ -11,12 +11,15 @@ const UNINSTALLED_APPLICATION_ID = 'uninstalled-application-id';
 const buildInstalledApplication = ({
   id,
   name,
+  runHealthCheckOnUserPreferences = false,
 }: {
   id: string;
   name: string;
+  runHealthCheckOnUserPreferences?: boolean;
 }) => ({
   id,
   name,
+  runHealthCheckOnUserPreferences,
   universalIdentifier: `${id}-universal-identifier`,
   logoUrl: null,
   createdAt: '2024-01-01T00:00:00.000Z',
@@ -298,6 +301,33 @@ describe('getApplicationsWithPreferences', () => {
     expect(result.connectionProviders.map(({ name }) => name)).toEqual([
       'linear',
     ]);
+  });
+
+  it('should keep an application whose only preference is a USER health check', () => {
+    const [result] = getApplicationsWithPreferences({
+      applicationPreferences: [
+        {
+          __typename: 'ApplicationPreferences',
+          applicationId: RECORDER_APPLICATION_ID,
+          settingsMenuItems: [],
+          variables: [],
+          connectionProviders: [],
+        },
+      ],
+      currentWorkspace: {
+        ...CURRENT_WORKSPACE,
+        installedApplications: [
+          buildInstalledApplication({
+            id: RECORDER_APPLICATION_ID,
+            name: 'Recorder',
+            runHealthCheckOnUserPreferences: true,
+          }),
+        ],
+      },
+    });
+
+    expect(result.application.id).toBe(RECORDER_APPLICATION_ID);
+    expect(result.application.runHealthCheckOnUserPreferences).toBe(true);
   });
 
   it('should leave out an application that is not installed', () => {

@@ -30,19 +30,11 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
-import {
-  generateViewExceptionMessage,
-  generateViewUserFriendlyExceptionMessage,
-  ViewException,
-  ViewExceptionCode,
-  ViewExceptionMessageKey,
-} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
@@ -107,22 +99,12 @@ export class ViewController {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const view = await this.viewService.findByIdWithRelations(id, workspace.id);
-
-    if (!isDefined(view) || !isViewVisibleToUser(view, userWorkspaceId)) {
-      throw new ViewException(
-        generateViewExceptionMessage(
-          ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          id,
-        ),
-        ViewExceptionCode.VIEW_NOT_FOUND,
-        {
-          userFriendlyMessage: generateViewUserFriendlyExceptionMessage(
-            ViewExceptionMessageKey.VIEW_NOT_FOUND,
-          ),
-        },
-      );
-    }
+    const view =
+      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+        id,
+        workspaceId: workspace.id,
+        userWorkspaceId,
+      });
 
     const processedViews = await this.processViewsWithTemplates(
       [view],

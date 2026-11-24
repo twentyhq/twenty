@@ -1,21 +1,20 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type ViewSort } from '@/views/types/ViewSort';
+import { isViewSortOnSameField } from '@/views/utils/isViewSortOnSameField';
 import { compareStrictlyExceptForNullAndUndefined } from '~/utils/compareStrictlyExceptForNullAndUndefined';
 
+// A sort on a saved sort's field updates it instead, see getViewSortsToUpdate
 export const getViewSortsToCreate = (
   currentViewSorts: ViewSort[],
   newViewSorts: ViewSort[],
 ) => {
-  return newViewSorts.filter((newViewSort) => {
-    const correspondingViewSort = currentViewSorts.find((currentViewSort) =>
-      compareStrictlyExceptForNullAndUndefined(
-        currentViewSort.id,
-        newViewSort.id,
+  return newViewSorts.filter(
+    (newViewSort) =>
+      !currentViewSorts.some(
+        (currentViewSort) =>
+          compareStrictlyExceptForNullAndUndefined(
+            currentViewSort.id,
+            newViewSort.id,
+          ) || isViewSortOnSameField(currentViewSort, newViewSort),
       ),
-    );
-
-    const shouldCreateBecauseViewSortIsNew = !isDefined(correspondingViewSort);
-
-    return shouldCreateBecauseViewSortIsNew;
-  });
+  );
 };

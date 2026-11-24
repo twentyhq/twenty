@@ -1,1 +1,5 @@
-export type UserSessionVariant = 'standard' | 'impersonated' | 'playground';
+export type UserSessionVariant =
+  | 'standard'
+  | 'serverImpersonated'
+  | 'workspaceImpersonated'
+  | 'playground';

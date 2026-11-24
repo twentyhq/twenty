@@ -1,9 +1,9 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { type MarketplaceAppRole } from '~/generated-metadata/graphql';
 
 export const buildRoleManifestFromMarketplaceAppRole = (
   role: MarketplaceAppRole,
-): RoleManifest => ({
+): LegacyCompliantRoleManifest => ({
   universalIdentifier: role.universalIdentifier,
   label: role.label,
   description: role.description ?? undefined,

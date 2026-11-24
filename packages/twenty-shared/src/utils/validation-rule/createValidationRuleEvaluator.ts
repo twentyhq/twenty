@@ -1,5 +1,7 @@
 import { type Expression } from 'expr-eval-fork';
 
+import { CustomError } from '@/utils/errors/CustomError';
+
 import { type ValidationRuleEvaluationResult } from '@/types/ValidationRuleEvaluationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { buildValidationRuleEvaluationContext } from '@/utils/validation-rule/buildValidationRuleEvaluationContext';
@@ -61,6 +63,18 @@ export const createValidationRuleEvaluator = ({
 
       return result ? { status: 'passed' } : { status: 'failed' };
     } catch (error) {
+      if (
+        error instanceof CustomError &&
+        (error.code === 'INVALID_DATE_UNIT' ||
+          error.code === 'INVALID_DATE_PART')
+      ) {
+        return {
+          status: 'errored',
+          errorMessage: error.message,
+          errorCode: error.code,
+        };
+      }
+
       return { status: 'errored', errorMessage: toErrorMessage(error) };
     }
   };

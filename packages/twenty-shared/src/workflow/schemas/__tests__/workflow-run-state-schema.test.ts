@@ -49,4 +49,27 @@ describe('workflowRunStateSchema', () => {
       }).success,
     ).toBe(false);
   });
+
+  it('should load a past run whose email step kept a legacy string body', () => {
+    for (const body of ['', '<p>Hi {{trigger.name}}</p>']) {
+      expect(
+        workflowRunStateSchema.shape.flow.shape.steps.safeParse([
+          {
+            id: STEP_ID,
+            name: 'Send email',
+            type: 'SEND_EMAIL',
+            valid: true,
+            settings: {
+              input: { connectedAccountId: '', recipients: {}, body },
+              outputSchema: {},
+              errorHandlingOptions: {
+                retryOnFailure: { value: 0 },
+                continueOnFailure: { value: false },
+              },
+            },
+          },
+        ]).success,
+      ).toBe(true);
+    }
+  });
 });

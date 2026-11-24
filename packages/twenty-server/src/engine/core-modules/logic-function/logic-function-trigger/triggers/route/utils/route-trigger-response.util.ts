@@ -16,6 +16,16 @@ const ALLOWED_RESPONSE_HEADERS = new Set([
   'retry-after',
 ]);
 
+const ROUTE_RESPONSE_SANDBOX_POLICY = [
+  'sandbox',
+  'allow-scripts',
+  'allow-forms',
+  'allow-popups',
+  'allow-popups-to-escape-sandbox',
+  'allow-modals',
+  'allow-downloads',
+].join(' ');
+
 export const buildRouteTriggerResponse = (
   data: unknown,
 ): RouteTriggerResponse => {
@@ -42,6 +52,9 @@ export const sendRouteTriggerResponse = (
       response.setHeader(key, value);
     }
   }
+
+  response.append('Content-Security-Policy', ROUTE_RESPONSE_SANDBOX_POLICY);
+  response.setHeader('X-Content-Type-Options', 'nosniff');
 
   if (!isDefined(body)) {
     response.send();

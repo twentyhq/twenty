@@ -95,6 +95,12 @@ jest.mock(
   }),
 );
 
+jest.mock('@/ai-chat/composer/hooks/useOpenAskAiPageWithPreprompt', () => ({
+  useOpenAskAiPageWithPreprompt: () => ({
+    openAskAiPageWithPreprompt: jest.fn(),
+  }),
+}));
+
 jest.mock('@/side-panel/hooks/useNavigateSidePanel', () => ({
   useNavigateSidePanel: () => ({
     navigateSidePanel: mockNavigateSidePanel,
@@ -1499,6 +1505,53 @@ describe('useFrontComponentExecutionContext', () => {
         status: 'failed',
         reason: 'upload-failed',
       });
+    });
+  });
+
+  describe('setToolCallArguments', () => {
+    const PENDING_TOOL_CALL = {
+      toolCallId: 'call-1',
+      toolName: 'app_tool_decide_cal_booking',
+      status: 'approval-requested' as const,
+      input: { bookingId: 'booking-1', decision: 'APPROVE' },
+    };
+
+    it('hands the new arguments to the approval card while the call awaits approval', async () => {
+      const onToolCallArgumentsChange = jest.fn();
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        toolCall: PENDING_TOOL_CALL,
+        onToolCallArgumentsChange,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.setToolCallArguments(
+          { bookingId: 'booking-1', decision: 'DECLINE' },
+        );
+      });
+
+      expect(onToolCallArgumentsChange).toHaveBeenCalledTimes(1);
+      expect(onToolCallArgumentsChange).toHaveBeenCalledWith({
+        bookingId: 'booking-1',
+        decision: 'DECLINE',
+      });
+    });
+
+    it('ignores new arguments once the call has been answered', async () => {
+      const onToolCallArgumentsChange = jest.fn();
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        toolCall: { ...PENDING_TOOL_CALL, status: 'approval-responded' },
+        onToolCallArgumentsChange,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.setToolCallArguments(
+          { decision: 'DECLINE' },
+        );
+      });
+
+      expect(onToolCallArgumentsChange).not.toHaveBeenCalled();
     });
   });
 

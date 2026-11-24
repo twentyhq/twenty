@@ -23,21 +23,21 @@ export const DEFAULT_MODELS_BY_TIER: Record<AiModelTier, string[]> = {
     'google/gemini-3.8-flash@high',
     'anthropic/claude-haiku-5-5',
     'xai/grok-4.6@medium',
-    'mistral/mistral-large-latest',
+    'mistral/mistral-medium-latest',
   ],
   smart: [
     'openai/gpt-6.1-sol',
-    'google/gemini-4-argon',
-    'anthropic/claude-opus-5@high',
+    'google/gemini-4-carbon',
+    'anthropic/claude-opus-5-5@high',
     'xai/grok-4.6@high',
-    'mistral/mistral-large-latest',
+    'mistral/mistral-medium-latest',
   ],
   extraSmart: [
-    'anthropic/claude-opus-5-5',
+    'anthropic/claude-fable-5-2',
+    'google/gemini-4-carbon',
     'openai/gpt-6.1-sol',
-    'google/gemini-4-argon',
     'xai/grok-4.7',
-    'mistral/mistral-large-latest',
+    'mistral/mistral-medium-latest',
   ],
 };
 

@@ -1,3 +1,4 @@
+import { type SourceFileManifest } from '@/application/sourceFileManifestType';
 import { type EventTriggerManifestSettings } from '@/application/eventTriggerManifestSettingsType';
 import { type ServerRouteTriggerSettings } from '@/application/serverRouteTriggerSettingsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
@@ -9,15 +10,18 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
   name?: string;
   description?: string;
   timeoutSeconds?: number;
+  retryLimit?: number;
+  jobFailureHandlerName?: string;
   cronTriggerSettings?: CronTriggerSettings;
   eventTriggerSettings?: EventTriggerManifestSettings;
-  // Replaced by eventTriggerSettings; still accepted
+  /** @deprecated Use `eventTriggerSettings` instead. */
   databaseEventTriggerSettings?: DatabaseEventTriggerSettings;
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
   serverRouteTriggerSettings?: ServerRouteTriggerSettings;
   toolTriggerSettings?: ToolTriggerSettings;
   workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
   sourceHandlerPath: string;
+  sourceFiles?: SourceFileManifest[];
   builtHandlerPath: string;
   builtHandlerChecksum: string;
   handlerName: string;

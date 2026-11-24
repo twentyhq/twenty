@@ -12,6 +12,7 @@ import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
 import { isMorphRelationTargetFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-relation-target-flat-field-metadata.util';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -46,11 +47,19 @@ export class FieldMetadataConnectionLoaderFactory {
     >(async (dataLoaderParams: FieldMetadataConnectionLoaderPayload[]) => {
       const locale = dataLoaderParams[0].locale;
       const workspaceId = dataLoaderParams[0].workspaceId;
-      const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
+      const {
+        flatFieldMetadataMaps,
+        flatFieldMetadataOptionMaps,
+        flatObjectMetadataMaps,
+      } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
+            flatMapsKeys: [
+              'flatFieldMetadataMaps',
+              'flatFieldMetadataOptionMaps',
+              'flatObjectMetadataMaps',
+            ],
           },
         );
 
@@ -98,13 +107,17 @@ export class FieldMetadataConnectionLoaderFactory {
         ...connection,
         edges: connection.edges.map((edge) => ({
           ...edge,
-          node: fromFlatFieldMetadataToFieldMetadataDto(
-            resolveEffectiveTranslatedFlatEntity({
+          node: fromFlatFieldMetadataToFieldMetadataDto({
+            ...resolveEffectiveTranslatedFlatEntity({
               metadataName: 'fieldMetadata',
               flatEntity: edge.node,
               i18nContext: getI18nContext(edge.node.applicationId),
             }),
-          ),
+            options: resolveFlatFieldMetadataOptions({
+              flatFieldMetadata: edge.node,
+              flatFieldMetadataOptionMaps,
+            }),
+          }),
         })),
       }));
     });

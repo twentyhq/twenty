@@ -1,9 +1,8 @@
-import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
-import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
+import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectsSection';
 import { SettingsRolePermissionsSettingsSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsSection';
 import { SettingsRolePermissionsToolSection } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsToolSection';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
-import { SettingsRolePermissionsAgentChatChannelsSection } from '@/settings/roles/role-permissions/agent-chat-channels/components/SettingsRolePermissionsAgentChatChannelsSection';
+import { SettingsRolePermissionsInboxChannelsSection } from '@/settings/roles/role-permissions/inbox-channels/components/SettingsRolePermissionsInboxChannelsSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -38,7 +37,7 @@ export const SettingsRolePermissions = ({
     roleId,
   );
 
-  const shouldShowAgentChatChannelsSection =
+  const shouldShowInboxChannelsSection =
     isAiChatInboxEnabled &&
     settingsDraftRole.canBeAssignedToUsers &&
     !isDefined(fromAgentId);
@@ -50,11 +49,6 @@ export const SettingsRolePermissions = ({
         roleId={roleId}
         isEditable={isEditable}
       />
-      <SettingsRolePermissionsObjectLevelSection
-        roleId={roleId}
-        fromAgentId={fromAgentId}
-        isEditable={isEditable}
-      />
       <SettingsRolePermissionsSettingsSection
         roleId={roleId}
         isEditable={isEditable}
@@ -63,8 +57,8 @@ export const SettingsRolePermissions = ({
         roleId={roleId}
         isEditable={isEditable}
       />
-      {shouldShowAgentChatChannelsSection && (
-        <SettingsRolePermissionsAgentChatChannelsSection
+      {shouldShowInboxChannelsSection && (
+        <SettingsRolePermissionsInboxChannelsSection
           roleId={roleId}
           isEditable={isEditable}
         />

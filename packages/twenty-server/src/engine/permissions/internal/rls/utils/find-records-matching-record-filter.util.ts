@@ -39,6 +39,7 @@ export const findRecordsMatchingRecordFilter = async <TRecord extends object>({
       filter: resolvedRecordFilter,
       flatObjectMetadata,
       flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+      flatFieldMetadataOptionMaps: metadataMaps.flatFieldMetadataOptionMaps,
       shouldIgnoreSoftDeleteDefaultFilter,
     }),
   );

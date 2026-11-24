@@ -38,6 +38,7 @@ const icalEvent = ({ uid, summary }: { uid: string; summary: string }) =>
     'DTSTART:20231115T100000Z',
     'DTEND:20231115T110000Z',
     `SUMMARY:${summary}`,
+    `ATTENDEE:mailto:guest-${uid}@example.com`,
     'END:VEVENT',
     'END:VCALENDAR',
   ].join('\r\n');

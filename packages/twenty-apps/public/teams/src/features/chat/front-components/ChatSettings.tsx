@@ -2,7 +2,7 @@ import { useTranslate } from 'twenty-sdk/front-component';
 
 import { RELEASE_FLAGS } from 'src/constants/release-flags';
 import { CHAT_ENABLED_APPLICATION_VARIABLE_KEY } from 'src/features/chat/constants/chat-enabled-application-variable-key';
-import { TeamsUserLinksList } from 'src/features/chat/front-components/TeamsUserLinksList';
+import { TeamsUserLinksSettings } from 'src/features/chat/front-components/TeamsUserLinksSettings';
 import { FeatureSettingsSection } from 'src/front-components/components/FeatureSettingsSection';
 import { useFeatureSetting } from 'src/front-components/hooks/use-feature-setting';
 import { isFeatureEnabled } from 'src/utils/is-feature-enabled';
@@ -38,7 +38,7 @@ export const ChatSettings = () => {
         hasSaveError={hasSaveError}
         onChange={handleChange}
       />
-      {isChatEnabled && <TeamsUserLinksList />}
+      {isChatEnabled && <TeamsUserLinksSettings />}
     </>
   );
 };

@@ -1,21 +1,27 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 
-export const filterOutInternals = (
-  primaryHandle: string,
-  messages: MessageWithParticipants[],
-) => {
-  return messages.filter((message) => {
-    if (!message.participants) {
+type ItemWithParticipants = {
+  participants?: { handle?: string | null }[] | null;
+};
+
+export const filterOutInternals = <TItem extends ItemWithParticipants>({
+  primaryHandle,
+  items,
+}: {
+  primaryHandle: string;
+  items: TItem[];
+}): TItem[] => {
+  return items.filter((item) => {
+    if (!isDefined(item.participants)) {
       return true;
     }
 
     const primaryHandleDomain = getDomainFromEmailOrThrow(primaryHandle);
 
     try {
-      const isAllHandlesFromSameDomain = message.participants
+      const isAllHandlesFromSameDomain = item.participants
         .filter((participant) => isDefined(participant.handle))
         .every(
           (participant) =>

@@ -277,7 +277,7 @@ describe('resolveProposedToolCall', () => {
           arguments: {
             recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
             subject: 'Renewal',
-            body: '<p>Quote attached</p>',
+            body: { type: 'html', html: '<p>Quote attached</p>' },
             files: [
               {
                 id: '20202020-9b5e-4d0c-a4a8-7c4bd7d1e001',

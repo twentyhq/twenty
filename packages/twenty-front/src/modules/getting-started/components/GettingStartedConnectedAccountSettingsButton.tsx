@@ -32,8 +32,8 @@ export const GettingStartedConnectedAccountSettingsButton = ({
       onClick={() =>
         navigateSettings(
           isPendingConfiguration
-            ? SettingsPath.AccountsConfiguration
-            : SettingsPath.AccountDetail,
+            ? SettingsPath.AppPreferencesAccountConfiguration
+            : SettingsPath.AppPreferencesAccountDetail,
           { connectedAccountId: account.id },
         )
       }

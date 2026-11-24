@@ -1,0 +1,2 @@
+export const ADD_IS_SYSTEM_SIDE_EFFECT_TO_ROLE_AND_ROLE_TARGET_UPGRADE_COMMAND_NAME =
+  '2.60.0_AddIsSystemSideEffectToRoleAndRoleTargetFastInstanceCommand_1794922746000';

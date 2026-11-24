@@ -397,4 +397,17 @@ describe('defineRole', () => {
       'Duplicate row level permission predicate group universalIdentifier "11111111-0000-4000-8000-000000000000"',
     );
   });
+
+  it('should return error when recordsPermissions is mixed with a deprecated grant property', () => {
+    const result = defineRole({
+      ...validConfig,
+      canReadAllObjectRecords: true,
+      recordsPermissions: { canUpdateAllRecords: true },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Role declares recordsPermissions together with the deprecated properties canReadAllObjectRecords. Move them into recordsPermissions.',
+    );
+  });
 });

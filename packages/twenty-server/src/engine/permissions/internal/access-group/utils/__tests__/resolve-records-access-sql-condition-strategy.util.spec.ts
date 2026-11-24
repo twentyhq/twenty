@@ -60,13 +60,14 @@ const buildRequest = ({
     workspaceId: 'workspace-id',
     mainPrincipal: {
       type: 'workspaceMember',
-      roleId: ROLE_ID,
+      roleIds: [ROLE_ID],
       workspaceMemberId: 'member-id',
     },
     applicationPrincipal: { type: 'customApplication' },
   },
   metadataMaps: {
     flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+    flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
     featureFlagsMap: {
       [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,

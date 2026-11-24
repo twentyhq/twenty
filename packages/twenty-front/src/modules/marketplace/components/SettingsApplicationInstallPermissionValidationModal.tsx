@@ -14,7 +14,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
-import { type RoleManifest } from 'twenty-shared/application';
+import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
@@ -31,7 +31,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;
   appDisplayName: string;
   appLogoUrl?: string;
-  defaultRole?: RoleManifest;
+  defaultRole?: LegacyCompliantRoleManifest;
   appObjects?: MarketplaceAppObject[];
   requestedCapabilities?: string[];
   requestedIframeMediaPermissions?: readonly IframeMediaPermission[];

@@ -1,0 +1,73 @@
+name: MCP Catalog Sync
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Weekly on Monday at 6 AM UTC
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  sync-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+    env:
+      CATALOG_DIR: packages/twenty-server/src/engine/core-modules/application/application-bundled/mcp-servers
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: main
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build dependencies
+        run: npx nx build twenty-shared
+
+      - name: Run catalog sync
+        run: |
+          npx nx run twenty-server:ts-node-no-deps-transpile-only -- \
+            ./scripts/mcp-catalog-sync/index.ts
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet "$CATALOG_DIR"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The branch is regenerated from main on every run, so it is force-pushed
+      - name: Push catalog branch
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name 'github-actions'
+          git config user.email 'github-actions@twenty.com'
+          git switch -c chore/mcp-catalog-sync
+          git add "$CATALOG_DIR"
+          git commit -m 'chore: sync MCP server catalog'
+          git push --force origin chore/mcp-catalog-sync
+
+  open-pull-request:
+    needs: sync-catalog
+    if: needs.sync-catalog.outputs.changed == 'true'
+    permissions: {}
+    uses: ./.github/workflows/open-pull-request.yaml
+    with:
+      branch: chore/mcp-catalog-sync
+      title: 'chore: sync MCP server catalog'
+      body: |
+        Automated weekly sync of the bundled MCP server apps.
+
+        - URL and icon come from the [official MCP registry](https://registry.modelcontextprotocol.io).
+        - The label, homepage and one-liner come from Anthropic's connector directory.
+
+        **Please review before merging**: a changed URL points agents at a different server, and a bumped version upgrades the app in every workspace that installed it.
+    secrets:
+      TWENTY_PR_PRIVATE_KEY: ${{ secrets.TWENTY_PR_PRIVATE_KEY }}
+      TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}

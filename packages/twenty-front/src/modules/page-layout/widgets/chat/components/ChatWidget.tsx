@@ -1,14 +1,11 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useId } from 'react';
 
-import { AiChatTab } from '@/ai/components/AiChatTab';
-import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
-import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
-import { ChatWidgetOpenInChatPageEffect } from '@/page-layout/widgets/chat/components/ChatWidgetOpenInChatPageEffect';
-import { ChatWidgetThreadSyncEffect } from '@/page-layout/widgets/chat/components/ChatWidgetThreadSyncEffect';
+import { AiChatSurfaceView } from '@/ai-chat/instance/components/AiChatSurfaceView';
+import { AI_CHAT_SURFACE } from '@/ai-chat/constants/AiChatSurface';
+import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 const StyledChatContainer = styled.div`
   --ai-chat-content-max-width: 768px;
@@ -22,27 +19,23 @@ const StyledChatContainer = styled.div`
 `;
 
 export const ChatWidget = () => {
+  const instanceId = useId();
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
-  // Checked once so leaving for the chat page later does not pull this chat into it
-  const [isOpenedBesideChatPage] = useState(
-    () => isInSidePanel && isCurrentPathAiChatPage(),
-  );
-
-  if (isOpenedBesideChatPage) {
-    return <ChatWidgetOpenInChatPageEffect threadId={targetRecord.id} />;
-  }
+  const { handleThreadClick } = useAiChatThreadClick({
+    shouldOpenInFullPage: !isInSidePanel,
+  });
 
   return (
     <StyledChatContainer>
-      <ChatWidgetThreadSyncEffect threadId={targetRecord.id} />
-      <AiChatSurfaceContext.Provider
-        value={
+      <AiChatSurfaceView
+        surface={
           isInSidePanel ? AI_CHAT_SURFACE.SIDE_PANEL : AI_CHAT_SURFACE.PAGE
         }
-      >
-        <AiChatTab />
-      </AiChatSurfaceContext.Provider>
+        instanceId={instanceId}
+        threadId={targetRecord.id}
+        onThreadChange={(threadId) => handleThreadClick({ id: threadId })}
+      />
     </StyledChatContainer>
   );
 };

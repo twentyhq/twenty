@@ -7,10 +7,13 @@ import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { MainNavigationDrawerEditButton } from '@/navigation/components/MainNavigationDrawerEditButton';
 import { MultiWorkspaceDropdownButton } from '@/navigation/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useLingui } from '@lingui/react/macro';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   flex-shrink: 0;
@@ -58,8 +61,11 @@ export const NavigationDrawerHeader = () => {
   const isMobile = useIsMobile();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
-  const searchButton = !isMobile && (
+  const searchButton = !isMobile && !isCustomizableSidebarEnabled && (
     <LightIconButton
       emphasis="standard"
       size={isExpanded ? 'sm' : 'md'}
@@ -80,6 +86,7 @@ export const NavigationDrawerHeader = () => {
           <StyledRightActions>
             <MediaAccessIndicator />
             {searchButton}
+            <MainNavigationDrawerEditButton />
             <NavigationDrawerCollapseButton
               direction="left"
               size={isMobile ? 'md' : 'sm'}

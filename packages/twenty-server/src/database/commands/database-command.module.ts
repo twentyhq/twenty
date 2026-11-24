@@ -25,7 +25,6 @@ import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/applicat
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
-import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.module';
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -40,6 +39,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
+import { UsageLimitInstanceOverrideModule } from 'src/engine/core-modules/usage-limit/instance-override/usage-limit-instance-override.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -95,7 +95,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     WorkspaceMigrationRunnerModule,
     TrashCleanupModule,
     BillingReminderModule,
-    ApplicationRecurringChargeModule,
+    UsageLimitInstanceOverrideModule,
     CodeInterpreterSessionCleanupModule,
     PublicDomainModule,
     EventLogCleanupModule,

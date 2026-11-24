@@ -11,6 +11,11 @@ input ActivateWorkspaceInput {
   displayName: String
 }
 
+input AddAgentChatThreadParticipantsInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]!
+}
+
 input AddQuerySubscriptionInput {
   eventStreamId: String!
   operationSignature: JSON!
@@ -27,6 +32,7 @@ type Agent {
   id: UUID!
   isActive: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -545,7 +551,7 @@ type Application {
   content: ApplicationContent
   createdAt: DateTime!
   defaultLogicFunctionRole: Role
-  defaultRoleId: String
+  defaultRoleId: String @deprecated(reason: "Use requestedRoleId instead")
   description: String
   frontComponents: [FrontComponent!]!
   grantRoleId: UUID
@@ -561,7 +567,8 @@ type Application {
   packageJsonChecksum: String
   packageJsonFileId: UUID
   requestedIframeMediaPermissions: [IframeMediaPermission!]!
-  runOnUserPreferences: Boolean!
+  requestedRoleId: UUID
+  runHealthCheckOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
   universalIdentifier: String!
@@ -572,6 +579,7 @@ type Application {
 
 type ApplicationAuthorization {
   applicationId: UUID!
+  applicationLogoUrl: String
   applicationName: String!
   applicationUniversalIdentifier: String
   createdAt: DateTime!
@@ -612,6 +620,11 @@ type ApplicationConnectedAccountDTO {
   visibility: String! @deprecated(reason: "Use scope instead.")
 }
 
+type ApplicationConnectedMemberCount {
+  applicationId: UUID!
+  connectedMemberCount: Int!
+}
+
 type ApplicationConnectionProvider {
   applicationId: String!
   displayName: String!
@@ -636,6 +649,7 @@ type ApplicationContent {
   frontComponents: [ApplicationContentItem!]!
   indexes: [ApplicationContentItem!]!
   logicFunctions: [ApplicationContentItem!]!
+  mcpServers: [ApplicationContentItem!]!
   navigationMenuItems: [ApplicationContentItem!]!
   objects: [ApplicationContentItem!]!
   pageLayoutTabs: [ApplicationContentItem!]!
@@ -696,8 +710,11 @@ enum ApplicationExportCoverageStatus {
 }
 
 type ApplicationExportFile {
-  """Base64 for public-asset files, UTF-8 text for other folders."""
+  """
+  Base64 for public-asset files or when encoding is base64, otherwise UTF-8 text.
+  """
   content: String!
+  encoding: String
   folder: String!
   path: String!
 }
@@ -818,7 +835,6 @@ type ApplicationMonitoringVersion {
 type ApplicationPreferences {
   applicationId: UUID!
   connectionProviders: [ApplicationConnectionProvider!]!
-  hasUserHealthCheck: Boolean!
   settingsMenuItems: [SettingsMenuItem!]!
   variables: [UserApplicationVariableValue!]!
 }
@@ -844,6 +860,7 @@ type ApplicationRegistration {
 }
 
 enum ApplicationRegistrationSourceType {
+  BUNDLED
   LOCAL
   NPM
   OAUTH_ONLY
@@ -1106,20 +1123,12 @@ enum BillingEntitlementKey {
   VALIDATION_RULES
 }
 
-type BillingLicensedProduct implements BillingProductDTO {
+type BillingLicensedProduct {
   description: String!
   images: [String!]
   metadata: BillingProductMetadata!
   name: String!
   prices: [BillingPriceLicensed!]
-}
-
-type BillingMeteredProduct implements BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-  prices: [BillingPriceMetered!]
 }
 
 type BillingPartnerCode {
@@ -1137,7 +1146,6 @@ type BillingPlan {
   downgradePlanKeys: [BillingPlanKey!]!
   isCheckoutDefault: Boolean!
   isSellable: Boolean!
-  meteredProducts: [BillingMeteredProduct!]!
   planKey: BillingPlanKey!
   resourceCreditProducts: [BillingLicensedProduct!]!
   upgradePlanKeys: [BillingPlanKey!]!
@@ -1154,23 +1162,9 @@ enum BillingPlanKey {
 type BillingPriceLicensed {
   creditAmount: Float
   isSellable: Boolean!
-  priceUsageType: BillingUsageType!
   recurringInterval: SubscriptionInterval!
   stripePriceId: String!
   unitAmount: Float!
-}
-
-type BillingPriceMetered {
-  priceUsageType: BillingUsageType!
-  recurringInterval: SubscriptionInterval!
-  stripePriceId: String!
-  tiers: [BillingPriceTier!]!
-}
-
-type BillingPriceTier {
-  flatAmount: Float
-  unitAmount: Float
-  upTo: Float
 }
 
 type BillingProduct {
@@ -1180,23 +1174,16 @@ type BillingProduct {
   name: String!
 }
 
-interface BillingProductDTO {
-  description: String!
-  images: [String!]
-  metadata: BillingProductMetadata!
-  name: String!
-}
-
 """The different billing products available"""
 enum BillingProductKey {
+  APPLICATION
   BASE_PRODUCT
   RESOURCE_CREDIT
 }
 
 type BillingProductMetadata {
   isLegacy: String
-  planKey: BillingPlanKey!
-  priceUsageBased: BillingUsageType!
+  planKey: BillingPlanKey
   productKey: BillingProductKey!
 }
 
@@ -1237,7 +1224,7 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
-  billingProduct: BillingProductDTO!
+  billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
   id: UUID!
@@ -1270,17 +1257,13 @@ type BillingUpdate {
   currentBillingSubscription: BillingSubscription!
 }
 
-enum BillingUsageType {
-  LICENSED
-  METERED
-}
-
 input BooleanFieldComparison {
   is: Boolean
   isNot: Boolean
 }
 
 type CalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
   connectedAccountId: UUID!
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy!
   createdAt: DateTime!
@@ -1503,6 +1486,7 @@ type ClientConfig {
   serverUrl: String!
   signInPrefilled: Boolean!
   support: Support!
+  webPushVapidPublicKey: String!
 }
 
 type ClientConfigMaintenanceMode {
@@ -1556,6 +1540,13 @@ union CommandMenuItemPayload = ObjectMetadataCommandMenuItemPayload | PathComman
 type CompleteApplicationFileUploadsResult {
   errors: [ApplicationFileCompletionError!]!
   files: [File!]!
+}
+
+input ConnectApplicationWithApiKeyInput {
+  apiKey: String!
+  applicationId: UUID!
+  providerName: String!
+  reconnectingConnectedAccountId: UUID
 }
 
 type ConnectedAccountPublicDTO {
@@ -1621,6 +1612,7 @@ input CreateAgentInput {
   avatarShape: String
   description: String
   icon: String
+  isPrivate: Boolean
   label: String!
   modelConfiguration: JSON
   modelId: String!
@@ -1792,6 +1784,7 @@ input CreateMcpServerInput {
   isActive: Boolean
   label: String!
   name: String!
+  signInScope: ConnectionProviderScope
   url: String!
 }
 
@@ -1803,14 +1796,16 @@ input CreateMessageSuppressionInput {
 input CreateNavigationMenuItemInput {
   agentChatChannelId: UUID
   agentId: UUID
+  builtInSectionKey: String
   color: String
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID
   link: String
   name: String
   nativePageKey: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float
   targetObjectMetadataId: UUID
   targetRecordId: UUID
@@ -1865,6 +1860,7 @@ input CreatePageLayoutTabInput {
 }
 
 input CreatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   configuration: JSON!
   objectMetadataId: UUID
   pageLayoutTabId: UUID!
@@ -1956,8 +1952,12 @@ input CreateViewFieldInput {
   aggregateOperation: AggregateOperations
   fieldMetadataId: UUID!
   id: UUID
+  isCanonical: Boolean = true
   isVisible: Boolean = true
+  label: String
   position: Float = 0
+  relationScope: ViewFieldRelationScopeInput
+  relationTargetFieldMetadataId: UUID
   size: Float = 0
   viewFieldGroupId: UUID
   viewId: UUID!
@@ -2000,6 +2000,7 @@ input CreateViewInput {
   icon: String!
   id: UUID
   isCompact: Boolean = false
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -2013,16 +2014,18 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   viewId: UUID!
 }
@@ -2313,6 +2316,7 @@ enum EngineComponentKey {
   GO_TO_WORKFLOWS
   HIDE_DELETED_RECORDS
   IMPORT_RECORDS
+  MANAGE_AI_CHAT_PARTICIPANTS
   MARK_AI_CHAT_AS_DONE
   MARK_AI_CHAT_AS_READ
   MARK_AI_CHAT_AS_UNREAD
@@ -2338,7 +2342,6 @@ enum EngineComponentKey {
   SEE_RUNS_WORKFLOW_VERSION
   SEE_VERSIONS_WORKFLOW
   SEE_VERSIONS_WORKFLOW_VERSION
-  SEE_VERSION_WORKFLOW_RUN
   SEE_WORKFLOW_WORKFLOW_RUN
   SEE_WORKFLOW_WORKFLOW_VERSION
   SEND_MESSAGE_CAMPAIGN
@@ -2501,15 +2504,20 @@ enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
-  IS_APP_PREFERENCES_ENABLED
+  IS_APPLICATION_PRICE_BILLING_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
+  IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
+  IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
+  IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
+  IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_GETTING_STARTED_ENABLED
-  IS_HTTP_EGRESS_LAMBDA_ENABLED
+  IS_INTERNAL_IMPORT_COLUMN_ENABLED
+  IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
   IS_MESSAGE_ATTACHMENT_ENABLED
-  IS_PERMISSION_TABLES_ENABLED
   IS_PRIVATE_RECORDS_ENABLED
   IS_RECORD_GROUP_TABS_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
@@ -2795,6 +2803,7 @@ type GetAuthorizationUrlForSSO {
 input GetAuthorizationUrlForSSOInput {
   identityProviderId: UUID!
   workspaceInviteHash: String
+  workspacePersonalInviteToken: String
 }
 
 type GettingStartedProgress {
@@ -3201,6 +3210,7 @@ type MarketplaceApp {
   category: String!
   connectUrl: String
   description: String!
+  hasMcpServers: Boolean!
   id: String!
   isListed: Boolean!
   logoUrl: String
@@ -3287,6 +3297,7 @@ type McpServer {
   isActive: Boolean!
   label: String!
   name: String!
+  signInScope: ConnectionProviderScope
   tools: [McpServerTool!]!
   toolsSyncError: String
   toolsSyncedAt: DateTime
@@ -3530,6 +3541,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  addAgentChatThreadParticipants(input: AddAgentChatThreadParticipantsInput!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
@@ -3553,6 +3565,7 @@ type Mutation {
   completeNewWorkspaceLogoUpload(fileId: String!, workspaceId: String!): FileWithSignedUrl!
   completeWorkspaceLogoUpload(fileId: String!): FileWithSignedUrl!
   completeWorkspaceMemberProfilePictureUpload(fileId: String!): FileWithSignedUrl!
+  connectApplicationWithApiKey(input: ConnectApplicationWithApiKeyInput!): UUID!
   createAgentChatChannel(input: CreateAgentChatChannelInput!): AgentChatChannel!
   createApiKey(input: CreateApiKeyInput!): ApiKey!
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
@@ -3774,6 +3787,7 @@ type Mutation {
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
+  updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
@@ -3795,7 +3809,9 @@ type Mutation {
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
+  updateRelatedRecordPath(input: UpdateRelatedRecordPathInput!): RelatedRecordPath!
   updateSkill(input: UpdateSkillInput!): Skill!
+  updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
@@ -3815,7 +3831,6 @@ type Mutation {
   updateWorkspaceIframeMediaPermissions(data: UpdateWorkspaceIframeMediaPermissionsInput!): Workspace!
   updateWorkspaceMemberRole(roleId: UUID!, workspaceMemberId: UUID!): WorkspaceMember!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
-  upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   uploadAppTarball(file: Upload!, universalIdentifier: String @deprecated(reason: "Ignored: the application universalIdentifier is read from the tarball manifest.")): ApplicationRegistration! @deprecated(reason: "Use createFileUpload with the AppTarball folder and completeAppTarballUpload, which send the tarball straight to file storage.")
   uploadApplicationFile(applicationUniversalIdentifier: String!, file: Upload!, fileFolder: FileFolder!, filePath: String!): File! @deprecated(reason: "Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.")
   uploadFilesFieldFileByUniversalIdentifier(fieldMetadataUniversalIdentifier: String!, file: Upload!): FileWithSignedUrl! @deprecated(reason: "Use createFileUpload with the FilesField folder and the fieldMetadataUniversalIdentifier, then completeFileUpload, which send the file straight to file storage.")
@@ -3826,8 +3841,9 @@ type Mutation {
   upsertFieldsWidget(input: UpsertFieldsWidgetInput!): View!
   upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
   upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
-  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  upsertRowLevelPermissionRules(input: UpsertRowLevelPermissionRulesInput!): UpsertRowLevelPermissionRulesResult!
   upsertViewWidget(input: UpsertViewWidgetInput!): View!
+  upsertWebPushSubscription(input: UpsertWebPushSubscriptionInput!): Boolean!
   validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
   verifyEmailAndGetLoginToken(captchaToken: String, email: String!, emailVerificationToken: String!, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(captchaToken: String, email: String!, emailVerificationToken: String!): AvailableWorkspacesAndAccessTokens!
@@ -3844,20 +3860,24 @@ type NavigationMenuItem {
   agentChatChannelId: UUID
   agentId: UUID
   applicationId: UUID
+  builtInSectionKey: String
   color: String
   createdAt: DateTime!
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
   id: UUID!
+  isActive: Boolean!
   link: String
   name: String
   nativePageKey: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float!
   targetObjectMetadataId: UUID
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
   type: NavigationMenuItemType!
+  universalIdentifier: UUID
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
@@ -3873,6 +3893,8 @@ enum NavigationMenuItemType {
   OBJECT
   PAGE_LAYOUT
   RECORD
+  SECTION
+  TAB
   VIEW
   WORKFLOW
 }
@@ -4050,6 +4072,7 @@ type ObjectRecordsPermissions {
   canCreateAllRecords: Boolean!
   canDestroyAllRecords: Boolean!
   canReadAllRecords: Boolean!
+  canReadSomeRecords: Boolean!
   canSoftDeleteAllRecords: Boolean!
   canUpdateAllRecords: Boolean!
   objectMetadataId: UUID!
@@ -4154,8 +4177,9 @@ type PageLayoutWidget {
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
   applicationName: String
-  conditionalAvailabilityExpression: String
-  conditionalDisplay: JSON
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use conditionalAvailability instead")
+  conditionalDisplay: JSON @deprecated(reason: "Use conditionalAvailability instead")
   configuration: WidgetConfiguration!
   createdAt: DateTime!
   deletedAt: DateTime
@@ -4233,6 +4257,7 @@ enum PermissionFlagType {
   LAYOUTS
   MARKETPLACE_APPS
   PROFILE_INFORMATION
+  READ_PRIVATE_CHANNELS
   ROLES
   SECURITY
   SEND_EMAIL_TOOL
@@ -4319,6 +4344,14 @@ type PublicApplicationRegistration {
   websiteUrl: String
 }
 
+type PublicCalendarChannel {
+  connectedAccount: ConnectedAccountPublicDTO
+  connectedAccountId: UUID!
+  handle: String!
+  id: UUID!
+  visibility: CalendarChannelVisibility!
+}
+
 type PublicConnectionParametersOutput {
   connectionSecurity: EmailConnectionSecurity
   host: String!
@@ -4400,6 +4433,7 @@ type Query {
   billingPartnerCode: BillingPartnerCode!
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
+  calendarChannels: [PublicCalendarChannel!]!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
   chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
   chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
@@ -4417,7 +4451,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, shouldIncludeLogicFunctionSources: Boolean = false, shouldIncludePublicAssets: Boolean = false, shouldIncludeSourceDependencies: Boolean = false, shouldIncludeSourceFiles: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -4450,7 +4484,7 @@ type Query {
   findUninstallApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findUpgradeApplicationJobStatus(jobId: String, universalIdentifier: String!): JobStatus
   findWorkspaceAiStats: WorkspaceAiStats!
-  findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
+  findWorkspaceFromInviteHash(inviteHash: String!): WorkspaceFromInviteHash!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   frontComponent(id: UUID!): FrontComponent
   frontComponents: [FrontComponent!]!
@@ -4528,6 +4562,7 @@ type Query {
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
   ): ObjectConnection!
+  onlineWorkspaceMemberIds: [UUID!]!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
@@ -4551,7 +4586,8 @@ type Query {
   validationRulesReadingField(fieldMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
-  workspaceApplicationAuthorizations: [ApplicationAuthorization!]!
+  workspaceApplicationAuthorizations(applicationId: UUID): [ApplicationAuthorization!]!
+  workspaceApplicationConnectedMemberCounts: [ApplicationConnectedMemberCount!]!
 }
 
 type RatioAggregateConfig {
@@ -4652,6 +4688,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isActive: Boolean!
   isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
@@ -4745,9 +4782,11 @@ type RowLevelPermissionPredicate {
   relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
+  rowLevelPermissionRuleId: String
   subFieldName: String
   value: JSON
   workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: String
   workspaceMemberSubFieldName: String
 }
 
@@ -4762,36 +4801,12 @@ type RowLevelPermissionPredicateGroup {
   parentRowLevelPermissionPredicateGroupId: String
   positionInRowLevelPermissionPredicateGroup: Float
   roleId: String!
-}
-
-input RowLevelPermissionPredicateGroupInput {
-  canDestroyRecords: Boolean
-  canReadRecords: Boolean
-  canSoftDeleteRecords: Boolean
-  canUpdateRecords: Boolean
-  id: UUID
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
-  objectMetadataId: UUID!
-  parentRowLevelPermissionPredicateGroupId: UUID
-  positionInRowLevelPermissionPredicateGroup: Float
+  rowLevelPermissionRuleId: String
 }
 
 enum RowLevelPermissionPredicateGroupLogicalOperator {
   AND
   OR
-}
-
-input RowLevelPermissionPredicateInput {
-  fieldMetadataId: UUID!
-  id: UUID
-  operand: RowLevelPermissionPredicateOperand!
-  positionInRowLevelPermissionPredicateGroup: Float
-  relationFieldMetadataId: UUID
-  rowLevelPermissionPredicateGroupId: UUID
-  subFieldName: String
-  value: JSON
-  workspaceMemberFieldMetadataId: String
-  workspaceMemberSubFieldName: String
 }
 
 enum RowLevelPermissionPredicateOperand {
@@ -4821,6 +4836,38 @@ type RowLevelPermissionRule {
   canUpdateRecords: Boolean!
   id: UUID!
   objectMetadataId: UUID!
+}
+
+input RowLevelPermissionRuleInput {
+  canCreateRecords: Boolean
+  canDestroyRecords: Boolean
+  canReadRecords: Boolean
+  canSoftDeleteRecords: Boolean
+  canUpdateRecords: Boolean
+  id: UUID
+  predicateGroups: [RowLevelPermissionRulePredicateGroupInput!]
+  predicates: [RowLevelPermissionRulePredicateInput!]
+}
+
+input RowLevelPermissionRulePredicateGroupInput {
+  id: UUID
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
+  position: Float
+  predicateGroups: [RowLevelPermissionRulePredicateGroupInput!]
+  predicates: [RowLevelPermissionRulePredicateInput!]
+}
+
+input RowLevelPermissionRulePredicateInput {
+  fieldMetadataId: UUID!
+  id: UUID
+  operand: RowLevelPermissionPredicateOperand!
+  position: Float
+  relationFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON
+  workspaceMemberFieldMetadataId: String
+  workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberSubFieldName: String
 }
 
 type RowLevelRecordsPermissions {
@@ -4914,6 +4961,11 @@ type SearchField {
   updatedAt: DateTime!
 }
 
+input SendAppChannelMessageAttachmentInput {
+  id: UUID!
+  name: String!
+}
+
 input SendAppChannelMessageEmailInput {
   bcc: String
   body: String!
@@ -4924,6 +4976,7 @@ input SendAppChannelMessageEmailInput {
 }
 
 input SendAppChannelMessageInput {
+  attachments: [SendAppChannelMessageAttachmentInput!]
   email: SendAppChannelMessageEmailInput
   idempotencyKey: UUID!
   messageChannelId: UUID!
@@ -5165,6 +5218,11 @@ input SyncAppMessageFoldersInput {
   messageChannelId: UUID!
 }
 
+enum TabPresenceStatus {
+  FOCUSED
+  OPEN
+}
+
 type TasksConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -5354,6 +5412,7 @@ input UpdateAgentInput {
   icon: String
   id: UUID!
   isActive: Boolean
+  isPrivate: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String
@@ -5482,6 +5541,11 @@ input UpdateGettingStartedInput {
   snoozedUntil: String
 }
 
+input UpdateInboxNotificationSettingsInput {
+  inboxNotificationLevel: String!
+  isInboxNotificationPreviewEnabled: Boolean!
+}
+
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
@@ -5519,6 +5583,7 @@ input UpdateMcpServerInputUpdates {
   isActive: Boolean
   label: String
   name: String
+  signInScope: ConnectionProviderScope
   url: String
 }
 
@@ -5553,11 +5618,13 @@ input UpdateMessageFoldersInput {
 
 input UpdateNavigationMenuItemInput {
   color: String
-  folderId: UUID
+  folderId: UUID @deprecated(reason: "Use parentId instead.")
   icon: String
+  isActive: Boolean
   link: String
   name: String
   pageLayoutId: UUID
+  parentId: UUID
   position: Float
 }
 
@@ -5624,6 +5691,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
 }
 
 input UpdatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5636,6 +5704,7 @@ input UpdatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetWithIdInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5653,6 +5722,12 @@ input UpdatePageLayoutWithTabsInput {
   objectMetadataId: UUID
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
   type: PageLayoutType!
+}
+
+input UpdateRelatedRecordPathInput {
+  id: UUID!
+  isActive: Boolean
+  isInherent: Boolean
 }
 
 input UpdateRoleInput {
@@ -5685,6 +5760,11 @@ input UpdateSkillInput {
   isActive: Boolean
   label: String
   name: String
+}
+
+input UpdateTabPresenceInput {
+  status: TabPresenceStatus!
+  tabId: String!
 }
 
 input UpdateTimelineActivityTypeInput {
@@ -5748,7 +5828,10 @@ input UpdateViewFieldInput {
 input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
+  label: String
   position: Float
+  relationScope: ViewFieldRelationScopeInput
+  relationTargetFieldMetadataId: UUID
   size: Float
   viewFieldGroupId: UUID
 }
@@ -5803,6 +5886,7 @@ input UpdateViewInput {
   icon: String
   id: UUID
   isCompact: Boolean
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -5818,7 +5902,7 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -5831,6 +5915,7 @@ input UpdateViewSortInput {
 
 input UpdateViewSortInputUpdates {
   direction: ViewSortDirection
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
 }
 
@@ -5883,6 +5968,7 @@ input UpdateWorkspaceInput {
   isCampaignOpenTrackingEnabled: Boolean
   isGoogleAuthBypassEnabled: Boolean
   isGoogleAuthEnabled: Boolean
+  isInternalImportEnabled: Boolean
   isInternalMessagesImportEnabled: Boolean
   isMicrosoftAuthBypassEnabled: Boolean
   isMicrosoftAuthEnabled: Boolean
@@ -5954,21 +6040,16 @@ input UpsertPermissionFlagsInput {
   roleId: UUID!
 }
 
-input UpsertRowLevelPermissionPredicatesInput {
-  canCreateRecords: Boolean
-  canDestroyRecords: Boolean
-  canReadRecords: Boolean
-  canSoftDeleteRecords: Boolean
-  canUpdateRecords: Boolean
+input UpsertRowLevelPermissionRulesInput {
   objectMetadataId: UUID!
-  predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
-  predicates: [RowLevelPermissionPredicateInput!]!
   roleId: UUID!
+  rules: [RowLevelPermissionRuleInput!]!
 }
 
-type UpsertRowLevelPermissionPredicatesResult {
+type UpsertRowLevelPermissionRulesResult {
   predicateGroups: [RowLevelPermissionPredicateGroup!]!
   predicates: [RowLevelPermissionPredicate!]!
+  rules: [RowLevelPermissionRule!]!
 }
 
 input UpsertViewWidgetInput {
@@ -6051,6 +6132,13 @@ input UpsertViewWidgetViewSortInput {
   direction: ViewSortDirection = ASC
   fieldMetadataId: UUID!
   id: UUID
+}
+
+input UpsertWebPushSubscriptionInput {
+  browserAuthSecret: String!
+  browserPublicKey: String!
+  endpoint: String!
+  vapidPublicKey: String!
 }
 
 type UsageAnalytics {
@@ -6277,7 +6365,9 @@ type UserWorkspace {
   createdAt: DateTime!
   deletedAt: DateTime
   id: UUID!
+  inboxNotificationLevel: String
   isImpersonating: Boolean
+  isInboxNotificationPreviewEnabled: Boolean
   locale: String!
   objectRecordsPermissions: [ObjectRecordsPermissions!]
   permissionFlags: [PermissionFlagType!]
@@ -6348,6 +6438,7 @@ type View {
   isActive: Boolean!
   isCompact: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -6358,6 +6449,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
@@ -6369,7 +6461,7 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility!
+  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6391,10 +6483,14 @@ type ViewField {
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
+  isCanonical: Boolean!
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
+  label: String
   position: Float!
+  relationScope: ViewFieldRelationScope
+  relationTargetFieldMetadataId: UUID
   size: Float!
   universalIdentifier: UUID!
   updatedAt: DateTime!
@@ -6416,6 +6512,68 @@ type ViewFieldGroup {
   viewFields: [ViewField!]!
   viewId: UUID!
   workspaceId: UUID!
+}
+
+type ViewFieldRelationScope {
+  aggregateOperation: AggregateOperations
+  filterGroups: [ViewFieldRelationScopeFilterGroup!]!
+  filters: [ViewFieldRelationScopeFilter!]!
+  limit: Int
+  sorts: [ViewFieldRelationScopeSort!]!
+}
+
+type ViewFieldRelationScopeFilter {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+type ViewFieldRelationScopeFilterGroup {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterGroupInput {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterInput {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+input ViewFieldRelationScopeInput {
+  aggregateOperation: AggregateOperations
+  filterGroups: [ViewFieldRelationScopeFilterGroupInput!]! = []
+  filters: [ViewFieldRelationScopeFilterInput!]! = []
+  limit: Int
+  sorts: [ViewFieldRelationScopeSortInput!]! = []
+}
+
+type ViewFieldRelationScopeSort {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+}
+
+input ViewFieldRelationScopeSortInput {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
 }
 
 type ViewFilter {
@@ -6492,12 +6650,23 @@ enum ViewOpenRecordIn {
   SIDE_PANEL
 }
 
+enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE
+  INBOX_CHANNEL_OPEN
+  INBOX_CHANNEL_SNOOZED
+  INBOX_DONE
+  INBOX_MENTIONS
+  INBOX_OPEN
+  INBOX_SNOOZED
+}
+
 type ViewSort {
   createdAt: DateTime!
   deletedAt: DateTime
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
+  relationTargetFieldMetadataId: UUID
   subFieldName: String
   updatedAt: DateTime!
   viewId: UUID!
@@ -6678,7 +6847,8 @@ type Workspace {
   isCustomDomainEnabled: Boolean!
   isGoogleAuthBypassEnabled: Boolean!
   isGoogleAuthEnabled: Boolean!
-  isInternalMessagesImportEnabled: Boolean!
+  isInternalImportEnabled: Boolean!
+  isInternalMessagesImportEnabled: Boolean! @deprecated(reason: "Use isInternalImportEnabled")
   isMicrosoftAuthBypassEnabled: Boolean!
   isMicrosoftAuthEnabled: Boolean!
   isPasswordAuthBypassEnabled: Boolean!
@@ -6743,6 +6913,13 @@ enum WorkspaceDiscoverability {
   HIDDEN
   MEMBERS_AND_INVITEES
   PUBLIC
+}
+
+type WorkspaceFromInviteHash {
+  allowImpersonation: Boolean!
+  displayName: String
+  id: UUID!
+  logo: String
 }
 
 type WorkspaceInvitation {

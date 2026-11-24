@@ -1,19 +1,28 @@
-import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  type OverridableFlatEntity,
+  resolveEffectiveFlatEntityProperty,
+} from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+
 export const isViewVisibleToUser = (
-  view: {
-    visibility: ViewVisibility;
+  view: OverridableFlatEntity & {
+    isPrivate: boolean;
     createdByUserWorkspaceId?: string | null;
   },
   userWorkspaceId?: string,
 ): boolean => {
-  if (view.visibility === ViewVisibility.WORKSPACE) {
+  const isPrivate = resolveEffectiveFlatEntityProperty({
+    metadataName: 'view',
+    flatEntity: view,
+    property: 'isPrivate',
+  });
+
+  if (isPrivate === false) {
     return true;
   }
 
   return (
-    view.visibility === ViewVisibility.UNLISTED &&
     isDefined(userWorkspaceId) &&
     view.createdByUserWorkspaceId === userWorkspaceId
   );

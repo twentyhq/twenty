@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -10,7 +10,13 @@ export class UpdateCoreWorkflowInput {
   @IsUUID()
   coreWorkflowId: string;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isPrivate?: boolean;
 }

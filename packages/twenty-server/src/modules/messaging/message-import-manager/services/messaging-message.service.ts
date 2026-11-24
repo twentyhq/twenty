@@ -19,6 +19,13 @@ type MessageToRefresh = Pick<
   'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
 >;
 
+type MessageChannelMessageAssociationSource = Partial<
+  Pick<
+    MessageChannelMessageAssociationWorkspaceEntity,
+    'accountOwnerId' | 'handle'
+  >
+>;
+
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
   existingThreadInDB?: Pick<MessageThreadWorkspaceEntity, 'id'>;
@@ -32,7 +39,8 @@ type MessageAccumulator = {
     | 'text'
     | 'messageThreadId'
     | 'isDraft'
-  >;
+  > &
+    Partial<Pick<MessageWorkspaceEntity, 'createdBy'>>;
   sentDraftToRefresh?: MessageToRefresh;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
@@ -43,7 +51,8 @@ type MessageAccumulator = {
     | 'messageExternalId'
     | 'messageThreadExternalId'
     | 'direction'
-  >;
+  > &
+    MessageChannelMessageAssociationSource;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -51,12 +60,19 @@ export class MessagingMessageService {
 
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  public async saveMessagesWithinTransaction(
-    messages: MessageWithParticipants[],
-    messageChannelId: string,
-    transactionScope: WorkspaceTransactionScope,
-    workspaceId: string,
-  ): Promise<{
+  public async saveMessagesWithinTransaction({
+    messages,
+    messageChannelId,
+    transactionScope,
+    workspaceId,
+    associationSource,
+  }: {
+    messages: MessageWithParticipants[];
+    messageChannelId: string;
+    transactionScope: WorkspaceTransactionScope;
+    workspaceId: string;
+    associationSource: MessageChannelMessageAssociationSource;
+  }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];
     sentDraftMessageIds: string[];
@@ -185,6 +201,9 @@ export class MessagingMessageService {
               text: message.text,
               messageThreadId,
               isDraft: message.isDraft,
+              ...(isDefined(message.createdBy)
+                ? { createdBy: message.createdBy }
+                : {}),
             };
 
             messageAccumulator.messageToCreate = messageToCreate;
@@ -229,6 +248,7 @@ export class MessagingMessageService {
               messageExternalId: message.externalId,
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
+              ...associationSource,
             };
 
             associationToCreateByMessageId.set(
@@ -304,6 +324,26 @@ export class MessagingMessageService {
           .filter(isDefined);
 
         await messageRepository.insert(messagesToCreate);
+
+        // Sync can import a just-sent message before the outbound path saves it
+        const existingMessageActorUpdates = messages.flatMap((message) => {
+          const existingMessage = messageAccumulatorMap.get(
+            message.externalId,
+          )?.existingMessageInDB;
+
+          return isDefined(existingMessage) && isDefined(message.createdBy)
+            ? [
+                {
+                  criteria: existingMessage.id,
+                  partialEntity: { createdBy: message.createdBy },
+                },
+              ]
+            : [];
+        });
+
+        if (existingMessageActorUpdates.length > 0) {
+          await messageRepository.updateMany(existingMessageActorUpdates);
+        }
 
         const sentDraftsToRefresh = Array.from(messageAccumulatorMap.values())
           .map((accumulator) => accumulator.sentDraftToRefresh)

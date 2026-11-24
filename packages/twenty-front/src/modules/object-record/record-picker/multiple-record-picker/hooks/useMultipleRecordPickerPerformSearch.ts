@@ -23,7 +23,11 @@ import {
   capitalize,
   isDefined,
 } from 'twenty-shared/utils';
-import { type SearchRecord, type SearchResultEdge } from '~/generated/graphql';
+import {
+  type ObjectRecordFilterInput,
+  type SearchRecord,
+  type SearchResultEdge,
+} from '~/generated/graphql';
 
 const MULTIPLE_RECORD_PICKER_PAGE_SIZE = 30;
 
@@ -418,7 +422,7 @@ const performSearchQueries = async ({
     filter,
     includedObjectMetadataItems,
   }: {
-    filter: any;
+    filter?: ObjectRecordFilterInput;
     includedObjectMetadataItems: EnrichedObjectMetadataItem[];
   }) => {
     if (includedObjectMetadataItems.length === 0) {

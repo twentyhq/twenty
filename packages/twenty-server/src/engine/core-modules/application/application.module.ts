@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationContentService } from 'src/engine/core-modules/application/application-content/application-content.service';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
+import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationGaugeService } from 'src/engine/core-modules/application/application-gauge.service';
@@ -45,6 +46,7 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ]),
     ApplicationTranslationModule,
     ApplicationLookupModule,
+    DomainServerConfigModule,
     ApplicationGrantRoleLookupModule,
     ApplicationStopModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,

@@ -1,0 +1,39 @@
+import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
+
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  GetAgentChatOpenThreadsSummaryDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+
+const EMPTY_INBOX_OPEN_THREADS_SUMMARY = {
+  openThreadCount: 0,
+  unreadOpenThreadCount: 0,
+  needsInputThreadCount: 0,
+  mentionThreadCount: 0,
+  assignedToMeThreadCount: 0,
+  assignedThreadCount: 0,
+  unassignedThreadCount: 0,
+  hasUnreadOpenThread: false,
+  hasUnreadMentionThread: false,
+  hasUnreadAssignedThread: false,
+};
+
+export const useInboxOpenThreadsSummary = () => {
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const { data } = useQuery(GetAgentChatOpenThreadsSummaryDocument, {
+    skip: !hasAiPermission || !isAiChatInboxEnabled,
+    fetchPolicy: 'cache-and-network',
+  });
+
+  return {
+    ...(data?.agentChatOpenThreadsSummary ?? EMPTY_INBOX_OPEN_THREADS_SUMMARY),
+    isOpenThreadsSummaryLoaded: isDefined(data),
+  };
+};
