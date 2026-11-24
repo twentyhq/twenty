@@ -5,6 +5,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
+import { isPrimaryPointerTouch } from '@/ai-chat/composer/utils/isPrimaryPointerTouch';
 import { serializeAiChatEditorDraft } from '@/ai-chat/composer/utils/serializeAiChatEditorDraft';
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai-chat/composer/constants/AiChatEditorProfile';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
@@ -71,6 +72,11 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
     editorProps: {
       handleKeyDown: (view, event) => {
         if (event.key === 'Enter' && !event.shiftKey) {
+          // Touch keyboards have no Shift+Enter, so return inserts a new line and the send button sends
+          if (isPrimaryPointerTouch()) {
+            return false;
+          }
+
           const isSuggestionMenuOpen = [
             MENTION_SUGGESTION_PLUGIN_KEY,
             SKILL_SUGGESTION_PLUGIN_KEY,
