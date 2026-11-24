@@ -1,7 +1,4 @@
-import {
-  getFieldMetadataFormulaExpression,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isFormulaFieldMetadata, isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import {
@@ -25,9 +22,7 @@ export const setFormulaFieldBindingsThroughMutation = ({
   )
     .filter(isDefined)
     .filter(({ universalSettings }) =>
-      isDefined(
-        getFieldMetadataFormulaExpression({ settings: universalSettings }),
-      ),
+      isFormulaFieldMetadata({ settings: universalSettings }),
     );
 
   if (formulaUniversalFlatFieldMetadatas.length === 0) {

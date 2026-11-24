@@ -8,7 +8,6 @@ type FormulaSqlIntervalUnit = {
   intervalField: string;
   multiplier: number;
   maximumAmount: number;
-  truncationField: string;
 };
 
 // Larger amounts yield no date, which keeps additions far inside the range Postgres timestamps can hold
@@ -19,49 +18,41 @@ const FORMULA_SQL_INTERVAL_UNITS: Partial<
     intervalField: 'secs',
     multiplier: 1,
     maximumAmount: 2_000_000_000,
-    truncationField: 'second',
   },
   MINUTE: {
     intervalField: 'mins',
     multiplier: 1,
     maximumAmount: 2_000_000_000,
-    truncationField: 'minute',
   },
   HOUR: {
     intervalField: 'hours',
     multiplier: 1,
     maximumAmount: 87_600_000,
-    truncationField: 'hour',
   },
   DAY: {
     intervalField: 'days',
     multiplier: 1,
     maximumAmount: 3_660_000,
-    truncationField: 'day',
   },
   WEEK: {
     intervalField: 'weeks',
     multiplier: 1,
     maximumAmount: 520_000,
-    truncationField: 'week',
   },
   MONTH: {
     intervalField: 'months',
     multiplier: 1,
     maximumAmount: 120_000,
-    truncationField: 'month',
   },
   QUARTER: {
     intervalField: 'months',
     multiplier: 3,
     maximumAmount: 40_000,
-    truncationField: 'quarter',
   },
   YEAR: {
     intervalField: 'years',
     multiplier: 1,
     maximumAmount: 10_000,
-    truncationField: 'year',
   },
 };
 
@@ -121,5 +112,8 @@ export const buildFormulaSqlPeriodStart = ({
 }: {
   unit: string;
   timestampSql: string;
-}): string =>
-  `date_trunc('${getIntervalUnitOrThrow(unit).truncationField}', ${timestampSql})`;
+}): string => {
+  getIntervalUnitOrThrow(unit);
+
+  return `date_trunc('${unit.toLowerCase()}', ${timestampSql})`;
+};

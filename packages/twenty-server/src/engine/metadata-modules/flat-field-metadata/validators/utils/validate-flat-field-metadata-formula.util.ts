@@ -17,6 +17,7 @@ import {
 } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-universal-flat-entity-maps.util';
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
 import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
+import { isFieldMetadataFormulaUnchanged } from 'src/engine/metadata-modules/formula-field/utils/is-field-metadata-formula-unchanged.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -106,16 +107,10 @@ export const validateFlatFieldMetadataFormula = ({
   // An existing formula stays editable when the flag is turned off
   if (
     !isFormulaFieldEnabled &&
-    (expression !==
-      getFieldMetadataFormulaExpression({
-        settings: existingUniversalSettings,
-      }) ||
-      getFieldMetadataFormulaCurrencyCodeExpression({
-        settings: universalSettings,
-      }) !==
-        getFieldMetadataFormulaCurrencyCodeExpression({
-          settings: existingUniversalSettings,
-        }))
+    !isFieldMetadataFormulaUnchanged({
+      settings: universalSettings,
+      existingSettings: existingUniversalSettings,
+    })
   ) {
     return [
       {
@@ -238,5 +233,5 @@ export const validateFlatFieldMetadataFormula = ({
     ];
   }
 
-  return errors;
+  return [];
 };
