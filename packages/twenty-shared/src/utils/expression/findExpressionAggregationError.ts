@@ -1,9 +1,7 @@
-import { FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT } from '@/constants/FormulaAggregateMaximumArgumentCount';
 import { type ExpressionInstruction } from '@/types/ExpressionInstruction';
-import { type FormulaAggregateFunctionName } from '@/types/FormulaAggregateFunctionName';
 import { type ValidationRuleErrorCode } from '@/types/ValidationRuleErrorCode';
 import { type ValidationRuleErrorParams } from '@/types/ValidationRuleErrorParams';
-import { isFormulaAggregateFunctionName } from '@/utils/formula/isFormulaAggregateFunctionName';
+import { getFormulaAggregateCall } from '@/utils/formula/getFormulaAggregateCall';
 import { isDefined } from '@/utils/validation/isDefined';
 
 type ExpressionAggregationError = {
@@ -82,20 +80,18 @@ const walkInstructions = ({
     functionName,
     argumentEntries,
   }: {
-    functionName: FormulaAggregateFunctionName;
+    functionName: string;
     argumentEntries: AggregationStackEntry[];
   }): AggregationStackEntry | undefined => {
-    const [relationEntry, ...conditionEntries] = argumentEntries;
-    const relationName =
-      relationEntry?.kind === 'path'
-        ? toManyRelationNameByPath.get(relationEntry.path)
-        : undefined;
+    const aggregateCall = getFormulaAggregateCall({
+      functionName,
+      argumentPaths: argumentEntries.map((entry) =>
+        entry.kind === 'path' ? entry.path : undefined,
+      ),
+      getToManyRelationName: (path) => toManyRelationNameByPath.get(path),
+    });
 
-    // min and max of plain values stay the scalar functions
-    if (
-      !isDefined(relationName) &&
-      (functionName === 'min' || functionName === 'max')
-    ) {
+    if (!isDefined(aggregateCall)) {
       return undefined;
     }
 
@@ -107,23 +103,16 @@ const walkInstructions = ({
       });
     }
 
-    const isRelationArgumentValid =
-      isDefined(relationName) &&
-      relationEntry?.kind === 'path' &&
-      (functionName === 'count'
-        ? relationEntry.path === relationName
-        : relationEntry.path !== relationName);
-
-    if (
-      !isRelationArgumentValid ||
-      argumentEntries.length > FORMULA_AGGREGATE_MAXIMUM_ARGUMENT_COUNT
-    ) {
+    if (!aggregateCall.isValid) {
       return throwAggregationError({
         errorMessage: `${functionName}() needs a relation, for example count(tasks) or sum(deals.amount)`,
         errorCode: 'INVALID_AGGREGATE_ARGUMENT',
         errorParams: { functionName },
       });
     }
+
+    const { relationName } = aggregateCall;
+    const [, ...conditionEntries] = argumentEntries;
 
     for (const conditionValue of conditionEntries.map(toValue)) {
       if (conditionValue.hasAggregate) {
@@ -195,8 +184,7 @@ const walkInstructions = ({
         const argumentEntries = popEntries(Number(value));
         const functionEntry = stack.pop();
         const aggregateEntry =
-          functionEntry?.kind === 'path' &&
-          isFormulaAggregateFunctionName(functionEntry.path)
+          functionEntry?.kind === 'path'
             ? aggregate({
                 functionName: functionEntry.path,
                 argumentEntries,

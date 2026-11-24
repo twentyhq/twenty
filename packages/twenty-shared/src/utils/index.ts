@@ -251,6 +251,7 @@ export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormu
 export { getFieldMetadataFormulaCurrencyCodeExpression } from './formula/getFieldMetadataFormulaCurrencyCodeExpression';
 export { getFieldMetadataFormulaEvaluation } from './formula/getFieldMetadataFormulaEvaluation';
 export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
+export { getFormulaAggregateCall } from './formula/getFormulaAggregateCall';
 export { getFormulaEvaluationFromBindings } from './formula/getFormulaEvaluationFromBindings';
 export { isFormulaAggregateFunctionName } from './formula/isFormulaAggregateFunctionName';
 export { isFormulaFieldMetadata } from './formula/isFormulaFieldMetadata';
