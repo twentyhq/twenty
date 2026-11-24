@@ -114,7 +114,7 @@ msgstr "\"{path}\" attraversa più di una relazione"
 #. js-lingui-id: WsA0r3
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
-msgstr ""
+msgstr "\"{path}\" ha diverse parti: leggine una, ad esempio {path}.{subfieldName}"
 
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -124,7 +124,7 @@ msgstr "\"{path}\" non è un valore"
 #. js-lingui-id: LWKWNY
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" reads a previous value, which a formula cannot use"
-msgstr ""
+msgstr "\"{path}\" legge un valore precedente, che una formula non può utilizzare"
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -896,12 +896,12 @@ msgstr "{formattedPercentage}% utilizzato, {formattedConversationSize} di {forma
 #. js-lingui-id: d3NhPx
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
-msgstr ""
+msgstr "{functionName} accetta {minimumArgumentCount} argomento/i, ma ne ha ricevuti {argumentCount}"
 
 #. js-lingui-id: KeR/79
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
-msgstr ""
+msgstr "{functionName} accetta almeno {minimumArgumentCount} argomento/i, ma ne ha ricevuti {argumentCount}"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -7467,22 +7467,22 @@ msgstr "Calcola i gruppi di accesso che gli elenchi di record utilizzeranno per 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand."
-msgstr ""
+msgstr "Calcola l'importo a partire da altri campi, in micros: 1 unità corrisponde a 1.000.000. Lascia vuoto per inserire i valori manualmente."
 
 #. js-lingui-id: Y+aLgd
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. Leave empty to enter values by hand."
-msgstr ""
+msgstr "Calcola questo campo a partire da altri campi. Lascia vuoto per inserire i valori manualmente."
 
 #. js-lingui-id: 5uQ2yY
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand."
-msgstr ""
+msgstr "Calcola questo campo a partire da altri campi. La formula deve restituire un numero da 1 a 5. Lascia vuoto per assegnare una valutazione manualmente."
 
 #. js-lingui-id: egFQhc
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand."
-msgstr ""
+msgstr "Calcola questo campo a partire da altri campi. La formula deve restituire uno dei valori delle opzioni, tra virgolette. Lascia vuoto per selezionare i valori manualmente."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -14753,18 +14753,18 @@ msgstr "I moduli sono pensati per i trigger manuali"
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Formula"
-msgstr ""
+msgstr "Formula"
 
 #. js-lingui-id: 2eN5Wv
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Formula currency"
-msgstr ""
+msgstr "Valuta della formula"
 
 #. js-lingui-id: k7mCp1
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Formula fields"
-msgstr ""
+msgstr "Campi formula"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -18002,7 +18002,7 @@ msgstr "Consenti alle regole di autorizzazione a livello di record di confrontar
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
-msgstr ""
+msgstr "Consenti ai campi di testo, numero, booleani e data di calcolare il proprio valore da un'espressione sul record e sui relativi record correlati."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -30292,7 +30292,7 @@ msgstr "La conversazione è stata compattata"
 #. js-lingui-id: Ah78wz
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "The currency of the computed amount: a code in quotes such as \"USD\", or the currency code of another field."
-msgstr ""
+msgstr "La valuta dell'importo calcolato: un codice tra virgolette come \"USD\" oppure il codice valuta di un altro campo."
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx

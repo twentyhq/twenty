@@ -114,7 +114,7 @@ msgstr "\"{path}\" traverse plus d'une relation"
 #. js-lingui-id: WsA0r3
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
-msgstr ""
+msgstr "\"{path}\" comporte plusieurs parties : lisez l'une d'elles, telle que {path}.{subfieldName}"
 
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -124,7 +124,7 @@ msgstr "\"{path}\" n'est pas une valeur"
 #. js-lingui-id: LWKWNY
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" reads a previous value, which a formula cannot use"
-msgstr ""
+msgstr "\"{path}\" lit une valeur précédente, qu'une formule ne peut pas utiliser"
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -896,12 +896,12 @@ msgstr "{formattedPercentage}% utilisé, {formattedConversationSize} sur {format
 #. js-lingui-id: d3NhPx
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
-msgstr ""
+msgstr "{functionName} accepte {minimumArgumentCount} argument(s), mais en a reçu {argumentCount}"
 
 #. js-lingui-id: KeR/79
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
-msgstr ""
+msgstr "{functionName} accepte au moins {minimumArgumentCount} argument(s), mais en a reçu {argumentCount}"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -7467,22 +7467,22 @@ msgstr "Calculez les groupes d'accès que les listes d'enregistrements utilisero
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand."
-msgstr ""
+msgstr "Calculez le montant à partir d'autres champs, en micros : 1 unité équivaut à 1 000 000. Laissez vide pour saisir des valeurs manuellement."
 
 #. js-lingui-id: Y+aLgd
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. Leave empty to enter values by hand."
-msgstr ""
+msgstr "Calculez ce champ à partir d'autres champs. Laissez vide pour saisir des valeurs manuellement."
 
 #. js-lingui-id: 5uQ2yY
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand."
-msgstr ""
+msgstr "Calculez ce champ à partir d'autres champs. La formule doit renvoyer un nombre de 1 à 5. Laissez vide pour attribuer une note manuellement."
 
 #. js-lingui-id: egFQhc
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand."
-msgstr ""
+msgstr "Calculez ce champ à partir d'autres champs. La formule doit renvoyer l'une des valeurs d'option, entre guillemets. Laissez vide pour sélectionner des valeurs manuellement."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -14753,18 +14753,18 @@ msgstr "Les formulaires sont destinés aux déclencheurs manuels"
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Formula"
-msgstr ""
+msgstr "Formule"
 
 #. js-lingui-id: 2eN5Wv
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Formula currency"
-msgstr ""
+msgstr "Devise de la formule"
 
 #. js-lingui-id: k7mCp1
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Formula fields"
-msgstr ""
+msgstr "Champs de formule"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -18002,7 +18002,7 @@ msgstr "Permettre aux règles d'autorisation au niveau des enregistrements de co
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
-msgstr ""
+msgstr "Permet aux champs de texte, numériques, booléens et de date de calculer leur valeur à partir d'une expression portant sur l'enregistrement et ses enregistrements associés."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -30292,7 +30292,7 @@ msgstr "La conversation a été compactée"
 #. js-lingui-id: Ah78wz
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "The currency of the computed amount: a code in quotes such as \"USD\", or the currency code of another field."
-msgstr ""
+msgstr "La devise du montant calculé : un code entre guillemets tel que \"USD\", ou le code de devise d'un autre champ."
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
