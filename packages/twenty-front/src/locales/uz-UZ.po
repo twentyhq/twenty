@@ -340,7 +340,7 @@ msgstr "{0, plural, one {Qo‘shilgan har bir jamoa a’zosi uchun {formattedInv
 #. placeholder {0}: end.occurrenceCount
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "{0, plural, one {occurrence} other {occurrences}}"
-msgstr ""
+msgstr "{0, plural, one {takrorlanish} other {takrorlanishlar}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -932,22 +932,22 @@ msgstr "{installCount, plural, one {{0} o‘rnatish} other {{1} o‘rnatish}}"
 #. js-lingui-id: UON5Ro
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {day} other {days}}"
-msgstr ""
+msgstr "{interval, plural, one {kun} other {kunlar}}"
 
 #. js-lingui-id: UGYVsx
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {month} other {months}}"
-msgstr ""
+msgstr "{interval, plural, one {oy} other {oylar}}"
 
 #. js-lingui-id: RxZ6VS
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {week} other {weeks}}"
-msgstr ""
+msgstr "{interval, plural, one {hafta} other {haftalar}}"
 
 #. js-lingui-id: qB4ocR
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {year} other {years}}"
-msgstr ""
+msgstr "{interval, plural, one {yil} other {yil}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1321,12 +1321,12 @@ msgstr "{storedToolName} (siz uchun mavjud emas)"
 #. js-lingui-id: VfeUjs
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, needs your input"
-msgstr ""
+msgstr "{tabName}, fikringiz talab qilinadi"
 
 #. js-lingui-id: REc4fO
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, unread"
-msgstr ""
+msgstr "{tabName}, o‘qilmagan"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2157,7 +2157,7 @@ msgstr "Hisob-kitob ma’lumotlaringizni yangilash va to‘lovni qayta amalga os
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "Tavsif qo‘shing"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2397,7 +2397,7 @@ msgstr "Maxsus provayder qo‘shish"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "Tavsif qo‘shish"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2502,12 +2502,12 @@ msgstr "Element qo‘shish"
 #. js-lingui-id: 1e37Dl
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item after"
-msgstr ""
+msgstr "Keyin band qo‘shish"
 
 #. js-lingui-id: w7mkyz
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
-msgstr ""
+msgstr "Oldin band qo‘shish"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2666,6 +2666,7 @@ msgid "Add rule group"
 msgstr "Qoidalar guruhini qo‘shish"
 
 #. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
 msgstr "Bo‘lim qo‘shish"
@@ -3029,7 +3030,7 @@ msgstr "Afrikaans"
 #. js-lingui-id: NawEr2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "After"
-msgstr ""
+msgstr "Keyin"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3791,7 +3792,7 @@ msgstr "Allaqachon yon panelda"
 #. js-lingui-id: CaKZeT
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in this section"
-msgstr ""
+msgstr "Allaqachon bu bo‘limda"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5296,17 +5297,17 @@ msgstr "O‘rnatilgan ilovalar tomonidan e’lon qilingan narxlarni ish maydoni 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
-msgstr ""
+msgstr "Ish joyingiz uchun hisob: oyiga {amount}"
 
 #. js-lingui-id: 9nZzfz
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per account"
-msgstr ""
+msgstr "Ish joyingiz uchun hisob: har bir hisob uchun oyiga {amount}"
 
 #. js-lingui-id: iOQoBV
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per member"
-msgstr ""
+msgstr "Ish joyingiz uchun hisob: har bir a’zo uchun oyiga {amount}"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -6449,7 +6450,7 @@ msgstr "Tasdiqlashni tekshirish"
 #. js-lingui-id: fbu0qc
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check when the event stops repeating"
-msgstr ""
+msgstr "Hodisa qachon takrorlanishni to‘xtatishini belgilang"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -10510,6 +10511,11 @@ msgstr "kamayish tartibida"
 msgid "Descending"
 msgstr "Kamayish tartibida"
 
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr ""
+
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
@@ -10924,6 +10930,11 @@ msgstr "Import qilmaslik"
 msgid "Do you want to unsubscribe?"
 msgstr "Obunani bekor qilmoqchimisiz?"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr ""
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10952,7 +10963,7 @@ msgstr "Hujjatlar"
 #. js-lingui-id: 7xJ6D1
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Does not repeat"
-msgstr ""
+msgstr "Takrorlanmaydi"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11416,7 +11427,7 @@ msgstr "Ma’lumotlar tuzilmasi va maydonlarini tahrirlash"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "Tavsifni tahrirlash"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -12756,7 +12767,7 @@ msgstr "Hodisalar"
 #. js-lingui-id: CRsuq4
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Every"
-msgstr ""
+msgstr "Har"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13774,7 +13785,7 @@ msgstr "Marketpleys katalogini sinxronlashtirish muvaffaqiyatsiz tugadi."
 #. js-lingui-id: UUsjVV
 #: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
 msgid "Failed to test agent"
-msgstr ""
+msgstr "Agentni sinab ko‘rish muvaffaqiyatsiz tugadi"
 
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14474,7 +14485,7 @@ msgstr "Birinchi 5 satr"
 #. js-lingui-id: idQLQP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "First event"
-msgstr ""
+msgstr "Birinchi hodisa"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -16341,6 +16352,7 @@ msgid "Inactive Skill Options"
 msgstr "Nofaol skill parametrlari"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -16349,7 +16361,7 @@ msgstr "Kiruvchi xatlar"
 #. js-lingui-id: UXZcgx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Inbox object names"
-msgstr ""
+msgstr "Kiruvchi quti obyekt nomlari"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17199,6 +17211,7 @@ msgstr "john.doe@example.com"
 
 #. js-lingui-id: fSPjtl
 #: src/pages/auth/SignInUp.tsx
+#: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
 msgstr "{workspaceName} jamoasiga qo‘shiling"
 
@@ -17883,7 +17896,7 @@ msgstr "Guruhlangan jadval va ro‘yxat ko‘rinishlari o‘z guruhlarini bir va
 #. js-lingui-id: livXRh
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Let members connect their own accounts"
-msgstr ""
+msgstr "Aʼzolar o‘z akkauntlarini ulashlariga ruxsat berish"
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19242,7 +19255,7 @@ msgstr "{recipientName}ga xabar"
 #. js-lingui-id: +nYs0G
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
-msgstr ""
+msgstr "Xabar amallari"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19598,7 +19611,7 @@ msgstr "Oylik"
 #. js-lingui-id: WHc/gS
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Monthly on day {startDayOfMonth}"
-msgstr ""
+msgstr "Har oy {startDayOfMonth}-kuni"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -21952,7 +21965,7 @@ msgstr "Kasr raqamlar soni"
 #. js-lingui-id: Dh3U6L
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Number of occurrences"
-msgstr ""
+msgstr "Takrorlanishlar soni"
 
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22160,7 +22173,7 @@ msgstr "Nol qiymatlarni hisobga olmaslik"
 #. js-lingui-id: Z5HWHd
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On"
-msgstr ""
+msgstr "Kuni"
 
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -22180,7 +22193,7 @@ msgstr "Jadval bo‘yicha"
 #. js-lingui-id: RuEWFx
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On date"
-msgstr ""
+msgstr "Sanada"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22426,7 +22439,7 @@ msgstr "Ochish"
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgctxt "Inbox thread status"
 msgid "Open"
-msgstr ""
+msgstr "Ochish"
 
 #. js-lingui-id: awIyH2
 #. placeholder {0}: account.handle
@@ -22846,7 +22859,7 @@ msgstr "Tashkilot litsenziyasi muvaffaqiyatli faollashtirildi"
 #. js-lingui-id: 50DOI7
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
-msgstr ""
+msgstr "Yon panelni yorliqlar va bo‘limlarga ajrating, jumladan, sevimlilar, chatlar va agentlar uchun o‘rnatilgan bo‘limlarni qo‘shing hamda uni joyida sozlang."
 
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -23171,7 +23184,7 @@ msgstr "Sahifalar"
 #. js-lingui-id: wl6crM
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Paid app"
-msgstr ""
+msgstr "Pullik ilova"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24537,7 +24550,7 @@ msgstr "AI qanday ishlashini tushunish uchun tizim promptlarini o‘qing (~{0} t
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "Sahifa tartibi vidjetlarining ko‘rinish qoidasini faqat uning daraxt ko‘rinishidan o‘qing. Ish maydoni yangilangandan va saqlangan qoidalar nusxalangandan keyin yoqiladi."
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25537,18 +25550,18 @@ msgstr "Variantlarni qayta tartiblash"
 #. js-lingui-id: BwWIp2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat"
-msgstr ""
+msgstr "Takrorlash"
 
 #. js-lingui-id: X9KmrM
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat interval"
-msgstr ""
+msgstr "Takrorlash oralig‘i"
 
 #. js-lingui-id: KR6sNP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "Repeat on"
-msgstr ""
+msgstr "Quyidagi kunlarda takrorlash"
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -26233,7 +26246,7 @@ msgstr "Funksiyani ishga tushirish"
 #. js-lingui-id: gdJPPW
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Run test"
-msgstr ""
+msgstr "Testni ishga tushirish"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -28358,7 +28371,7 @@ msgstr "Yon panel"
 #. js-lingui-id: QWUT9V
 #: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 msgid "Sidebar actions"
-msgstr ""
+msgstr "Yon panel amallari"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29537,7 +29550,7 @@ msgstr "Ushbu ko‘rinishni umumlashtirish"
 #. js-lingui-id: mLm1b0
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Summarize what changed on Acme this week"
-msgstr ""
+msgstr "Bu hafta Acme’da nimalar o‘zgarganini umumlashtiring"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
@@ -29993,14 +30006,14 @@ msgstr "Sinov"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
 msgid "Test agent"
-msgstr ""
+msgstr "Agentni sinash"
 
 #. js-lingui-id: AriIhI
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Test Agent"
-msgstr ""
+msgstr "Agentni sinash"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -30220,7 +30233,7 @@ msgstr "Hisobingiz bilan bog‘langan elektron pochta manzili"
 #. js-lingui-id: pJahAY
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date can't be before the first event."
-msgstr ""
+msgstr "Tugash sanasi birinchi hodisadan oldin bo‘lishi mumkin emas."
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30688,6 +30701,16 @@ msgstr "Bu agent ilovadan kelgan, shuning uchun uning kirish huquqini bu yerda o
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "Bu agent ilovadan kelgan, shuning uchun uning vositalarini bu yerda o‘zgartirib bo‘lmaydi."
+
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr ""
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr ""
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -31677,7 +31700,6 @@ msgstr "Tarjimalar"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Saralash"
 
@@ -31930,7 +31952,7 @@ msgstr "Navbatlar"
 #. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
-msgstr ""
+msgstr "Ushbu agentni sinaganingizda yoki undan ish jarayoni yoki ilova foydalanganda, urinishlar shu yerda paydo bo‘ladi"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33237,7 +33259,7 @@ msgstr "Bizning API’dan foydalaning yoki birinchi {objectLabel} ni qo‘lda qo
 #. js-lingui-id: TTyUsT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
-msgstr ""
+msgstr "Suhbat oqimi va xabar obyektlari uchun kiruvchi quti nomlaridan foydalaning. Ularni qayta nomlaydigan ish maydoni yangilanishi tomonidan yoqiladi, shuning uchun uni qo'lda o'zgartirmang."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -34435,7 +34457,7 @@ msgstr "Vidjet sozlamalari"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "Vidjet ko‘rinish qoidasi daraxti"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34991,7 +35013,7 @@ msgstr "Yillik"
 #. js-lingui-id: 1+9d+F
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Yearly on {startMonthAndDay}"
-msgstr ""
+msgstr "Har yili {startMonthAndDay} kuni"
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

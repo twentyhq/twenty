@@ -340,7 +340,7 @@ msgstr "{0, plural, other {每有一位隊友加入，即可獲得 {formattedInv
 #. placeholder {0}: end.occurrenceCount
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "{0, plural, one {occurrence} other {occurrences}}"
-msgstr ""
+msgstr "{0, plural, other {次}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -932,22 +932,22 @@ msgstr "{installCount, plural, other {{0} 次安裝}}"
 #. js-lingui-id: UON5Ro
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {day} other {days}}"
-msgstr ""
+msgstr "{interval, plural, other {天}}"
 
 #. js-lingui-id: UGYVsx
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {month} other {months}}"
-msgstr ""
+msgstr "{interval, plural, other {個月}}"
 
 #. js-lingui-id: RxZ6VS
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {week} other {weeks}}"
-msgstr ""
+msgstr "{interval, plural, other {週}}"
 
 #. js-lingui-id: qB4ocR
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {year} other {years}}"
-msgstr ""
+msgstr "{interval, plural, other {年}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1321,12 +1321,12 @@ msgstr "{storedToolName}（您無法使用）"
 #. js-lingui-id: VfeUjs
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, needs your input"
-msgstr ""
+msgstr "{tabName}，需要您的輸入"
 
 #. js-lingui-id: REc4fO
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, unread"
-msgstr ""
+msgstr "{tabName}，未讀"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2157,7 +2157,7 @@ msgstr "在下方新增卡片，以更新您的帳單詳細資料並重試付款
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "新增描述"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2397,7 +2397,7 @@ msgstr "新增自訂供應商"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "新增描述"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2502,12 +2502,12 @@ msgstr "新增項目"
 #. js-lingui-id: 1e37Dl
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item after"
-msgstr ""
+msgstr "在後面新增項目"
 
 #. js-lingui-id: w7mkyz
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
-msgstr ""
+msgstr "在前面新增項目"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2666,6 +2666,7 @@ msgid "Add rule group"
 msgstr "新增規則群組"
 
 #. js-lingui-id: RxFV0G
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
 msgstr "新增區段"
@@ -3029,7 +3030,7 @@ msgstr "南非荷蘭語"
 #. js-lingui-id: NawEr2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "After"
-msgstr ""
+msgstr "之後"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3791,7 +3792,7 @@ msgstr "已在側邊欄中"
 #. js-lingui-id: CaKZeT
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in this section"
-msgstr ""
+msgstr "已在此區段中"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5296,17 +5297,17 @@ msgstr "將已安裝應用程式所宣告的價格計入工作區訂閱費用。
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
-msgstr ""
+msgstr "向您的工作區收取 {amount} / 月"
 
 #. js-lingui-id: 9nZzfz
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per account"
-msgstr ""
+msgstr "向您的工作區按每個帳戶收取 {amount} / 月"
 
 #. js-lingui-id: iOQoBV
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per member"
-msgstr ""
+msgstr "向您的工作區按每位成員收取 {amount} / 月"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -6449,7 +6450,7 @@ msgstr "檢查驗證"
 #. js-lingui-id: fbu0qc
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check when the event stops repeating"
-msgstr ""
+msgstr "檢查事件何時停止重複"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -10510,6 +10511,11 @@ msgstr "降序"
 msgid "Descending"
 msgstr "降序"
 
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr ""
+
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
@@ -10924,6 +10930,11 @@ msgstr "不導入"
 msgid "Do you want to unsubscribe?"
 msgstr "您要取消訂閱嗎？"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr ""
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10952,7 +10963,7 @@ msgstr "文檔"
 #. js-lingui-id: 7xJ6D1
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Does not repeat"
-msgstr ""
+msgstr "不重複"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11416,7 +11427,7 @@ msgstr "編輯數據結構和欄位"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "編輯描述"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -12756,7 +12767,7 @@ msgstr "事件"
 #. js-lingui-id: CRsuq4
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Every"
-msgstr ""
+msgstr "每"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13774,7 +13785,7 @@ msgstr "同步市集目錄失敗。"
 #. js-lingui-id: UUsjVV
 #: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
 msgid "Failed to test agent"
-msgstr ""
+msgstr "測試代理失敗"
 
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14474,7 +14485,7 @@ msgstr "前5行"
 #. js-lingui-id: idQLQP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "First event"
-msgstr ""
+msgstr "第一個事件"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -16341,6 +16352,7 @@ msgid "Inactive Skill Options"
 msgstr ""
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -16349,7 +16361,7 @@ msgstr "收件箱"
 #. js-lingui-id: UXZcgx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Inbox object names"
-msgstr ""
+msgstr "收件匣物件名稱"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17199,6 +17211,7 @@ msgstr "john.doe@example.com"
 
 #. js-lingui-id: fSPjtl
 #: src/pages/auth/SignInUp.tsx
+#: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
 msgstr "加入 {workspaceName} 團隊"
 
@@ -17883,7 +17896,7 @@ msgstr "讓已分組的表格和清單檢視將其群組顯示為分頁，每次
 #. js-lingui-id: livXRh
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Let members connect their own accounts"
-msgstr ""
+msgstr "讓成員連結自己的帳戶"
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19242,7 +19255,7 @@ msgstr "傳送訊息給 {recipientName}"
 #. js-lingui-id: +nYs0G
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
-msgstr ""
+msgstr "訊息操作"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19598,7 +19611,7 @@ msgstr "每月"
 #. js-lingui-id: WHc/gS
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Monthly on day {startDayOfMonth}"
-msgstr ""
+msgstr "每月的第 {startDayOfMonth} 天"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -21952,7 +21965,7 @@ msgstr "小數位數"
 #. js-lingui-id: Dh3U6L
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Number of occurrences"
-msgstr ""
+msgstr "發生次數"
 
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22160,7 +22173,7 @@ msgstr "省略零值"
 #. js-lingui-id: Z5HWHd
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On"
-msgstr ""
+msgstr "於"
 
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -22180,7 +22193,7 @@ msgstr "依排程執行"
 #. js-lingui-id: RuEWFx
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On date"
-msgstr ""
+msgstr "於日期"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22426,7 +22439,7 @@ msgstr "開啟"
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgctxt "Inbox thread status"
 msgid "Open"
-msgstr ""
+msgstr "開啟"
 
 #. js-lingui-id: awIyH2
 #. placeholder {0}: account.handle
@@ -22846,7 +22859,7 @@ msgstr "組織授權已成功啟用"
 #. js-lingui-id: 50DOI7
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
-msgstr ""
+msgstr "將側邊欄整理為分頁和區段，包括內建的我的最愛、聊天和代理程式區段，並可直接在原處進行自訂。"
 
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -23171,7 +23184,7 @@ msgstr "頁面"
 #. js-lingui-id: wl6crM
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Paid app"
-msgstr ""
+msgstr "付費應用程式"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24537,7 +24550,7 @@ msgstr "閱讀系統提示詞以瞭解 AI 的運作方式 (~{0} 個詞元)"
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "僅從頁面版面配置小工具的樹狀表單讀取其可見性規則。工作區升級複製已儲存的規則後啟用。"
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25537,18 +25550,18 @@ msgstr "重新排序選項"
 #. js-lingui-id: BwWIp2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat"
-msgstr ""
+msgstr "重複"
 
 #. js-lingui-id: X9KmrM
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat interval"
-msgstr ""
+msgstr "重複間隔"
 
 #. js-lingui-id: KR6sNP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "Repeat on"
-msgstr ""
+msgstr "重複於"
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -26233,7 +26246,7 @@ msgstr "執行功能"
 #. js-lingui-id: gdJPPW
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Run test"
-msgstr ""
+msgstr "執行測試"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -28358,7 +28371,7 @@ msgstr "側邊面板"
 #. js-lingui-id: QWUT9V
 #: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 msgid "Sidebar actions"
-msgstr ""
+msgstr "側邊欄動作"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29537,7 +29550,7 @@ msgstr "摘要此視圖"
 #. js-lingui-id: mLm1b0
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Summarize what changed on Acme this week"
-msgstr ""
+msgstr "摘要說明 Acme 本週的變更"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
@@ -29993,14 +30006,14 @@ msgstr "測試"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
 msgid "Test agent"
-msgstr ""
+msgstr "測試代理"
 
 #. js-lingui-id: AriIhI
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Test Agent"
-msgstr ""
+msgstr "測試代理"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -30220,7 +30233,7 @@ msgstr "與您的帳戶關聯的電子郵件"
 #. js-lingui-id: pJahAY
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date can't be before the first event."
-msgstr ""
+msgstr "結束日期不能早於第一個事件。"
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30688,6 +30701,16 @@ msgstr "此代理來自應用程式，因此無法在此變更其存取權。"
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "此代理來自應用程式，因此無法在此變更其工具。"
+
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr ""
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr ""
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -31677,7 +31700,6 @@ msgstr "翻译"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "分類"
 
@@ -31930,7 +31952,7 @@ msgstr "回合"
 #. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
-msgstr ""
+msgstr "測試此代理後，或有工作流程或應用程式使用它時，對話回合將顯示於此"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33237,7 +33259,7 @@ msgstr "使用我們的 API 或手動添加您的第一個 {objectLabel}"
 #. js-lingui-id: TTyUsT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
-msgstr ""
+msgstr "對聊天討論串和訊息物件使用收件匣名稱。重新命名這些物件的工作區升級會啟用此功能，因此請勿手動切換。"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -34435,7 +34457,7 @@ msgstr "小工具設定"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "小工具可見性規則樹狀結構"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34991,7 +35013,7 @@ msgstr "年度"
 #. js-lingui-id: 1+9d+F
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Yearly on {startMonthAndDay}"
-msgstr ""
+msgstr "每年於 {startMonthAndDay}"
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

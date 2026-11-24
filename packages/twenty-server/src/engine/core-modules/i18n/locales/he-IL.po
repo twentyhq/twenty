@@ -394,13 +394,13 @@ msgstr "ווידג׳ט קשר מקונן חייב להשתמש בפריסת טב
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot be tied to a row level permission rule"
-msgstr ""
+msgstr "לא ניתן לקשור שדה מקונן שאינו ניתן לקריאה לכלל הרשאות ברמת שורה"
 
 #. js-lingui-id: +cMY8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot use itself as its source"
-msgstr ""
+msgstr "שדה מקונן שאינו ניתן לקריאה אינו יכול להשתמש בעצמו כמקור שלו"
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -501,7 +501,7 @@ msgstr "הקלטה של פגישה"
 #. js-lingui-id: l+tyko
 #: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
 msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
-msgstr ""
+msgstr "מופע חוזר מסתיים либо ב-recurrence.endDate או לאחר recurrence.endOccurrenceCount, אך לא בשניהם"
 
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -782,12 +782,12 @@ msgstr "חבר בסביבת עבודה"
 #. js-lingui-id: EAIj51
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a field and at least one value"
-msgstr ""
+msgstr "מסנן קשרי חברי סביבת עבודה דורש שדה ולפחות ערך אחד"
 
 #. js-lingui-id: mZ5k8L
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a workspace member relation"
-msgstr ""
+msgstr "מסנן קשרי חברי סביבת עבודה דורש קשר של חבר סביבת עבודה"
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3184,7 +3184,7 @@ msgstr "בחר אדם אחד או תפקיד אחד לשיתוף."
 #. js-lingui-id: 8+4T+u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field and the values to keep on the related records"
-msgstr ""
+msgstr "בחרו את השדה ואת הערכים לשמירה ברשומות הקשורות"
 
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3199,7 +3199,7 @@ msgstr "בחר את האובייקט שמפיק סוג פעילות ציר זמ�
 #. js-lingui-id: fr9dvq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the relation of the workspace member to filter"
-msgstr ""
+msgstr "בחרו את הקשר של חבר סביבת העבודה לסינון"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5733,7 +5733,7 @@ msgstr "השדה \"{workspaceMemberRelationFieldName}\" אינו קשר של א�
 #. js-lingui-id: yfFA+h
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
-msgstr ""
+msgstr "השדה \"{workspaceMemberRelationFilterFieldName}\" אינו שדה בחירה, טקסט או בוליאני של הרשומות הקשורות"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -6187,7 +6187,7 @@ msgstr "אופרטור הסינון אינו נתמך עבור סוג שדה ז�
 #. js-lingui-id: twPawb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Filter the related records on one of their select, text or boolean fields"
-msgstr ""
+msgstr "סננו את הרשומות הקשורות לפי אחד משדות הבחירה, הטקסט או הבוליאניים שלהן"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10546,12 +10546,12 @@ msgstr "האפשרות \"{optionLabel}\" מגיעה עם השדה ולא נית�
 #. js-lingui-id: xTWr3W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "תיאור האפשרות \"{optionLabel}\" חורג מ-{OPTION_DESCRIPTION_MAX_CHAR_LENGTH} תווים"
 
 #. js-lingui-id: cCRBHe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" has an invalid description"
-msgstr ""
+msgstr "לאפשרות \"{optionLabel}\" יש תיאור לא תקין"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -11795,12 +11795,12 @@ msgstr "הרשומות שאליהן מצורף שרשור זה"
 #. js-lingui-id: Q/3t6e
 #: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
 msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
-msgstr ""
+msgstr "recurrence.endDate חייב להיות תאריך בפורמט YYYY-MM-DD ביום תחילת האירוע או לאחריו ({firstOccurrenceDate})"
 
 #. js-lingui-id: wM8dZb
 #: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
 msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
-msgstr ""
+msgstr "recurrence.interval ו-recurrence.endOccurrenceCount חייבים להיות מספרים שלמים חיוביים"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13466,12 +13466,12 @@ msgstr "כותרת מסמך המקור"
 #. js-lingui-id: gAdogO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field metadata not found"
-msgstr ""
+msgstr "לא נמצאו מטא-נתונים לשדה המקור"
 
 #. js-lingui-id: 8Fgyo1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field not found"
-msgstr ""
+msgstr "שדה המקור לא נמצא"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -15946,7 +15946,7 @@ msgstr "גרסה זו של היישום כבר מותקנת במרחב עבוד�
 #. js-lingui-id: lJw5/K
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "This view type is not available on this object"
-msgstr ""
+msgstr "סוג תצוגה זה אינו זמין באובייקט זה"
 
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -17584,7 +17584,7 @@ msgstr "לא נמצאה תצוגה לעדכון"
 #. js-lingui-id: OZdSbV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "View type is not available on the view object"
-msgstr ""
+msgstr "סוג התצוגה אינו זמין באובייקט התצוגה"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -18430,7 +18430,7 @@ msgstr "לא נמצאו מטא-נתונים של שדה קשר של חבר סב�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation filter field metadata not found"
-msgstr ""
+msgstr "מטא-נתונים של שדה סינון קשר חבר סביבת העבודה לא נמצאו"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
