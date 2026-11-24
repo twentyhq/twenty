@@ -928,6 +928,28 @@ export class AuthService {
     return (await qr.getOne()) ?? undefined;
   }
 
+  private async findSocialSsoInvitation({
+    currentWorkspace,
+    email,
+    workspacePersonalInviteToken,
+  }: {
+    currentWorkspace: WorkspaceEntity;
+    email: string;
+    workspacePersonalInviteToken?: string;
+  }) {
+    const invitationFromToken = isNonEmptyString(workspacePersonalInviteToken)
+      ? await this.findInvitationForSignInUp({
+          currentWorkspace,
+          workspacePersonalInviteToken,
+        })
+      : undefined;
+
+    return (
+      invitationFromToken ??
+      (await this.findInvitationForSignInUp({ currentWorkspace, email }))
+    );
+  }
+
   async findWorkspaceForSignInUp(
     params: {
       workspaceId?: string;
@@ -1068,6 +1090,7 @@ export class AuthService {
       email: rawEmail,
       picture,
       workspaceInviteHash,
+      workspacePersonalInviteToken,
       workspaceId,
       billingCheckoutSessionState,
       locale,
@@ -1125,13 +1148,13 @@ export class AuthService {
     });
 
     try {
-      const invitation =
-        currentWorkspace && email
-          ? await this.findInvitationForSignInUp({
-              currentWorkspace,
-              email,
-            })
-          : undefined;
+      const invitation = isDefined(currentWorkspace)
+        ? await this.findSocialSsoInvitation({
+            currentWorkspace,
+            email,
+            workspacePersonalInviteToken,
+          })
+        : undefined;
 
       const { userData } = this.formatUserDataPayload(
         {

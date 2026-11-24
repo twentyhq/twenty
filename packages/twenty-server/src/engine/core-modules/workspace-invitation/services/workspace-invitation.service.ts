@@ -76,9 +76,11 @@ export class WorkspaceInvitationService {
   async validatePersonalInvitation({
     workspacePersonalInviteToken,
     email,
+    allowEmailMismatch = false,
   }: {
     workspacePersonalInviteToken?: string;
     email: string;
+    allowEmailMismatch?: boolean;
   }) {
     try {
       const appToken = await this.appTokenRepository.findOne({
@@ -94,8 +96,9 @@ export class WorkspaceInvitationService {
       }
 
       if (
-        !appToken.context?.email ||
-        appToken.context.email.toLowerCase() !== email.toLowerCase()
+        !allowEmailMismatch &&
+        (!appToken.context?.email ||
+          appToken.context.email.toLowerCase() !== email.toLowerCase())
       ) {
         throw new Error('Email does not match the invitation');
       }

@@ -28,6 +28,7 @@ export type MicrosoftRequest = Omit<
     picture: string | null;
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
     action: SocialSsoSignInUpActionType;
@@ -53,6 +54,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       ...options,
       state: JSON.stringify({
         workspaceInviteHash: req.query.workspaceInviteHash,
+        inviteToken: req.query.inviteToken,
         workspaceId: req.params.workspaceId,
         locale: req.query.locale,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
@@ -90,6 +92,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       lastName: name?.familyName,
       picture: photos?.[0]?.value ?? null,
       workspaceInviteHash: state?.workspaceInviteHash,
+      workspacePersonalInviteToken: state?.inviteToken,
       workspaceId: state?.workspaceId,
       billingCheckoutSessionState: state?.billingCheckoutSessionState,
       locale: state?.locale,

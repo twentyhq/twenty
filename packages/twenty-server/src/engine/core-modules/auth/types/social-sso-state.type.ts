@@ -4,6 +4,7 @@ import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/t
 
 export type SocialSsoState = {
   workspaceInviteHash?: string;
+  inviteToken?: string;
   workspaceId?: string;
   billingCheckoutSessionState?: string;
   action?: SocialSsoSignInUpActionType;

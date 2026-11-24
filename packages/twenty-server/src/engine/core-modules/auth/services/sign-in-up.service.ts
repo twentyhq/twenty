@@ -148,6 +148,7 @@ export class SignInUpService {
         user: await this.signInUpWithPersonalInvitation({
           invitation: params.invitation,
           userData: params.userData,
+          authProvider: params.authParams.provider,
         }),
       };
     }
@@ -183,6 +184,7 @@ export class SignInUpService {
   private async signInUpWithPersonalInvitation(
     params: {
       invitation: AppTokenEntity;
+      authProvider: AuthProviderEnum;
     } & ExistingUserOrPartialUserWithPicture,
   ) {
     if (!params.invitation) {
@@ -208,10 +210,16 @@ export class SignInUpService {
       );
     }
 
+    // Google and Microsoft verify the email, so an invitee may use an alias.
+    // Workspace SSO stays strict since its identity provider can assert any email.
     const invitationValidation =
       await this.workspaceInvitationService.validatePersonalInvitation({
         workspacePersonalInviteToken: params.invitation.value,
         email,
+        allowEmailMismatch: [
+          AuthProviderEnum.Google,
+          AuthProviderEnum.Microsoft,
+        ].includes(params.authProvider),
       });
 
     if (!invitationValidation?.isValid) {
@@ -238,9 +246,9 @@ export class SignInUpService {
       });
     }
 
-    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+    await this.workspaceInvitationService.deleteWorkspaceInvitation(
+      params.invitation.id,
       invitationValidation.workspace.id,
-      email,
     );
 
     await this.userService.markEmailAsVerified(updatedUser.id);
