@@ -16,9 +16,9 @@ import {
 } from '@/platform/seo';
 import { AffiliateProgramFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { ProductStepper } from '@/sections/product-stepper';
 import {
   CREATOR_STEPPER_STEPS,
+  ProgramStepper,
   CreatorApplyButton,
   CreatorAudiences,
   CREATOR_HERO_BACKDROP,
@@ -78,11 +78,8 @@ export default async function CreatorProgramPage({
           heading={msg`Become a\n*Twenty creator*`}
         />
         <CreatorAudiences />
-        <ProductStepper
+        <ProgramStepper
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
-          body={msg`Share your link, we credit the signups it brings, and you get paid every month the customer stays, for up to 12 months.`}
-          eyebrow={msg`How it works`}
-          heading={msg`From link *to payout*`}
           steps={CREATOR_STEPPER_STEPS}
         />
         <AffiliateProgramFaq

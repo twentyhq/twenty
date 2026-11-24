@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { getCommunityStats } from '@/platform/community';
 import {
   getRouteI18n,
@@ -15,10 +14,7 @@ import { Menu } from '@/sections/menu';
 import { ProductFeature } from '@/sections/product-feature';
 import { ProductHero } from '@/sections/product-hero';
 import { ProductSignoff } from '@/sections/product-signoff';
-import {
-  PRODUCT_STEPPER_STEPS,
-  ProductStepper,
-} from '@/sections/product-stepper';
+import { ProductStepper } from '@/sections/product-stepper';
 import { ProductThreeCards } from '@/sections/three-cards';
 import { TrustedBy } from '@/sections/trusted-by';
 
@@ -52,12 +48,7 @@ export default async function ProductPage({
         <TrustedBy />
         <ProductFeature />
         <ProductThreeCards />
-        <ProductStepper
-          body={msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`}
-          eyebrow={msg`Customization`}
-          heading={msg`Go the extra mile *with no-code*`}
-          steps={PRODUCT_STEPPER_STEPS}
-        />
+        <ProductStepper />
         <ProductSignoff />
         <Faq />
       </main>

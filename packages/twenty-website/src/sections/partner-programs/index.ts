@@ -7,3 +7,4 @@ export { ProgramHero } from './ProgramHero';
 export { INTEGRATOR_STEPS } from './integrator-steps.data';
 export { CREATOR_HERO_BACKDROP } from './creator-hero-backdrop';
 export { ProgramHeroVisual } from './ProgramHeroVisual';
+export { ProgramStepper } from './ProgramStepper';

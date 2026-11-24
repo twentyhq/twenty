@@ -1,6 +1,6 @@
 'use client';
 
-import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type CSSProperties } from 'react';
@@ -16,6 +16,7 @@ import {
   StepperSwipeDeck,
 } from '@/ui';
 
+import { PRODUCT_STEPPER_STEPS } from '../data/product-stepper-data';
 import { type ProductStepperStep } from '../types/product-stepper-step';
 
 const ContentRoot = styled.div`
@@ -133,10 +134,6 @@ const computeStepStyle = (
 
 export type ProductStepperContentProps = {
   activeStepIndex: number;
-  body: MessageDescriptor;
-  eyebrow: MessageDescriptor;
-  heading: MessageDescriptor;
-  steps: readonly ProductStepperStep[];
   layoutMode: 'scroll' | 'swipe';
   localProgress: number;
   onMobileStepIndexChange: (nextIndex: number) => void;
@@ -144,10 +141,6 @@ export type ProductStepperContentProps = {
 
 export function ProductStepperContent({
   activeStepIndex,
-  body,
-  eyebrow,
-  heading,
-  steps,
   layoutMode,
   localProgress,
   onMobileStepIndexChange,
@@ -178,17 +171,19 @@ export function ProductStepperContent({
         activeStepIndex={activeStepIndex}
         inactiveColor={color('black-80')}
         localProgress={localProgress}
-        stepCount={steps.length}
+        stepCount={PRODUCT_STEPPER_STEPS.length}
       />
       <StepsColumn>
         <IntroBlock>
-          <Eyebrow>{i18n._(eyebrow)}</Eyebrow>
+          <Eyebrow>{i18n._(msg`Customization`)}</Eyebrow>
           <HeadingPair>
             <Heading as="h2" size="lg" weight="light">
-              {i18n._(heading)}
+              {i18n._(msg`Go the extra mile *with no-code*`)}
             </Heading>
             <Body muted size="sm">
-              {i18n._(body)}
+              {i18n._(
+                msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
+              )}
             </Body>
           </HeadingPair>
         </IntroBlock>
@@ -196,19 +191,19 @@ export function ProductStepperContent({
           <StepperSwipeDeck
             activeIndex={activeStepIndex}
             onActiveIndexChange={onMobileStepIndexChange}
-            stepCount={steps.length}
+            stepCount={PRODUCT_STEPPER_STEPS.length}
           >
             {(stepIndex) => (
               <SwipeStepBlock>
                 {renderStepContent(
-                  steps[stepIndex],
+                  PRODUCT_STEPPER_STEPS[stepIndex],
                   stepIndex === activeStepIndex,
                 )}
               </SwipeStepBlock>
             )}
           </StepperSwipeDeck>
         ) : (
-          steps.map((step, stepNumber) => {
+          PRODUCT_STEPPER_STEPS.map((step, stepNumber) => {
             const { opacity, transform } = computeStepStyle(
               stepNumber,
               activeStepIndex,
@@ -217,7 +212,7 @@ export function ProductStepperContent({
 
             return (
               <StepBlock
-                key={step.heading.id}
+                key={step.visual}
                 style={
                   {
                     '--step-opacity': opacity,

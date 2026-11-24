@@ -5,10 +5,9 @@ import { cssVariableStyle } from '@/ui/css-variable-style';
 
 const shell = PRODUCT_STEPPER_SCENE.shell;
 
-// The product stepper's light-window fiction: one card in the frame, either
-// centred or, with data-anchor="corner", running off its bottom-right edge
-// like a window seen in part. With data-scrub, every animation inside is
-// paused and its playhead set by the scroll (see scrub below).
+// One light card centred in the stepper's frame. With data-scrub, every
+// animation inside is paused and its playhead set by the scroll (see scrub
+// below).
 const Stage = styled.div`
   align-items: center;
   display: flex;
@@ -21,10 +20,6 @@ const Stage = styled.div`
 
   &[data-active] {
     opacity: 1;
-  }
-
-  &[data-anchor='corner'] {
-    position: relative;
   }
 
   &[data-scrub] * {
@@ -55,11 +50,6 @@ const scrub = (progress: number | undefined, timelineMs: number) =>
         }),
       };
 
-// ProductStepperVisualFrame insets its slides by 6% of the frame; the corner
-// card cancels that inset so it meets the frame's right and bottom edges.
-const FRAME_INSET_RATIO = 0.06;
-const cornerBleed = `calc(-100% * ${FRAME_INSET_RATIO} / ${1 - 2 * FRAME_INSET_RATIO})`;
-
 const Card = styled.div`
   background: ${shell.background};
   border: 1px solid ${shell.borderMedium};
@@ -69,21 +59,6 @@ const Card = styled.div`
   flex-direction: column;
   max-width: 440px;
   width: 86%;
-
-  [data-anchor='corner'] > & {
-    border-bottom: none;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 4px;
-    border-right: none;
-    border-top-right-radius: 0;
-    bottom: ${cornerBleed};
-    height: 84%;
-    max-width: none;
-    overflow: hidden;
-    position: absolute;
-    right: ${cornerBleed};
-    width: 84%;
-  }
 `;
 
 const CardHeader = styled.div`
