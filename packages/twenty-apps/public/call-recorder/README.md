@@ -46,9 +46,18 @@ field to On.
 ## 🙋 Choosing which of your meetings are recorded
 
 Each member decides for their own calendars. Under **Settings → Apps
-preferences → Call Recorder**, **Meetings to record** is set to All my meetings
-by default; choose None of my meetings to stop the recorder joining your
-meetings on its own.
+preferences → Call Recorder**, **Meetings to record** offers:
+
+- **All my meetings**, the default.
+- **Only internal meetings**: meetings where everyone invited is a workspace
+  member or on your email domain.
+- **Only external meetings**: meetings with at least one other person.
+- **None of my meetings**: the recorder never joins on its own.
+
+Your email domain is the one of the calendar you connected. A personal address
+(Gmail, Outlook and the like) has no company domain, so only workspace members
+count as internal for it. Booked rooms are ignored, and a meeting with more
+than 60 invitees counts as external.
 
 A meeting that several members have on their calendars is recorded as soon as
 one of them chose to record it. The Recording Bot field of a meeting wins over

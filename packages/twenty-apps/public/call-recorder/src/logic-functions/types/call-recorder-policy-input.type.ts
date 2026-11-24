@@ -1,10 +1,10 @@
 import { type CallRecorderPreference } from 'src/constants/call-recorder-preference';
-import { type MemberRecordingPreference } from 'src/logic-functions/types/member-recording-preference.type';
+import { type CalendarEventRecordingPreference } from 'src/logic-functions/types/calendar-event-recording-preference.type';
 
 export type CallRecorderPolicyInput = {
   isCalendarBotSchedulingEnabled: boolean;
   callRecorderPreference: CallRecorderPreference | undefined;
-  ownerRecordingPreferences: MemberRecordingPreference[];
+  ownerRecordingPreferences: CalendarEventRecordingPreference[];
   isCanceled: boolean;
   startsAt: string | undefined;
   endsAt: string | undefined;
