@@ -10,6 +10,8 @@ import { v4 } from 'uuid';
 
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
+import { ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-limiter-max-interval-ms.constant';
+import { ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-limiter-min-interval-ms.constant';
 import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
 import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
 import { MAX_JOBS_PER_STATUS_READ } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-status-read.constant';
@@ -84,9 +86,11 @@ export class ApplicationJobService {
     userWorkspaceId: string | null;
     input: EnqueueJobsInputDTO;
   }): Promise<EnqueueJobsResult> {
-    const { logicFunctionUniversalIdentifier } = input;
+    const { logicFunctionUniversalIdentifier, limiter } = input;
 
     const jobItems = this.getJobItems(input);
+
+    this.validateLimiter(input);
 
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -147,11 +151,18 @@ export class ApplicationJobService {
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
           priority: ENQUEUE_JOB_PRIORITY,
           ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
+          ...(isDefined(limiter)
+            ? {
+                limiter,
+                // Calls with the same values share one slot queue; new values start another
+                groupKey: `logicFunction:${flatLogicFunction.id}:limiter:${limiter.max}:${limiter.durationMs}`,
+              }
+            : {}),
         },
       );
 
-    const sizeBytesByQueueJobId = new Map(
-      jobs.map(({ jobId, sizeBytes }) => [jobId, sizeBytes]),
+    const enqueuedJobsByQueueJobId = new Map(
+      jobs.map((enqueuedJob) => [enqueuedJob.jobId, enqueuedJob]),
     );
 
     return {
@@ -160,11 +171,19 @@ export class ApplicationJobService {
       enqueuedJobsCount: jobItems.length,
       jobIds,
       jobs: jobIds.flatMap((jobId) => {
-        const sizeBytes = sizeBytesByQueueJobId.get(
+        const enqueuedJob = enqueuedJobsByQueueJobId.get(
           buildQueueJobId({ workspaceId, jobId }),
         );
 
-        return isDefined(sizeBytes) ? [{ jobId, sizeBytes }] : [];
+        return isDefined(enqueuedJob)
+          ? [
+              {
+                jobId,
+                sizeBytes: enqueuedJob.sizeBytes,
+                scheduledAt: enqueuedJob.scheduledAt,
+              },
+            ]
+          : [];
       }),
       availableBytes,
     };
@@ -197,6 +216,34 @@ export class ApplicationJobService {
 
       return [buildJobStatus({ jobId, job })];
     });
+  }
+
+  private validateLimiter({ limiter, delayMs }: EnqueueJobsInputDTO): void {
+    if (!isDefined(limiter)) {
+      return;
+    }
+
+    if (isDefined(delayMs)) {
+      throw new ApplicationException(
+        'Provide either delayMs or limiter, not both',
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const intervalMs = limiter.durationMs / limiter.max;
+
+    if (
+      !Number.isInteger(limiter.max) ||
+      !Number.isInteger(limiter.durationMs) ||
+      limiter.max < 1 ||
+      intervalMs < ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS ||
+      intervalMs > ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS
+    ) {
+      throw new ApplicationException(
+        `limiter max and durationMs must be positive integers with durationMs / max between ${ENQUEUE_JOB_LIMITER_MIN_INTERVAL_MS} and ${ENQUEUE_JOB_LIMITER_MAX_INTERVAL_MS} ms`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
   }
 
   private getJobItems(input: EnqueueJobsInputDTO): EnqueueJobItem[] {

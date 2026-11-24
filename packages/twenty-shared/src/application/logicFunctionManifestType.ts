@@ -29,6 +29,8 @@ export type LogicFunctionManifest = SyncableEntityOptions & {
 
 export type CronTriggerSettings = {
   pattern: string;
+  // Shifts this cron's phase by a stable per-workspace offset in [0, spreadMs), whole minutes
+  spreadMs?: number;
 };
 
 export type DatabaseEventTriggerSettings = {

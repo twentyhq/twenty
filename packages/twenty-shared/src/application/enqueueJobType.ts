@@ -3,6 +3,11 @@ export type EnqueueJobOptions = {
   delayMs?: number;
 };
 
+export type EnqueueJobsLimiter = {
+  max: number;
+  durationMs: number;
+};
+
 /** @deprecated Use `EnqueueJobsInput` instead. */
 export type EnqueueJobInput = EnqueueJobOptions & {
   logicFunctionUniversalIdentifier: string;
@@ -24,6 +29,8 @@ export type EnqueueJobItem = {
 
 export type EnqueueJobsInput = EnqueueJobOptions & {
   logicFunctionUniversalIdentifier: string;
+  // Spaces this function's jobs durationMs / max apart; cannot be combined with delayMs
+  limiter?: EnqueueJobsLimiter;
   /** @deprecated Use `jobs` instead. */
   payloads?: Record<string, unknown>[];
   jobs?: EnqueueJobItem[];
@@ -32,6 +39,8 @@ export type EnqueueJobsInput = EnqueueJobOptions & {
 export type EnqueuedJob = {
   jobId: string;
   sizeBytes: number;
+  // Unix ms when the job first became eligible to run; not a start time prediction
+  scheduledAt: number;
 };
 
 export type EnqueueJobsResult = {
@@ -59,6 +68,7 @@ export type JobStatusResult = {
   attemptsMade: number;
   failedReason?: string | null;
   enqueuedAt: number;
+  scheduledAt: number;
   startedAt?: number | null;
   finishedAt?: number | null;
 };

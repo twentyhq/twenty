@@ -58,6 +58,7 @@ export class FairQueueScheduler {
     additionalGroupKeys,
     delay,
     staticPriority,
+    limiter,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
@@ -65,6 +66,7 @@ export class FairQueueScheduler {
     additionalGroupKeys?: string[];
     delay: number | undefined;
     staticPriority: number | undefined;
+    limiter?: MessageQueueLimiter;
   }): Promise<FairJobOptions[]> {
     const callerDelayMs = delay ?? 0;
     const [fairJobOptions, pacedDelays] = await Promise.all([
@@ -82,6 +84,7 @@ export class FairQueueScheduler {
             scopes,
             limiterGroupKeys,
             callerDelayMs,
+            limiter,
           }),
     ]);
 
@@ -103,13 +106,15 @@ export class FairQueueScheduler {
     scopes,
     limiterGroupKeys,
     callerDelayMs,
+    limiter,
   }: {
     queueName: MessageQueue;
     scopes: QueueJobScope[];
     limiterGroupKeys: (string | undefined)[] | undefined;
     callerDelayMs: number;
+    limiter: MessageQueueLimiter | undefined;
   }): Promise<number[] | undefined> {
-    const groupLimiter = this.options.getGroupLimiter(queueName);
+    const groupLimiter = limiter ?? this.options.getGroupLimiter(queueName);
 
     if (!isDefined(limiterGroupKeys) || !isDefined(groupLimiter)) {
       return undefined;

@@ -23,6 +23,8 @@ type StoredJobOptions = {
   delay?: number;
   attempts?: number;
   backoff?: { type: string; delay: number };
+  timestamp?: number;
+  scheduledAt?: number;
 };
 
 type StoredJob = {
@@ -62,7 +64,9 @@ type BullMQDouble = {
   processor: ((job: object) => Promise<void>) | undefined;
   client: RedisClientDouble | undefined;
   redis: Redis | undefined;
+  beforeNextAddBulk: (() => Promise<void>) | undefined;
   store: (jobToStore: JobToStore) => Promise<{ id: string }>;
+  addIfMissing: (jobToStore: JobToStore) => Promise<{ id: string }>;
   takeNext: () => Promise<StoredJob | undefined>;
   release: (job: StoredJob) => Promise<void>;
   refreshPriorities: () => Promise<void>;
@@ -104,6 +108,7 @@ const mockBullMQ: BullMQDouble = {
   processor: undefined,
   client: undefined,
   redis: undefined,
+  beforeNextAddBulk: undefined,
   store: async ({ id, name, data, options, attemptsMade = 0 }) => {
     const priority = options.priority ?? 0;
 
@@ -134,6 +139,8 @@ const mockBullMQ: BullMQDouble = {
       buildJobKey(job.id),
       'opts',
       JSON.stringify(options),
+      'timestamp',
+      options.timestamp ?? job.timestamp,
     );
 
     if (!job.isPromoted) {
@@ -147,6 +154,19 @@ const mockBullMQ: BullMQDouble = {
     }
 
     return { id: job.id };
+  },
+  // Like BullMQ, adding an id that still exists keeps the existing job untouched
+  addIfMissing: async (jobToStore) => {
+    const jobId = jobToStore.options.jobId;
+
+    if (
+      isDefined(jobId) &&
+      (await mockBullMQ.redis?.exists(buildJobKey(jobId))) === 1
+    ) {
+      return { id: jobId };
+    }
+
+    return mockBullMQ.store(jobToStore);
   },
   takeNext: async () => {
     const eligibleJobs = mockBullMQ.jobs.filter(
@@ -211,6 +231,7 @@ const mockBullMQ: BullMQDouble = {
     mockBullMQ.processor = undefined;
     mockBullMQ.client = client;
     mockBullMQ.redis = redis;
+    mockBullMQ.beforeNextAddBulk = undefined;
   },
 };
 
@@ -224,14 +245,20 @@ jest.mock('bullmq', () => ({
       name: string,
       data: ScenarioJobData,
       options: StoredJobOptions,
-    ) => mockBullMQ.store({ name, data, options }),
+    ) => mockBullMQ.addIfMissing({ name, data, options }),
     addBulk: async (
       jobs: { name: string; data: ScenarioJobData; opts: StoredJobOptions }[],
     ) => {
       const storedJobs: { id: string }[] = [];
+      const beforeAddBulk = mockBullMQ.beforeNextAddBulk;
+
+      mockBullMQ.beforeNextAddBulk = undefined;
+      await beforeAddBulk?.();
 
       for (const { name, data, opts } of jobs) {
-        storedJobs.push(await mockBullMQ.store({ name, data, options: opts }));
+        storedJobs.push(
+          await mockBullMQ.addIfMissing({ name, data, options: opts }),
+        );
       }
 
       return storedJobs;
@@ -460,6 +487,7 @@ export const createFairnessHarness = async ({
       groupKey,
       delay,
       jobIds,
+      limiter,
     }: {
       labels: string[];
       jobIds?: string[];
@@ -467,8 +495,9 @@ export const createFairnessHarness = async ({
       applicationUniversalIdentifier?: string;
       groupKey?: string;
       delay?: number;
-    }) => {
-      await driver.bulkAdd<ScenarioJobData>(
+      limiter?: MessageQueueLimiter;
+    }) =>
+      driver.bulkAdd<ScenarioJobData>(
         QUEUE,
         JOB_NAME,
         labels.map((label, index) => ({
@@ -480,11 +509,14 @@ export const createFairnessHarness = async ({
             applicationUniversalIdentifier,
           }),
         })),
-        isDefined(delay) || isDefined(jobIds)
-          ? { delay, doNotCheckDuplicatesBasedOnPrefix: isDefined(jobIds) }
+        isDefined(delay) || isDefined(jobIds) || isDefined(limiter)
+          ? {
+              delay,
+              doNotCheckDuplicatesBasedOnPrefix: isDefined(jobIds),
+              limiter,
+            }
           : undefined,
-      );
-    },
+      ),
     scheduleCron: async ({
       label,
       every,
@@ -572,6 +604,13 @@ export const createFairnessHarness = async ({
       mockBullMQ.jobs.find((job) => job.data.label === label)?.options.priority,
     readDelay: ({ label }: { label: string }) =>
       mockBullMQ.jobs.find((job) => job.data.label === label)?.options.delay,
+    readScheduledAt: ({ label }: { label: string }) =>
+      mockBullMQ.jobs.find((job) => job.data.label === label)?.options
+        .scheduledAt,
+    beforeNextAddBulk: (hook: () => Promise<void>) => {
+      mockBullMQ.beforeNextAddBulk = hook;
+    },
+    storeJob: (jobToStore: JobToStore) => mockBullMQ.store(jobToStore),
     breakRedis: () => {
       const runCommand = jest
         .fn()

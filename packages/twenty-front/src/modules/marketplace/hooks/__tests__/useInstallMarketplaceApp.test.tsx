@@ -83,6 +83,7 @@ describe('useInstallMarketplaceApp', () => {
         attemptsMade: 1,
         progress: 43,
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 
@@ -95,6 +96,7 @@ describe('useInstallMarketplaceApp', () => {
         attemptsMade: 1,
         failedReason: 'Manifest validation failed',
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 
@@ -134,6 +136,7 @@ describe('useInstallMarketplaceApp', () => {
         attemptsMade: 1,
         progress: 86,
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 

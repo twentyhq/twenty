@@ -1,3 +1,5 @@
+import { type MessageQueueLimiter } from 'src/engine/core-modules/message-queue/types/message-queue-limiter.type';
+
 export type QueueJobBackoffOptions = {
   strategy: 'fixed' | 'exponential';
   initialDelayMilliseconds: number;
@@ -51,6 +53,8 @@ export type QueueJobSettings = {
   broadcastTo?: QueueJobRecipient;
   fairnessGroupKeys?: string[];
   groupKey?: string;
+  // Paces the groupKey slots in place of the queue groupLimiter
+  limiter?: MessageQueueLimiter;
 };
 
 export type QueueJobOptions = QueueJobSettings & QueueJobScope;

@@ -1612,6 +1612,7 @@ export interface EnqueueJobsResult {
 
 export interface EnqueuedJob {
     jobId: Scalars['String']
+    scheduledAt: Scalars['Float']
     sizeBytes: Scalars['Int']
     __typename: 'EnqueuedJob'
 }
@@ -2068,6 +2069,7 @@ export interface JobStatus {
     finishedAt?: Scalars['Float']
     jobId: Scalars['String']
     progress?: Scalars['Int']
+    scheduledAt: Scalars['Float']
     startedAt?: Scalars['Float']
     state: JobState
     __typename: 'JobStatus'
@@ -6495,7 +6497,9 @@ export interface EnqueueJobResultGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface EnqueueJobsInput {delayMs?: (Scalars['Int'] | null),jobs?: (EnqueueJobItemInput[] | null),logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),retryLimit?: (Scalars['Int'] | null)}
+export interface EnqueueJobsInput {delayMs?: (Scalars['Int'] | null),jobs?: (EnqueueJobItemInput[] | null),limiter?: (EnqueueJobsLimiterInput | null),logicFunctionUniversalIdentifier: Scalars['String'],payloads?: (Scalars['JSON'][] | null),retryLimit?: (Scalars['Int'] | null)}
+
+export interface EnqueueJobsLimiterInput {durationMs: Scalars['Int'],max: Scalars['Int']}
 
 export interface EnqueueJobsResultGenqlSelection{
     availableBytes?: boolean | number
@@ -6510,6 +6514,7 @@ export interface EnqueueJobsResultGenqlSelection{
 
 export interface EnqueuedJobGenqlSelection{
     jobId?: boolean | number
+    scheduledAt?: boolean | number
     sizeBytes?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7018,6 +7023,7 @@ export interface JobStatusGenqlSelection{
     finishedAt?: boolean | number
     jobId?: boolean | number
     progress?: boolean | number
+    scheduledAt?: boolean | number
     startedAt?: boolean | number
     state?: boolean | number
     __typename?: boolean | number
