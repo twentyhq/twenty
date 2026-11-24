@@ -7,16 +7,16 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildFavoritesNavigationMenuSectionToCreate } from 'src/database/commands/upgrade-version-command/2-63/utils/build-favorites-navigation-menu-section-to-create.util';
+import { buildFavoritesNavigationMenuSectionToCreate } from 'src/database/commands/upgrade-version-command/2-64/utils/build-favorites-navigation-menu-section-to-create.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795527933153)
+@RegisteredWorkspaceCommand('2.64.0', 1795527933153)
 @Command({
-  name: 'upgrade:2-63:add-favorites-navigation-menu-section',
+  name: 'upgrade:2-64:add-favorites-navigation-menu-section',
   description:
     'Add the standard Favorites section at the top of Home in the navigation menu',
 })
