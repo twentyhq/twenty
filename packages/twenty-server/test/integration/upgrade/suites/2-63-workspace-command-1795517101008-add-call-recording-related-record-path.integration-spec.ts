@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddCallRecordingRelatedRecordPathCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795510325055-add-call-recording-related-record-path.command';
+import { type AddCallRecordingRelatedRecordPathCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795517101008-add-call-recording-related-record-path.command';
 import { CALL_RECORDING_RELATED_RECORD_PATH_UNIVERSAL_IDENTIFIER } from 'src/database/commands/upgrade-version-command/2-63/constants/call-recording-related-record-path-universal-identifier.constant';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
