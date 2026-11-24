@@ -2667,6 +2667,7 @@ msgstr "Lägg till regelgrupp"
 
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
 msgstr "Lägg till sektion"
 
@@ -17208,6 +17209,7 @@ msgid "john.doe@example.com"
 msgstr "john.doe@example.com"
 
 #. js-lingui-id: fSPjtl
+#: src/pages/auth/SignInUp.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
 msgstr "Gå med i {workspaceName} team"
