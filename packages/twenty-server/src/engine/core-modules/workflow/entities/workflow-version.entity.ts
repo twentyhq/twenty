@@ -90,7 +90,13 @@ export class WorkflowVersionEntity extends SyncableEntity {
     upgradeCommandName:
       ADD_WORKSPACE_WORKFLOW_VERSION_ID_TO_WORKFLOW_VERSION_UPGRADE_COMMAND_NAME,
   })
-  @Column({ type: 'uuid', nullable: true })
+  @Column({
+    type: 'uuid',
+    nullable: true,
+    select: false,
+    insert: false,
+    update: false,
+  })
   workspaceWorkflowVersionId: WasRemovedInUpgrade<string | null>;
 
   @CreateDateColumn({ type: 'timestamptz' })
