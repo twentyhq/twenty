@@ -762,6 +762,16 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "工作區成員"
 
+#. js-lingui-id: EAIj51
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a field and at least one value"
+msgstr ""
+
+#. js-lingui-id: mZ5k8L
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a workspace member relation"
+msgstr ""
+
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
@@ -3154,6 +3164,11 @@ msgstr "選擇要覆寫的現有時間軸活動類型"
 msgid "Choose one person or one role to share with."
 msgstr "請選擇一位人員或一個角色進行分享。"
 
+#. js-lingui-id: 8+4T+u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field and the values to keep on the related records"
+msgstr ""
+
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
@@ -3163,6 +3178,11 @@ msgstr "選擇要在相關記錄中讀取的欄位"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
 msgstr "選擇發送此時間軸活動類型的物件"
+
+#. js-lingui-id: fr9dvq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the relation of the workspace member to filter"
+msgstr ""
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5693,6 +5713,11 @@ msgstr "欄位 \"{workspaceMemberFieldName}\" 不是 workspaceMember 物件的�
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
 msgstr "欄位 \"{workspaceMemberRelationFieldName}\" 並非 workspaceMember 物件的一對多關聯"
 
+#. js-lingui-id: yfFA+h
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
+msgstr ""
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6141,6 +6166,11 @@ msgstr "在「{0}」上的篩選使用了不存在的選項 {invalidValuesText}�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "此欄位類型不支援篩選運算元"
+
+#. js-lingui-id: twPawb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Filter the related records on one of their select, text or boolean fields"
+msgstr ""
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -18349,6 +18379,12 @@ msgstr "工作區成員記錄頁面欄位"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
 msgstr "找不到工作區成員關聯欄位中繼資料"
+
+#. js-lingui-id: L8uUWk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation filter field metadata not found"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
