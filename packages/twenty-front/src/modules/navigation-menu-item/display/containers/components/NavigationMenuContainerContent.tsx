@@ -1,7 +1,6 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
-import { getNavigationMenuContainerBlocks } from '@/navigation-menu-item/common/utils/getNavigationMenuContainerBlocks';
 import { sortNavigationMenuContainerChildren } from '@/navigation-menu-item/common/utils/sortNavigationMenuContainerChildren';
 import { NavigationMenuContainerEditableItems } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerEditableItems';
 import { NavigationMenuSectionRenderer } from '@/navigation-menu-item/display/containers/components/NavigationMenuSectionRenderer';
@@ -12,6 +11,31 @@ import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sec
 import { NavigationMenuAddSectionButton } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionButton';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+type NavigationMenuContainerBlock =
+  | { kind: 'items'; items: NavigationMenuItem[] }
+  | { kind: 'section'; section: NavigationMenuItem };
+
+const getNavigationMenuContainerBlocks = (
+  sortedChildren: NavigationMenuItem[],
+): NavigationMenuContainerBlock[] =>
+  sortedChildren.reduce<NavigationMenuContainerBlock[]>((blocks, child) => {
+    if (child.type === NavigationMenuItemType.SECTION) {
+      return [...blocks, { kind: 'section', section: child }];
+    }
+
+    const lastBlock = blocks.at(-1);
+
+    if (lastBlock?.kind === 'items') {
+      return [
+        ...blocks.slice(0, -1),
+        { kind: 'items', items: [...lastBlock.items, child] },
+      ];
+    }
+
+    return [...blocks, { kind: 'items', items: [child] }];
+  }, []);
 
 type NavigationMenuContainerContentProps = {
   containerId: string | null;
