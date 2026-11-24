@@ -31,7 +31,6 @@ const buildCreateEnumStatement = ({
     END IF;
   END $$`;
 
-// Idempotent so a retried workspace activation can run it on a schema that already has the tables
 export const buildCreatePermissionTablesStatements = ({
   schemaName,
 }: {
