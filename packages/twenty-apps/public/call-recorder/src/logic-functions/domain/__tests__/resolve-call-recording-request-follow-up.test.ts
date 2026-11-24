@@ -43,6 +43,8 @@ const buildCalendarEvent = (
   iCalUid: undefined,
   conferenceLinkUrl: 'https://meet.example.com/customer-sync',
   calendarChannelIds: [],
+  participants: [],
+  hasUnlistedParticipants: false,
   callRecorderPreference: undefined,
   ...overrides,
 });

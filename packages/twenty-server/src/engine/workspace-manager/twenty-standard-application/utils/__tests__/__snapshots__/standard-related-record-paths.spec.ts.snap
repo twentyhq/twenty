@@ -6,6 +6,7 @@ exports[`Standard related record paths declares the standard paths and their inh
   "calendarEvent.calendarChannelEventAssociations inherent",
   "calendarEvent.calendarEventParticipants inherent",
   "calendarEvent.calendarEventTargets inherent",
+  "calendarEvent.callRecordings inherent",
   "company.attachments inherent",
   "company.noteTargets.note regular",
   "company.taskTargets.task regular",
