@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { Brackets, ILike, IsNull, Repository } from 'typeorm';
 
 import { type AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
@@ -154,7 +152,7 @@ export class AdminPanelStatisticsService {
       string,
       {
         workspace: WorkspaceEntity;
-        fallbackAvatarUrlsByUserId: Map<string, string | null>;
+        fallbackAvatarFileIdsByUserId: Map<string, string | null>;
       }
     >();
 
@@ -170,17 +168,12 @@ export class AdminPanelStatisticsService {
 
         const entry = contextsByWorkspaceId.get(workspace.id) ?? {
           workspace,
-          fallbackAvatarUrlsByUserId: new Map(),
+          fallbackAvatarFileIdsByUserId: new Map(),
         };
 
-        entry.fallbackAvatarUrlsByUserId.set(
+        entry.fallbackAvatarFileIdsByUserId.set(
           user.id,
-          isDefined(userWorkspace.defaultAvatarFileId)
-            ? this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
-                fileId: userWorkspace.defaultAvatarFileId,
-                fileFolder: FileFolder.CorePicture,
-              })
-            : null,
+          userWorkspace.defaultAvatarFileId,
         );
         contextsByWorkspaceId.set(workspace.id, entry);
       }
@@ -188,11 +181,11 @@ export class AdminPanelStatisticsService {
 
     await Promise.all(
       Array.from(contextsByWorkspaceId.values()).map(
-        async ({ workspace, fallbackAvatarUrlsByUserId }) => {
+        async ({ workspace, fallbackAvatarFileIdsByUserId }) => {
           const perWorkspaceSigned =
             await this.userService.loadSignedAvatarUrlsByUserId({
               workspace,
-              fallbackAvatarUrlsByUserId,
+              fallbackAvatarFileIdsByUserId,
             });
 
           for (const [userId, signedUrl] of perWorkspaceSigned.entries()) {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -41,7 +41,7 @@ export class AdminPanelUserLookupService {
     private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
   ) {}
 
-  private buildFallbackAvatarUrlsByUserId(
+  private buildFallbackAvatarFileIdsByUserId(
     workspaceUsers: UserWorkspaceEntity[],
   ): Map<string, string | null> {
     return new Map(
@@ -49,12 +49,7 @@ export class AdminPanelUserLookupService {
         .filter((workspaceUser) => isDefined(workspaceUser.user))
         .map((workspaceUser) => [
           workspaceUser.user.id,
-          isDefined(workspaceUser.defaultAvatarFileId)
-            ? this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
-                fileId: workspaceUser.defaultAvatarFileId,
-                fileFolder: FileFolder.CorePicture,
-              })
-            : null,
+          workspaceUser.defaultAvatarFileId,
         ]),
     );
   }
@@ -128,8 +123,8 @@ export class AdminPanelUserLookupService {
         const [avatarUrlsByUserId, adminUserIds] = await Promise.all([
           this.userService.loadSignedAvatarUrlsByUserId({
             workspace: userWorkspace.workspace,
-            fallbackAvatarUrlsByUserId:
-              this.buildFallbackAvatarUrlsByUserId(workspaceUsers),
+            fallbackAvatarFileIdsByUserId:
+              this.buildFallbackAvatarFileIdsByUserId(workspaceUsers),
           }),
           this.getAdminUserIds({
             workspaceId: userWorkspace.workspace.id,
@@ -216,7 +211,7 @@ export class AdminPanelUserLookupService {
     const [avatarUrlsByUserId, adminUserIds] = await Promise.all([
       this.userService.loadSignedAvatarUrlsByUserId({
         workspace,
-        fallbackAvatarUrlsByUserId: this.buildFallbackAvatarUrlsByUserId(
+        fallbackAvatarFileIdsByUserId: this.buildFallbackAvatarFileIdsByUserId(
           definedWorkspaceUsers,
         ),
       }),
