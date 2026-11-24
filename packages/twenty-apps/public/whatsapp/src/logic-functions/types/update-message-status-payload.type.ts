@@ -4,4 +4,5 @@ export type UpdateMessageStatusPayload = {
   whatsAppBusinessAccountId: string;
   displayPhoneNumber: string;
   status: WhatsAppWebhookMessageStatus;
+  attempt?: number;
 };

@@ -2,6 +2,8 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 import { isDefined } from 'twenty-sdk/utils';
 import { WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE } from 'src/constants/whatsapp-marketing-opt-out-error-code.constant';
 import { WHATSAPP_LOGIC_FUNCTION_UPDATE_MESSAGE_STATUS_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { WHATSAPP_UNKNOWN_STATUS_MESSAGE_RETRY } from 'src/constants/whatsapp-unknown-status-message-retry.constant';
+import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
 import { buildFailedWhatsAppMessageNotificationText } from 'src/logic-functions/data/build-failed-whatsapp-message-notification-text.util';
 import { parseWhatsAppTimestamp } from 'src/logic-functions/data/parse-whatsapp-timestamp.util';
 import { scheduleWhatsAppCampaignRefresh } from 'src/logic-functions/data/schedule-whatsapp-campaign-refresh.util';
@@ -10,24 +12,31 @@ import { updateWhatsAppMarketingPreference } from 'src/logic-functions/data/upda
 import { updateWhatsAppMessageStatus } from 'src/logic-functions/data/update-whatsapp-message-status.util';
 import { type UpdateMessageStatusPayload } from 'src/logic-functions/types/update-message-status-payload.type';
 
-const handler = async ({ whatsAppBusinessAccountId, displayPhoneNumber, status }: UpdateMessageStatusPayload) => {
-  const updatedMessage = await updateWhatsAppMessageStatus({
-    displayPhoneNumber,
-    messageExternalId: status.id,
-    reportedStatus: status.status,
-    errors: status.errors,
-  });
+// re-enqueued rather than thrown, so the extra parts of a reply, which Twenty never stores, end quietly
+const retryWhenMessageIsStored = async (payload: UpdateMessageStatusPayload) => {
+  const nextAttempt = (payload.attempt ?? 1) + 1;
 
-  if (isDefined(updatedMessage?.campaignId)) {
-    await scheduleWhatsAppCampaignRefresh([updatedMessage.campaignId]);
-  }
-
-  if (status.status !== 'failed') {
+  if (nextAttempt > WHATSAPP_UNKNOWN_STATUS_MESSAGE_RETRY.maxAttempts) {
     return;
   }
 
-  // covers users who stopped marketing messages before the app was connected
-  if (status.errors?.some(({ code }) => code === WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE)) {
+  await enqueueLogicFunctionJobs<UpdateMessageStatusPayload>({
+    logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_UPDATE_MESSAGE_STATUS_UNIVERSAL_IDENTIFIER,
+    payloads: [{ ...payload, attempt: nextAttempt }],
+    getJobKey: ({ status }) => `${status.id}:${status.status}:${nextAttempt}`,
+    delayMs: WHATSAPP_UNKNOWN_STATUS_MESSAGE_RETRY.delayMs,
+  });
+};
+
+const handler = async (payload: UpdateMessageStatusPayload) => {
+  const { whatsAppBusinessAccountId, displayPhoneNumber, status } = payload;
+
+  // covers users who stopped marketing messages before the app was connected, whether or not the message is stored
+  if (
+    !isDefined(payload.attempt) &&
+    status.status === 'failed' &&
+    status.errors?.some(({ code }) => code === WHATSAPP_MARKETING_OPT_OUT_ERROR_CODE)
+  ) {
     await updateWhatsAppMarketingPreference({
       identity: { whatsAppId: status.recipient_id, whatsAppUserId: status.recipient_user_id },
       isOptedOut: true,
@@ -35,7 +44,26 @@ const handler = async ({ whatsAppBusinessAccountId, displayPhoneNumber, status }
     });
   }
 
-  if (isDefined(updatedMessage)) {
+  const result = await updateWhatsAppMessageStatus({
+    displayPhoneNumber,
+    messageExternalId: status.id,
+    reportedStatus: status.status,
+    errors: status.errors,
+  });
+
+  if (result.outcome === 'MESSAGE_NOT_FOUND') {
+    await retryWhenMessageIsStored(payload);
+
+    return;
+  }
+
+  const updatedMessage = result.outcome === 'UPDATED' ? result : undefined;
+
+  if (isDefined(updatedMessage?.campaignId)) {
+    await scheduleWhatsAppCampaignRefresh([updatedMessage.campaignId]);
+  }
+
+  if (status.status === 'failed' && isDefined(updatedMessage)) {
     await sendInboxNotification({
       threadKey: `message_failed:${whatsAppBusinessAccountId}`,
       idempotencyKey: `message_failed:${status.id}`,

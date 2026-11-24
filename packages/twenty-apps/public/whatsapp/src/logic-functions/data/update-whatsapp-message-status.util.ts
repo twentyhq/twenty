@@ -4,7 +4,6 @@ import { WHATSAPP_MESSAGE_STATUSES } from 'src/constants/whatsapp-message-status
 import { findMessageChannelByDisplayPhoneNumber } from 'src/logic-functions/data/find-message-channel-by-display-phone-number.util';
 import { getNextWhatsAppMessageStatus } from 'src/logic-functions/data/get-next-whatsapp-message-status.util';
 
-// returns the message when its status changed
 export const updateWhatsAppMessageStatus = async ({
   displayPhoneNumber,
   messageExternalId,
@@ -15,11 +14,15 @@ export const updateWhatsAppMessageStatus = async ({
   messageExternalId: string;
   reportedStatus: (typeof WHATSAPP_MESSAGE_STATUSES)[number];
   errors?: Array<{ code: number; title: string; error_data?: { details?: string } }>;
-}): Promise<{ text: string | null; statusError: string | null; campaignId: string | null } | undefined> => {
+}): Promise<
+  | { outcome: 'MESSAGE_NOT_FOUND' }
+  | { outcome: 'UNCHANGED' }
+  | { outcome: 'UPDATED'; text: string | null; statusError: string | null; campaignId: string | null }
+> => {
   const messageChannel = await findMessageChannelByDisplayPhoneNumber(displayPhoneNumber);
 
   if (!isDefined(messageChannel)) {
-    return undefined;
+    return { outcome: 'UNCHANGED' };
   }
 
   const client = new CoreApiClient();
@@ -40,9 +43,8 @@ export const updateWhatsAppMessageStatus = async ({
     | undefined =
     messageChannelMessageAssociations?.edges[0]?.node.message ?? undefined;
 
-  // statuses also arrive for messages Twenty never stored, such as the extra parts of a reply
   if (!isDefined(message)) {
-    return undefined;
+    return { outcome: 'MESSAGE_NOT_FOUND' };
   }
 
   const nextStatus = getNextWhatsAppMessageStatus({
@@ -51,7 +53,7 @@ export const updateWhatsAppMessageStatus = async ({
   });
 
   if (!isDefined(nextStatus)) {
-    return undefined;
+    return { outcome: 'UNCHANGED' };
   }
 
   const statusError =
@@ -72,5 +74,5 @@ export const updateWhatsAppMessageStatus = async ({
     },
   });
 
-  return { text: message.text, statusError, campaignId: message.whatsAppCampaignId };
+  return { outcome: 'UPDATED', text: message.text, statusError, campaignId: message.whatsAppCampaignId };
 };
