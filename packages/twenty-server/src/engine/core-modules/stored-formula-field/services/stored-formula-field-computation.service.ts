@@ -111,10 +111,15 @@ export class StoredFormulaFieldComputationService {
         });
       }
 
-      return recordIds.length ===
-        STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE * batchCount
-        ? recordIds[recordIds.length - 1]
-        : null;
+      const hasMoreRecords =
+        recordIds.length ===
+        STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE * batchCount;
+
+      if (!hasMoreRecords) {
+        return null;
+      }
+
+      return recordIds[recordIds.length - 1];
     }, buildSystemAuthContext(workspaceId));
   }
 
