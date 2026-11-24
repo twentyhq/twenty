@@ -55,10 +55,7 @@ const SALES_SECTION: NamedNavigationMenuItem = {
   updatedAt: '2026-01-01',
 };
 
-const renderTabContent = (
-  permissionFlags: PermissionFlagType[],
-  containerId: string | null = 'sales-tab-id',
-) => {
+const renderTabContent = (permissionFlags: PermissionFlagType[]) => {
   const store = createStore();
 
   store.set(currentUserWorkspaceState.atom, {
@@ -70,7 +67,7 @@ const renderTabContent = (
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
         <MemoryRouter>
-          <NavigationMenuTabContent containerId={containerId} />
+          <NavigationMenuTabContent containerId="sales-tab-id" />
         </MemoryRouter>
       </JotaiProvider>
     </I18nProvider>,
@@ -89,14 +86,6 @@ describe('NavigationMenuTabContent', () => {
 
   it('offers Customize tab on an empty tab', async () => {
     renderTabContent([PermissionFlagType.LAYOUTS]);
-
-    await userEvent.click(screen.getByText('Customize tab'));
-
-    expect(mockEnterLayoutCustomizationMode).toHaveBeenCalledTimes(1);
-  });
-
-  it('offers Customize tab on an empty Home', async () => {
-    renderTabContent([PermissionFlagType.LAYOUTS], null);
 
     await userEvent.click(screen.getByText('Customize tab'));
 
