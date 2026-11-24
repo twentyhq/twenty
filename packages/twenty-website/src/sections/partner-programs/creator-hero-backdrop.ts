@@ -27,7 +27,9 @@ export const CREATOR_HERO_BACKDROP: Pick<
     },
     hover: {
       halftoneEnabled: true,
-      halftonePowerShift: 0.9,
+      // 0: under the cursor the dashes swell and turn blue, but white stays white,
+      // so no dash appears over the copy or the hero's own element.
+      halftonePowerShift: 0,
       halftoneRadius: 0.6,
       halftoneWidthShift: -0.2,
       lightEnabled: true,
