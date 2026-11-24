@@ -48,9 +48,7 @@ export class CoreWorkflowListService {
       ]);
 
     return findManyFlatEntityByIdInFlatEntityMaps({
-      flatEntityIds: coreWorkflowIds.map((coreWorkflowId) =>
-        coreWorkflowId.toLowerCase(),
-      ),
+      flatEntityIds: coreWorkflowIds,
       flatEntityMaps: flatWorkflowMaps,
     })
       .filter((flatWorkflow) =>

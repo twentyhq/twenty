@@ -93,7 +93,7 @@ export class CoreWorkflowVersionListService {
       ]);
 
     const flatWorkflow = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowId.toLowerCase(),
+      flatEntityId: coreWorkflowId,
       flatEntityMaps: flatWorkflowMaps,
     });
 
@@ -143,7 +143,7 @@ export class CoreWorkflowVersionListService {
     ]);
 
     const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: coreWorkflowVersionId.toLowerCase(),
+      flatEntityId: coreWorkflowVersionId,
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 
