@@ -31,6 +31,7 @@ const HALFTONE_FRAGMENT = /* glsl */ `
   uniform sampler2D tScene; uniform vec2 effectResolution; uniform vec2 logicalResolution;
   uniform float cell; uniform float power; uniform float dotScale; uniform vec3 dotColor;
   uniform vec2 pointer; uniform float hover; uniform float hoverRadius; uniform float hoverLift;
+  uniform float mixed;
   void main() {
     vec2 frag = (gl_FragCoord.xy / max(effectResolution, vec2(1.0))) * logicalResolution;
     vec2 cellIndex = floor(frag / cell);
@@ -42,8 +43,14 @@ const HALFTONE_FRAGMENT = /* glsl */ `
     float level = clamp(tone + power * 0.2357 + near * hoverLift * on, 0.0, 1.0);
     float alpha = 0.0;
     if (level > 0.0001) {
+      vec2 offset = fract(frag / cell) - 0.5;
       float r = level * dotScale;
-      float d = length(fract(frag / cell) - 0.5);
+      // mixed: light tones stay round dots; stronger tones stretch into
+      // horizontal dashes that join into lines, as the site's halftone does
+      float halfLength = mixed * max(0.0, level - 0.28) * 1.2;
+      r = mix(r, min(r, 0.3), mixed);
+      offset.x -= clamp(offset.x, -halfLength, halfLength);
+      float d = length(offset);
       float aa = 1.0 / cell;
       alpha = (1.0 - smoothstep(r - aa, r + aa, d)) * on;
     }
@@ -94,7 +101,16 @@ export type HalftoneDotStage = {
 
 export function createHalftoneDotStage(
   frame: HTMLElement,
-  { fov }: { fov: number },
+  {
+    fov,
+    shape = 'dots',
+    cellPx = HALFTONE.cellPx,
+  }: {
+    fov: number;
+    // 'mixed' turns the stronger tones into dashes
+    shape?: 'dots' | 'mixed';
+    cellPx?: number;
+  },
 ): HalftoneDotStage | null {
   const renderer = createVisualRenderer({ alpha: true, antialias: true });
   if (renderer === null) {
@@ -122,7 +138,8 @@ export function createHalftoneDotStage(
       tScene: { value: target.texture },
       effectResolution: { value: new THREE.Vector2() },
       logicalResolution: { value: new THREE.Vector2() },
-      cell: { value: HALFTONE.cellPx },
+      cell: { value: cellPx },
+      mixed: { value: shape === 'mixed' ? 1 : 0 },
       power: { value: HALFTONE.power },
       dotScale: { value: HALFTONE.dotScale },
       dotColor: { value: new THREE.Color(paletteColorNumber('blue')) },

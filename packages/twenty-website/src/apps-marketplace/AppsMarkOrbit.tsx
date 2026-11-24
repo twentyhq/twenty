@@ -158,7 +158,11 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
   useEffect(() => {
     const frame = frameRef.current;
     if (!isDefined(frame) || appsWithLogo.length === 0) return;
-    const stage = createHalftoneDotStage(frame, { fov: 30 });
+    const stage = createHalftoneDotStage(frame, {
+      cellPx: 7,
+      fov: 30,
+      shape: 'mixed',
+    });
     if (!isDefined(stage)) return;
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
