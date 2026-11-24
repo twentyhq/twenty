@@ -5,6 +5,8 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { AddSelectOptionDropdownSection } from '@/ui/input/components/AddSelectOptionDropdownSection';
+import { SelectOptionDescriptionTooltip } from '@/ui/input/components/SelectOptionDescriptionTooltip';
+import { SelectOptionDescriptionTooltipProvider } from '@/ui/input/components/SelectOptionDescriptionTooltipProvider';
 import { filterSelectOptionsBySearch } from '@/ui/input/utils/filterSelectOptionsBySearch';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 import { useLingui } from '@lingui/react/macro';
@@ -73,30 +75,38 @@ export const SelectInput = ({
         aria-label={t`Search`}
       />
       <Dropdown.Separator />
-      <Dropdown.Section scrollable>
-        {!isSearching && clearOptionItem}
-        {optionsInDropdown.map((option) => (
-          <Dropdown.OptionItem
-            key={option.value}
-            onSelect={() => onOptionSelected(option)}
-            selected={option.value === value}
-            closeOnSelect={false}
-          >
-            <Tag
-              color={option.color ?? 'transparent'}
-              startIcon={
-                isDefined(option.Icon) ? createElement(option.Icon) : undefined
-              }
+      <SelectOptionDescriptionTooltipProvider>
+        <Dropdown.Section scrollable>
+          {!isSearching && clearOptionItem}
+          {optionsInDropdown.map((option) => (
+            <SelectOptionDescriptionTooltip
+              key={option.value}
+              description={option.description}
             >
-              {option.label}
-            </Tag>
-          </Dropdown.OptionItem>
-        ))}
-        {isSearching && clearOptionItem}
-        {!shouldShowClearOption && !isNonEmptyArray(optionsInDropdown) && (
-          <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
-        )}
-      </Dropdown.Section>
+              <Dropdown.OptionItem
+                onSelect={() => onOptionSelected(option)}
+                selected={option.value === value}
+                closeOnSelect={false}
+              >
+                <Tag
+                  color={option.color ?? 'transparent'}
+                  startIcon={
+                    isDefined(option.Icon)
+                      ? createElement(option.Icon)
+                      : undefined
+                  }
+                >
+                  {option.label}
+                </Tag>
+              </Dropdown.OptionItem>
+            </SelectOptionDescriptionTooltip>
+          ))}
+          {isSearching && clearOptionItem}
+          {!shouldShowClearOption && !isNonEmptyArray(optionsInDropdown) && (
+            <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
+          )}
+        </Dropdown.Section>
+      </SelectOptionDescriptionTooltipProvider>
       <AddSelectOptionDropdownSection
         searchFilter={searchFilter}
         filteredOptions={filteredOptions}

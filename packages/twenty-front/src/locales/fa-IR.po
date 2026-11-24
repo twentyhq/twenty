@@ -30052,6 +30052,11 @@ msgstr "صادرات متوقف شد. لطفاً دوباره تلاش کنید.
 msgid "The fields below are now available as variables in the next steps."
 msgstr "فیلدهای زیر اکنون به‌عنوان متغیر در مراحل بعدی در دسترس هستند."
 
+#. js-lingui-id: UbUlij
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The first value that is set, or nothing when none is."
+msgstr "اولین مقداری که تنظیم شده است، یا اگر هیچ‌کدام تنظیم نشده باشند، هیچ‌چیز."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -30061,6 +30066,11 @@ msgstr "توافق‌نامه کامل با فیلدهای حل‌شده برا�
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "نمادی که راه‌انداز گردش کار شما در منوی فرمان نمایش می‌دهد"
+
+#. js-lingui-id: Qp6vM+
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The largest of the numbers. Values that are not numbers are ignored."
+msgstr "بزرگ‌ترینِ اعداد. مقادیری که عدد نیستند نادیده گرفته می‌شوند."
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30144,6 +30154,11 @@ msgstr "تعداد موارد در فهرست، یا در صورتی که فهر
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
 msgstr "تعداد واحدهای کامل از تاریخ اول تا تاریخ دوم؛ اگر تاریخ دوم زودتر باشد، منفی است. دقیقه‌ها و ساعت‌ها زمان سپری‌شده هستند؛ واحدهای طولانی‌تر روزها و ماه‌های تقویمی را در UTC شمارش می‌کنند."
 
+#. js-lingui-id: wmIQo4
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number rounded to a number of decimals."
+msgstr "عدد گرد شده به تعداد مشخصی رقم اعشار."
+
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -30179,6 +30194,11 @@ msgstr "پیکربندی رابطه قابل حل نبود."
 msgid "The role attached to this webhook."
 msgstr "نقش متصل به این وب‌هوک."
 
+#. js-lingui-id: eHwsp0
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The second value when the condition is true, otherwise the third."
+msgstr "مقدار دوم در صورت درست بودن شرط؛ در غیر این صورت، مقدار سوم."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -30199,10 +30219,25 @@ msgstr "رکوردهای انتخاب‌شده (تا {maxRecordsFormatted}) به
 msgid "The shared email you want to use."
 msgstr "ایمیل مشترکی که می‌خواهید استفاده کنید."
 
+#. js-lingui-id: CZF2sj
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The smallest of the numbers. Values that are not numbers are ignored."
+msgstr "کوچک‌ترینِ اعداد. مقادیری که عدد نیستند نادیده گرفته می‌شوند."
+
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
 msgstr "ابتدای واحدی که تاریخ در آن قرار دارد، در UTC. هفته‌ها از دوشنبه شروع می‌شوند."
+
+#. js-lingui-id: hdgKJ2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in lower case."
+msgstr "متن با حروف کوچک."
+
+#. js-lingui-id: P/EZTH
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in upper case."
+msgstr "متن با حروف بزرگ."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30250,6 +30285,11 @@ msgstr "کاربردی که این محدودیت برای آن اعمال می�
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The value a field had before the update. Empty when the record is created."
 msgstr "مقداری که یک فیلد پیش از به‌روزرسانی داشت. هنگام ایجاد رکورد خالی است."
+
+#. js-lingui-id: cXlUXr
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The values joined as one text. Values that are not set are skipped."
+msgstr "مقادیر به‌صورت یک متن به هم پیوسته‌اند. مقادیری که تنظیم نشده‌اند رد می‌شوند."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
