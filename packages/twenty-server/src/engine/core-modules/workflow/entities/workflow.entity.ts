@@ -70,7 +70,7 @@ export class WorkflowEntity extends SyncableEntity implements PrivatableEntity {
   @Column({ type: 'uuid', nullable: true })
   lastPublishedCoreWorkflowVersionId: string | null;
 
-  // Enforced where ids resolve (CoreWorkflowIdResolutionService), so a private workflow's versions and steps are unreachable too.
+  // Enforced where ids resolve (CoreWorkflowAccessService), so a private workflow's versions and steps are unreachable too.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_IS_PRIVATE_UPGRADE_COMMAND_NAME,
   })

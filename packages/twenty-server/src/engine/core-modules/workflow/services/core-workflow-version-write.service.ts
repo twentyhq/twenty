@@ -115,38 +115,10 @@ export class CoreWorkflowVersionWriteService {
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
-    await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
-      {
-        workspaceId,
-        userWorkspaceId,
-        coreWorkflowVersionIds: [coreWorkflowVersionId],
-      },
-    );
-
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-      });
-
-    if (!isDefined(coreWorkflowVersion)) {
-      throw new WorkflowQueryValidationException(
-        `Core workflow version '${coreWorkflowVersionId}' not found`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow version not found`,
-        },
+    const { coreWorkflowVersion } =
+      await this.coreWorkflowAccessService.findEditableCoreWorkflowVersionOrThrow(
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
-    }
-
-    if (isDefined(coreWorkflowVersion.coreWorkflowId)) {
-      await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
-        {
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
-        },
-      );
-    }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.DRAFT) {
       throw new WorkflowQueryValidationException(

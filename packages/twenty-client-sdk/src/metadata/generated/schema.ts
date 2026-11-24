@@ -4410,7 +4410,7 @@ export interface ViewSort {
 
 export type ViewSortDirection = 'ASC' | 'DESC'
 
-export type ViewType = 'CALENDAR' | 'CALENDAR_WIDGET' | 'FIELDS_WIDGET' | 'KANBAN' | 'KANBAN_WIDGET' | 'LIST' | 'LIST_WIDGET' | 'TABLE' | 'TABLE_WIDGET'
+export type ViewType = 'CALENDAR' | 'CALENDAR_WIDGET' | 'FIELDS_WIDGET' | 'INBOX' | 'KANBAN' | 'KANBAN_WIDGET' | 'LIST' | 'LIST_WIDGET' | 'TABLE' | 'TABLE_WIDGET'
 
 export type ViewVisibility = 'UNLISTED' | 'WORKSPACE'
 
@@ -13986,6 +13986,7 @@ export const enumViewType = {
    CALENDAR: 'CALENDAR' as const,
    CALENDAR_WIDGET: 'CALENDAR_WIDGET' as const,
    FIELDS_WIDGET: 'FIELDS_WIDGET' as const,
+   INBOX: 'INBOX' as const,
    KANBAN: 'KANBAN' as const,
    KANBAN_WIDGET: 'KANBAN_WIDGET' as const,
    LIST: 'LIST' as const,
