@@ -6,7 +6,7 @@ import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTrigge
 import { IconRefresh } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
 
-const COMPONENT_INSTANCE_ID =
+const COMPONENT_INSTANCE_ID_PREFIX =
   'information-banner-reconnect-account-insufficient-permissions';
 
 export const InformationBannerReconnectAccountInsufficientPermissions = () => {
@@ -15,10 +15,11 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
     InformationBannerKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
   );
 
+  const componentInstanceId = `${COMPONENT_INSTANCE_ID_PREFIX}-${accountToReconnect?.id}`;
+
   const { triggerProviderReconnect } = useTriggerProviderReconnect();
-  const { dismissReconnectAccountBanner } = useDismissReconnectAccountBanner(
-    COMPONENT_INSTANCE_ID,
-  );
+  const { dismissReconnectAccountBanner } =
+    useDismissReconnectAccountBanner(componentInstanceId);
 
   if (!accountToReconnect) {
     return null;
@@ -32,7 +33,7 @@ export const InformationBannerReconnectAccountInsufficientPermissions = () => {
 
   return (
     <InformationBanner
-      componentInstanceId={COMPONENT_INSTANCE_ID}
+      componentInstanceId={componentInstanceId}
       variant="soft"
       message={t`Sync lost with mailbox ${mailboxHandle}. Please reconnect for updates:`}
       buttonTitle={t`Reconnect`}

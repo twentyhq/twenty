@@ -143,6 +143,14 @@ validationRuleParser.binaryOps['>='] = compareDefinedValues(
 validationRuleParser.binaryOps.in = (value: unknown, list: unknown) =>
   Array.isArray(list) && list.includes(value);
 
+const toConcatenableValue = (value: unknown) =>
+  isValidationRuleValueDefined(value) ? value : '';
+
+validationRuleParser.binaryOps['||'] = (left: unknown, right: unknown) =>
+  Array.isArray(left) && Array.isArray(right)
+    ? [...left, ...right]
+    : `${toConcatenableValue(left)}${toConcatenableValue(right)}`;
+
 validationRuleParser.functions = Object.fromEntries(
   Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
     name,

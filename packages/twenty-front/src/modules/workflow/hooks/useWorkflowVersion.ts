@@ -1,21 +1,14 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
-import {
-  GetCoreWorkflowVersionDocument,
-  GetCoreWorkflowDocument,
-} from '~/generated/graphql';
+import { GetCoreWorkflowDocument } from '~/generated/graphql';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { buildWorkflowVersionFromCore } from '@/object-core/workflows/utils/buildWorkflowVersionFromCore';
+import { useCoreWorkflowVersion } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersion';
 
 export const useWorkflowVersion = (workflowVersionId?: string) => {
   const client = useApolloCoreClient();
-  const { data } = useQuery(GetCoreWorkflowVersionDocument, {
-    client,
-    variables: { coreWorkflowVersionId: workflowVersionId ?? '' },
-    fetchPolicy: 'cache-and-network',
-    skip: !workflowVersionId,
-  });
-  const coreWorkflowId = data?.coreWorkflowVersion?.coreWorkflowId;
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(workflowVersionId);
+  const coreWorkflowId = coreWorkflowVersion?.coreWorkflowId;
   const { data: workflowData } = useQuery(GetCoreWorkflowDocument, {
     client,
     variables: { coreWorkflowId: coreWorkflowId ?? '' },
@@ -24,7 +17,7 @@ export const useWorkflowVersion = (workflowVersionId?: string) => {
   });
 
   return useMemo(() => {
-    const version = buildWorkflowVersionFromCore(data?.coreWorkflowVersion);
+    const version = buildWorkflowVersionFromCore(coreWorkflowVersion);
     return version
       ? {
           ...version,
@@ -34,5 +27,5 @@ export const useWorkflowVersion = (workflowVersionId?: string) => {
           },
         }
       : undefined;
-  }, [data, workflowData]);
+  }, [coreWorkflowVersion, workflowData]);
 };

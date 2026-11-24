@@ -577,6 +577,7 @@ msgstr "{0}, {unreadOpenThreadCount} non lus"
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu.tsx
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu.tsx
 #: src/modules/object-record/record-column-lookup/components/RecordTableLookupTargetFieldSelectMenu.tsx
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
 #: src/modules/settings/roles/role-permissions/rule-conditions/components/SettingsRoleRuleConditionFieldSelectSubFieldMenu.tsx
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartAggregateOperationSelectionDropdownContent.tsx
 #: src/modules/spreadsheet-import/components/MatchColumnSelectSubFieldSelectDropdownContent.tsx
@@ -1368,6 +1369,11 @@ msgstr "{unitCount, plural, one {Année} other {Années}}"
 msgid "{unlistedCount, plural, one {No listed application matches. # unlisted application is available.} other {No listed application matches. # unlisted applications are available.}}"
 msgstr "{unlistedCount, plural, one {Aucune application répertoriée ne correspond. # application non répertoriée est disponible.} other {Aucune application répertoriée ne correspond. # applications non répertoriées sont disponibles.}}"
 
+#. js-lingui-id: dCxqaV
+#: src/modules/object-record/record-field/ui/meta-types/display/components/RelationWithUnloadedRecordCount.tsx
+msgid "{unloadedRecordCount, plural, one {# more related record} other {# more related records}}"
+msgstr "{unloadedRecordCount, plural, one {# enregistrement associé supplémentaire} other {# enregistrements associés supplémentaires}}"
+
 #. js-lingui-id: rU6wAU
 #: src/modules/object-core/agents/components/CoreAgentDataAccessSection.tsx
 msgid "{unreadableFieldCount, plural, one {Can't see # field} other {Can't see # fields}}"
@@ -1889,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Accédez à votre espace de travail Twenty via MCP"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Accéder aux données de votre espace de travail"
 
@@ -2094,6 +2100,7 @@ msgstr "Acteur"
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "Add"
 msgstr "Ajouter"
 
@@ -2101,6 +2108,11 @@ msgstr "Ajouter"
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
 msgstr "Ajouter \"{optionName}\" aux options"
+
+#. js-lingui-id: AQVwJ5
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "Add {checkedCount}"
+msgstr "Ajouter {checkedCount}"
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
@@ -2293,6 +2305,7 @@ msgstr "Ajouter Cc"
 #. js-lingui-id: AgvHni
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorTableHandles.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderAddColumnButton.tsx
+#: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Add column"
 msgstr "Ajouter une colonne"
 
@@ -2437,6 +2450,11 @@ msgid "Add inputs to your form"
 msgstr "Ajoutez des entrées à votre formulaire"
 
 #. js-lingui-id: NQ8llq
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
+#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuSectionMenuContent.tsx
+#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormArrayFieldInput.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldSaveButton.tsx
 msgid "Add item"
@@ -2457,14 +2475,6 @@ msgstr "Ajouter un lien"
 #: src/modules/settings/mcp-servers/components/SettingsMcpServersSection.tsx
 msgid "Add MCP server"
 msgstr "Ajouter un serveur MCP"
-
-#. js-lingui-id: gaZXkv
-#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
-#: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown.tsx
-#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
-#: src/modules/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton.tsx
-msgid "Add menu item"
-msgstr "Ajouter un élément de menu"
 
 #. js-lingui-id: JbORSt
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
@@ -2525,6 +2535,12 @@ msgstr "Ajouter ou supprimer des utilisateurs"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Add Output Field"
 msgstr "Ajouter un champ de sortie"
+
+#. js-lingui-id: aY6gdO
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Add participants"
+msgstr "Ajouter des participants"
 
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
@@ -3072,6 +3088,8 @@ msgid "Agent Web Search"
 msgstr "Recherche Web par agent"
 
 #. js-lingui-id: 8Uv5e6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 #: src/modules/navigation-menu-item/display/native-page/constants/NativePageNavigationMenuItemConfigs.ts
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAutomationOptions.ts
 #: src/modules/object-core/agents/utils/getCoreAgentBreadcrumbLinks.ts
@@ -3604,12 +3622,12 @@ msgstr "Autoriser"
 #. js-lingui-id: rgjDVZ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow {settingsEntryLabel} in macOS settings"
-msgstr ""
+msgstr "Autoriser {settingsEntryLabel} dans les paramètres macOS"
 
 #. js-lingui-id: CzjC6l
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow {settingsEntryLabel} in Windows settings"
-msgstr ""
+msgstr "Autoriser {settingsEntryLabel} dans les paramètres Windows"
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -3665,12 +3683,12 @@ msgstr "Autoriser la connexion via Microsoft pour les utilisateurs avec des perm
 #. js-lingui-id: iN398g
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Allow notifications"
-msgstr ""
+msgstr "Autoriser les notifications"
 
 #. js-lingui-id: kDJaGH
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Allow notifications in your browser"
-msgstr ""
+msgstr "Autoriser les notifications dans votre navigateur"
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -3923,7 +3941,6 @@ msgid "Any {0} field"
 msgstr "Tout champ {0}"
 
 #. js-lingui-id: COyjuu
-#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Any device"
 msgstr "Tous les appareils"
@@ -4497,7 +4514,7 @@ msgstr "ascendant"
 #. js-lingui-id: nYD/Cq
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Ascending"
@@ -4632,6 +4649,7 @@ msgstr "Attribué à vous"
 
 #. js-lingui-id: ojKCLU
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Assignee"
 msgstr "Attributaire"
 
@@ -5882,6 +5900,7 @@ msgstr "Canada"
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
 #: src/modules/side-panel/pages/add-to-message-list/components/SidePanelAddToMessageListPage.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
 #: src/modules/spreadsheet-import/provider/components/SpreadsheetImport.tsx
@@ -6244,6 +6263,11 @@ msgstr "Options du canal"
 msgid "channel role"
 msgstr "rôle de canal"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "Visibilité des canaux sur les clés API"
+
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
@@ -6381,7 +6405,7 @@ msgstr "Vérifiez votre boîte de réception pour valider votre nouvelle adresse
 #. js-lingui-id: iY9Tuz
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Check your system notification settings"
-msgstr ""
+msgstr "Vérifiez les paramètres de notification de votre système"
 
 #. js-lingui-id: BGQXlj
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -8357,6 +8381,11 @@ msgstr "Impossible de mettre à jour le type d'instance"
 msgid "Couldn't add to favorites"
 msgstr "Impossible d’ajouter aux favoris"
 
+#. js-lingui-id: l5bv5j
+#: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
+msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
+msgstr "Impossible de joindre \"{fileName}\". Les fichiers doivent être de taille égale ou inférieure à {maxUploadSize}."
+
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 msgid "Couldn't check availability. Please try again."
@@ -9402,6 +9431,11 @@ msgstr "Personnaliser la page d'enregistrement"
 msgid "Customize sidebar"
 msgstr "Personnaliser la barre latérale"
 
+#. js-lingui-id: CZs1kG
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
+msgid "Customize tab"
+msgstr "Personnaliser l’onglet"
+
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Customize the workspace record page"
@@ -10408,7 +10442,7 @@ msgstr "descendant"
 #. js-lingui-id: Cko536
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
-#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent.tsx
 #: src/modules/views/editable-chip/components/EditableSortChip.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Descending"
@@ -10465,7 +10499,6 @@ msgid "Description provided by the application"
 msgstr "Description fournie par l'application"
 
 #. js-lingui-id: BBqGS9
-#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Desktop"
 msgstr "Ordinateur"
@@ -10613,12 +10646,12 @@ msgstr "La dictée n'est pas prise en charge dans ce navigateur."
 #. js-lingui-id: rgWPME
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Did you see a test notification?"
-msgstr ""
+msgstr "Avez-vous vu une notification de test ?"
 
 #. js-lingui-id: kd/w8u
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Did you see it this time?"
-msgstr ""
+msgstr "L'avez-vous vue cette fois-ci ?"
 
 #. js-lingui-id: DVB659
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -10813,7 +10846,7 @@ msgstr "Enregistrements DNS :"
 #. js-lingui-id: 5bBKM2
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Do not disturb"
-msgstr ""
+msgstr "Ne pas déranger"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -11299,6 +11332,12 @@ msgstr "Actions d'édition"
 #: src/modules/object-core/agents/constants/CoreAgentRecordAccessLevels.ts
 msgid "Edit all records"
 msgstr "Modifier tous les enregistrements"
+
+#. js-lingui-id: QM4RhQ
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
+msgid "Edit column"
+msgstr "Modifier la colonne"
 
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -12053,6 +12092,11 @@ msgstr "Saisissez une nouvelle valeur secrète"
 #: src/modules/object-record/record-form/components/RecordFormPercentageFieldInput.tsx
 msgid "Enter a number"
 msgstr "Saisissez un nombre"
+
+#. js-lingui-id: 14OSiZ
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Enter a number between 1 and {QUERY_MAX_RECORDS_FROM_RELATION}"
+msgstr "Saisissez un nombre compris entre 1 et {QUERY_MAX_RECORDS_FROM_RELATION}"
 
 #. js-lingui-id: LsUGyx
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -13822,6 +13866,7 @@ msgstr "Rapide"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Discussions favorites"
 
@@ -14151,6 +14196,7 @@ msgstr "Remplir avec une entrée d'exemple à partir de"
 #: src/modules/settings/components/SettingsSearchFilterTrigger.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesList.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
@@ -14231,6 +14277,11 @@ msgstr "Filtrer la chronologie"
 #: src/modules/object-core/commands/hooks/useCoreObjectsCommands.ts
 msgid "Filter workflows"
 msgstr "Filtrer les workflows"
+
+#. js-lingui-id: 03Qqf9
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Filtered"
+msgstr "Filtré"
 
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
@@ -14392,6 +14443,7 @@ msgstr "Fleur"
 #. js-lingui-id: kNqMMd
 #: src/modules/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder.ts
 #: src/modules/navigation-menu-item/display/folder/utils/getFolderNavigationMenuItemLabel.ts
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
@@ -17813,6 +17865,7 @@ msgstr "Vert citron"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsTable.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Limit"
@@ -18474,7 +18527,7 @@ msgstr "M"
 #. js-lingui-id: PcJKDa
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "macOS can block notifications even when {browserLabel} allows Twenty. Open Notifications, select {settingsEntryLabel} and turn on Allow notifications. If Focus is on, turn it off. Then send a test."
-msgstr ""
+msgstr "macOS peut bloquer les notifications même lorsque {browserLabel} autorise Twenty. Ouvrez Notifications, sélectionnez {settingsEntryLabel} et activez Autoriser les notifications. Si Concentration est activée, désactivez-la. Envoyez ensuite un test."
 
 #. js-lingui-id: MsaCqr
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -19275,7 +19328,6 @@ msgid "Mission accomplished!"
 msgstr "Mission accomplie !"
 
 #. js-lingui-id: dMsM20
-#: src/modules/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel.ts
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
 msgid "Mobile"
 msgstr "Mobile"
@@ -19968,6 +20020,11 @@ msgstr "Nouveau compte"
 msgid "New Account"
 msgstr "Nouveau compte"
 
+#. js-lingui-id: PlBr35
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
+msgid "New agent"
+msgstr "Nouvel agent"
+
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
 msgid "New Agent"
@@ -20083,7 +20140,7 @@ msgstr "Les nouveaux messages de la boîte de réception vous avertissent lorsqu
 #. js-lingui-id: Wi5Riu
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "New inbox messages will show up like the test notification while your browser is running."
-msgstr ""
+msgstr "Les nouveaux messages de la boîte de réception s'afficheront comme la notification de test tant que votre navigateur est ouvert."
 
 #. js-lingui-id: ynuJvo
 #: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
@@ -20496,6 +20553,7 @@ msgid "No apps found"
 msgstr "Aucune application trouvée"
 
 #. js-lingui-id: 3bvkPk
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsAssigneeItem.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
 msgstr "Aucun responsable"
@@ -20922,6 +20980,11 @@ msgstr "Aucun membre trouvé"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members match your search"
 msgstr "Aucun membre ne correspond à votre recherche"
+
+#. js-lingui-id: 5bqxVl
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "No members to add"
+msgstr "Aucun membre à ajouter"
 
 #. js-lingui-id: IohPnt
 #: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
@@ -21439,7 +21502,7 @@ msgstr "Aucun espace de travail ne correspond à cette recherche"
 #. js-lingui-id: LayLjZ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "No, read the guide"
-msgstr ""
+msgstr "Non, lire le guide"
 
 #. js-lingui-id: Ah7JCB
 #: src/modules/side-panel/pages/workflow/step/view-run/components/SidePanelWorkflowRunViewStepContent.tsx
@@ -21686,7 +21749,7 @@ msgstr "Notifications"
 #. js-lingui-id: sdfGbU
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "Notifications › {settingsEntryName}"
-msgstr ""
+msgstr "Notifications › {settingsEntryName}"
 
 #. js-lingui-id: A09awi
 #: src/modules/settings/experience/hooks/useSendBrowserTestNotification.tsx
@@ -21696,7 +21759,7 @@ msgstr "Les notifications sont activées"
 #. js-lingui-id: +j76n0
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Notifications are set up"
-msgstr ""
+msgstr "Les notifications sont configurées"
 
 #. js-lingui-id: 6RihN0
 #: src/modules/settings/privacy/components/SettingsPrivacySafeguards.tsx
@@ -21945,6 +22008,11 @@ msgstr "Hors des sentiers battus"
 msgid "Official app"
 msgstr "Application officielle"
 
+#. js-lingui-id: 6Aih4U
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
+msgid "Offline"
+msgstr "Hors ligne"
+
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Offset"
@@ -22081,6 +22149,11 @@ msgstr "Ponctuel"
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
 msgstr "Conversations individuelles entre personnes"
+
+#. js-lingui-id: oXOSPE
+#: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
+msgid "Online"
+msgstr "En ligne"
 
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
@@ -22394,7 +22467,7 @@ msgstr "Ouvrir le panneau latéral"
 #. js-lingui-id: TgKqjz
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Open system settings"
-msgstr ""
+msgstr "Ouvrir les paramètres du système"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -22965,6 +23038,12 @@ msgstr "paragraphe"
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 msgid "Parameters"
 msgstr "Paramètres"
+
+#. js-lingui-id: MZHPuB
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Participants"
+msgstr "Participants"
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -24288,7 +24367,7 @@ msgstr "Lire l'adresse, le propriétaire et le statut du compte des canaux priv�
 #. js-lingui-id: 4X88Wc
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Read the guide"
-msgstr ""
+msgstr "Lire le guide"
 
 #. js-lingui-id: h1Az4D
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -24312,7 +24391,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Lire les prompts système pour comprendre le fonctionnement de l'IA (~{0} jetons)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Lire votre profil"
 
@@ -25220,6 +25299,11 @@ msgstr "Supprimer le tri"
 msgid "Remove sorting?"
 msgstr "Supprimer le tri ?"
 
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Supprimer l'accès aux messages et au calendrier des clés API pour les rôles pouvant être attribués aux utilisateurs. Lorsqu'elle est désactivée, ces clés API les lisent comme le ferait un membre qui ne possède pas le canal."
+
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Remove this provider and disconnect all its models"
@@ -25845,6 +25929,7 @@ msgstr "Roumain"
 
 #. js-lingui-id: cepC1f
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Root level"
 msgstr "Niveau racine"
 
@@ -26135,6 +26220,7 @@ msgstr "Samedi"
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
 #: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 #: src/modules/settings/profile/components/EmailField.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage.tsx
 #: src/modules/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -26598,6 +26684,7 @@ msgstr "Icône de recherche"
 #. js-lingui-id: AaDUlx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr "Rechercher des membres"
@@ -27735,6 +27822,7 @@ msgstr "Configuration de votre <0>base de données</0>..."
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-record/record-merge/hooks/useMergeRecordsContainerTabs.ts
@@ -27926,6 +28014,11 @@ msgstr "Changer le libellé d'un objet doit-il aussi changer l'API ?"
 msgid "Should changing the label also change the API name?"
 msgstr "Le changement de l'étiquette doit-il également modifier le nom de l'API ?"
 
+#. js-lingui-id: 8vETh9
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Show"
+msgstr "Afficher"
+
 #. js-lingui-id: h8lzfw
 #. placeholder {0}: fieldMetadataItem.label
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableFieldsDropdownHiddenFieldsContent.tsx
@@ -27955,6 +28048,7 @@ msgstr "Afficher toutes les applications"
 
 #. js-lingui-id: E1fsbl
 #: src/modules/activities/calendar/components/CalendarEventComposerTargetsInput.tsx
+#: src/modules/object-record/record-column-scope/components/ScopedRelationLookupFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiRecordFieldChips.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/MorphRelationOneToManyFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/display/components/MultiSelectFieldDisplay.tsx
@@ -28458,6 +28552,11 @@ msgstr "Certaines modifications de la mise en page n'ont pas pu être enregistr�
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr "Certaines données de journal ont été supprimées pour respecter la limite de taille ({0} entrées, {1} octets)."
 
+#. js-lingui-id: FUT0ml
+#: src/modules/ai-chat/threads/hooks/useAddParticipantsToAiChatThread.ts
+msgid "Some members could not be added."
+msgstr "Certains membres n’ont pas pu être ajoutés."
+
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Some records"
@@ -28543,6 +28642,7 @@ msgstr "Désolé, nous n'avons pas pu déterminer le type d'objet correct pour c
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilterAndSortRows.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockViewBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -29483,7 +29583,7 @@ msgstr "Système"
 #. js-lingui-id: q2LSdK
 #: src/modules/settings/experience/components/SystemNotificationSettingsIllustration.tsx
 msgid "System › Notifications"
-msgstr ""
+msgstr "Système › Notifications"
 
 #. js-lingui-id: bbR21S
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldTable.tsx
@@ -31581,7 +31681,7 @@ msgstr "Transformer en"
 #. js-lingui-id: Njwcqh
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Turn on notifications"
-msgstr ""
+msgstr "Activer les notifications"
 
 #. js-lingui-id: 10DZzC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -33670,12 +33770,12 @@ msgstr "Nous avons rencontré un problème lors de la vérification"
 #. js-lingui-id: zXOO0X
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "We just sent another test notification."
-msgstr ""
+msgstr "Nous venons d'envoyer une autre notification de test."
 
 #. js-lingui-id: Ik3LPq
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "We just sent one. It shows up in a corner of your screen."
-msgstr ""
+msgstr "Nous venons d'en envoyer une. Elle s'affiche dans un coin de votre écran."
 
 #. js-lingui-id: 4x3zRh
 #. placeholder {0}: objectLabelSingular ?? ''
@@ -34129,7 +34229,7 @@ msgstr "Recevra cet e-mail"
 #. js-lingui-id: BQiUZ6
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Windows can block {browserLabel} even when Twenty is allowed. Open Notifications, turn on {settingsEntryLabel} and turn off Do not disturb. Then send a test."
-msgstr ""
+msgstr "Windows peut bloquer {browserLabel} même lorsque Twenty est autorisé. Ouvrez Notifications, activez {settingsEntryLabel} et désactivez Ne pas déranger. Envoyez ensuite un test."
 
 #. js-lingui-id: UcBL9G
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -34477,6 +34577,7 @@ msgstr "ID du membre de l'espace de travail"
 
 #. js-lingui-id: wtxjAY
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Workspace members"
@@ -34685,7 +34786,7 @@ msgstr "Oui"
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Yes, I saw it"
-msgstr ""
+msgstr "Oui, je l'ai vue"
 
 #. js-lingui-id: y/0uwd
 #: src/modules/inbox/utils/groupInboxThreadsByDate.ts
@@ -34700,6 +34801,7 @@ msgstr "Hier"
 #: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
 msgstr "Vous"
@@ -34874,17 +34976,17 @@ msgstr "Votre facturation passe au mensuel le {0}, à la fin de votre période d
 #. js-lingui-id: AUurzR
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "your browser"
-msgstr ""
+msgstr "votre navigateur"
 
 #. js-lingui-id: TzFYej
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your browser closed the request or showed it as an icon in the address bar. Click that icon and choose Allow, then continue."
-msgstr ""
+msgstr "Votre navigateur a fermé la demande ou l'a affichée sous forme d'icône dans la barre d'adresse. Cliquez sur cette icône et choisissez Autoriser, puis continuez."
 
 #. js-lingui-id: o3PWYJ
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your browser will ask to show notifications from Twenty. Choose Allow."
-msgstr ""
+msgstr "Votre navigateur vous demandera l'autorisation d'afficher des notifications de Twenty. Choisissez Autoriser."
 
 #. js-lingui-id: u1O1GV
 #: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
@@ -35076,7 +35178,7 @@ msgstr "Le statut de votre abonnement est : {statusLabel}"
 #. js-lingui-id: nH1nrf
 #: src/modules/settings/experience/components/BrowserNotificationSetupDialog.tsx
 msgid "Your system can block {browserLabel} even when Twenty is allowed. Allow notifications for {browserLabel} in your system settings, then send a test."
-msgstr ""
+msgstr "Votre système peut bloquer {browserLabel} même lorsque Twenty est autorisé. Autorisez les notifications pour {browserLabel} dans les paramètres de votre système, puis envoyez un test."
 
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts

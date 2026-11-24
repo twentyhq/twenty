@@ -42,6 +42,26 @@ export const createSourceTestApp = async (appPath: string) => {
     'exports.useRecord = () => undefined;',
   );
 
+  const uiPath = join(appPath, 'node_modules', 'twenty-ui');
+
+  await mkdir(uiPath, { recursive: true });
+  await writeFile(
+    join(uiPath, 'package.json'),
+    JSON.stringify({
+      name: 'twenty-ui',
+      version: '2.44.0',
+      exports: { './icon': './icon.cjs', './theme': './theme.cjs' },
+    }),
+  );
+  await writeFile(join(uiPath, 'icon.cjs'), 'exports.IconTest = () => null;');
+  await writeFile(
+    join(uiPath, 'theme.cjs'),
+    `exports.themeCssVariables = {
+      font: { color: { primary: 'var(--t-font-color-primary)' } },
+      border: { color: { medium: 'var(--t-border-color-medium)' } },
+    };`,
+  );
+
   return sdkPath;
 };
 

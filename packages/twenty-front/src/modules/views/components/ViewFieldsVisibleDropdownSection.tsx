@@ -6,7 +6,7 @@ import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdow
 import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
-import { useGetRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useGetRecordFieldLookupTarget';
+import { useGetRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useGetRecordFieldColumnKind';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
@@ -44,7 +44,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const { getFieldMetadataItemByIdOrThrow } =
     useGetFieldMetadataItemByIdOrThrow();
 
-  const getRecordFieldLookupTarget = useGetRecordFieldLookupTarget();
+  const getRecordFieldColumnKind = useGetRecordFieldColumnKind();
 
   const handleReorderFields =
     viewType === ViewType.KANBAN
@@ -109,7 +109,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
             dragHandleVisibility="always"
             isDragDisabled
           >
-            {fieldMetadataItemLabelIdentifier.label}
+            {nonDraggableRecordField?.label ??
+              fieldMetadataItemLabelIdentifier.label}
           </DraggableListRow>
         )}
         {draggableRecordFields.length > 0 && (
@@ -123,10 +124,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
                   );
                   const columnHeader = getRecordFieldColumnHeader({
                     fieldMetadataItem,
-                    lookupTarget: getRecordFieldLookupTarget({
-                      recordField,
-                      fieldMetadataItem,
-                    }),
+                    columnKind: getRecordFieldColumnKind(recordField.id),
+                    customLabel: recordField.label,
                   });
 
                   return (

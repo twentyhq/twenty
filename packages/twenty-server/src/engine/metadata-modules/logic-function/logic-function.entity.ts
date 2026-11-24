@@ -18,6 +18,7 @@ import {
 } from 'twenty-shared/application';
 
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
+import { ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-63/add-logic-function-job-failure-handler-name-and-retry-limit-upgrade-command-name.constant';
 import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
 import { type MessageQueueJobConfig } from 'src/engine/core-modules/message-queue/types/message-queue-job-config.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -68,6 +69,20 @@ export class LogicFunctionEntity
   @Column({ nullable: false, default: DEFAULT_LOGIC_FUNCTION_TIMEOUT_SECONDS })
   @Check(`"timeoutSeconds" >= 1 AND "timeoutSeconds" <= 900`)
   timeoutSeconds: number;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'varchar' })
+  jobFailureHandlerName: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_LOGIC_FUNCTION_JOB_FAILURE_HANDLER_NAME_AND_RETRY_LIMIT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'int' })
+  retryLimit: number | null;
 
   @Column({ nullable: true, type: 'text' })
   checksum: string | null;

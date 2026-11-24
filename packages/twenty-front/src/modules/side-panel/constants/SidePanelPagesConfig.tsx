@@ -17,6 +17,7 @@ import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePan
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
 import { SidePanelCreateRelatedRecordPage } from '@/side-panel/pages/create-related-record/components/SidePanelCreateRelatedRecordPage';
+import { SidePanelEditColumnPage } from '@/side-panel/pages/edit-column/components/SidePanelEditColumnPage';
 import { SidePanelRecordCreationFormPage } from '@/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage';
 import { SidePanelRecordCreationFormSettingsPage } from '@/side-panel/pages/record-creation-form-settings/components/SidePanelRecordCreationFormSettingsPage';
 import { SidePanelRecordUpdateFormPage } from '@/side-panel/pages/record-update-form/components/SidePanelRecordUpdateFormPage';
@@ -24,6 +25,8 @@ import { SidePanelSendCampaignPage } from '@/side-panel/pages/send-campaign/comp
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelShareRecordPage } from '@/side-panel/pages/share-record/components/SidePanelShareRecordPage';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { SidePanelAddAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage';
+import { SidePanelAiChatParticipantsPage } from '@/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage';
 import { SidePanelAssignAiChatPage } from '@/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
@@ -132,4 +135,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<
   [SidePanelPages.ShareRecord, <SidePanelShareRecordPage />],
   [SidePanelPages.SnoozeAiChat, <SidePanelSnoozeAiChatPage />],
   [SidePanelPages.AssignAiChat, <SidePanelAssignAiChatPage />],
+  [SidePanelPages.AiChatParticipants, <SidePanelAiChatParticipantsPage />],
+  [
+    SidePanelPages.AddAiChatParticipants,
+    <SidePanelAddAiChatParticipantsPage />,
+  ],
+  [SidePanelPages.EditColumn, <SidePanelEditColumnPage />],
 ]);

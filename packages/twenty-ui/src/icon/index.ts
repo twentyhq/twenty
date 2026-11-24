@@ -359,6 +359,7 @@ export {
   IconMaximize,
   IconMessage,
   IconMessageCirclePlus,
+  IconMessageHeart,
   IconMicrophone,
   IconMinimize,
   IconMinus,

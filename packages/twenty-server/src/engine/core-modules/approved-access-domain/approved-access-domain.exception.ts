@@ -12,6 +12,7 @@ export enum ApprovedAccessDomainExceptionCode {
   APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID = 'APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID',
   APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED = 'APPROVED_ACCESS_DOMAIN_ALREADY_VALIDATED',
   APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN = 'APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN',
+  APPROVED_ACCESS_DOMAIN_RATE_LIMIT_EXCEEDED = 'APPROVED_ACCESS_DOMAIN_RATE_LIMIT_EXCEEDED',
 }
 
 const getApprovedAccessDomainExceptionUserFriendlyMessage = (
@@ -32,6 +33,8 @@ const getApprovedAccessDomainExceptionUserFriendlyMessage = (
       return msg`This domain has already been validated.`;
     case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN:
       return msg`Please use a company email domain.`;
+    case ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_RATE_LIMIT_EXCEEDED:
+      return msg`Too many domain validation emails sent. Please try again later.`;
     default:
       assertUnreachable(code);
   }

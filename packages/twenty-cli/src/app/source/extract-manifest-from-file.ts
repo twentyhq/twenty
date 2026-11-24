@@ -55,10 +55,20 @@ const getCompiledWrapper = (
 };
 
 const MANIFEST_MOCK_MODULES = [
-  'twenty-ui',
   'twenty-client-sdk/core',
   'twenty-client-sdk/metadata',
 ];
+
+// Its own prototype, since esbuild resolves named imports through a copy inheriting from it
+const MANIFEST_MOCK_MODULE_SOURCE = `
+const mock = new Proxy(function () {}, {
+  get: (_target, key) => (key === Symbol.toPrimitive ? () => '' : mock),
+  apply: () => mock,
+  construct: () => mock,
+  getPrototypeOf: () => mock,
+});
+module.exports = mock;
+`;
 
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -69,19 +79,13 @@ const manifestMockPlugin: esbuild.Plugin = {
     const escapedModules = MANIFEST_MOCK_MODULES.map(escapeRegExp);
     const filter = new RegExp(`^(${escapedModules.join('|')})(/.*)?$`);
 
-    build.onResolve({ filter }, ({ path: modulePath }) => {
-      if (modulePath.endsWith('.css')) {
-        return null;
-      }
-
-      return {
-        path: modulePath,
-        namespace: 'manifest-mock',
-      };
-    });
+    build.onResolve({ filter }, ({ path: modulePath }) => ({
+      path: modulePath,
+      namespace: 'manifest-mock',
+    }));
 
     build.onLoad({ filter: /.*/, namespace: 'manifest-mock' }, () => ({
-      contents: 'module.exports = new Proxy({}, { get: () => () => {} });',
+      contents: MANIFEST_MOCK_MODULE_SOURCE,
       loader: 'js',
     }));
   },
