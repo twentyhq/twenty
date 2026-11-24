@@ -14,6 +14,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { getMissingCreateEventScopes } from 'src/modules/calendar/calendar-event-creation-manager/utils/get-missing-create-event-scopes.util';
 import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
 import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-valid-time-zone.util';
+import { normalizeCalendarEventRecurrence } from 'src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util';
 import { resolveCalendarEventTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/resolve-calendar-event-time-zone.util';
 import { type CalendarEventComposerResult } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-composer-result.type';
 import { type CalendarEventToCreate } from 'src/modules/calendar/calendar-event-creation-manager/types/calendar-event-to-create.type';
@@ -110,6 +111,19 @@ export class CalendarEventComposerService {
       };
     }
 
+    const recurrence = isDefined(params.recurrence)
+      ? normalizeCalendarEventRecurrence({
+          recurrence: params.recurrence,
+          startsAt: params.startsAt,
+          isFullDay,
+          timeZone,
+        })
+      : undefined;
+
+    if (isDefined(recurrence) && 'error' in recurrence) {
+      return { error: recurrence.error };
+    }
+
     const sendInvitations = params.sendInvitations ?? false;
     // Attendees are only ever attached when the caller explicitly opts in to
     // notifying them, so creating an event never silently emails external people.
@@ -148,6 +162,7 @@ export class CalendarEventComposerService {
       attendees: attendeeEmails.map((email) => ({ email })),
       sendInvitations,
       addConferencing: params.addConferencing ?? false,
+      recurrence,
     };
   }
 
