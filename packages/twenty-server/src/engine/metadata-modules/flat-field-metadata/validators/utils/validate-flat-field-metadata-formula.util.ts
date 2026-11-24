@@ -221,7 +221,9 @@ export const validateFlatFieldMetadataFormula = ({
     expression,
     currencyCodeExpression,
     selectEnumSqlType: 'text',
-    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors(fields),
+    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
+      fields,
+    }),
   });
 
   if (!sqlCompilation.isValid) {
