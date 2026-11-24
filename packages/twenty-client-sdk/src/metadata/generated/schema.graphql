@@ -1344,6 +1344,31 @@ type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarEventRecurrenceInput {
+  daysOfWeek: [CalendarEventRecurrenceWeekday!]
+  endDate: String
+  endOccurrenceCount: Int
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int
+}
+
+enum CalendarEventRecurrenceWeekday {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
+}
+
 type CallRecordingSummaryConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -1697,6 +1722,7 @@ input CreateCalendarEventInput {
   endsAt: String!
   isFullDay: Boolean
   location: String
+  recurrence: CalendarEventRecurrenceInput
   sendInvitations: Boolean
   startsAt: String!
   timeZone: String

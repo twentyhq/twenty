@@ -16,7 +16,7 @@ describe('canMoveBuiltInSectionToContainer', () => {
     ).toBe(true);
   });
 
-  it('should keep Favorites to one per container and off Home', () => {
+  it('should keep Favorites to one per container, Home included', () => {
     expect(
       canMoveBuiltInSectionToContainer({
         builtInSectionKey: 'favorites',
@@ -29,6 +29,13 @@ describe('canMoveBuiltInSectionToContainer', () => {
         builtInSectionKey: 'favorites',
         containerId: null,
         items,
+      }),
+    ).toBe(true);
+    expect(
+      canMoveBuiltInSectionToContainer({
+        builtInSectionKey: 'favorites',
+        containerId: null,
+        items: [...items, { builtInSectionKey: 'favorites', parentId: null }],
       }),
     ).toBe(false);
     expect(
