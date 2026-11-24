@@ -4484,6 +4484,9 @@ export default {
             "isCompact": [
                 1
             ],
+            "isPrivate": [
+                1
+            ],
             "kanbanAggregateOperation": [
                 32
             ],
@@ -15587,6 +15590,9 @@ export default {
             "isCompact": [
                 1
             ],
+            "isPrivate": [
+                1
+            ],
             "kanbanAggregateOperation": [
                 32
             ],
@@ -16733,6 +16739,9 @@ export default {
                 1
             ],
             "isCustom": [
+                1
+            ],
+            "isPrivate": [
                 1
             ],
             "isSystemSideEffect": [
