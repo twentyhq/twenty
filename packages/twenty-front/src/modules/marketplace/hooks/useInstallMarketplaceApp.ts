@@ -147,9 +147,9 @@ export const useInstallMarketplaceApp = ({
     fetchJobStatus: fetchInstallJobStatus,
   });
 
-  const install = async (): Promise<void> => {
+  const install = async (): Promise<boolean> => {
     if (!isDefined(universalIdentifier)) {
-      return;
+      return false;
     }
 
     try {
@@ -159,9 +159,13 @@ export const useInstallMarketplaceApp = ({
 
       const jobId = data?.triggerInstallApplication.jobId;
 
-      if (isDefined(jobId)) {
-        trackJob({ jobId, context: universalIdentifier });
+      if (!isDefined(jobId)) {
+        return false;
       }
+
+      trackJob({ jobId, context: universalIdentifier });
+
+      return true;
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
@@ -169,6 +173,8 @@ export const useInstallMarketplaceApp = ({
         status: 'error',
         children: graphqlMessage ?? t`Failed to install the application.`,
       });
+
+      return false;
     }
   };
 
