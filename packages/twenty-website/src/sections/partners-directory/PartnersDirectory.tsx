@@ -70,6 +70,15 @@ const presentValues = <Value extends string>(
   return vocabulary.filter((value) => present.has(value));
 };
 
+// The filters open the list: they sit closer to the intro than the section's
+// 80px, at SectionStack's own mobile step, so a small button does not float
+// in the gap. Doubled class: wins over SectionStack's child margin.
+const Listing = styled.div`
+  && {
+    margin-top: ${spacing(10)};
+  }
+`;
+
 // The production directory's spacing between the filters and the results.
 const Results = styled.div`
   margin-top: ${spacing(6)};
@@ -181,7 +190,7 @@ export function PartnersDirectory({
             <OfferAction>{matchCta}</OfferAction>
           </Offer>
         ) : (
-          <div>
+          <Listing>
             <FilterBar
               ariaLabel={i18n._(msg`Filter partners`)}
               facets={facets}
@@ -203,7 +212,7 @@ export function PartnersDirectory({
                 </Grid>
               )}
             </Results>
-          </div>
+          </Listing>
         )}
       </SectionStack>
     </SectionShell>
