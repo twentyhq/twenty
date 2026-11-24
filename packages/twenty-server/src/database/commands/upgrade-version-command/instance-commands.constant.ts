@@ -337,6 +337,7 @@ import { AddFieldMetadataOptionDescriptionFastInstanceCommand } from 'src/databa
 import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
 import { AddPresetFilterToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795514647600-add-preset-filter-to-view';
 import { AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523223000-add-workspace-member-relation-filter-to-row-level-permission-predicate';
+import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523227174-add-source-field-to-field-permission';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -676,4 +677,5 @@ export const INSTANCE_COMMANDS = [
   AddPresetFilterToViewFastInstanceCommand,
   AddFieldMetadataOptionDescriptionFastInstanceCommand,
   AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstanceCommand,
+  AddSourceFieldToFieldPermissionFastInstanceCommand,
 ];
