@@ -932,6 +932,20 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
+**Adrese de serviciu.** `isWorkEmail(address)` din `twenty-sdk/email` diferențiază o adresă de companie de una personală, folosind aceeași listă de furnizori de e-mail gratuit și temporar pe care o utilizează Twenty. Are propria intrare deoarece lista respectivă are aproximativ 240 KB, astfel încât doar funcțiile care o importă o includ în pachet:
+
+```ts
+import { isWorkEmail } from 'twenty-sdk/email';
+
+isWorkEmail('ada@acme.com'); // true
+isWorkEmail('ada@gmail.com'); // false
+```
+
+Domeniul este comparat exact așa cum este scris, deci mai întâi transformă adresa în litere mici.
+
+</Note>
+
+<Note>
   **Hook-urile de instalare** — handlerii de preinstalare, postinstalare și dezinstalare — partajează
   acest runtime, dar sunt declarați cu propriile lor funcții define și nu acceptă
   setări de declanșare. Consultați Hook-uri de

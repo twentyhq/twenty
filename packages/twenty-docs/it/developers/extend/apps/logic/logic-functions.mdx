@@ -931,6 +931,20 @@ const handler = async (params: { parentMessageId?: string }) => {
 </Note>
 
 <Note>
+**Indirizzi di lavoro.** `isWorkEmail(address)` da `twenty-sdk/email` distingue un indirizzo aziendale da uno personale, utilizzando lo stesso elenco di provider di posta elettronica gratuiti e temporanei usato da Twenty. Ha una propria voce perché quell'elenco pesa circa 240 KB, quindi solo le funzioni che lo importano lo includono nel bundle:
+
+```ts
+import { isWorkEmail } from 'twenty-sdk/email';
+
+isWorkEmail('ada@acme.com'); // true
+isWorkEmail('ada@gmail.com'); // false
+```
+
+Il dominio viene confrontato così come è scritto, quindi converti prima l'indirizzo in minuscolo.
+
+</Note>
+
+<Note>
   **Hook di installazione** — i gestori di pre-installazione, post-installazione e disinstallazione — condividono
   questo runtime, ma sono dichiarati con le proprie funzioni di definizione e non accettano
   impostazioni dei trigger. Consulta Hook di
