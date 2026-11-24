@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FONT_WEIGHT,
   fontFamily,
+  HERO_COMPOSITION,
   radius,
   semanticColor,
   spacing,
@@ -19,7 +20,8 @@ const Story = styled.div`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   ${typeRampDeclarations('bodySm')}
-  max-width: 624px;
+  // The header tagline's measure: one reading width on the page.
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
 
   & > * + * {
     margin-top: ${spacing(4)};
@@ -42,7 +44,8 @@ const Story = styled.div`
 
   & > h2,
   & > h3 {
-    margin-top: ${spacing(14)};
+    // The gap between the page's two columns.
+    margin-top: ${spacing(16)};
   }
 
   & > :first-child {

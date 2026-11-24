@@ -11,6 +11,7 @@ import {
   DURATION,
   EASING,
   fontFamily,
+  HERO_COMPOSITION,
   mediaUp,
   MENU_HEIGHT_PX,
   radius,
@@ -41,6 +42,8 @@ import {
   type MarketplaceAppDetail,
 } from './marketplace-app';
 
+const ICON_SIZE_PX = 72;
+
 // The partner profile's band.
 const Cover = styled.div`
   border: 1px solid ${semanticColor.line};
@@ -64,42 +67,34 @@ const CoverImage = styled.img`
   width: 100%;
 `;
 
+// Under the cover, its icon half on the band as on the app cards, flush
+// with the page's left edge like everything below; the name
+// and tagline, then Install level with the tagline on wide screens.
 const Header = styled.div`
-  align-items: start;
+  && {
+    margin-top: calc(-1 * ${ICON_SIZE_PX / 2}px);
+  }
+
   display: grid;
-  gap: ${spacing(5)};
-  grid-template-columns: auto minmax(0, 1fr);
+  gap: ${spacing(6)};
 
   ${mediaUp('md')} {
-    align-items: center;
-    gap: ${spacing(6)};
-    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 `;
 
 const HeaderText = styled.div`
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
   min-width: 0;
 
   & > * + * {
     margin-top: ${spacing(2)};
   }
-`;
 
-// Below md the side column comes after the content, so the header keeps Install.
-const HeaderAction = styled.div`
-  grid-column: 1 / -1;
-
-  ${mediaUp('md')} {
-    display: none;
-  }
-`;
-
-const SideAction = styled.div`
-  display: none;
-  padding-top: ${spacing(2)};
-
-  ${mediaUp('md')} {
-    display: block;
+  & > :first-child {
+    margin-bottom: ${spacing(4)};
+    position: relative;
   }
 `;
 
@@ -118,7 +113,7 @@ const Main = styled.div`
   min-width: 0;
 
   & > * + * {
-    margin-top: ${spacing(14)};
+    margin-top: ${spacing(16)};
   }
 `;
 
@@ -142,16 +137,15 @@ const ValueList = styled.ul`
   }
 `;
 
+// Groups apart by space alone, no rules between them.
 const Side = styled.aside`
   & > * + * {
-    border-top: 1px solid ${semanticColor.line};
-    margin-top: ${spacing(6)};
-    padding-top: ${spacing(6)};
+    margin-top: ${spacing(8)};
   }
 
   ${mediaUp('md')} {
     position: sticky;
-    top: ${MENU_HEIGHT_PX + 32}px;
+    top: calc(${MENU_HEIGHT_PX}px + ${spacing(8)});
   }
 `;
 
@@ -185,13 +179,6 @@ const SideGroup = styled.div`
   & > * + * {
     margin-top: ${spacing(4)};
   }
-`;
-
-const PackageName = styled.p`
-  color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
-  ${typeRampDeclarations('bodyXs')}
-  overflow-wrap: anywhere;
 `;
 
 const SideLink = styled(ExternalLink)`
@@ -253,11 +240,10 @@ const Related = styled.div`
   }
 `;
 
-const firstSentence = (text: string) =>
-  text
-    .trim()
-    .split(/(?<=[.!?])\s/)[0]
-    ?.toLowerCase() ?? '';
+const leadSentence = (text: string) =>
+  text.trim().split(/(?<=[.!?])\s/)[0] ?? '';
+
+const firstSentence = (text: string) => leadSentence(text).toLowerCase();
 
 // The tagline already sits under the name: a README opening on the same
 // sentence would say it twice.
@@ -377,27 +363,29 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
           </Cover>
 
           <Header>
-            <AppIcon app={app} sizePx={72} />
             <HeaderText>
+              <AppIcon app={app} sizePx={ICON_SIZE_PX} />
               <Heading as="h1" size="md" weight="light" wrap="normal">
                 {app.name}
               </Heading>
+              {/* The tagline's first sentence: the whole one runs to 260
+                  characters, and the overview says the rest. */}
               <Body muted size="sm">
-                {app.tagline}
+                {leadSentence(app.tagline)}
               </Body>
-              <Body muted size="xs">
-                {[app.category, ...(isBeta ? [i18n._(msg`Beta`)] : [])]
-                  .filter((part) => part.length > 0)
-                  .join(' · ')}
-              </Body>
+              {isBeta && (
+                <Body muted size="xs">
+                  {i18n._(msg`Beta`)}
+                </Body>
+              )}
             </HeaderText>
-            <HeaderAction>
+            <div>
               <Button
                 href={buildAppInstallUrl(app.universalIdentifier)}
                 label={i18n._(msg`Install app`)}
                 variant="filled"
               />
-            </HeaderAction>
+            </div>
           </Header>
 
           <Columns>
@@ -408,28 +396,11 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
                 <SideField label={i18n._(msg`Developer`)}>
                   <Body size="sm">{app.author}</Body>
                 </SideField>
-                {isDefined(app.latestAvailableVersion) && (
-                  <SideField label={i18n._(msg`Version`)}>
-                    <Body size="sm">{app.latestAvailableVersion}</Body>
-                  </SideField>
-                )}
                 {isDefined(installs) && (
                   <SideField label={i18n._(msg`Installed by`)}>
                     <Body size="sm">{i18n._(msg`${installs} workspaces`)}</Body>
                   </SideField>
                 )}
-                {isDefined(app.sourcePackage) && (
-                  <SideField label={i18n._(msg`Package`)}>
-                    <PackageName>{app.sourcePackage}</PackageName>
-                  </SideField>
-                )}
-                <SideAction>
-                  <Button
-                    href={buildAppInstallUrl(app.universalIdentifier)}
-                    label={i18n._(msg`Install app`)}
-                    variant="filled"
-                  />
-                </SideAction>
               </SideGroup>
 
               {addsSections.length > 0 && (
