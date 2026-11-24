@@ -29,9 +29,9 @@ const INBOX_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = [
   INBOX_THREAD.views.assignedToMe.viewFilters.assigneeIsMe.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.63.0', 1795526879491)
+@RegisteredWorkspaceCommand('2.64.0', 1795529957525)
 @Command({
-  name: 'upgrade:2-63:add-standard-inbox-views',
+  name: 'upgrade:2-64:add-standard-inbox-views',
   description:
     'Add the standard inbox views of chats and their saved filters in existing workspaces',
 })

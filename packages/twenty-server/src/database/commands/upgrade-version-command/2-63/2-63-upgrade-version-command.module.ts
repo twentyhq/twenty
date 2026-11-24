@@ -7,7 +7,6 @@ import { AddRichTextFileIdsColumnsCommand } from 'src/database/commands/upgrade-
 import { AddAiChatParticipantsCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795508846990-add-ai-chat-participants-command-menu-item.command';
 import { AddCallRecordingRelatedRecordPathCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795517101008-add-call-recording-related-record-path.command';
 import { CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795522445881-copy-page-layout-widget-rules-to-conditional-availability.command';
-import { AddStandardInboxViewsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795526879491-add-standard-inbox-views.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -30,7 +29,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddAiChatParticipantsCommandMenuItemCommand,
     AddCallRecordingRelatedRecordPathCommand,
     CopyPageLayoutWidgetRulesToConditionalAvailabilityCommand,
-    AddStandardInboxViewsCommand,
   ],
 })
 export class V2_63_UpgradeVersionCommandModule {}
