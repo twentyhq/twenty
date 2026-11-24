@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { isWatchedFieldUpdated } from 'src/engine/core-modules/stored-formula-field/utils/is-watched-field-updated.util';
 import { type StoredFormulaRelatedRecordWatchPlan } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
 
 type RecordSnapshot = Record<string, unknown>;
@@ -33,9 +34,7 @@ export const findStaleStoredFormulaRecordIdsByObjectMetadataId = ({
 
       if (
         isRecordUpdate &&
-        !(updatedFields ?? []).some((fieldName) =>
-          watchedFieldNames.has(fieldName),
-        )
+        !isWatchedFieldUpdated({ updatedFields, watchedFieldNames })
       ) {
         continue;
       }

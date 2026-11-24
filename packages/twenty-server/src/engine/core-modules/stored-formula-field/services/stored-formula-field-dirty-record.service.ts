@@ -8,6 +8,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { POP_DIRTY_RECORDS_INTO_PROCESSING_SCRIPT } from 'src/engine/core-modules/stored-formula-field/constants/pop-dirty-records-into-processing-script.constant';
 import { RECOMPUTE_DIRTY_STORED_FORMULA_RECORDS_JOB_NAME } from 'src/engine/core-modules/stored-formula-field/constants/recompute-dirty-stored-formula-records-job-name.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-debounce-ms.constant';
 import { type RecomputeDirtyStoredFormulaRecordsJobData } from 'src/engine/core-modules/stored-formula-field/types/recompute-dirty-stored-formula-records-job-data.type';
@@ -41,19 +42,30 @@ export class StoredFormulaFieldDirtyRecordService {
       recordIds,
     );
 
+    const scheduledKey = this.getKey({
+      prefix: 'recompute-scheduled',
+      workspaceId,
+      objectMetadataId,
+    });
+
     // Saves the enqueue round trips on every batch while a recompute is pending
     const isFirstMarkSinceLastRun = await this.cacheStorageService.setIfAbsent(
-      this.getKey({
-        prefix: 'recompute-scheduled',
-        workspaceId,
-        objectMetadataId,
-      }),
+      scheduledKey,
       true,
       STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS,
     );
 
-    if (isFirstMarkSinceLastRun) {
+    if (!isFirstMarkSinceLastRun) {
+      return;
+    }
+
+    try {
       await this.scheduleRecompute({ workspaceId, objectMetadataId });
+    } catch (error) {
+      // Otherwise the marker would keep later batches from scheduling a run until it expires
+      await this.cacheStorageService.del(scheduledKey);
+
+      throw error;
     }
   }
 
@@ -97,12 +109,11 @@ export class StoredFormulaFieldDirtyRecordService {
       await this.cacheStorageService.del(processingRecordIdsKey);
     }
 
-    const recordIds = await this.cacheStorageService.setPop(
-      dirtyRecordIdsKey,
-      size,
-    );
-
-    await this.cacheStorageService.setAdd(processingRecordIdsKey, recordIds);
+    const recordIds = await this.cacheStorageService.runScript<string[]>({
+      script: POP_DIRTY_RECORDS_INTO_PROCESSING_SCRIPT,
+      keys: [dirtyRecordIdsKey, processingRecordIdsKey],
+      args: [String(size)],
+    });
 
     return recordIds;
   }

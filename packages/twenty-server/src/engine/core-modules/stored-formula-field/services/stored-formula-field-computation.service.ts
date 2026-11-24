@@ -4,6 +4,7 @@ import chunk from 'lodash.chunk';
 import isEqual from 'lodash.isequal';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
 import { STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-backfill-batches-per-job.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-batch-size.constant';
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
@@ -33,7 +34,10 @@ type RecomputeRecordsBatchParameters = {
 
 @Injectable()
 export class StoredFormulaFieldComputationService {
-  constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
+  constructor(
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly storedFormulaFieldDirtyRecordService: StoredFormulaFieldDirtyRecordService,
+  ) {}
 
   async recomputeStoredFormulaFieldsOfRecords({
     workspaceId,
@@ -105,11 +109,18 @@ export class StoredFormulaFieldComputationService {
         await recordIdsQueryBuilder.getRawMany<{ id: string }>()
       ).map(({ id }) => id);
 
-      await this.recomputeRecordsInBatches({
+      const writtenRecordIds = await this.recomputeRecordsInBatches({
         ...resolvedColumnExpressions,
         recordIds,
         // A full pass would otherwise fire an update event, webhook and workflow per record
         shouldSkipEventEmission: true,
+      });
+
+      // A live recompute may have written a newer value meanwhile: re-checking writes only if one was overwritten
+      await this.storedFormulaFieldDirtyRecordService.markRecordsDirty({
+        workspaceId,
+        objectMetadataId,
+        recordIds: writtenRecordIds,
       });
 
       const hasMoreRecords =
@@ -161,19 +172,26 @@ export class StoredFormulaFieldComputationService {
       : undefined;
   }
 
+  // Returns the ids of the records written
   private async recomputeRecordsInBatches({
     recordIds,
     ...batchParameters
-  }: RecomputeRecordsBatchParameters): Promise<void> {
+  }: RecomputeRecordsBatchParameters): Promise<string[]> {
+    const writtenRecordIds: string[] = [];
+
     for (const recordIdsBatch of chunk(
       recordIds,
       STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE,
     )) {
-      await this.recomputeRecordsBatch({
-        ...batchParameters,
-        recordIds: recordIdsBatch,
-      });
+      writtenRecordIds.push(
+        ...(await this.recomputeRecordsBatch({
+          ...batchParameters,
+          recordIds: recordIdsBatch,
+        })),
+      );
     }
+
+    return writtenRecordIds;
   }
 
   private async recomputeRecordsBatch({
@@ -181,7 +199,7 @@ export class StoredFormulaFieldComputationService {
     columnExpressions,
     recordIds,
     shouldSkipEventEmission,
-  }: RecomputeRecordsBatchParameters): Promise<void> {
+  }: RecomputeRecordsBatchParameters): Promise<string[]> {
     const recordRepository =
       this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
         flatObjectMetadata.nameSingular,
@@ -215,7 +233,7 @@ export class StoredFormulaFieldComputationService {
     );
 
     if (!isNonEmptyArray(staleRows)) {
-      return;
+      return [];
     }
 
     await recordRepository.updateMany(
@@ -229,5 +247,7 @@ export class StoredFormulaFieldComputationService {
         }),
       })),
     );
+
+    return staleRows.map(({ id }) => id);
   }
 }

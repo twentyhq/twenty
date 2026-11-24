@@ -3,6 +3,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   getFieldMetadataFormulaCurrencyCodeExpression,
+  getFieldMetadataFormulaEvaluation,
   getFieldMetadataFormulaExpression,
   isDefined,
   isFormulaFieldMetadataType,
@@ -202,6 +203,9 @@ export const validateFlatFieldMetadataFormula = ({
       const compilation = compileFormulaExpression({
         expression: formulaExpression,
         fields,
+        evaluation: getFieldMetadataFormulaEvaluation({
+          settings: universalSettings,
+        }),
       });
 
       return compilation.isValid
