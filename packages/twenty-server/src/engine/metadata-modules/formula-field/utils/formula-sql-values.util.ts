@@ -20,7 +20,7 @@ const FORMULA_SQL_TYPE_LABELS: Record<FormulaSqlType, string> = {
 export const describeFormulaSqlType = (type: FormulaSqlType): string =>
   FORMULA_SQL_TYPE_LABELS[type];
 
-export const buildTextLiteralValue = (text: string): FormulaSqlValue => {
+export const buildTextLiteralValueOrThrow = (text: string): FormulaSqlValue => {
   if (text.includes('\u0000')) {
     throw new FormulaSqlCompilationException({
       message: 'Text cannot contain a null character',
