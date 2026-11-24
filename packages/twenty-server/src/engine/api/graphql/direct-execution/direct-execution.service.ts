@@ -33,7 +33,7 @@ import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/g
 import { WorkspaceResolverRunnerService } from 'src/engine/api/graphql/direct-execution/services/workspace-resolver-runner.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { getGraphqlOperationMetricKeyFromErrorCode } from 'src/engine/core-modules/graphql/utils/get-graphql-operation-metric-key-from-error-code.util';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { validateGraphqlQueryComplexityOrThrow } from 'src/engine/core-modules/graphql/utils/validate-graphql-query-complexity-or-throw.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -144,7 +144,14 @@ export class DirectExecutionService {
         req.body.operationName,
       );
 
-      this.checkRootResolverLimitsOrThrow(topLevelFields);
+      validateGraphqlQueryComplexityOrThrow(document, {
+        maximumAllowedFields:
+          this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
+        maximumAllowedRootResolvers: this.twentyConfigService.get(
+          'GRAPHQL_MAX_ROOT_RESOLVERS',
+        ),
+        checkDuplicateRootResolvers: true,
+      });
 
       const fragmentMap = graphQLBuildFragmentMap(document);
       const variables = applyGraphqlVariableDefaults(
@@ -385,32 +392,5 @@ export class DirectExecutionService {
       'graphql.direct_execution.selected_leaf_field_count':
         queryCost.selectedLeafFieldCount,
     });
-  }
-
-  private checkRootResolverLimitsOrThrow(topLevelFields: FieldNode[]): void {
-    const maxRootResolvers = this.twentyConfigService.get(
-      'GRAPHQL_MAX_ROOT_RESOLVERS',
-    );
-
-    if (
-      isDefined(maxRootResolvers) &&
-      topLevelFields.length > maxRootResolvers
-    ) {
-      throw new UserInputError(
-        `Query too complex - Too many root resolvers requested: ${topLevelFields.length} - Maximum allowed root resolvers: ${maxRootResolvers}`,
-      );
-    }
-
-    const seen = new Set<string>();
-
-    for (const field of topLevelFields) {
-      const name = field.name.value;
-
-      if (seen.has(name)) {
-        throw new UserInputError(`Duplicate root resolver: "${name}"`);
-      }
-
-      seen.add(name);
-    }
   }
 }

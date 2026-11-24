@@ -36,7 +36,7 @@ describe('Query Complexity', () => {
     expect(response.body.errors[0].message).toMatchSnapshot();
   });
 
-  it.only('should fail to execute a query with too many root resolvers', async () => {
+  it('should fail to execute a query with too many root resolvers', async () => {
     const response = await makeGraphqlApiRequest({
       query: TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS,
     });
