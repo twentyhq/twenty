@@ -106,9 +106,19 @@ msgstr ""
 msgid "\"{path}\" goes more than one relation deep"
 msgstr ""
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr ""
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
+msgstr ""
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
 msgstr ""
 
 #. js-lingui-id: ZIIOJj
@@ -876,6 +886,16 @@ msgstr ""
 #. js-lingui-id: EjjpWm
 #: src/modules/ai-chat/usage/components/AiChatContextUsageButton.tsx
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
+msgstr ""
+
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr ""
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
 msgstr ""
 
 #. js-lingui-id: NHstiz
@@ -14667,6 +14687,11 @@ msgstr ""
 msgid "Forms are meant for manual triggers"
 msgstr ""
 
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr ""
+
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Forwarding address"
@@ -17898,6 +17923,11 @@ msgstr ""
 #. js-lingui-id: b3MaZQ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
+msgstr ""
+
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
 msgstr ""
 
 #. js-lingui-id: HRo4g8
