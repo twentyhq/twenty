@@ -17,16 +17,16 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const CHAT = STANDARD_OBJECTS.agentChatThread;
+const INBOX_THREAD = STANDARD_OBJECTS.agentChatThread;
 
-const INBOX_VIEW_UNIVERSAL_IDENTIFIERS = Object.values(CHAT.views).map(
+const INBOX_VIEW_UNIVERSAL_IDENTIFIERS = Object.values(INBOX_THREAD.views).map(
   (view) => view.universalIdentifier,
 );
 
 const INBOX_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = [
-  CHAT.views.needsInput.viewFilters.pendingQuestionMessageIdIsNotEmpty
+  INBOX_THREAD.views.needsInput.viewFilters.pendingQuestionMessageIdIsNotEmpty
     .universalIdentifier,
-  CHAT.views.assignedToMe.viewFilters.assigneeIsMe.universalIdentifier,
+  INBOX_THREAD.views.assignedToMe.viewFilters.assigneeIsMe.universalIdentifier,
 ];
 
 @RegisteredWorkspaceCommand('2.63.0', 1795526879491)
@@ -59,7 +59,7 @@ export class AddStandardInboxViewsCommand extends ProvisionedWorkspaceCommandRun
     const hasChatObject = isDefined(
       findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
         flatEntityMaps: flatObjectMetadataMaps,
-        universalIdentifier: CHAT.universalIdentifier,
+        universalIdentifier: INBOX_THREAD.universalIdentifier,
       }),
     );
 

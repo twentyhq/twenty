@@ -12,7 +12,7 @@ const WORKSPACE_ID = '20202020-1111-4111-8111-111111111111';
 const TWENTY_STANDARD_APPLICATION_ID = '20202020-2222-4222-8222-222222222222';
 const NOW = '2024-01-01T00:00:00.000Z';
 
-const CHAT = STANDARD_OBJECTS.agentChatThread;
+const INBOX_THREAD = STANDARD_OBJECTS.agentChatThread;
 
 describe('AgentChatThread standard views build', () => {
   const { allFlatEntityMaps } =
@@ -28,7 +28,8 @@ describe('AgentChatThread standard views build', () => {
     .filter(isDefined)
     .filter(
       (view) =>
-        view.objectMetadataUniversalIdentifier === CHAT.universalIdentifier,
+        view.objectMetadataUniversalIdentifier ===
+        INBOX_THREAD.universalIdentifier,
     )
     .sort((viewA, viewB) => viewA.position - viewB.position);
 
@@ -43,24 +44,30 @@ describe('AgentChatThread standard views build', () => {
       })),
     ).toEqual(
       [
-        { view: CHAT.views.open, presetFilter: ViewPresetFilter.INBOX_OPEN },
         {
-          view: CHAT.views.needsInput,
+          view: INBOX_THREAD.views.open,
           presetFilter: ViewPresetFilter.INBOX_OPEN,
         },
         {
-          view: CHAT.views.mentions,
+          view: INBOX_THREAD.views.needsInput,
+          presetFilter: ViewPresetFilter.INBOX_OPEN,
+        },
+        {
+          view: INBOX_THREAD.views.mentions,
           presetFilter: ViewPresetFilter.INBOX_MENTIONS,
         },
         {
-          view: CHAT.views.assignedToMe,
+          view: INBOX_THREAD.views.assignedToMe,
           presetFilter: ViewPresetFilter.INBOX_OPEN,
         },
         {
-          view: CHAT.views.snoozed,
+          view: INBOX_THREAD.views.snoozed,
           presetFilter: ViewPresetFilter.INBOX_SNOOZED,
         },
-        { view: CHAT.views.done, presetFilter: ViewPresetFilter.INBOX_DONE },
+        {
+          view: INBOX_THREAD.views.done,
+          presetFilter: ViewPresetFilter.INBOX_DONE,
+        },
       ].map(({ view, presetFilter }) => ({
         universalIdentifier: view.universalIdentifier,
         type: ViewType.INBOX,
@@ -95,16 +102,18 @@ describe('AgentChatThread standard views build', () => {
 
     expect(chatViewFilters).toEqual([
       {
-        viewUniversalIdentifier: CHAT.views.needsInput.universalIdentifier,
+        viewUniversalIdentifier:
+          INBOX_THREAD.views.needsInput.universalIdentifier,
         fieldMetadataUniversalIdentifier:
-          CHAT.fields.pendingQuestionMessageId.universalIdentifier,
+          INBOX_THREAD.fields.pendingQuestionMessageId.universalIdentifier,
         operand: ViewFilterOperand.IS_NOT_EMPTY,
         value: '',
       },
       {
-        viewUniversalIdentifier: CHAT.views.assignedToMe.universalIdentifier,
+        viewUniversalIdentifier:
+          INBOX_THREAD.views.assignedToMe.universalIdentifier,
         fieldMetadataUniversalIdentifier:
-          CHAT.fields.assignee.universalIdentifier,
+          INBOX_THREAD.fields.assignee.universalIdentifier,
         operand: ViewFilterOperand.IS,
         value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: true,
