@@ -1,4 +1,3 @@
-import { isDynamicField } from 'twenty-shared/metadata';
 import {
   type CompositeProperty,
   FieldMetadataType,
@@ -188,10 +187,7 @@ export const generateColumnDefinitions = ({
   workspaceId: string;
   searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
-  if (
-    isMorphRelationHead(flatFieldMetadata) ||
-    isDynamicField(flatFieldMetadata)
-  ) {
+  if (isMorphRelationHead(flatFieldMetadata)) {
     return [];
   }
 

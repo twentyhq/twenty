@@ -1,4 +1,3 @@
-import { isDynamicField } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import {
@@ -191,10 +190,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
-    if (
-      isMorphRelationHead(currentFlatFieldMetadata) ||
-      isDynamicField(currentFlatFieldMetadata)
-    ) {
+    if (isMorphRelationHead(currentFlatFieldMetadata)) {
       return;
     }
 

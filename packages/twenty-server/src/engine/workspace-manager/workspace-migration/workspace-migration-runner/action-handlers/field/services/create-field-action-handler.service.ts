@@ -1,4 +1,3 @@
-import { isDynamicField } from 'twenty-shared/metadata';
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
@@ -239,10 +238,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     tableName: string;
     workspaceId: string;
   }): Promise<void> {
-    if (
-      isMorphRelationHead(flatFieldMetadata) ||
-      isDynamicField(flatFieldMetadata)
-    ) {
+    if (isMorphRelationHead(flatFieldMetadata)) {
       return;
     }
 
