@@ -188,6 +188,7 @@ const handler = async (
           break;
         case "messages": {
           if ('errors' in change.value) {
+            console.error(`WhatsApp reported errors for business account ${entry.id}`, change.value.errors);
             break;
           }
           if ('statuses' in change.value) {
