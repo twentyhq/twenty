@@ -229,6 +229,8 @@ export type IndustrySubCategoryPage = {
   addedObjects: readonly IndustryObject[];
   workflows: Three<IndustryWorkflow>;
   customScreen?: IndustryCustomScreen;
+  agents?: IndustryCategoryPage['agents'];
+  access?: IndustryCategoryPage['access'];
   questions: readonly IndustryQuestion[];
   proof?: IndustryProof;
 };

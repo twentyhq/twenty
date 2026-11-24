@@ -57,6 +57,8 @@ export const resolveIndustryPage = (
     },
     workflows: { ...inherited.workflows, items: definition.workflows },
     customScreen: definition.customScreen ?? inherited.customScreen,
+    agents: definition.agents ?? inherited.agents,
+    access: definition.access ?? inherited.access,
     questions: mergeQuestions(definition.questions, inherited.questions),
     proof: definition.proof ?? inherited.proof,
     parent: { slug: parent.slug, name: parent.name },
