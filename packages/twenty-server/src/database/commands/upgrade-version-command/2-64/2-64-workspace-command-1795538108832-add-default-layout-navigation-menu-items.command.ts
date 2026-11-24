@@ -14,7 +14,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.64.0', 1795528202227)
+@RegisteredWorkspaceCommand('2.64.0', 1795538108832)
 @Command({
   name: 'upgrade:2-64:add-default-layout-navigation-menu-items',
   description:
