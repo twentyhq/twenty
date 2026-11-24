@@ -7,13 +7,24 @@ const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
   (objectMetadataItem) => ({
     ...objectMetadataItem,
     fields: objectMetadataItem.fields.map((fieldMetadataItem) =>
-      objectMetadataItem.nameSingular === 'company' &&
-      fieldMetadataItem.name === 'employees'
-        ? {
-            ...fieldMetadataItem,
-            settings: { formula: { expression: 'arrayLength(tagline)' } },
-          }
-        : fieldMetadataItem,
+      objectMetadataItem.nameSingular !== 'company'
+        ? fieldMetadataItem
+        : fieldMetadataItem.name === 'employees'
+          ? {
+              ...fieldMetadataItem,
+              settings: { formula: { expression: 'arrayLength(tagline)' } },
+            }
+          : fieldMetadataItem.name === 'idealCustomerProfile'
+            ? {
+                ...fieldMetadataItem,
+                settings: {
+                  formula: {
+                    expression: 'count(people) > 10',
+                    evaluation: 'STORED',
+                  },
+                },
+              }
+            : fieldMetadataItem,
     ),
   }),
 );
@@ -44,7 +55,32 @@ describe('buildFormulaFieldEditorInputs', () => {
     );
   });
 
-  it('should leave out formula fields, on the object and behind a relation', () => {
+  it('should offer one-to-many relations and the fields of their records, for aggregates', () => {
+    const { fields, editorFields } = buildFormulaFieldEditorInputs({
+      objectMetadataItem: findObjectMetadataItemOrThrow('company'),
+      objectMetadataItems,
+    });
+
+    expect(
+      fields
+        .find(({ name }) => name === 'people')
+        ?.relationTargetFields?.map(({ name }) => name),
+    ).toContain('jobTitle');
+    expect(editorFields.map(({ path }) => path)).toEqual(
+      expect.arrayContaining(['people', 'people.jobTitle']),
+    );
+  });
+
+  it('should offer stored formula fields, which other formulas can read', () => {
+    const { fields } = buildFormulaFieldEditorInputs({
+      objectMetadataItem: findObjectMetadataItemOrThrow('company'),
+      objectMetadataItems,
+    });
+
+    expect(fields.map(({ name }) => name)).toContain('idealCustomerProfile');
+  });
+
+  it('should leave out query-time formula fields, on the object and behind a relation', () => {
     const companyInputs = buildFormulaFieldEditorInputs({
       objectMetadataItem: findObjectMetadataItemOrThrow('company'),
       objectMetadataItems,

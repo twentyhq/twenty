@@ -1,4 +1,7 @@
-import { VALIDATION_RULE_FUNCTIONS } from 'twenty-shared/constants';
+import {
+  FORMULA_AGGREGATE_FUNCTION_NAMES,
+  VALIDATION_RULE_FUNCTIONS,
+} from 'twenty-shared/constants';
 import { type ValidationRuleExpressionToken } from 'twenty-shared/types';
 import {
   isDefined,
@@ -11,7 +14,10 @@ import {
   type ValidationRuleExpressionHighlightKind,
 } from '@/validation-rules/types/ValidationRuleExpressionHighlight';
 
-const FUNCTION_NAMES = Object.keys(VALIDATION_RULE_FUNCTIONS);
+const FUNCTION_NAMES = [
+  ...Object.keys(VALIDATION_RULE_FUNCTIONS),
+  ...FORMULA_AGGREGATE_FUNCTION_NAMES,
+];
 const KEYWORD_NAMES = VALIDATION_RULE_KEYWORDS.map(({ name }) => name);
 const OPERATOR_CHARACTERS = '=!<>+-*/%?:|&';
 
