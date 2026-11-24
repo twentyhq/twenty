@@ -5878,7 +5878,7 @@ export interface CalendarConfigurationGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CalendarEventRecurrenceInput {daysOfWeek?: (CalendarEventRecurrenceWeekday[] | null),endDate?: (Scalars['String'] | null),frequency: CalendarEventRecurrenceFrequency,interval?: (Scalars['Int'] | null),occurrenceCount?: (Scalars['Int'] | null)}
+export interface CalendarEventRecurrenceInput {daysOfWeek?: (CalendarEventRecurrenceWeekday[] | null),endDate?: (Scalars['String'] | null),endOccurrenceCount?: (Scalars['Int'] | null),frequency: CalendarEventRecurrenceFrequency,interval?: (Scalars['Int'] | null)}
 
 export interface CallRecordingSummaryConfigurationGenqlSelection{
     configurationType?: boolean | number

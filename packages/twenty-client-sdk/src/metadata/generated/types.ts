@@ -241,7 +241,7 @@ export default {
                 349
             ],
             "universalIdentifier": [
-                563
+                572
             ],
             "updatedAt": [
                 233
@@ -2848,13 +2848,13 @@ export default {
             "endDate": [
                 4
             ],
+            "endOccurrenceCount": [
+                2
+            ],
             "frequency": [
                 151
             ],
             "interval": [
-                2
-            ],
-            "occurrenceCount": [
                 2
             ],
             "__typename": [

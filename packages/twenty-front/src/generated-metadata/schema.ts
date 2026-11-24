@@ -1449,9 +1449,9 @@ export enum CalendarEventRecurrenceFrequency {
 export type CalendarEventRecurrenceInput = {
   daysOfWeek?: InputMaybe<Array<CalendarEventRecurrenceWeekday>>;
   endDate?: InputMaybe<Scalars['String']['input']>;
+  endOccurrenceCount?: InputMaybe<Scalars['Int']['input']>;
   frequency: CalendarEventRecurrenceFrequency;
   interval?: InputMaybe<Scalars['Int']['input']>;
-  occurrenceCount?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export enum CalendarEventRecurrenceWeekday {

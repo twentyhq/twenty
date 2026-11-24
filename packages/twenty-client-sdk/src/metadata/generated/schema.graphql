@@ -1354,9 +1354,9 @@ enum CalendarEventRecurrenceFrequency {
 input CalendarEventRecurrenceInput {
   daysOfWeek: [CalendarEventRecurrenceWeekday!]
   endDate: String
+  endOccurrenceCount: Int
   frequency: CalendarEventRecurrenceFrequency!
   interval: Int
-  occurrenceCount: Int
 }
 
 enum CalendarEventRecurrenceWeekday {
