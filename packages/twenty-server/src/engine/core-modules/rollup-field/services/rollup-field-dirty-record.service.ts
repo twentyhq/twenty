@@ -28,7 +28,7 @@ export class RollupFieldDirtyRecordService {
   }: RecomputeDirtyRollupRecordsJobData & {
     recordIds: string[];
   }): Promise<void> {
-    if (recordIds.length === 0) {
+    if (!isNonEmptyArray(recordIds)) {
       return;
     }
 
