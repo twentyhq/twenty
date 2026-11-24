@@ -46,24 +46,11 @@ export const fromUniversalRollupSettingsToRollupSettingsOrThrow = ({
     )
       ? toFieldMetadataIdOrThrow(aggregatedFieldMetadataUniversalIdentifier)
       : null,
-    filters: filters.map(
-      ({
+    filters: filters.map(({ fieldMetadataUniversalIdentifier, ...filter }) => ({
+      ...filter,
+      fieldMetadataId: toFieldMetadataIdOrThrow(
         fieldMetadataUniversalIdentifier,
-        relationTargetFieldMetadataUniversalIdentifier,
-        ...filter
-      }) => ({
-        ...filter,
-        fieldMetadataId: toFieldMetadataIdOrThrow(
-          fieldMetadataUniversalIdentifier,
-        ),
-        ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
-          ? {
-              relationTargetFieldMetadataId: toFieldMetadataIdOrThrow(
-                relationTargetFieldMetadataUniversalIdentifier,
-              ),
-            }
-          : {}),
-      }),
-    ),
+      ),
+    })),
   };
 };

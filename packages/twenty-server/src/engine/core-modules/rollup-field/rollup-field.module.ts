@@ -25,6 +25,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ReconcileRollupFieldsCronJob,
     ReconcileRollupFieldsCronCommand,
   ],
-  exports: [RollupFieldComputationService, ReconcileRollupFieldsCronCommand],
+  exports: [ReconcileRollupFieldsCronCommand],
 })
 export class RollupFieldModule {}

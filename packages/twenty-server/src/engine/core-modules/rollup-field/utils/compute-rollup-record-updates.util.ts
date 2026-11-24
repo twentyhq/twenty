@@ -1,6 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
-
-type RollupValue = number | string | null;
+import { type RollupValue } from 'src/engine/core-modules/rollup-field/types/rollup-value.type';
 
 type RollupValuesByFieldName = Record<string, RollupValue>;
 
@@ -19,8 +17,7 @@ export const computeRollupRecordUpdates = ({
       ),
     );
 
-    return isDefined(computedValuesByRecordId[recordId]) &&
-      Object.keys(changedValues).length > 0
+    return Object.keys(changedValues).length > 0
       ? [{ criteria: recordId, partialEntity: changedValues }]
       : [];
   });
