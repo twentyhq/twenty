@@ -23,8 +23,9 @@ import {
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
+import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
 import { fetchOwnerUserWorkspaceIdByCalendarChannelId } from 'src/logic-functions/data/fetch-owner-user-workspace-id-by-calendar-channel-id.util';
-import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
+import { clearCalendarEventsAutoRecording } from 'src/logic-functions/data/clear-calendar-events-auto-recording.util';
 import { enqueueCallRecordingRequestFollowUps } from 'src/logic-functions/data/enqueue-call-recording-request-follow-ups.util';
 import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
@@ -42,7 +43,7 @@ type CallRecorderMeetingPolicyResolution = {
 
 type CanceledMeetingReconciliation = {
   reconciliationResult: CallRecorderReconciliationResult;
-  calendarEventIdsToClearRecordingOn: string[];
+  calendarEventIdsToClearAutoRecording: string[];
 };
 
 type ActiveMeetingReconciliation = {
@@ -93,8 +94,13 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     client,
     getUniqueSortedIds(calendarEventIds),
   );
-  const ownerUserWorkspaceIdByCalendarChannelId =
-    await fetchOwnerUserWorkspaceIdByCalendarChannelId();
+  const [
+    ownerUserWorkspaceIdByCalendarChannelId,
+    memberRecordingPreferenceByUserWorkspaceId,
+  ] = await Promise.all([
+    fetchOwnerUserWorkspaceIdByCalendarChannelId(),
+    fetchMemberRecordingPreferenceByUserWorkspaceId(),
+  ]);
   const affectedMeetingKeys = new Set<string>();
   const occurrenceStartsAtAnchors = new Set<string>();
   const changedCalendarEventPolicyResults = changedCalendarEvents.map(
@@ -102,6 +108,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       buildCallRecorderPolicyResult({
         calendarEvent,
         ownerUserWorkspaceIdByCalendarChannelId,
+        memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),
   );
@@ -149,6 +156,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       buildCallRecorderPolicyResult({
         calendarEvent,
         ownerUserWorkspaceIdByCalendarChannelId,
+        memberRecordingPreferenceByUserWorkspaceId,
         now,
       }),
     );
@@ -186,6 +194,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       calendarEventIds: [],
       requestingCalendarEventIds: [],
       calendarEventIdsWithRecordingOn: [],
+      calendarEventIdsWithAutoRecording: [],
     });
   }
 
@@ -257,11 +266,11 @@ const reconcileCallRecorderForMeetingOccurrences = async ({
       activeMeetingCallRecordingIds: new Set(activeMeetingCallRecordingIds),
     });
 
-  await clearCanceledMeetingsRecordingOn(
+  await clearCanceledMeetingsAutoRecording(
     client,
     canceledMeetingReconciliations.flatMap(
       (canceledMeetingReconciliation) =>
-        canceledMeetingReconciliation.calendarEventIdsToClearRecordingOn,
+        canceledMeetingReconciliation.calendarEventIdsToClearAutoRecording,
     ),
   );
 
@@ -372,7 +381,7 @@ const reconcileCanceledMeetings = async ({
           meetingPolicyResult.realMeetingKey,
           error,
         ),
-        calendarEventIdsToClearRecordingOn: [],
+        calendarEventIdsToClearAutoRecording: [],
       });
     }
   }
@@ -768,8 +777,8 @@ const reconcileCanceledMeeting = async ({
   const cancellableCallRecordingIds = new Set(
     cancellableCallRecordings.map((callRecording) => callRecording.id),
   );
-  const calendarEventIdsToClearRecordingOn =
-    getCalendarEventIdsToClearRecordingOn({
+  const calendarEventIdsToClearAutoRecording =
+    getCalendarEventIdsToClearAutoRecording({
       meetingPolicyResult,
       remainingCallRecordings: meetingCallRecordings.filter(
         (callRecording) => !cancellableCallRecordingIds.has(callRecording.id),
@@ -781,7 +790,7 @@ const reconcileCanceledMeeting = async ({
       reconciliationResult: buildSkippedResult(
         meetingPolicyResult.realMeetingKey,
       ),
-      calendarEventIdsToClearRecordingOn,
+      calendarEventIdsToClearAutoRecording,
     };
   }
 
@@ -791,11 +800,11 @@ const reconcileCanceledMeeting = async ({
       realMeetingKey: meetingPolicyResult.realMeetingKey,
       callRecordingId: cancellableCallRecordings[0].id,
     },
-    calendarEventIdsToClearRecordingOn,
+    calendarEventIdsToClearAutoRecording,
   };
 };
 
-const getCalendarEventIdsToClearRecordingOn = ({
+const getCalendarEventIdsToClearAutoRecording = ({
   meetingPolicyResult,
   remainingCallRecordings,
 }: {
@@ -810,15 +819,15 @@ const getCalendarEventIdsToClearRecordingOn = ({
 
   return hasCallRecordingOutsideThisCancellation
     ? []
-    : meetingPolicyResult.calendarEventIdsWithRecordingOn;
+    : meetingPolicyResult.calendarEventIdsWithAutoRecording;
 };
 
-const clearCanceledMeetingsRecordingOn = async (
+const clearCanceledMeetingsAutoRecording = async (
   client: Pick<CoreApiClient, 'query' | 'mutation'>,
   calendarEventIds: string[],
 ): Promise<void> => {
   try {
-    await clearCalendarEventsRecordingOn(client, calendarEventIds);
+    await clearCalendarEventsAutoRecording(client, calendarEventIds);
   } catch (error) {
     console.warn(
       `[call-recorder] failed to clear the recording preference of ${calendarEventIds.length} calendar events: ${

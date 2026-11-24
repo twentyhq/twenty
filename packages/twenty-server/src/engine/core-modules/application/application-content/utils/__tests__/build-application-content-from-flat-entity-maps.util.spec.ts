@@ -1,9 +1,5 @@
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import {
   type ApplicationContentFlatEntityMaps,
@@ -48,7 +44,7 @@ const BASE_FLAT_VIEW: FlatView = {
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   isActive: true,
   isSystemSideEffect: false,
   createdByUserWorkspaceId: null,
@@ -164,13 +160,13 @@ describe('buildApplicationContentFromFlatEntityMaps', () => {
             ...BASE_FLAT_VIEW,
             id: 'app-unlisted-view-id',
             universalIdentifier: 'app-unlisted-view',
-            visibility: ViewVisibility.UNLISTED,
+            isPrivate: true,
           },
           {
             ...BASE_FLAT_VIEW,
             id: 'personal-view-id',
             universalIdentifier: 'personal-view',
-            visibility: ViewVisibility.UNLISTED,
+            isPrivate: true,
             createdByUserWorkspaceId: 'user-workspace-id',
           },
         ],
