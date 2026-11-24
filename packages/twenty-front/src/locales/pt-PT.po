@@ -7464,6 +7464,26 @@ msgstr "Escrever e-mail"
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
 msgstr "Calcule os grupos de acesso que as listagens de registros usarão para permissões no nível da linha. Ative após a conclusão da atualização do espaço de trabalho."
 
+#. js-lingui-id: LzmTuU
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand."
+msgstr ""
+
+#. js-lingui-id: Y+aLgd
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. Leave empty to enter values by hand."
+msgstr ""
+
+#. js-lingui-id: 5uQ2yY
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand."
+msgstr ""
+
+#. js-lingui-id: egFQhc
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand."
+msgstr ""
+
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
 msgid "Computed at"
@@ -14727,6 +14747,19 @@ msgstr "Ex-membro"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "Os formulários destinam-se a gatilhos manuais"
+
+#. js-lingui-id: lpxWKi
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Formula"
+msgstr ""
+
+#. js-lingui-id: 2eN5Wv
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Formula currency"
+msgstr ""
 
 #. js-lingui-id: k7mCp1
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -30255,6 +30288,11 @@ msgstr "O código do parceiro da Twenty que indicou você"
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
 msgstr "A conversa foi compactada"
+
+#. js-lingui-id: Ah78wz
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "The currency of the computed amount: a code in quotes such as \"USD\", or the currency code of another field."
+msgstr ""
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
