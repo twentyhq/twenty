@@ -7,6 +7,7 @@ import {
   type ViewFilterOperand,
   type ViewKey,
   type ViewOpenRecordIn,
+  type ViewPresetFilter,
   type ViewSortDirection,
   type ViewType,
   type ViewVisibility,
@@ -90,6 +91,7 @@ export type ViewManifest = SyncableEntityOptions & {
   mainGroupByFieldMetadataUniversalIdentifier?: string;
   shouldHideEmptyGroups?: boolean;
   shouldDisplayGroupsAsTabs?: boolean;
+  presetFilter?: ViewPresetFilter;
   groupLoadLimit?: number;
   anyFieldFilterValue?: string | null;
   kanbanColumnWidth?: number | null;
