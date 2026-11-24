@@ -10,6 +10,7 @@ import {
 
 import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { NAVIGATION_DRAWER_MODE_ORDER } from '@/navigation/constants/NavigationDrawerModeOrder';
+import { isNavigationDrawerTabShown } from '@/navigation/utils/isNavigationDrawerTabShown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   type NavigationDrawerActiveTab,
@@ -65,19 +66,12 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
     },
   };
 
-  const isTabShown = (tab: NavigationDrawerActiveTab) => {
-    switch (tab) {
-      case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
-        return hasAiPermission && !hasAiChatSectionInSidebar;
-      case NAVIGATION_DRAWER_TABS.SETTINGS:
-        return !isCustomizableSidebarEnabled;
-      default:
-        return true;
-    }
-  };
-
-  return NAVIGATION_DRAWER_MODE_ORDER.filter(isTabShown).map((tab) => ({
-    ...navigationDrawerTabDisplays[tab],
-    tab,
-  }));
+  return NAVIGATION_DRAWER_MODE_ORDER.filter((tab) =>
+    isNavigationDrawerTabShown({
+      tab,
+      hasAiPermission,
+      hasAiChatSectionInSidebar,
+      isCustomizableSidebarEnabled,
+    }),
+  ).map((tab) => ({ ...navigationDrawerTabDisplays[tab], tab }));
 };
