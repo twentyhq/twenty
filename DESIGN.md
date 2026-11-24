@@ -110,7 +110,7 @@ Twenty uses squircles where the browser supports `corner-shape` (Chromium 139+).
 - Squircle the rectangles: buttons, inputs, menus, cards, panels.
 - Keep round things round: avatars, checkboxes, switch handles, chips, tags, pills, dots, spinners. They use `border.radius.smRound`, `mdRound`, `lgRound`, `pill` or `rounded`, which never double.
 - Nested radii are concentric in both modes. Derive the inner radius from the outer token minus the inset: `calc(var(--t-border-radius-md) - var(--t-spacing-1))`, as `ListItem` does. Picking a smaller token by eye breaks concentricity under squircles.
-- Small framed clusters, 24 to 32px tall (`RecordTableCellButtons`, icon button groups), use `sm` for the frame so the outer radius never clamps.
+- Small framed clusters, 24 to 32px tall (`RecordTableCellButtons`, icon button groups), keep round corners: `mdRound` for the frame, the inner radius derived from it.
 - Opt a subtree out with `--t-corner-shape: round`.
 - All inputs share one radius (`md`) and one focus style: the border turns blue.
 - Hover, selection and focus shapes follow the element's own radius.
@@ -250,7 +250,7 @@ The side panel is where secondary work happens: record previews, AI chat outside
 ### AI chat
 
 - Outside the Inbox, a chat opens in the side panel.
-- A message shows avatar, name and time on top, with content aligned to the left edge.
+- A message shows avatar and name on top, with content aligned to the left edge. A person's message carries its time at the end of the bubble; the AI's answer, which has no bubble, shows it next to the name.
 - Tool calls stay out of the answer. They collapse into monochrome thinking steps ("Worked for 12s"), and results surface as chips.
 - The response header says who is working ("Ada is thinking"). A pending question or approval replaces the composer until answered.
 - Hover actions: copy everywhere; edit and delete on your own messages; reply and react on teammates'; retry and react on the AI's. Messages get no thumbs up or down.

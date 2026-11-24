@@ -4,4 +4,6 @@ export const AI_CHAT_UNGROUPED_MESSAGE_POSITION: AiChatMessageGroupPosition = {
   isGroupedWithPrevious: false,
   isGroupedWithNext: false,
   isTimeSharedWithNext: false,
+  isFirstOfDay: false,
+  isFollowedByNewDay: false,
 };

@@ -13,23 +13,8 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
-@UseGuards(
-  AccessPolicyGuard({
-    authPrincipals: {
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    },
-    requiredPermissionFlags: [],
-  }),
-)
 @MetadataResolver(() => ApplicationConnectionProviderDTO)
 @UseFilters(ApplicationExceptionFilter)
 export class ApplicationConnectionProviderResolver {
@@ -39,7 +24,23 @@ export class ApplicationConnectionProviderResolver {
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AccessPolicyGuard({
+      authPrincipals: {
+        userSession: {
+          standard: true,
+          impersonated: true,
+          playground: true,
+          workspaceAgnostic: false,
+        },
+        apiKey: true,
+        oauthClient: true,
+        application: true,
+      },
+      requiredPermissionFlags: [],
+    }),
+    ApplicationTargetGuard,
+  )
   async applicationConnectionProviders(
     @ApplicationTargetArg(
       'applicationId',
@@ -56,6 +57,7 @@ export class ApplicationConnectionProviderResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   logoUrl(
     @Parent()
     connectionProvider: Pick<
