@@ -5,7 +5,6 @@ import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT } from '@/navigation-menu-it
 import { isNavigationMenuSectionShowingAllItemsFamilyState } from '@/navigation-menu-item/common/states/isNavigationMenuSectionShowingAllItemsFamilyState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
-import { useSelectActiveNavigationMenuItemInEditMode } from '@/navigation-menu-item/display/hooks/useSelectActiveNavigationMenuItemInEditMode';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
@@ -30,8 +29,6 @@ export const NavigationMenuSection = ({
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(
     section.id,
   );
-  const handleActiveObjectMetadataItemClick =
-    useSelectActiveNavigationMenuItemInEditMode();
 
   if (topLevelItems.length === 0) {
     return null;
@@ -59,7 +56,6 @@ export const NavigationMenuSection = ({
       <WorkspaceSectionListReadOnly
         filteredItems={displayedItems}
         folderChildrenById={folderChildrenById}
-        onActiveObjectMetadataItemClick={handleActiveObjectMetadataItemClick}
       />
       {hasHiddenItems && (
         <NavigationDrawerItem
