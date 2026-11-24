@@ -5,12 +5,10 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 import { SITE_URLS } from '@/platform/site-urls';
-import { mediaUp, spacing } from '@/tokens';
+import { HERO_COMPOSITION, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
-import { AppsBackdrop } from './AppsBackdrop';
-import { AppsOrbit } from './AppsOrbit';
-import { APPS_ORBIT_ROOM } from './apps-orbit-room';
+import { AppsMarkOrbit } from './AppsMarkOrbit';
 import { type MarketplaceApp } from './marketplace-app';
 
 // The home hero's stack: centred copy, then CTAs, one 32px gap.
@@ -43,13 +41,10 @@ const CtaRow = styled.div`
   justify-content: center;
 `;
 
-// Empty: the orbit, drawn in the background layer, turns in this room.
-const OrbitRoom = styled.div`
-  height: ${APPS_ORBIT_ROOM.base};
-
-  ${mediaUp('md')} {
-    height: ${APPS_ORBIT_ROOM.md};
-  }
+// Under the actions, the apps turning around the Twenty mark close the hero.
+const FieldStage = styled.div`
+  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
+  width: 100%;
 `;
 
 type AppsHeroProps = {
@@ -61,12 +56,6 @@ export function AppsHero({ apps }: AppsHeroProps) {
 
   return (
     <SectionShell
-      background={
-        <>
-          <AppsOrbit apps={apps} backdrop={<AppsBackdrop />} />
-        </>
-      }
-      fullBleedBackground
       rhythm="hero"
       scheme="muted"
     >
@@ -94,7 +83,9 @@ export function AppsHero({ apps }: AppsHeroProps) {
           />
         </CtaRow>
       </IntroStack>
-      <OrbitRoom />
+      <FieldStage>
+        <AppsMarkOrbit apps={apps} />
+      </FieldStage>
     </SectionShell>
   );
 }
