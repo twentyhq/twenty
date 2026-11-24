@@ -7,6 +7,8 @@ import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/t
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
 import { type MemberRecordingPreference } from 'src/logic-functions/types/member-recording-preference.type';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
+import { isCalendarEventInternal } from 'src/logic-functions/domain/is-calendar-event-internal.util';
+import { narrowMemberRecordingPreferenceToCalendarEvent } from 'src/logic-functions/domain/narrow-member-recording-preference-to-calendar-event.util';
 import { resolveCallRecorderPolicyResult } from 'src/logic-functions/domain/resolve-call-recorder-policy-result.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 
@@ -44,11 +46,18 @@ export const buildCallRecorderPolicyResult = ({
           calendarChannelOwnerByCalendarChannelId.get(calendarChannelId),
         )
         .filter(isDefined)
-        .map(
-          (calendarChannelOwner) =>
-            memberRecordingPreferenceByUserWorkspaceId.get(
-              calendarChannelOwner.userWorkspaceId,
-            ) ?? UNREADABLE_MEMBER_RECORDING_PREFERENCE,
+        .map((calendarChannelOwner) =>
+          narrowMemberRecordingPreferenceToCalendarEvent({
+            memberRecordingPreference:
+              memberRecordingPreferenceByUserWorkspaceId.get(
+                calendarChannelOwner.userWorkspaceId,
+              ) ?? UNREADABLE_MEMBER_RECORDING_PREFERENCE,
+            isCalendarEventInternal: isCalendarEventInternal({
+              participants: calendarEvent.participants,
+              hasUnlistedParticipants: calendarEvent.hasUnlistedParticipants,
+              ownerHandle: calendarChannelOwner.handle,
+            }),
+          }),
         ),
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,
