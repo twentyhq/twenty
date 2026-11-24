@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
 import { createVisualRenderer } from '@/platform/visuals/three-runtime/create-visual-renderer';
 import {
+  buildSchemeDeclarations,
   color,
   DURATION,
   EASING,
@@ -201,7 +202,10 @@ const GlobePoint = styled.span`
 `;
 
 // The directory card's mark, name and mono place line, above the point.
+// A light island: on a profile the globe sits in a dark band, where the
+// section's ink turns white; the tag keeps its own light scheme.
 const Tag = styled.div`
+  ${buildSchemeDeclarations('light')}
   align-items: center;
   background-color: ${color('white')};
   border-radius: ${radius(2)};
