@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ArrowUpRight } from '@/icons';
@@ -9,7 +10,6 @@ import {
   color,
   DURATION,
   EASING,
-  FONT_WEIGHT,
   fontFamily,
   mediaUp,
   MENU_HEIGHT_PX,
@@ -22,7 +22,6 @@ import {
 import {
   Button,
   ExternalLink,
-  Field,
   Body,
   Heading,
   SectionShell,
@@ -122,30 +121,12 @@ const Main = styled.div`
   }
 `;
 
-// Grouped like the product's app page, so the site shows what install adds.
-const AddsSections = styled.div`
-  & > * + * {
-    margin-top: ${spacing(5)};
-  }
-`;
-
-const AddsSection = styled.div`
-  & > * + * {
-    margin-top: ${spacing(1)};
-  }
-`;
-
-const AddsTitle = styled.p`
+// One value list per field, at the value's size: what install adds reads
+// like the rest of the column (label, then values).
+const ValueList = styled.ul`
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
-  ${typeRampDeclarations('bodyXs')}
-  font-weight: ${FONT_WEIGHT.medium};
-`;
-
-const AddsList = styled.ul`
-  color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('sans')};
-  ${typeRampDeclarations('bodyXs')}
+  ${typeRampDeclarations('bodySm')}
   list-style: none;
   padding: 0;
 
@@ -156,7 +137,7 @@ const AddsList = styled.ul`
   }
 
   & > li + li {
-    margin-top: ${spacing(0.5)};
+    margin-top: ${spacing(1.5)};
   }
 `;
 
@@ -172,6 +153,32 @@ const Side = styled.aside`
     top: ${MENU_HEIGHT_PX + 32}px;
   }
 `;
+
+// Label above its value, as a role sits under a name in Testimonials: the
+// label is muted small text so the value carries the weight.
+const SideFieldStack = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(1.5)};
+  }
+`;
+
+const SideField = ({
+  children,
+  label,
+}: {
+  children: ReactNode;
+  label: string;
+}) => (
+  <SideFieldStack>
+    <Body as="span" muted size="xs">
+      {label}
+    </Body>
+    {children}
+  </SideFieldStack>
+);
 
 const SideGroup = styled.div`
   & > * + * {
@@ -230,7 +237,7 @@ const SideLink = styled(ExternalLink)`
 const SideLinks = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${spacing(2)};
+  gap: ${spacing(1.5)};
 `;
 
 const SHOWN_NAMES = 3;
@@ -395,23 +402,23 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
 
             <Side>
               <SideGroup>
-                <Field label={i18n._(msg`Developer`)}>
+                <SideField label={i18n._(msg`Developer`)}>
                   <Body size="sm">{app.author}</Body>
-                </Field>
+                </SideField>
                 {isDefined(app.latestAvailableVersion) && (
-                  <Field label={i18n._(msg`Version`)}>
+                  <SideField label={i18n._(msg`Version`)}>
                     <Body size="sm">{app.latestAvailableVersion}</Body>
-                  </Field>
+                  </SideField>
                 )}
                 {isDefined(installs) && (
-                  <Field label={i18n._(msg`Installed by`)}>
+                  <SideField label={i18n._(msg`Installed by`)}>
                     <Body size="sm">{i18n._(msg`${installs} workspaces`)}</Body>
-                  </Field>
+                  </SideField>
                 )}
                 {isDefined(app.sourcePackage) && (
-                  <Field label={i18n._(msg`Package`)}>
+                  <SideField label={i18n._(msg`Package`)}>
                     <PackageName>{app.sourcePackage}</PackageName>
-                  </Field>
+                  </SideField>
                 )}
                 <SideAction>
                   <Button
@@ -423,31 +430,26 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
               </SideGroup>
 
               {addsSections.length > 0 && (
-                <Field label={i18n._(msg`What ${app.name} adds`)}>
-                  <AddsSections>
-                    {addsSections.map((section) => {
-                      const lines = [...new Set(section.lines)];
+                <SideGroup>
+                  {addsSections.map((section) => {
+                    const lines = [...new Set(section.lines)];
 
-                      return (
-                        <AddsSection key={section.id}>
-                          <AddsTitle>{section.title}</AddsTitle>
-                          <AddsList>
-                            {lines.slice(0, SHOWN_NAMES).map((line) => (
-                              <li key={line}>{line}</li>
-                            ))}
-                            {lines.length > SHOWN_NAMES && (
-                              <li>
-                                {i18n._(
-                                  msg`+${lines.length - SHOWN_NAMES} more`,
-                                )}
-                              </li>
-                            )}
-                          </AddsList>
-                        </AddsSection>
-                      );
-                    })}
-                  </AddsSections>
-                </Field>
+                    return (
+                      <SideField key={section.id} label={section.title}>
+                        <ValueList>
+                          {lines.slice(0, SHOWN_NAMES).map((line) => (
+                            <li key={line}>{line}</li>
+                          ))}
+                          {lines.length > SHOWN_NAMES && (
+                            <li>
+                              {i18n._(msg`+${lines.length - SHOWN_NAMES} more`)}
+                            </li>
+                          )}
+                        </ValueList>
+                      </SideField>
+                    );
+                  })}
+                </SideGroup>
               )}
 
               {[
@@ -456,7 +458,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
                 app.issueReportUrl,
                 app.emailSupport,
               ].some(isDefined) && (
-                <Field label={i18n._(msg`Resources`)}>
+                <SideField label={i18n._(msg`Resources`)}>
                   <SideLinks>
                     {isDefined(app.websiteUrl) && (
                       <SideLink href={app.websiteUrl}>
@@ -483,7 +485,7 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
                       </SideLink>
                     )}
                   </SideLinks>
-                </Field>
+                </SideField>
               )}
             </Side>
           </Columns>

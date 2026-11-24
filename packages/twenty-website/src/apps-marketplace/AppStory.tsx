@@ -90,7 +90,7 @@ const Story = styled.div`
     border-radius: ${radius(1)};
     color: ${semanticColor.ink};
     font-family: ${fontFamily('mono')};
-    font-size: 0.85em;
+    ${typeRampDeclarations('bodyXs')}
     padding: 1px ${spacing(1)};
   }
 

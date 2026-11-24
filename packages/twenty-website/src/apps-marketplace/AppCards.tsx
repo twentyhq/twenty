@@ -7,6 +7,7 @@ import {
   color,
   DURATION,
   EASING,
+  FONT_WEIGHT,
   fontFamily,
   mediaUp,
   radius,
@@ -94,6 +95,7 @@ const AppName = styled.h3`
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   ${typeRampDeclarations('headingXs')}
+  font-weight: ${FONT_WEIGHT.medium};
 `;
 
 const Tagline = styled.p`
