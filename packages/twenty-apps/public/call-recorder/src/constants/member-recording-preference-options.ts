@@ -4,8 +4,8 @@ export const MEMBER_RECORDING_PREFERENCE_OPTIONS: {
   label: string;
   value: MemberRecordingPreference;
 }[] = [
-  { label: 'All my meetings', value: 'ALL' },
-  { label: 'Only internal meetings', value: 'INTERNAL' },
-  { label: 'Only external meetings', value: 'EXTERNAL' },
-  { label: 'None of my meetings', value: 'NONE' },
+  { label: 'All', value: 'ALL' },
+  { label: 'Internal', value: 'INTERNAL' },
+  { label: 'External', value: 'EXTERNAL' },
+  { label: 'None', value: 'NONE' },
 ];
