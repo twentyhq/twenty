@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type Nullable } from 'twenty-shared/types';
+import { type ShortcutDefinition } from 'twenty-ui/primitives/typography';
 
 export type CommandMenuItemProps = {
   label: string;
@@ -10,6 +11,7 @@ export type CommandMenuItemProps = {
   onClick?: () => void;
   Icon?: IconComponent;
   hotKeys?: Nullable<string[]>;
+  shortcut?: ShortcutDefinition;
   LeftComponent?: ReactNode;
   RightComponent?: ReactNode;
   contextualTextPosition?: 'left' | 'right';

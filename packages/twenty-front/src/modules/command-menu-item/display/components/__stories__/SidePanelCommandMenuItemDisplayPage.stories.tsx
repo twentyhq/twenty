@@ -372,13 +372,13 @@ export const SearchWithoutMatchingItemsAndWithoutFallback: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('No results found')).toBeVisible();
+    expect(await canvas.findByText('No records found')).toBeVisible();
     expect(canvas.queryByText('Collapse sidebar')).not.toBeInTheDocument();
     expect(canvas.queryByText('Expand sidebar')).not.toBeInTheDocument();
   },
 };
 
-export const SearchWithoutMatchingItemsAndWithFallback: Story = {
+export const SearchWithoutMatchingItemsReplacesSearchFallback: Story = {
   decorators: [
     createDecorator({
       commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, FALLBACK_ITEM],
@@ -389,10 +389,8 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Search records')).toBeVisible();
-    await waitFor(() => {
-      expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
-    });
+    expect(await canvas.findByText('No records found')).toBeVisible();
+    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
   },
 };
 
@@ -408,9 +406,9 @@ export const SearchWithoutMatchingItemsOffersAskAi: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Use ‘mike’ with...')).toBeVisible();
-    expect(canvas.getByText('Search records')).toBeVisible();
-    expect(canvas.getByText('Ask AI')).toBeVisible();
+    expect(await canvas.findByText('“mike”')).toBeVisible();
+    expect(canvas.getAllByText('Ask AI')).toHaveLength(2);
+    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
   },
 };
 
@@ -426,7 +424,6 @@ export const NavigationSitsLastAtRest: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('Import records')).toBeVisible();
-    expect(await canvas.findByText('Go to People')).toBeVisible();
 
     const headings = canvas.getAllByText(
       /^(Selection|Object: Companies|Workspace|Go to)$/,
@@ -438,6 +435,19 @@ export const NavigationSitsLastAtRest: Story = {
       'Workspace',
       'Go to',
     ]);
+
+    expect(
+      canvas.queryByRole('button', { name: 'Go to People' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Expand Go to' }));
+
+    expect(
+      await canvas.findByRole('button', { name: 'Go to People' }),
+    ).toBeVisible();
+    expect(
+      canvas.getByRole('button', { name: 'Collapse Go to' }),
+    ).toBeVisible();
   },
 };
 

@@ -8,8 +8,15 @@ import { StandardObjectNameSingular } from 'twenty-shared/types';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
+import { isNonEmptyString } from '@sniptt/guards';
 
-export const useSidePanelSearchRecords = () => {
+type UseSidePanelSearchRecordsParams = {
+  shouldSkipEmptySearch?: boolean;
+};
+
+export const useSidePanelSearchRecords = ({
+  shouldSkipEmptySearch = false,
+}: UseSidePanelSearchRecordsParams = {}) => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const sidePanelSearchObjectFilter = useAtomStateValue(
     sidePanelSearchObjectFilterState,
@@ -24,11 +31,19 @@ export const useSidePanelSearchRecords = () => {
 
   const hasNoSearchableObject = includedObjectNameSingulars.length === 0;
 
+  const isSkippedEmptySearch =
+    shouldSkipEmptySearch &&
+    (!isNonEmptyString(trimmedSidePanelSearch) ||
+      !isNonEmptyString(deferredSidePanelSearch));
+
   const { loading, searchRecords, error } = useObjectRecordSearchRecords({
     objectNameSingulars: includedObjectNameSingulars,
     searchInput: deferredSidePanelSearch,
-    skip: hasNoSearchableObject,
+    skip: hasNoSearchableObject || isSkippedEmptySearch,
   });
+
+  const isWaitingForDebouncedSearch =
+    deferredSidePanelSearch !== trimmedSidePanelSearch;
 
   const searchResultItems: SearchResultItem[] = useMemo(() => {
     return searchRecords.map((searchRecord) => ({
@@ -50,7 +65,7 @@ export const useSidePanelSearchRecords = () => {
 
   return {
     error,
-    loading,
+    loading: loading || isWaitingForDebouncedSearch,
     noResults: !searchResultItems.length,
     searchResultItems,
   };
