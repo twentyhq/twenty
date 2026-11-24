@@ -10,10 +10,8 @@ export const isOwnableEntityVisibleToCaller = ({
   ownableEntity,
   authContext = workspaceAuthContextStorage.getStore(),
 }: {
-  ownableEntity: {
-    isPrivate: unknown;
-    createdByUserWorkspaceId?: OwnableEntity['createdByUserWorkspaceId'];
-  };
+  ownableEntity: Pick<OwnableEntity, 'isPrivate'> &
+    Partial<Pick<OwnableEntity, 'createdByUserWorkspaceId'>>;
   authContext?: WorkspaceAuthContext;
 }): boolean => {
   if (ownableEntity.isPrivate === false) {

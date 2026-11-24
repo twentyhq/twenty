@@ -9,9 +9,8 @@ export const isViewVisibleToCaller = ({
   authContext,
 }: {
   view: OverridableFlatEntity &
-    Pick<OwnableEntity, 'isPrivate'> & {
-      createdByUserWorkspaceId?: OwnableEntity['createdByUserWorkspaceId'];
-    };
+    Pick<OwnableEntity, 'isPrivate'> &
+    Partial<Pick<OwnableEntity, 'createdByUserWorkspaceId'>>;
   authContext?: WorkspaceAuthContext;
 }): boolean =>
   isOwnableEntityVisibleToCaller({
