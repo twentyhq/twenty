@@ -12,7 +12,6 @@ type RollupSourceRecordEvent = {
   };
 };
 
-// Adding or removing a record always changes its rollups; an update only when it touches a watched field
 export const findDirtyRollupRecordIdsByObjectMetadataId = ({
   events,
   watchPlans,
