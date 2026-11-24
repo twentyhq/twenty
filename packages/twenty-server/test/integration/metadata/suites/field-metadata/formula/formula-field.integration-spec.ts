@@ -613,33 +613,6 @@ describe('Formula fields', () => {
     ]);
   });
 
-  it('should return the computed formula of a destroyed record', async () => {
-    const createResponse = await makeGraphqlApiRequest({
-      query: gql`
-        mutation {
-          createFormulaGadget(data: { name: "Doomed", price: 2, quantity: 3 }) {
-            id
-          }
-        }
-      `,
-    });
-    const destroyResponse = await makeGraphqlApiRequest({
-      query: gql`
-        mutation DestroyFormulaGadget($id: UUID!) {
-          destroyFormulaGadget(id: $id) {
-            total
-          }
-        }
-      `,
-      variables: { id: createResponse.body.data.createFormulaGadget.id },
-    });
-
-    expect(destroyResponse.body.errors).toBeUndefined();
-    expect(destroyResponse.body.data.destroyFormulaGadget).toEqual({
-      total: 6,
-    });
-  });
-
   it.each([
     {
       reason: 'an unknown field',

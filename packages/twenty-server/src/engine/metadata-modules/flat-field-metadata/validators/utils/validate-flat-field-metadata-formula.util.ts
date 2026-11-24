@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { RelationType } from 'twenty-shared/types';
 import {
   compileFormulaExpression,
   getFieldMetadataFormulaCurrencyCodeExpression,
@@ -173,17 +173,6 @@ export const validateFlatFieldMetadataFormula = ({
   const currencyCodeExpression = getFieldMetadataFormulaCurrencyCodeExpression({
     settings: universalSettings,
   });
-
-  if (
-    type === FieldMetadataType.CURRENCY &&
-    !isDefined(currencyCodeExpression)
-  ) {
-    errors.push({
-      code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-      message: 'A currency formula needs a currency code expression',
-      userFriendlyMessage: msg`A currency formula needs a currency code`,
-    });
-  }
 
   const toInvalidFormulaError = ({
     errorMessage,
