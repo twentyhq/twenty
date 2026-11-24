@@ -2524,6 +2524,7 @@ enum FeatureFlagKey {
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED
 }
 
 type Field {
@@ -4787,6 +4788,8 @@ type RowLevelPermissionPredicate {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: String
+  workspaceMemberRelationFilterFieldMetadataId: String
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -4867,6 +4870,8 @@ input RowLevelPermissionRulePredicateInput {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberRelationFilterFieldMetadataId: UUID
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 

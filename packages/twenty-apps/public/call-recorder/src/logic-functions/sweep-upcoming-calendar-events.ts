@@ -25,7 +25,7 @@ export const sweepUpcomingCalendarEventsHandler =
       const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
 
       const calendarEventIdBatches = groupUpcomingCalendarEventIdsIntoBatches(
-        await fetchUpcomingCalendarEvents(client, new Date()),
+        await fetchUpcomingCalendarEvents({ client, now: new Date() }),
       );
 
       if (calendarEventIdBatches.length === 0) {

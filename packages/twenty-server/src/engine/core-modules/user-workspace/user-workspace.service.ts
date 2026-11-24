@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
+import { In, IsNull, type QueryRunner, type Repository } from 'typeorm';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
@@ -601,15 +601,15 @@ export class UserWorkspaceService {
     queryRunner?: QueryRunner;
   }): Promise<string | undefined> {
     if (isExistingUser) {
-      const userWorkspace = await this.userWorkspaceRepository.findOne({
-        where: {
-          userId,
-          defaultAvatarFileId: Not(IsNull()),
-        },
-        order: {
-          createdAt: 'ASC',
-        },
+      // No filter on defaultAvatarFileId: the column is hidden from the entity until its slow upgrade has run
+      const userWorkspaces = await this.userWorkspaceRepository.find({
+        where: { userId },
+        order: { createdAt: 'ASC' },
       });
+
+      const userWorkspace = userWorkspaces.find((candidate) =>
+        isDefined(candidate.defaultAvatarFileId),
+      );
 
       if (!isDefined(userWorkspace?.defaultAvatarFileId)) {
         return;

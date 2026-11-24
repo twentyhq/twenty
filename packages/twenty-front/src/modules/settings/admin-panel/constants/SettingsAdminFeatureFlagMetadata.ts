@@ -109,4 +109,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Lookup columns`,
     description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,
   },
+  [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: {
+    label: msg`Widget visibility rule tree`,
+    description: msg`Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules.`,
+  },
 };
