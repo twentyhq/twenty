@@ -226,9 +226,11 @@ export class CoreWorkflowVersionWriteService {
       },
     );
 
-    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
-      workspaceId,
-    });
+    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommitOrThrow(
+      {
+        workspaceId,
+      },
+    );
 
     return { trigger, steps };
   }
@@ -324,9 +326,11 @@ export class CoreWorkflowVersionWriteService {
       },
     });
 
-    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
-      workspaceId,
-    });
+    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommitOrThrow(
+      {
+        workspaceId,
+      },
+    );
 
     return { coreWorkflowVersionId };
   }

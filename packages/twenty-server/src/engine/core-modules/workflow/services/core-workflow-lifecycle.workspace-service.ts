@@ -261,15 +261,17 @@ export class CoreWorkflowLifecycleWorkspaceService {
             CoreWorkflowVersionStatus.ACTIVE &&
           previous.trigger?.type === WorkflowTriggerType.CRON;
 
-        await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
-          workspaceId,
-          cronTriggersToPublish: isDefined(cronTriggerToPublish)
-            ? [cronTriggerToPublish]
-            : [],
-          coreWorkflowIdsToUnschedule: isPreviousCronUnscheduled
-            ? [coreWorkflow.id]
-            : [],
-        });
+        await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommitOrThrow(
+          {
+            workspaceId,
+            cronTriggersToPublish: isDefined(cronTriggerToPublish)
+              ? [cronTriggerToPublish]
+              : [],
+            coreWorkflowIdsToUnschedule: isPreviousCronUnscheduled
+              ? [coreWorkflow.id]
+              : [],
+          },
+        );
       },
     });
 
@@ -324,13 +326,15 @@ export class CoreWorkflowLifecycleWorkspaceService {
           }),
         });
 
-        await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
-          workspaceId,
-          coreWorkflowIdsToUnschedule:
-            resolved.trigger?.type === WorkflowTriggerType.CRON
-              ? [resolved.coreWorkflow.id]
-              : [],
-        });
+        await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommitOrThrow(
+          {
+            workspaceId,
+            coreWorkflowIdsToUnschedule:
+              resolved.trigger?.type === WorkflowTriggerType.CRON
+                ? [resolved.coreWorkflow.id]
+                : [],
+          },
+        );
       },
     });
 

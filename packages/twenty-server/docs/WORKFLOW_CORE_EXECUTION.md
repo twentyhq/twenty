@@ -10,7 +10,7 @@ Workflow definitions live in core: `core.workflow` and `core.workflowVersion`. R
 | Activation and deactivation | `CoreWorkflowLifecycleWorkspaceService`. Version statuses, the published pointer and the manual-trigger command menu item are written in one metadata migration, under the workflow lifecycle lock. |
 | Read, edit and application-trigger permissions | `CoreWorkflowAccessService`. It returns the authorized workflow or version entity, so callers do not reload it. |
 | Execution-side reads of core definitions | `CoreWorkflowTriggerService` (`findCoreVersionById`, `findCoreWorkflowById`, and `findCoreWorkflowByIdOrWorkspaceWorkflowId` for compatibility boundaries) |
-| Derived trigger caches | `CoreWorkflowTriggerService.refreshTriggerCachesAfterCommit`, see below |
+| Derived trigger caches | `CoreWorkflowTriggerService.refreshTriggerCachesAfterCommitOrThrow`, see below |
 | Application-managed workflows | The application manifest sync and its `workflow` metadata side effects. Editing APIs refuse to modify them. |
 
 ## Identifiers
@@ -48,7 +48,7 @@ Compatibility boundaries that resolve historical identifiers:
 
 ## Derived caches
 
-Two caches are derived from committed definitions: the workspace `workflowAutomatedTriggerMaps` and the `workflow-cron-triggers` hash. They are refreshed after the metadata migration commits, only through `refreshTriggerCachesAfterCommit`. The failure contract:
+Two caches are derived from committed definitions: the workspace `workflowAutomatedTriggerMaps` and the `workflow-cron-triggers` hash. They are refreshed after the metadata migration commits, only through `refreshTriggerCachesAfterCommitOrThrow`. The failure contract:
 
 - **Cron hash**: entries are published with `hashSetIfExists` and removed with `hashDelete`. If either fails, the whole hash is dropped and the next cron tick rebuilds it from the database. Stale entries are harmless, because the cron job normalizes each one against the published core version.
 - **Automated trigger maps**: invalidated and recomputed from the database. If that fails, a `CoreWorkflowMetadataException` with code `TRIGGER_CACHE_REFRESH_FAILED` is raised: the definition change is committed, but the maps may stay stale until the next successful refresh.

@@ -730,9 +730,11 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     });
 
-    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommit({
-      workspaceId,
-    });
+    await this.coreWorkflowTriggerService.refreshTriggerCachesAfterCommitOrThrow(
+      {
+        workspaceId,
+      },
+    );
 
     return coreVersion.coreWorkflowId;
   }

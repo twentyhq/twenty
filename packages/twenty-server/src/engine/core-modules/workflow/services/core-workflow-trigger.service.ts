@@ -38,7 +38,7 @@ export class CoreWorkflowTriggerService {
     });
   }
 
-  async refreshTriggerCachesAfterCommit({
+  async refreshTriggerCachesAfterCommitOrThrow({
     workspaceId,
     cronTriggersToPublish = [],
     coreWorkflowIdsToUnschedule = [],
