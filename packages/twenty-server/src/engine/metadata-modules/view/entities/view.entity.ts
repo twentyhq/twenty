@@ -44,6 +44,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+import { type OwnableEntity } from 'src/engine/permissions/metadata-permissions/types/ownable-entity.type';
 
 export type ViewOverrides = {
   isActive?: boolean;
@@ -91,7 +92,7 @@ export type ViewOverrides = {
 )
 export class ViewEntity
   extends OverridableEntity<ViewOverrides>
-  implements Required<ViewEntity>
+  implements Required<ViewEntity>, OwnableEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;

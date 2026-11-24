@@ -61,12 +61,9 @@ export class AgentResolver {
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO[]> {
     const flatAgentsWithRoleId = await this.agentService.findManyAgents({
       workspaceId,
-      userWorkspaceId,
     });
 
     return flatAgentsWithRoleId
@@ -95,13 +92,10 @@ export class AgentResolver {
     })
     { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO> {
     const fatAgentWithRoleId = await this.agentService.findOneAgentById({
       workspaceId,
       id,
-      userWorkspaceId,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(fatAgentWithRoleId);
@@ -184,13 +178,10 @@ export class AgentResolver {
     })
     { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO> {
     const deletedFlatAgent = await this.agentService.deleteOneAgent({
       id,
       workspaceId,
-      userWorkspaceId,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(deletedFlatAgent);

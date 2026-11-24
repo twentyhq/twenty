@@ -39,8 +39,7 @@ import { SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-i
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
-import { isAgentVisibleToUser } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-agent-visible-to-user.util';
+import { isOwnableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-ownable-entity-visible-to-caller.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
@@ -221,8 +220,6 @@ export class ApplicationResolver {
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ) {
     if (
       !canCallerReachApplication({
@@ -241,7 +238,7 @@ export class ApplicationResolver {
     });
 
     return agents.filter((agent) =>
-      isAgentVisibleToUser({ agent, userWorkspaceId }),
+      isOwnableEntityVisibleToCaller({ ownableEntity: agent }),
     );
   }
 

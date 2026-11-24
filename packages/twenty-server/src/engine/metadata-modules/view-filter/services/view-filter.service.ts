@@ -8,8 +8,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
-import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { findFlatViewAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-caller.util';
+import { findManyFlatViewChildrenAvailableToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-caller.util';
 import { sortByPositionInViewFilterGroup } from 'src/engine/metadata-modules/flat-view/utils/sort-by-position-in-view-filter-group.util';
 import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/metadata-modules/flat-view-filter/utils/from-create-view-filter-input-to-flat-view-filter-to-create.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
@@ -272,14 +272,11 @@ export class ViewFilterService {
 
   async findByWorkspaceId({
     workspaceId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFilterDTO[]> {
-    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToUser({
+    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToCaller({
       workspaceId,
-      userWorkspaceId,
     });
 
     return flatViewFilters.map(fromFlatViewFilterToViewFilterDto);
@@ -288,18 +285,15 @@ export class ViewFilterService {
   async findManyPaginated({
     workspaceId,
     viewId,
-    userWorkspaceId,
     pagination,
   }: {
     workspaceId: string;
     viewId?: string;
-    userWorkspaceId: string | undefined;
     pagination: MetadataCursorPagination;
   }): Promise<MetadataCursorPage<ViewFilterDTO> & { totalCount: number }> {
-    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToUser({
+    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToCaller({
       workspaceId,
       viewId,
-      userWorkspaceId,
     });
     const page = paginateMetadataOrderedItems({
       items: flatViewFilters,
@@ -316,29 +310,24 @@ export class ViewFilterService {
   async findByViewId({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFilterDTO[]> {
-    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToUser({
+    const flatViewFilters = await this.findManyFlatViewFiltersVisibleToCaller({
       workspaceId,
       viewId,
-      userWorkspaceId,
     });
 
     return flatViewFilters.map(fromFlatViewFilterToViewFilterDto);
   }
 
-  private async findManyFlatViewFiltersVisibleToUser({
+  private async findManyFlatViewFiltersVisibleToCaller({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId?: string;
-    userWorkspaceId: string | undefined;
   }): Promise<FlatViewFilter[]> {
     const { flatViewFilterMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -349,12 +338,11 @@ export class ViewFilterService {
       );
 
     return sortByPositionInViewFilterGroup(
-      findManyFlatViewChildrenAvailableToUser({
+      findManyFlatViewChildrenAvailableToCaller({
         flatViewMaps,
         flatViewChildMaps: flatViewFilterMaps,
         flatViewChildIdsKey: 'viewFilterIds',
         viewId,
-        userWorkspaceId,
       }),
     );
   }
@@ -362,11 +350,9 @@ export class ViewFilterService {
   async findByIdOrThrow({
     id,
     workspaceId,
-    userWorkspaceId,
   }: {
     id: string;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewFilterDTO> {
     const { flatViewFilterMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -384,10 +370,9 @@ export class ViewFilterService {
       !isDefined(flatViewFilter) ||
       flatViewFilter.deletedAt !== null ||
       !isDefined(
-        findFlatViewAvailableToUser({
+        findFlatViewAvailableToCaller({
           viewId: flatViewFilter.viewId,
           flatViewMaps,
-          userWorkspaceId,
         }),
       )
     ) {

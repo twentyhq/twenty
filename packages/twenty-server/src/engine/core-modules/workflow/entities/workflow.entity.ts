@@ -27,6 +27,7 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { type OwnableEntity } from 'src/engine/permissions/metadata-permissions/types/ownable-entity.type';
 
 @Entity({ name: 'workflow', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -39,7 +40,7 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
   'isPrivate',
   'createdByUserWorkspaceId',
 ])
-export class WorkflowEntity extends SyncableEntity {
+export class WorkflowEntity extends SyncableEntity implements OwnableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
