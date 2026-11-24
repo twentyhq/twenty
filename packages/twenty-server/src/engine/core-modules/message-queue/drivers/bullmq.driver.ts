@@ -44,6 +44,7 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
+import { QUEUE_JOB_FAILED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-failed-event.constant';
 import { QUEUE_RETENTION } from 'src/engine/core-modules/message-queue/constants/queue-retention.constants';
 import { FairQueueScheduler } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-queue-scheduler';
 import {
@@ -60,6 +61,7 @@ import {
   MessageQueueExceptionCode,
 } from 'src/engine/core-modules/message-queue/message-queue.exception';
 import { type QueueJobChangedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-changed-event.type';
+import { type QueueJobFailedEvent } from 'src/engine/core-modules/message-queue/types/queue-job-failed-event.type';
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { buildQueueJobIdWithSuffix } from 'src/engine/core-modules/message-queue/utils/build-queue-job-id-with-suffix.util';
 import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
@@ -486,10 +488,25 @@ export class BullMQDriver
       void this.clearOversizedCompletedJobData(job);
       this.releaseFinishedJobMemory({ queueName, job });
     });
-    this.workerMap[queueName].on('failed', (job) => {
-      if (isDefined(job?.finishedOn)) {
-        this.releaseFinishedJobMemory({ queueName, job });
+    this.workerMap[queueName].on('failed', (job, error) => {
+      if (!isDefined(job?.finishedOn)) {
+        return;
       }
+
+      this.releaseFinishedJobMemory({ queueName, job });
+      this.eventEmitter.emit(QUEUE_JOB_FAILED_EVENT, {
+        queueName,
+        job: {
+          id: job.id ?? '',
+          name: job.name,
+          data: job.data,
+          attemptsMade: job.attemptsMade,
+        },
+        error: {
+          name: error.name,
+          message: error.message,
+        },
+      } satisfies QueueJobFailedEvent);
     });
 
     this.workerMap[queueName].on('completed', (job) => {
