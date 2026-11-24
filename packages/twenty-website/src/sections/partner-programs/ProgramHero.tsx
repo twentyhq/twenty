@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { GRADIENT, HERO_COMPOSITION, spacing } from '@/tokens';
-import { APP_PREVIEW_STAGE } from '@/tokens/app-preview/app-preview-stage';
 import { Body, Heading, HeadingPair, SectionShell } from '@/ui';
 
 // WhyTwentyHero's composition: centered intro, actions, then the visual.
@@ -21,10 +20,9 @@ const IntroStack = styled.div`
   }
 `;
 
-// HomeHero's app-window height for every program hero, so integrators and
-// creators match whether they show an object or a full-bleed backdrop.
+// WhyTwentyHero's stage: the visual sets its own height, so the hero ends
+// with it and the illustration shows on arrival on large screens.
 const VisualStage = styled.div`
-  height: ${APP_PREVIEW_STAGE.windowScene.heightPx}px;
   margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
   width: 100%;
 `;

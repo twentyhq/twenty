@@ -1,27 +1,29 @@
 import { type HalftoneModelProps } from '@/platform/visuals/rigs/HalftoneModel';
 import { paletteColorNumber } from '@/tokens';
 
-// The audience objects, set like the /partners services: one blue, slowly turning.
+// The audience objects, read like the home cards (three-cards/
+// card-model-configs.ts): the same camera, light and halftone, one blue,
+// slowly turning.
 export const CREATOR_AUDIENCE_MODEL_SETTINGS = {
-  previewDistance: 5.4,
+  previewDistance: 4.5,
   lighting: {
-    intensity: 1.8,
-    fillIntensity: 0.25,
-    ambientIntensity: 0.18,
-    angleDegrees: 132,
-    height: 2.6,
+    intensity: 1.5,
+    fillIntensity: 0.48,
+    ambientIntensity: 0.3,
+    angleDegrees: 53,
+    height: 2,
   },
   material: {
     surface: 'solid',
     color: 0xd4d0c8,
-    roughness: 0.38,
-    metalness: 0.26,
+    roughness: 0.42,
+    metalness: 0.15,
   },
   halftone: {
     variant: 'band',
-    scale: 7,
-    power: 0.16,
-    width: 0.62,
+    scale: 14,
+    power: 0.4,
+    width: 0.5,
     dashColor: paletteColorNumber('blue'),
     hoverDashColor: paletteColorNumber('blue'),
   },

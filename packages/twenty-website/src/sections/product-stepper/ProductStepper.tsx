@@ -81,6 +81,7 @@ export function ProductStepper({
           />
           <ProductStepperVisual
             activeStepIndex={activeStepIndex}
+            localProgress={isMdUp ? localProgress : undefined}
             steps={steps}
           />
         </ScrollStage>

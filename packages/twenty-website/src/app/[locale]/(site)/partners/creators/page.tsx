@@ -21,9 +21,9 @@ import {
   CREATOR_STEPPER_STEPS,
   CreatorApplyButton,
   CreatorAudiences,
-  CREATOR_HERO_MODEL,
+  CreatorHeroRoom,
+  CreatorHeroScene,
   ProgramHero,
-  ProgramHeroVisual,
 } from '@/sections/partner-programs';
 import { Button } from '@/ui';
 
@@ -68,9 +68,8 @@ export default async function CreatorProgramPage({
               />
             </>
           }
-          visual={
-            <ProgramHeroVisual model={CREATOR_HERO_MODEL} slot="creator-hero" />
-          }
+          backdrop={<CreatorHeroScene />}
+          visual={<CreatorHeroRoom />}
           body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
           heading={msg`Become a\n*Twenty creator*`}
         />
