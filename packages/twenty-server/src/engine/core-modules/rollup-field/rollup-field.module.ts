@@ -12,6 +12,5 @@ import { RollupFieldComputationService } from 'src/engine/core-modules/rollup-fi
     ComputeRollupFieldsDeferredOperationHandlerService,
     BackfillRollupFieldsJob,
   ],
-  exports: [RollupFieldComputationService],
 })
 export class RollupFieldModule {}
