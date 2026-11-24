@@ -200,7 +200,6 @@ const compileInstructions = ({
   return result;
 };
 
-// Parser errors carry the message to show, so they are reported like compilation errors
 export const compileFormulaExpressionToSqlOrThrow = ({
   expression,
   resolveReference,
