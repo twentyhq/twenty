@@ -6,6 +6,7 @@ import { WHATSAPP_CAMPAIGN_MAX_SCHEDULE_DELAY_MS } from 'src/constants/whatsapp-
 import { WHATSAPP_KV_KEY_PREFIXES } from 'src/constants/whatsapp-kv-key-prefixes.constant';
 import { createWhatsAppCampaignSkips } from 'src/logic-functions/data/create-whatsapp-campaign-skips.util';
 import { enqueueLogicFunctionJobs } from 'src/logic-functions/data/enqueue-logic-function-jobs.util';
+import { getCurrentWorkspaceMemberIdOrThrow } from 'src/logic-functions/data/get-current-workspace-member-id-or-throw.util';
 import { findWhatsAppTemplateRecipientPeopleOrThrow } from 'src/logic-functions/data/find-whatsapp-template-recipient-people-or-throw.util';
 import { resolveWhatsAppCampaignRecipient } from 'src/logic-functions/data/resolve-whatsapp-campaign-recipient.util';
 import { type SendCampaignMessagePayload } from 'src/logic-functions/types/send-campaign-message-payload.type';
@@ -29,7 +30,9 @@ export const launchWhatsAppCampaign = async ({
   sendAt?: string;
   content: WhatsAppCampaignContent;
 }): Promise<SendTemplateToPeopleResult> => {
-  const requestKey = `${WHATSAPP_KV_KEY_PREFIXES.campaignRequest}${requestId}`;
+  // request IDs come from the client, so they are scoped to the member: reusing one never reaches another member's campaign
+  const memberRequestId = `${await getCurrentWorkspaceMemberIdOrThrow()}:${requestId}`;
+  const requestKey = `${WHATSAPP_KV_KEY_PREFIXES.campaignRequest}${memberRequestId}`;
 
   // a retried request returns the campaign it already created instead of creating another one
   if (!isDryRun) {
@@ -121,7 +124,7 @@ export const launchWhatsAppCampaign = async ({
   await enqueueLogicFunctionJobs<SendCampaignMessagePayload>({
     logicFunctionUniversalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_CAMPAIGN_MESSAGE_UNIVERSAL_IDENTIFIER,
     payloads: recipientPersonIds.map((personId) => ({ ...content, campaignId: createWhatsAppCampaign.id, personId })),
-    getJobKey: ({ personId }) => `${requestId}:${personId}`,
+    getJobKey: ({ personId }) => `${memberRequestId}:${personId}`,
     ...(delayMs > 0 ? { delayMs } : {}),
   });
 
