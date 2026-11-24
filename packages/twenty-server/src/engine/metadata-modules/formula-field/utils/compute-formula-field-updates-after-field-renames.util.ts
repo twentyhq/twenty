@@ -15,22 +15,17 @@ type UniversalFlatFieldMetadataByUniversalIdentifier = Partial<
   Record<string, UniversalFlatFieldMetadata>
 >;
 
-export const computeFormulaFieldUpdatesAfterFieldRename = ({
-  renamedFieldUniversalIdentifier,
-  newFieldName,
+export const computeFormulaFieldUpdatesAfterFieldRenames = ({
+  newFieldNameByUniversalIdentifier,
   existingUniversalFlatFieldMetadataByUniversalIdentifier,
   pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier,
   deletedUniversalFlatFieldMetadataByUniversalIdentifier,
 }: {
-  renamedFieldUniversalIdentifier: string;
-  newFieldName: string;
+  newFieldNameByUniversalIdentifier: Map<string, string>;
   existingUniversalFlatFieldMetadataByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
   pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
   deletedUniversalFlatFieldMetadataByUniversalIdentifier: UniversalFlatFieldMetadataByUniversalIdentifier;
 }): Record<string, UniversalFlatFieldMetadata> => {
-  const fieldNameByUniversalIdentifier = new Map([
-    [renamedFieldUniversalIdentifier, newFieldName],
-  ]);
   const universalFlatFieldMetadataToUpdate: Record<
     string,
     UniversalFlatFieldMetadata
@@ -66,15 +61,20 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       continue;
     }
 
-    const renamedPaths = Object.entries(bindings).filter(
-      ([, boundUniversalIdentifier]) =>
-        boundUniversalIdentifier === renamedFieldUniversalIdentifier,
+    const renamedPaths = Object.entries(bindings).flatMap(
+      ([path, boundUniversalIdentifier]) => {
+        const newFieldName = newFieldNameByUniversalIdentifier.get(
+          boundUniversalIdentifier,
+        );
+
+        return isDefined(newFieldName) ? [{ path, newFieldName }] : [];
+      },
     );
 
     // A reserved name would change what the rewritten expression means, so the formula is left to fail
     if (
       renamedPaths.length === 0 ||
-      renamedPaths.some(([path]) =>
+      renamedPaths.some(({ path, newFieldName }) =>
         isValidationRuleReservedName({
           name: newFieldName,
           isMember: path.includes('.'),
@@ -89,7 +89,7 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
         renameValidationRulePath({
           path,
           bindings,
-          fieldNameByUniversalIdentifier,
+          fieldNameByUniversalIdentifier: newFieldNameByUniversalIdentifier,
         }),
         boundUniversalIdentifier,
       ]),
@@ -99,7 +99,7 @@ export const computeFormulaFieldUpdatesAfterFieldRename = ({
       renameValidationRuleExpressionFields({
         expression: formulaExpression,
         bindings,
-        fieldNameByUniversalIdentifier,
+        fieldNameByUniversalIdentifier: newFieldNameByUniversalIdentifier,
       });
 
     universalFlatFieldMetadataToUpdate[universalIdentifier] = {
