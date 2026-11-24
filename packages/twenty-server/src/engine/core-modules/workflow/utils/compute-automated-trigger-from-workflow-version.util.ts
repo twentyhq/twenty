@@ -10,7 +10,7 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
 }: {
   workflowVersion: Pick<
     WorkflowVersionEntity,
-    'id' | 'workflowId' | 'coreWorkflowId' | 'applicationId' | 'triggers'
+    'id' | 'coreWorkflowId' | 'applicationId' | 'triggers'
   >;
 }): CachedWorkflowAutomatedTrigger | null => {
   const trigger = workflowVersion.triggers?.[0] ?? null;
@@ -23,7 +23,6 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
     case WorkflowTriggerType.DATABASE_EVENT:
       return {
         workflowId: workflowVersion.coreWorkflowId,
-        legacyWorkflowId: workflowVersion.workflowId ?? undefined,
         applicationId: workflowVersion.applicationId,
         coreWorkflowVersionId: workflowVersion.id,
         type: AutomatedTriggerType.DATABASE_EVENT,
@@ -32,7 +31,6 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
     case WorkflowTriggerType.CRON:
       return {
         workflowId: workflowVersion.coreWorkflowId,
-        legacyWorkflowId: workflowVersion.workflowId ?? undefined,
         applicationId: workflowVersion.applicationId,
         coreWorkflowVersionId: workflowVersion.id,
         type: AutomatedTriggerType.CRON,

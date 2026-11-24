@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
-import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -126,11 +125,11 @@ export class CallWebhookJobsForMetadataJob {
           resolveEffectiveFlatEntityProperty({
             metadataName: 'view',
             flatEntity: {
-              visibility: record.visibility,
+              isPrivate: record.isPrivate,
               overrides: record.overrides,
             },
-            property: 'visibility',
-          }) === ViewVisibility.WORKSPACE
+            property: 'isPrivate',
+          }) === false
         );
       });
     }

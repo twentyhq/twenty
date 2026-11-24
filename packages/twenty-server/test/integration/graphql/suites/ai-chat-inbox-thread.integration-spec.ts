@@ -367,6 +367,18 @@ describe('Inbox thread mutations for members and applications', () => {
     expect(await readCompanyLinks(threadId)).toEqual([{ deletedAt: null }]);
   });
 
+  it('grants the application a creator share on the conversation it opens', async () => {
+    const threadId = await createApplicationThread();
+
+    expect(
+      await global.testDataSource.query(
+        `SELECT "accessLevel", "rowCause" FROM ${SCHEMA}."recordShare"
+         WHERE "recordId" = $1 AND "principalId" = $2`,
+        [threadId, applicationRoleId],
+      ),
+    ).toEqual([{ accessLevel: 'FULL', rowCause: 'APPLICATION' }]);
+  });
+
   it('attaches and detaches as the application that wrote in the conversation', async () => {
     const threadId = await createApplicationThread();
 

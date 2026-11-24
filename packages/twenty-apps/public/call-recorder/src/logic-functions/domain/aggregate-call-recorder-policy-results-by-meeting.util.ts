@@ -32,12 +32,22 @@ export const aggregateCallRecorderPolicyResultsByMeeting = (
       calendarEventIds: [],
       requestingCalendarEventIds: [],
       calendarEventIdsWithRecordingOn: [],
+      calendarEventIdsWithAutoRecording: [],
     };
 
     meetingPolicyResult.calendarEventIds.push(calendarEventId);
 
-    if (callRecorderPreference === CallRecorderPreference.ON) {
+    if (
+      callRecorderPreference === CallRecorderPreference.ON ||
+      callRecorderPreference === CallRecorderPreference.AUTO
+    ) {
       meetingPolicyResult.calendarEventIdsWithRecordingOn.push(calendarEventId);
+    }
+
+    if (callRecorderPreference === CallRecorderPreference.AUTO) {
+      meetingPolicyResult.calendarEventIdsWithAutoRecording.push(
+        calendarEventId,
+      );
     }
 
     if (shouldRequestBot) {
