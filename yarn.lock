@@ -46264,7 +46264,6 @@ __metadata:
     typescript: "npm:^5.9.3"
     uuid: "npm:^11.1.1"
     vite: "npm:^8.0.0"
-    vite-plugin-dts: "npm:^4.5.4"
     zod: "npm:^4.6.6"
   languageName: unknown
   linkType: soft
