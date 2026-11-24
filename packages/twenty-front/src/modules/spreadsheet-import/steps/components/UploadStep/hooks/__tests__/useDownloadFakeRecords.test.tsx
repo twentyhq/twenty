@@ -5,7 +5,8 @@ import { I18nProvider } from '@lingui/react';
 import { renderHook } from '@testing-library/react';
 import { saveAs } from 'file-saver';
 import { type ReactNode } from 'react';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 jest.mock('@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow');
@@ -14,6 +15,12 @@ const mockSaveAs = jest.mocked(saveAs);
 const mockUseContextStoreObjectMetadataItemOrThrow = jest.mocked(
   useContextStoreObjectMetadataItemOrThrow,
 );
+
+const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+const jobTitleFieldMetadataItem = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: personObjectMetadataItem,
+  fieldName: 'jobTitle',
+});
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <I18nProvider i18n={i18n}>{children}</I18nProvider>
@@ -40,21 +47,10 @@ describe('useDownloadFakeRecords', () => {
     mockSaveAs.mockClear();
     mockUseContextStoreObjectMetadataItemOrThrow.mockReturnValue({
       objectMetadataItem: {
-        labelPlural: 'People',
-        updatableFields: [
-          {
-            id: 'field-id',
-            name: 'owner',
-            label: 'مالک',
-            type: FieldMetadataType.TEXT,
-            isActive: true,
-            isSystem: false,
-          },
-        ],
+        ...personObjectMetadataItem,
+        updatableFields: [{ ...jobTitleFieldMetadataItem, label: 'مالک' }],
       },
-    } as unknown as ReturnType<
-      typeof useContextStoreObjectMetadataItemOrThrow
-    >);
+    });
   });
 
   it('downloads a sample CSV starting with a UTF-8 BOM', async () => {

@@ -4,6 +4,7 @@ import { getCompositeSubFieldLabelWithFieldLabel } from '@/object-record/spreads
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { SETTINGS_NON_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import {
+  formatRecordExportHeader,
   formatValueForCSV,
   sanitizeValueForCSVExport,
 } from 'twenty-shared/utils';
@@ -140,9 +141,12 @@ export const useDownloadFakeRecords = () => {
 
   const downloadSample = () => {
     const { headerRow, bodyRows } = buildTableWithFakeRecords();
-    const csvContent = formatToCsvContent([headerRow, ...bodyRows]);
-    // UTF-8 BOM so Excel detects the encoding of translated headers
-    const blob = new Blob(['\uFEFF', ...csvContent], { type: 'text/csv' });
+    const header = formatRecordExportHeader(
+      headerRow.map((label) => ({ label })),
+    );
+    const blob = new Blob([header, ...formatToCsvContent(bodyRows)], {
+      type: 'text/csv',
+    });
     saveAs(blob, `${objectMetadataItem.labelPlural.toLowerCase()}-sample.csv`);
   };
 
