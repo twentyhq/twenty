@@ -11,10 +11,13 @@ describe('getViewLayoutFromViewType', () => {
     expect(getViewLayoutFromViewType(viewType)).toBe(expectedLayout);
   });
 
-  it.each([ViewType.TABLE, ViewType.KANBAN, ViewType.LIST, ViewType.CALENDAR])(
-    'should leave the %s layout unchanged',
-    (viewType) => {
-      expect(getViewLayoutFromViewType(viewType)).toBe(viewType);
-    },
-  );
+  it.each([
+    ViewType.TABLE,
+    ViewType.KANBAN,
+    ViewType.LIST,
+    ViewType.CALENDAR,
+    ViewType.INBOX,
+  ])('should leave the %s layout unchanged', (viewType) => {
+    expect(getViewLayoutFromViewType(viewType)).toBe(viewType);
+  });
 });
