@@ -26,7 +26,6 @@ export type CompiledFormulaFieldColumn = {
   expression?: string;
 };
 
-// A formula that no longer compiles gets no expression on any of its columns
 export const compileFormulaFieldColumns = ({
   flatFieldMetadata: { name, type, settings },
   schemaName,
@@ -74,21 +73,26 @@ export const compileFormulaFieldColumns = ({
 
   const compositeProperties = compositeTypeDefinitions.get(type)?.properties;
 
+  if (!isDefined(compositeProperties)) {
+    return {
+      enumSqlType,
+      columns: [
+        {
+          columnName: name,
+          columnFieldMetadataType: type,
+          expression: findCompiledExpression(undefined),
+        },
+      ],
+    };
+  }
+
   return {
     enumSqlType,
-    columns: isDefined(compositeProperties)
-      ? compositeProperties.map((compositeProperty) => ({
-          columnName: computeCompositeColumnName(name, compositeProperty),
-          columnFieldMetadataType: compositeProperty.type,
-          compositePropertyName: compositeProperty.name,
-          expression: findCompiledExpression(compositeProperty.name),
-        }))
-      : [
-          {
-            columnName: name,
-            columnFieldMetadataType: type,
-            expression: findCompiledExpression(undefined),
-          },
-        ],
+    columns: compositeProperties.map((compositeProperty) => ({
+      columnName: computeCompositeColumnName(name, compositeProperty),
+      columnFieldMetadataType: compositeProperty.type,
+      compositePropertyName: compositeProperty.name,
+      expression: findCompiledExpression(compositeProperty.name),
+    })),
   };
 };

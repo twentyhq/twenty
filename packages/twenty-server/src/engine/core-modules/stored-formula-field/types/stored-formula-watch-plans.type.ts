@@ -1,4 +1,3 @@
-// Where a change can make a stored formula of another object stale: a record related through a one-to-many relation
 export type StoredFormulaRelatedRecordWatchPlan = {
   objectMetadataId: string;
   joinColumnName: string;

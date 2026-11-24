@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+import { isNonEmptyString } from '@sniptt/guards';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -67,7 +68,9 @@ describe('Stored formula fields', () => {
         type,
         objectMetadataId,
         isLabelSyncedWithName: false,
-        ...(expression ? { settings: { formula: { expression } } } : {}),
+        ...(isNonEmptyString(expression)
+          ? { settings: { formula: { expression } } }
+          : {}),
       },
       gqlFields: 'id settings',
     });
