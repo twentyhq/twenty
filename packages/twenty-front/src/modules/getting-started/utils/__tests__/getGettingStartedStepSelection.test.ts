@@ -14,12 +14,12 @@ describe('getGettingStartedStepSelection', () => {
       },
     },
     {
-      description: 'never goes back to a skipped step before the saved one',
-      completedStepActionKeys: [GettingStartedStepActionKey.FOLLOW_UP_DEALS],
+      description: 'wraps to the first remaining step',
+      completedStepActionKeys: [],
       selectedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
       expected: {
         selectedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
-        nextStep: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+        nextStep: GettingStartedStepActionKey.CONNECT_MAILBOX,
       },
     },
     {

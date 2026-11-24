@@ -19,11 +19,12 @@ export const getGettingStartedStepSelection = ({
   const displayedStep = selectedStepActionKey ?? currentStep;
   const displayedStepIndex = stepActionKeys.indexOf(displayedStep);
   const nextStep =
-    stepActionKeys
-      .slice(displayedStepIndex + 1)
-      .find(
-        (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
-      ) ?? displayedStep;
+    [
+      ...stepActionKeys.slice(displayedStepIndex + 1),
+      ...stepActionKeys.slice(0, displayedStepIndex),
+    ].find(
+      (stepActionKey) => !completedStepActionKeys.includes(stepActionKey),
+    ) ?? displayedStep;
 
   return {
     selectedStepActionKey: displayedStep,

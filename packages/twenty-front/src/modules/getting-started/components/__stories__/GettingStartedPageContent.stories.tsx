@@ -12,7 +12,6 @@ import { billingState } from '@/client-config/states/billingState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
-import { GETTING_STARTED_AUTO_ADVANCE_DELAY_MS } from '@/getting-started/constants/GettingStartedAutoAdvanceDelayMs';
 import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { GET_MY_CALENDAR_CHANNELS } from '@/settings/accounts/graphql/queries/getMyCalendarChannels';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
@@ -737,42 +736,6 @@ export const StepAnimations: Story = {
   },
 };
 
-export const LastStepCompletionKeepsSkippedStepsBehind: Story = {
-  ...StepAnimations,
-  beforeEach: () => {
-    animationPreviewProgress = {
-      ...createAnimationPreviewProgress(),
-      selectedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
-    };
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Complete the current step' }),
-    );
-
-    await expect(
-      await canvas.findByRole('region', { name: 'Deal follow-ups on track' }),
-    ).toBeVisible();
-
-    await new Promise((resolve) =>
-      setTimeout(resolve, GETTING_STARTED_AUTO_ADVANCE_DELAY_MS + 500),
-    );
-
-    const steps = canvas.getByRole('navigation', {
-      name: 'Getting started steps',
-    });
-
-    await expect(
-      within(steps).getByRole('button', { name: 'Follow up on closing deals' }),
-    ).toHaveAttribute('aria-current', 'step');
-    await expect(
-      canvas.getByRole('region', { name: 'Deal follow-ups on track' }),
-    ).toBeVisible();
-  },
-};
-
 const buildFeaturedAppDetail = (
   universalIdentifier: string,
 ): FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] => ({
@@ -808,20 +771,10 @@ const buildFeaturedAppDetail = (
   roles: [],
 });
 
-export const OptimisticAppInstallAsLastStep: Story = {
+export const OptimisticAppInstall: Story = {
   beforeEach: () => {
     animationPreviewProgress = {
       ...TRIAL_PROGRESS,
-      steps: [
-        ...mockGettingStartedStepDefinitions.filter(
-          ({ actionKey }) =>
-            actionKey !== GettingStartedStepActionKey.INSTALL_APP,
-        ),
-        ...mockGettingStartedStepDefinitions.filter(
-          ({ actionKey }) =>
-            actionKey === GettingStartedStepActionKey.INSTALL_APP,
-        ),
-      ],
       selectedStepActionKey: GettingStartedStepActionKey.INSTALL_APP,
     };
   },
@@ -887,17 +840,6 @@ export const OptimisticAppInstallAsLastStep: Story = {
 
     await expect(
       await canvas.findByRole('region', { name: 'App installed' }),
-    ).toBeVisible();
-    await expect(
-      canvas.getByRole('img', { name: 'Slack installed' }),
-    ).toBeVisible();
-
-    await new Promise((resolve) =>
-      setTimeout(resolve, GETTING_STARTED_AUTO_ADVANCE_DELAY_MS + 500),
-    );
-
-    await expect(
-      canvas.getByRole('region', { name: 'App installed' }),
     ).toBeVisible();
     await expect(
       canvas.getByRole('img', { name: 'Slack installed' }),
