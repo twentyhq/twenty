@@ -6,6 +6,7 @@ export { IntegratorLevelCards } from './IntegratorLevelCards';
 export { PARTNER_LEVELS } from './partner-levels.data';
 export { ProgramHero } from './ProgramHero';
 export { ProgramHeroVisual } from './ProgramHeroVisual';
+export { ProgramStepper } from './ProgramStepper';
 export { ProgramExplainer } from './ProgramExplainer';
 export { ProgramStrip } from './ProgramStrip';
 export { ProgramStripSection } from './ProgramStripSection';

@@ -16,10 +16,10 @@ import {
 } from '@/platform/seo';
 import { BecomePartnerFaq } from '@/sections/faq';
 import { Menu } from '@/sections/menu';
-import { ProductStepper } from '@/sections/product-stepper';
 import {
   INTEGRATOR_HERO_BACKDROP,
   INTEGRATOR_STEPPER_STEPS,
+  ProgramStepper,
   IntegratorApplyButton,
   IntegratorEarnings,
   IntegratorLevelCards,
@@ -82,11 +82,8 @@ export default async function IntegratorProgramPage({
         />
         <IntegratorLevelCards levels={PARTNER_LEVELS} />
         <IntegratorEarnings />
-        <ProductStepper
+        <ProgramStepper
           anchorId={HOW_IT_WORKS_ANCHOR_ID}
-          body={msg`Three steps, and no fee to join. You set your own rates and keep what you bill.`}
-          eyebrow={msg`How it works`}
-          heading={msg`From application *to clients*`}
           steps={INTEGRATOR_STEPPER_STEPS}
         />
         <PartnerTestimonials />

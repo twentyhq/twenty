@@ -4,24 +4,23 @@ import { ApplyStepVisual } from './integrator-step-visuals/ApplyStepVisual';
 import { CommissionStepVisual } from './integrator-step-visuals/CommissionStepVisual';
 import { PartnerCodeStepVisual } from './integrator-step-visuals/PartnerCodeStepVisual';
 
-// Shaped for ProductStepper's steps; sections may not import each other's types.
-export const INTEGRATOR_STEPPER_STEPS = [
+import { type ProgramStepperStep } from './ProgramStepper';
+
+// The home stepper's form: a heading with its accent, one line under it.
+export const INTEGRATOR_STEPPER_STEPS: readonly ProgramStepperStep[] = [
   {
-    icon: 'edit' as const,
-    heading: msg`Apply`,
-    body: msg`Tell us about your company, the clients you work with and what you have built with Twenty. It takes a few minutes.`,
+    heading: msg`Apply to *the program*`,
+    body: msg`Tell us about your company, your clients and what you've built with Twenty.`,
     Visual: ApplyStepVisual,
   },
   {
-    icon: 'tag' as const,
-    heading: msg`Get your partner code`,
-    body: msg`We review every application by hand, then send you your partner code.`,
+    heading: msg`Get your *partner code*`,
+    body: msg`We review every application by hand, then send you your code.`,
     Visual: PartnerCodeStepVisual,
   },
   {
-    icon: 'users' as const,
-    heading: msg`Bring your clients`,
-    body: msg`Earn 20% of seat revenue for 12 months on every client on Organization or Enterprise.`,
+    heading: msg`Bring *your clients*`,
+    body: msg`Earn 20% of seat revenue for 12 months on every Organization or Enterprise client.`,
     Visual: CommissionStepVisual,
   },
 ];

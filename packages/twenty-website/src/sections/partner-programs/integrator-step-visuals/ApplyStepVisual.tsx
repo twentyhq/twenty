@@ -184,7 +184,6 @@ export function ApplyStepVisual({
     <Stage
       aria-hidden
       data-active={active ? '' : undefined}
-      data-anchor="corner"
       {...scrub(progress, TIMELINE_MS)}
     >
       <Card>

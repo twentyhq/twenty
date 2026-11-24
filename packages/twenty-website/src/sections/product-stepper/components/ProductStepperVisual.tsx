@@ -1,10 +1,25 @@
 'use client';
 
 import { styled } from '@linaria/react';
+import { type ComponentType } from 'react';
+
 import { EASING, mediaUp } from '@/tokens';
 
-import { type ProductStepperStep } from '../types/product-stepper-step';
+import { DataModelVisual } from '../DataModelVisual';
+import { LayoutVisual } from '../LayoutVisual';
+import { WorkflowVisual } from '../WorkflowVisual';
+import { PRODUCT_STEPPER_STEPS } from '../data/product-stepper-data';
+import { type ProductStepperVisualKey } from '../types/product-stepper-visual-key';
 import { ProductStepperVisualFrame } from './ProductStepperVisualFrame';
+
+const VISUALS: Record<
+  ProductStepperVisualKey,
+  ComponentType<{ active: boolean }>
+> = {
+  dataModel: DataModelVisual,
+  layout: LayoutVisual,
+  workflow: WorkflowVisual,
+};
 
 const VisualColumn = styled.div`
   min-width: 0;
@@ -55,50 +70,23 @@ const SlideInner = styled.div`
   width: 100%;
 `;
 
-type ProductStepperVisualProps = {
-  activeStepIndex: number;
-  // Progress through the active step; undefined when the stepper swipes.
-  localProgress?: number;
-  steps: readonly ProductStepperStep[];
-};
-
-const getStepProgress = (
-  stepNumber: number,
-  activeStepIndex: number,
-  localProgress: number,
-) => {
-  if (stepNumber < activeStepIndex) return 1;
-  if (stepNumber > activeStepIndex) return 0;
-  return localProgress;
-};
-
 export function ProductStepperVisual({
   activeStepIndex,
-  localProgress,
-  steps,
-}: ProductStepperVisualProps) {
+}: {
+  activeStepIndex: number;
+}) {
   return (
     <VisualColumn>
       <VisualMeasure>
         <ProductStepperVisualFrame>
-          {steps.map(({ heading, Visual }, stepNumber) => {
+          {PRODUCT_STEPPER_STEPS.map((step, stepNumber) => {
             const isActive = stepNumber === activeStepIndex;
+            const Visual = VISUALS[step.visual];
 
             return (
-              <Slide data-active={isActive ? '' : undefined} key={heading.id}>
+              <Slide data-active={isActive ? '' : undefined} key={step.visual}>
                 <SlideInner>
-                  <Visual
-                    active={isActive}
-                    progress={
-                      localProgress === undefined
-                        ? undefined
-                        : getStepProgress(
-                            stepNumber,
-                            activeStepIndex,
-                            localProgress,
-                          )
-                    }
-                  />
+                  <Visual active={isActive} />
                 </SlideInner>
               </Slide>
             );
