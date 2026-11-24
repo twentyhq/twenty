@@ -5,10 +5,12 @@ import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 import { SITE_URLS } from '@/platform/site-urls';
-import { HERO_COMPOSITION, spacing } from '@/tokens';
+import { mediaUp, spacing } from '@/tokens';
 import { Body, Button, Heading, HeadingPair, SectionShell } from '@/ui';
 
-import { AppsHub } from './AppsHub';
+import { AppsBackdrop } from './AppsBackdrop';
+import { AppsOrbit } from './AppsOrbit';
+import { APPS_ORBIT_ROOM } from './apps-orbit-room';
 import { type MarketplaceApp } from './marketplace-app';
 
 // The home hero's stack: centred copy, then CTAs, one 32px gap.
@@ -41,8 +43,13 @@ const CtaRow = styled.div`
   justify-content: center;
 `;
 
-const VisualStage = styled.div`
-  margin-top: ${HERO_COMPOSITION.ctaToVisualGapPx}px;
+// Empty: the orbit, drawn in the background layer, turns in this room.
+const OrbitRoom = styled.div`
+  height: ${APPS_ORBIT_ROOM.base};
+
+  ${mediaUp('md')} {
+    height: ${APPS_ORBIT_ROOM.md};
+  }
 `;
 
 type AppsHeroProps = {
@@ -53,8 +60,18 @@ export function AppsHero({ apps }: AppsHeroProps) {
   const { i18n } = useLingui();
 
   return (
-    <SectionShell rhythm="hero" scheme="muted">
-      <IntroStack>
+    <SectionShell
+      background={
+        <>
+          <AppsBackdrop />
+          <AppsOrbit apps={apps} />
+        </>
+      }
+      fullBleedBackground
+      rhythm="hero"
+      scheme="muted"
+    >
+      <IntroStack data-apps-stage-copy="">
         <HeadingPair>
           <HeadingMeasure>
             <Heading as="h1" size="lg" weight="light">
@@ -78,9 +95,7 @@ export function AppsHero({ apps }: AppsHeroProps) {
           />
         </CtaRow>
       </IntroStack>
-      <VisualStage>
-        <AppsHub apps={apps} />
-      </VisualStage>
+      <OrbitRoom />
     </SectionShell>
   );
 }
