@@ -2222,9 +2222,6 @@ export default {
             "id": [
                 572
             ],
-            "inviteHash": [
-                4
-            ],
             "loginToken": [
                 4
             ],

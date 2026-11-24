@@ -1084,7 +1084,6 @@ export type AvailableWorkspace = {
   __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
-  inviteHash?: Maybe<Scalars['String']['output']>;
   loginToken?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
   personalInviteToken?: Maybe<Scalars['String']['output']>;

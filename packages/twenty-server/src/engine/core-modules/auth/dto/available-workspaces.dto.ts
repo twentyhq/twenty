@@ -42,9 +42,6 @@ export class AvailableWorkspace {
   @Field(() => String, { nullable: true })
   personalInviteToken?: string;
 
-  @Field(() => String, { nullable: true })
-  inviteHash?: string;
-
   @Field(() => WorkspaceUrlsDTO)
   workspaceUrls: WorkspaceUrlsDTO;
 
