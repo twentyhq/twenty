@@ -57,6 +57,7 @@ export class RollupFieldComputationService {
         await this.recomputeRecordsBatch({
           ...resolvedPlans,
           recordIds: recordIdsBatch,
+          shouldSkipEventEmission: false,
         });
       }
     }, buildSystemAuthContext(workspaceId));
@@ -112,6 +113,8 @@ export class RollupFieldComputationService {
         await this.recomputeRecordsBatch({
           ...resolvedPlans,
           recordIds: recordIdsBatch,
+          // A full pass would otherwise fire an update event, webhook and workflow per record
+          shouldSkipEventEmission: true,
         });
       }
 
@@ -158,10 +161,12 @@ export class RollupFieldComputationService {
     flatObjectMetadata,
     plans,
     recordIds,
+    shouldSkipEventEmission,
   }: {
     flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
     plans: RollupFieldComputationPlan[];
     recordIds: string[];
+    shouldSkipEventEmission: boolean;
   }): Promise<void> {
     if (recordIds.length === 0) {
       return;
@@ -170,6 +175,7 @@ export class RollupFieldComputationService {
     const recordRepository =
       this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
         flatObjectMetadata.nameSingular,
+        { shouldSkipEventEmission },
       );
     const recordAlias = escapeIdentifier(flatObjectMetadata.nameSingular);
     const storedValuesQueryBuilder = recordRepository
