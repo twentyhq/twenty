@@ -118,7 +118,7 @@ const compileDateDifference = ({
 }: {
   from: FormulaSqlValue;
   to: FormulaSqlValue;
-  unit: string;
+  unit: (typeof EXPRESSION_DATE_UNITS)[number];
 }): string => {
   switch (unit) {
     case 'MINUTE':
@@ -132,7 +132,7 @@ const compileDateDifference = ({
       return compileCalendarMonthDifference({ from, to }).months;
     case 'QUARTER':
       return `trunc(${compileCalendarMonthDifference({ from, to }).months} / 3)`;
-    default:
+    case 'YEAR':
       return compileCalendarMonthDifference({ from, to }).years;
   }
 };
