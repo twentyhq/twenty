@@ -11,9 +11,15 @@ export class AddSourceFieldToFieldPermissionFastInstanceCommand
     await queryRunner.query(
       'ALTER TABLE "core"."fieldPermission" ADD "sourceFieldMetadataId" uuid',
     );
+    await queryRunner.query(
+      'ALTER TABLE "core"."fieldPermission" ADD CONSTRAINT "FK_ec49745645153cbb32ff67f9a92" FOREIGN KEY ("sourceFieldMetadataId") REFERENCES "core"."fieldMetadata"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."fieldPermission" DROP CONSTRAINT "FK_ec49745645153cbb32ff67f9a92"',
+    );
     await queryRunner.query(
       'ALTER TABLE "core"."fieldPermission" DROP COLUMN "sourceFieldMetadataId"',
     );
