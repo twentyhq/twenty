@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -53,14 +53,53 @@ export class RollupFieldDirtyRecordService {
     objectMetadataId,
     size,
   }: RecomputeDirtyRollupRecordsJobData & { size: number }): Promise<string[]> {
+    const dirtyRecordIdsKey = this.getDirtyRecordIdsKey({
+      workspaceId,
+      objectMetadataId,
+    });
+    const processingRecordIdsKey = this.getProcessingRecordIdsKey({
+      workspaceId,
+      objectMetadataId,
+    });
+
     // Cleared before popping so ids added from now on schedule another run
     await this.cacheStorageService.del(
       this.getRecomputeScheduledKey({ workspaceId, objectMetadataId }),
     );
 
-    return this.cacheStorageService.setPop(
-      this.getDirtyRecordIdsKey({ workspaceId, objectMetadataId }),
+    // Ids left by a run that died before completing go back in the queue
+    const unfinishedRecordIds = await this.cacheStorageService.setMembers(
+      processingRecordIdsKey,
+    );
+
+    if (isNonEmptyArray(unfinishedRecordIds)) {
+      await this.cacheStorageService.setAdd(
+        dirtyRecordIdsKey,
+        unfinishedRecordIds,
+      );
+      await this.cacheStorageService.del(processingRecordIdsKey);
+    }
+
+    const recordIds = await this.cacheStorageService.setPop(
+      dirtyRecordIdsKey,
       size,
+    );
+
+    await this.cacheStorageService.setAdd(processingRecordIdsKey, recordIds);
+
+    return recordIds;
+  }
+
+  async completeDirtyRecordIds({
+    workspaceId,
+    objectMetadataId,
+    recordIds,
+  }: RecomputeDirtyRollupRecordsJobData & {
+    recordIds: string[];
+  }): Promise<void> {
+    await this.cacheStorageService.setRemove(
+      this.getProcessingRecordIdsKey({ workspaceId, objectMetadataId }),
+      recordIds,
     );
   }
 
@@ -88,6 +127,13 @@ export class RollupFieldDirtyRecordService {
     objectMetadataId,
   }: RecomputeDirtyRollupRecordsJobData): string {
     return `recompute-scheduled:${workspaceId}:${objectMetadataId}`;
+  }
+
+  private getProcessingRecordIdsKey({
+    workspaceId,
+    objectMetadataId,
+  }: RecomputeDirtyRollupRecordsJobData): string {
+    return `processing-record-ids:${workspaceId}:${objectMetadataId}`;
   }
 
   private getDirtyRecordIdsKey({

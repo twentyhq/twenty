@@ -1,3 +1,5 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -22,7 +24,7 @@ export class RecomputeDirtyRollupRecordsJob {
         size: ROLLUP_FIELD_DIRTY_RECORDS_PER_JOB,
       });
 
-    if (recordIds.length === 0) {
+    if (!isNonEmptyArray(recordIds)) {
       return;
     }
 
@@ -32,14 +34,16 @@ export class RecomputeDirtyRollupRecordsJob {
         recordIds,
       });
     } catch (error) {
-      await this.rollupFieldDirtyRecordService.markRecordsDirty({
-        ...jobData,
-        recordIds,
-      });
+      // The ids stay in the processing set and the next run picks them up
       await this.rollupFieldDirtyRecordService.scheduleRecompute(jobData);
 
       throw error;
     }
+
+    await this.rollupFieldDirtyRecordService.completeDirtyRecordIds({
+      ...jobData,
+      recordIds,
+    });
 
     if (recordIds.length === ROLLUP_FIELD_DIRTY_RECORDS_PER_JOB) {
       await this.rollupFieldDirtyRecordService.scheduleRecompute(jobData);
