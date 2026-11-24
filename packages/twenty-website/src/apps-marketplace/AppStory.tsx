@@ -57,14 +57,16 @@ const Story = styled.div`
     margin-top: ${spacing(3)};
   }
 
+  // Emphasis by colour alone: ink on muted, at the text's own weight, so a
+  // paragraph holds two styles, not three.
   & strong {
     color: ${semanticColor.ink};
-    font-weight: ${FONT_WEIGHT.medium};
+    font-weight: inherit;
   }
 
   & ul,
   & ol {
-    padding-left: ${spacing(5)};
+    padding-left: ${spacing(4)};
   }
 
   & ul {
@@ -101,7 +103,7 @@ const Story = styled.div`
     color: ${semanticColor.ink};
     text-decoration: underline;
     text-decoration-color: ${semanticColor.lineStrong};
-    text-underline-offset: 3px;
+    text-underline-offset: 2px;
   }
 
   & a:hover {

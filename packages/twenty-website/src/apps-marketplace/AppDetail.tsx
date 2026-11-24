@@ -14,8 +14,8 @@ import {
   HERO_COMPOSITION,
   mediaUp,
   MENU_HEIGHT_PX,
-  radius,
   REDUCED_MOTION,
+  RHYTHM,
   semanticColor,
   spacing,
   typeRampDeclarations,
@@ -31,7 +31,6 @@ import {
 } from '@/ui';
 
 import { AppCards } from './AppCards';
-import { AppDefaultCover } from './AppDefaultCover';
 import { AppIcon } from './AppIcon';
 import { AppStory } from './AppStory';
 import { BETA_APP_NAMES } from './beta-app-names';
@@ -44,21 +43,23 @@ import {
 
 const ICON_SIZE_PX = 72;
 
-// The partner profile's band.
-const Cover = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  height: 200px;
-  overflow: hidden;
+// The backdrop twenty-cli draws under the covers it generates: the band of an
+// app that ships no image.
+const DEFAULT_COVER_URL = '/images/apps/default-cover.png';
+
+// The cover runs edge to edge as the band's full-bleed background; this box
+// only gives it its height and holds the icon on its lower edge.
+const CoverRoom = styled.div`
+  height: ${spacing(50)};
   position: relative;
 
   ${mediaUp('md')} {
-    aspect-ratio: 2400 / 787;
-    height: auto;
+    height: ${spacing(100)};
   }
 `;
 
 const CoverImage = styled.img`
+  border-bottom: 1px solid ${semanticColor.line};
   height: 100%;
   inset: 0;
   object-fit: cover;
@@ -67,38 +68,50 @@ const CoverImage = styled.img`
   width: 100%;
 `;
 
-// The cover's caption, as on a store page: icon, name and tagline, then
-// Install at the head of the side column, on Columns' own grid so the button
-// lines up with the facts below it. Closer to the cover than the section's
-// 80px, at SectionStack's own mobile step, so it reads as the cover's.
-const Header = styled.div`
-  && {
-    margin-top: ${spacing(10)};
-  }
+// On the band's lower edge at the content's left edge, half over the cover.
+const CoverIcon = styled.div`
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  transform: translateY(50%);
+`;
 
-  display: grid;
-  gap: ${spacing(6)};
+// Under the band, the title sits a fixed step below the icon at every width:
+// the section's own top padding minus the icon's half that hangs into it.
+const Header = styled.div`
+  margin-top: calc(
+    ${ICON_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.base)}
+  );
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
 
   ${mediaUp('md')} {
-    align-items: center;
-    gap: ${spacing(16)};
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    margin-top: calc(
+      ${ICON_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.md)}
+    );
   }
-`;
-
-const Identity = styled.div`
-  align-items: center;
-  display: grid;
-  gap: ${spacing(6)};
-  grid-template-columns: auto minmax(0, 1fr);
-`;
-
-const HeaderText = styled.div`
-  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
-  min-width: 0;
 
   & > * + * {
     margin-top: ${spacing(2)};
+  }
+`;
+
+// Below md the side column comes after the content, so the header keeps
+// Install; from md it heads the side column.
+const HeaderAction = styled.div`
+  && {
+    margin-top: ${spacing(6)};
+  }
+
+  ${mediaUp('md')} {
+    display: none;
+  }
+`;
+
+const SideAction = styled.div`
+  display: none;
+
+  ${mediaUp('md')} {
+    display: block;
   }
 `;
 
@@ -284,6 +297,14 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
     ? new Intl.NumberFormat(locale).format(app.installCount)
     : undefined;
 
+  const install = (
+    <Button
+      href={buildAppInstallUrl(app.universalIdentifier)}
+      label={i18n._(msg`Install app`)}
+      variant="filled"
+    />
+  );
+
   const overview = (
     <>
       {isDefined(app.aboutDescription) ? (
@@ -353,51 +374,42 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
 
   return (
     <>
-      <SectionShell rhythm="section" scheme="light">
+      <SectionShell
+        background={<CoverImage alt="" src={cover ?? DEFAULT_COVER_URL} />}
+        fullBleedBackground
+        rhythm="flush"
+        scheme="light"
+      >
+        <CoverRoom>
+          <CoverIcon>
+            <AppIcon app={app} sizePx={ICON_SIZE_PX} />
+          </CoverIcon>
+        </CoverRoom>
+      </SectionShell>
+      <SectionShell connectsUp rhythm="section" scheme="light">
         <SectionStack>
-          <Cover>
-            {isDefined(cover) ? (
-              <CoverImage
-                alt={i18n._(msg`${app.name} screenshot`)}
-                src={cover}
-              />
-            ) : (
-              <AppDefaultCover app={app} tilePx={72} />
-            )}
-          </Cover>
-
           <Header>
-            <Identity>
-              <AppIcon app={app} sizePx={ICON_SIZE_PX} />
-              <HeaderText>
-                <Heading as="h1" size="md" weight="light" wrap="normal">
-                  {app.name}
-                </Heading>
-                {/* The tagline's first sentence: the whole one runs to 260
-                  characters, and the overview says the rest. */}
-                <Body muted size="sm">
-                  {leadSentence(app.tagline)}
-                </Body>
-                {isBeta && (
-                  <Body muted size="xs">
-                    {i18n._(msg`Beta`)}
-                  </Body>
-                )}
-              </HeaderText>
-            </Identity>
-            <div>
-              <Button
-                href={buildAppInstallUrl(app.universalIdentifier)}
-                label={i18n._(msg`Install app`)}
-                variant="filled"
-              />
-            </div>
+            <Heading as="h1" size="md" weight="light" wrap="normal">
+              {app.name}
+            </Heading>
+            {/* The tagline's first sentence: the whole one runs to 260
+                characters, and the overview says the rest. */}
+            <Body muted size="sm">
+              {leadSentence(app.tagline)}
+            </Body>
+            {isBeta && (
+              <Body muted size="xs">
+                {i18n._(msg`Beta`)}
+              </Body>
+            )}
+            <HeaderAction>{install}</HeaderAction>
           </Header>
 
           <Columns>
             <Main>{overview}</Main>
 
             <Side>
+              <SideAction>{install}</SideAction>
               <SideGroup>
                 <SideField label={i18n._(msg`Developer`)}>
                   <Body size="sm">{app.author}</Body>
