@@ -7,15 +7,11 @@ describe('getCalendarEventIdsFromParticipantEvents', () => {
     expect(
       getCalendarEventIdsFromParticipantEvents([
         {
-          eventId: 'database-event-1',
-          recordId: 'participant-1',
           properties: {
             after: { id: 'participant-1', calendarEventId: 'calendar-event-2' },
           },
         },
         {
-          eventId: 'database-event-2',
-          recordId: 'participant-2',
           properties: {
             before: {
               id: 'participant-2',
@@ -25,8 +21,6 @@ describe('getCalendarEventIdsFromParticipantEvents', () => {
           },
         },
         {
-          eventId: 'database-event-3',
-          recordId: 'participant-3',
           properties: {
             before: {
               id: 'participant-3',
@@ -42,8 +36,6 @@ describe('getCalendarEventIdsFromParticipantEvents', () => {
     expect(
       getCalendarEventIdsFromParticipantEvents([
         {
-          eventId: 'database-event-1',
-          recordId: 'participant-1',
           properties: {},
         },
       ]),

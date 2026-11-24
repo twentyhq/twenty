@@ -4,7 +4,10 @@ import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functio
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 
 export const getCalendarEventIdsFromParticipantEvents = (
-  events: ObjectRecordBaseEvent<CalendarEventParticipantForDatabaseEvent>[],
+  events: Pick<
+    ObjectRecordBaseEvent<CalendarEventParticipantForDatabaseEvent>,
+    'properties'
+  >[],
 ): string[] =>
   getUniqueSortedIds(
     events.flatMap((event) => [

@@ -39,8 +39,6 @@ export const reconcileCallRecorderCalendarEventParticipantHandler = async (
     return { skipped: true, reason: 'no calendar event' };
   }
 
-  // A calendar import saves every participant of every meeting, so this runs
-  // often; the guest list only matters to these two choices.
   const memberRecordingPreferences = [
     ...(await fetchMemberRecordingPreferenceByUserWorkspaceId()).values(),
   ];
