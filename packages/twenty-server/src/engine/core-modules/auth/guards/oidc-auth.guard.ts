@@ -2,6 +2,7 @@
 
 import { type ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { type Request } from 'express';
 
 import {
   AuthException,
@@ -24,8 +25,7 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
     super();
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  private getStateByRequest(request: any): {
+  private getStateByRequest(request: Pick<Request, 'params' | 'query'>): {
     identityProviderId: string;
   } {
     if (request.params.identityProviderId) {
