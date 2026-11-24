@@ -812,7 +812,7 @@ export class BullMQDriver
   private withScheduledAt(
     options: BullMQJobsOptions,
   ): BullMQJobsOptions & { scheduledAt: number } {
-    const timestamp = Date.now();
+    const timestamp = options.timestamp ?? Date.now();
 
     return {
       ...options,
@@ -825,9 +825,11 @@ export class BullMQDriver
   private async findPersistedScheduledAts({
     queueName,
     jobIds,
+    existingJobIds,
   }: {
     queueName: MessageQueue;
     jobIds: string[];
+    existingJobIds: Set<string>;
   }): Promise<Map<string, number>> {
     if (jobIds.length === 0) {
       return new Map();
@@ -871,8 +873,13 @@ export class BullMQDriver
         }),
       );
     } catch (error) {
+      // The new date was never given to an existing job, so it must not be reported
+      if (jobIds.some((jobId) => existingJobIds.has(jobId))) {
+        throw error;
+      }
+
       this.logger.warn(
-        `Failed to read the schedule of existing jobs on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to read the schedule of added jobs on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return new Map();
@@ -1195,6 +1202,7 @@ export class BullMQDriver
       jobIds: jobsToAdd.flatMap((job) =>
         isDefined(job.jobId) ? [job.jobId] : [],
       ),
+      existingJobIds,
     });
 
     return {

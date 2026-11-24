@@ -3,6 +3,7 @@ import {
   createFairnessHarness,
   silenceDriverLogs,
 } from 'src/engine/core-modules/message-queue/drivers/__tests__/fairness-harness.test-util';
+import { JOBS_PERSISTED_OPTIONS_SCRIPT } from 'src/engine/core-modules/message-queue/constants/jobs-persisted-options-script.constant';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 
 const NOW_MS = Date.UTC(2026, 0, 1);
@@ -69,6 +70,36 @@ describe('BullMQDriver per-call limiter and scheduledAt', () => {
     });
 
     expect(scheduledAtsOf(secondCall)).toEqual([500, 750]);
+  });
+
+  it('keeps the spacing when the producer clock moves away from the Redis clock', async () => {
+    const harness = await createFairnessHarness();
+
+    const firstCall = await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'L', count: 2 }),
+      ...SCOPE,
+      groupKey: GROUP_KEY,
+      limiter: LIMITER,
+    });
+
+    jest.setSystemTime(NOW_MS + 150);
+
+    const secondCall = await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'M', count: 2 }),
+      ...SCOPE,
+      groupKey: GROUP_KEY,
+      limiter: LIMITER,
+    });
+
+    const [firstScheduledAt] = firstCall.jobs.map(
+      ({ scheduledAt }) => scheduledAt,
+    );
+
+    expect(
+      [...firstCall.jobs, ...secondCall.jobs].map(
+        ({ scheduledAt }) => scheduledAt - firstScheduledAt,
+      ),
+    ).toEqual([0, 250, 500, 750]);
   });
 
   it('accepts reservations more than 7 days ahead', async () => {
@@ -158,6 +189,60 @@ describe('BullMQDriver per-call limiter and scheduledAt', () => {
     });
 
     expect(scheduledAtsOf(result)).toEqual([42]);
+  });
+
+  it('reports the stored schedule of an id that is still waiting', async () => {
+    const harness = await createFairnessHarness();
+    const jobIds = ['job-1', 'job-2'];
+
+    const firstCall = await harness.enqueueBulk({
+      labels: ['W1', 'W2'],
+      jobIds,
+      ...SCOPE,
+    });
+
+    jest.setSystemTime(NOW_MS + 5_000);
+
+    const reEnqueue = await harness.enqueueBulk({
+      labels: ['R1', 'R2'],
+      jobIds,
+      ...SCOPE,
+    });
+
+    expect(scheduledAtsOf(firstCall)).toEqual([0, 0]);
+    expect(reEnqueue.jobs.map(({ jobId }) => jobId)).toEqual(jobIds);
+    expect(scheduledAtsOf(reEnqueue)).toEqual([0, 0]);
+  });
+
+  it('fails instead of reporting a new date when the schedule of an existing id cannot be read', async () => {
+    const harness = await createFairnessHarness();
+
+    await harness.enqueueBulk({ labels: ['W1'], jobIds: ['job-1'], ...SCOPE });
+    harness.failScript({ script: JOBS_PERSISTED_OPTIONS_SCRIPT });
+
+    await expect(
+      harness.enqueueBulk({
+        labels: ['R1'],
+        jobIds: ['job-1'],
+        ...SCOPE,
+        delay: 5_000,
+      }),
+    ).rejects.toThrow('Redis read failed');
+  });
+
+  it('reports the computed date of new jobs when their schedule cannot be read back', async () => {
+    const harness = await createFairnessHarness();
+
+    harness.failScript({ script: JOBS_PERSISTED_OPTIONS_SCRIPT });
+
+    const result = await harness.enqueueBulk({
+      labels: ['N1'],
+      jobIds: ['job-1'],
+      ...SCOPE,
+      delay: 5_000,
+    });
+
+    expect(scheduledAtsOf(result)).toEqual([5_000]);
   });
 
   it('schedules a delayed job at its insertion time plus the delay', async () => {

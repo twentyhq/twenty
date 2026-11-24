@@ -19,6 +19,7 @@ export type FairJobOptions = {
   priority?: number;
   fairBase?: number;
   delay?: number;
+  timestamp?: number;
 };
 
 type PacedJobsRequest = {
@@ -89,10 +90,11 @@ export class FairQueueScheduler {
     ]);
 
     return fairJobOptions.map((jobOptions, jobIndex) => {
-      const pacedDelayMs = pacedDelays?.[jobIndex] ?? 0;
+      const pacedDelayMs = pacedDelays?.delays[jobIndex] ?? 0;
 
-      return pacedDelayMs > callerDelayMs
-        ? { ...jobOptions, delay: pacedDelayMs }
+      // Anchored to the Redis clock that reserved the slot, not the producer's
+      return isDefined(pacedDelays) && pacedDelayMs > callerDelayMs
+        ? { ...jobOptions, delay: pacedDelayMs, timestamp: pacedDelays.nowMs }
         : jobOptions;
     });
   }
@@ -113,7 +115,7 @@ export class FairQueueScheduler {
     limiterGroupKeys: (string | undefined)[] | undefined;
     callerDelayMs: number;
     limiter: MessageQueueLimiter | undefined;
-  }): Promise<number[] | undefined> {
+  }): Promise<{ nowMs: number; delays: number[] } | undefined> {
     const groupLimiter = limiter ?? this.options.getGroupLimiter(queueName);
 
     if (!isDefined(limiterGroupKeys) || !isDefined(groupLimiter)) {
@@ -147,7 +149,7 @@ export class FairQueueScheduler {
       return undefined;
     }
 
-    const delaysByRequest = await this.groupRatePacer.computeDelays({
+    const paceResult = await this.groupRatePacer.computeDelays({
       queueName,
       notBeforeDelayMs: callerDelayMs,
       requests: requests.map(({ slotKey, jobIndexes }) => ({
@@ -156,7 +158,7 @@ export class FairQueueScheduler {
       })),
     });
 
-    if (!isDefined(delaysByRequest)) {
+    if (!isDefined(paceResult)) {
       return undefined;
     }
 
@@ -164,7 +166,7 @@ export class FairQueueScheduler {
 
     requests.forEach(({ jobIndexes }, requestIndex) => {
       jobIndexes.forEach((jobIndex, position) => {
-        pacedDelays[jobIndex] = delaysByRequest[requestIndex][position];
+        pacedDelays[jobIndex] = paceResult.delays[requestIndex][position];
       });
     });
 
@@ -176,7 +178,7 @@ export class FairQueueScheduler {
       });
     }
 
-    return pacedDelays;
+    return { nowMs: paceResult.nowMs, delays: pacedDelays };
   }
 
   private async computeFairJobOptions({

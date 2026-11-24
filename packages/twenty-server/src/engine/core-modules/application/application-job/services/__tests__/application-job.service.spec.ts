@@ -132,6 +132,16 @@ describe('ApplicationJobService.enqueueJobs', () => {
     expect(bulkAdd.mock.calls[0][2]).not.toHaveProperty('groupKey');
   });
 
+  it('lets BullMQ dedupe the exact job ids instead of filtering waiting ones by prefix', async () => {
+    const { enqueueJobs, bulkAdd } = buildService();
+
+    await enqueueJobs({});
+
+    expect(bulkAdd.mock.calls[0][2]).toMatchObject({
+      doNotCheckDuplicatesBasedOnPrefix: true,
+    });
+  });
+
   it('returns the scheduledAt of each enqueued job', async () => {
     const { enqueueJobs } = buildService();
 

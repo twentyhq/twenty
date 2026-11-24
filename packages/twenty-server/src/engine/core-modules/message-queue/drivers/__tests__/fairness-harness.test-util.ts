@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 import { Logger } from '@nestjs/common';
 
 import { PRIORITY_LIMIT } from 'bullmq';
@@ -611,6 +613,24 @@ export const createFairnessHarness = async ({
       mockBullMQ.beforeNextAddBulk = hook;
     },
     storeJob: (jobToStore: JobToStore) => mockBullMQ.store(jobToStore),
+    failScript: ({ script }: { script: string }) => {
+      const scriptSha = createHash('sha1').update(script).digest('hex');
+      const client = mockBullMQ.client;
+
+      mockBullMQ.client = {
+        runCommand: async (name, args) => {
+          if (args[0] === scriptSha || args[0] === script) {
+            throw new Error('Redis read failed');
+          }
+
+          if (!isDefined(client)) {
+            throw new Error('Redis client is not set');
+          }
+
+          return client.runCommand(name, args);
+        },
+      };
+    },
     breakRedis: () => {
       const runCommand = jest
         .fn()
