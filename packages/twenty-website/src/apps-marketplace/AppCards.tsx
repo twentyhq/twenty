@@ -71,6 +71,33 @@ const Card = styled(LocalizedLink)`
   }
 `;
 
+// No app sends a cover yet: every card shows the default one, a wave in the
+// site's grey dashes. The image is three bands wide: each column of the grid
+// shows another third, so neighbouring cards differ.
+const DEFAULT_COVER_URL = '/images/apps/card-cover.webp';
+
+const Banner = styled.div`
+  border-bottom: 1px solid ${semanticColor.line};
+  height: ${spacing(28)};
+  overflow: hidden;
+`;
+
+const BannerImage = styled.img`
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+  width: 100%;
+
+  li:nth-child(3n + 2) & {
+    object-position: center;
+  }
+
+  li:nth-child(3n) & {
+    object-position: right center;
+  }
+`;
+
 const Content = styled.div`
   display: flex;
   flex: 1 1 auto;
@@ -79,10 +106,13 @@ const Content = styled.div`
   padding: ${spacing(6)};
 `;
 
+// Half of the 40px icon sits on the banner.
 const Top = styled.div`
   align-items: center;
   display: flex;
   justify-content: space-between;
+  margin-top: calc(-1 * (${spacing(6)} + ${spacing(5)}));
+  position: relative;
 `;
 
 const Text = styled.div`
@@ -119,6 +149,9 @@ export function AppCards({ apps }: AppCardsProps) {
         return (
           <li key={app.slug}>
             <Card href={`/apps/${app.slug}`}>
+              <Banner>
+                <BannerImage alt="" src={DEFAULT_COVER_URL} />
+              </Banner>
               <Content>
                 <Top>
                   <AppIcon app={app} sizePx={40} />
