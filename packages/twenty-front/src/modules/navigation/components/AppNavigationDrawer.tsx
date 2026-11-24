@@ -3,6 +3,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 import { MainNavigationDrawerFixedRows } from '@/navigation/components/MainNavigationDrawerFixedRows';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
+import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
 import { MainNavigationDrawerTabSwitcher } from '@/navigation/components/MainNavigationDrawerTabSwitcher';
 import { NavigationDrawerHeader } from '@/navigation/components/NavigationDrawerHeader';
 import { NavigationDrawerModeTransition } from '@/navigation/components/NavigationDrawerModeTransition';
@@ -28,21 +29,23 @@ export const AppNavigationDrawer = ({
 
   return (
     <NavigationDrawer className={className} header={<NavigationDrawerHeader />}>
-      {/* Mobile switches modes from the bottom navigation bar instead. */}
-      {!isMobile && (
-        <NavigationDrawerFixedContent>
-          <MainNavigationDrawerTabSwitcher />
-          <MainNavigationDrawerFixedRows />
-        </NavigationDrawerFixedContent>
-      )}
-
-      <NavigationDrawerModeTransition>
-        {isSettingsDrawer ? (
-          <SettingsNavigationDrawerContent />
-        ) : (
-          <MainNavigationDrawerContent />
+      <MainNavigationDrawerContextMenu>
+        {/* Mobile switches modes from the bottom navigation bar instead. */}
+        {!isMobile && (
+          <NavigationDrawerFixedContent>
+            <MainNavigationDrawerTabSwitcher />
+            <MainNavigationDrawerFixedRows />
+          </NavigationDrawerFixedContent>
         )}
-      </NavigationDrawerModeTransition>
+
+        <NavigationDrawerModeTransition>
+          {isSettingsDrawer ? (
+            <SettingsNavigationDrawerContent />
+          ) : (
+            <MainNavigationDrawerContent />
+          )}
+        </NavigationDrawerModeTransition>
+      </MainNavigationDrawerContextMenu>
       {!isSettingsDrawer && <GettingStartedSidebarCard />}
     </NavigationDrawer>
   );
