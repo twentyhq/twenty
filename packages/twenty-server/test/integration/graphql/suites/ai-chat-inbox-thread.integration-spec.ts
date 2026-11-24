@@ -183,7 +183,9 @@ describe('Inbox thread mutations for members and applications', () => {
     return threadId;
   };
 
-  const createApplicationThread = async (): Promise<string> => {
+  const createApplicationThread = async (
+    token = applicationToken,
+  ): Promise<string> => {
     const response = await makeMetadataApiRequest(
       {
         query: SEND_INBOX_MESSAGE,
@@ -197,7 +199,7 @@ describe('Inbox thread mutations for members and applications', () => {
           },
         },
       },
-      applicationToken,
+      token,
     );
 
     if (isDefined(response.body.errors)) {
@@ -391,6 +393,35 @@ describe('Inbox thread mutations for members and applications', () => {
     expect(await readCompanyLinks(threadId)).toEqual([
       { deletedAt: expect.anything() },
     ]);
+  });
+
+  it('refuses to attach a record the authoring application cannot read', async () => {
+    const restrictedApplication = await setupApplicationWithResources({
+      name: 'Restricted Inbox Thread Application',
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+    });
+    jest.useRealTimers();
+
+    try {
+      const token = (
+        await generateApplicationTokenPair({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: restrictedApplication.id,
+        })
+      ).applicationAccessToken.token;
+      const threadId = await createApplicationThread(token);
+
+      expectNotFound(
+        await attachRecord({ threadId, token }),
+        AiExceptionCode.RECORD_NOT_FOUND,
+      );
+      expect(await readCompanyLinks(threadId)).toEqual([]);
+    } finally {
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier:
+          restrictedApplication.universalIdentifier,
+      });
+    }
   });
 
   it('refuses an application that neither wrote in the conversation nor reaches it through its role', async () => {

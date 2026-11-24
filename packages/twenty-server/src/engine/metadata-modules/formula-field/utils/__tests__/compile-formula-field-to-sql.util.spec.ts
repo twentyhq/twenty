@@ -179,6 +179,11 @@ describe('compileFormulaFieldToSql', () => {
       errorMessage: 'dateAdd needs a date, but got text',
     },
     {
+      type: FieldMetadataType.NUMBER,
+      expression: 'dateDiff("0000-01-01", now, "DAY")',
+      errorMessage: 'dateDiff needs a date, but got text',
+    },
+    {
       type: FieldMetadataType.TEXT,
       expression: 'payload',
       errorMessage: '"payload" cannot be read by a formula',

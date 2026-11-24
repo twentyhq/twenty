@@ -97,6 +97,7 @@ export { createExpressionEvaluator } from './expression/createExpressionEvaluato
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
 export { parseExpressionInstructions } from './expression/parseExpressionInstructions';
 export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
+export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
