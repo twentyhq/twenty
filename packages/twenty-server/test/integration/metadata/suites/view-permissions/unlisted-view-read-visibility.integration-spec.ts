@@ -152,7 +152,7 @@ describe('unlisted view read visibility (integration)', () => {
     'should hide an unlisted view without a creator and its children from $caller',
     async ({ token }) => {
       expect(await findViewOwnership(ownerlessViewId)).toEqual({
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
         createdByUserWorkspaceId: null,
       });
       expect(

@@ -412,6 +412,16 @@ msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Cíl poznámky"
 
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Morfní vztah jedna ku mnoha nelze porovnávat přímo; pro porovnání pole jeho záznamů přejděte přes vztah"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Vztah jedna ku mnoha podporuje pouze operandy IS_EMPTY a IS_NOT_EMPTY; pro porovnání pole jeho záznamů přejděte přes vztah"
+
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "A page layout navigation menu item can only point to a standalone page"
@@ -3123,6 +3133,11 @@ msgstr "Chaty spojené s kontaktem"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Chaty spojené s příležitostí"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Kontrola, zda je relace jedna k mnoha prázdná, vyžaduje průchody relacemi v predikátech oprávnění na úrovni řádků"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -10791,6 +10806,12 @@ msgstr "Nadřazená skupina filtrů zobrazení nebyla nalezena"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId a folderId se musí shodovat. folderId je zastaralé, použijte parentId."
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "Účastníci"
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -15568,6 +15589,13 @@ msgstr "Toto oprávnění k objektu je již pro roli nastaveno"
 msgid "This operand is not supported for this field"
 msgstr "Tento operand není pro toto pole podporován"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Tento operand není pro tuto relaci podporován"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15870,11 @@ msgstr "Tento pracovní postup již existuje"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Tento pracovní postup již existuje."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Tento identifikátor workflow odpovídá více než jednomu workflow."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17576,6 +17609,16 @@ msgstr "Nepodařilo se spustit připojení. Zkuste to prosím znovu."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Tento klíč se nepodařilo ověřit. Zkontrolujte ho, nebo to zkuste později, pokud služba není dostupná."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Tuto aplikaci se nám nepodařilo vyúčtovat. Aktualizujte způsob platby a zkuste to znovu."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Toto připojení se nám nepodařilo vyúčtovat. Aktualizujte způsob platby a zkuste to znovu."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

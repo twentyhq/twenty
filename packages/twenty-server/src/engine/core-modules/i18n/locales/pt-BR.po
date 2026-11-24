@@ -412,6 +412,16 @@ msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Um Alvo de Nota"
 
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Uma relação morph de um para muitos não pode ser comparada diretamente; percorra a relação para comparar um campo de seus registros"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Uma relação de um para muitos só oferece suporte aos operandos IS_EMPTY e IS_NOT_EMPTY; percorra a relação para comparar um campo de seus registros"
+
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "A page layout navigation menu item can only point to a standalone page"
@@ -3123,6 +3133,11 @@ msgstr "Conversas vinculadas ao contato"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Conversas vinculadas à oportunidade"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Verificar se uma relação um-para-muitos está vazia requer saltos de relação em predicados de permissão de nível de linha"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -10791,6 +10806,12 @@ msgstr "Grupo pai de filtros da visualização não encontrado"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId e folderId devem corresponder. folderId está obsoleto, use parentId."
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "Participantes"
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -15568,6 +15589,13 @@ msgstr "Esta permissão do objeto já está definida para o papel"
 msgid "This operand is not supported for this field"
 msgstr "Este operando não é compatível com este campo"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Este operando não é compatível com esta relação"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15870,11 @@ msgstr "Este fluxo de trabalho já existe"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Este fluxo de trabalho já existe."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Este identificador de workflow corresponde a mais de um workflow."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17576,6 +17609,16 @@ msgstr "Não foi possível iniciar a conexão. Tente novamente."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Não foi possível verificar esta chave. Verifique-a ou tente novamente mais tarde se o serviço estiver indisponível."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Não foi possível cobrar por este aplicativo. Atualize sua forma de pagamento e tente novamente."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Não foi possível cobrar por esta conexão. Atualize sua forma de pagamento e tente novamente."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

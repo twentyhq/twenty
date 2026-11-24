@@ -412,6 +412,16 @@ msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Նշման թիրախ"
 
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Մեկից-շատ morph կապը չի կարող ուղղակիորեն համեմատվել, անցեք կապի միջոցով՝ դրա գրառումների դաշտը համեմատելու համար"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Մեկից-շատ կապն աջակցում է միայն IS_EMPTY և IS_NOT_EMPTY օպերանդներին, անցեք կապի միջոցով՝ դրա գրառումների դաշտը համեմատելու համար"
+
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
 msgid "A page layout navigation menu item can only point to a standalone page"
@@ -3123,6 +3133,11 @@ msgstr "Կոնտակտին կապակցված զրույցներ"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Հնարավորությանը կապակցված զրույցներ"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Մեկից շատ կապի դատարկ լինելը ստուգելը պահանջում է կապի անցումներ տողերի մակարդակի թույլտվությունների պայմաններում"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -10791,6 +10806,12 @@ msgstr "Վերադաս տեսքի ֆիլտրի խումբը չի գտնվել"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId-ը և folderId-ը պետք է համընկնեն։ folderId-ը հնացած է, օգտագործեք parentId-ը։"
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "Մասնակիցներ"
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -15568,6 +15589,13 @@ msgstr "Այս օբյեկտի արտոնությունը արդեն սահման
 msgid "This operand is not supported for this field"
 msgstr "Այս դաշտի համար այս օպերանդը չի աջակցվում"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Այս օպերանդը չի աջակցվում այս կապի համար"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15870,11 @@ msgstr "Այս աշխատահոսքն արդեն գոյություն ունի"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Այս աշխատահոսքն արդեն գոյություն ունի։"
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Աշխատանքային հոսքի այս նույնացուցիչը համապատասխանում է մեկից ավելի աշխատանքային հոսքի։"
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17576,6 +17609,16 @@ msgstr "Չհաջողվեց սկսել միացումը։ Խնդրում ենք �
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Չհաջողվեց հաստատել այս բանալին։ Ստուգեք այն կամ ավելի ուշ նորից փորձեք, եթե ծառայությունն անհասանելի է։"
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Չհաջողվեց գանձում կատարել այս հավելվածի համար։ Թարմացրեք վճարման եղանակը և փորձեք կրկին։"
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Չհաջողվեց գանձում կատարել այս կապի համար։ Թարմացրեք վճարման եղանակը և փորձեք կրկին։"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
