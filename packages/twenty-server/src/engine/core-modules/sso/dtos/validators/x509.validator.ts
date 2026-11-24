@@ -13,8 +13,7 @@ import { getCertificateBase64Body } from 'src/engine/core-modules/sso/utils/get-
 
 @ValidatorConstraint({ async: false })
 export class IsX509CertificateConstraint implements ValidatorConstraintInterface {
-  // oxlint-disable-next-line typescript/no-explicit-any
-  validate(value: any) {
+  validate(value: unknown) {
     if (typeof value !== 'string') {
       return false;
     }
