@@ -1,6 +1,5 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +10,7 @@ import { formatUsdRate } from '@/partners-marketplace/format-usd-rate';
 import { isSafeHttpUrl } from '@/partners-marketplace/is-safe-http-url';
 import { MARKETPLACE_COPY } from '@/partners-marketplace/marketplace-copy';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
+import { type ServedGeo } from '@/partners-marketplace/served-geos';
 import { PARTNER_SCOPE_LABELS } from '@/partners-marketplace/partner-scope-labels';
 import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
@@ -23,6 +23,7 @@ import {
   fontFamily,
   HERO_COMPOSITION,
   mediaUp,
+  type PaletteToken,
   MENU_HEIGHT_PX,
   radius,
   REDUCED_MOTION,
@@ -44,14 +45,25 @@ import {
 import { PartnerCard } from './PartnerCard';
 import { PartnerMark } from './PartnerMark';
 import { partnerBaseRegion } from './partner-base-region';
-import { RegionMapPoint } from './RegionMapPoint';
+import { PartnersGlobe } from './PartnersGlobe';
+import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 
 const MARK_SIZE_PX = 72;
 
-// The partner's region, edge to edge as the band's full-bleed background: the
-// same still as its directory card (public/images/partners/regions), dashes
-// in the region's accent on black like the customer story covers, with the
-// partner's place on it.
+// Each region's colour, as on its directory card still
+// (public/images/partners/regions).
+const REGION_ACCENT: Record<ServedGeo, PaletteToken> = {
+  AFRICA: 'yellow',
+  APAC: 'pink',
+  EUROPE: 'blue',
+  LATAM: 'yellow',
+  MENA: 'green',
+  US: 'pink',
+};
+
+// The partners hero's globe, edge to edge on black as the band's full-bleed
+// background, in the region's colour and turned to the partner's city. The
+// band is a dark surface, so the menu turns dark over it, as on Product.
 const MapFill = styled.div`
   background-color: ${color('black')};
   inset: 0;
@@ -278,6 +290,10 @@ export function PartnerDetail({
 }: PartnerDetailProps) {
   const i18n = getServerI18n();
   const baseRegion = partnerBaseRegion(partner);
+  const coordinates = resolvePartnerCoordinates(
+    partner.city ?? '',
+    partner.country ?? '',
+  );
   const place = [
     partner.city,
     partner.country ? titleCaseFallback(partner.country) : '',
@@ -333,20 +349,16 @@ export function PartnerDetail({
       <SectionShell
         background={
           <MapFill>
-            <NextImage
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              src={`/images/partners/regions/${baseRegion.toLowerCase()}.webp`}
-              style={{ objectFit: 'cover' }}
+            <PartnersGlobe
+              accent={REGION_ACCENT[baseRegion]}
+              facing={coordinates ?? undefined}
+              partners={[partner]}
             />
-            <RegionMapPoint partner={partner} />
           </MapFill>
         }
         fullBleedBackground
         rhythm="flush"
-        scheme="light"
+        scheme="dark"
       >
         <BandRoom>
           <BandMark>

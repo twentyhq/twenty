@@ -15,6 +15,7 @@ import {
   fontFamily,
   fontSize,
   paletteColorNumber,
+  type PaletteToken,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -261,10 +262,30 @@ type GlobePartner = {
 };
 
 type PartnersGlobeProps = {
+  // The dots' colour: blue on the partners hero, the region's on a profile.
+  accent?: PaletteToken;
+  // A profile turns the globe to its partner's place, [longitude, latitude],
+  // and holds it there in place of the hero's slow spin.
+  facing?: readonly [number, number];
   partners: readonly MarketplacePartner[];
 };
 
-export function PartnersGlobe({ partners }: PartnersGlobeProps) {
+// How fast a profile's globe settles on its partner, and how far off it starts.
+const FACING_EASE = 0.03;
+const FACING_START_OFFSET = 40 * DEGREES;
+// A profile opens on the whole globe, then the camera closes in until the
+// globe stands at this many times the frame's height: the partner's region.
+const FACING_ZOOM = 2.5;
+const FACING_ZOOM_EASE = 0.025;
+const FACING_CAMERA_DISTANCE =
+  RADIUS /
+  Math.sin(Math.atan(FACING_ZOOM * Math.tan((FOV_DEGREES / 2) * DEGREES)));
+
+export function PartnersGlobe({
+  accent = 'blue',
+  facing,
+  partners,
+}: PartnersGlobeProps) {
   const frameRef = useRef<HTMLDivElement>(null);
   const placedRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tagRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -319,7 +340,10 @@ export function PartnersGlobe({ partners }: PartnersGlobeProps) {
 
     const toneScene = new THREE.Scene();
     const tilt = new THREE.Group();
-    tilt.rotation.x = GLOBE_VIEW.pose.rotationX;
+    // a profile tips its partner's latitude to the front
+    tilt.rotation.x = isDefined(facing)
+      ? facing[1] * DEGREES
+      : GLOBE_VIEW.pose.rotationX;
     const globe = new THREE.Group();
     tilt.add(globe);
     toneScene.add(tilt);
@@ -357,7 +381,7 @@ export function PartnersGlobe({ partners }: PartnersGlobeProps) {
         cell: { value: HALFTONE.cellPx },
         power: { value: HALFTONE.power },
         dotScale: { value: HALFTONE.dotScale },
-        dotColor: { value: new THREE.Color(paletteColorNumber('blue')) },
+        dotColor: { value: new THREE.Color(paletteColorNumber(accent)) },
         pointer: { value: new THREE.Vector2(-9999, -9999) },
         hover: { value: 0 },
         hoverRadius: { value: HOVER.radiusPx },
@@ -372,8 +396,15 @@ export function PartnersGlobe({ partners }: PartnersGlobeProps) {
     const quadCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
     // drag to turn, then ease back to the slow spin
-    let spin = GLOBE_VIEW.pose.rotationY;
+    const facingSpin = isDefined(facing) ? -facing[0] * DEGREES : undefined;
+    let spin = isDefined(facingSpin)
+      ? facingSpin + (reducedMotion ? 0 : FACING_START_OFFSET)
+      : GLOBE_VIEW.pose.rotationY;
     let velocity = AUTO_SPIN;
+    let cameraDistance =
+      isDefined(facing) && reducedMotion
+        ? FACING_CAMERA_DISTANCE
+        : CAMERA_DISTANCE;
     let dragging = false;
     let lastX = 0;
     const canvas = renderer.domElement;
@@ -447,7 +478,13 @@ export function PartnersGlobe({ partners }: PartnersGlobeProps) {
       animationFrame = requestAnimationFrame(render);
       if (!visible) return;
 
-      if (!dragging) {
+      if (!dragging && isDefined(facingSpin)) {
+        // a profile's globe eases onto its partner and stays there
+        spin += (facingSpin - spin) * (reducedMotion ? 1 : FACING_EASE);
+        cameraDistance +=
+          (FACING_CAMERA_DISTANCE - cameraDistance) * FACING_ZOOM_EASE;
+        camera.position.z = cameraDistance;
+      } else if (!dragging) {
         // a hovered point stays under the cursor
         const spinTarget = isDefined(hoveredRef.current) ? 0 : AUTO_SPIN;
         velocity += (spinTarget - velocity) * 0.08;
@@ -568,7 +605,7 @@ export function PartnersGlobe({ partners }: PartnersGlobeProps) {
       renderer.dispose();
       canvas.remove();
     };
-  }, [globePartners]);
+  }, [accent, facing, globePartners]);
 
   return (
     <Frame ref={frameRef}>
