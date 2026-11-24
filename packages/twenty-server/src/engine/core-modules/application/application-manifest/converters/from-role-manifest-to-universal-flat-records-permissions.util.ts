@@ -29,22 +29,14 @@ const ALL_RECORDS_PERMISSION_KEYS = [
   'canDestroyAllRecords',
 ] as const;
 
-export type UnreadableNestedFieldDeclaration = {
-  objectUniversalIdentifier: string;
-  fieldUniversalIdentifier: string;
-  sourceFieldUniversalIdentifier: string;
-};
-
 export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
   roleManifest,
   applicationUniversalIdentifier,
   now,
-  unreadableNestedFields = [],
 }: {
   roleManifest: RoleManifest;
   applicationUniversalIdentifier: string;
   now: string;
-  unreadableNestedFields?: UnreadableNestedFieldDeclaration[];
 }): {
   objectPermissions: UniversalFlatObjectPermission[];
   fieldPermissions: UniversalFlatFieldPermission[];
@@ -65,12 +57,10 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     unreadableFields = [],
     uneditableFields = [],
     fieldPermissionIdentifiers = [],
-    objectUnreadableNestedFields = [],
     rowLevelPermissionRuleUniversalIdentifier,
     rowLevelPermissionPredicateGroupUniversalIdentifier,
   }: FieldRestrictionsManifest & {
     objectUniversalIdentifier: string;
-    objectUnreadableNestedFields?: UnreadableNestedFieldDeclaration[];
     rowLevelPermissionRuleUniversalIdentifier: string | null;
     rowLevelPermissionPredicateGroupUniversalIdentifier: string | null;
   }): UniversalFlatFieldPermission[] =>
@@ -79,9 +69,6 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       ...new Set([
         ...unreadableFields,
         ...uneditableFields,
-        ...objectUnreadableNestedFields.map(
-          ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
-        ),
         ...fieldPermissionIdentifiers.map(
           ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
         ),
@@ -105,12 +92,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       rowLevelPermissionRuleUniversalIdentifier,
-      sourceFieldMetadataUniversalIdentifier:
-        objectUnreadableNestedFields.find(
-          (unreadableNestedField) =>
-            unreadableNestedField.fieldUniversalIdentifier ===
-            fieldUniversalIdentifier,
-        )?.sourceFieldUniversalIdentifier ?? null,
+      sourceFieldMetadataUniversalIdentifier: null,
       canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
         ? false
         : null,
@@ -151,11 +133,6 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       ...objects.flatMap((objectRecordsPermissionsManifest) =>
         buildFieldPermissions({
           ...objectRecordsPermissionsManifest,
-          objectUnreadableNestedFields: unreadableNestedFields.filter(
-            (unreadableNestedField) =>
-              unreadableNestedField.objectUniversalIdentifier ===
-              objectRecordsPermissionsManifest.objectUniversalIdentifier,
-          ),
           rowLevelPermissionRuleUniversalIdentifier: null,
           rowLevelPermissionPredicateGroupUniversalIdentifier: null,
         }),

@@ -154,45 +154,6 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
     ]);
   });
 
-  it('should read a nested unreadable field as hidden only through a parent that cannot read its source', () => {
-    const { fieldPermissions } =
-      fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
-        roleManifest: {
-          ...ROLE,
-          recordsPermissions: {
-            objects: [
-              {
-                objectUniversalIdentifier: 'messageThread',
-                unreadableFields: ['secret'],
-              },
-            ],
-          },
-        },
-        applicationUniversalIdentifier: APPLICATION,
-        now: NOW,
-        unreadableNestedFields: [
-          {
-            objectUniversalIdentifier: 'messageThread',
-            fieldUniversalIdentifier: 'subject',
-            sourceFieldUniversalIdentifier: 'messageSubject',
-          },
-        ],
-      });
-
-    expect(fieldPermissions).toMatchObject([
-      {
-        fieldMetadataUniversalIdentifier: 'secret',
-        sourceFieldMetadataUniversalIdentifier: null,
-        canReadFieldValue: false,
-      },
-      {
-        fieldMetadataUniversalIdentifier: 'subject',
-        sourceFieldMetadataUniversalIdentifier: 'messageSubject',
-        canReadFieldValue: null,
-      },
-    ]);
-  });
-
   it('should refuse field restrictions on a rule that has no predicate group to hold them', () => {
     expect(() =>
       convert({

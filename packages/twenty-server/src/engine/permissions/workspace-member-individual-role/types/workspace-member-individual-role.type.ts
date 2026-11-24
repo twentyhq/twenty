@@ -1,11 +1,16 @@
 import { type RoleManifest } from 'twenty-shared/application';
 
-import { type UnreadableNestedFieldDeclaration } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
-
 export type WorkspaceMemberIndividualRoleHolder =
   | { type: 'userWorkspace'; userWorkspaceId: string }
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   | { type: 'apiKeys' };
+
+// Hidden only on records reached through a related record path whose parent cannot read the source field
+export type UnreadableNestedFieldDeclaration = {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  sourceFieldUniversalIdentifier: string;
+};
 
 export type WorkspaceMemberIndividualRole = {
   holder: WorkspaceMemberIndividualRoleHolder;
