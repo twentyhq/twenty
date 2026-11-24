@@ -10,7 +10,6 @@ import {
 import {
   canAccessThroughAllRecordsOrRlsPermission,
   isDefined,
-  isNonEmptyArray,
 } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
