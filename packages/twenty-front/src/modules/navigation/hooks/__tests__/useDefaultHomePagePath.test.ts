@@ -19,7 +19,6 @@ import {
   NavigationMenuItemType,
   ViewKey,
   ViewType,
-  ViewVisibility,
 } from '~/generated-metadata/graphql';
 import {
   mockCurrentWorkspace,
@@ -158,7 +157,7 @@ const buildCompanyView = (
   icon: '',
   kanbanAggregateOperationFieldMetadataId: '',
   position,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   createdByUserWorkspaceId: null,
   shouldHideEmptyGroups: false,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
@@ -227,7 +226,7 @@ const renderHooks = ({
               icon: '',
               kanbanAggregateOperationFieldMetadataId: '',
               position: 0,
-              visibility: ViewVisibility.WORKSPACE,
+              isPrivate: false,
               createdByUserWorkspaceId: null,
               shouldHideEmptyGroups: false,
               groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,

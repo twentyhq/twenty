@@ -8,7 +8,6 @@ import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFi
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 const mockObjectMetadataItemNameSingular = 'company';
@@ -43,7 +42,7 @@ describe('mapRecordFilterGroupToViewFilterGroup', () => {
     icon: '',
     kanbanAggregateOperationFieldMetadataId: '',
     position: 0,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     isActive: true,
   };
 

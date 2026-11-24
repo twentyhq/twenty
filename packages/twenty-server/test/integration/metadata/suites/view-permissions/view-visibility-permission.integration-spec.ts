@@ -9,13 +9,13 @@ import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const readViewVisibility = async (viewId: string): Promise<string> => {
+const readViewIsPrivate = async (viewId: string): Promise<boolean> => {
   const [view] = await globalThis.testDataSource.query(
-    `SELECT visibility FROM core."view" WHERE id = $1`,
+    `SELECT "isPrivate" FROM core."view" WHERE id = $1`,
     [viewId],
   );
 
-  return view.visibility;
+  return view.isPrivate;
 };
 
 // The seeded guest role cannot access tools, so it lacks VIEWS
@@ -62,9 +62,7 @@ describe('view visibility permission (integration)', () => {
 
     expect(errors).toBeUndefined();
     expect(data.updateView).toMatchObject({ name: 'Guest renamed companies' });
-    expect(await readViewVisibility(unlistedViewId)).toBe(
-      ViewVisibility.UNLISTED,
-    );
+    expect(await readViewIsPrivate(unlistedViewId)).toBe(true);
   });
 
   it('should refuse publishing it through GraphQL', async () => {
@@ -78,9 +76,21 @@ describe('view visibility permission (integration)', () => {
     expect(errors?.[0]?.message).toBe(
       'You do not have permission to modify this view',
     );
-    expect(await readViewVisibility(unlistedViewId)).toBe(
-      ViewVisibility.UNLISTED,
+    expect(await readViewIsPrivate(unlistedViewId)).toBe(true);
+  });
+
+  it('should refuse publishing it through GraphQL with isPrivate', async () => {
+    const { errors } = await updateOneView({
+      viewId: unlistedViewId,
+      input: { id: unlistedViewId, isPrivate: false },
+      token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      expectToFail: true,
+    });
+
+    expect(errors?.[0]?.message).toBe(
+      'You do not have permission to modify this view',
     );
+    expect(await readViewIsPrivate(unlistedViewId)).toBe(true);
   });
 
   it('should refuse publishing it through REST', async () => {
@@ -92,8 +102,18 @@ describe('view visibility permission (integration)', () => {
     });
 
     expect(response.status).toBe(403);
-    expect(await readViewVisibility(unlistedViewId)).toBe(
-      ViewVisibility.UNLISTED,
-    );
+    expect(await readViewIsPrivate(unlistedViewId)).toBe(true);
+  });
+
+  it('should refuse publishing it through REST with isPrivate', async () => {
+    const response = await makeRestApiRequest({
+      method: 'patch',
+      path: `/metadata/views/${unlistedViewId}`,
+      bearer: APPLE_PHIL_GUEST_ACCESS_TOKEN,
+      body: { isPrivate: false },
+    });
+
+    expect(response.status).toBe(403);
+    expect(await readViewIsPrivate(unlistedViewId)).toBe(true);
   });
 });
