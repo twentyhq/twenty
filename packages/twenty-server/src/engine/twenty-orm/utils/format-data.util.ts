@@ -98,7 +98,7 @@ export function formatCompositeField(
     if (value && value[subFieldKey] !== undefined) {
       formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
         value[subFieldKey],
-        property as unknown as OrmFlatFieldMetadata,
+        property,
       );
     }
   }
@@ -109,7 +109,7 @@ export function formatCompositeField(
 function formatFieldMetadataValue(
   // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
-  fieldMetadata: OrmFlatFieldMetadata,
+  fieldMetadata: Pick<OrmFlatFieldMetadata, 'type'>,
 ) {
   if (
     fieldMetadata.type === FieldMetadataType.RAW_JSON &&
