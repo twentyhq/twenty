@@ -13123,6 +13123,12 @@ export default {
             "workspaceMemberRelationFieldMetadataId": [
                 4
             ],
+            "workspaceMemberRelationFilterFieldMetadataId": [
+                4
+            ],
+            "workspaceMemberRelationFilterValues": [
+                4
+            ],
             "workspaceMemberSubFieldName": [
                 4
             ],
@@ -13272,6 +13278,12 @@ export default {
             ],
             "workspaceMemberRelationFieldMetadataId": [
                 564
+            ],
+            "workspaceMemberRelationFilterFieldMetadataId": [
+                564
+            ],
+            "workspaceMemberRelationFilterValues": [
+                4
             ],
             "workspaceMemberSubFieldName": [
                 4
