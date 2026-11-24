@@ -1020,6 +1020,16 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       };
     }
 
+    const isRecordIdOfWorkspaceMemberFieldTarget =
+      fieldMetadata.type === FieldMetadataType.UUID &&
+      fieldMetadata.name === 'id' &&
+      fieldMetadata.objectMetadataUniversalIdentifier ===
+        workspaceMemberFieldMetadata.relationTargetObjectMetadataUniversalIdentifier;
+
+    if (isRecordIdOfWorkspaceMemberFieldTarget) {
+      return undefined;
+    }
+
     if (
       fieldMetadata.type !== FieldMetadataType.RELATION ||
       !isDefined(

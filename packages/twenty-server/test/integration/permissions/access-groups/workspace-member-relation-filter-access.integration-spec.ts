@@ -50,6 +50,8 @@ describePermissionTestWorkspace({
     let seatCompanyFieldMetadataId: string;
     let memberSeatsFieldMetadataId: string;
     let seatRoleFieldMetadataId: string;
+    let companyObjectMetadataId: string;
+    let companyIdFieldMetadataId: string;
     const companyIds: Record<string, string> = {};
 
     const createRecord = async ({
@@ -185,9 +187,10 @@ describePermissionTestWorkspace({
       const { objects } = await findManyObjectMetadata<{
         id: string;
         nameSingular: string;
+        fieldsList: { id: string; name: string }[];
       }>({
         input: { filter: {}, paging: { first: 1000 } },
-        gqlFields: 'id nameSingular',
+        gqlFields: 'id nameSingular fieldsList { id name }',
         expectToFail: false,
         token,
       });
@@ -202,7 +205,17 @@ describePermissionTestWorkspace({
 
         return objectMetadataId;
       };
-      const companyObjectMetadataId = findObjectMetadataId('company');
+      companyObjectMetadataId = findObjectMetadataId('company');
+
+      const companyIdField = objects
+        .find(({ nameSingular }) => nameSingular === 'company')
+        ?.fieldsList.find(({ name }) => name === 'id');
+
+      if (!isDefined(companyIdField)) {
+        throw new Error('company.id field metadata not found');
+      }
+
+      companyIdFieldMetadataId = companyIdField.id;
 
       const { data: seatObjectData } = await createOneObjectMetadata({
         input: {
@@ -388,6 +401,30 @@ describePermissionTestWorkspace({
         'lowVisibilityTier',
         'mediumVisibilityTier',
       ]);
+    });
+
+    it('should compare a record id with the records the member relation rows point to', async () => {
+      const { errors } = await upsertRowLevelPermissionRules({
+        input: {
+          roleId,
+          objectMetadataId: companyObjectMetadataId,
+          rules: [
+            {
+              canReadRecords: true,
+              canUpdateRecords: true,
+              predicates: [
+                buildLeadSeatPredicate({
+                  fieldMetadataId: companyIdFieldMetadataId,
+                }),
+              ],
+            },
+          ],
+        },
+        expectToFail: false,
+        token: findWorkspace().adminAccessToken,
+      });
+
+      expect(errors).toBeUndefined();
     });
 
     it.each([
