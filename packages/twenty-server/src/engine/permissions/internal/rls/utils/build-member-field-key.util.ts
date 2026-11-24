@@ -7,11 +7,15 @@ export const buildMemberFieldKey = ({
   workspaceMemberFieldMetadataId,
   workspaceMemberSubFieldName,
   workspaceMemberRelationFieldMetadataId,
+  workspaceMemberRelationFilterFieldMetadataId,
+  workspaceMemberRelationFilterValues,
 }: Pick<
   RowLevelPermissionPredicate,
   | 'workspaceMemberFieldMetadataId'
   | 'workspaceMemberSubFieldName'
   | 'workspaceMemberRelationFieldMetadataId'
+  | 'workspaceMemberRelationFilterFieldMetadataId'
+  | 'workspaceMemberRelationFilterValues'
 >): string => {
   const memberFieldKey = `${workspaceMemberFieldMetadataId}:${workspaceMemberSubFieldName ?? ''}`;
 
@@ -19,5 +23,9 @@ export const buildMemberFieldKey = ({
     return memberFieldKey;
   }
 
-  return `${workspaceMemberRelationFieldMetadataId}>${memberFieldKey}`;
+  const relationKey = isDefined(workspaceMemberRelationFilterFieldMetadataId)
+    ? `${workspaceMemberRelationFieldMetadataId}[${workspaceMemberRelationFilterFieldMetadataId}=${[...(workspaceMemberRelationFilterValues ?? [])].sort().join('|')}]`
+    : workspaceMemberRelationFieldMetadataId;
+
+  return `${relationKey}>${memberFieldKey}`;
 };
