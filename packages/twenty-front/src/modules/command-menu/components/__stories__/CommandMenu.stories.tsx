@@ -212,7 +212,6 @@ export const NoResultsSearchFallback: Story = {
   parameters: {
     msw: {
       handlers: [
-        ...graphqlMocks.handlers,
         graphql.query('Search', () => {
           return HttpResponse.json({
             data: {
@@ -226,6 +225,7 @@ export const NoResultsSearchFallback: Story = {
             },
           });
         }),
+        ...graphqlMocks.handlers,
       ],
     },
   },
