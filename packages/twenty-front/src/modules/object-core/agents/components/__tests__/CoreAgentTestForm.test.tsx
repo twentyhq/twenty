@@ -40,7 +40,9 @@ const agent: CoreAgent = {
   updatedAt: '2026-01-01T00:00:00.000Z',
 };
 
-const renderForm = (agentOverrides: Partial<CoreAgent> = {}) => {
+const renderForm = (
+  agentOverrides: Partial<Pick<CoreAgent, 'triggers'>> = {},
+) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
 
   return render(<CoreAgentTestForm agent={{ ...agent, ...agentOverrides }} />, {

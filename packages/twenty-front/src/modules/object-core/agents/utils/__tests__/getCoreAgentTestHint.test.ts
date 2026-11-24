@@ -1,8 +1,10 @@
+import { type AgentTrigger } from 'twenty-shared/application';
+
 import { getCoreAgentTestHint } from '@/object-core/agents/utils/getCoreAgentTestHint';
 
 const TRIGGER_ID = '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11';
 
-const getHint = (triggers: unknown[]) =>
+const getHint = (triggers: AgentTrigger[]) =>
   getCoreAgentTestHint({
     triggers,
     getTriggerDetails: () => 'People',
