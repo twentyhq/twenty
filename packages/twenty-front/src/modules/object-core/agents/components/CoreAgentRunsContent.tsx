@@ -6,15 +6,20 @@ import {
   IconBolt,
   IconCalendarTime,
   IconCoins,
+  IconPlayerPlay,
   IconStatusChange,
   IconSum,
   IconTextSize,
   IconTimeDuration30,
 } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { useOpenAskAiThread } from '@/ai-chat/threads/hooks/useOpenAskAiThread';
 import { CoreAgentRunConversation } from '@/object-core/agents/components/CoreAgentRunConversation';
 import { CoreAgentRunRow } from '@/object-core/agents/components/CoreAgentRunRow';
+import { useCanTestCoreAgent } from '@/object-core/agents/hooks/useCanTestCoreAgent';
+import { useOpenCoreAgentTestSidePanel } from '@/object-core/agents/hooks/useOpenCoreAgentTestSidePanel';
+import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { CORE_AGENT_RUNS_GRID_TEMPLATE_COLUMNS } from '@/object-core/agents/constants/CoreAgentRunsGridTemplateColumns';
 import { type CoreAgentRun } from '@/object-core/agents/types/CoreAgentRun';
 import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/groupCoreAgentRunsByConversation';
@@ -54,19 +59,19 @@ const toggleId = (ids: Set<string>, id: string): Set<string> => {
 };
 
 type CoreAgentRunsContentProps = {
-  agentId: string;
+  agent: CoreAgent;
 };
 
-export const CoreAgentRunsContent = ({
-  agentId,
-}: CoreAgentRunsContentProps) => {
+export const CoreAgentRunsContent = ({ agent }: CoreAgentRunsContentProps) => {
   const { t } = useLingui();
   const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
   const { openAskAiThread } = useOpenAskAiThread();
+  const canTest = useCanTestCoreAgent(agent);
+  const { openCoreAgentTestSidePanel } = useOpenCoreAgentTestSidePanel();
 
   // runs start and settle outside this page, so the list refreshes while it is visible
   const { data, loading, error } = useQuery(GetAgentRunsDocument, {
-    variables: { agentId },
+    variables: { agentId: agent.id },
     pollInterval: CORE_AGENT_RUNS_POLL_INTERVAL_IN_MS,
     skipPollAttempt: () => document.hidden,
   });
@@ -141,9 +146,18 @@ export const CoreAgentRunsContent = ({
           <EmptyState.Content>
             <EmptyState.Title>{t`No turns yet`}</EmptyState.Title>
             <EmptyState.Description>
-              {t`Turns appear here once a workflow or an app uses this agent`}
+              {t`Turns appear here once you test this agent, or a workflow or an app uses it`}
             </EmptyState.Description>
           </EmptyState.Content>
+          {canTest && (
+            <EmptyState.Actions>
+              <Button
+                startIcon={<IconPlayerPlay />}
+                onClick={() => openCoreAgentTestSidePanel(agent.id)}
+                variant="outline"
+              >{t`Test agent`}</Button>
+            </EmptyState.Actions>
+          )}
         </EmptyState.Root>
       </StyledEmptyStateContainer>
     );

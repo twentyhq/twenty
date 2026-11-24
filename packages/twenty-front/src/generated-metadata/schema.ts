@@ -61,6 +61,7 @@ export type Agent = {
   responseFormat?: Maybe<Scalars['JSON']['output']>;
   roleId?: Maybe<Scalars['UUID']['output']>;
   triggers: Array<Scalars['JSON']['output']>;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -1438,6 +1439,31 @@ export type CalendarConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export enum CalendarEventRecurrenceFrequency {
+  DAILY = 'DAILY',
+  MONTHLY = 'MONTHLY',
+  WEEKLY = 'WEEKLY',
+  YEARLY = 'YEARLY'
+}
+
+export type CalendarEventRecurrenceInput = {
+  daysOfWeek?: InputMaybe<Array<CalendarEventRecurrenceWeekday>>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  endOccurrenceCount?: InputMaybe<Scalars['Int']['input']>;
+  frequency: CalendarEventRecurrenceFrequency;
+  interval?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export enum CalendarEventRecurrenceWeekday {
+  FRIDAY = 'FRIDAY',
+  MONDAY = 'MONDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
+  THURSDAY = 'THURSDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY'
+}
+
 export type CallRecordingSummaryConfiguration = {
   __typename?: 'CallRecordingSummaryConfiguration';
   configurationType: WidgetConfigurationType;
@@ -1813,6 +1839,7 @@ export type CreateCalendarEventInput = {
   endsAt: Scalars['String']['input'];
   isFullDay?: InputMaybe<Scalars['Boolean']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
+  recurrence?: InputMaybe<CalendarEventRecurrenceInput>;
   sendInvitations?: InputMaybe<Scalars['Boolean']['input']>;
   startsAt: Scalars['String']['input'];
   timeZone?: InputMaybe<Scalars['String']['input']>;
