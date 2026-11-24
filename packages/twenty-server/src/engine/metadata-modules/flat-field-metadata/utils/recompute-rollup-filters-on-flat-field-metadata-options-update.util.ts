@@ -3,15 +3,15 @@ import {
   type FromTo,
   type ViewFilterValue,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { resolveFlatFieldMetadataOptions } from 'src/engine/metadata-modules/flat-field-metadata-option/utils/resolve-flat-field-metadata-options.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findRollupFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-rollup-flat-field-metadatas.util';
 import { compareTwoFlatFieldMetadataEnumOptions } from 'src/engine/metadata-modules/flat-field-metadata/utils/compare-two-flat-field-metadata-enum-options.util';
 import { computeSelectFilterValueAfterOptionsUpdate } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-select-filter-value-after-options-update.util';
 import { isEnumFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-enum-flat-field-metadata.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 
 type RecomputeRollupFiltersOnFlatFieldMetadataOptionsUpdateArgs = FromTo<
   FlatFieldMetadata,
@@ -53,12 +53,8 @@ export const recomputeRollupFiltersOnFlatFieldMetadataOptionsUpdate = ({
     return [];
   }
 
-  return Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
-    .filter(isDefined)
-    .filter((flatFieldMetadata) =>
-      isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.ROLLUP),
-    )
-    .flatMap((rollupFlatFieldMetadata) => {
+  return findRollupFlatFieldMetadatas(flatFieldMetadataMaps).flatMap(
+    (rollupFlatFieldMetadata) => {
       const recomputedValueByFilterId = new Map<string, string[]>();
 
       for (const filter of rollupFlatFieldMetadata.settings.filters) {
@@ -112,5 +108,6 @@ export const recomputeRollupFiltersOnFlatFieldMetadataOptionsUpdate = ({
           },
         },
       ];
-    });
+    },
+  );
 };

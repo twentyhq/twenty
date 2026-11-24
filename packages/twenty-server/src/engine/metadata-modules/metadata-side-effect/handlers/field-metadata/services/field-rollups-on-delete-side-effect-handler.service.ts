@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { findRollupFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-rollup-flat-field-metadatas.util';
 import { findRollupFlatFieldMetadatasDependingOnFields } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-rollup-flat-field-metadatas-depending-on-fields.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import {
   type BuildSideEffectsArgs,
   MetadataSideEffectHandler,
@@ -34,16 +33,9 @@ export class FieldRollupsOnDeleteSideEffectHandlerService extends MetadataSideEf
       fieldMetadataUniversalIdentifiers: [
         deletedFlatFieldMetadata.universalIdentifier,
       ],
-      rollupFlatFieldMetadatas: Object.values(
-        flatFieldMetadataMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .filter((flatFieldMetadata) =>
-          isFlatFieldMetadataOfType(
-            flatFieldMetadata,
-            FieldMetadataType.ROLLUP,
-          ),
-        ),
+      rollupFlatFieldMetadatas: findRollupFlatFieldMetadatas(
+        flatFieldMetadataMaps,
+      ),
     }).filter(
       ({ universalIdentifier }) =>
         !isDefined(fieldsAlreadyDeleted[universalIdentifier]),
