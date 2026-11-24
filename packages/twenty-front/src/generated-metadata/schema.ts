@@ -2112,6 +2112,7 @@ export type CreateViewInput = {
   icon: Scalars['String']['input'];
   id?: InputMaybe<Scalars['UUID']['input']>;
   isCompact?: InputMaybe<Scalars['Boolean']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
@@ -2125,7 +2126,6 @@ export type CreateViewInput = {
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
-  visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type CreateViewSortInput = {
@@ -3989,6 +3989,7 @@ export type Mutation = {
   updatePageLayoutWidget: PageLayoutWidget;
   updatePageLayoutWithTabsAndWidgets: PageLayout;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateRelatedRecordPath: RelatedRecordPath;
   updateSkill: Skill;
   updateTabPresence: Scalars['Boolean']['output'];
   updateTimelineActivityType: TimelineActivityType;
@@ -5399,6 +5400,11 @@ export type MutationUpdatePageLayoutWithTabsAndWidgetsArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String']['input'];
   passwordResetToken: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateRelatedRecordPathArgs = {
+  input: UpdateRelatedRecordPathInput;
 };
 
 
@@ -7038,6 +7044,7 @@ export type RelatedRecordPath = {
   __typename?: 'RelatedRecordPath';
   firstFieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
+  isActive: Scalars['Boolean']['output'];
   isInherent: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   secondFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -8148,6 +8155,12 @@ export type UpdatePageLayoutWithTabsInput = {
   type: PageLayoutType;
 };
 
+export type UpdateRelatedRecordPathInput = {
+  id: Scalars['UUID']['input'];
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  isInherent?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type UpdateRoleInput = {
   /** The id of the role to update */
   id: Scalars['UUID']['input'];
@@ -8299,6 +8312,7 @@ export type UpdateViewInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   isCompact?: InputMaybe<Scalars['Boolean']['input']>;
+  isPrivate?: InputMaybe<Scalars['Boolean']['input']>;
   kanbanAggregateOperation?: InputMaybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   kanbanColumnWidth?: InputMaybe<Scalars['Int']['input']>;
@@ -8311,7 +8325,6 @@ export type UpdateViewInput = {
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
   type?: InputMaybe<ViewType>;
-  visibility?: InputMaybe<ViewVisibility>;
 };
 
 export type UpdateViewSortInput = {
@@ -8840,6 +8853,7 @@ export type View = {
   isCompact: Scalars['Boolean']['output'];
   /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
   isCustom: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
   isSystemSideEffect: Scalars['Boolean']['output'];
   kanbanAggregateOperation?: Maybe<AggregateOperations>;
   kanbanAggregateOperationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -8862,6 +8876,7 @@ export type View = {
   viewFilters: Array<ViewFilter>;
   viewGroups: Array<ViewGroup>;
   viewSorts: Array<ViewSort>;
+  /** @deprecated Use isPrivate instead */
   visibility: ViewVisibility;
   workspaceId: Scalars['UUID']['output'];
 };

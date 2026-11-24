@@ -1,4 +1,3 @@
-import { ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationContentDTO } from 'src/engine/core-modules/application/application-content/dtos/application-content.dto';
@@ -71,11 +70,9 @@ const isPersonalNavigationMenuItem = (navigationMenuItem: {
 }) => isDefined(navigationMenuItem.userWorkspaceId);
 
 const isPersonalView = (view: {
-  visibility: ViewVisibility;
+  isPrivate: boolean;
   createdByUserWorkspaceId: string | null;
-}) =>
-  view.visibility === ViewVisibility.UNLISTED &&
-  isDefined(view.createdByUserWorkspaceId);
+}) => view.isPrivate && isDefined(view.createdByUserWorkspaceId);
 
 export const buildApplicationContentFromFlatEntityMaps = ({
   applicationId,

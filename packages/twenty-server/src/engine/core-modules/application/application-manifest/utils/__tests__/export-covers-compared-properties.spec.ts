@@ -570,7 +570,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { isPrivate: 'visibility' },
     workspaceLocalProperties: [
       'isActive',
       'universalOverrides',
@@ -1014,7 +1014,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
     },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {},
   },
 ];

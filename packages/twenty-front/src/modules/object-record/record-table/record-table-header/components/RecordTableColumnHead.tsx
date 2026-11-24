@@ -2,9 +2,8 @@ import { styled } from '@linaria/react';
 import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
-import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
-import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
+import { useRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useRecordFieldColumnKind';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { RECORD_TABLE_CELL_CONTENT_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableCellContentClassName';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -42,16 +41,13 @@ export const RecordTableColumnHead = ({
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
-  const lookupTarget = useRecordFieldLookupTarget(recordField);
-  const scopedRelationAlias = useScopedRelationAlias(recordField.id);
+  const columnKind = useRecordFieldColumnKind(recordField.id);
   const foundFieldMetadataItem =
     correspondingFieldMetadataItem.foundFieldMetadataItem;
   const fieldMetadataItem = isDefined(foundFieldMetadataItem)
     ? getRecordFieldColumnHeader({
         fieldMetadataItem: foundFieldMetadataItem,
-        lookupTarget: lookupTarget ?? scopedRelationAlias?.lookupTarget,
-        isScopedRelationColumn: isDefined(scopedRelationAlias),
-        summary: scopedRelationAlias?.summary,
+        columnKind,
         customLabel: recordField.label,
       })
     : undefined;
