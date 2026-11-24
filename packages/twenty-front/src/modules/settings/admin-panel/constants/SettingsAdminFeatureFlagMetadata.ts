@@ -113,4 +113,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Widget visibility rule tree`,
     description: msg`Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules.`,
   },
+  [FeatureFlagKey.IS_INBOX_OBJECT_NAMING_ENABLED]: {
+    label: msg`Inbox object names`,
+    description: msg`Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand.`,
+  },
 };
