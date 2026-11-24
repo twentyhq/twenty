@@ -1,15 +1,9 @@
-import {
-  type ConnectionProviderManifest,
-  type McpServerManifest,
-  type MessagingProviderManifest,
-  normalizeConnectionProviderManifest,
-  normalizeMcpServerManifest,
-  normalizeMessagingProviderManifest,
-  type SyncableEntityOptions,
-} from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { type ConnectionProviderManifest } from '@/application/connectionProviderManifestType';
+import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { normalizeConnectionProviderManifest } from '@/application/utils/normalizeConnectionProviderManifest';
+import { isDefined } from '@/utils/validation/isDefined';
 
-// Servers before 2.63 only read the deprecated { universalIdentifier } references, so the built manifest carries both.
+// Servers before 2.63 only read the deprecated { universalIdentifier } references, so built manifests carry both.
 const toDeprecatedReference = (
   universalIdentifier: string | undefined,
 ): SyncableEntityOptions | undefined =>
@@ -55,39 +49,5 @@ export const withDeprecatedConnectionProviderReferences = (
         custom.callbackLogicFunctionUniversalIdentifier,
       ),
     },
-  };
-};
-
-export const withDeprecatedMessagingProviderReferences = (
-  messagingProviderManifest: MessagingProviderManifest,
-): MessagingProviderManifest => {
-  const normalizedManifest = normalizeMessagingProviderManifest(
-    messagingProviderManifest,
-  );
-
-  return {
-    ...normalizedManifest,
-    connectionProvider: toDeprecatedReference(
-      normalizedManifest.connectionProviderUniversalIdentifier,
-    ),
-    sendMessageLogicFunction: toDeprecatedReference(
-      normalizedManifest.sendMessageLogicFunctionUniversalIdentifier,
-    ),
-    markThreadAsReadLogicFunction: toDeprecatedReference(
-      normalizedManifest.markThreadAsReadLogicFunctionUniversalIdentifier,
-    ),
-  };
-};
-
-export const withDeprecatedMcpServerReferences = (
-  mcpServerManifest: McpServerManifest,
-): McpServerManifest => {
-  const normalizedManifest = normalizeMcpServerManifest(mcpServerManifest);
-
-  return {
-    ...normalizedManifest,
-    connectionProvider: toDeprecatedReference(
-      normalizedManifest.connectionProviderUniversalIdentifier,
-    ),
   };
 };

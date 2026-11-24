@@ -1,7 +1,7 @@
 import { type MessagingProviderManifest } from '@/application/messagingProviderManifestType';
 import { resolveManifestReferenceUniversalIdentifier } from '@/application/utils/resolveManifestReferenceUniversalIdentifier';
 
-// TODO: remove with the deprecated { universalIdentifier } references once published apps no longer send them
+// TODO(@FelixMalfait): remove with the deprecated { universalIdentifier } references once published apps no longer send them
 export const normalizeMessagingProviderManifest = ({
   connectionProvider,
   sendMessageLogicFunction,

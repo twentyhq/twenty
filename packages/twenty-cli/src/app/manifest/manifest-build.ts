@@ -1,8 +1,3 @@
-import {
-  withDeprecatedConnectionProviderReferences,
-  withDeprecatedMcpServerReferences,
-  withDeprecatedMessagingProviderReferences,
-} from '@/app/manifest/utils/with-deprecated-provider-references';
 import { fromObjectConfigToObjectManifest } from '@/app/manifest/utils/from-object-config-to-object-manifest';
 import { fromLogicFunctionConfigToLogicFunctionManifest } from '@/app/manifest/utils/from-logic-function-config-to-logic-function-manifest';
 import { fromFrontComponentConfigToFrontComponentManifest } from '@/app/manifest/utils/from-front-component-config-to-front-component-manifest';
@@ -71,6 +66,9 @@ import {
   type TimelineActivityTypeManifest,
   type ViewManifest,
   type WorkflowManifest,
+  withDeprecatedConnectionProviderReferences,
+  withDeprecatedMcpServerReferences,
+  withDeprecatedMessagingProviderReferences,
 } from 'twenty-shared/application';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 

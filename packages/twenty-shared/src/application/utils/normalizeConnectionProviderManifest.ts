@@ -21,7 +21,7 @@ const normalizeCustomConnectionProviderConfig = ({
     }),
 });
 
-// TODO: remove with the deprecated { universalIdentifier } references once published apps no longer send them
+// TODO(@FelixMalfait): remove with the deprecated { universalIdentifier } references once published apps no longer send them
 export const normalizeConnectionProviderManifest = (
   connectionProviderManifest: ConnectionProviderManifest,
 ): ConnectionProviderManifest => {

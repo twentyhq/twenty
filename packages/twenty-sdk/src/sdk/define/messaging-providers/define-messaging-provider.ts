@@ -6,6 +6,7 @@ import {
   MESSAGING_PROVIDER_CONVERSATION_STYLES,
   type MessagingProviderManifest,
   normalizeMessagingProviderManifest,
+  withDeprecatedMessagingProviderReferences,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
@@ -75,5 +76,9 @@ export const defineMessagingProvider: DefineEntity<
     );
   }
 
-  return createValidationResult({ config: normalizedConfig, errors });
+  // Both spellings, so a manifest built by a CLI older than this SDK still reads on older servers.
+  return createValidationResult({
+    config: withDeprecatedMessagingProviderReferences(config),
+    errors,
+  });
 };

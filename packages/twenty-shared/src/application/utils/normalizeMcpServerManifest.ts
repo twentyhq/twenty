@@ -1,7 +1,7 @@
 import { type McpServerManifest } from '@/application/mcpServerManifestType';
 import { resolveManifestReferenceUniversalIdentifier } from '@/application/utils/resolveManifestReferenceUniversalIdentifier';
 
-// TODO: remove with the deprecated { universalIdentifier } reference once published apps no longer send it
+// TODO(@FelixMalfait): remove with the deprecated { universalIdentifier } reference once published apps no longer send it
 export const normalizeMcpServerManifest = ({
   connectionProvider,
   ...mcpServerManifest

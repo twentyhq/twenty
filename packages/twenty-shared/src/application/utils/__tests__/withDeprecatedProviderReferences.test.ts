@@ -1,9 +1,5 @@
-import { describe, expect, it } from 'vitest';
-
-import {
-  withDeprecatedConnectionProviderReferences,
-  withDeprecatedMessagingProviderReferences,
-} from '@/app/manifest/utils/with-deprecated-provider-references';
+import { withDeprecatedConnectionProviderReferences } from '@/application/utils/withDeprecatedConnectionProviderReferences';
+import { withDeprecatedMessagingProviderReferences } from '@/application/utils/withDeprecatedMessagingProviderReferences';
 
 const CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER =
   '6b1f0a52-4d8e-4c4e-9b0a-2f5d8a7c1e02';

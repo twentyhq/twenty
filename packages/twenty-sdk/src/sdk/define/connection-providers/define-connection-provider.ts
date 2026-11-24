@@ -7,6 +7,7 @@ import {
   type ConnectionProviderManifest,
   type CustomConnectionProviderConfig,
   normalizeConnectionProviderManifest,
+  withDeprecatedConnectionProviderReferences,
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl } from 'twenty-shared/utils';
 
@@ -175,5 +176,9 @@ export const defineConnectionProvider: DefineEntity<
     errors.push(...getCustomConfigErrors(normalizedConfig.custom));
   }
 
-  return createValidationResult({ config: normalizedConfig, errors });
+  // Both spellings, so a manifest built by a CLI older than this SDK still reads on older servers.
+  return createValidationResult({
+    config: withDeprecatedConnectionProviderReferences(config),
+    errors,
+  });
 };

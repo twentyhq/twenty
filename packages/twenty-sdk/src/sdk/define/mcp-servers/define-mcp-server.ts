@@ -5,6 +5,7 @@ import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres
 import {
   type McpServerManifest,
   normalizeMcpServerManifest,
+  withDeprecatedMcpServerReferences,
 } from 'twenty-shared/application';
 import { isDefined, isHttpUrl, isNonEmptyString } from 'twenty-shared/utils';
 
@@ -47,5 +48,9 @@ export const defineMcpServer: DefineEntity<McpServerManifest> = (config) => {
     );
   }
 
-  return createValidationResult({ config: normalizedConfig, errors });
+  // Both spellings, so a manifest built by a CLI older than this SDK still reads on older servers.
+  return createValidationResult({
+    config: withDeprecatedMcpServerReferences(config),
+    errors,
+  });
 };
