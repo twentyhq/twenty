@@ -12,7 +12,7 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type CachedCronTrigger } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/types/cached-cron-trigger.type';
-import { publishCronTriggerCacheEntry } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/utils/publish-cron-trigger-cache-entry.util';
+import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -32,12 +32,36 @@ export class CoreWorkflowTriggerService {
   async publishCronTriggerCacheEntries(
     cachedTriggers: CachedCronTrigger[],
   ): Promise<void> {
-    for (const cachedTrigger of cachedTriggers) {
-      await publishCronTriggerCacheEntry({
-        cacheStorageService: this.cacheStorageService,
-        cachedTrigger,
-        logger: this.logger,
-      });
+    await this.updateCronTriggerCache({
+      cronTriggersToPublish: cachedTriggers,
+      coreWorkflowIdsToUnschedule: [],
+    });
+  }
+
+  async refreshTriggerCachesAfterCommit({
+    workspaceId,
+    cronTriggersToPublish = [],
+    coreWorkflowIdsToUnschedule = [],
+  }: {
+    workspaceId: string;
+    cronTriggersToPublish?: CachedCronTrigger[];
+    coreWorkflowIdsToUnschedule?: string[];
+  }): Promise<void> {
+    await this.updateCronTriggerCache({
+      workspaceId,
+      cronTriggersToPublish,
+      coreWorkflowIdsToUnschedule,
+    });
+
+    try {
+      await this.invalidateAutomatedTriggerMaps(workspaceId);
+    } catch (error) {
+      throw new CoreWorkflowMetadataException(
+        `Workflow changes were committed, but the automated trigger maps of workspace ${workspaceId} could not be refreshed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        CoreWorkflowMetadataExceptionCode.TRIGGER_CACHE_REFRESH_FAILED,
+      );
     }
   }
 
@@ -83,7 +107,60 @@ export class CoreWorkflowTriggerService {
     return workflows[0] ?? null;
   }
 
-  async invalidateAutomatedTriggerMaps(workspaceId: string): Promise<void> {
+  private async updateCronTriggerCache({
+    workspaceId,
+    cronTriggersToPublish,
+    coreWorkflowIdsToUnschedule,
+  }: {
+    workspaceId?: string;
+    cronTriggersToPublish: CachedCronTrigger[];
+    coreWorkflowIdsToUnschedule: string[];
+  }): Promise<void> {
+    try {
+      for (const coreWorkflowId of coreWorkflowIdsToUnschedule) {
+        await this.cacheStorageService.hashDelete({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: coreWorkflowId,
+        });
+      }
+
+      for (const cachedTrigger of cronTriggersToPublish) {
+        await this.cacheStorageService.hashSetIfExists({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: cachedTrigger.workflowId,
+          value: JSON.stringify(cachedTrigger),
+        });
+      }
+    } catch (error) {
+      const affectedWorkflows = [
+        ...coreWorkflowIdsToUnschedule.map(
+          (coreWorkflowId) => `${coreWorkflowId} (workspace ${workspaceId})`,
+        ),
+        ...cronTriggersToPublish.map(
+          (cachedTrigger) =>
+            `${cachedTrigger.workflowId} (workspace ${cachedTrigger.workspaceId})`,
+        ),
+      ].join(', ');
+
+      this.logger.error(
+        `Cron trigger cache not updated for workflows ${affectedWorkflows}, dropping it so the next tick rebuilds it from the database`,
+        error,
+      );
+
+      try {
+        await this.cacheStorageService.del(WORKFLOW_CRON_TRIGGER_CACHE_KEY);
+      } catch (invalidationError) {
+        this.logger.error(
+          `Cron trigger cache could not be dropped after a failed update for workflows ${affectedWorkflows}`,
+          invalidationError,
+        );
+      }
+    }
+  }
+
+  private async invalidateAutomatedTriggerMaps(
+    workspaceId: string,
+  ): Promise<void> {
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',
     ]);
