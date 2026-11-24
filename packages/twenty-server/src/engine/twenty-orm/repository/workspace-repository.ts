@@ -2208,33 +2208,42 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
       ];
 
-      for (const { alias, objectMetadataId } of sources) {
-        if (alias !== COMPUTED_COLUMN_RECORD_ALIAS) {
-          const accessCondition =
-            await recordPermissions.buildReadRecordsAccessSQLCondition({
-              principals,
-              objectMetadataId,
-              tableAlias: alias,
-            });
+      const sourcePermissions = await Promise.all(
+        sources.map(async ({ alias, objectMetadataId }) => {
+          const [accessCondition, unreadableFieldsSQLConditions] =
+            await Promise.all([
+              alias === COMPUTED_COLUMN_RECORD_ALIAS
+                ? true
+                : recordPermissions.buildReadRecordsAccessSQLCondition({
+                    principals,
+                    objectMetadataId,
+                    tableAlias: alias,
+                  }),
+              recordFieldPermissions.buildUnreadableFieldsSQLConditions({
+                principals,
+                objectMetadataId,
+                tableAlias: alias,
+              }),
+            ]);
 
-          if (accessCondition === false) {
-            permissions.lookupAccessConditionByAlias[alias] = false;
-            continue;
-          }
+          return { alias, accessCondition, unreadableFieldsSQLConditions };
+        }),
+      );
 
-          if (accessCondition !== true) {
-            permissions.lookupAccessConditionByAlias[alias] =
-              accessCondition.sql;
-            Object.assign(parameters, accessCondition.parameters);
-          }
+      for (const {
+        alias,
+        accessCondition,
+        unreadableFieldsSQLConditions,
+      } of sourcePermissions) {
+        if (accessCondition === false) {
+          permissions.lookupAccessConditionByAlias[alias] = false;
+          continue;
         }
 
-        const unreadableFieldsSQLConditions =
-          await recordFieldPermissions.buildUnreadableFieldsSQLConditions({
-            principals,
-            objectMetadataId,
-            tableAlias: alias,
-          });
+        if (accessCondition !== true) {
+          permissions.lookupAccessConditionByAlias[alias] = accessCondition.sql;
+          Object.assign(parameters, accessCondition.parameters);
+        }
 
         for (const {
           fieldMetadataIds,

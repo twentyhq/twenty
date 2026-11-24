@@ -29,33 +29,13 @@ export const buildFormulaSqlReferenceResolverFromDescriptors = ({
     Map<string, FormulaSqlColumn>
   >();
 
-  const readField = ({
-    alias,
-    fieldName,
-    candidateFields,
-  }: {
-    alias: string;
-    fieldName: string;
-    candidateFields: ValidationRuleFieldDescriptor[];
-  }) => {
-    const field = candidateFields.find(({ name }) => name === fieldName);
-
-    if (isDefined(field)) {
-      onFieldRead?.({
-        alias,
-        fieldUniversalIdentifier: field.universalIdentifier,
-      });
-    }
-  };
-
   return (path) => {
     const recordColumn = recordColumnsByPath.get(path);
 
     if (isDefined(recordColumn)) {
-      readField({
+      onFieldRead?.({
         alias: COMPUTED_COLUMN_RECORD_ALIAS,
-        fieldName: recordColumn.fieldName,
-        candidateFields: fields,
+        fieldUniversalIdentifier: recordColumn.fieldUniversalIdentifier,
       });
 
       return buildFormulaSqlColumnValue({
@@ -65,11 +45,10 @@ export const buildFormulaSqlReferenceResolverFromDescriptors = ({
     }
 
     const [relationFieldName, ...targetPathSegments] = path.split('.');
-    const relationTargetFields = fields.find(
-      ({ name }) => name === relationFieldName,
-    )?.relationTargetFields;
+    const relationField = fields.find(({ name }) => name === relationFieldName);
+    const relationTargetFields = relationField?.relationTargetFields;
 
-    if (!isDefined(relationTargetFields)) {
+    if (!isDefined(relationField) || !isDefined(relationTargetFields)) {
       return undefined;
     }
 
@@ -90,15 +69,13 @@ export const buildFormulaSqlReferenceResolverFromDescriptors = ({
 
     const lookupAlias = getLookupAlias(relationFieldName);
 
-    readField({
+    onFieldRead?.({
       alias: COMPUTED_COLUMN_RECORD_ALIAS,
-      fieldName: relationFieldName,
-      candidateFields: fields,
+      fieldUniversalIdentifier: relationField.universalIdentifier,
     });
-    readField({
+    onFieldRead?.({
       alias: lookupAlias,
-      fieldName: lookupColumn.fieldName,
-      candidateFields: relationTargetFields,
+      fieldUniversalIdentifier: lookupColumn.fieldUniversalIdentifier,
     });
 
     return buildFormulaSqlColumnValue({

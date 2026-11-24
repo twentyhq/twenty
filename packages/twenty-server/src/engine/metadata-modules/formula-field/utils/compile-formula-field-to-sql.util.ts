@@ -5,10 +5,11 @@ import {
 } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { escapeLiteral } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
 import {
-  compileFormulaExpressionToSql,
+  compileFormulaExpressionToSqlOrThrow,
   type FormulaSqlReferenceResolver,
 } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-expression-to-sql.util';
 import {
@@ -18,7 +19,6 @@ import {
   toDateLikeValueOrThrow,
   toDateTimeValue,
   toDoublePrecision,
-  toSqlTextLiteral,
   toTextSqlOrThrow,
   toUtcDate,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
@@ -34,7 +34,7 @@ type FormulaFieldSqlCompilationResult =
 const USAGE = 'This field';
 
 const toTextArraySql = (values: readonly string[]): string =>
-  `ARRAY[${values.map(toSqlTextLiteral).join(', ')}]::text[]`;
+  `ARRAY[${values.map(escapeLiteral).join(', ')}]::text[]`;
 
 // Reads as NULL unless the value is one of the allowed ones, evaluating the value once
 const keepAllowedText = ({
@@ -46,20 +46,15 @@ const keepAllowedText = ({
 }): string =>
   `(${allowedValuesSql})[array_position(${allowedValuesSql}, ${textSql})]`;
 
-const coerceToRating = (value: FormulaSqlValue): string => {
-  if (value.type === 'number') {
-    return keepAllowedText({
-      textSql: `'RATING_' || trim_scale(${value.sql})::text`,
-      allowedValuesSql: toTextArraySql(RATING_VALUES),
-    });
-  }
-
-  return keepAllowedText({
-    textSql: assertFormulaSqlTypeOrThrow({ value, type: 'text', usage: USAGE })
-      .sql,
+const coerceToRating = (value: FormulaSqlValue): string =>
+  keepAllowedText({
+    textSql:
+      value.type === 'number'
+        ? `'RATING_' || trim_scale(${value.sql})::text`
+        : assertFormulaSqlTypeOrThrow({ value, type: 'text', usage: USAGE })
+            .sql,
     allowedValuesSql: toTextArraySql(RATING_VALUES),
   });
-};
 
 // Dates keep four-digit years, the only ones record values are read back with
 const coerceToColumnExpression = ({
@@ -117,27 +112,6 @@ const coerceToColumnExpression = ({
   }
 };
 
-const compileOrThrow = ({
-  expression,
-  resolveReference,
-}: {
-  expression: string;
-  resolveReference: FormulaSqlReferenceResolver;
-}): FormulaSqlValue => {
-  const compilation = compileFormulaExpressionToSql({
-    expression,
-    resolveReference,
-  });
-
-  if (!compilation.isValid) {
-    throw new FormulaSqlCompilationException({
-      message: compilation.errorMessage,
-    });
-  }
-
-  return compilation.value;
-};
-
 export const compileFormulaFieldToSql = ({
   fieldMetadataType,
   expression,
@@ -153,7 +127,10 @@ export const compileFormulaFieldToSql = ({
 }): FormulaFieldSqlCompilationResult => {
   try {
     const columnExpression = coerceToColumnExpression({
-      value: compileOrThrow({ expression, resolveReference }),
+      value: compileFormulaExpressionToSqlOrThrow({
+        expression,
+        resolveReference,
+      }),
       fieldMetadataType,
       selectEnumSqlType,
     });
@@ -168,7 +145,7 @@ export const compileFormulaFieldToSql = ({
       });
     }
 
-    const currencyCode = compileOrThrow({
+    const currencyCode = compileFormulaExpressionToSqlOrThrow({
       expression: currencyCodeExpression,
       resolveReference,
     });

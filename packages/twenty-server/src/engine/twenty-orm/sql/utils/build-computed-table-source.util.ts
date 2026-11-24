@@ -6,6 +6,11 @@ import {
   type WorkspaceComputedColumnShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import {
+  quoteColumn,
+  quoteTable,
+} from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
+import { renderUnreadableColumn } from 'src/engine/twenty-orm/sql/utils/render-unreadable-column.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export type ComputedTableSourcePermissions = {
@@ -23,17 +28,6 @@ type ComputedLookup = {
   joinColumnName: string;
   targetTableShape: WorkspaceTableShape;
 };
-
-const quoteColumn = ({
-  alias,
-  columnName,
-}: {
-  alias: string;
-  columnName: string;
-}): string => `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
-
-const quoteTable = ({ schemaName, tableName }: WorkspaceTableShape): string =>
-  `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
 
 const renderComputedColumn = ({
   computedColumnShape: { columnName, sqlType, expression, dependencies },
@@ -84,9 +78,9 @@ const renderComputedColumn = ({
           fieldMetadataIds.includes(dependency.fieldMetadataId),
       ),
     )
-    .map(({ condition }) => `(${condition})`);
+    .map(({ condition }) => condition);
   const readableExpression = isNonEmptyArray(unreadableConditions)
-    ? `CASE WHEN ${unreadableConditions.join(' OR ')} THEN NULL ELSE ${expression} END`
+    ? renderUnreadableColumn({ quotedColumn: expression, unreadableConditions })
     : expression;
 
   return {
@@ -144,9 +138,7 @@ export const buildComputedTableSource = ({
   );
   const storedColumns = tableShape.columnNames
     .filter((columnName) => !computedColumnNames.has(columnName))
-    .map((columnName) =>
-      quoteColumn({ alias: COMPUTED_COLUMN_RECORD_ALIAS, columnName }),
-    );
+    .map((columnName) => quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName));
   const joinedLookupAliases = new Set(
     computedColumns.flatMap(({ lookupAliases }) => lookupAliases),
   );
@@ -155,9 +147,9 @@ export const buildComputedTableSource = ({
     .map(({ alias, joinColumnName, targetTableShape }) => {
       const accessCondition = permissions?.lookupAccessConditionByAlias[alias];
       const conditions = [
-        `${quoteColumn({ alias, columnName: 'id' })} = ${quoteColumn({ alias: COMPUTED_COLUMN_RECORD_ALIAS, columnName: joinColumnName })}`,
+        `${quoteColumn(alias, 'id')} = ${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, joinColumnName)}`,
         targetTableShape.hasDeletedAtColumn
-          ? `${quoteColumn({ alias, columnName: 'deletedAt' })} IS NULL`
+          ? `${quoteColumn(alias, 'deletedAt')} IS NULL`
           : undefined,
         isDefined(accessCondition) && accessCondition !== false
           ? `(${accessCondition})`
