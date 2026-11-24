@@ -138,12 +138,17 @@ const PerkIconFrame = styled.span`
 `;
 
 // PlanCard's CtaRow: full-width action, pushed to the card's foot so both
-// cards end on the same line.
+// cards end on the same line. As tall as the button (40px), content centred,
+// so the top level's note sits on the button's axis in the card beside it.
 const Action = styled.div`
   && {
     margin-top: auto;
     padding-top: ${spacing(4)};
   }
+
+  align-items: center;
+  display: flex;
+  min-height: calc(${spacing(10)} + ${spacing(4)});
 
   > * {
     display: flex;

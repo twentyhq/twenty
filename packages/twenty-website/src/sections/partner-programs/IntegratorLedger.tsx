@@ -12,7 +12,6 @@ import {
   EASING,
   FONT_WEIGHT,
   fontFamily,
-  mediaUp,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -24,7 +23,8 @@ import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { INTEGRATOR_LEDGER } from './integrator-ledger-config';
 
-const CHART_HEIGHT_PX = 168;
+// Tall enough to carry the section: a whole number of dash rows.
+const CHART_HEIGHT_PX = 324;
 const DASH_PITCH_PX = 6;
 const DASH_ROWS = CHART_HEIGHT_PX / DASH_PITCH_PX;
 const MONTHS = Array.from(
@@ -33,17 +33,10 @@ const MONTHS = Array.from(
 );
 const READOUT_ENTRANCE_DELAY_MS = 900;
 
-// Outlined like the level cards above it.
+// No frame: the calculator is the section's content, not a widget in it.
 const Panel = styled.div`
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  padding: ${spacing(5)};
   position: relative;
   width: 100%;
-
-  ${mediaUp('md')} {
-    padding: ${spacing(7)};
-  }
 
   & > * + * {
     margin-top: ${spacing(6)};
@@ -130,8 +123,9 @@ const Stack = styled.div`
   width: 100%;
 `;
 
+// The section's figure, at the home hero's size.
 const ReadoutValue = styled.output`
-  ${typeRampDeclarations('headingLg')}
+  ${typeRampDeclarations('headingXl')}
   color: ${semanticColor.ink};
   display: block;
   font-family: ${fontFamily('serif')};
