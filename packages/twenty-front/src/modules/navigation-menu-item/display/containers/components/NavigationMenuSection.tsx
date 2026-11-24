@@ -63,6 +63,7 @@ export const NavigationMenuSection = ({
           Icon={isShowingAllItems ? IconChevronUp : IconChevronDown}
           variant="tertiary"
           preventCollapseOnMobile
+          triggerEvent="CLICK"
           onClick={() => setIsShowingAllItems(!isShowingAllItems)}
         />
       )}
