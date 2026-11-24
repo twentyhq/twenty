@@ -126,8 +126,13 @@ export type SelectStatementState = {
   tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
 };
 
-// A table with computed columns is read through a derived table that holds their values
 export type TableSourceByObjectMetadataId = Partial<Record<string, string>>;
+
+export const quoteTable = ({
+  schemaName,
+  tableName,
+}: Pick<WorkspaceTableShape, 'schemaName' | 'tableName'>): string =>
+  `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`;
 
 const renderTableSource = ({
   tableShape,
@@ -137,9 +142,7 @@ const renderTableSource = ({
   tableSourceByObjectMetadataId?: TableSourceByObjectMetadataId;
 }): string =>
   tableSourceByObjectMetadataId?.[tableShape.objectMetadataId] ??
-  `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
-    tableShape.tableName,
-  )}`;
+  quoteTable(tableShape);
 
 export const quoteColumn = (alias: string, columnName: string): string =>
   `${escapeIdentifier(alias)}.${escapeIdentifier(columnName)}`;
