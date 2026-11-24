@@ -14,7 +14,7 @@ type InboxThreadView = {
   type: ViewType;
   position: number;
   presetFilter: ViewPresetFilter | null;
-  viewFilters: { operand: ViewFilterOperand; value: unknown }[];
+  viewFilters: { operand: ViewFilterOperand; value: string }[];
 };
 
 const INBOX_THREAD_VIEW_GQL_FIELDS = `
