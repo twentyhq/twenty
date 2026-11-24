@@ -9,7 +9,7 @@ type SettingsApplicationProviderConnectionsProps = {
   applicationId: string;
   connectionProvider: Pick<
     ApplicationWithPreferences['connectionProviders'][number],
-    'name' | 'type' | 'displayName' | 'logoUrl' | 'connectedAccountPrices'
+    'name' | 'type' | 'logoUrl'
   >;
   connections: ConnectedAccount[];
   canStartAuthorization: boolean;
@@ -42,7 +42,8 @@ export const SettingsApplicationProviderConnections = ({
         {canStartAuthorization && (
           <SettingsApplicationAddConnectionButton
             applicationId={applicationId}
-            connectionProvider={connectionProvider}
+            connectionProviderName={connectionProvider.name}
+            connectionProviderType={connectionProvider.type}
             redirectLocation={redirectLocation}
           />
         )}

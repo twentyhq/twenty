@@ -702,7 +702,6 @@ export type ApplicationConnectedMemberCount = {
 export type ApplicationConnectionProvider = {
   __typename?: 'ApplicationConnectionProvider';
   applicationId: Scalars['String']['output'];
-  connectedAccountPrices: Array<ApplicationBillingPrice>;
   displayName: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
@@ -3412,6 +3411,7 @@ export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
   aboutDescription?: Maybe<Scalars['String']['output']>;
   author?: Maybe<Scalars['String']['output']>;
+  billingPrices: Array<ApplicationBillingPrice>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
   connectUrl?: Maybe<Scalars['String']['output']>;
@@ -3420,7 +3420,6 @@ export type MarketplaceAppDetail = {
   description?: Maybe<Scalars['String']['output']>;
   emailSupport?: Maybe<Scalars['String']['output']>;
   galleryImages: Array<Scalars['String']['output']>;
-  hasBillingPrices: Scalars['Boolean']['output'];
   id: Scalars['String']['output'];
   installCount: Scalars['Int']['output'];
   isListed: Scalars['Boolean']['output'];

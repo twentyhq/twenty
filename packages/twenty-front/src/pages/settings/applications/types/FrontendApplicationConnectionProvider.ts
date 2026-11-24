@@ -3,8 +3,6 @@ import {
   type ConnectionProviderType,
 } from 'twenty-shared/application';
 
-import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
-
 export type FrontendApplicationConnectionProviderOAuthConfig = {
   scopes: string[];
   // false when the server admin hasn't filled in the OAuth client_id /
@@ -22,5 +20,4 @@ export type FrontendApplicationConnectionProvider = {
   scope: ConnectionProviderScope;
   logoUrl: string | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
-  connectedAccountPrices: ApplicationBillingPrice[];
 };

@@ -3,9 +3,7 @@ import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationBillingPriceService } from 'src/engine/core-modules/application/application-billing-price/application-billing-price.service';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { ApplicationBillingPriceDTO } from 'src/engine/core-modules/application/dtos/application-billing-price.dto';
 import { ApplicationConnectionProviderDTO } from 'src/engine/core-modules/application/connection-provider/dtos/application-connection-provider.dto';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -38,7 +36,6 @@ export class ApplicationConnectionProviderResolver {
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly applicationBillingPriceService: ApplicationBillingPriceService,
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
@@ -70,18 +67,6 @@ export class ApplicationConnectionProviderResolver {
     return buildPublicAssetLogoUrl({
       logo: connectionProvider.logo,
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
-      workspaceId: workspace.id,
-      applicationId: connectionProvider.applicationId,
-    });
-  }
-
-  @ResolveField(() => [ApplicationBillingPriceDTO])
-  connectedAccountPrices(
-    @Parent()
-    connectionProvider: Pick<ApplicationConnectionProviderDTO, 'applicationId'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ApplicationBillingPriceDTO[]> {
-    return this.applicationBillingPriceService.findConnectedAccountPrices({
       workspaceId: workspace.id,
       applicationId: connectionProvider.applicationId,
     });

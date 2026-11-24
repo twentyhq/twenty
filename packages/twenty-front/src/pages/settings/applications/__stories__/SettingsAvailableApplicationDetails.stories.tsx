@@ -12,6 +12,10 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
+  ApplicationBillingPriceCurrency,
+  ApplicationBillingPricePeriod,
+  ApplicationBillingPriceType,
+  ApplicationBillingPriceUnit,
   ApplicationRegistrationSourceType,
   PermissionFlagType,
   type FindMarketplaceAppDetailQuery,
@@ -48,7 +52,18 @@ const LINKEDIN_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarket
     requestedCapabilities: [],
     requestedIframeMediaPermissions: [],
     billsCredits: false,
-    hasBillingPrices: true,
+    billingPrices: [
+      {
+        __typename: 'ApplicationBillingPrice',
+        universalIdentifier: '20202020-7c1d-4e2f-8a3b-000000000002',
+        label: 'Per connected account',
+        type: ApplicationBillingPriceType.RECURRING,
+        billingPeriod: ApplicationBillingPricePeriod.MONTHLY,
+        amountCents: 700,
+        currency: ApplicationBillingPriceCurrency.USD,
+        per: ApplicationBillingPriceUnit.CONNECTED_ACCOUNT,
+      },
+    ],
     objects: [],
     roles: [],
   };
@@ -136,7 +151,14 @@ export const SubscriptionAppAsksForBillingConsentOnInstall: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     await waitFor(() =>
-      expect(body.getByText('Bill your workspace')).toBeVisible(),
+      expect(
+        body.getByText(
+          'Bill your workspace $7.00 / month per connected account',
+        ),
+      ).toBeVisible(),
     );
+    expect(
+      body.getByText('Let members connect their own accounts'),
+    ).toBeVisible();
   },
 };

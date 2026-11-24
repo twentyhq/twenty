@@ -95,7 +95,7 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
               detail?.requestedIframeMediaPermissions
             }
             billsCredits={detail?.billsCredits}
-            hasBillingPrices={detail?.hasBillingPrices}
+            billingPrices={detail?.billingPrices}
             isListed={detail?.isListed}
             onAuthorize={install}
             isInstalling={isInstalling}

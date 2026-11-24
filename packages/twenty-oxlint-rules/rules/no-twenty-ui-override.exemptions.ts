@@ -46,6 +46,11 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
+      'packages/twenty-front/src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx',
+    reason: 'LightButton pinned to the corner of the fullscreen dialog',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/navigation/components/MobileNavigationBar.tsx',
     reason:
       'IconButton sized as a 40px touch target with the current page fill',

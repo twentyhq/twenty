@@ -1,7 +1,10 @@
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { AppConsentCard } from '@/applications/components/AppConsentCard';
-import { AppConsentCardRow } from '@/applications/components/AppConsentCardRow';
-import { AppConsentDialog } from '@/applications/components/AppConsentDialog';
+import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
+import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
+import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
 import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/utils/buildApplicationIframeMediaPermissionSummary';
@@ -10,6 +13,7 @@ import {
   type PermissionSummaryItem,
 } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
@@ -17,7 +21,8 @@ import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
-import { IconAlertTriangle } from 'twenty-ui/icon';
+import { LightButton } from 'twenty-ui/components/input';
+import { IconAlertTriangle, IconChevronLeft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 
@@ -34,14 +39,83 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   requestedCapabilities?: string[];
   requestedIframeMediaPermissions?: readonly IframeMediaPermission[];
   billsCredits?: boolean;
-  hasBillingPrices?: boolean;
+  billingPrices?: ApplicationBillingPrice[];
   isListed?: boolean;
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
 
+const StyledFullscreenContainer = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.secondary};
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[16]} ${themeCssVariables.spacing[4]};
+  position: relative;
+  width: 100%;
+`;
+
+const StyledLightButton = styled(LightButton)`
+  left: ${themeCssVariables.spacing[4]};
+  position: fixed;
+  top: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin: auto 0;
+  max-width: 400px;
+  width: 100%;
+`;
+
+const StyledAppConnectionHeaderContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledTitle = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[6]};
+  text-align: center;
+`;
+
 const StyledNotListedBannerContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledPermissionsCard = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  margin-bottom: ${themeCssVariables.spacing[6]};
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledPermissionsTitle = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin-bottom: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledPermissionRow = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]} 0;
+`;
+
+const StyledPermissionIcon = styled.div`
+  color: ${themeCssVariables.color.blue9};
+  display: flex;
 `;
 
 const StyledPermissionLabel = styled.span`
@@ -72,12 +146,15 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   requestedCapabilities = [],
   requestedIframeMediaPermissions = [],
   billsCredits = false,
-  hasBillingPrices = false,
+  billingPrices,
   isListed = false,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
   const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
+  const { closeDialog } = useDialog();
+
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const objectLabelsByUniversalIdentifier = useMemo(
@@ -115,7 +192,15 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       ...buildApplicationIframeMediaPermissionSummary(
         requestedIframeMediaPermissions,
       ),
-      ...buildApplicationBillingSummary(billsCredits || hasBillingPrices),
+      ...buildApplicationBillingSummary({
+        billsCredits,
+        billingPrices: billingPrices ?? [],
+        formatAmount: ({ amountCents, currency }) =>
+          `${getCurrencyPrefix(currency)}${formatNumber(amountCents / 100, {
+            decimals: 2,
+            minimumDecimals: 2,
+          })}`,
+      }),
     ];
     // The summary builders translate through the global i18n
   }, [
@@ -126,62 +211,110 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     objectLabelsByUniversalIdentifier,
     appObjectUniversalIdentifiers,
     billsCredits,
-    hasBillingPrices,
+    billingPrices,
+    formatNumber,
   ]);
 
-  return (
-    <AppConsentDialog
-      dialogId={modalInstanceId}
-      appName={appDisplayName}
-      appLogoUrl={appLogoUrl}
-      title={t`Install ${appDisplayName} on your workspace`}
-      onAuthorize={onAuthorize}
-      isAuthorizing={isInstalling}
-    >
-      {!isListed && (
-        <StyledNotListedBannerContainer>
-          <InlineBanner
-            status="warning"
-            layout="compact"
-            icon={<IconAlertTriangle aria-hidden="true" />}
-          >{t`This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
-        </StyledNotListedBannerContainer>
-      )}
+  const handleAuthorize = () => {
+    closeDialog(modalInstanceId);
+    onAuthorize();
+  };
 
-      {permissionItems.length > 0 && (
-        <AppConsentCard title={t`${appDisplayName} would like to:`}>
-          {permissionItems.map((item) => (
-            <AppConsentCardRow key={item.label} Icon={item.Icon}>
-              {isDefined(item.details) ? (
-                <Tooltip
-                  content={
-                    <>
-                      <StyledObjectListTitle>
-                        {item.details.title}
-                      </StyledObjectListTitle>
-                      <StyledObjectList>
-                        {item.details.items.map((detailItem) => (
-                          <li key={detailItem}>{detailItem}</li>
-                        ))}
-                      </StyledObjectList>
-                    </>
-                  }
-                  arrow
-                  side="top"
-                  delay={TooltipDelay.shortDelay}
-                  positionMethod="fixed"
-                >
-                  <StyledPermissionLabel tabIndex={0}>
-                    {item.label}
-                  </StyledPermissionLabel>
-                </Tooltip>
-              ) : (
-                item.label
+  const handleClose = () => {
+    closeDialog(modalInstanceId);
+  };
+
+  return (
+    <DialogInstance
+      dialogId={modalInstanceId}
+      dismissible
+      onClose={handleClose}
+      renderInDocumentBody
+    >
+      {({ onKeyDown }) => (
+        <Dialog.Popup
+          aria-label={t`Install ${appDisplayName} on your workspace`}
+          onKeyDown={onKeyDown}
+          size="fullscreen"
+        >
+          <StyledFullscreenContainer>
+            <StyledLightButton
+              startIcon={<IconChevronLeft />}
+              onClick={handleClose}
+            >{t`Back to settings`}</StyledLightButton>
+
+            <StyledContent>
+              <StyledAppConnectionHeaderContainer>
+                <AppConnectionHeader
+                  appLogoUrl={appLogoUrl}
+                  appName={appDisplayName}
+                />
+              </StyledAppConnectionHeaderContainer>
+
+              <StyledTitle>
+                {t`Install ${appDisplayName} on your workspace`}
+              </StyledTitle>
+
+              {!isListed && (
+                <StyledNotListedBannerContainer>
+                  <InlineBanner
+                    status="warning"
+                    layout="compact"
+                    icon={<IconAlertTriangle aria-hidden="true" />}
+                  >{t`This application is not listed on the marketplace and has not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
+                </StyledNotListedBannerContainer>
               )}
-            </AppConsentCardRow>
-          ))}
-        </AppConsentCard>
+
+              {permissionItems.length > 0 && (
+                <StyledPermissionsCard>
+                  <StyledPermissionsTitle>
+                    {t`${appDisplayName} would like to:`}
+                  </StyledPermissionsTitle>
+                  {permissionItems.map((item) => (
+                    <StyledPermissionRow key={item.label}>
+                      <StyledPermissionIcon>
+                        <item.Icon size={16} aria-hidden />
+                      </StyledPermissionIcon>
+                      {isDefined(item.details) ? (
+                        <Tooltip
+                          content={
+                            <>
+                              <StyledObjectListTitle>
+                                {item.details.title}
+                              </StyledObjectListTitle>
+                              <StyledObjectList>
+                                {item.details.items.map((detailItem) => (
+                                  <li key={detailItem}>{detailItem}</li>
+                                ))}
+                              </StyledObjectList>
+                            </>
+                          }
+                          arrow
+                          side="top"
+                          delay={TooltipDelay.shortDelay}
+                          positionMethod="fixed"
+                        >
+                          <StyledPermissionLabel tabIndex={0}>
+                            {item.label}
+                          </StyledPermissionLabel>
+                        </Tooltip>
+                      ) : (
+                        item.label
+                      )}
+                    </StyledPermissionRow>
+                  ))}
+                </StyledPermissionsCard>
+              )}
+
+              <AuthorizeActionButtons
+                onCancel={handleClose}
+                onAuthorize={handleAuthorize}
+                isLoading={isInstalling}
+              />
+            </StyledContent>
+          </StyledFullscreenContainer>
+        </Dialog.Popup>
       )}
-    </AppConsentDialog>
+    </DialogInstance>
   );
 };

@@ -526,7 +526,6 @@ export interface ApplicationConnectedMemberCount {
 
 export interface ApplicationConnectionProvider {
     applicationId: Scalars['String']
-    connectedAccountPrices: ApplicationBillingPrice[]
     displayName: Scalars['String']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
@@ -2203,6 +2202,7 @@ export interface MarketplaceApp {
 export interface MarketplaceAppDetail {
     aboutDescription?: Scalars['String']
     author?: Scalars['String']
+    billingPrices: ApplicationBillingPrice[]
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
     connectUrl?: Scalars['String']
@@ -2211,7 +2211,6 @@ export interface MarketplaceAppDetail {
     description?: Scalars['String']
     emailSupport?: Scalars['String']
     galleryImages: Scalars['String'][]
-    hasBillingPrices: Scalars['Boolean']
     id: Scalars['String']
     installCount: Scalars['Int']
     isListed: Scalars['Boolean']
@@ -5195,7 +5194,6 @@ export interface ApplicationConnectedMemberCountGenqlSelection{
 
 export interface ApplicationConnectionProviderGenqlSelection{
     applicationId?: boolean | number
-    connectedAccountPrices?: ApplicationBillingPriceGenqlSelection
     displayName?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
@@ -7167,6 +7165,7 @@ export interface MarketplaceAppGenqlSelection{
 export interface MarketplaceAppDetailGenqlSelection{
     aboutDescription?: boolean | number
     author?: boolean | number
+    billingPrices?: ApplicationBillingPriceGenqlSelection
     billsCredits?: boolean | number
     category?: boolean | number
     connectUrl?: boolean | number
@@ -7175,7 +7174,6 @@ export interface MarketplaceAppDetailGenqlSelection{
     description?: boolean | number
     emailSupport?: boolean | number
     galleryImages?: boolean | number
-    hasBillingPrices?: boolean | number
     id?: boolean | number
     installCount?: boolean | number
     isListed?: boolean | number

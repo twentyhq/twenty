@@ -654,7 +654,6 @@ type ApplicationConnectedMemberCount {
 
 type ApplicationConnectionProvider {
   applicationId: String!
-  connectedAccountPrices: [ApplicationBillingPrice!]!
   displayName: String!
   id: UUID!
   logoUrl: String
@@ -3248,6 +3247,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String
@@ -3256,7 +3256,6 @@ type MarketplaceAppDetail {
   description: String
   emailSupport: String
   galleryImages: [String!]!
-  hasBillingPrices: Boolean!
   id: String!
   installCount: Int!
   isListed: Boolean!

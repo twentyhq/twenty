@@ -1418,9 +1418,6 @@ export default {
             "applicationId": [
                 4
             ],
-            "connectedAccountPrices": [
-                61
-            ],
             "displayName": [
                 4
             ],
@@ -6687,6 +6684,9 @@ export default {
             "author": [
                 4
             ],
+            "billingPrices": [
+                61
+            ],
             "billsCredits": [
                 1
             ],
@@ -6710,9 +6710,6 @@ export default {
             ],
             "galleryImages": [
                 4
-            ],
-            "hasBillingPrices": [
-                1
             ],
             "id": [
                 4
