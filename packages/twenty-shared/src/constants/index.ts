@@ -50,6 +50,7 @@ export { EXPRESSION_DATE_UNITS } from './ExpressionDateUnits';
 export { FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION } from './FieldForTotalCountAggregateOperation';
 export { MAX_OPTIONS_TO_DISPLAY } from './FieldMetadataMaxOptionsToDisplay';
 export { FIELD_METADATA_TYPES_NOT_SUPPORTED_IN_GROUP_BY } from './FieldMetadataTypesNotSupportedInGroupBy';
+export { FIELD_METADATA_TYPES_NOT_WRITABLE } from './FieldMetadataTypesNotWritable';
 export { FIELD_REFERENCE_FILTER_OPERATORS } from './FieldReferenceFilterOperators';
 export { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from './FieldRestrictedAdditionalPermissionsRequired';
 export { FIELD_TYPE_DEFAULT_ICONS } from './FieldTypeDefaultIcons';
