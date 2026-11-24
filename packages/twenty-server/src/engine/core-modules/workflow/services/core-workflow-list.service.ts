@@ -12,12 +12,9 @@ import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/ty
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
 import { compareFlatWorkflows } from 'src/engine/core-modules/workflow/utils/compare-flat-workflows.util';
-import { computeCoreWorkflowStatusesFromFlatWorkflowVersions } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-statuses-from-flat-workflow-versions.util';
 import { fromFlatWorkflowToCoreWorkflowDto } from 'src/engine/core-modules/workflow/utils/from-flat-workflow-to-core-workflow-dto.util';
 import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/utils/get-core-workflow-current-version.util';
-import { groupFlatWorkflowVersionsByCoreWorkflowId } from 'src/engine/core-modules/workflow/utils/group-flat-workflow-versions-by-core-workflow-id.util';
 import { isCoreWorkflowVisibleToUser } from 'src/engine/core-modules/workflow/utils/is-core-workflow-visible-to-user.util';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
@@ -66,14 +63,11 @@ export class CoreWorkflowListService {
     workspaceId: string;
     coreWorkflowIds: string[];
   }): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
-    const { flatWorkflowMaps, flatWorkflowVersionMaps } =
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
-        'flatWorkflowVersionMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
       ]);
-
-    const flatWorkflowVersionsByCoreWorkflowId =
-      groupFlatWorkflowVersionsByCoreWorkflowId(flatWorkflowVersionMaps);
 
     return findManyFlatEntityByIdInFlatEntityMaps({
       flatEntityIds: coreWorkflowIds,
@@ -83,11 +77,13 @@ export class CoreWorkflowListService {
         isFlatWorkflowReadableByReader({ flatWorkflow, ...reader }),
       )
       .flatMap((flatWorkflow) => {
-        const flatWorkflowVersions =
-          flatWorkflowVersionsByCoreWorkflowId.get(flatWorkflow.id) ?? [];
+        const coreWorkflowVersions =
+          coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id];
+        const flatWorkflowVersionsInCreationOrder =
+          coreWorkflowVersions?.flatWorkflowVersionsInCreationOrder ?? [];
 
         const versions = buildCoreWorkflowVersionSummaries({
-          flatWorkflowVersionsInCreationOrder: flatWorkflowVersions,
+          flatWorkflowVersionsInCreationOrder,
           workspaceWorkflowId: flatWorkflow.workspaceWorkflowId,
         });
 
@@ -97,12 +93,10 @@ export class CoreWorkflowListService {
             flatWorkflow.lastPublishedCoreWorkflowVersionId,
         });
 
-        const currentFlatWorkflowVersion = isDefined(currentVersion)
-          ? findFlatEntityByIdInFlatEntityMaps({
-              flatEntityId: currentVersion.id,
-              flatEntityMaps: flatWorkflowVersionMaps,
-            })
-          : undefined;
+        const currentFlatWorkflowVersion =
+          flatWorkflowVersionsInCreationOrder.find(
+            ({ id }) => id === currentVersion?.id,
+          );
 
         if (
           !isDefined(currentVersion) ||
@@ -115,10 +109,7 @@ export class CoreWorkflowListService {
           {
             workflow: fromFlatWorkflowToCoreWorkflowDto({
               flatWorkflow,
-              statuses:
-                computeCoreWorkflowStatusesFromFlatWorkflowVersions(
-                  flatWorkflowVersions,
-                ),
+              statuses: coreWorkflowVersions?.statuses ?? [],
               userWorkspaceId: reader.userWorkspaceId,
             }),
             versions,
@@ -243,14 +234,11 @@ export class CoreWorkflowListService {
     reader: CoreWorkflowReader;
     matchesFlatWorkflow?: (flatWorkflow: FlatWorkflow) => boolean;
   }): Promise<FlatWorkflowWithStatuses[]> {
-    const { flatWorkflowMaps, flatWorkflowVersionMaps } =
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
-        'flatWorkflowVersionMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
       ]);
-
-    const flatWorkflowVersionsByCoreWorkflowId =
-      groupFlatWorkflowVersionsByCoreWorkflowId(flatWorkflowVersionMaps);
 
     return Object.values(flatWorkflowMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -261,9 +249,8 @@ export class CoreWorkflowListService {
       )
       .map((flatWorkflow) => ({
         ...flatWorkflow,
-        statuses: computeCoreWorkflowStatusesFromFlatWorkflowVersions(
-          flatWorkflowVersionsByCoreWorkflowId.get(flatWorkflow.id) ?? [],
-        ),
+        statuses:
+          coreWorkflowVersionsByCoreWorkflowId[flatWorkflow.id]?.statuses ?? [],
       }));
   }
 }

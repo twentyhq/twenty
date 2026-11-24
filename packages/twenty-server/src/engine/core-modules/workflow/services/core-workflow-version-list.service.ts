@@ -7,7 +7,6 @@ import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dt
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
-import { findFlatWorkflowVersionsInCreationOrder } from 'src/engine/core-modules/workflow/utils/find-flat-workflow-versions-in-creation-order.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -30,10 +29,10 @@ export class CoreWorkflowVersionListService {
     userWorkspaceId: string | undefined;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
-    const { flatWorkflowMaps, flatWorkflowVersionMaps } =
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
-        'flatWorkflowVersionMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
       ]);
 
     const parentFlatWorkflow = Object.values(
@@ -69,10 +68,8 @@ export class CoreWorkflowVersionListService {
 
     return buildCoreWorkflowVersionSummaries({
       flatWorkflowVersionsInCreationOrder:
-        findFlatWorkflowVersionsInCreationOrder({
-          flatWorkflowVersionMaps,
-          coreWorkflowId: parentFlatWorkflow.id,
-        }),
+        coreWorkflowVersionsByCoreWorkflowId[parentFlatWorkflow.id]
+          ?.flatWorkflowVersionsInCreationOrder ?? [],
       workspaceWorkflowId,
     });
   }
@@ -88,10 +85,10 @@ export class CoreWorkflowVersionListService {
     userWorkspaceId: string | undefined;
     coreWorkflowId: string;
   }): Promise<CoreWorkflowVersionDTO[]> {
-    const { flatWorkflowMaps, flatWorkflowVersionMaps } =
+    const { flatWorkflowMaps, coreWorkflowVersionsByCoreWorkflowId } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
-        'flatWorkflowVersionMaps',
+        'coreWorkflowVersionsByCoreWorkflowId',
       ]);
 
     const flatWorkflow = findFlatEntityByIdInFlatEntityMaps({
@@ -117,10 +114,8 @@ export class CoreWorkflowVersionListService {
 
     return buildCoreWorkflowVersionSummaries({
       flatWorkflowVersionsInCreationOrder:
-        findFlatWorkflowVersionsInCreationOrder({
-          flatWorkflowVersionMaps,
-          coreWorkflowId,
-        }),
+        coreWorkflowVersionsByCoreWorkflowId[coreWorkflowId]
+          ?.flatWorkflowVersionsInCreationOrder ?? [],
       workspaceWorkflowId: flatWorkflow.workspaceWorkflowId,
     });
   }
@@ -136,11 +131,15 @@ export class CoreWorkflowVersionListService {
     userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO | null> {
-    const { flatWorkflowMaps, flatWorkflowVersionMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkflowMaps',
-        'flatWorkflowVersionMaps',
-      ]);
+    const {
+      flatWorkflowMaps,
+      flatWorkflowVersionMaps,
+      coreWorkflowVersionsByCoreWorkflowId,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatWorkflowMaps',
+      'flatWorkflowVersionMaps',
+      'coreWorkflowVersionsByCoreWorkflowId',
+    ]);
 
     const flatWorkflowVersion = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: coreWorkflowVersionId,
@@ -173,11 +172,14 @@ export class CoreWorkflowVersionListService {
       { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflowId] },
     );
 
+    const flatWorkflowVersionsInCreationOrder =
+      coreWorkflowVersionsByCoreWorkflowId[coreWorkflowId]
+        ?.flatWorkflowVersionsInCreationOrder ?? [];
+
     const versionRank =
-      findFlatWorkflowVersionsInCreationOrder({
-        flatWorkflowVersionMaps,
-        coreWorkflowId,
-      }).findIndex(({ id }) => id === flatWorkflowVersion.id) + 1;
+      flatWorkflowVersionsInCreationOrder.findIndex(
+        ({ id }) => id === flatWorkflowVersion.id,
+      ) + 1;
 
     return {
       id: flatWorkflowVersion.id,
