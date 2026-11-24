@@ -8,7 +8,7 @@ export const getFormulaSqlUnitOrThrow = <TUnit extends string>({
   units,
   usage,
 }: {
-  value: FormulaSqlValue;
+  value: Pick<FormulaSqlValue, 'textLiteral'>;
   units: readonly TUnit[];
   usage: string;
 }): TUnit => {
