@@ -77,10 +77,7 @@ export class ObjectIndexViewLabelIdentifierOnUpdateSideEffectHandlerService exte
         indexViewUniversalIdentifier
       ];
 
-    if (
-      !isDefined(indexFlatView) ||
-      indexFlatView.isSystemSideEffect !== true
-    ) {
+    if (!isDefined(indexFlatView) || !indexFlatView.isSystemSideEffect) {
       return { status: 'noop' };
     }
 

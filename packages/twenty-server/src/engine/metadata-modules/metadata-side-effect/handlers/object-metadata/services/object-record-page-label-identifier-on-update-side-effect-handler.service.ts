@@ -84,7 +84,7 @@ export class ObjectRecordPageLabelIdentifierOnUpdateSideEffectHandlerService ext
 
     if (
       !isDefined(recordPageFlatView) ||
-      recordPageFlatView.isSystemSideEffect !== true
+      !recordPageFlatView.isSystemSideEffect
     ) {
       return { status: 'noop' };
     }
