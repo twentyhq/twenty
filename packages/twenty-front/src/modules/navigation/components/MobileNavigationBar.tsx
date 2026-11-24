@@ -12,6 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Fragment } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IconButton } from 'twenty-ui/components/input';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
@@ -67,11 +68,10 @@ const StyledNavigationBar = styled.nav`
   }
 `;
 
-const StyledDivider = styled.span`
-  align-self: stretch;
-  background: ${themeCssVariables.border.color.medium};
-  margin: ${themeCssVariables.spacing[2]} 0;
-  width: 1px;
+const StyledSeparatorContainer = styled.div`
+  align-self: center;
+  display: flex;
+  height: ${themeCssVariables.spacing[5]};
 `;
 
 const StyledIconContainer = styled.span`
@@ -139,7 +139,11 @@ export const MobileNavigationBar = () => {
                     )}
                   </StyledIconContainer>
                 </IconButton>
-                {hasDividerAfter && <StyledDivider aria-hidden />}
+                {hasDividerAfter && (
+                  <StyledSeparatorContainer>
+                    <Separator orientation="vertical" />
+                  </StyledSeparatorContainer>
+                )}
               </Fragment>
             ),
           )}

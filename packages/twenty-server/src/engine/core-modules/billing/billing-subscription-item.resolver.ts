@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { UseFilters, UsePipes } from '@nestjs/common';
+import { UseFilters, UsePipes, UseGuards } from '@nestjs/common';
 import { Parent, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -14,6 +14,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @MetadataResolver(() => BillingSubscriptionItemDTO)
 @UsePipes(ResolverValidationPipe)
@@ -26,6 +27,7 @@ export class BillingSubscriptionItemResolver {
 
   // Not the catalog: superseded prices keep billing existing workspaces and leave the catalog once archived
   @ResolveField(() => Number, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async unitAmount(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
   ): Promise<number | null> {
@@ -41,6 +43,7 @@ export class BillingSubscriptionItemResolver {
   }
 
   @ResolveField(() => Number, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async creditAmount(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
   ): Promise<number | null> {
