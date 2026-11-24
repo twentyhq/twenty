@@ -1,13 +1,13 @@
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { RelaxWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795454169406-relax-workflow-visibility';
+import { RelaxWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478750333-relax-workflow-visibility';
 import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 jest.useRealTimers();
 
-describe('2-63 instance command 1795454169406 - relax workflow visibility (integration)', () => {
+describe('2-63 instance command 1795478750333 - relax workflow visibility (integration)', () => {
   const relaxVisibilityCommand =
     new RelaxWorkflowVisibilityFastInstanceCommand();
   const dropVisibilityCommand = new DropWorkflowVisibilityFastInstanceCommand();
