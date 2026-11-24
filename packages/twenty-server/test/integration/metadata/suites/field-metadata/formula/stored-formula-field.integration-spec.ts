@@ -12,6 +12,7 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { getFieldMetadataFormulaEvaluation } from 'twenty-shared/utils';
 
+import { STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-debounce-ms.constant';
 import { type StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -113,10 +114,8 @@ describe('Stored formula fields', () => {
       variables: { id, data },
     });
 
-  const findSupplier = async (id: string) => {
-    await waitForAllJobsToFinish();
-
-    return (
+  const readSupplierWithoutWaiting = async (id: string) =>
+    (
       await runGraphqlOperation({
         query: `query FindSupplier($id: UUID!) {
           storedFormulaSupplier(filter: { id: { eq: $id } }) { ${SUPPLIER_GQL_FIELDS} }
@@ -124,6 +123,11 @@ describe('Stored formula fields', () => {
         variables: { id },
       })
     ).storedFormulaSupplier;
+
+  const findSupplier = async (id: string) => {
+    await waitForAllJobsToFinish();
+
+    return readSupplierWithoutWaiting(id);
   };
 
   beforeAll(async () => {
@@ -380,6 +384,45 @@ describe('Stored formula fields', () => {
     expect(takenRecordIds).toContain(firstSupplierId);
     expect(await findSupplier(firstSupplierId)).toMatchObject({
       gadgetCount: 2,
+    });
+  });
+
+  it('should recompute a record marked dirty while another recompute is running', async () => {
+    const storedFormulaFieldDirtyRecordService =
+      getAppProviderByClassName<StoredFormulaFieldDirtyRecordService>(
+        'StoredFormulaFieldDirtyRecordService',
+      );
+    const runScope = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      objectMetadataId: supplierObjectMetadataId,
+    };
+
+    expect(
+      await storedFormulaFieldDirtyRecordService.acquireRecomputeRun(runScope),
+    ).toBe(true);
+
+    try {
+      await createGadget({
+        name: 'Gizmo',
+        price: 1,
+        quantity: 0,
+        supplierId: firstSupplierId,
+      });
+
+      // Lets the scheduled recompute run into the held lock and reschedule itself
+      await new Promise((resolve) =>
+        setTimeout(resolve, STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS * 2),
+      );
+
+      expect(await readSupplierWithoutWaiting(firstSupplierId)).toMatchObject({
+        gadgetCount: 2,
+      });
+    } finally {
+      await storedFormulaFieldDirtyRecordService.releaseRecomputeRun(runScope);
+    }
+
+    expect(await findSupplier(firstSupplierId)).toMatchObject({
+      gadgetCount: 3,
     });
   });
 

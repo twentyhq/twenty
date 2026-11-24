@@ -5,7 +5,6 @@ import isEqual from 'lodash.isequal';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
-import { STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-backfill-batches-per-job.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-batch-size.constant';
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
 import { buildStoredFormulaColumnExpressions } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-column-expressions.util';
@@ -20,10 +19,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const RECORD_ID_COLUMN = quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, 'id');
-
-const STORED_FORMULA_FIELD_BACKFILL_PAGE_SIZE =
-  STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE *
-  STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB;
 
 type RecomputeRecordsBatchParameters = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
@@ -97,7 +92,7 @@ export class StoredFormulaFieldComputationService {
         .withStoredColumnsOnly()
         .select(`${RECORD_ID_COLUMN}`, 'id')
         .orderBy(`${RECORD_ID_COLUMN}`, 'ASC')
-        .limit(STORED_FORMULA_FIELD_BACKFILL_PAGE_SIZE);
+        .limit(STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE);
 
       if (isDefined(afterRecordId)) {
         recordIdsQueryBuilder.where(`${RECORD_ID_COLUMN} > :afterRecordId`, {
@@ -124,7 +119,7 @@ export class StoredFormulaFieldComputationService {
       });
 
       const hasMoreRecords =
-        recordIds.length === STORED_FORMULA_FIELD_BACKFILL_PAGE_SIZE;
+        recordIds.length === STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE;
 
       if (!hasMoreRecords) {
         return null;

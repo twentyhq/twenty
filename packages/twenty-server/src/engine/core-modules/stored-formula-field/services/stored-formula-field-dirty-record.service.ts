@@ -43,31 +43,7 @@ export class StoredFormulaFieldDirtyRecordService {
       recordIds,
     );
 
-    const scheduledKey = this.getKey({
-      prefix: 'recompute-scheduled',
-      workspaceId,
-      objectMetadataId,
-    });
-
-    // Saves the enqueue round trips on every batch while a recompute is pending
-    const isFirstMarkSinceLastRun = await this.cacheStorageService.setIfAbsent(
-      scheduledKey,
-      true,
-      STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS,
-    );
-
-    if (!isFirstMarkSinceLastRun) {
-      return;
-    }
-
-    try {
-      await this.scheduleRecompute({ workspaceId, objectMetadataId });
-    } catch (error) {
-      // Otherwise the marker would keep later batches from scheduling a run until it expires
-      await this.cacheStorageService.del(scheduledKey);
-
-      throw error;
-    }
+    await this.scheduleRecompute({ workspaceId, objectMetadataId });
   }
 
   async popDirtyRecordIds({
@@ -87,15 +63,6 @@ export class StoredFormulaFieldDirtyRecordService {
       workspaceId,
       objectMetadataId,
     });
-
-    // Cleared before popping so ids added from now on schedule another run
-    await this.cacheStorageService.del(
-      this.getKey({
-        prefix: 'recompute-scheduled',
-        workspaceId,
-        objectMetadataId,
-      }),
-    );
 
     // Ids left by a run that died before completing go back in the queue
     const unfinishedRecordIds = await this.cacheStorageService.setMembers(
@@ -136,7 +103,8 @@ export class StoredFormulaFieldDirtyRecordService {
     );
   }
 
-  // One run per object at a time, so a run never takes back the ids of another run in progress
+  // Covers a stalled job rerun while its first worker is still running: the rerun
+  // would otherwise take back the ids that worker is processing
   async acquireRecomputeRun({
     workspaceId,
     objectMetadataId,
@@ -189,11 +157,7 @@ export class StoredFormulaFieldDirtyRecordService {
     workspaceId,
     objectMetadataId,
   }: RecomputeDirtyStoredFormulaRecordsJobData & {
-    prefix:
-      | 'dirty-record-ids'
-      | 'processing-record-ids'
-      | 'recompute-scheduled'
-      | 'recompute-running';
+    prefix: 'dirty-record-ids' | 'processing-record-ids' | 'recompute-running';
   }): string {
     return `${prefix}:${workspaceId}:${objectMetadataId}`;
   }
