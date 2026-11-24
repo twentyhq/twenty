@@ -126,13 +126,17 @@ export function CreatorReferralScene() {
   useEffect(() => {
     const frame = frameRef.current;
     if (!isDefined(frame)) return;
-    const stage = createHalftoneDotStage(frame, { fov: 28 });
+    const stage = createHalftoneDotStage(frame, {
+      cellPx: 7,
+      fov: 28,
+      shape: 'mixed',
+    });
     if (!isDefined(stage)) return;
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
-    stage.camera.position.set(0, 7.2, 11);
+    stage.camera.position.set(0, 6.1, 9.4);
     stage.camera.lookAt(0, -0.6, 0.6);
 
     const solids = NODES.map((node) => {
