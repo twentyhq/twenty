@@ -18,7 +18,7 @@ const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock().map(
   }),
 );
 
-const findObjectMetadataItem = (nameSingular: string) => {
+const findObjectMetadataItemOrThrow = (nameSingular: string) => {
   const objectMetadataItem = objectMetadataItems.find(
     (candidate) => candidate.nameSingular === nameSingular,
   );
@@ -33,7 +33,7 @@ const findObjectMetadataItem = (nameSingular: string) => {
 describe('buildFormulaFieldEditorInputs', () => {
   it('should offer the stored fields of the object and of its to-one relations', () => {
     const { fields, editorFields } = buildFormulaFieldEditorInputs({
-      objectMetadataItem: findObjectMetadataItem('person'),
+      objectMetadataItem: findObjectMetadataItemOrThrow('person'),
       objectMetadataItems,
     });
     const paths = editorFields.map(({ path }) => path);
@@ -46,11 +46,11 @@ describe('buildFormulaFieldEditorInputs', () => {
 
   it('should leave out formula fields, on the object and behind a relation', () => {
     const companyInputs = buildFormulaFieldEditorInputs({
-      objectMetadataItem: findObjectMetadataItem('company'),
+      objectMetadataItem: findObjectMetadataItemOrThrow('company'),
       objectMetadataItems,
     });
     const personInputs = buildFormulaFieldEditorInputs({
-      objectMetadataItem: findObjectMetadataItem('person'),
+      objectMetadataItem: findObjectMetadataItemOrThrow('person'),
       objectMetadataItems,
     });
 
@@ -63,7 +63,7 @@ describe('buildFormulaFieldEditorInputs', () => {
   });
 
   it('should leave out the field being edited and previous values', () => {
-    const personObjectMetadataItem = findObjectMetadataItem('person');
+    const personObjectMetadataItem = findObjectMetadataItemOrThrow('person');
     const jobTitleFieldMetadataItem = personObjectMetadataItem.fields.find(
       ({ name }) => name === 'jobTitle',
     );
