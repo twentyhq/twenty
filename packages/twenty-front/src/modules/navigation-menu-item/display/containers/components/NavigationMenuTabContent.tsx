@@ -6,7 +6,6 @@ import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/us
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuContainerEditableItems } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerEditableItems';
 import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuContainerItems';
-import { useSelectActiveNavigationMenuItemInEditMode } from '@/navigation-menu-item/display/hooks/useSelectActiveNavigationMenuItemInEditMode';
 import { NavigationMenuSectionList } from '@/navigation-menu-item/display/containers/components/NavigationMenuSectionList';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -32,8 +31,6 @@ export const NavigationMenuTabContent = ({
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(
     tab.id,
   );
-  const handleActiveObjectMetadataItemClick =
-    useSelectActiveNavigationMenuItemInEditMode();
   const sections = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.SECTION,
     containerId: tab.id,
@@ -61,9 +58,6 @@ export const NavigationMenuTabContent = ({
           <WorkspaceSectionListReadOnly
             filteredItems={topLevelItems}
             folderChildrenById={folderChildrenById}
-            onActiveObjectMetadataItemClick={
-              handleActiveObjectMetadataItemClick
-            }
           />
         </NavigationDrawerSection>
       )}
