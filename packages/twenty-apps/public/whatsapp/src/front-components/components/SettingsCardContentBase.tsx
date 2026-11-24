@@ -1,0 +1,36 @@
+import styled from '@emotion/styled';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const StyledSettingsCardRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${() => themeCssVariables.spacing[3]};
+`;
+
+export const StyledSettingsCardIcon = styled.div`
+  align-items: center;
+  background-color: ${() => themeCssVariables.background.primary};
+  border: 2px solid ${() => themeCssVariables.border.color.light};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
+  display: flex;
+  height: ${() => themeCssVariables.spacing[8]};
+  justify-content: center;
+  min-width: ${() => themeCssVariables.spacing[8]};
+  width: ${() => themeCssVariables.spacing[8]};
+`;
+
+export const StyledSettingsCardTextContainer = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${() => themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+export const StyledSettingsCardControlContainer = styled.span`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+`;
