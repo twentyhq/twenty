@@ -104,6 +104,7 @@ export type { AskQuestionsToolResult } from './types/AskQuestionsToolResult';
 export type { AskQuestionToolInput } from './types/AskQuestionToolInput';
 export type { AskQuestionToolResult } from './types/AskQuestionToolResult';
 export type { AskQuestionToolStatus } from './types/AskQuestionToolStatus';
+export type { ChannelInboxViewPresetFilter } from './types/ChannelInboxViewPresetFilter';
 export type { ChatReferenceIdentity } from './types/ChatReferenceIdentity';
 export type { ChatReferenceKind } from './types/ChatReferenceKind';
 export type { ChatReferenceMatch } from './types/ChatReferenceMatch';
@@ -121,6 +122,7 @@ export type {
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
+export type { MemberInboxViewPresetFilter } from './types/MemberInboxViewPresetFilter';
 export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { ProposedToolCall } from './types/ProposedToolCall';
 export type { ProposedToolCallTemplate } from './types/ProposedToolCallTemplate';
@@ -145,7 +147,11 @@ export {
 } from './types/ToolWidget';
 export { applyAgentChatInboxAction } from './utils/apply-agent-chat-inbox-action.util';
 export { buildFallbackProposedToolCall } from './utils/build-fallback-proposed-tool-call.util';
+export { computeAgentChatTabThreadFieldGqlFilter } from './utils/compute-agent-chat-tab-thread-field-gql-filter.util';
 export { computeAgentChatThreadPresetFilterGqlFilter } from './utils/compute-agent-chat-thread-preset-filter-gql-filter.util';
+export { computeChannelInboxStatusGqlFilter } from './utils/compute-channel-inbox-status-gql-filter.util';
+export { computeMemberArchivedWithoutActivitySinceGqlFilters } from './utils/compute-member-archived-without-activity-since-gql-filters.util';
+export { computeMemberInboxStatusGqlFilter } from './utils/compute-member-inbox-status-gql-filter.util';
 export { computeViewPresetFilterGqlFilter } from './utils/compute-view-preset-filter-gql-filter.util';
 export { escapeMarkdownForChatReference } from './utils/escape-markdown-for-chat-reference.util';
 export { extractRecordReferenceIds } from './utils/extract-record-reference-ids.util';
