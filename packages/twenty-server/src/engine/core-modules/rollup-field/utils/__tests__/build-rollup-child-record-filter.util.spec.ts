@@ -47,7 +47,7 @@ const flatFieldMetadataMaps = [
 );
 
 describe('buildRollupChildRecordFilter', () => {
-  const mapsArgs = {
+  const flatEntityMaps = {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
   };
@@ -56,7 +56,7 @@ describe('buildRollupChildRecordFilter', () => {
     expect(
       buildRollupChildRecordFilter({
         settings: { filters: [], filterGroups: [] },
-        ...mapsArgs,
+        ...flatEntityMaps,
       }),
     ).toEqual({});
   });
@@ -81,7 +81,7 @@ describe('buildRollupChildRecordFilter', () => {
           ],
           filterGroups: [],
         },
-        ...mapsArgs,
+        ...flatEntityMaps,
       }),
     ).toEqual({
       and: [{ isDone: { eq: true } }, { estimate: { gte: 5 } }],
@@ -115,7 +115,7 @@ describe('buildRollupChildRecordFilter', () => {
             },
           ],
         },
-        ...mapsArgs,
+        ...flatEntityMaps,
       }),
     ).toEqual({
       or: [{ isDone: { eq: true } }, { estimate: { gte: 5 } }],
@@ -136,7 +136,7 @@ describe('buildRollupChildRecordFilter', () => {
           ],
           filterGroups: [],
         },
-        ...mapsArgs,
+        ...flatEntityMaps,
       }),
     ).toEqual({ subtaskCount: { gte: 2 } });
   });
