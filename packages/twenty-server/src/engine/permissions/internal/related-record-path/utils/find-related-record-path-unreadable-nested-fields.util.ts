@@ -40,7 +40,6 @@ export const findRelatedRecordPathUnreadableNestedFields = ({
         `${fieldMetadataId}:${sourceFieldMetadataId}`,
         {
           fieldMetadataId,
-          // A missing source field leaves no path group showing it, so the field stays hidden
           sourceObjectMetadataId:
             findFlatEntityByIdInFlatEntityMaps({
               flatEntityId: sourceFieldMetadataId,

@@ -5,7 +5,6 @@ export type WorkspaceMemberIndividualRoleHolder =
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   | { type: 'apiKeys' };
 
-// Hidden only on records reached through a related record path whose parent cannot read the source field
 export type UnreadableNestedFieldDeclaration = {
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
