@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
 import { CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
@@ -153,7 +153,7 @@ export class RollupFieldComputationService {
       rollupFieldMetadataIds,
     });
 
-    if (plans.length === 0) {
+    if (!isNonEmptyArray(plans)) {
       return undefined;
     }
 
@@ -238,7 +238,7 @@ export class RollupFieldComputationService {
       computedValuesByRecordId,
     });
 
-    if (recordUpdates.length > 0) {
+    if (isNonEmptyArray(recordUpdates)) {
       await recordRepository.updateMany(recordUpdates);
     }
   }
