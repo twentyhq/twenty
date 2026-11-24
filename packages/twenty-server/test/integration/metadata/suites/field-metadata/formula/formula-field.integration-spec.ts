@@ -755,7 +755,9 @@ describe('Formula fields', () => {
     });
 
     expect(JSON.stringify(errors)).toContain(
-      JSON.stringify('Invalid formula: Unknown field "quantity"').slice(1, -1),
+      JSON.stringify(
+        'A formula reads this field, so it cannot be named "now"',
+      ).slice(1, -1),
     );
     expect(await findGadget('total')).toEqual({ total: 125 });
   });
