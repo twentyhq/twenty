@@ -394,13 +394,13 @@ msgstr "入れ子のリレーションウィジェットは、テーブルレイ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot be tied to a row level permission rule"
-msgstr ""
+msgstr "ネストされた読み取り不可フィールドを行レベルの権限ルールに関連付けることはできません"
 
 #. js-lingui-id: +cMY8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot use itself as its source"
-msgstr ""
+msgstr "ネストされた読み取り不可フィールドは、自身をソースとして使用できません"
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -497,6 +497,11 @@ msgstr "この値を持つレコードはすでに存在します。"
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "ミーティングの録音/録画"
+
+#. js-lingui-id: l+tyko
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
+msgstr "繰り返しは recurrence.endDate または recurrence.endOccurrenceCount の後に終了します。両方を指定することはできません"
 
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -777,12 +782,12 @@ msgstr "ワークスペースメンバー"
 #. js-lingui-id: EAIj51
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a field and at least one value"
-msgstr ""
+msgstr "ワークスペースメンバー関係フィルターには、フィールドと少なくとも1つの値が必要です"
 
 #. js-lingui-id: mZ5k8L
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a workspace member relation"
-msgstr ""
+msgstr "ワークスペースメンバー関係フィルターには、ワークスペースメンバー関係が必要です"
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3179,7 +3184,7 @@ msgstr "共有するユーザーまたはロールを選択してください。
 #. js-lingui-id: 8+4T+u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field and the values to keep on the related records"
-msgstr ""
+msgstr "関連レコードで保持するフィールドと値を選択"
 
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3194,7 +3199,7 @@ msgstr "このタイムラインアクティビティタイプを発行するオ
 #. js-lingui-id: fr9dvq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the relation of the workspace member to filter"
-msgstr ""
+msgstr "フィルタリングするワークスペースメンバーとのリレーションを選択"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5728,7 +5733,7 @@ msgstr "フィールド \"{workspaceMemberRelationFieldName}\" は、workspaceMe
 #. js-lingui-id: yfFA+h
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
-msgstr ""
+msgstr "フィールド \"{workspaceMemberRelationFilterFieldName}\" は、関連レコードの選択、テキスト、またはブール値フィールドではありません"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -6182,7 +6187,7 @@ msgstr "このフィールドタイプではフィルターオペランドはサ
 #. js-lingui-id: twPawb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Filter the related records on one of their select, text or boolean fields"
-msgstr ""
+msgstr "関連レコードの選択、テキスト、またはブール値フィールドのいずれかでフィルタリング"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10541,12 +10546,12 @@ msgstr "オプション「{optionLabel}」はフィールドに含まれてい�
 #. js-lingui-id: xTWr3W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "オプション \"{optionLabel}\" の説明が {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} 文字を超えています"
 
 #. js-lingui-id: cCRBHe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" has an invalid description"
-msgstr ""
+msgstr "オプション \"{optionLabel}\" の説明が無効です"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -11786,6 +11791,16 @@ msgstr "関連レコードのリレーションでレコードをソートする
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
 msgstr "このスレッドの添付先レコード"
+
+#. js-lingui-id: Q/3t6e
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
+msgstr "recurrence.endDate は、イベントの開始日（{firstOccurrenceDate}）以降の YYYY-MM-DD 形式の日付である必要があります"
+
+#. js-lingui-id: wM8dZb
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
+msgstr "recurrence.interval と recurrence.endOccurrenceCount は正の整数である必要があります"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13451,12 +13466,12 @@ msgstr "ソースドキュメントのタイトル"
 #. js-lingui-id: gAdogO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field metadata not found"
-msgstr ""
+msgstr "ソースフィールドのメタデータが見つかりません"
 
 #. js-lingui-id: 8Fgyo1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field not found"
-msgstr ""
+msgstr "ソースフィールドが見つかりません"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -15931,7 +15946,7 @@ msgstr "このアプリケーションのこのバージョンは、既にこの
 #. js-lingui-id: lJw5/K
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "This view type is not available on this object"
-msgstr ""
+msgstr "このビュータイプはこのオブジェクトでは利用できません"
 
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -17569,7 +17584,7 @@ msgstr "更新するビューが見つかりません"
 #. js-lingui-id: OZdSbV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "View type is not available on the view object"
-msgstr ""
+msgstr "ビュータイプはビューオブジェクトでは利用できません"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -18415,7 +18430,7 @@ msgstr "ワークスペースメンバーリレーションフィールドのメ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation filter field metadata not found"
-msgstr ""
+msgstr "ワークスペースメンバーのリレーションフィルターフィールドのメタデータが見つかりません"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

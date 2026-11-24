@@ -58,6 +58,25 @@ export const buildStandardFlatNavigationMenuItemMaps = ({
     byUserWorkspaceIdAndParentId: {},
   };
 
+  const favoritesSectionDefinition =
+    STANDARD_NAVIGATION_MENU_ITEMS.favoritesSection;
+
+  addFlatNavigationMenuItemToMapsAndUpdateIndex({
+    flatNavigationMenuItem: createStandardNavigationMenuItemSectionFlatMetadata(
+      {
+        universalIdentifier: favoritesSectionDefinition.universalIdentifier,
+        name: null,
+        builtInSectionKey: favoritesSectionDefinition.builtInSectionKey,
+        position: favoritesSectionDefinition.position,
+        navigationMenuItemId: v4(),
+        workspaceId,
+        twentyStandardApplicationId,
+        now,
+      },
+    ),
+    flatNavigationMenuItemMaps,
+  });
+
   const workspaceSectionDefinition =
     STANDARD_NAVIGATION_MENU_ITEMS.workspaceSection;
   const workspaceSection = createStandardNavigationMenuItemSectionFlatMetadata({

@@ -32,12 +32,8 @@ jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
 );
 jest.mock(
-  '@/navigation-menu-item/display/containers/components/NavigationMenuSectionList',
-  () => ({ NavigationMenuSectionList: () => null }),
-);
-jest.mock(
-  '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly',
-  () => ({ WorkspaceSectionListReadOnly: () => null }),
+  '@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent',
+  () => ({ NavigationMenuContainerContent: () => null }),
 );
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({

@@ -336,6 +336,12 @@ msgstr "{0, plural, one {kreditt/periode} other {kreditter/periode}}"
 msgid "{0, plural, one {Earn {formattedInviteTeamCreditsRewardPerUser} free credit per teammate who joins} other {Earn {formattedInviteTeamCreditsRewardPerUser} free credits per teammate who joins}}"
 msgstr "{0, plural, one {Tjen {formattedInviteTeamCreditsRewardPerUser} gratis kreditt per teammedlem som blir med} other {Tjen {formattedInviteTeamCreditsRewardPerUser} gratis kreditter per teammedlem som blir med}}"
 
+#. js-lingui-id: ywXd/t
+#. placeholder {0}: end.occurrenceCount
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "{0, plural, one {occurrence} other {occurrences}}"
+msgstr "{0, plural, one {forekomst} other {forekomster}}"
+
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
 #: src/modules/settings/admin-panel/utils/formatSubscriptionItemValue.ts
@@ -923,6 +929,26 @@ msgstr "{importContactsCallRecordingHours, plural, one {{formattedImportContacts
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
 msgstr "{installCount, plural, one {{0} installasjon} other {{1} installasjoner}}"
 
+#. js-lingui-id: UON5Ro
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {day} other {days}}"
+msgstr "{interval, plural, one {dag} other {dager}}"
+
+#. js-lingui-id: UGYVsx
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {month} other {months}}"
+msgstr "{interval, plural, one {måned} other {måneder}}"
+
+#. js-lingui-id: RxZ6VS
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {week} other {weeks}}"
+msgstr "{interval, plural, one {uke} other {uker}}"
+
+#. js-lingui-id: qB4ocR
+#: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
+msgid "{interval, plural, one {year} other {years}}"
+msgstr "{interval, plural, one {år} other {år}}"
+
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "{invitationCount} invitations sent"
@@ -1295,12 +1321,12 @@ msgstr "{storedToolName} (ikke tilgjengelig for deg)"
 #. js-lingui-id: VfeUjs
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, needs your input"
-msgstr ""
+msgstr "{tabName} trenger innspill fra deg"
 
 #. js-lingui-id: REc4fO
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, unread"
-msgstr ""
+msgstr "{tabName}, ulest"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2131,7 +2157,7 @@ msgstr "Legg til et kort nedenfor for å oppdatere faktureringsopplysningene din
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "Legg til en beskrivelse"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2371,7 +2397,7 @@ msgstr "Legg til egendefinert tilbyder"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "Legg til beskrivelse"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2476,12 +2502,12 @@ msgstr "Legg til element"
 #. js-lingui-id: 1e37Dl
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item after"
-msgstr ""
+msgstr "Legg til element etter"
 
 #. js-lingui-id: w7mkyz
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
-msgstr ""
+msgstr "Legg til element før"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2999,6 +3025,11 @@ msgstr "Avanserte alternativer"
 #: src/modules/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr "Afrikaans"
+
+#. js-lingui-id: NawEr2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "After"
+msgstr "Etter"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3760,7 +3791,7 @@ msgstr "Allerede i sidepanelet"
 #. js-lingui-id: CaKZeT
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in this section"
-msgstr ""
+msgstr "Allerede i denne seksjonen"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5265,17 +5296,17 @@ msgstr "Fakturer prisene som er oppgitt av installerte apper på arbeidsområdet
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
-msgstr ""
+msgstr "Fakturer arbeidsområdet ditt {amount} / måned"
 
 #. js-lingui-id: 9nZzfz
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per account"
-msgstr ""
+msgstr "Fakturer arbeidsområdet ditt {amount} / måned per konto"
 
 #. js-lingui-id: iOQoBV
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per member"
-msgstr ""
+msgstr "Fakturer arbeidsområdet ditt {amount} / måned per medlem"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -6414,6 +6445,11 @@ msgstr "Sjekk denne arbeidsflytens nylige kjøringer, og fortell meg om noen mis
 #: src/modules/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton.tsx
 msgid "Check verification"
 msgstr "Sjekk verifikasjon"
+
+#. js-lingui-id: fbu0qc
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "Check when the event stops repeating"
+msgstr "Velg når hendelsen slutter å gjenta seg"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -9487,6 +9523,7 @@ msgid "Czech"
 msgstr "Tsjekkisk"
 
 #. js-lingui-id: U0sC6H
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Daily"
 msgstr "Daglig"
@@ -10473,6 +10510,11 @@ msgstr "synkende"
 msgid "Descending"
 msgstr "Synkende"
 
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr ""
+
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
 msgid "Describe the role of the AI and how it should do the task..."
@@ -10887,6 +10929,11 @@ msgstr "Ikke importer"
 msgid "Do you want to unsubscribe?"
 msgstr "Vil du avslutte abonnementet?"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr ""
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10911,6 +10958,11 @@ msgstr "Dokument"
 #: src/pages/settings/developers/SettingsDevelopers.tsx
 msgid "Documentation"
 msgstr "Les dokumentasjon"
+
+#. js-lingui-id: 7xJ6D1
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Does not repeat"
+msgstr "Gjentas ikke"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11374,7 +11426,7 @@ msgstr "Rediger datastruktur og felt"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "Rediger beskrivelse"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -12032,6 +12084,7 @@ msgstr "Endepunkts-URL"
 #. js-lingui-id: x/6eQ0
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
@@ -12709,6 +12762,11 @@ msgstr "Hendelses synlighet"
 #: src/modules/settings/application-monitoring/components/ApplicationMonitoringIssuesTable.tsx
 msgid "Events"
 msgstr "Hendelser"
+
+#. js-lingui-id: CRsuq4
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Every"
+msgstr "Hver"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13726,7 +13784,7 @@ msgstr "Kunne ikke synkronisere markedsplasskatalogen."
 #. js-lingui-id: UUsjVV
 #: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
 msgid "Failed to test agent"
-msgstr ""
+msgstr "Kunne ikke teste agent"
 
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14422,6 +14480,11 @@ msgstr "Første 2 linjer"
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 msgid "First 5 lines"
 msgstr "Første 5 linjer"
+
+#. js-lingui-id: idQLQP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "First event"
+msgstr "Første hendelse"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -16296,7 +16359,7 @@ msgstr "Innboks"
 #. js-lingui-id: UXZcgx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Inbox object names"
-msgstr ""
+msgstr "Navn på innboksobjekter"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17830,7 +17893,7 @@ msgstr "La grupperte tabell- og listevisninger vise gruppene sine som faner, én
 #. js-lingui-id: livXRh
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Let members connect their own accounts"
-msgstr ""
+msgstr "La medlemmer koble til sine egne kontoer"
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19189,7 +19252,7 @@ msgstr "Melding {recipientName}"
 #. js-lingui-id: +nYs0G
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
-msgstr ""
+msgstr "Meldingshandlinger"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19541,6 +19604,11 @@ msgstr "månedlig"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Monthly"
 msgstr "Månedlig"
+
+#. js-lingui-id: WHc/gS
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Monthly on day {startDayOfMonth}"
+msgstr "Månedlig den {startDayOfMonth}"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -20014,6 +20082,7 @@ msgid "Network error"
 msgstr "Nettverksfeil"
 
 #. js-lingui-id: qqeAJM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitsSection.tsx
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -21890,6 +21959,11 @@ msgstr "Antall dager logger skal beholdes ({minEventLogRetentionInDays}-{maxEven
 msgid "Number of decimals"
 msgstr "Antall desimaler"
 
+#. js-lingui-id: Dh3U6L
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Number of occurrences"
+msgstr "Antall forekomster"
+
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Number of records to skip. Combine with Limit to page through results."
@@ -22093,6 +22167,11 @@ msgstr ""
 msgid "Omit zero values"
 msgstr "Utelat nullverdier"
 
+#. js-lingui-id: Z5HWHd
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On"
+msgstr "På"
+
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "on {dayName}"
@@ -22107,6 +22186,11 @@ msgstr "på {remainingDays} og {lastDay}"
 #: src/modules/workflow/constants/WorkflowStepDefaultNames.ts
 msgid "On a schedule"
 msgstr "Etter tidsplan"
+
+#. js-lingui-id: RuEWFx
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "On date"
+msgstr "På dato"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22352,7 +22436,7 @@ msgstr "Åpne"
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgctxt "Inbox thread status"
 msgid "Open"
-msgstr ""
+msgstr "Åpne"
 
 #. js-lingui-id: awIyH2
 #. placeholder {0}: account.handle
@@ -22772,7 +22856,7 @@ msgstr "Organisasjonslisensen ble aktivert."
 #. js-lingui-id: 50DOI7
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
-msgstr ""
+msgstr "Organiser sidepanelet i faner og seksjoner, inkludert innebygde seksjoner for favoritter, chatter og agenter, og tilpass det på stedet."
 
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -23097,7 +23181,7 @@ msgstr "Sider"
 #. js-lingui-id: wl6crM
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Paid app"
-msgstr ""
+msgstr "Betalt app"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24463,7 +24547,7 @@ msgstr "Les systeminstruksjonene for å forstå hvordan AI-en fungerer (~{0} tok
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "Les synlighetsregelen for sideoppsett-widgeter kun fra treformen. Aktiveres etter at oppgraderingen av arbeidsområdet kopierer de lagrede reglene."
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25460,6 +25544,22 @@ msgstr "Endre rekkefølge på felt"
 msgid "Reorder options"
 msgstr "Endre rekkefølgen på alternativer"
 
+#. js-lingui-id: BwWIp2
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat"
+msgstr "Gjenta"
+
+#. js-lingui-id: X9KmrM
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Repeat interval"
+msgstr "Gjenta intervall"
+
+#. js-lingui-id: KR6sNP
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+#: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
+msgid "Repeat on"
+msgstr "Gjenta på"
+
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Replace widget"
@@ -26143,7 +26243,7 @@ msgstr "Kjør funksjon"
 #. js-lingui-id: gdJPPW
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Run test"
-msgstr ""
+msgstr "Kjør test"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -28268,7 +28368,7 @@ msgstr "Sidepanel"
 #. js-lingui-id: QWUT9V
 #: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 msgid "Sidebar actions"
-msgstr ""
+msgstr "Handlinger i sidepanelet"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29447,7 +29547,7 @@ msgstr "Oppsummer denne visningen"
 #. js-lingui-id: mLm1b0
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Summarize what changed on Acme this week"
-msgstr ""
+msgstr "Oppsummer hva som har endret seg i Acme denne uken"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
@@ -29903,14 +30003,14 @@ msgstr "Test"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
 msgid "Test agent"
-msgstr ""
+msgstr "Test agent"
 
 #. js-lingui-id: AriIhI
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Test Agent"
-msgstr ""
+msgstr "Test agent"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -30126,6 +30226,11 @@ msgstr ""
 #: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "E-posten knyttet til kontoen din"
+
+#. js-lingui-id: pJahAY
+#: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
+msgid "The end date can't be before the first event."
+msgstr "Sluttdatoen kan ikke være før den første hendelsen."
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30593,6 +30698,16 @@ msgstr "Denne agenten kommer fra en app, så tilgangen kan ikke endres her."
 #: src/modules/object-core/agents/components/SidePanelCoreAgentToolsPage.tsx
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "Denne agenten kommer fra en app, så verktøyene kan ikke endres her."
+
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr ""
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr ""
 
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
@@ -31835,7 +31950,7 @@ msgstr "Omganger"
 #. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
-msgstr ""
+msgstr "Kjøringer vises her når du har testet denne agenten, eller når en arbeidsflyt eller en app bruker den"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33142,7 +33257,7 @@ msgstr "Bruk vår API eller legg til din første {objectLabel} manuelt"
 #. js-lingui-id: TTyUsT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
-msgstr ""
+msgstr "Bruk innboksnavnene for chat-tråd- og meldingsobjektene. Slås på av arbeidsområdeoppgraderingen som gir dem nye navn, så ikke slå det på manuelt."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -34090,6 +34205,7 @@ msgid "Week"
 msgstr "Uke"
 
 #. js-lingui-id: 4XSc4l
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 #: src/modules/settings/billing/constants/UsageLimitPeriodNameLabels.ts
 msgid "Weekly"
 msgstr "Ukentlig"
@@ -34339,7 +34455,7 @@ msgstr "Widgetinnstillinger"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "Tre for synlighetsregel for widget"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34891,6 +35007,11 @@ msgstr "År"
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Yearly"
 msgstr "Årlig"
+
+#. js-lingui-id: 1+9d+F
+#: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
+msgid "Yearly on {startMonthAndDay}"
+msgstr "Årlig den {startMonthAndDay}"
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

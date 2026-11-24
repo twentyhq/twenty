@@ -394,13 +394,13 @@ msgstr "Un widget di relazione annidata deve usare il layout a tabella."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot be tied to a row level permission rule"
-msgstr ""
+msgstr "Un campo nidificato non leggibile non può essere associato a una regola di autorizzazione a livello di riga"
 
 #. js-lingui-id: +cMY8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot use itself as its source"
-msgstr ""
+msgstr "Un campo nidificato non leggibile non può usare se stesso come origine"
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -497,6 +497,11 @@ msgstr "Esiste già un record con questo valore."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Una registrazione di una riunione"
+
+#. js-lingui-id: l+tyko
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
+msgstr "Una ricorrenza termina in corrispondenza di recurrence.endDate oppure dopo recurrence.endOccurrenceCount, non entrambe le condizioni"
 
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -777,12 +782,12 @@ msgstr "Un membro dello spazio di lavoro"
 #. js-lingui-id: EAIj51
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a field and at least one value"
-msgstr ""
+msgstr "Un filtro di relazione membro dello spazio di lavoro richiede un campo e almeno un valore"
 
 #. js-lingui-id: mZ5k8L
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a workspace member relation"
-msgstr ""
+msgstr "Un filtro di relazione membro dello spazio di lavoro richiede una relazione membro dello spazio di lavoro"
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3179,7 +3184,7 @@ msgstr "Scegli una persona o un ruolo con cui condividere."
 #. js-lingui-id: 8+4T+u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field and the values to keep on the related records"
-msgstr ""
+msgstr "Scegli il campo e i valori da mantenere nei record correlati"
 
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3194,7 +3199,7 @@ msgstr "Scegli l'oggetto che emette questo tipo di attività della cronologia"
 #. js-lingui-id: fr9dvq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the relation of the workspace member to filter"
-msgstr ""
+msgstr "Scegli la relazione del membro dell'area di lavoro da filtrare"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5728,7 +5733,7 @@ msgstr "Il campo \"{workspaceMemberRelationFieldName}\" non è una relazione uno
 #. js-lingui-id: yfFA+h
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
-msgstr ""
+msgstr "Il campo \"{workspaceMemberRelationFilterFieldName}\" non è un campo select, di testo o booleano dei record correlati"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -6182,7 +6187,7 @@ msgstr "L'operando del filtro non è supportato per questo tipo di campo"
 #. js-lingui-id: twPawb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Filter the related records on one of their select, text or boolean fields"
-msgstr ""
+msgstr "Filtra i record correlati in base a uno dei relativi campi select, di testo o booleani"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10541,12 +10546,12 @@ msgstr "L'opzione \"{optionLabel}\" è inclusa nel campo e non può essere rimos
 #. js-lingui-id: xTWr3W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "La descrizione dell'opzione \"{optionLabel}\" supera i {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} caratteri"
 
 #. js-lingui-id: cCRBHe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" has an invalid description"
-msgstr ""
+msgstr "L'opzione \"{optionLabel}\" ha una descrizione non valida"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -11786,6 +11791,16 @@ msgstr "I record non possono essere ordinati in base a una relazione del record 
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
 msgstr "Record a cui è allegato questo thread"
+
+#. js-lingui-id: Q/3t6e
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
+msgstr "recurrence.endDate deve essere una data YYYY-MM-DD uguale o successiva alla data di inizio dell'evento ({firstOccurrenceDate})"
+
+#. js-lingui-id: wM8dZb
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
+msgstr "recurrence.interval e recurrence.endOccurrenceCount devono essere numeri interi positivi"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13451,12 +13466,12 @@ msgstr "Titolo del documento di origine"
 #. js-lingui-id: gAdogO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field metadata not found"
-msgstr ""
+msgstr "Metadati del campo di origine non trovati"
 
 #. js-lingui-id: 8Fgyo1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field not found"
-msgstr ""
+msgstr "Campo di origine non trovato"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -15931,7 +15946,7 @@ msgstr "Questa versione dell'applicazione è già installata in questo spazio di
 #. js-lingui-id: lJw5/K
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "This view type is not available on this object"
-msgstr ""
+msgstr "Questo tipo di vista non è disponibile su questo oggetto"
 
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -17569,7 +17584,7 @@ msgstr "Vista da aggiornare non trovata"
 #. js-lingui-id: OZdSbV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "View type is not available on the view object"
-msgstr ""
+msgstr "Il tipo di vista non è disponibile sull'oggetto vista"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -18415,7 +18430,7 @@ msgstr "Metadati del campo di relazione del membro dell'area di lavoro non trova
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation filter field metadata not found"
-msgstr ""
+msgstr "Metadati del campo filtro della relazione del membro dell'area di lavoro non trovati"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
