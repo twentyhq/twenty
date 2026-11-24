@@ -12,27 +12,19 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 
-import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ROLLUP_MAX_DECIMALS } from 'src/engine/metadata-modules/flat-field-metadata/schemas/rollup-settings-input.schema';
 import { type FlatFieldMetadataTypeValidationArgs } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-type-validator.type';
 import { type FlatFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-validation-error.type';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isRelationUniversalFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-relation-universal-flat-field-metadata-of-type.util';
+import { toRollupFieldMetadataValidationError } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/to-rollup-field-metadata-validation-error.util';
 import { validateRollupFlatFieldMetadataFilters } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-rollup-flat-field-metadata-filters.util';
 
-const invalidRollup = ({
-  message,
-  userFriendlyMessage,
-}: Pick<
-  FlatFieldMetadataValidationError,
-  'message' | 'userFriendlyMessage'
->): FlatFieldMetadataValidationError[] => [
-  {
-    code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-    message,
-    userFriendlyMessage,
-  },
+const invalidRollup = (
+  error: Parameters<typeof toRollupFieldMetadataValidationError>[0],
+): FlatFieldMetadataValidationError[] => [
+  toRollupFieldMetadataValidationError(error),
 ];
 
 export const validateRollupFlatFieldMetadata = ({

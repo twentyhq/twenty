@@ -15,10 +15,12 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 
 export const fromUniversalSettingsToFlatFieldMetadataSettings = ({
+  fieldMetadataType,
   universalSettings,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
   flatFieldMetadataMaps,
 }: {
+  fieldMetadataType: FieldMetadataType;
   universalSettings: UniversalFlatFieldMetadata['universalSettings'];
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap: Map<string, string>;
   flatFieldMetadataMaps: MetadataFlatEntityMaps<'fieldMetadata'>;
@@ -28,6 +30,7 @@ export const fromUniversalSettingsToFlatFieldMetadataSettings = ({
   }
 
   if (
+    fieldMetadataType === FieldMetadataType.ROLLUP &&
     isUniversalFieldMetadataSettingsOftype(
       universalSettings,
       FieldMetadataType.ROLLUP,

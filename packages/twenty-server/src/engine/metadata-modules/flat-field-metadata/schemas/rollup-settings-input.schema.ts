@@ -13,5 +13,3 @@ export const rollupSettingsInputSchema = z.object({
   filterGroups: viewFieldRelationScopeSchema.shape.filterGroups,
   decimals: z.number().int().min(0).max(ROLLUP_MAX_DECIMALS).optional(),
 });
-
-export type RollupSettingsInput = z.infer<typeof rollupSettingsInputSchema>;
