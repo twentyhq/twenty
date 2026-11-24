@@ -213,7 +213,7 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectRecordsOperationType } from './ObjectRecordsOperationType';
 export type {
-  InheritedFieldPermission,
+  UnreadableNestedFieldPermission,
   ObjectRecordsPermissions,
 } from './ObjectRecordsPermissions';
 export { ObjectSharingReach } from './ObjectSharingReach';

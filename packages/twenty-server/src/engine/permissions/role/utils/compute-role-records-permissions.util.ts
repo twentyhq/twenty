@@ -196,17 +196,17 @@ const buildUnreadableAndUneditableFields = ({
 
 const NO_FIELDS = { unreadableFields: [], uneditableFields: [] };
 
-const buildInheritedFields = (
+const buildUnreadableNestedFields = (
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'],
-): Pick<ObjectRecordsPermissions, 'inheritedFields'> => {
-  const inheritedFields = fieldPermissions.flatMap(
+): Pick<ObjectRecordsPermissions, 'unreadableNestedFields'> => {
+  const unreadableNestedFields = fieldPermissions.flatMap(
     ({ fieldMetadataId, sourceFieldMetadataId }) =>
       isDefined(sourceFieldMetadataId)
         ? [{ fieldMetadataId, sourceFieldMetadataId }]
         : [],
   );
 
-  return inheritedFields.length > 0 ? { inheritedFields } : {};
+  return unreadableNestedFields.length > 0 ? { unreadableNestedFields } : {};
 };
 
 const buildObjectRecordsPermissions = ({
@@ -217,7 +217,7 @@ const buildObjectRecordsPermissions = ({
   objectRecordsAccess: ObjectRecordsAccess;
   objectFields: Pick<
     ObjectRecordsPermissions,
-    'unreadableFields' | 'uneditableFields' | 'inheritedFields'
+    'unreadableFields' | 'uneditableFields' | 'unreadableNestedFields'
   >;
   rowLevelRecordsPermissions: RowLevelRecordsPermissions[];
 }): ObjectRecordsPermissions => ({
@@ -318,7 +318,7 @@ export const computeRoleRecordsPermissions = ({
               resolveMorphRelationPermissionFieldIds,
               isLabelIdentifierAlwaysReadable: true,
             }),
-            ...buildInheritedFields(objectFieldPermissions),
+            ...buildUnreadableNestedFields(objectFieldPermissions),
           },
       objectRecordsAccess: {
         canCreate: objectRecordsAccess.canCreate && hasAiAccess,

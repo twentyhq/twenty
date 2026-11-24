@@ -1,6 +1,6 @@
 import { type RowLevelRecordsPermissions } from '@/types/RowLevelRecordsPermissions';
 
-export type InheritedFieldPermission = {
+export type UnreadableNestedFieldPermission = {
   fieldMetadataId: string;
   sourceFieldMetadataId: string;
 };
@@ -13,7 +13,7 @@ export type ObjectRecordsPermissions = {
   canDestroyAllRecords: boolean;
   unreadableFields: string[];
   uneditableFields: string[];
-  inheritedFields?: InheritedFieldPermission[];
+  unreadableNestedFields?: UnreadableNestedFieldPermission[];
   rowLevelRecordsPermissions?: RowLevelRecordsPermissions[] | null;
   canReadSomeRecords?: boolean;
 };

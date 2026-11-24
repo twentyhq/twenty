@@ -7,7 +7,7 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-export const validateFieldPermissionInheritedSource = ({
+export const validateFieldPermissionUnreadableNestedSource = ({
   flatFieldPermission,
   flatFieldMetadataMaps,
 }: {
@@ -49,8 +49,8 @@ export const validateFieldPermissionInheritedSource = ({
   ) {
     errors.push({
       code: PermissionsExceptionCode.INVALID_SETTING,
-      message: t`A field cannot inherit its readability from itself`,
-      userFriendlyMessage: msg`A field cannot inherit its readability from itself`,
+      message: t`A nested unreadable field cannot use itself as its source`,
+      userFriendlyMessage: msg`A nested unreadable field cannot use itself as its source`,
     });
   }
 
@@ -62,8 +62,8 @@ export const validateFieldPermissionInheritedSource = ({
   ) {
     errors.push({
       code: PermissionsExceptionCode.INVALID_SETTING,
-      message: t`An inherited field permission cannot be tied to a row level permission rule`,
-      userFriendlyMessage: msg`An inherited field permission cannot be tied to a row level permission rule`,
+      message: t`A nested unreadable field cannot be tied to a row level permission rule`,
+      userFriendlyMessage: msg`A nested unreadable field cannot be tied to a row level permission rule`,
     });
   }
 

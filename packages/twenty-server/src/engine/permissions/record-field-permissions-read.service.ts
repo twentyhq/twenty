@@ -66,7 +66,7 @@ export class RecordFieldPermissionsReadService {
         objectMetadataId,
         tableAlias,
       })),
-      ...(await this.recordPermissionsReadService.buildInheritedUnreadableFieldsSQLConditions(
+      ...(await this.recordPermissionsReadService.buildUnreadableNestedFieldsSQLConditions(
         { principals, objectMetadataId, tableAlias },
       )),
     ];

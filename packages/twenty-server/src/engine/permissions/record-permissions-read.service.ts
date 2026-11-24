@@ -54,7 +54,7 @@ import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
-import { findRelatedRecordPathInheritedFields } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-inherited-fields.util';
+import { findRelatedRecordPathUnreadableNestedFields } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -435,7 +435,7 @@ export class RecordPermissionsReadService {
     ]);
   }
 
-  async buildInheritedUnreadableFieldsSQLConditions({
+  async buildUnreadableNestedFieldsSQLConditions({
     tableAlias,
     ...question
   }: ObjectQuestion & { tableAlias: string }): Promise<
@@ -450,11 +450,11 @@ export class RecordPermissionsReadService {
       return [];
     }
 
-    const inheritedFields =
-      findRelatedRecordPathInheritedFields(objectAccessRequest);
+    const unreadableNestedFields =
+      findRelatedRecordPathUnreadableNestedFields(objectAccessRequest);
 
     if (
-      !isNonEmptyArray(inheritedFields) ||
+      !isNonEmptyArray(unreadableNestedFields) ||
       !canRelatedRecordPathExtendAccess(objectAccessRequest)
     ) {
       return [];
@@ -466,19 +466,19 @@ export class RecordPermissionsReadService {
     ] = await Promise.all([
       this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
       this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields(
-        { request: objectAccessRequest, sourceFields: inheritedFields },
+        { request: objectAccessRequest, sourceFields: unreadableNestedFields },
       ),
     ]);
 
-    const inheritedUnreadableFieldsSQLConditions = inheritedFields.map(
-      ({ fieldMetadataId }, inheritedFieldIndex) => {
+    const unreadableNestedFieldsSQLConditions = unreadableNestedFields.map(
+      ({ fieldMetadataId }, unreadableNestedFieldIndex) => {
         const fieldReadableSQLCondition = this.buildRecordsAccessSQLCondition({
           objectAccessRequest,
           tableAlias,
           principalsAccessGroupCompactIds,
           principalsRelatedRecordPathAccessGroupCompactIds:
             principalsRelatedRecordPathAccessGroupCompactIdsShowingFields[
-              inheritedFieldIndex
+              unreadableNestedFieldIndex
             ],
         });
 
@@ -501,7 +501,7 @@ export class RecordPermissionsReadService {
       },
     );
 
-    return inheritedUnreadableFieldsSQLConditions.filter(isDefined);
+    return unreadableNestedFieldsSQLConditions.filter(isDefined);
   }
 
   private async findPrincipalsAccessGroupCompactIds(

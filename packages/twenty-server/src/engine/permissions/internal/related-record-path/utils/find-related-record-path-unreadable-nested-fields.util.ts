@@ -5,28 +5,31 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 
-export type RelatedRecordPathInheritedField = {
+export type RelatedRecordPathUnreadableNestedField = {
   fieldMetadataId: string;
   sourceObjectMetadataId: string;
   sourceFieldMetadataId: string;
 };
 
-export const findRelatedRecordPathInheritedFields = ({
+export const findRelatedRecordPathUnreadableNestedFields = ({
   principals,
   metadataMaps: { rolesPermissions, flatFieldMetadataMaps },
   flatObjectMetadata,
-}: PermissionsObjectAccessRequest): RelatedRecordPathInheritedField[] => {
-  const inheritedFieldBySourceKey = new Map<
+}: PermissionsObjectAccessRequest): RelatedRecordPathUnreadableNestedField[] => {
+  const unreadableNestedFieldBySourceKey = new Map<
     string,
-    RelatedRecordPathInheritedField
+    RelatedRecordPathUnreadableNestedField
   >();
 
   for (const roleId of principals.mainPrincipal.roleIds) {
-    const inheritedFields =
+    const unreadableNestedFields =
       rolesPermissions[roleId]?.objects[flatObjectMetadata.id]
-        ?.inheritedFields ?? [];
+        ?.unreadableNestedFields ?? [];
 
-    for (const { fieldMetadataId, sourceFieldMetadataId } of inheritedFields) {
+    for (const {
+      fieldMetadataId,
+      sourceFieldMetadataId,
+    } of unreadableNestedFields) {
       const sourceFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: sourceFieldMetadataId,
         flatEntityMaps: flatFieldMetadataMaps,
@@ -36,7 +39,7 @@ export const findRelatedRecordPathInheritedFields = ({
         continue;
       }
 
-      inheritedFieldBySourceKey.set(
+      unreadableNestedFieldBySourceKey.set(
         `${fieldMetadataId}:${sourceFieldMetadataId}`,
         {
           fieldMetadataId,
@@ -47,5 +50,5 @@ export const findRelatedRecordPathInheritedFields = ({
     }
   }
 
-  return [...inheritedFieldBySourceKey.values()];
+  return [...unreadableNestedFieldBySourceKey.values()];
 };

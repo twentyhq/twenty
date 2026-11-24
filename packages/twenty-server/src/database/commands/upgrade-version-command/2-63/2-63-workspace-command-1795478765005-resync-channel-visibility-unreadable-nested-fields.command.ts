@@ -8,11 +8,11 @@ import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permission
 
 @RegisteredWorkspaceCommand('2.63.0', 1795478765005)
 @Command({
-  name: 'upgrade:2-63:resync-channel-visibility-inherited-fields',
+  name: 'upgrade:2-63:resync-channel-visibility-unreadable-nested-fields',
   description:
-    'Schedule the channel visibility sync so individual roles declare the thread subject as inherited from the message subject',
+    'Schedule the channel visibility sync so individual roles declare the thread subject as a nested unreadable field sourced from the message subject',
 })
-export class ResyncChannelVisibilityInheritedFieldsCommand extends ProvisionedWorkspaceCommandRunner {
+export class ResyncChannelVisibilityUnreadableNestedFieldsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly channelVisibilityRuleSyncSchedulerService: ChannelVisibilityRuleSyncSchedulerService,

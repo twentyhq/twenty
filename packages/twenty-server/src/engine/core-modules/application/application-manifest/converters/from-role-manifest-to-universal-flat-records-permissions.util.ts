@@ -66,7 +66,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     rowLevelPermissionPredicateGroupUniversalIdentifier: string | null;
   }): UniversalFlatFieldPermission[] => {
     const alwaysUnreadableFields = unreadableFields.filter(isString);
-    const inheritedUnreadableFields = unreadableFields.flatMap(
+    const unreadableNestedFields = unreadableFields.flatMap(
       (unreadableField) => (isString(unreadableField) ? [] : [unreadableField]),
     );
 
@@ -75,7 +75,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       ...new Set([
         ...alwaysUnreadableFields,
         ...uneditableFields,
-        ...inheritedUnreadableFields.map(
+        ...unreadableNestedFields.map(
           ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
         ),
         ...fieldPermissionIdentifiers.map(
@@ -102,9 +102,9 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       rowLevelPermissionRuleUniversalIdentifier,
       sourceFieldMetadataUniversalIdentifier:
-        inheritedUnreadableFields.find(
-          (inheritedUnreadableField) =>
-            inheritedUnreadableField.fieldUniversalIdentifier ===
+        unreadableNestedFields.find(
+          (unreadableNestedField) =>
+            unreadableNestedField.fieldUniversalIdentifier ===
             fieldUniversalIdentifier,
         )?.sourceFieldUniversalIdentifier ?? null,
       canReadFieldValue: alwaysUnreadableFields.includes(
