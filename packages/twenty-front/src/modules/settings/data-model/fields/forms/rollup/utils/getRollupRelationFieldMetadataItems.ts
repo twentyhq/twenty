@@ -1,12 +1,15 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
+
+type RelationFieldMetadataItem = FieldMetadataItem & {
+  relation: NonNullable<FieldMetadataItem['relation']>;
+};
 
 export const getRollupRelationFieldMetadataItems = (
   fieldMetadataItems: FieldMetadataItem[],
-): FieldMetadataItem[] =>
+): RelationFieldMetadataItem[] =>
   fieldMetadataItems.filter(
-    (fieldMetadataItem) =>
+    (fieldMetadataItem): fieldMetadataItem is RelationFieldMetadataItem =>
       fieldMetadataItem.isActive === true &&
-      fieldMetadataItem.type === FieldMetadataType.RELATION &&
-      fieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY,
+      isOneToManyRelationField(fieldMetadataItem),
   );

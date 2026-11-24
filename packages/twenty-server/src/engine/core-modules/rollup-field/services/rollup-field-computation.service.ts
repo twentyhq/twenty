@@ -16,7 +16,6 @@ import { buildRollupValueSqlExpression } from 'src/engine/core-modules/rollup-fi
 import { computeRollupRecordUpdates } from 'src/engine/core-modules/rollup-field/utils/compute-rollup-record-updates.util';
 import { getRollupEmptyValue } from 'src/engine/core-modules/rollup-field/utils/get-rollup-empty-value.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -165,12 +164,8 @@ export class RollupFieldComputationService {
         childRecordFilter: this.filterArgProcessorService.process({
           filter: buildRollupChildRecordFilter({
             settings: plan.rollupFlatFieldMetadata.settings,
-            filterFlatFieldMetadatas: findManyFlatEntityByIdInFlatEntityMaps({
-              flatEntityIds: plan.rollupFlatFieldMetadata.settings.filters.map(
-                ({ fieldMetadataId }) => fieldMetadataId,
-              ),
-              flatEntityMaps: flatFieldMetadataMaps,
-            }),
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
           }),
           flatObjectMetadata: plan.childFlatObjectMetadata,
           flatObjectMetadataMaps,

@@ -3,7 +3,35 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { ROLLUP_FILTER_OPERANDS_BY_FIELD_METADATA_TYPE } from '@/settings/data-model/fields/forms/rollup/constants/RollupFilterOperandsByFieldMetadataType';
 import { type RollupSettingsFormFilter } from '@/settings/data-model/fields/forms/rollup/types/RollupSettingsFormFilter';
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
-import { getFieldMetadataValueType } from 'twenty-shared/utils';
+import {
+  type FieldMetadataValueType,
+  getFieldMetadataValueType,
+} from 'twenty-shared/utils';
+
+const getDefaultRollupFilterValue = ({
+  fieldType,
+  options,
+}: {
+  fieldType: FieldMetadataValueType;
+  options: FieldMetadataItem['options'];
+}): string => {
+  if (fieldType === FieldMetadataType.BOOLEAN) {
+    return 'true';
+  }
+
+  if (
+    fieldType !== FieldMetadataType.SELECT &&
+    fieldType !== FieldMetadataType.MULTI_SELECT
+  ) {
+    return '';
+  }
+
+  const firstOptionValue = options?.[0]?.value;
+
+  return JSON.stringify(
+    isNonEmptyString(firstOptionValue) ? [firstOptionValue] : [],
+  );
+};
 
 export const getRollupFilterForFieldMetadataItem = ({
   filterId,
@@ -18,35 +46,14 @@ export const getRollupFilterForFieldMetadataItem = ({
   const fieldType = getFieldMetadataValueType(fieldMetadataItem);
   const [operand = ViewFilterOperand.IS] =
     ROLLUP_FILTER_OPERANDS_BY_FIELD_METADATA_TYPE[fieldType] ?? [];
-  const firstOptionValue = fieldMetadataItem.options?.[0]?.value;
-
-  if (fieldType === FieldMetadataType.BOOLEAN) {
-    return {
-      id: filterId,
-      fieldMetadataId: fieldMetadataItem.id,
-      operand,
-      value: 'true',
-    };
-  }
-
-  if (
-    fieldType === FieldMetadataType.SELECT ||
-    fieldType === FieldMetadataType.MULTI_SELECT
-  ) {
-    return {
-      id: filterId,
-      fieldMetadataId: fieldMetadataItem.id,
-      operand,
-      value: JSON.stringify(
-        isNonEmptyString(firstOptionValue) ? [firstOptionValue] : [],
-      ),
-    };
-  }
 
   return {
     id: filterId,
     fieldMetadataId: fieldMetadataItem.id,
     operand,
-    value: '',
+    value: getDefaultRollupFilterValue({
+      fieldType,
+      options: fieldMetadataItem.options,
+    }),
   };
 };
