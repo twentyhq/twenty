@@ -65,12 +65,13 @@ export const buildStoredFormulaColumnExpressions = ({
           tableName,
           resolveReference,
           resolveAggregationSource,
-        })?.columns ?? []
-      ).map(({ columnName, compositePropertyName, expression }) => ({
+        }) ?? []
+      ).map(({ columnName, sqlType, compositePropertyName, expression }) => ({
         fieldName: storedFormulaFlatFieldMetadata.name,
         compositePropertyName,
         columnName,
-        expression: expression ?? 'NULL',
+        // Cast to the column type, so the computed value reads back exactly as the stored one
+        expression: `(${expression ?? 'NULL'})::${sqlType}`,
       })),
   );
 };

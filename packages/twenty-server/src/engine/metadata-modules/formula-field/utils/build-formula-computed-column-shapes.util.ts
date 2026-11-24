@@ -14,9 +14,6 @@ import {
   type WorkspaceComputedColumnShape,
   type WorkspaceComputedLookupShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
-
-const ENUM_COLUMN_TYPE = 'enum';
 
 export const buildFormulaComputedColumnShapes = ({
   flatObjectMetadata,
@@ -89,26 +86,13 @@ export const buildFormulaComputedColumnShapes = ({
         }),
       });
 
-      if (!isDefined(compiledColumns)) {
-        return [];
-      }
-
-      return compiledColumns.columns.map(
-        ({ columnName, columnFieldMetadataType, expression }) => {
-          const columnType = fieldMetadataTypeToColumnType(
-            columnFieldMetadataType,
-          );
-
-          return {
-            columnName,
-            sqlType:
-              columnType === ENUM_COLUMN_TYPE
-                ? compiledColumns.enumSqlType
-                : columnType,
-            expression,
-            dependencies: [...dependencyByKey.values()],
-          };
-        },
+      return (compiledColumns ?? []).map(
+        ({ columnName, sqlType, expression }) => ({
+          columnName,
+          sqlType,
+          expression,
+          dependencies: [...dependencyByKey.values()],
+        }),
       );
     },
   );

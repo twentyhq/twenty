@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
+import isEqual from 'lodash.isequal';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { STORED_FORMULA_FIELD_BACKFILL_BATCHES_PER_JOB } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-backfill-batches-per-job.constant';
@@ -186,27 +187,32 @@ export class StoredFormulaFieldComputationService {
         flatObjectMetadata.nameSingular,
         { shouldSkipEventEmission },
       );
-    const staleValuesQueryBuilder = recordRepository
+    const valuesQueryBuilder = recordRepository
       .createQueryBuilder(COMPUTED_COLUMN_RECORD_ALIAS)
       .withStoredColumnsOnly()
-      .select(`${RECORD_ID_COLUMN}`, 'id')
-      .where(`${RECORD_ID_COLUMN} IN (:...recordIds)`, { recordIds })
-      .andWhere(
-        `(${columnExpressions
-          .map(
-            ({ columnName, expression }) =>
-              `${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName)} IS DISTINCT FROM ${expression}`,
-          )
-          .join(' OR ')})`,
-      );
+      .select(RECORD_ID_COLUMN, 'id')
+      .where(`${RECORD_ID_COLUMN} IN (:...recordIds)`, { recordIds });
 
-    columnExpressions.forEach(({ expression }, columnIndex) =>
-      staleValuesQueryBuilder.addSelect(expression, `value${columnIndex}`),
+    columnExpressions.forEach(({ columnName, expression }, columnIndex) =>
+      valuesQueryBuilder
+        .addSelect(
+          quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, columnName),
+          `stored${columnIndex}`,
+        )
+        .addSelect(expression, `value${columnIndex}`),
     );
 
-    const staleRows = await staleValuesQueryBuilder.getRawMany<
-      { id: string } & Record<string, unknown>
-    >();
+    // Compared here rather than in SQL, so each expression is computed once per record
+    const staleRows = (
+      await valuesQueryBuilder.getRawMany<
+        { id: string } & Record<string, unknown>
+      >()
+    ).filter((row) =>
+      columnExpressions.some(
+        (_, columnIndex) =>
+          !isEqual(row[`stored${columnIndex}`], row[`value${columnIndex}`]),
+      ),
+    );
 
     if (!isNonEmptyArray(staleRows)) {
       return;

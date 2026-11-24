@@ -18,13 +18,16 @@ import {
 import { compileFormulaFieldToSql } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-to-sql.util';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 
 export type CompiledFormulaFieldColumn = {
   columnName: string;
-  columnFieldMetadataType: FieldMetadataType;
+  sqlType: string;
   compositePropertyName?: string;
   expression?: string;
 };
+
+const ENUM_COLUMN_TYPE = 'enum';
 
 export const compileFormulaFieldColumns = ({
   flatFieldMetadata: { name, type, settings },
@@ -38,9 +41,7 @@ export const compileFormulaFieldColumns = ({
   tableName: string;
   resolveReference: FormulaSqlReferenceResolver;
   resolveAggregationSource?: FormulaSqlAggregationSourceResolver;
-}):
-  | { enumSqlType: string; columns: CompiledFormulaFieldColumn[] }
-  | undefined => {
+}): CompiledFormulaFieldColumn[] | undefined => {
   const expression = getFieldMetadataFormulaExpression({ settings });
 
   if (!isFormulaFieldMetadataType(type) || !isDefined(expression)) {
@@ -71,28 +72,28 @@ export const compileFormulaFieldColumns = ({
         )?.expression
       : undefined;
 
+  const toSqlType = (columnFieldMetadataType: FieldMetadataType): string => {
+    const columnType = fieldMetadataTypeToColumnType(columnFieldMetadataType);
+
+    return columnType === ENUM_COLUMN_TYPE ? enumSqlType : columnType;
+  };
+
   const compositeProperties = compositeTypeDefinitions.get(type)?.properties;
 
   if (!isDefined(compositeProperties)) {
-    return {
-      enumSqlType,
-      columns: [
-        {
-          columnName: name,
-          columnFieldMetadataType: type,
-          expression: findCompiledExpression(undefined),
-        },
-      ],
-    };
+    return [
+      {
+        columnName: name,
+        sqlType: toSqlType(type),
+        expression: findCompiledExpression(undefined),
+      },
+    ];
   }
 
-  return {
-    enumSqlType,
-    columns: compositeProperties.map((compositeProperty) => ({
-      columnName: computeCompositeColumnName(name, compositeProperty),
-      columnFieldMetadataType: compositeProperty.type,
-      compositePropertyName: compositeProperty.name,
-      expression: findCompiledExpression(compositeProperty.name),
-    })),
-  };
+  return compositeProperties.map((compositeProperty) => ({
+    columnName: computeCompositeColumnName(name, compositeProperty),
+    sqlType: toSqlType(compositeProperty.type),
+    compositePropertyName: compositeProperty.name,
+    expression: findCompiledExpression(compositeProperty.name),
+  }));
 };

@@ -383,6 +383,32 @@ describe('Stored formula fields', () => {
     });
   });
 
+  it('should leave a record untouched when its recompute finds nothing stale', async () => {
+    const readSupplierUpdatedAt = async () => {
+      await waitForAllJobsToFinish();
+
+      return (
+        await runGraphqlOperation({
+          query: `query FindSupplier($id: UUID!) {
+            storedFormulaSupplier(filter: { id: { eq: $id } }) { updatedAt }
+          }`,
+          variables: { id: secondSupplierId },
+        })
+      ).storedFormulaSupplier.updatedAt;
+    };
+    const updatedAtBeforeRecompute = await readSupplierUpdatedAt();
+
+    await getAppProviderByClassName<StoredFormulaFieldDirtyRecordService>(
+      'StoredFormulaFieldDirtyRecordService',
+    ).markRecordsDirty({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      objectMetadataId: supplierObjectMetadataId,
+      recordIds: [secondSupplierId],
+    });
+
+    expect(await readSupplierUpdatedAt()).toBe(updatedAtBeforeRecompute);
+  });
+
   it('should backfill again when the expression changes', async () => {
     const [{ id: gadgetCountFieldMetadataId }] =
       await global.testDataSource.query(
