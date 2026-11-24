@@ -12,6 +12,7 @@ import {
   EASING,
   FONT_WEIGHT,
   fontFamily,
+  mediaUp,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -23,10 +24,11 @@ import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { INTEGRATOR_LEDGER } from './integrator-ledger-config';
 
-// Tall enough to carry the section: a whole number of dash rows.
-const CHART_HEIGHT_PX = 324;
+// Tall enough to carry the section, shorter on a phone; both a whole number
+// of dash rows. The lit part of each column is snapped to a whole dash in CSS,
+// so either height draws clean steps.
+const CHART_HEIGHT_PX = { base: 216, md: 324 } as const;
 const DASH_PITCH_PX = 6;
-const DASH_ROWS = CHART_HEIGHT_PX / DASH_PITCH_PX;
 const MONTHS = Array.from(
   { length: INTEGRATOR_LEDGER.months },
   (_, index) => index + 1,
@@ -144,12 +146,25 @@ const Columns = styled.div`
   column-gap: ${spacing(1.5)};
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  height: ${CHART_HEIGHT_PX}px;
+  height: var(--chart-height);
+
+  --chart-height: ${CHART_HEIGHT_PX.base}px;
+
+  ${mediaUp('md')} {
+    --chart-height: ${CHART_HEIGHT_PX.md}px;
+  }
 `;
 
 const Column = styled.span`
   height: 100%;
   position: relative;
+
+  /* How much of the column is lit: its share of the height, snapped to a
+     whole dash, never less than one. */
+  --lit: max(
+    ${DASH_PITCH_PX}px,
+    round(var(--fill) * var(--chart-height), ${DASH_PITCH_PX}px)
+  );
 
   /* The empty track: every dash a month could still light. */
   &::before {
@@ -177,7 +192,7 @@ const ColumnEntrance = styled.span`
 
 const ColumnFill = styled.span`
   background-color: ${color('blue')};
-  clip-path: inset(calc((1 - var(--fill)) * 100%) 0 0 0);
+  clip-path: inset(calc(var(--chart-height) - var(--lit)) 0 0 0);
   inset: 0;
   mask-image: repeating-linear-gradient(
     to top,
@@ -199,7 +214,7 @@ const ColumnCap = styled.span`
   position: absolute;
   right: 0;
   top: -2px;
-  transform: translateY(calc((1 - var(--fill)) * ${CHART_HEIGHT_PX}px + 4px));
+  transform: translateY(calc(var(--chart-height) - var(--lit) + 4px));
   transition: transform ${DURATION.lg} ${EASING.standard};
 
   ${REDUCED_MOTION} {
@@ -293,17 +308,14 @@ const Footnote = styled.p`
   font-family: ${fontFamily('sans')};
 `;
 
-const filledDashFraction = (month: number, seats: number): number => {
+// A month's share of the chart's height; CSS snaps it to a whole dash.
+const filledFraction = (month: number, seats: number): number => {
   const { minSeats, maxSeats, months } = INTEGRATOR_LEDGER;
   const seatProgress = (seats - minSeats) / (maxSeats - minSeats);
   // Eased so small books still draw a readable staircase.
   const level = 0.3 + 0.7 * seatProgress ** 0.5;
-  const litDashes = Math.max(
-    1,
-    Math.round(DASH_ROWS * (month / months) * level),
-  );
 
-  return litDashes / DASH_ROWS;
+  return (month / months) * level;
 };
 
 type IntegratorLedgerProps = {
@@ -362,7 +374,7 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
               <Column
                 key={month}
                 style={cssVariableStyle({
-                  '--fill': filledDashFraction(month, seats),
+                  '--fill': filledFraction(month, seats),
                   '--month': month,
                 })}
               >
