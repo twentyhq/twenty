@@ -57,4 +57,47 @@ describe('findWhatsAppCampaignRecipients', () => {
       createdAt: { gt: '2026-11-20T09:00:00.000Z' },
     });
   });
+
+  it('should keep reading reply pages until every conversation is found', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce({
+        messages: {
+          edges: [
+            buildMessage({ id: 'message-1', status: 'READ', handle: '16505551234' }),
+            buildMessage({ id: 'message-2', status: 'READ', handle: '16505559999' }),
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        messageChannelMessageAssociations: {
+          edges: [
+            { node: { messageId: 'message-1', messageThreadExternalId: 'thread-1' } },
+            { node: { messageId: 'message-2', messageThreadExternalId: 'thread-2' } },
+          ],
+        },
+      })
+      .mockResolvedValueOnce({
+        messageChannelMessageAssociations: {
+          edges: [{ node: { messageThreadExternalId: 'thread-1' } }, { node: { messageThreadExternalId: 'thread-1' } }],
+          pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+        },
+      })
+      .mockResolvedValueOnce({
+        messageChannelMessageAssociations: {
+          edges: [{ node: { messageThreadExternalId: 'thread-2' } }],
+          pageInfo: { hasNextPage: true, endCursor: 'cursor-2' },
+        },
+      });
+
+    const recipients = await findWhatsAppCampaignRecipients({
+      client: { query } as unknown as CoreApiClient,
+      campaignId: 'campaign-id',
+      campaignCreatedAt: '2026-11-20T09:00:00.000Z',
+    });
+
+    expect(recipients.map(({ hasReplied }) => hasReplied)).toEqual([true, true]);
+    expect(query.mock.calls[3]?.[0].messageChannelMessageAssociations.__args.after).toBe('cursor-1');
+    expect(query).toHaveBeenCalledTimes(4);
+  });
 });
