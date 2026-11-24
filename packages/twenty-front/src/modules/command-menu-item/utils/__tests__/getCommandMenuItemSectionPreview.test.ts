@@ -7,10 +7,11 @@ const OBJECT_METADATA_ITEMS = [
 ];
 
 describe('getCommandMenuItemSectionPreview', () => {
-  it('uses plural object labels in Go to and the full label otherwise', () => {
+  it('uses plural object labels in Go to and drops the heading from other rows', () => {
     expect(
       getCommandMenuItemSectionPreview({
         section: 'GO_TO',
+        sectionHeading: 'Go to',
         commandMenuItems: [
           { label: 'Go to Settings' },
           {
@@ -25,13 +26,53 @@ describe('getCommandMenuItemSectionPreview', () => {
         ],
         objectMetadataItems: OBJECT_METADATA_ITEMS,
       }),
-    ).toBe('Go to Settings, Companies, People…');
+    ).toBe('Settings, Companies, People…');
+  });
+
+  it('keeps a label that does not start with the heading whole', () => {
+    expect(
+      getCommandMenuItemSectionPreview({
+        section: 'GO_TO',
+        sectionHeading: 'Aller à',
+        commandMenuItems: [
+          { label: 'Ouvrir les paramètres' },
+          { label: 'Go to Settings' },
+        ],
+        objectMetadataItems: OBJECT_METADATA_ITEMS,
+      }),
+    ).toBe('Ouvrir les paramètres, Go to Settings');
+  });
+
+  it('matches the heading regardless of case and keeps the rest as written', () => {
+    expect(
+      getCommandMenuItemSectionPreview({
+        section: 'GO_TO',
+        sectionHeading: 'Go to',
+        commandMenuItems: [
+          { label: 'GO TO Experience Settings' },
+          { label: 'go to apps preferences' },
+        ],
+        objectMetadataItems: OBJECT_METADATA_ITEMS,
+      }),
+    ).toBe('Experience Settings, apps preferences');
+  });
+
+  it('keeps a label equal to the heading alone whole', () => {
+    expect(
+      getCommandMenuItemSectionPreview({
+        section: 'GO_TO',
+        sectionHeading: 'Go to',
+        commandMenuItems: [{ label: 'Go to' }, { label: 'Go to ' }],
+        objectMetadataItems: OBJECT_METADATA_ITEMS,
+      }),
+    ).toBe('Go to, Go to ');
   });
 
   it('uses singular object labels in Create record', () => {
     expect(
       getCommandMenuItemSectionPreview({
         section: 'CREATE_RECORD',
+        sectionHeading: 'Create record',
         commandMenuItems: [
           {
             label: 'Create Company',
@@ -48,6 +89,7 @@ describe('getCommandMenuItemSectionPreview', () => {
     expect(
       getCommandMenuItemSectionPreview({
         section: 'CREATE_RECORD',
+        sectionHeading: 'Create record',
         commandMenuItems: [
           {
             label: 'Create Widget',

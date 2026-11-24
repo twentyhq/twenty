@@ -363,9 +363,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     doesSearchReadAsQuestion: doesSearchReadAsQuestion(trimmedSidePanelSearch),
   });
 
-  const getSectionPreview = (section: CommandMenuItemSection) =>
+  const getSectionPreview = (section: DisplayedCommandMenuItemSection) =>
     getCommandMenuItemSectionPreview({
       section,
+      sectionHeading: getSectionHeading(section),
       commandMenuItems: commandMenuItemsBySection[section].map((item) => ({
         label: interpolateCommandMenuItemFields(item, commandMenuContextApi)
           .label,
