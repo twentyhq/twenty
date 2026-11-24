@@ -66,6 +66,8 @@ jobs:
       - name: Build twenty-shared
         run: npx nx build twenty-shared
       - name: Run knip on every workspace's dependencies
+        env:
+          CI: false
         run: npx knip --include dependencies,devDependencies --treat-config-hints-as-errors
   ci-knip-status-check:
     if: always() && !cancelled()
