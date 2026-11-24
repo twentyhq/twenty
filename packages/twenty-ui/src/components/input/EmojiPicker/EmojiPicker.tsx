@@ -5,6 +5,7 @@ import { useRef } from 'react';
 
 import { Input } from '@ui/primitives/input/Input/Input';
 import { Separator } from '@ui/primitives/layout/Separator/Separator';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 import styles from './EmojiPicker.module.scss';
 import { EmojiPickerEmoji } from './internal/EmojiPickerEmoji';
@@ -13,13 +14,13 @@ import { EmojiPickerScrollEffect } from './internal/EmojiPickerScrollEffect';
 import { type EmojiPickerProps } from './types/EmojiPickerProps';
 
 const EMOJI_PICKER_COLUMNS = 8;
-const EMOJI_PICKER_KEYS = [
+const EMOJI_PICKER_KEYS = doNotTranslate([
   'ArrowUp',
   'ArrowDown',
   'ArrowLeft',
   'ArrowRight',
   'Enter',
-];
+]);
 
 export const EmojiPicker = ({
   emojibaseUrl,
