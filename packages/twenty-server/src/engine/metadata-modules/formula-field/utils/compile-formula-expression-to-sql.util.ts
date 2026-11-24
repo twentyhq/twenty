@@ -4,10 +4,10 @@ import { isDefined, parseExpressionInstructions } from 'twenty-shared/utils';
 
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
+import { compileFormulaSqlMembershipOrThrow } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-membership.util';
 import { compileFormulaSqlFunctionOrThrow } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-functions.util';
 import {
   compileFormulaSqlBinaryOperatorOrThrow,
-  compileFormulaSqlMembershipOrThrow,
   compileFormulaSqlUnaryOperatorOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-sql-operator.util';
 import { buildTextLiteralValue } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
@@ -142,19 +142,24 @@ const compileInstructions = ({
         const rightEntry = popEntryOrThrow();
         const left = popValueOrThrow();
 
+        if (value === 'in' && rightEntry.kind === 'list') {
+          stack.push({
+            kind: 'value',
+            value: compileFormulaSqlMembershipOrThrow({
+              value: left,
+              candidates: rightEntry.values,
+            }),
+          });
+          break;
+        }
+
         stack.push({
           kind: 'value',
-          value:
-            value === 'in' && rightEntry.kind === 'list'
-              ? compileFormulaSqlMembershipOrThrow({
-                  value: left,
-                  candidates: rightEntry.values,
-                })
-              : compileFormulaSqlBinaryOperatorOrThrow({
-                  operator: String(value),
-                  left,
-                  right: toValueOrThrow(rightEntry),
-                }),
+          value: compileFormulaSqlBinaryOperatorOrThrow({
+            operator: String(value),
+            left,
+            right: toValueOrThrow(rightEntry),
+          }),
         });
         break;
       }

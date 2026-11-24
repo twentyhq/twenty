@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
-import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
 import { keepFormulaSqlValueInRange } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-values.util';
 
 type FormulaSqlIntervalUnit = {
@@ -54,26 +53,6 @@ const FORMULA_SQL_INTERVAL_UNITS: Partial<
     multiplier: 1,
     maximumAmount: 10_000,
   },
-};
-
-export const getFormulaSqlUnitOrThrow = <TUnit extends string>({
-  value,
-  units,
-  usage,
-}: {
-  value: FormulaSqlValue;
-  units: readonly TUnit[];
-  usage: string;
-}): TUnit => {
-  const unit = units.find((candidate) => candidate === value.textLiteral);
-
-  if (!isDefined(unit)) {
-    throw new FormulaSqlCompilationException({
-      message: `${usage} needs one of ${units.map((candidate) => `"${candidate}"`).join(', ')}`,
-    });
-  }
-
-  return unit;
 };
 
 const getIntervalUnitOrThrow = (unit: string): FormulaSqlIntervalUnit => {

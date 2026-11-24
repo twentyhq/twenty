@@ -10,10 +10,10 @@ import {
 
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
+import { getFormulaSqlUnitOrThrow } from 'src/engine/metadata-modules/formula-field/utils/get-formula-sql-unit-or-throw.util';
 import {
   buildFormulaSqlInterval,
   buildFormulaSqlPeriodStart,
-  getFormulaSqlUnitOrThrow,
 } from 'src/engine/metadata-modules/formula-field/utils/formula-sql-intervals.util';
 import {
   assertFormulaSqlTypeOrThrow,
@@ -159,15 +159,17 @@ const compileRelativeDateRange = ({
     return `COALESCE(${timestamp} >= ${periodStart} AND ${timestamp} < ${periodStart} + ${onePeriod}, FALSE)`;
   }
 
-  const [start, end] =
-    direction === 'PAST'
-      ? [`${periodStart} - ${periods}`, periodStart]
-      : [
-          `${periodStart} + ${onePeriod}`,
-          `${periodStart} + ${onePeriod} + ${periods}`,
-        ];
+  const isInRange = (start: string, end: string) =>
+    `COALESCE(${amountSql} >= 1 AND ${timestamp} >= ${start} AND ${timestamp} < ${end}, FALSE)`;
 
-  return `COALESCE(${amountSql} >= 1 AND ${timestamp} >= ${start} AND ${timestamp} < ${end}, FALSE)`;
+  if (direction === 'PAST') {
+    return isInRange(`${periodStart} - ${periods}`, periodStart);
+  }
+
+  return isInRange(
+    `${periodStart} + ${onePeriod}`,
+    `${periodStart} + ${onePeriod} + ${periods}`,
+  );
 };
 
 const buildTextCaseFunction = (
