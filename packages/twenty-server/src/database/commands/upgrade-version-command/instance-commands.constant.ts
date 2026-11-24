@@ -335,7 +335,7 @@ import { RelaxWorkflowVisibilityFastInstanceCommand } from 'src/database/command
 import { AddLogicFunctionJobFailureHandlerNameAndRetryLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795507394217-add-logic-function-job-failure-handler-name-and-retry-limit';
 import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
 import { AddPresetFilterToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795514647600-add-preset-filter-to-view';
-import { AddUserWorkspaceDefaultAvatarFileIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795516417916-add-user-workspace-default-avatar-file-id';
+import { AddUserWorkspaceDefaultAvatarFileIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795518178910-add-user-workspace-default-avatar-file-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

@@ -55,6 +55,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 )
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
+@Index('IDX_USER_WORKSPACE_DEFAULT_AVATAR_FILE_ID', ['defaultAvatarFileId'])
 export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
