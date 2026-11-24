@@ -30,7 +30,24 @@ const CHANNEL_OBJECT_UNIVERSAL_IDENTIFIERS = [
   ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
 ];
 
-const { attachment } = STANDARD_OBJECTS;
+const { attachment, callRecording } = STANDARD_OBJECTS;
+
+const OBJECTS_FOLLOWING_A_CHANNEL_RECORD = [
+  {
+    objectUniversalIdentifier: attachment.universalIdentifier,
+    channelRecordFieldUniversalIdentifier:
+      attachment.fields.targetMessage.universalIdentifier,
+    ruleUniversalIdentifierSeed: 'attachmentNotOfMessage',
+    recordsFollowingAChannelRecord: 'message attachments',
+  },
+  {
+    objectUniversalIdentifier: callRecording.universalIdentifier,
+    channelRecordFieldUniversalIdentifier:
+      callRecording.fields.calendarEvent.universalIdentifier,
+    ruleUniversalIdentifierSeed: 'callRecordingNotOfCalendarEvent',
+    recordsFollowingAChannelRecord: 'call recordings of calendar events',
+  },
+];
 
 const NO_RECORDS_PERMISSIONS = {
   canReadObjectRecords: false,
@@ -44,7 +61,7 @@ const NO_RECORDS_PERMISSIONS = {
 @Command({
   name: 'channel-visibility:revoke-role-wide-access',
   description:
-    'Revoke the role wide access of user roles to message and calendar objects, and to message attachments, in workspaces enforcing channel visibility through individual roles, then schedule their individual roles sync',
+    'Revoke the role wide access of user roles to message and calendar objects, to message attachments and to call recordings of calendar events, in workspaces enforcing channel visibility through individual roles, then schedule their individual roles sync',
 })
 export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -99,11 +116,6 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
         { workspaceId },
       );
     const now = new Date().toISOString();
-
-    const attachmentFlatObjectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        attachment.universalIdentifier
-      ];
 
     const operationsByApplicationUniversalIdentifier = new Map<
       string,
@@ -186,38 +198,49 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
         }
       }
 
-      const attachmentRecordsPermissions = isDefined(
-        attachmentFlatObjectMetadata,
-      )
-        ? rolesPermissions[roleId]?.objects[attachmentFlatObjectMetadata.id]
-        : undefined;
-      const hasAttachmentObjectPermission = existingObjectPermissions.some(
-        (objectPermission) =>
-          objectPermission.roleUniversalIdentifier ===
-            roleUniversalIdentifier &&
-          objectPermission.objectMetadataUniversalIdentifier ===
-            attachment.universalIdentifier,
-      );
+      for (const {
+        objectUniversalIdentifier,
+        channelRecordFieldUniversalIdentifier,
+        ruleUniversalIdentifierSeed,
+        recordsFollowingAChannelRecord,
+      } of OBJECTS_FOLLOWING_A_CHANNEL_RECORD) {
+        const flatObjectMetadata =
+          flatObjectMetadataMaps.byUniversalIdentifier[
+            objectUniversalIdentifier
+          ];
 
-      const hasOwnAttachmentSettings =
-        hasAttachmentObjectPermission ||
-        isDefined(attachmentRecordsPermissions?.rowLevelRecordsPermissions);
+        if (!isDefined(flatObjectMetadata)) {
+          continue;
+        }
 
-      if (
-        attachmentRecordsPermissions?.canReadAllRecords &&
-        hasOwnAttachmentSettings
-      ) {
-        this.logger.warn(
-          `Workspace ${workspaceId}: role ${label} keeps its own attachment settings, so it may still read message attachments`,
+        const recordsPermissions =
+          rolesPermissions[roleId]?.objects[flatObjectMetadata.id];
+
+        if (!recordsPermissions?.canReadAllRecords) {
+          continue;
+        }
+
+        const hasObjectPermission = existingObjectPermissions.some(
+          (objectPermission) =>
+            objectPermission.roleUniversalIdentifier ===
+              roleUniversalIdentifier &&
+            objectPermission.objectMetadataUniversalIdentifier ===
+              objectUniversalIdentifier,
         );
-      }
 
-      if (
-        attachmentRecordsPermissions?.canReadAllRecords &&
-        !hasOwnAttachmentSettings
-      ) {
+        if (
+          hasObjectPermission ||
+          isDefined(recordsPermissions.rowLevelRecordsPermissions)
+        ) {
+          this.logger.warn(
+            `Workspace ${workspaceId}: role ${label} keeps its own ${flatObjectMetadata.nameSingular} settings, so it may still read ${recordsFollowingAChannelRecord}`,
+          );
+
+          continue;
+        }
+
         const buildUniversalIdentifier = (kind: string) =>
-          v5(`attachmentNotOfMessage:${kind}`, roleUniversalIdentifier);
+          v5(`${ruleUniversalIdentifierSeed}:${kind}`, roleUniversalIdentifier);
         const { objectPermissions, rules, predicateGroups, predicates } =
           fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
             roleManifest: {
@@ -226,7 +249,7 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
               recordsPermissions: {
                 objects: [
                   {
-                    objectUniversalIdentifier: attachment.universalIdentifier,
+                    objectUniversalIdentifier,
                     canReadAllRecords: false,
                     canCreateAllRecords: false,
                     canUpdateAllRecords: false,
@@ -237,13 +260,13 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
                         universalIdentifier: buildUniversalIdentifier('rule'),
                         canReadRecords: true,
                         canCreateRecords:
-                          attachmentRecordsPermissions.canCreateAllRecords,
+                          recordsPermissions.canCreateAllRecords,
                         canUpdateRecords:
-                          attachmentRecordsPermissions.canUpdateAllRecords,
+                          recordsPermissions.canUpdateAllRecords,
                         canSoftDeleteRecords:
-                          attachmentRecordsPermissions.canSoftDeleteAllRecords,
+                          recordsPermissions.canSoftDeleteAllRecords,
                         canDestroyRecords:
-                          attachmentRecordsPermissions.canDestroyAllRecords,
+                          recordsPermissions.canDestroyAllRecords,
                         predicateGroups: [
                           {
                             universalIdentifier:
@@ -255,8 +278,7 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
                                 universalIdentifier:
                                   buildUniversalIdentifier('predicate'),
                                 fieldUniversalIdentifier:
-                                  attachment.fields.targetMessage
-                                    .universalIdentifier,
+                                  channelRecordFieldUniversalIdentifier,
                                 operand:
                                   RowLevelPermissionPredicateOperand.IS_EMPTY,
                               },

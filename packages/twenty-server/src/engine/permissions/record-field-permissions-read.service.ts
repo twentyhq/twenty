@@ -183,19 +183,24 @@ export class RecordFieldPermissionsReadService {
         const fieldReadableSQLCondition =
           fieldReadableSQLConditions[unreadableNestedFieldIndex];
 
-        if (fieldReadableSQLCondition === true) {
-          return [];
+        if (isBoolean(fieldReadableSQLCondition)) {
+          return fieldReadableSQLCondition
+            ? []
+            : [
+                {
+                  fieldMetadataIds: [fieldMetadataId],
+                  sqlCondition: { sql: 'TRUE', parameters: {} },
+                },
+              ];
         }
 
         return [
           {
             fieldMetadataIds: [fieldMetadataId],
-            sqlCondition: isBoolean(fieldReadableSQLCondition)
-              ? { sql: 'TRUE', parameters: {} }
-              : {
-                  sql: `NOT (${fieldReadableSQLCondition.sql})`,
-                  parameters: fieldReadableSQLCondition.parameters,
-                },
+            sqlCondition: {
+              sql: `NOT (${fieldReadableSQLCondition.sql})`,
+              parameters: fieldReadableSQLCondition.parameters,
+            },
           },
         ];
       },
