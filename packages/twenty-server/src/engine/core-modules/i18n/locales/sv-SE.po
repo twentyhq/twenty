@@ -1814,6 +1814,12 @@ msgctxt "fieldMetadata.label"
 msgid "Assigned tasks"
 msgstr "Tilldelade uppgifter"
 
+#. js-lingui-id: n0weTx
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Assigned to me"
+msgstr ""
+
 #. js-lingui-id: JytrLO
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util.ts
 msgctxt "view.name"
@@ -4867,6 +4873,12 @@ msgstr "Klar"
 msgctxt "fieldMetadata.label"
 msgid "Done"
 msgstr "Klar"
+
+#. js-lingui-id: yXCB4Q
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Done"
+msgstr ""
 
 #. js-lingui-id: WvWTez
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8840,6 +8852,12 @@ msgctxt "objectMetadata.description"
 msgid "Members of a role who receive the same evaluated grant"
 msgstr "Medlemmar i en roll som får samma utvärderade tilldelning"
 
+#. js-lingui-id: 3dY3eR
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Mentions"
+msgstr ""
+
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9592,6 +9610,12 @@ msgstr "Navigeringsmålobjekt hittades inte"
 msgctxt "fieldMetadata.label"
 msgid "Needs Action"
 msgstr "Åtgärd krävs"
+
+#. js-lingui-id: xYrVeE
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Needs input"
+msgstr ""
 
 #. js-lingui-id: 1NsPsQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -10395,6 +10419,12 @@ msgstr "Endast arbetsytan kan tilldela roller till applikationer"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace custom application can assign roles to applications"
 msgstr "Endast arbetsytans anpassade applikation kan tilldela roller till applikationer"
+
+#. js-lingui-id: /Ybnwz
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Open"
+msgstr ""
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13336,6 +13366,12 @@ msgstr "Snooza"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Snooze time must be in the future."
 msgstr "Snoozetiden måste ligga i framtiden."
+
+#. js-lingui-id: dVYfIF
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Snoozed"
+msgstr ""
 
 #. js-lingui-id: Q/HVbF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts

@@ -1814,6 +1814,12 @@ msgctxt "fieldMetadata.label"
 msgid "Assigned tasks"
 msgstr "Նշանակված առաջադրանքներ"
 
+#. js-lingui-id: n0weTx
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Assigned to me"
+msgstr ""
+
 #. js-lingui-id: JytrLO
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util.ts
 msgctxt "view.name"
@@ -4867,6 +4873,12 @@ msgstr "Կատարված"
 msgctxt "fieldMetadata.label"
 msgid "Done"
 msgstr "Կատարված"
+
+#. js-lingui-id: yXCB4Q
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Done"
+msgstr ""
 
 #. js-lingui-id: WvWTez
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8840,6 +8852,12 @@ msgctxt "objectMetadata.description"
 msgid "Members of a role who receive the same evaluated grant"
 msgstr "Դերի անդամներ, որոնք ստանում են նույն գնահատված թույլտվությունը"
 
+#. js-lingui-id: 3dY3eR
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Mentions"
+msgstr ""
+
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -9590,6 +9608,12 @@ msgstr "Նավիգացիայի նպատակային օբյեկտը չի գտնվ
 msgctxt "fieldMetadata.label"
 msgid "Needs Action"
 msgstr "Պահանջում է գործողություն"
+
+#. js-lingui-id: xYrVeE
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Needs input"
+msgstr ""
 
 #. js-lingui-id: 1NsPsQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -10393,6 +10417,12 @@ msgstr "Միայն աշխատատարածքը կարող է դերեր վերա�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace custom application can assign roles to applications"
 msgstr "Միայն աշխատատարածքի հատուկ հավելվածը կարող է դերեր վերագրել հավելվածներին"
+
+#. js-lingui-id: /Ybnwz
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Open"
+msgstr ""
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -13332,6 +13362,12 @@ msgstr "Հետաձգել"
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Snooze time must be in the future."
 msgstr "Հետաձգման ժամանակը պետք է լինի ապագայում։"
+
+#. js-lingui-id: dVYfIF
+#: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-agent-chat-thread-views.util.ts
+msgctxt "view.name"
+msgid "Snoozed"
+msgstr ""
 
 #. js-lingui-id: Q/HVbF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
