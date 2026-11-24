@@ -17,7 +17,12 @@ type UpcomingCalendarEventNode = {
 export const fetchUpcomingCalendarEvents = async (
   client: CoreApiClient,
   now: Date,
+  candidateCalendarEventIds?: string[],
 ): Promise<UpcomingCalendarEvent[]> => {
+  if (candidateCalendarEventIds?.length === 0) {
+    return [];
+  }
+
   const nowIsoString = now.toISOString();
   const horizonEndIsoString =
     computeUpcomingCalendarEventHorizonEnd(now).toISOString();
@@ -28,6 +33,9 @@ export const fetchUpcomingCalendarEvents = async (
         calendarEvents: {
           __args: {
             filter: {
+              ...(isUndefined(candidateCalendarEventIds)
+                ? {}
+                : { id: { in: candidateCalendarEventIds } }),
               isCanceled: { eq: false },
               // Mirror the policy: the horizon is measured from startsAt (the bot's join time),
               // while endsAt drives the not-past check so in-progress meetings still qualify.

@@ -16,14 +16,9 @@ export const reconcileCallRecorderForUpcomingCalendarEventIds = async ({
     return { skipped: true, reason: 'no calendar event' };
   }
 
-  const upcomingCalendarEventIds = new Set(
-    (await fetchUpcomingCalendarEvents(client, new Date())).map(
-      (upcomingCalendarEvent) => upcomingCalendarEvent.id,
-    ),
-  );
-  const upcomingChangedCalendarEventIds = calendarEventIds.filter(
-    (calendarEventId) => upcomingCalendarEventIds.has(calendarEventId),
-  );
+  const upcomingChangedCalendarEventIds = (
+    await fetchUpcomingCalendarEvents(client, new Date(), calendarEventIds)
+  ).map((upcomingCalendarEvent) => upcomingCalendarEvent.id);
 
   if (!isNonEmptyArray(upcomingChangedCalendarEventIds)) {
     return { skipped: true, reason: 'no upcoming calendar event' };

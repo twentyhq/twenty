@@ -108,6 +108,32 @@ describe('fetchUpcomingCalendarEvents', () => {
     ]);
   });
 
+  it('looks only among the given events when candidates are passed', async () => {
+    queryMock.mockResolvedValue(
+      buildPage({ calendarEventNodes: [{ id: 'calendar-event-1' }] }),
+    );
+
+    await fetchUpcomingCalendarEvents(CLIENT, NOW, [
+      'calendar-event-1',
+      'calendar-event-2',
+    ]);
+
+    expect(queryMock.mock.calls[0][0].calendarEvents.__args.filter).toEqual(
+      expect.objectContaining({
+        id: { in: ['calendar-event-1', 'calendar-event-2'] },
+        isCanceled: { eq: false },
+        or: expect.any(Array),
+      }),
+    );
+  });
+
+  it('does not query when the candidate list is empty', async () => {
+    await expect(fetchUpcomingCalendarEvents(CLIENT, NOW, [])).resolves.toEqual(
+      [],
+    );
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
   it('returns an empty list when no upcoming events exist', async () => {
     queryMock.mockResolvedValue(buildPage({ calendarEventNodes: [] }));
 

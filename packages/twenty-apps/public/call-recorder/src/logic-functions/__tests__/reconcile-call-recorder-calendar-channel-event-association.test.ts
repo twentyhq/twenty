@@ -25,9 +25,12 @@ const buildLinkedBatch = (calendarEventIds: string[]) => ({
   })),
 });
 
-const setUpcomingCalendarEventIds = (calendarEventIds: string[]) =>
-  fetchUpcomingCalendarEventsMock.mockResolvedValue(
-    calendarEventIds.map((id) => ({ id, startsAt: undefined })),
+const setUpcomingCalendarEventIds = (upcomingCalendarEventIds: string[]) =>
+  fetchUpcomingCalendarEventsMock.mockImplementation(
+    async (_client: unknown, _now: Date, candidateCalendarEventIds: string[]) =>
+      upcomingCalendarEventIds
+        .filter((id) => candidateCalendarEventIds.includes(id))
+        .map((id) => ({ id, startsAt: undefined })),
   );
 
 describe('reconcileCallRecorderCalendarChannelEventAssociationHandler', () => {
