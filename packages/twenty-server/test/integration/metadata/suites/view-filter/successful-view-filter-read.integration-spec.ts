@@ -28,7 +28,6 @@ const VIEW_FILTER_DTO_GQL_FIELDS = `
   workspaceId
   createdAt
   updatedAt
-  deletedAt
 `;
 
 const VIEW_FILTER_REST_READ_TEST_CASES =

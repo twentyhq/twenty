@@ -68,6 +68,9 @@ describe('value functions in validation rule expressions', () => {
     'roundTo(price, 2) == 12.35',
     'roundTo(price, 0) == 12',
     'not isDefined(roundTo(discount, 2))',
+    'roundTo(2.55, 1) == 2.6',
+    'length("😀") == 1',
+    'length(nickname) == 0',
   ])('should hold: %s', (expression) => {
     expect(isTrue(expression)).toBe(true);
   });

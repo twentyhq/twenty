@@ -22,7 +22,6 @@ const VIEW_FILTER_GROUP_DTO_GQL_FIELDS = `
   workspaceId
   createdAt
   updatedAt
-  deletedAt
 `;
 
 const VIEW_FILTER_GROUP_REST_READ_TEST_CASES =

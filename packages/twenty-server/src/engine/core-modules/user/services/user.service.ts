@@ -5,6 +5,7 @@ import assert from 'assert';
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import {
   isWorkspaceProvisioned,
@@ -22,6 +23,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { VERIFICATION_EMAIL_SENDING_THROTTLE } from 'src/engine/core-modules/email-verification/constants/verification-email-sending-throttle.constant';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -71,6 +73,7 @@ export class UserService {
     private readonly workspaceQueueService: MessageQueueService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
+    private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectAgentHistoryRepository('agentChatThread')
@@ -152,12 +155,12 @@ export class UserService {
 
   async loadSignedAvatarUrlsByUserId({
     workspace,
-    fallbackAvatarUrlsByUserId,
+    fallbackAvatarFileIdsByUserId,
   }: {
     workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
-    fallbackAvatarUrlsByUserId: Map<string, string | null>;
+    fallbackAvatarFileIdsByUserId: Map<string, string | null>;
   }): Promise<Map<string, string | null>> {
-    const userIds = Array.from(fallbackAvatarUrlsByUserId.keys());
+    const userIds = Array.from(fallbackAvatarFileIdsByUserId.keys());
 
     if (userIds.length === 0) {
       return new Map();
@@ -185,21 +188,19 @@ export class UserService {
           return [userId, memberSigned];
         }
 
-        const fallbackAvatarUrl = fallbackAvatarUrlsByUserId.get(userId);
+        const fallbackAvatarFileId = fallbackAvatarFileIdsByUserId.get(userId);
 
-        if (!isNonEmptyString(fallbackAvatarUrl)) {
+        if (!isDefined(fallbackAvatarFileId)) {
           return [userId, null];
         }
 
-        const fallbackSigned =
-          await this.workspaceMemberTranspiler.generateSignedAvatarUrl({
-            workspaceId: workspace.id,
-            workspaceMember: { avatarUrl: fallbackAvatarUrl, id: userId },
-          });
-
         return [
           userId,
-          isNonEmptyString(fallbackSigned) ? fallbackSigned : fallbackAvatarUrl,
+          await this.fileUrlService.signFileByIdUrl({
+            fileId: fallbackAvatarFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          }),
         ];
       }),
     );
