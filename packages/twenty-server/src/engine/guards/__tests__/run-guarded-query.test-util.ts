@@ -26,6 +26,7 @@ import { type NextFunction, type Request, type Response } from 'express';
 import { type GraphQLSchema, graphql } from 'graphql';
 import supertest from 'supertest';
 
+import { GRAPHQL_FIELD_RESOLVER_ENHANCERS } from 'src/engine/api/graphql/graphql-config/constants/graphql-field-resolver-enhancers.constant';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
@@ -34,7 +35,7 @@ const EXCEPTION_HANDLER_SERVICE_PROVIDER = {
   useValue: { captureExceptions: () => [] },
 };
 
-const runQueryOnGraphqlApp = async ({
+export const runQueryOnGraphqlApp = async ({
   resolver,
   source,
   request,
@@ -53,7 +54,7 @@ const runQueryOnGraphqlApp = async ({
       GraphQLModule.forRoot<YogaDriverConfig>({
         driver: YogaDriver,
         autoSchemaFile: true,
-        fieldResolverEnhancers: ['guards'],
+        fieldResolverEnhancers: GRAPHQL_FIELD_RESOLVER_ENHANCERS,
       }),
       FeatureModule,
     ],
