@@ -1003,7 +1003,7 @@ type AutocompleteResult {
 type AvailableWorkspace {
   displayName: String
   id: UUID!
-  inviteHash: String
+  inviteHash: String @deprecated(reason: "Always null. Will be removed.")
   loginToken: String
   logo: String
   personalInviteToken: String
