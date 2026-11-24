@@ -3,6 +3,7 @@ import {
   getFieldPermissionUniversalIdentifier,
   type ObjectRecordsPermissionsManifest,
   type RowLevelPermissionRuleManifest,
+  type UnreadableFieldManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -31,18 +32,20 @@ const buildFieldLists = ({
   fieldRestrictions: FieldRestriction[];
   predicateGroupUniversalIdentifier: string | null;
 }): FieldRestrictionsManifest => {
-  const unreadableFields = fieldRestrictions
-    .filter(({ canReadFieldValue }) => canReadFieldValue === false)
-    .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);
+  const unreadableFields: UnreadableFieldManifest[] = [
+    ...fieldRestrictions
+      .filter(({ canReadFieldValue }) => canReadFieldValue === false)
+      .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier),
+    ...fieldRestrictions.flatMap(
+      ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) =>
+        isDefined(sourceFieldUniversalIdentifier)
+          ? [{ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }]
+          : [],
+    ),
+  ];
   const uneditableFields = fieldRestrictions
     .filter(({ canUpdateFieldValue }) => canUpdateFieldValue === false)
     .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);
-  const inheritedFields = fieldRestrictions.flatMap(
-    ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) =>
-      isDefined(sourceFieldUniversalIdentifier)
-        ? [{ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }]
-        : [],
-  );
   const fieldPermissionIdentifiers = fieldRestrictions
     .filter(
       ({
@@ -68,7 +71,6 @@ const buildFieldLists = ({
   return {
     ...(isNonEmptyArray(unreadableFields) ? { unreadableFields } : {}),
     ...(isNonEmptyArray(uneditableFields) ? { uneditableFields } : {}),
-    ...(isNonEmptyArray(inheritedFields) ? { inheritedFields } : {}),
     ...(isNonEmptyArray(fieldPermissionIdentifiers)
       ? { fieldPermissionIdentifiers }
       : {}),

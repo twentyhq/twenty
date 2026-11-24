@@ -57,10 +57,10 @@ export default defineRole({
 - `objects` lists what differs for one object: the same five grants for all its records,
   `unreadableFields` and `uneditableFields` (field universal identifiers; a field that cannot be
   read cannot be edited either), and its [row-level records permissions](#row-level-security).
-- `inheritedFields` on an object lists fields that copy a field of another object, as
-  `{ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }` pairs. Such a field is readable on a
-  record only when the role reads the record directly, or reaches it through a related record whose
-  source field it can read. It cannot be set on a row-level rule.
+- An entry of `unreadableFields` can also be a `{ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }`
+  pair, for a field that copies a field of another object. Such a field stays readable on records
+  the role reads directly, and is unreadable only on records reached through a related record whose
+  source field the role cannot read. It cannot be set on a row-level rule.
 
 <Note>
   `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS`

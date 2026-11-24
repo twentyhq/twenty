@@ -1,4 +1,5 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { type UnreadableFieldManifest } from 'twenty-shared/application';
 
 type RulePredicate = {
   universalIdentifier: string;
@@ -17,7 +18,7 @@ type RowLevelRecordsPermissions = {
   universalIdentifier: string;
   predicates?: RulePredicate[];
   predicateGroups?: RulePredicateGroup[];
-  unreadableFields?: string[];
+  unreadableFields?: UnreadableFieldManifest[];
   uneditableFields?: string[];
 };
 

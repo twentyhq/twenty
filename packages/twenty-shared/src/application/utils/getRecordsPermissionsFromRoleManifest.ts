@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import {
   type RoleManifest,
   type RowLevelPermissionRuleManifest,
@@ -41,11 +43,13 @@ export const getRecordsPermissionsFromRoleManifest = ({
     fieldPermissions: objects.flatMap(
       ({
         objectUniversalIdentifier,
-        unreadableFields = [],
+        unreadableFields: unreadableFieldEntries = [],
         uneditableFields = [],
         fieldPermissionIdentifiers = [],
-      }) =>
-        [...new Set([...unreadableFields, ...uneditableFields])].map(
+      }) => {
+        const unreadableFields = unreadableFieldEntries.filter(isString);
+
+        return [...new Set([...unreadableFields, ...uneditableFields])].map(
           (fieldUniversalIdentifier) => ({
             universalIdentifier: fieldPermissionIdentifiers.find(
               (fieldPermissionIdentifier) =>
@@ -61,7 +65,8 @@ export const getRecordsPermissionsFromRoleManifest = ({
               ? { canUpdateFieldValue: false }
               : {}),
           }),
-        ),
+        );
+      },
     ),
     rowLevelPermissionRules: objects.flatMap(
       ({ objectUniversalIdentifier, rowLevelRecordsPermissions = [] }) =>

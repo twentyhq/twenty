@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { isString } from '@sniptt/guards';
 import {
   type FieldRestrictionsManifest,
   flattenRowLevelPermissionRuleManifests,
@@ -56,7 +57,6 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     objectUniversalIdentifier,
     unreadableFields = [],
     uneditableFields = [],
-    inheritedFields = [],
     fieldPermissionIdentifiers = [],
     rowLevelPermissionRuleUniversalIdentifier,
     rowLevelPermissionPredicateGroupUniversalIdentifier,
@@ -64,13 +64,18 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     objectUniversalIdentifier: string;
     rowLevelPermissionRuleUniversalIdentifier: string | null;
     rowLevelPermissionPredicateGroupUniversalIdentifier: string | null;
-  }): UniversalFlatFieldPermission[] =>
+  }): UniversalFlatFieldPermission[] => {
+    const alwaysUnreadableFields = unreadableFields.filter(isString);
+    const inheritedUnreadableFields = unreadableFields.flatMap(
+      (unreadableField) => (isString(unreadableField) ? [] : [unreadableField]),
+    );
+
     // A declared field permission that restricts nothing still gets its row, so a stored restriction is lifted
-    [
+    return [
       ...new Set([
-        ...unreadableFields,
+        ...alwaysUnreadableFields,
         ...uneditableFields,
-        ...inheritedFields.map(
+        ...inheritedUnreadableFields.map(
           ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
         ),
         ...fieldPermissionIdentifiers.map(
@@ -97,12 +102,14 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       rowLevelPermissionRuleUniversalIdentifier,
       sourceFieldMetadataUniversalIdentifier:
-        inheritedFields.find(
-          (inheritedField) =>
-            inheritedField.fieldUniversalIdentifier ===
+        inheritedUnreadableFields.find(
+          (inheritedUnreadableField) =>
+            inheritedUnreadableField.fieldUniversalIdentifier ===
             fieldUniversalIdentifier,
         )?.sourceFieldUniversalIdentifier ?? null,
-      canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
+      canReadFieldValue: alwaysUnreadableFields.includes(
+        fieldUniversalIdentifier,
+      )
         ? false
         : null,
       canUpdateFieldValue: uneditableFields.includes(fieldUniversalIdentifier)
@@ -111,6 +118,7 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       createdAt: now,
       updatedAt: now,
     }));
+  };
 
   const rules = objects.flatMap(
     ({ objectUniversalIdentifier, rowLevelRecordsPermissions = [] }) =>

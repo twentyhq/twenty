@@ -132,7 +132,7 @@ export class ChannelVisibilityRuleSyncService {
               objectUniversalIdentifier,
               ...(objectUniversalIdentifier ===
                 messageThread.universalIdentifier && {
-                inheritedFields: [
+                unreadableFields: [
                   {
                     fieldUniversalIdentifier:
                       messageThread.fields.subject.universalIdentifier,
