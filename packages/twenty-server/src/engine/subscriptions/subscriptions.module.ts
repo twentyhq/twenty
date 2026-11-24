@@ -20,7 +20,7 @@ import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-reco
 import { QueueJobEventListener } from 'src/engine/subscriptions/queue-job-event/queue-job-event.listener';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { DynamicFieldModule } from 'src/engine/api/common/common-dynamic-fields/dynamic-field.module';
+import { MetadataResolvedFieldModule } from 'src/engine/api/common/common-metadata-resolved-fields/metadata-resolved-field.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Global()
@@ -35,7 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     RecordShareModule,
     UserWorkspaceModule,
-    DynamicFieldModule,
+    MetadataResolvedFieldModule,
   ],
   providers: [
     SubscriptionService,

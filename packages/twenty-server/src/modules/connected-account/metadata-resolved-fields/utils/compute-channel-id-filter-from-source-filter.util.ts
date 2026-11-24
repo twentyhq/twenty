@@ -7,47 +7,47 @@ import {
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-dynamic-fields/constants/dynamic-field-no-match-sentinel-id.constant';
-import { type ChannelAssociationSource } from 'src/modules/connected-account/dynamic-fields/types/channel-association-source.type';
+import { METADATA_RESOLVED_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-metadata-resolved-fields/constants/metadata-resolved-field-no-match-sentinel-id.constant';
+import { type ChannelAssociationSource } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-source.type';
 
 const isSourceMatchingFilter = ({
   source,
-  dynamicFieldName,
-  dynamicFieldFilter,
+  metadataResolvedFieldName,
+  metadataResolvedFieldFilter,
 }: {
   source: Pick<ChannelAssociationSource, 'handle' | 'accountOwnerId'>;
-  dynamicFieldName: string;
-  dynamicFieldFilter: StringFilter & UUIDFilter;
+  metadataResolvedFieldName: string;
+  metadataResolvedFieldFilter: StringFilter & UUIDFilter;
 }): boolean => {
-  if (dynamicFieldName === 'handle') {
+  if (metadataResolvedFieldName === 'handle') {
     return isMatchingStringFilter({
-      stringFilter: dynamicFieldFilter,
+      stringFilter: metadataResolvedFieldFilter,
       value: source.handle,
     });
   }
 
   return isDefined(source.accountOwnerId)
     ? isMatchingUUIDFilter({
-        uuidFilter: dynamicFieldFilter,
+        uuidFilter: metadataResolvedFieldFilter,
         value: source.accountOwnerId,
       })
-    : dynamicFieldFilter.is === 'NULL';
+    : metadataResolvedFieldFilter.is === 'NULL';
 };
 
 export const computeChannelIdFilterFromSourceFilter = ({
   channelIdColumnName,
-  dynamicFieldName,
-  dynamicFieldFilter,
+  metadataResolvedFieldName,
+  metadataResolvedFieldFilter,
   channelAssociationSources,
 }: {
   channelIdColumnName: string;
-  dynamicFieldName: string;
-  dynamicFieldFilter: StringFilter & UUIDFilter;
+  metadataResolvedFieldName: string;
+  metadataResolvedFieldFilter: StringFilter & UUIDFilter;
   channelAssociationSources: ChannelAssociationSource[];
 }): ObjectRecordFilter => {
   const channelIds = channelAssociationSources
     .filter((source) =>
-      isSourceMatchingFilter({ source, dynamicFieldName, dynamicFieldFilter }),
+      isSourceMatchingFilter({ source, metadataResolvedFieldName, metadataResolvedFieldFilter }),
     )
     .map(({ channelId }) => channelId);
 
@@ -56,7 +56,7 @@ export const computeChannelIdFilterFromSourceFilter = ({
       in:
         channelIds.length > 0
           ? channelIds
-          : [DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID],
+          : [METADATA_RESOLVED_FIELD_NO_MATCH_SENTINEL_ID],
     },
   };
 };

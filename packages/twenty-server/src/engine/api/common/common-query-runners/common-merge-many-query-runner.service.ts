@@ -1,4 +1,4 @@
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -416,7 +416,7 @@ export class CommonMergeManyQueryRunnerService extends CommonRecordQueryRunnerSe
     ).filter(isDefined)) {
       if (
         !isMorphOrRelationFlatFieldMetadata(field) ||
-        isDynamicField(field) ||
+        isMetadataResolvedField(field) ||
         field.relationTargetObjectMetadataId !== flatObjectMetadata.id ||
         !resolveEffectiveFlatEntityProperty({
           metadataName: 'fieldMetadata',

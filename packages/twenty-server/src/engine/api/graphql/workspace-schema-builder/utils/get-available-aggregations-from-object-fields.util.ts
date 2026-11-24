@@ -1,4 +1,4 @@
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import { GraphQLISODateTime } from '@nestjs/graphql';
 
 import { GraphQLFloat, GraphQLInt, type GraphQLScalarType } from 'graphql';
@@ -24,7 +24,10 @@ export const getAvailableAggregationsFromObjectFields = (
 ): Record<string, AggregationField> => {
   return fields.reduce<Record<string, AggregationField>>(
     (acc, field) => {
-      if (field.type === FieldMetadataType.RELATION || isDynamicField(field)) {
+      if (
+        field.type === FieldMetadataType.RELATION ||
+        isMetadataResolvedField(field)
+      ) {
         return acc;
       }
 

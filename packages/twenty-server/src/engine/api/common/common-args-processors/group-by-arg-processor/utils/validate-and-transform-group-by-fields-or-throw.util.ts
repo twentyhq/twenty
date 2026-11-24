@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
@@ -59,9 +59,9 @@ const getFieldMetadataForGroupByOrThrow = ({
     );
   }
 
-  if (isDynamicField(fieldMetadata)) {
+  if (isMetadataResolvedField(fieldMetadata)) {
     throw new CommonQueryRunnerException(
-      `Field "${fieldName}" is dynamic and cannot be grouped by`,
+      `Field "${fieldName}" is resolved from metadata and cannot be grouped by`,
       CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: msg`Grouping by "${fieldName}" is not supported` },
     );

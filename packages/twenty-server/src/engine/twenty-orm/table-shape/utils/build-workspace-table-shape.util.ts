@@ -1,4 +1,4 @@
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,7 +41,7 @@ export const buildWorkspaceTableShape = ({
   const relationShapeByFieldName: Record<string, WorkspaceRelationShape> = {};
 
   for (const flatFieldMetadata of flatFieldMetadatas) {
-    if (isDynamicField(flatFieldMetadata)) {
+    if (isMetadataResolvedField(flatFieldMetadata)) {
       continue;
     }
 

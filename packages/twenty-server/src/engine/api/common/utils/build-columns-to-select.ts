@@ -5,7 +5,7 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { type CommonSelection } from 'src/engine/api/common/types/common-selection.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { getDynamicFieldColumnNames } from 'src/engine/api/common/common-dynamic-fields/utils/get-dynamic-field-column-names.util';
+import { getMetadataResolvedFieldColumnNames } from 'src/engine/api/common/common-metadata-resolved-fields/utils/get-metadata-resolved-field-column-names.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -35,7 +35,7 @@ export const buildColumnsToSelect = ({
     fieldsToSelect[columnName] = true;
   }
 
-  const dynamicFieldColumnNames = getDynamicFieldColumnNames({
+  const metadataResolvedFieldColumnNames = getMetadataResolvedFieldColumnNames({
     flatObjectMetadata,
     flatFieldMetadataMaps,
   });
@@ -43,7 +43,8 @@ export const buildColumnsToSelect = ({
   return {
     ...Object.fromEntries(
       Object.entries(fieldsToSelect).filter(
-        ([columnName]) => !dynamicFieldColumnNames.includes(columnName),
+        ([columnName]) =>
+          !metadataResolvedFieldColumnNames.includes(columnName),
       ),
     ),
     id: true,

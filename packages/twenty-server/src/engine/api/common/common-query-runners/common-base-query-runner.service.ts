@@ -64,7 +64,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { getApiType } from 'src/engine/core-modules/usage/storage/api-request-context.storage';
 import { buildUsageSpendersFromAuthContext } from 'src/engine/core-modules/usage/utils/build-usage-spenders-from-auth-context.util';
-import { DynamicFieldService } from 'src/engine/api/common/common-dynamic-fields/services/dynamic-field.service';
+import { MetadataResolvedFieldService } from 'src/engine/api/common/common-metadata-resolved-fields/services/metadata-resolved-field.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -124,7 +124,7 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly recordFieldPermissionsReadService: RecordFieldPermissionsReadService;
   @Inject()
-  protected readonly dynamicFieldService: DynamicFieldService;
+  protected readonly metadataResolvedFieldService: MetadataResolvedFieldService;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -160,7 +160,7 @@ export abstract class CommonBaseQueryRunnerService<
       args.selectedFields,
     );
 
-    await this.dynamicFieldService.prepareSelection({
+    await this.metadataResolvedFieldService.prepareSelection({
       authContext,
       selection: selectedFieldsResult,
       flatObjectMetadata,
@@ -283,13 +283,16 @@ export abstract class CommonBaseQueryRunnerService<
 
     return {
       ...hookedArgs,
-      filter: await this.dynamicFieldService.rewriteDynamicFieldFilters({
-        authContext,
-        filter: hookedArgs.filter,
-        flatObjectMetadata,
-        flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
-      }),
+      filter:
+        await this.metadataResolvedFieldService.rewriteMetadataResolvedFieldFilters(
+          {
+            authContext,
+            filter: hookedArgs.filter,
+            flatObjectMetadata,
+            flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+            flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+          },
+        ),
     };
   }
 

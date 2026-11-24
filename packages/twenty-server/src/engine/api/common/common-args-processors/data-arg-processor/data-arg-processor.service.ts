@@ -1,4 +1,4 @@
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -159,9 +159,9 @@ export class DataArgProcessorService {
           );
         }
 
-        if (isDynamicField(fieldMetadata)) {
+        if (isMetadataResolvedField(fieldMetadata)) {
           throw new CommonQueryRunnerException(
-            `Field ${key} is dynamic and cannot be written.`,
+            `Field ${key} is resolved from metadata and cannot be written.`,
             CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
             { userFriendlyMessage: msg`"${key}" cannot be edited.` },
           );

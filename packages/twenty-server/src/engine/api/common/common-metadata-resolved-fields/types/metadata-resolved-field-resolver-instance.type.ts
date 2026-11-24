@@ -2,9 +2,9 @@ import { type LeafFilter, type ObjectRecord } from 'twenty-shared/types';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-export type DynamicFieldResolverInstance<
+export type MetadataResolvedFieldResolverInstance<
   TContext = unknown,
-  TDynamicFieldFilter extends NonNullable<LeafFilter> = NonNullable<LeafFilter>,
+  TMetadataResolvedFieldFilter extends NonNullable<LeafFilter> = NonNullable<LeafFilter>,
 > = {
   readonly objectUniversalIdentifier: string;
   readonly sourceColumnNames: readonly string[];
@@ -14,8 +14,8 @@ export type DynamicFieldResolverInstance<
     context: TContext;
   }): Partial<ObjectRecord>;
   computeSourceFilter(args: {
-    dynamicFieldName: string;
-    dynamicFieldFilter: TDynamicFieldFilter;
+    metadataResolvedFieldName: string;
+    metadataResolvedFieldFilter: TMetadataResolvedFieldFilter;
     context: TContext;
   }): ObjectRecordFilter;
 };

@@ -1,4 +1,4 @@
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import {
   type CompositeType,
   compositeTypeDefinitions,
@@ -63,7 +63,10 @@ export function processFieldMetadataForColumnNameMapping(
       flatEntityId: fieldMetadataId,
     });
 
-    if (isMorphRelationHead(fieldMetadata) || isDynamicField(fieldMetadata)) {
+    if (
+      isMorphRelationHead(fieldMetadata) ||
+      isMetadataResolvedField(fieldMetadata)
+    ) {
       continue;
     }
 

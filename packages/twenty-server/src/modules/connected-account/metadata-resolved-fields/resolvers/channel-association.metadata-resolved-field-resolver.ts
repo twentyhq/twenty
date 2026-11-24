@@ -7,14 +7,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type DynamicFieldResolverInstance } from 'src/engine/api/common/common-dynamic-fields/types/dynamic-field-resolver-instance.type';
+import { type MetadataResolvedFieldResolverInstance } from 'src/engine/api/common/common-metadata-resolved-fields/types/metadata-resolved-field-resolver-instance.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type ChannelAssociationChannelRow } from 'src/modules/connected-account/dynamic-fields/types/channel-association-channel-row.type';
-import { type ChannelAssociationDynamicFieldContext } from 'src/modules/connected-account/dynamic-fields/types/channel-association-dynamic-field-context.type';
-import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/dynamic-fields/utils/compute-channel-id-filter-from-source-filter.util';
+import { type ChannelAssociationChannelRow } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-channel-row.type';
+import { type ChannelAssociationMetadataResolvedFieldContext } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-metadata-resolved-field-context.type';
+import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/metadata-resolved-fields/utils/compute-channel-id-filter-from-source-filter.util';
 
-export abstract class ChannelAssociationDynamicFieldResolver implements DynamicFieldResolverInstance<
-  ChannelAssociationDynamicFieldContext,
+export abstract class ChannelAssociationMetadataResolvedFieldResolver implements MetadataResolvedFieldResolverInstance<
+  ChannelAssociationMetadataResolvedFieldContext,
   StringFilter & UUIDFilter
 > {
   abstract readonly objectUniversalIdentifier: string;
@@ -34,7 +34,7 @@ export abstract class ChannelAssociationDynamicFieldResolver implements DynamicF
     workspaceId,
   }: {
     workspaceId: string;
-  }): Promise<ChannelAssociationDynamicFieldContext> {
+  }): Promise<ChannelAssociationMetadataResolvedFieldContext> {
     const [channelRows, { flatWorkspaceMemberMaps }] = await Promise.all([
       this.findChannelRows(workspaceId),
       this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -68,7 +68,7 @@ export abstract class ChannelAssociationDynamicFieldResolver implements DynamicF
   }: {
     record: ObjectRecord;
     context: Pick<
-      ChannelAssociationDynamicFieldContext,
+      ChannelAssociationMetadataResolvedFieldContext,
       'channelAssociationSourceByChannelId'
     >;
   }): Partial<ObjectRecord> {
@@ -83,21 +83,21 @@ export abstract class ChannelAssociationDynamicFieldResolver implements DynamicF
   }
 
   computeSourceFilter({
-    dynamicFieldName,
-    dynamicFieldFilter,
+    metadataResolvedFieldName,
+    metadataResolvedFieldFilter,
     context,
   }: {
-    dynamicFieldName: string;
-    dynamicFieldFilter: StringFilter & UUIDFilter;
+    metadataResolvedFieldName: string;
+    metadataResolvedFieldFilter: StringFilter & UUIDFilter;
     context: Pick<
-      ChannelAssociationDynamicFieldContext,
+      ChannelAssociationMetadataResolvedFieldContext,
       'channelAssociationSources'
     >;
   }): ObjectRecordFilter {
     return computeChannelIdFilterFromSourceFilter({
       channelIdColumnName: this.channelIdColumnName,
-      dynamicFieldName,
-      dynamicFieldFilter,
+      metadataResolvedFieldName,
+      metadataResolvedFieldFilter,
       channelAssociationSources: context.channelAssociationSources,
     });
   }

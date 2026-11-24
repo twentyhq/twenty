@@ -4,15 +4,15 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { DataSource } from 'typeorm';
 
-import { DynamicFieldResolver } from 'src/engine/api/common/common-dynamic-fields/decorators/dynamic-field-resolver.decorator';
+import { MetadataResolvedFieldResolver } from 'src/engine/api/common/common-metadata-resolved-fields/decorators/metadata-resolved-field-resolver.decorator';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ChannelAssociationDynamicFieldResolver } from 'src/modules/connected-account/dynamic-fields/resolvers/channel-association.dynamic-field-resolver';
-import { type ChannelAssociationChannelRow } from 'src/modules/connected-account/dynamic-fields/types/channel-association-channel-row.type';
+import { ChannelAssociationMetadataResolvedFieldResolver } from 'src/modules/connected-account/metadata-resolved-fields/resolvers/channel-association.metadata-resolved-field-resolver';
+import { type ChannelAssociationChannelRow } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-channel-row.type';
 
 @Injectable()
-@DynamicFieldResolver()
-export class CalendarChannelEventAssociationDynamicFieldResolver extends ChannelAssociationDynamicFieldResolver {
+@MetadataResolvedFieldResolver()
+export class CalendarChannelEventAssociationMetadataResolvedFieldResolver extends ChannelAssociationMetadataResolvedFieldResolver {
   readonly objectUniversalIdentifier =
     STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier;
   readonly channelIdColumnName = 'calendarChannelId';

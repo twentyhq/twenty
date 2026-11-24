@@ -6,13 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-dynamic-fields/constants/dynamic-field-no-match-sentinel-id.constant';
-import { DynamicFieldResolverRegistry } from 'src/engine/api/common/common-dynamic-fields/services/dynamic-field-resolver.registry';
-import { type DynamicFieldContextLoader } from 'src/engine/api/common/common-dynamic-fields/types/dynamic-field-context-loader.type';
-import { type DynamicFieldFilter } from 'src/engine/api/common/common-dynamic-fields/types/dynamic-field-filter.type';
-import { type DynamicFieldResolverInstance } from 'src/engine/api/common/common-dynamic-fields/types/dynamic-field-resolver-instance.type';
-import { getDynamicFieldColumnNames } from 'src/engine/api/common/common-dynamic-fields/utils/get-dynamic-field-column-names.util';
-import { mapDynamicFieldFilters } from 'src/engine/api/common/common-dynamic-fields/utils/map-dynamic-field-filters.util';
+import { METADATA_RESOLVED_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-metadata-resolved-fields/constants/metadata-resolved-field-no-match-sentinel-id.constant';
+import { MetadataResolvedFieldResolverRegistry } from 'src/engine/api/common/common-metadata-resolved-fields/services/metadata-resolved-field-resolver.registry';
+import { type MetadataResolvedFieldContextLoader } from 'src/engine/api/common/common-metadata-resolved-fields/types/metadata-resolved-field-context-loader.type';
+import { type MetadataResolvedFieldFilter } from 'src/engine/api/common/common-metadata-resolved-fields/types/metadata-resolved-field-filter.type';
+import { type MetadataResolvedFieldResolverInstance } from 'src/engine/api/common/common-metadata-resolved-fields/types/metadata-resolved-field-resolver-instance.type';
+import { getMetadataResolvedFieldColumnNames } from 'src/engine/api/common/common-metadata-resolved-fields/utils/get-metadata-resolved-field-column-names.util';
+import { mapMetadataResolvedFieldFilters } from 'src/engine/api/common/common-metadata-resolved-fields/utils/map-metadata-resolved-field-filters.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -29,7 +29,7 @@ import { findFlatFieldMetadataByName } from 'src/engine/metadata-modules/flat-fi
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
-type DynamicFieldMetadataArgs = {
+type MetadataResolvedFieldMetadataArgs = {
   authContext: WorkspaceAuthContext;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -37,25 +37,25 @@ type DynamicFieldMetadataArgs = {
 };
 
 @Injectable()
-export class DynamicFieldService {
+export class MetadataResolvedFieldService {
   constructor(
-    private readonly dynamicFieldResolverRegistry: DynamicFieldResolverRegistry,
+    private readonly metadataResolvedFieldResolverRegistry: MetadataResolvedFieldResolverRegistry,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  createContextLoader(workspaceId: string): DynamicFieldContextLoader {
-    const loadingContextByDynamicFieldResolver = new Map<
-      DynamicFieldResolverInstance,
+  createContextLoader(workspaceId: string): MetadataResolvedFieldContextLoader {
+    const loadingContextByMetadataResolvedFieldResolver = new Map<
+      MetadataResolvedFieldResolverInstance,
       Promise<unknown>
     >();
 
-    return (dynamicFieldResolver) => {
+    return (metadataResolvedFieldResolver) => {
       const loadingContext =
-        loadingContextByDynamicFieldResolver.get(dynamicFieldResolver) ??
-        dynamicFieldResolver.loadContext({ workspaceId });
+        loadingContextByMetadataResolvedFieldResolver.get(metadataResolvedFieldResolver) ??
+        metadataResolvedFieldResolver.loadContext({ workspaceId });
 
-      loadingContextByDynamicFieldResolver.set(
-        dynamicFieldResolver,
+      loadingContextByMetadataResolvedFieldResolver.set(
+        metadataResolvedFieldResolver,
         loadingContext,
       );
 
@@ -63,68 +63,68 @@ export class DynamicFieldService {
     };
   }
 
-  async assignDynamicFieldValuesToRecords({
+  async assignMetadataResolvedFieldValuesToRecords({
     loadContext,
     flatObjectMetadata,
     flatFieldMetadataMaps,
     selection,
     records,
   }: Pick<
-    DynamicFieldMetadataArgs,
+    MetadataResolvedFieldMetadataArgs,
     'flatObjectMetadata' | 'flatFieldMetadataMaps'
   > & {
-    loadContext: DynamicFieldContextLoader;
+    loadContext: MetadataResolvedFieldContextLoader;
     selection: CommonSelection;
     records: ObjectRecord[];
   }): Promise<void> {
-    const selectedDynamicFieldColumnNames =
-      this.getSelectedDynamicFieldColumnNames({
+    const selectedMetadataResolvedFieldColumnNames =
+      this.getSelectedMetadataResolvedFieldColumnNames({
         selection,
         flatObjectMetadata,
         flatFieldMetadataMaps,
       });
 
-    if (selectedDynamicFieldColumnNames.length === 0 || records.length === 0) {
+    if (selectedMetadataResolvedFieldColumnNames.length === 0 || records.length === 0) {
       return;
     }
 
-    const dynamicFieldResolver =
-      this.dynamicFieldResolverRegistry.findOrThrow(flatObjectMetadata);
-    const context = await loadContext(dynamicFieldResolver);
+    const metadataResolvedFieldResolver =
+      this.metadataResolvedFieldResolverRegistry.findOrThrow(flatObjectMetadata);
+    const context = await loadContext(metadataResolvedFieldResolver);
 
     for (const record of records) {
-      const dynamicFieldValues = dynamicFieldResolver.computeValues({
+      const metadataResolvedFieldValues = metadataResolvedFieldResolver.computeValues({
         record,
         context,
       });
 
-      for (const dynamicFieldColumnName of selectedDynamicFieldColumnNames) {
-        record[dynamicFieldColumnName] =
-          dynamicFieldValues[dynamicFieldColumnName] ?? null;
+      for (const metadataResolvedFieldColumnName of selectedMetadataResolvedFieldColumnNames) {
+        record[metadataResolvedFieldColumnName] =
+          metadataResolvedFieldValues[metadataResolvedFieldColumnName] ?? null;
       }
     }
   }
 
   async prepareSelection({
     selection,
-    ...dynamicFieldMetadataArgs
-  }: DynamicFieldMetadataArgs & {
+    ...metadataResolvedFieldMetadataArgs
+  }: MetadataResolvedFieldMetadataArgs & {
     selection: CommonSelection;
   }): Promise<void> {
     const {
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    } = dynamicFieldMetadataArgs;
+    } = metadataResolvedFieldMetadataArgs;
 
     if (
-      this.getSelectedDynamicFieldColumnNames({
+      this.getSelectedMetadataResolvedFieldColumnNames({
         selection,
         flatObjectMetadata,
         flatFieldMetadataMaps,
       }).length > 0
     ) {
-      for (const sourceColumnName of this.dynamicFieldResolverRegistry.findOrThrow(
+      for (const sourceColumnName of this.metadataResolvedFieldResolverRegistry.findOrThrow(
         flatObjectMetadata,
       ).sourceColumnNames) {
         selection.columns[sourceColumnName] = true;
@@ -153,98 +153,98 @@ export class DynamicFieldService {
       }
 
       if (isDefined(relationSelection.filter)) {
-        relationSelection.filter = await this.rewriteDynamicFieldFilters({
-          ...dynamicFieldMetadataArgs,
+        relationSelection.filter = await this.rewriteMetadataResolvedFieldFilters({
+          ...metadataResolvedFieldMetadataArgs,
           filter: relationSelection.filter,
           flatObjectMetadata: targetFlatObjectMetadata,
         });
       }
 
       await this.prepareSelection({
-        ...dynamicFieldMetadataArgs,
+        ...metadataResolvedFieldMetadataArgs,
         selection: relationSelection.selection,
         flatObjectMetadata: targetFlatObjectMetadata,
       });
     }
   }
 
-  async rewriteDynamicFieldFilters({
+  async rewriteMetadataResolvedFieldFilters({
     filter,
     loadContext: providedLoadContext,
-    ...dynamicFieldMetadataArgs
-  }: DynamicFieldMetadataArgs & {
+    ...metadataResolvedFieldMetadataArgs
+  }: MetadataResolvedFieldMetadataArgs & {
     filter: ObjectRecordFilter;
-    loadContext?: DynamicFieldContextLoader;
+    loadContext?: MetadataResolvedFieldContextLoader;
   }): Promise<ObjectRecordFilter> {
     const {
       authContext,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-    } = dynamicFieldMetadataArgs;
+    } = metadataResolvedFieldMetadataArgs;
     const mapFilters = (
-      mapDynamicFieldFilter: (
-        dynamicFieldFilter: DynamicFieldFilter,
+      mapMetadataResolvedFieldFilter: (
+        metadataResolvedFieldFilter: MetadataResolvedFieldFilter,
       ) => ObjectRecordFilter | undefined,
     ) =>
-      mapDynamicFieldFilters({
+      mapMetadataResolvedFieldFilters({
         filter,
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        mapDynamicFieldFilter,
+        mapMetadataResolvedFieldFilter,
       });
 
-    const dynamicFieldFilters: DynamicFieldFilter[] = [];
+    const metadataResolvedFieldFilters: MetadataResolvedFieldFilter[] = [];
 
-    mapFilters((dynamicFieldFilter) => {
-      dynamicFieldFilters.push(dynamicFieldFilter);
+    mapFilters((metadataResolvedFieldFilter) => {
+      metadataResolvedFieldFilters.push(metadataResolvedFieldFilter);
 
       return undefined;
     });
 
-    if (dynamicFieldFilters.length === 0) {
+    if (metadataResolvedFieldFilters.length === 0) {
       return filter;
     }
 
     const loadContext =
       providedLoadContext ?? this.createContextLoader(authContext.workspace.id);
 
-    const sourceFilterByDynamicFieldFilter = new Map<
+    const sourceFilterByMetadataResolvedFieldFilter = new Map<
       Record<string, unknown>,
       ObjectRecordFilter
     >(
       await Promise.all(
-        dynamicFieldFilters.map(
+        metadataResolvedFieldFilters.map(
           async ({
-            flatObjectMetadata: dynamicFieldFlatObjectMetadata,
-            dynamicFieldName,
-            dynamicFieldFilter,
+            flatObjectMetadata: metadataResolvedFieldFlatObjectMetadata,
+            metadataResolvedFieldName,
+            metadataResolvedFieldFilter,
             relationTargetFlatObjectMetadata,
           }) => {
-            const dynamicFieldResolver =
-              this.dynamicFieldResolverRegistry.findOrThrow(
-                dynamicFieldFlatObjectMetadata,
+            const metadataResolvedFieldResolver =
+              this.metadataResolvedFieldResolverRegistry.findOrThrow(
+                metadataResolvedFieldFlatObjectMetadata,
               );
-            const context = await loadContext(dynamicFieldResolver);
-            const resolvedDynamicFieldFilter = isDefined(
+            const context = await loadContext(metadataResolvedFieldResolver);
+            const resolvedMetadataResolvedFieldFilter = isDefined(
               relationTargetFlatObjectMetadata,
             )
               ? {
                   in: await this.findMatchingRelationTargetIds({
-                    ...dynamicFieldMetadataArgs,
-                    filter: dynamicFieldFilter,
+                    ...metadataResolvedFieldMetadataArgs,
+                    filter: metadataResolvedFieldFilter,
                     flatObjectMetadata: relationTargetFlatObjectMetadata,
                   }),
                 }
-              : dynamicFieldFilter;
+              : metadataResolvedFieldFilter;
 
             return [
-              dynamicFieldFilter,
+              metadataResolvedFieldFilter,
               this.computeSourceFilterOrThrow({
-                dynamicFieldResolver,
-                dynamicFieldName,
-                dynamicFieldFilter: resolvedDynamicFieldFilter,
+                metadataResolvedFieldResolver,
+                metadataResolvedFieldName,
+                metadataResolvedFieldFilter: resolvedMetadataResolvedFieldFilter,
                 context,
               }),
             ] as const;
@@ -253,17 +253,17 @@ export class DynamicFieldService {
       ),
     );
 
-    return mapFilters(({ dynamicFieldFilter }) =>
-      sourceFilterByDynamicFieldFilter.get(dynamicFieldFilter),
+    return mapFilters(({ metadataResolvedFieldFilter }) =>
+      sourceFilterByMetadataResolvedFieldFilter.get(metadataResolvedFieldFilter),
     );
   }
 
-  private getSelectedDynamicFieldColumnNames({
+  private getSelectedMetadataResolvedFieldColumnNames({
     selection,
     flatObjectMetadata,
     flatFieldMetadataMaps,
   }: Pick<
-    DynamicFieldMetadataArgs,
+    MetadataResolvedFieldMetadataArgs,
     'flatObjectMetadata' | 'flatFieldMetadataMaps'
   > & {
     selection: CommonSelection;
@@ -277,37 +277,37 @@ export class DynamicFieldService {
       ),
     ]);
 
-    return getDynamicFieldColumnNames({
+    return getMetadataResolvedFieldColumnNames({
       flatObjectMetadata,
       flatFieldMetadataMaps,
-    }).filter((dynamicFieldColumnName) =>
-      selectedColumnNames.has(dynamicFieldColumnName),
+    }).filter((metadataResolvedFieldColumnName) =>
+      selectedColumnNames.has(metadataResolvedFieldColumnName),
     );
   }
 
   private computeSourceFilterOrThrow<TContext>({
-    dynamicFieldResolver,
-    dynamicFieldName,
-    dynamicFieldFilter,
+    metadataResolvedFieldResolver,
+    metadataResolvedFieldName,
+    metadataResolvedFieldFilter,
     context,
   }: {
-    dynamicFieldResolver: DynamicFieldResolverInstance<TContext>;
-    dynamicFieldName: string;
-    dynamicFieldFilter: Record<string, unknown>;
+    metadataResolvedFieldResolver: MetadataResolvedFieldResolverInstance<TContext>;
+    metadataResolvedFieldName: string;
+    metadataResolvedFieldFilter: Record<string, unknown>;
     context: TContext;
   }): ObjectRecordFilter {
     try {
-      return dynamicFieldResolver.computeSourceFilter({
-        dynamicFieldName,
-        dynamicFieldFilter,
+      return metadataResolvedFieldResolver.computeSourceFilter({
+        metadataResolvedFieldName,
+        metadataResolvedFieldFilter,
         context,
       });
     } catch {
       throw new CommonQueryRunnerException(
-        `Filter ${JSON.stringify(dynamicFieldFilter)} is not supported on dynamic field "${dynamicFieldName}"`,
+        `Filter ${JSON.stringify(metadataResolvedFieldFilter)} is not supported on metadata resolved field "${metadataResolvedFieldName}"`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         {
-          userFriendlyMessage: msg`This filter is not supported on "${dynamicFieldName}"`,
+          userFriendlyMessage: msg`This filter is not supported on "${metadataResolvedFieldName}"`,
         },
       );
     }
@@ -319,7 +319,7 @@ export class DynamicFieldService {
     flatObjectMetadata,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-  }: DynamicFieldMetadataArgs & {
+  }: MetadataResolvedFieldMetadataArgs & {
     filter: ObjectRecordFilter;
   }): Promise<string[]> {
     const { nameSingular } = flatObjectMetadata;
@@ -345,6 +345,6 @@ export class DynamicFieldService {
 
     return relationTargets.length > 0
       ? relationTargets.map(({ id }) => id)
-      : [DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID];
+      : [METADATA_RESOLVED_FIELD_NO_MATCH_SENTINEL_ID];
   }
 }

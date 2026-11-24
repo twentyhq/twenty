@@ -1,10 +1,10 @@
-import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
+import { isMetadataResolvedField } from 'src/engine/metadata-modules/field-metadata/utils/is-metadata-resolved-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type DynamicFieldFilter } from 'src/engine/api/common/common-dynamic-fields/types/dynamic-field-filter.type';
+import { type MetadataResolvedFieldFilter } from 'src/engine/api/common/common-metadata-resolved-fields/types/metadata-resolved-field-filter.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -13,13 +13,13 @@ import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-module
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-type MapDynamicFieldFiltersArgs = {
+type MapMetadataResolvedFieldFiltersArgs = {
   filter: ObjectRecordFilter;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  mapDynamicFieldFilter: (
-    dynamicFieldFilter: DynamicFieldFilter,
+  mapMetadataResolvedFieldFilter: (
+    metadataResolvedFieldFilter: MetadataResolvedFieldFilter,
   ) => ObjectRecordFilter | undefined;
 };
 
@@ -29,10 +29,10 @@ const resolveFilterKey = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: Pick<
-  MapDynamicFieldFiltersArgs,
+  MapMetadataResolvedFieldFiltersArgs,
   'flatObjectMetadata' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
 > & { filterKey: string }): {
-  isDynamic: boolean;
+  isMetadataResolved: boolean;
   columnName: string;
   relationTargetFlatObjectMetadata: FlatObjectMetadata | undefined;
 } => {
@@ -54,7 +54,7 @@ const resolveFilterKey = ({
 
   if (!isDefined(fieldMetadata)) {
     return {
-      isDynamic: false,
+      isMetadataResolved: false,
       columnName: filterKey,
       relationTargetFlatObjectMetadata: undefined,
     };
@@ -66,7 +66,7 @@ const resolveFilterKey = ({
     isDefined(fieldMetadata.relationTargetObjectMetadataId);
 
   return {
-    isDynamic: isDynamicField(fieldMetadata),
+    isMetadataResolved: isMetadataResolvedField(fieldMetadata),
     columnName: isRelationReferencedByName
       ? computeMorphOrRelationFieldJoinColumnName({ name: filterKey })
       : filterKey,
@@ -79,13 +79,13 @@ const resolveFilterKey = ({
   };
 };
 
-export const mapDynamicFieldFilters = ({
+export const mapMetadataResolvedFieldFilters = ({
   filter,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  mapDynamicFieldFilter,
-}: MapDynamicFieldFiltersArgs): ObjectRecordFilter => {
+  mapMetadataResolvedFieldFilter,
+}: MapMetadataResolvedFieldFiltersArgs): ObjectRecordFilter => {
   const mapNestedFilter = ({
     nestedFilter,
     nestedFlatObjectMetadata = flatObjectMetadata,
@@ -93,16 +93,16 @@ export const mapDynamicFieldFilters = ({
     nestedFilter: ObjectRecordFilter;
     nestedFlatObjectMetadata?: FlatObjectMetadata;
   }) =>
-    mapDynamicFieldFilters({
+    mapMetadataResolvedFieldFilters({
       filter: nestedFilter,
       flatObjectMetadata: nestedFlatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      mapDynamicFieldFilter,
+      mapMetadataResolvedFieldFilter,
     });
 
   const untouchedFilter: ObjectRecordFilter = {};
-  const mappedDynamicFieldFilters: ObjectRecordFilter[] = [];
+  const mappedMetadataResolvedFieldFilters: ObjectRecordFilter[] = [];
 
   for (const [key, value] of Object.entries(filter)) {
     if ((key === 'and' || key === 'or') && Array.isArray(value)) {
@@ -122,7 +122,7 @@ export const mapDynamicFieldFilters = ({
       continue;
     }
 
-    const { isDynamic, columnName, relationTargetFlatObjectMetadata } =
+    const { isMetadataResolved, columnName, relationTargetFlatObjectMetadata } =
       resolveFilterKey({
         filterKey: key,
         flatObjectMetadata,
@@ -130,16 +130,16 @@ export const mapDynamicFieldFilters = ({
         flatFieldMetadataMaps,
       });
 
-    if (isDynamic) {
-      const mappedDynamicFieldFilter = mapDynamicFieldFilter({
+    if (isMetadataResolved) {
+      const mappedMetadataResolvedFieldFilter = mapMetadataResolvedFieldFilter({
         flatObjectMetadata,
-        dynamicFieldName: columnName,
-        dynamicFieldFilter: value,
+        metadataResolvedFieldName: columnName,
+        metadataResolvedFieldFilter: value,
         relationTargetFlatObjectMetadata,
       });
 
-      if (isDefined(mappedDynamicFieldFilter)) {
-        mappedDynamicFieldFilters.push(mappedDynamicFieldFilter);
+      if (isDefined(mappedMetadataResolvedFieldFilter)) {
+        mappedMetadataResolvedFieldFilters.push(mappedMetadataResolvedFieldFilter);
         continue;
       }
     }
@@ -152,14 +152,14 @@ export const mapDynamicFieldFilters = ({
       : value;
   }
 
-  if (mappedDynamicFieldFilters.length === 0) {
+  if (mappedMetadataResolvedFieldFilters.length === 0) {
     return untouchedFilter;
   }
 
   return {
     and: [
       ...(Object.keys(untouchedFilter).length > 0 ? [untouchedFilter] : []),
-      ...mappedDynamicFieldFilters,
+      ...mappedMetadataResolvedFieldFilters,
     ],
   };
 };

@@ -363,13 +363,15 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
         workspaceId: authContext.workspace.id,
       });
       appliedFilters =
-        await this.dynamicFieldService.rewriteDynamicFieldFilters({
-          authContext,
-          filter: appliedFilters,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-        });
+        await this.metadataResolvedFieldService.rewriteMetadataResolvedFieldFilters(
+          {
+            authContext,
+            filter: appliedFilters,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          },
+        );
     }
 
     commonQueryParser.applyFilterToBuilder({

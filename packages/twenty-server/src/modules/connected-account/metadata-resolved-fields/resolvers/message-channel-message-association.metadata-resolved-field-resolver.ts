@@ -5,15 +5,15 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MessageChannelType } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
-import { DynamicFieldResolver } from 'src/engine/api/common/common-dynamic-fields/decorators/dynamic-field-resolver.decorator';
+import { MetadataResolvedFieldResolver } from 'src/engine/api/common/common-metadata-resolved-fields/decorators/metadata-resolved-field-resolver.decorator';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ChannelAssociationDynamicFieldResolver } from 'src/modules/connected-account/dynamic-fields/resolvers/channel-association.dynamic-field-resolver';
-import { type ChannelAssociationChannelRow } from 'src/modules/connected-account/dynamic-fields/types/channel-association-channel-row.type';
+import { ChannelAssociationMetadataResolvedFieldResolver } from 'src/modules/connected-account/metadata-resolved-fields/resolvers/channel-association.metadata-resolved-field-resolver';
+import { type ChannelAssociationChannelRow } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-channel-row.type';
 
 @Injectable()
-@DynamicFieldResolver()
-export class MessageChannelMessageAssociationDynamicFieldResolver extends ChannelAssociationDynamicFieldResolver {
+@MetadataResolvedFieldResolver()
+export class MessageChannelMessageAssociationMetadataResolvedFieldResolver extends ChannelAssociationMetadataResolvedFieldResolver {
   readonly objectUniversalIdentifier =
     STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier;
   readonly channelIdColumnName = 'messageChannelId';

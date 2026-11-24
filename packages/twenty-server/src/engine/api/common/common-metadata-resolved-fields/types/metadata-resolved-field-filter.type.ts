@@ -2,9 +2,9 @@ import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export type DynamicFieldFilter = {
+export type MetadataResolvedFieldFilter = {
   flatObjectMetadata: FlatObjectMetadata;
-  dynamicFieldName: string;
-  dynamicFieldFilter: ObjectRecordFilter;
+  metadataResolvedFieldName: string;
+  metadataResolvedFieldFilter: ObjectRecordFilter;
   relationTargetFlatObjectMetadata: FlatObjectMetadata | undefined;
 };

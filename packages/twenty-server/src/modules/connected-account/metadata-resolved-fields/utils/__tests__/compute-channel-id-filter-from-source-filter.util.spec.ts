@@ -1,8 +1,8 @@
 import { type StringFilter, type UUIDFilter } from 'twenty-shared/types';
 
-import { DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-dynamic-fields/constants/dynamic-field-no-match-sentinel-id.constant';
-import { type ChannelAssociationSource } from 'src/modules/connected-account/dynamic-fields/types/channel-association-source.type';
-import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/dynamic-fields/utils/compute-channel-id-filter-from-source-filter.util';
+import { METADATA_RESOLVED_FIELD_NO_MATCH_SENTINEL_ID } from 'src/engine/api/common/common-metadata-resolved-fields/constants/metadata-resolved-field-no-match-sentinel-id.constant';
+import { type ChannelAssociationSource } from 'src/modules/connected-account/metadata-resolved-fields/types/channel-association-source.type';
+import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/metadata-resolved-fields/utils/compute-channel-id-filter-from-source-filter.util';
 const CHANNEL_ASSOCIATION_SOURCES: ChannelAssociationSource[] = [
   { channelId: 'tim-channel', handle: 'tim@apple.dev', accountOwnerId: 'tim' },
   {
@@ -18,16 +18,16 @@ const CHANNEL_ASSOCIATION_SOURCES: ChannelAssociationSource[] = [
 ];
 
 const computeChannelIds = ({
-  dynamicFieldName,
-  dynamicFieldFilter,
+  metadataResolvedFieldName,
+  metadataResolvedFieldFilter,
 }: {
-  dynamicFieldName: string;
-  dynamicFieldFilter: StringFilter & UUIDFilter;
+  metadataResolvedFieldName: string;
+  metadataResolvedFieldFilter: StringFilter & UUIDFilter;
 }) =>
   computeChannelIdFilterFromSourceFilter({
     channelIdColumnName: 'messageChannelId',
-    dynamicFieldName,
-    dynamicFieldFilter,
+    metadataResolvedFieldName,
+    metadataResolvedFieldFilter,
     channelAssociationSources: CHANNEL_ASSOCIATION_SOURCES,
   }).messageChannelId.in;
 
@@ -38,14 +38,14 @@ describe('computeChannelIdFilterFromSourceFilter', () => {
     [{ neq: 'tim' }, ['jony-channel']],
     [{ is: 'NULL' }, ['shared-channel']],
     [{ is: 'NOT_NULL' }, ['tim-channel', 'jony-channel']],
-    [{ eq: 'nobody' }, [DYNAMIC_FIELD_NO_MATCH_SENTINEL_ID]],
+    [{ eq: 'nobody' }, [METADATA_RESOLVED_FIELD_NO_MATCH_SENTINEL_ID]],
   ])(
     'should turn account owner filter %j into channels',
-    (dynamicFieldFilter, expected) => {
+    (metadataResolvedFieldFilter, expected) => {
       expect(
         computeChannelIds({
-          dynamicFieldName: 'accountOwnerId',
-          dynamicFieldFilter,
+          metadataResolvedFieldName: 'accountOwnerId',
+          metadataResolvedFieldFilter,
         }),
       ).toEqual(expected);
     },
@@ -54,8 +54,8 @@ describe('computeChannelIdFilterFromSourceFilter', () => {
   it('should match channels by handle', () => {
     expect(
       computeChannelIds({
-        dynamicFieldName: 'handle',
-        dynamicFieldFilter: { ilike: '%SUPPORT%' },
+        metadataResolvedFieldName: 'handle',
+        metadataResolvedFieldFilter: { ilike: '%SUPPORT%' },
       }),
     ).toEqual(['shared-channel']);
   });
