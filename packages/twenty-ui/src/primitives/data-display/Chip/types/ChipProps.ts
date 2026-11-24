@@ -21,6 +21,7 @@ export type ChipProps = Omit<useRender.ComponentProps<'div'>, 'color'> &
     color?: 'primary' | 'secondary';
     shape?: 'square' | 'round';
     weight?: 'regular' | 'medium';
+    padding?: 'sm' | 'md';
     clickable?: boolean;
     startElement?: ReactNode;
     endElement?: ReactNode;

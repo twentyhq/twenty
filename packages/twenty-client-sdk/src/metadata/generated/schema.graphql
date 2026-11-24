@@ -592,6 +592,33 @@ type ApplicationAuthorization {
   workspaceId: UUID!
 }
 
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: ApplicationBillingPricePeriod!
+  currency: ApplicationBillingPriceCurrency!
+  label: String!
+  per: ApplicationBillingPriceUnit
+  type: ApplicationBillingPriceType!
+  universalIdentifier: String!
+}
+
+enum ApplicationBillingPriceCurrency {
+  USD
+}
+
+enum ApplicationBillingPricePeriod {
+  MONTHLY
+}
+
+enum ApplicationBillingPriceType {
+  RECURRING
+}
+
+enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT
+  WORKSPACE_MEMBER
+}
+
 type ApplicationCapabilityGrant {
   grantedCapabilities: [String!]!
   id: UUID!
@@ -2515,6 +2542,7 @@ enum FeatureFlagKey {
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
   IS_FORMULA_FIELD_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
@@ -3223,6 +3251,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String

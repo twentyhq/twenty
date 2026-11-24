@@ -21,13 +21,16 @@ const StyledContent = styled.div<{ isSpacerReservedByContent: boolean }>`
 `;
 
 const StyledMeta = styled.div`
-  align-items: center;
   bottom: 0;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
   height: ${META_HEIGHT};
+  line-height: ${META_HEIGHT};
   position: absolute;
   right: 0;
+  white-space: nowrap;
+
+  & > * + * {
+    margin-inline-start: ${themeCssVariables.spacing[1]};
+  }
 `;
 
 type ChatMessageBubbleContentProps = {

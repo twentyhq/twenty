@@ -1,5 +1,5 @@
 import { type BuiltInSectionKey } from 'twenty-shared/types';
-import { isBuiltInSectionKey, isDefined } from 'twenty-shared/utils';
+import { isBuiltInSectionKey } from 'twenty-shared/utils';
 
 import { useInboxChatAttention } from '@/inbox/hooks/useInboxChatAttention';
 import { useInboxOpenThreadsSummary } from '@/inbox/hooks/useInboxOpenThreadsSummary';
@@ -18,10 +18,9 @@ export const useNavigationMenuChatAttention = () => {
 
   const tabIdsWithChatSections = new Set(
     workspaceNavigationMenuItems.flatMap((item) =>
-      isDefined(item.parentId) &&
       isBuiltInSectionKey(item.builtInSectionKey) &&
       AI_CHAT_BUILT_IN_SECTION_KEYS.includes(item.builtInSectionKey)
-        ? [item.parentId]
+        ? [item.parentId ?? null]
         : [],
     ),
   );
@@ -29,7 +28,7 @@ export const useNavigationMenuChatAttention = () => {
   return {
     chatAttention,
     unreadOpenThreadCount,
-    getTabChatAttention: (tabId: string) =>
+    getTabChatAttention: (tabId: string | null) =>
       tabIdsWithChatSections.has(tabId) ? chatAttention : null,
   };
 };

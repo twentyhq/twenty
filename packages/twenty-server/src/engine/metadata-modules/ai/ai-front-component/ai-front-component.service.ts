@@ -31,6 +31,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import { buildFrontComponentPreviewContext } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-preview-context.util';
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 
 const DRAFT_TIME_TO_LIVE_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
@@ -227,7 +228,7 @@ export class AiFrontComponentService {
       workspaceId: context.workspaceId,
       userWorkspaceId,
     });
-    const objectNamePlural = await this.getQueryObjectNamePluralOrThrow({
+    const queryObject = await this.getQueryObjectOrThrow({
       query: input.query,
       authContext: context.authContext,
     });
@@ -289,7 +290,8 @@ export class AiFrontComponentService {
         entrySource: built.source,
         componentName: built.componentName,
         hasSdkClientImport: built.hasSdkClientImport,
-        objectNamePlural,
+        objectNamePlural: queryObject.namePlural,
+        objectMetadataId: queryObject.id,
         id,
         applicationId: application.id,
         expiresAt: Date.now() + DRAFT_TIME_TO_LIVE_IN_MILLISECONDS,
@@ -354,6 +356,7 @@ export class AiFrontComponentService {
       applicationId: draft.applicationId,
       sharedDependenciesChecksum:
         application.frontComponentSharedDependenciesChecksum,
+      ...buildFrontComponentPreviewContext(draft),
       mockQueryResult: {
         [draft.objectNamePlural]: {
           edges: draft.sampleRecords.map((node) => ({ node })),
@@ -497,7 +500,7 @@ export class AiFrontComponentService {
         }
 
         if (!isDefined(existing)) {
-          await this.getQueryObjectNamePluralOrThrow({
+          await this.getQueryObjectOrThrow({
             query: draft.query,
             authContext,
           });
@@ -586,7 +589,7 @@ export class AiFrontComponentService {
     });
   }
 
-  private async getQueryObjectNamePluralOrThrow({
+  private async getQueryObjectOrThrow({
     query,
     authContext,
   }: {
@@ -613,6 +616,6 @@ export class AiFrontComponentService {
       }
     }
 
-    return flatObjectMetadata.namePlural;
+    return flatObjectMetadata;
   }
 }
