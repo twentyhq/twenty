@@ -2112,7 +2112,7 @@ msgstr "「{optionName}」をオプションに追加"
 #. js-lingui-id: AQVwJ5
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "Add {checkedCount}"
-msgstr ""
+msgstr "{checkedCount} を追加"
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
@@ -2540,7 +2540,7 @@ msgstr "出力フィールドを追加"
 #: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Add participants"
-msgstr ""
+msgstr "参加者を追加"
 
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
@@ -20984,7 +20984,7 @@ msgstr "検索に一致するメンバーはいません"
 #. js-lingui-id: 5bqxVl
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "No members to add"
-msgstr ""
+msgstr "追加するメンバーがいません"
 
 #. js-lingui-id: IohPnt
 #: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
@@ -23043,7 +23043,7 @@ msgstr "パラメーター"
 #: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Participants"
-msgstr ""
+msgstr "参加者"
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -28555,7 +28555,7 @@ msgstr "サイズ上限に合わせるため、一部のログデータが削除
 #. js-lingui-id: FUT0ml
 #: src/modules/ai-chat/threads/hooks/useAddParticipantsToAiChatThread.ts
 msgid "Some members could not be added."
-msgstr ""
+msgstr "一部のメンバーを追加できませんでした。"
 
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx

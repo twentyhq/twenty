@@ -10810,7 +10810,7 @@ msgstr "parentId 和 folderId 必须匹配。folderId 已弃用，请使用 pare
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Participants"
-msgstr ""
+msgstr "参与者"
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

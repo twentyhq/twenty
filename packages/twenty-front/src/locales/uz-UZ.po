@@ -2112,7 +2112,7 @@ msgstr "\"{optionName}\" ni variantlarga qo‘shish"
 #. js-lingui-id: AQVwJ5
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "Add {checkedCount}"
-msgstr ""
+msgstr "{checkedCount} qo‘shish"
 
 #. js-lingui-id: OYMnsg
 #: src/modules/object-record/record-field/ui/meta-types/input/components/LinksFieldInput.tsx
@@ -2540,7 +2540,7 @@ msgstr "Chiqish maydoni qo‘shish"
 #: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Add participants"
-msgstr ""
+msgstr "Ishtirokchilarni qo‘shish"
 
 #. js-lingui-id: ZqKhbh
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
@@ -20984,7 +20984,7 @@ msgstr "Qidiruvingizga mos aʼzolar topilmadi"
 #. js-lingui-id: 5bqxVl
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "No members to add"
-msgstr ""
+msgstr "Qoʻshish uchun aʼzolar yoʻq"
 
 #. js-lingui-id: IohPnt
 #: src/modules/settings/admin-panel/components/SettingsAdminChatThreadMessageList.tsx
@@ -23043,7 +23043,7 @@ msgstr "Parametrlar"
 #: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
 #: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Participants"
-msgstr ""
+msgstr "Ishtirokchilar"
 
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -28555,7 +28555,7 @@ msgstr "O‘lcham chekloviga moslashish uchun ba'zi log ma'lumotlari tashlab yub
 #. js-lingui-id: FUT0ml
 #: src/modules/ai-chat/threads/hooks/useAddParticipantsToAiChatThread.ts
 msgid "Some members could not be added."
-msgstr ""
+msgstr "Baʼzi aʼzolarni qoʻshib boʻlmadi."
 
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
