@@ -136,6 +136,20 @@ describe('compileFormulaExpression', () => {
     });
   });
 
+  it('should reject a lookup when the other expression of the field makes it stored', () => {
+    expect(
+      compileFormulaExpression({
+        expression: 'company.name',
+        fields: OPPORTUNITY_FIELDS,
+        evaluation: 'STORED',
+      }),
+    ).toMatchObject({
+      isValid: false,
+      errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
+      errorParams: { path: 'company.name' },
+    });
+  });
+
   it('should reject a lookup in a formula that aggregates', () => {
     expect(compile('count(tasks) || company.name')).toMatchObject({
       isValid: false,
