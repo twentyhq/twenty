@@ -1,1 +1,0 @@
-export const RECONCILE_ROLLUP_FIELDS_CRON_PATTERN = '40 2 * * *';
