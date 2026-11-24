@@ -11,11 +11,13 @@ One Telegram bot serves the whole Twenty server. A member connects their own
 Telegram account from Twenty, and the bot then knows which workspace and which
 member a direct message comes from.
 
-1. In Twenty, the member starts a connection and gets a one-time link.
+1. In Twenty, the member opens the Telegram app settings, or runs **Connect
+   Telegram** from the command menu, and gets a one-time link.
 2. The link opens the bot in Telegram. Pressing **Start** completes the
    connection.
-3. Sending `/disconnect` to the bot, blocking the bot, or disconnecting from
-   Twenty removes it.
+3. Sending `/disconnect` to the bot, blocking the bot, or disconnecting from the
+   app settings removes it. Members with the roles permission can disconnect
+   any account there.
 
 A connection link works once and expires after 10 minutes.
 
