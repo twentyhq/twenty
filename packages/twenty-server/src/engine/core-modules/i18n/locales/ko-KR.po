@@ -45,7 +45,7 @@ msgstr "\"{fieldName}\"에 잘못된 값이 입력되었습니다."
 #. js-lingui-id: fx2IXJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "\"{name}\" cannot be used in this visibility restriction"
-msgstr ""
+msgstr "\"{name}\"은 이 표시 제한에 사용할 수 없습니다"
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -411,6 +411,16 @@ msgstr "노트"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "노트 대상"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "일대다 다형 관계는 직접 비교할 수 없으므로 관계를 통해 해당 레코드의 필드를 비교하세요"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "일대다 관계는 IS_EMPTY 및 IS_NOT_EMPTY 피연산자만 지원하므로 관계를 통해 해당 레코드의 필드를 비교하세요"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3123,6 +3133,11 @@ msgstr "연락처에 연결된 채팅"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "기회에 연결된 채팅"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "일대다 관계가 비어 있는지 확인하려면 행 수준 권한 조건자에서 관계 홉이 필요합니다"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7875,7 +7890,7 @@ msgstr "필드 위젯 \"{widgetTitle}\"에 대한 viewUniversalIdentifier가 유
 #. js-lingui-id: PwvY87
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
-msgstr ""
+msgstr "잘못된 표시 제한: {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15568,6 +15583,13 @@ msgstr "이 객체 권한은 이미 해당 역할에 설정되어 있습니다"
 msgid "This operand is not supported for this field"
 msgstr "이 필드에서는 이 피연산자를 지원하지 않습니다"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "이 관계에서는 이 연산자를 지원하지 않습니다"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15864,11 @@ msgstr "이 워크플로우는 이미 존재합니다"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "이 워크플로우는 이미 존재합니다."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "이 워크플로 식별자는 둘 이상의 워크플로와 일치합니다."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17489,12 +17516,12 @@ msgstr "뷰 정렬을 생성하려면 ViewId가 필요합니다."
 #. js-lingui-id: 6TF7+T
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction cannot be read"
-msgstr ""
+msgstr "표시 제한을 읽을 수 없습니다"
 
 #. js-lingui-id: N6vpsk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction has too many conditions"
-msgstr ""
+msgstr "표시 제한에 조건이 너무 많습니다"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
@@ -17576,6 +17603,16 @@ msgstr "연결을 시작할 수 없습니다. 다시 시도하세요."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "이 키를 확인할 수 없습니다. 확인하거나 서비스가 중단된 경우 나중에 다시 시도하세요."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "이 앱에 요금을 청구할 수 없습니다. 결제 수단을 업데이트한 후 다시 시도하세요."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "이 연결에 요금을 청구할 수 없습니다. 결제 수단을 업데이트한 후 다시 시도하세요."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

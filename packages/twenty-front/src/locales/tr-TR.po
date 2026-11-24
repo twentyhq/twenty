@@ -1895,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Twenty çalışma alanınıza MCP üzerinden erişin"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Çalışma alanı verilerinize erişin"
 
@@ -6250,6 +6250,11 @@ msgstr "Kanal seçenekleri"
 msgid "channel role"
 msgstr "kanal rolü"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "API anahtarlarında kanal görünürlüğü"
+
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
@@ -8366,7 +8371,7 @@ msgstr "Sık kullanılanlara eklenemedi"
 #. js-lingui-id: l5bv5j
 #: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
-msgstr ""
+msgstr "\"{fileName}\" eklenemedi. Dosyaların boyutu {maxUploadSize} veya daha küçük olmalıdır."
 
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -9412,6 +9417,11 @@ msgstr "Kayıt sayfasını özelleştir"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
 msgstr "Kenar çubuğunu özelleştir"
+
+#. js-lingui-id: CZs1kG
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
+msgid "Customize tab"
+msgstr "Sekmeyi özelleştir"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -13843,6 +13853,7 @@ msgstr "Hızlı"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Favori sohbetler"
 
@@ -19999,7 +20010,7 @@ msgstr "Yeni Hesap"
 #. js-lingui-id: PlBr35
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 msgid "New agent"
-msgstr ""
+msgstr "Yeni Temsilci"
 
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -21981,7 +21992,7 @@ msgstr "Resmi uygulama"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Çevrimdışı"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22123,7 +22134,7 @@ msgstr "Kişiler arasındaki bire bir konuşmalar"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Çevrimiçi"
 
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
@@ -24355,7 +24366,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Yapay zekânın nasıl çalıştığını anlamak için sistem istemlerini okuyun (~{0} token)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Profilinizi okuyun"
 
@@ -25262,6 +25273,11 @@ msgstr "Sıralamayı Kaldır"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Sıralamayı kaldır?"
+
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Kullanıcılara atanabilen rollerdeki API anahtarlarının mesaj ve takvim erişimini kaldırın. Bu ayar kapalıyken, bu API anahtarları bunları kanalın sahibi olmayan bir üye gibi okur."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -27779,6 +27795,7 @@ msgstr "<0>Veritabanınız</0> ayarlanıyor..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx

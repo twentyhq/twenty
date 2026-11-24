@@ -6,7 +6,6 @@ import {
   ViewType,
   ViewKey,
   ViewOpenRecordIn,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -158,7 +157,7 @@ export const createStandardViewFlatMetadata = <
     calendarEndFieldMetadataId,
     anyFieldFilterValue: null,
     presetFilter: null,
-    visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect:

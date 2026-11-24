@@ -1895,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Få åtkomst till din Twenty-arbetsyta via MCP"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Åtkomst till arbetsytans data"
 
@@ -6250,6 +6250,11 @@ msgstr "Kanalalternativ"
 msgid "channel role"
 msgstr "kanalroll"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "Kanalsynlighet för API-nycklar"
+
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
@@ -8366,7 +8371,7 @@ msgstr "Det gick inte att lägga till i favoriter"
 #. js-lingui-id: l5bv5j
 #: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
-msgstr ""
+msgstr "Det gick inte att bifoga \"{fileName}\". Filer måste vara {maxUploadSize} eller mindre."
 
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -9412,6 +9417,11 @@ msgstr "Anpassa postsidan"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
 msgstr "Anpassa sidofält"
+
+#. js-lingui-id: CZs1kG
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
+msgid "Customize tab"
+msgstr "Anpassa flik"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -13843,6 +13853,7 @@ msgstr "Snabb"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Favoritchattar"
 
@@ -20001,7 +20012,7 @@ msgstr "Nytt Konto"
 #. js-lingui-id: PlBr35
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 msgid "New agent"
-msgstr ""
+msgstr "Ny agent"
 
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -21983,7 +21994,7 @@ msgstr "Officiell app"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Frånkopplad"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22125,7 +22136,7 @@ msgstr "Enskilda konversationer mellan personer"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Ansluten"
 
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
@@ -24357,7 +24368,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Läs systeminstruktionerna för att förstå hur AI:n fungerar (~{0} token)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Läs din profil"
 
@@ -25264,6 +25275,11 @@ msgstr "Ta bort Sortering"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Ta bort sortering?"
+
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Ta bort API-nycklars åtkomst till meddelanden och kalender för roller som kan tilldelas användare. När funktionen är avstängd läser dessa API-nycklar dem som en medlem som inte äger kanalen skulle göra."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -27783,6 +27799,7 @@ msgstr "Konfigurerar din <0>databas</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx

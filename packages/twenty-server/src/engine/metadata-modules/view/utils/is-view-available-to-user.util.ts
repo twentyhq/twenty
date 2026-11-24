@@ -8,7 +8,7 @@ export const isViewAvailableToUser = ({
   flatView: Pick<
     FlatView,
     | 'deletedAt'
-    | 'visibility'
+    | 'isPrivate'
     | 'createdByUserWorkspaceId'
     | 'overrides'
     | 'applicationUniversalIdentifier'

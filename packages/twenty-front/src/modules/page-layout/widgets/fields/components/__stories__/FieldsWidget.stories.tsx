@@ -30,7 +30,6 @@ import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewType,
-  ViewVisibility,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -210,7 +209,7 @@ const createView = (
   viewGroups: [],
   viewFilters: [],
   viewSorts: [],
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   createdByUserWorkspaceId: null,
   isActive: true,
   ...overrides,

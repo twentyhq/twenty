@@ -1895,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Uzyskaj dostęp do swojego środowiska pracy Twenty przez MCP"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Dostęp do danych Twojej przestrzeni roboczej"
 
@@ -6250,6 +6250,11 @@ msgstr "Opcje kanału"
 msgid "channel role"
 msgstr "rola kanału"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "Widoczność kanałów dla kluczy API"
+
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
@@ -8366,7 +8371,7 @@ msgstr "Nie można było dodać do ulubionych"
 #. js-lingui-id: l5bv5j
 #: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
-msgstr ""
+msgstr "Nie można było dołączyć pliku „{fileName}”. Pliki muszą mieć rozmiar {maxUploadSize} lub mniejszy."
 
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -9412,6 +9417,11 @@ msgstr "Dostosuj stronę rekordu"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
 msgstr "Dostosuj pasek boczny"
+
+#. js-lingui-id: CZs1kG
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
+msgid "Customize tab"
+msgstr "Dostosuj kartę"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -13843,6 +13853,7 @@ msgstr "Szybki"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Ulubione czaty"
 
@@ -19999,7 +20010,7 @@ msgstr "Nowe Konto"
 #. js-lingui-id: PlBr35
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 msgid "New agent"
-msgstr ""
+msgstr "Nowy agent"
 
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -21981,7 +21992,7 @@ msgstr "Oficjalna aplikacja"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22123,7 +22134,7 @@ msgstr "Rozmowy jeden na jeden między osobami"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
@@ -24355,7 +24366,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Przeczytaj prompty systemowe, aby zrozumieć, jak działa AI (~{0} tokenów)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Odczyt Twojego profilu"
 
@@ -25262,6 +25273,11 @@ msgstr "Usuń sortowanie"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Usunąć sortowanie?"
+
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Usuń dostęp kluczy API do wiadomości i kalendarza w rolach, które można przypisywać użytkownikom. Gdy ta opcja jest wyłączona, te klucze API odczytują je tak, jak zrobiłby to członek niebędący właścicielem kanału."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -27779,6 +27795,7 @@ msgstr "Konfigurowanie twojej <0>bazy danych</0>..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx

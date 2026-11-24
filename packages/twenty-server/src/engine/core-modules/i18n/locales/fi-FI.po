@@ -45,7 +45,7 @@ msgstr "\"{fieldName}\" on saanut virheellisen arvon."
 #. js-lingui-id: fx2IXJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "\"{name}\" cannot be used in this visibility restriction"
-msgstr ""
+msgstr "\"{name}\" ei voida käyttää tässä näkyvyysrajoituksessa"
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -411,6 +411,16 @@ msgstr "Muistiinpano"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Muistiinpanon kohde"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "Yksi-moneen-morfisuhdetta ei voi verrata suoraan, siirry suhteen kautta vertaamaan sen tietueiden kenttää"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "Yksi-moneen-suhde tukee vain IS_EMPTY- ja IS_NOT_EMPTY-operaattoreita, siirry suhteen kautta vertaamaan sen tietueiden kenttää"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3123,6 +3133,11 @@ msgstr "Yhteyshenkilöön liittyvät keskustelut"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Mahdollisuuteen liittyvät keskustelut"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Sen tarkistaminen, onko yksi-moneen-suhde tyhjä, edellyttää relaatiolohkoja rivitason käyttöoikeuspredikaateissa"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7875,7 +7890,7 @@ msgstr "Virheellinen viewUniversalIdentifier kenttä-widgetille \"{widgetTitle}\
 #. js-lingui-id: PwvY87
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
-msgstr ""
+msgstr "Virheellinen näkyvyysrajoitus: {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15568,6 +15583,13 @@ msgstr "Tämä kohteen käyttöoikeus on jo asetettu roolille"
 msgid "This operand is not supported for this field"
 msgstr "Tätä operandia ei tueta tälle kentälle"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Tätä operandia ei tueta tässä suhteessa"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15864,11 @@ msgstr "Tämä työnkulku on jo olemassa"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Tämä työnkulku on jo olemassa."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Tämä työnkulun tunniste vastaa useampaa kuin yhtä työnkulkua."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17489,12 +17516,12 @@ msgstr "ViewId on pakollinen, että voi luoda näkymälajittelun."
 #. js-lingui-id: 6TF7+T
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction cannot be read"
-msgstr ""
+msgstr "Näkyvyysrajoitusta ei voida lukea"
 
 #. js-lingui-id: N6vpsk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction has too many conditions"
-msgstr ""
+msgstr "Näkyvyysrajoituksessa on liian monta ehtoa"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
@@ -17576,6 +17603,16 @@ msgstr "Yhteyttä ei voitu aloittaa. Yritä uudelleen."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Emme voineet vahvistaa tätä avainta. Tarkista se tai yritä myöhemmin uudelleen, jos palvelu ei ole käytettävissä."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Tämän sovelluksen laskutus epäonnistui. Päivitä maksutapasi ja yritä uudelleen."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Tämän yhteyden laskutus epäonnistui. Päivitä maksutapasi ja yritä uudelleen."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

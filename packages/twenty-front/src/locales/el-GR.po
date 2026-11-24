@@ -1895,7 +1895,7 @@ msgid "Access your Twenty workspace through MCP"
 msgstr "Αποκτήστε πρόσβαση στο περιβάλλον εργασίας σας Twenty μέσω MCP"
 
 #. js-lingui-id: CrjDqe
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Access your workspace data"
 msgstr "Να έχει πρόσβαση στα δεδομένα του χώρου εργασίας σας"
 
@@ -6250,6 +6250,11 @@ msgstr "Επιλογές καναλιού"
 msgid "channel role"
 msgstr "ρόλος καναλιού"
 
+#. js-lingui-id: oFZSaN
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Channel visibility on API keys"
+msgstr "Ορατότητα καναλιών στα κλειδιά API"
+
 #. js-lingui-id: Kjphnm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Channel visibility through rules"
@@ -8366,7 +8371,7 @@ msgstr "Δεν ήταν δυνατή η προσθήκη στα αγαπημέν
 #. js-lingui-id: l5bv5j
 #: src/modules/ai-chat/composer/hooks/useAiChatFileUpload.ts
 msgid "Couldn't attach \"{fileName}\". Files must be {maxUploadSize} or smaller."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η επισύναψη του \"{fileName}\". Τα αρχεία πρέπει να έχουν μέγεθος έως {maxUploadSize}."
 
 #. js-lingui-id: OkB1TC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
@@ -9412,6 +9417,11 @@ msgstr "Προσαρμογή της σελίδας εγγραφής"
 #: src/modules/navigation/components/MainNavigationDrawerEditButton.tsx
 msgid "Customize sidebar"
 msgstr "Προσαρμογή πλευρικής γραμμής"
+
+#. js-lingui-id: CZs1kG
+#: src/modules/navigation-menu-item/display/containers/components/NavigationMenuTabContent.tsx
+msgid "Customize tab"
+msgstr "Καρτέλα προσαρμογής"
 
 #. js-lingui-id: JcqvfA
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
@@ -13843,6 +13853,7 @@ msgstr "Γρήγορο"
 
 #. js-lingui-id: x77Ptp
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiChatFavoritesSection.tsx
 msgid "Favorite chats"
 msgstr "Αγαπημένες συνομιλίες"
 
@@ -19999,7 +20010,7 @@ msgstr "Νέος Λογαριασμός"
 #. js-lingui-id: PlBr35
 #: src/modules/navigation-menu-item/display/built-in-sections/components/NavigationMenuAiAgentsSection.tsx
 msgid "New agent"
-msgstr ""
+msgstr "Νέος Πράκτορας"
 
 #. js-lingui-id: mJIA0/
 #: src/pages/object-core/AgentCoreIndexPage.tsx
@@ -21981,7 +21992,7 @@ msgstr "Επίσημη εφαρμογή"
 #. js-lingui-id: 6Aih4U
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Offline"
-msgstr ""
+msgstr "Εκτός σύνδεσης"
 
 #. js-lingui-id: Zd5vVt
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22123,7 +22134,7 @@ msgstr "Ατομικές συνομιλίες μεταξύ ατόμων"
 #. js-lingui-id: oXOSPE
 #: src/modules/ai-chat/threads/components/AiChatMemberPresence.tsx
 msgid "Online"
-msgstr ""
+msgstr "Σε σύνδεση"
 
 #. js-lingui-id: P/Sdzf
 #: src/modules/settings/roles/role-permissions/object-overrides/utils/getObjectDisabledOperationReason.ts
@@ -24355,7 +24366,7 @@ msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "Διαβάστε τις προτροπές του συστήματος για να κατανοήσετε πώς λειτουργεί η τεχνητή νοημοσύνη (~{0} tokens)"
 
 #. js-lingui-id: afMuDE
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
 msgstr "Ανάγνωση του προφίλ σας"
 
@@ -25262,6 +25273,11 @@ msgstr "Αφαίρεση Ταξινόμησης"
 #: src/modules/object-record/record-index/components/RecordIndexRemoveSortingModal.tsx
 msgid "Remove sorting?"
 msgstr "Αφαίρεση ταξινόμησης;"
+
+#. js-lingui-id: J8gtSc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Remove the message and calendar access of API keys on roles assignable to users. While off, those API keys read them as a member who doesn't own the channel would."
+msgstr "Καταργήστε την πρόσβαση των κλειδιών API σε μηνύματα και ημερολόγια για ρόλους που μπορούν να εκχωρηθούν σε χρήστες. Όταν είναι απενεργοποιημένη, αυτά τα κλειδιά API τα διαβάζουν όπως θα τα διάβαζε ένα μέλος που δεν κατέχει το κανάλι."
 
 #. js-lingui-id: yBC05U
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -27779,6 +27795,7 @@ msgstr "Ρύθμιση της <0>βάσης δεδομένων</0> σας..."
 #. js-lingui-id: Tz0i8g
 #: src/modules/ai-chat/tool-calls/components/AiChatApprovalMergeReviewContent.tsx
 #: src/modules/ai-chat/usage/components/AiChatUserCreditsExhaustedBanner.tsx
+#: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx

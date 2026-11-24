@@ -71,7 +71,7 @@ type Assertions = [
       | 'groupLoadLimit'
       | 'anyFieldFilterValue'
       | 'presetFilter'
-      | 'visibility'
+      | 'isPrivate'
       | 'createdByUserWorkspaceId'
       | 'isActive'
       | 'universalOverrides'

@@ -3,7 +3,6 @@ import {
   ObjectOpenRecordIn,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import {
@@ -146,7 +145,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       kanbanColumnWidth: null,
       groupLoadLimit: 20,
       anyFieldFilterValue: null,
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
       createdByUserWorkspaceId: null,
       deletedAt: null,
       viewSortUniversalIdentifiers: [],
@@ -258,7 +257,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       kanbanColumnWidth: null,
       groupLoadLimit: 20,
       anyFieldFilterValue: null,
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
       createdByUserWorkspaceId: null,
       deletedAt: null,
       viewSortUniversalIdentifiers: [],

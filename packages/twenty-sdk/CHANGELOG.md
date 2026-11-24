@@ -8,7 +8,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- **`onJobFailure` on `defineLogicFunction`.** Declare it next to `handler` and Twenty calls it, as its own queued job, when a queued run of the function fails and will not be retried: an uncaught error, a timeout, `RetryableLogicFunctionError` past `maxRetries`, a platform error once the job has no attempts left, or a worker process crashing twice while running it. It receives a `LogicFunctionJobFailure` with the original `payload`, the `error` (`type`, `message`) and the `job` (`id`, `attemptsMade`). It does not run for executions outside the job queue, or when `onJobFailure` itself fails. Requires Twenty 2.63.
+
+- **`retryLimit` on `defineLogicFunction`.** Sets the queue retry limit (0 to 10) for every queued run of the function, whether started by `enqueueJobs`, cron, a database event or a server route. A `retryLimit` passed to `enqueueJobs` still overrides it for that call. Requires Twenty 2.63.
+
 - **Date functions in rule expressions: `dateDiff`, `dateAdd`, `dateTrunc` and `datePart`.** They take a unit (`'MINUTE'`, `'HOUR'`, `'DAY'`, `'WEEK'`, `'MONTH'`, `'QUARTER'` or `'YEAR'`) or, for `datePart`, a part (`'YEAR'`, `'QUARTER'`, `'MONTH'`, `'WEEK'`, `'DAY'`, `'DAY_OF_WEEK'`, `'HOUR'` or `'MINUTE'`), read dates in UTC, and are available as `ruleExpression.dateDiff(...)` and so on. Minutes and hours are elapsed time; longer units count calendar days and months.
+
+### Deprecated
+
+- **`databaseEventTriggerSettings`, the `payloads` argument of `enqueueJobs` and the `jobIds` field of its result are now marked `@deprecated`.** They keep working. Use `eventTriggerSettings`, the `jobs` argument and the `jobs` result field instead. `enqueueJob` was already marked.
 
 ### Changed
 

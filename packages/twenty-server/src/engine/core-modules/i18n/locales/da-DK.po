@@ -45,7 +45,7 @@ msgstr "\"{fieldName}\" modtog en ugyldig værdi."
 #. js-lingui-id: fx2IXJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "\"{name}\" cannot be used in this visibility restriction"
-msgstr ""
+msgstr "\"{name}\" kan ikke bruges i denne synlighedsbegrænsning"
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -411,6 +411,16 @@ msgstr "En note"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "Et notemål"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "En en-til-mange-morf-relation kan ikke sammenlignes direkte; gå gennem relationen for at sammenligne et felt i dens poster"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "En en-til-mange-relation understøtter kun operanderne IS_EMPTY og IS_NOT_EMPTY; gå gennem relationen for at sammenligne et felt i dens poster"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3123,6 +3133,11 @@ msgstr "Chats knyttet til kontakten"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "Chats knyttet til muligheden"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "Kontrol af, om en en-til-mange-relation er tom, kræver relationshop i prædikater for tilladelser på rækkeniveau"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7875,7 +7890,7 @@ msgstr "Ugyldig viewUniversalIdentifier for feltwidgetten \"{widgetTitle}\". For
 #. js-lingui-id: PwvY87
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
-msgstr ""
+msgstr "Ugyldig synlighedsbegrænsning: {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15568,6 +15583,13 @@ msgstr "Denne objekttilladelse er allerede angivet for rollen"
 msgid "This operand is not supported for this field"
 msgstr "Denne operand understøttes ikke for dette felt"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "Denne operand understøttes ikke for denne relation"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15864,11 @@ msgstr "Denne arbejdsgang findes allerede"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "Denne arbejdsgang findes allerede."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "Denne workflow-identifikator matcher mere end ét workflow."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17489,12 +17516,12 @@ msgstr "ViewId er påkrævet for at oprette en sortering af visning."
 #. js-lingui-id: 6TF7+T
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction cannot be read"
-msgstr ""
+msgstr "Synlighedsbegrænsning kan ikke læses"
 
 #. js-lingui-id: N6vpsk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction has too many conditions"
-msgstr ""
+msgstr "Synlighedsbegrænsning har for mange betingelser"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
@@ -17576,6 +17603,16 @@ msgstr "Vi kunne ikke starte forbindelsen. Prøv igen."
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "Vi kunne ikke bekræfte denne nøgle. Kontrollér den, eller prøv igen senere, hvis tjenesten er nede."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "Vi kunne ikke fakturere denne app. Opdater din betalingsmetode, og prøv igen."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "Vi kunne ikke fakturere denne forbindelse. Opdater din betalingsmetode, og prøv igen."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

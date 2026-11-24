@@ -45,7 +45,7 @@ msgstr "「{fieldName}」的值無效。"
 #. js-lingui-id: fx2IXJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "\"{name}\" cannot be used in this visibility restriction"
-msgstr ""
+msgstr "「{name}」無法用於此可見性限制"
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -411,6 +411,16 @@ msgstr "備註"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "備註目標"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "一對多多型關聯無法直接比較，請透過該關聯比較其記錄的欄位"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "一對多關聯僅支援 IS_EMPTY 和 IS_NOT_EMPTY 運算元，請透過該關聯比較其記錄的欄位"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3123,6 +3133,11 @@ msgstr "與聯絡人相關的聊天"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "與商機相關的聊天"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "檢查一對多關聯是否為空需要在資料列層級權限述詞中使用關聯跳轉"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7875,7 +7890,7 @@ msgstr "欄位小工具「{widgetTitle}」的 viewUniversalIdentifier 無效。�
 #. js-lingui-id: PwvY87
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
-msgstr ""
+msgstr "無效的可見性限制：{untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15568,6 +15583,13 @@ msgstr "此物件權限已為該角色設定"
 msgid "This operand is not supported for this field"
 msgstr "此欄位不支援此運算元"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "此關聯不支援此運算元"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15864,11 @@ msgstr "此工作流程已存在"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "此工作流程已存在。"
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "此工作流程識別碼符合多個工作流程。"
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17489,12 +17516,12 @@ msgstr "建立檢視排序需要 ViewId。"
 #. js-lingui-id: 6TF7+T
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction cannot be read"
-msgstr ""
+msgstr "無法讀取可見性限制"
 
 #. js-lingui-id: N6vpsk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction has too many conditions"
-msgstr ""
+msgstr "可見性限制的條件過多"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
@@ -17576,6 +17603,16 @@ msgstr "我們無法啟動連線。請再試一次。"
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "我們無法驗證此金鑰。請檢查金鑰，或在服務中斷時稍後再試。"
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "無法向此應用程式收費。請更新您的付款方式後再試一次。"
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "無法向此連線收費。請更新您的付款方式後再試一次。"
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

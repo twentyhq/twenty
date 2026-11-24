@@ -45,7 +45,7 @@ msgstr "\"{fieldName}\" تلقّى قيمة غير صالحة."
 #. js-lingui-id: fx2IXJ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "\"{name}\" cannot be used in this visibility restriction"
-msgstr ""
+msgstr "لا يمكن استخدام \"{name}\" في تقييد الرؤية هذا"
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -411,6 +411,16 @@ msgstr "ملاحظة"
 msgctxt "objectMetadata.description"
 msgid "A note target"
 msgstr "هدف الملاحظة"
+
+#. js-lingui-id: PqP6rg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many morph relation cannot be compared directly, go through the relation to compare a field of its records"
+msgstr "لا يمكن مقارنة علاقة متعددة الأشكال من واحد إلى متعدد مباشرةً، انتقل عبر العلاقة لمقارنة حقل من سجلاتها"
+
+#. js-lingui-id: s0zuRf
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A one-to-many relation only supports the IS_EMPTY and IS_NOT_EMPTY operands, go through the relation to compare a field of its records"
+msgstr "لا تدعم علاقة من واحد إلى متعدد سوى معاملي IS_EMPTY وIS_NOT_EMPTY، انتقل عبر العلاقة لمقارنة حقل من سجلاتها"
 
 #. js-lingui-id: IaspUK
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-page-layout-reference-cross-entity.util.ts
@@ -3123,6 +3133,11 @@ msgstr "المحادثات المتعلقة بجهة الاتصال"
 msgctxt "fieldMetadata.description"
 msgid "Chats tied to the opportunity"
 msgstr "المحادثات المرتبطة بالفرصة"
+
+#. js-lingui-id: YNDJWu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Checking whether a one-to-many relation is empty requires relation hops in row level permission predicates"
+msgstr "يتطلب التحقق مما إذا كانت العلاقة من واحد إلى متعدد فارغة الانتقالات عبر العلاقات في مسندات الأذونات على مستوى الصف"
 
 #. js-lingui-id: ZgijCO
 #: src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.service.ts
@@ -7875,7 +7890,7 @@ msgstr "viewUniversalIdentifier غير صالح لأداة الحقول \"{widge
 #. js-lingui-id: PwvY87
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Invalid visibility restriction: {untranslatedErrorMessage}"
-msgstr ""
+msgstr "تقييد رؤية غير صالح: {untranslatedErrorMessage}"
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts
@@ -15568,6 +15583,13 @@ msgstr "تم تعيين إذن الكائن هذا للدور بالفعل"
 msgid "This operand is not supported for this field"
 msgstr "عامل التشغيل هذا غير مدعوم لهذا الحقل"
 
+#. js-lingui-id: sf5yLA
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This operand is not supported for this relation"
+msgstr "عامل التشغيل هذا غير مدعوم لهذه العلاقة"
+
 #. js-lingui-id: RZF775
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "This operand is not supported on a relation field"
@@ -15842,6 +15864,11 @@ msgstr "سير العمل هذا موجود بالفعل"
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
 msgid "This workflow already exists."
 msgstr "سير العمل هذا موجود بالفعل."
+
+#. js-lingui-id: Kd1y55
+#: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+msgid "This workflow identifier matches more than one workflow."
+msgstr "يتطابق معرّف سير العمل هذا مع أكثر من سير عمل واحد."
 
 #. js-lingui-id: MuU6yL
 #: src/engine/core-modules/workflow/services/core-workflow-access.service.ts
@@ -17489,12 +17516,12 @@ msgstr "معرف العرض مطلوب لإنشاء فرز عرض."
 #. js-lingui-id: 6TF7+T
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction cannot be read"
-msgstr ""
+msgstr "يتعذر قراءة تقييد الرؤية"
 
 #. js-lingui-id: N6vpsk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-page-layout-widget-conditional-availability.util.ts
 msgid "Visibility restriction has too many conditions"
-msgstr ""
+msgstr "يحتوي تقييد الرؤية على عدد كبير جدًا من الشروط"
 
 #. js-lingui-id: 4KUXUa
 #: src/modules/workflow/workflow-trigger/utils/assert-wait-for-event-step-is-valid.util.ts
@@ -17576,6 +17603,16 @@ msgstr "تعذّر بدء الاتصال. يُرجى المحاولة مرة أ�
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "We could not verify this key. Check it, or try again later if the service is down."
 msgstr "تعذر علينا التحقق من هذا المفتاح. تحقّق منه، أو حاول مرة أخرى لاحقًا إذا كانت الخدمة متوقفة."
+
+#. js-lingui-id: wyJJ5n
+#: src/engine/core-modules/application/application.exception.ts
+msgid "We couldn't bill this app. Update your payment method and try again."
+msgstr "تعذر علينا تحصيل رسوم هذا التطبيق. حدّث طريقة الدفع وحاول مرة أخرى."
+
+#. js-lingui-id: DDkLji
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "We couldn't bill this connection. Update your payment method and try again."
+msgstr "تعذر علينا تحصيل رسوم هذا الاتصال. حدّث طريقة الدفع وحاول مرة أخرى."
 
 #. js-lingui-id: B3CG/U
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts

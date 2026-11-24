@@ -5,10 +5,7 @@ import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewType } from '@/views/types/ViewType';
-import {
-  type ViewCalendarLayout,
-  type ViewVisibility,
-} from '~/generated-metadata/graphql';
+import { type ViewCalendarLayout } from '~/generated-metadata/graphql';
 import { type ViewSort } from '@/views/types/ViewSort';
 
 export type GraphQLView = {
@@ -36,7 +33,7 @@ export type GraphQLView = {
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: string | null;
   calendarEndFieldMetadataId?: string | null;
-  visibility: ViewVisibility;
+  isPrivate: boolean;
   createdByUserWorkspaceId?: string | null;
   applicationId?: string;
 };

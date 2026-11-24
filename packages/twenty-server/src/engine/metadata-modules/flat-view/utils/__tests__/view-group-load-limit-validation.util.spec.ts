@@ -2,11 +2,7 @@ import {
   DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   VIEW_GROUP_LOAD_LIMIT_OPTIONS,
 } from 'twenty-shared/constants';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -68,7 +64,7 @@ const existingFlatView: FlatView = {
   kanbanColumnWidth: null,
   groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   anyFieldFilterValue: null,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   isActive: true,
   isSystemSideEffect: false,
   createdByUserWorkspaceId: null,
