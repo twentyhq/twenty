@@ -34,7 +34,7 @@ const INBOX_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = [
   INBOX_THREAD.views.assignedToMe.viewFilters.assigneeIsMe.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.64.0', 1795529957525)
+@RegisteredWorkspaceCommand('2.64.0', 1795538284087)
 @Command({
   name: 'upgrade:2-64:add-standard-inbox-views',
   description:
