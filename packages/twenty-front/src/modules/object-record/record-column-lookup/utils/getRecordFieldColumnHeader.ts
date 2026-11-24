@@ -11,45 +11,66 @@ type ColumnHeaderFieldMetadataItem = Pick<
   'label' | 'icon' | 'description'
 >;
 
+// What the header needs of a RecordFieldColumnKind, so the column editor can name a column it has not saved yet
+type ColumnHeaderColumnKind =
+  | { kind: 'field' | 'scopedRecords' }
+  | {
+      kind: 'lookup' | 'scopedLookup';
+      lookupTarget: Pick<
+        RecordFieldLookupTarget,
+        'lookupTargetFieldMetadataItem'
+      >;
+    }
+  | {
+      kind: 'summary';
+      summary?: Pick<
+        RecordFieldSummary,
+        'aggregateOperation' | 'aggregatedFieldMetadataItem'
+      >;
+    };
+
+const getFilteredLabel = (fieldMetadataItem: ColumnHeaderFieldMetadataItem) =>
+  `${fieldMetadataItem.label} · ${t`Filtered`}`;
+
 const getDefaultRecordFieldColumnHeader = ({
   fieldMetadataItem,
-  lookupTarget,
-  isScopedRelationColumn,
-  summary,
+  columnKind,
 }: {
   fieldMetadataItem: ColumnHeaderFieldMetadataItem;
-  lookupTarget?: Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>;
-  isScopedRelationColumn?: boolean;
-  summary?: Pick<
-    RecordFieldSummary,
-    'aggregateOperation' | 'aggregatedFieldMetadataItem'
-  >;
+  columnKind: ColumnHeaderColumnKind;
 }): ColumnHeaderFieldMetadataItem => {
-  if (isDefined(summary)) {
-    return {
-      ...fieldMetadataItem,
-      label: `${fieldMetadataItem.label} · ${getRecordFieldSummaryLabel(summary)}`,
-    };
+  switch (columnKind.kind) {
+    case 'field':
+      return { ...fieldMetadataItem };
+    case 'scopedRecords':
+      return {
+        ...fieldMetadataItem,
+        label: getFilteredLabel(fieldMetadataItem),
+      };
+    case 'summary':
+      return {
+        ...fieldMetadataItem,
+        label: isDefined(columnKind.summary)
+          ? `${fieldMetadataItem.label} · ${getRecordFieldSummaryLabel(columnKind.summary)}`
+          : getFilteredLabel(fieldMetadataItem),
+      };
+    case 'lookup':
+    case 'scopedLookup': {
+      const { lookupTargetFieldMetadataItem } = columnKind.lookupTarget;
+      const label =
+        columnKind.kind === 'scopedLookup'
+          ? getFilteredLabel(fieldMetadataItem)
+          : fieldMetadataItem.label;
+
+      return {
+        label: `${label} › ${lookupTargetFieldMetadataItem.label}`,
+        icon: lookupTargetFieldMetadataItem.icon ?? fieldMetadataItem.icon,
+        description:
+          lookupTargetFieldMetadataItem.description ??
+          fieldMetadataItem.description,
+      };
+    }
   }
-
-  const label = isScopedRelationColumn
-    ? `${fieldMetadataItem.label} · ${t`Filtered`}`
-    : fieldMetadataItem.label;
-
-  const lookupTargetFieldMetadataItem =
-    lookupTarget?.lookupTargetFieldMetadataItem;
-
-  if (!isDefined(lookupTargetFieldMetadataItem)) {
-    return { ...fieldMetadataItem, label };
-  }
-
-  return {
-    label: `${label} › ${lookupTargetFieldMetadataItem.label}`,
-    icon: lookupTargetFieldMetadataItem.icon ?? fieldMetadataItem.icon,
-    description:
-      lookupTargetFieldMetadataItem.description ??
-      fieldMetadataItem.description,
-  };
 };
 
 export const getRecordFieldColumnHeader = ({

@@ -9,7 +9,10 @@ const mutationMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
-    query = async () => ({ calendarChannels: [] });
+    query = async () => ({
+      calendarChannels: [],
+      myUserApplicationVariables: [],
+    });
   },
 }));
 
