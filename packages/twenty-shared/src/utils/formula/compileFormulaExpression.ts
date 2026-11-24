@@ -9,6 +9,33 @@ import { isDefined } from '@/utils/validation/isDefined';
 import { isValidationRulePreviousValuePath } from '@/utils/validation-rule/isValidationRulePreviousValuePath';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 
+const findPathUnsupportedInStoredFormula = ({
+  expression,
+  fields,
+}: {
+  expression: string;
+  fields: ValidationRuleFieldDescriptor[];
+}): string | undefined => {
+  const toOneRelationNames = new Set(
+    fields
+      .filter(({ relationType }) => relationType === RelationType.MANY_TO_ONE)
+      .map(({ name }) => name),
+  );
+
+  return parseValidationRuleExpression(expression)
+    .variables({ withMembers: true })
+    .find((path) => {
+      const [rootSegment, ...memberSegments] = path.split('.');
+
+      return (
+        rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME ||
+        (isDefined(rootSegment) &&
+          toOneRelationNames.has(rootSegment) &&
+          memberSegments.length > 0)
+      );
+    });
+};
+
 export const compileFormulaExpression = ({
   expression,
   fields,
@@ -19,7 +46,7 @@ export const compileFormulaExpression = ({
   const compilation = compileExpression({
     expression,
     fields,
-    allowAggregates: true,
+    shouldAllowAggregates: true,
   });
 
   if (!compilation.isValid) {
@@ -39,38 +66,21 @@ export const compileFormulaExpression = ({
     };
   }
 
-  if (
+  const unsupportedPath =
     getFormulaEvaluationFromBindings({
       bindings: compilation.bindings,
       fields,
     }) === 'STORED'
-  ) {
-    const toOneRelationNames = new Set(
-      fields
-        .filter(({ relationType }) => relationType === RelationType.MANY_TO_ONE)
-        .map(({ name }) => name),
-    );
-    const unsupportedPath = parseValidationRuleExpression(expression)
-      .variables({ withMembers: true })
-      .find((path) => {
-        const [rootSegment, ...memberSegments] = path.split('.');
+      ? findPathUnsupportedInStoredFormula({ expression, fields })
+      : undefined;
 
-        return (
-          rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME ||
-          (isDefined(rootSegment) &&
-            toOneRelationNames.has(rootSegment) &&
-            memberSegments.length > 0)
-        );
-      });
-
-    if (isDefined(unsupportedPath)) {
-      return {
-        isValid: false,
-        errorMessage: `A formula that aggregates related records is stored, so it cannot read "${unsupportedPath}". Aggregate in this field and read it from another formula.`,
-        errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
-        errorParams: { path: unsupportedPath },
-      };
-    }
+  if (isDefined(unsupportedPath)) {
+    return {
+      isValid: false,
+      errorMessage: `A formula that aggregates related records is stored, so it cannot read "${unsupportedPath}". Aggregate in this field and read it from another formula.`,
+      errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
+      errorParams: { path: unsupportedPath },
+    };
   }
 
   const emptyRecordEvaluation = createExpressionEvaluator({

@@ -70,10 +70,21 @@ export const setFormulaFieldBindings = <
     ? getFieldMetadataFormulaBindings({ settings: existingUniversalSettings })
     : undefined;
 
-  const computeDerivedSettings = (): Pick<
+  const getDerivedSettings = (): Pick<
     FieldMetadataFormula,
     'bindings' | 'evaluation'
   > => {
+    if (isDefined(existingBindings)) {
+      return {
+        bindings: existingBindings,
+        ...keepStoredFormulaEvaluation(
+          getFieldMetadataFormulaEvaluation({
+            settings: existingUniversalSettings,
+          }),
+        ),
+      };
+    }
+
     if (!isDefined(universalFlatObjectMetadata)) {
       return { bindings: {} };
     }
@@ -123,16 +134,7 @@ export const setFormulaFieldBindings = <
         ...(isDefined(currencyCodeExpression)
           ? { currencyCodeExpression }
           : {}),
-        ...(isDefined(existingBindings)
-          ? {
-              bindings: existingBindings,
-              ...keepStoredFormulaEvaluation(
-                getFieldMetadataFormulaEvaluation({
-                  settings: existingUniversalSettings,
-                }),
-              ),
-            }
-          : computeDerivedSettings()),
+        ...getDerivedSettings(),
       },
     },
   };

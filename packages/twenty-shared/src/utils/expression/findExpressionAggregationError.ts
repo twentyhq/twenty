@@ -35,11 +35,11 @@ const throwAggregationError = (
 const walkInstructions = ({
   instructions,
   toManyRelationNameByPath,
-  allowAggregates,
+  shouldAllowAggregates,
 }: {
   instructions: ExpressionInstruction[];
   toManyRelationNameByPath: ReadonlyMap<string, string>;
-  allowAggregates: boolean;
+  shouldAllowAggregates: boolean;
 }): AggregationStackEntry | undefined => {
   const stack: AggregationStackEntry[] = [];
 
@@ -99,7 +99,7 @@ const walkInstructions = ({
       return undefined;
     }
 
-    if (!allowAggregates) {
+    if (!shouldAllowAggregates) {
       return throwAggregationError({
         errorMessage: `${functionName}() reads related records, which only a formula can do`,
         errorCode: 'AGGREGATE_NOT_ALLOWED',
@@ -176,7 +176,7 @@ const walkInstructions = ({
               ? walkInstructions({
                   instructions: value,
                   toManyRelationNameByPath,
-                  allowAggregates,
+                  shouldAllowAggregates,
                 })
               : undefined,
           ]),
@@ -218,30 +218,32 @@ const walkInstructions = ({
 export const findExpressionAggregationError = ({
   instructions,
   toManyRelationNameByPath,
-  allowAggregates,
+  shouldAllowAggregates,
 }: {
   instructions: ExpressionInstruction[];
   toManyRelationNameByPath: ReadonlyMap<string, string>;
-  allowAggregates: boolean;
+  shouldAllowAggregates: boolean;
 }): ExpressionAggregationError | null => {
   try {
     const rootEntry = walkInstructions({
       instructions,
       toManyRelationNameByPath,
-      allowAggregates,
+      shouldAllowAggregates,
     });
     const [toManyRelationName] =
       rootEntry?.kind === 'path'
         ? [toManyRelationNameByPath.get(rootEntry.path)].filter(isDefined)
         : [...(rootEntry?.toManyRelationNames ?? [])];
 
-    return isDefined(toManyRelationName)
-      ? {
-          errorMessage: `"${toManyRelationName}" has many records: read it inside count(), sum(), avg(), min() or max()`,
-          errorCode: 'TO_MANY_RELATION_OUTSIDE_AGGREGATE',
-          errorParams: { fieldName: toManyRelationName },
-        }
-      : null;
+    if (!isDefined(toManyRelationName)) {
+      return null;
+    }
+
+    return {
+      errorMessage: `"${toManyRelationName}" has many records: read it inside count(), sum(), avg(), min() or max()`,
+      errorCode: 'TO_MANY_RELATION_OUTSIDE_AGGREGATE',
+      errorParams: { fieldName: toManyRelationName },
+    };
   } catch (error) {
     if (error instanceof ExpressionAggregationException) {
       return error.aggregationError;
