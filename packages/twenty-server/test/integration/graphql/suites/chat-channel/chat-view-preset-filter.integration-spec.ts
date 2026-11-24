@@ -64,15 +64,15 @@ const mentionJane: ThreadStateStep = (threadId) =>
     workspaceMemberId: JONY,
   });
 
-// No mutation leaves a chat without activity, or filed at the very instant of its last activity
+// No mutation leaves a chat without activity, or archived at the very instant of its last activity
 const setLastActivityAt =
-  (lastActivityAt: 'NONE' | 'AT_MEMBER_FILING' | 'AT_CHANNEL_FILING') =>
+  (lastActivityAt: 'NONE' | 'AT_MEMBER_ARCHIVE' | 'AT_CHANNEL_ARCHIVE') =>
   (threadId: string) =>
     global.testDataSource.query(
       `UPDATE ${SCHEMA}."agentChatThread" thread
        SET "lastActivityAt" = CASE $2::text
-         WHEN 'AT_CHANNEL_FILING' THEN thread."channelArchivedAt"
-         WHEN 'AT_MEMBER_FILING' THEN (
+         WHEN 'AT_CHANNEL_ARCHIVE' THEN thread."channelArchivedAt"
+         WHEN 'AT_MEMBER_ARCHIVE' THEN (
            SELECT participant."archivedAt"
            FROM ${SCHEMA}."agentChatThreadParticipant" participant
            WHERE participant."threadId" = thread.id AND participant."workspaceMemberId" = $3
@@ -94,7 +94,7 @@ const MEMBER_THREAD_STATES: ThreadStateStep[][] = [
   [setLastActivityAt('NONE')],
   [runMemberAction('ARCHIVE'), setLastActivityAt('NONE')],
   [runMemberAction('SNOOZE'), setLastActivityAt('NONE')],
-  [runMemberAction('ARCHIVE'), setLastActivityAt('AT_MEMBER_FILING')],
+  [runMemberAction('ARCHIVE'), setLastActivityAt('AT_MEMBER_ARCHIVE')],
 ];
 
 const CHANNEL_THREAD_STATES: ThreadStateStep[][] = [
@@ -106,7 +106,7 @@ const CHANNEL_THREAD_STATES: ThreadStateStep[][] = [
   [setLastActivityAt('NONE')],
   [markAsDoneInChannel, setLastActivityAt('NONE')],
   [snoozeInChannel, setLastActivityAt('NONE')],
-  [markAsDoneInChannel, setLastActivityAt('AT_CHANNEL_FILING')],
+  [markAsDoneInChannel, setLastActivityAt('AT_CHANNEL_ARCHIVE')],
 ];
 
 type LoadedThread = {

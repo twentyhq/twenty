@@ -41,7 +41,7 @@ const computeMemberInboxStatusFilter = ({
       { archivedAt: { ltField: 'thread.lastActivityAt' } },
     ],
   };
-  const filedWithoutActivitySince = (
+  const computeArchivedWithoutActivitySinceFilters = (
     snoozedUntil: NullCheck,
   ): RecordGqlOperationFilter[] => [
     {
@@ -76,7 +76,7 @@ const computeMemberInboxStatusFilter = ({
         ],
       });
     case 'INBOX_SNOOZED':
-      return { or: filedWithoutActivitySince('NOT_NULL') };
+      return { or: computeArchivedWithoutActivitySinceFilters('NOT_NULL') };
     case 'INBOX_DONE':
       return {
         or: [
@@ -85,13 +85,13 @@ const computeMemberInboxStatusFilter = ({
             isSubscribed: { eq: false },
             archivedAt: { is: 'NOT_NULL' },
           }),
-          ...filedWithoutActivitySince('NULL'),
+          ...computeArchivedWithoutActivitySinceFilters('NULL'),
         ],
       };
   }
 };
 
-const computeChannelFiledStatusFilter = (
+const computeChannelArchivedWithoutActivitySinceFilter = (
   channelSnoozedUntil: NullCheck,
 ): RecordGqlOperationFilter => ({
   channelSnoozedUntil: { is: channelSnoozedUntil },
@@ -137,8 +137,8 @@ export const computeViewPresetFilterGqlFilter = ({
         ],
       };
     case 'INBOX_CHANNEL_SNOOZED':
-      return computeChannelFiledStatusFilter('NOT_NULL');
+      return computeChannelArchivedWithoutActivitySinceFilter('NOT_NULL');
     case 'INBOX_CHANNEL_DONE':
-      return computeChannelFiledStatusFilter('NULL');
+      return computeChannelArchivedWithoutActivitySinceFilter('NULL');
   }
 };

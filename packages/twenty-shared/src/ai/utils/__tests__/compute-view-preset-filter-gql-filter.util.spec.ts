@@ -17,7 +17,7 @@ const CHANNEL_PRESET_FILTERS = [
   ViewPresetFilter.INBOX_CHANNEL_DONE,
 ];
 
-const FILED_WITHOUT_ACTIVITY_SINCE = [
+const ARCHIVED_WITHOUT_ACTIVITY_SINCE = [
   { channelArchivedAt: { is: 'NOT_NULL' }, lastActivityAt: { is: 'NULL' } },
   { channelArchivedAt: { gteField: 'lastActivityAt' } },
 ];
@@ -76,7 +76,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
     },
   );
 
-  it('keeps a channel chat open until it is filed, and again once it has newer activity', () => {
+  it('keeps a channel chat open until it is archived, and again once it has newer activity', () => {
     expect(
       computeViewPresetFilterGqlFilter({
         presetFilter: ViewPresetFilter.INBOX_CHANNEL_OPEN,
@@ -94,7 +94,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
     [ViewPresetFilter.INBOX_CHANNEL_SNOOZED, 'NOT_NULL'],
     [ViewPresetFilter.INBOX_CHANNEL_DONE, 'NULL'],
   ] as const)(
-    'lists %s chats filed without activity since, including chats with no activity',
+    'lists %s chats archived without activity since, including chats with no activity',
     (presetFilter, channelSnoozedUntil) => {
       expect(
         computeViewPresetFilterGqlFilter({
@@ -103,7 +103,7 @@ describe('computeViewPresetFilterGqlFilter', () => {
         }),
       ).toEqual({
         channelSnoozedUntil: { is: channelSnoozedUntil },
-        or: FILED_WITHOUT_ACTIVITY_SINCE,
+        or: ARCHIVED_WITHOUT_ACTIVITY_SINCE,
       });
     },
   );
