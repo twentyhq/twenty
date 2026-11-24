@@ -23,9 +23,13 @@ export const buildMemberFieldKey = ({
     return memberFieldKey;
   }
 
-  const relationKey = isDefined(workspaceMemberRelationFilterFieldMetadataId)
-    ? `${workspaceMemberRelationFieldMetadataId}[${workspaceMemberRelationFilterFieldMetadataId}=${JSON.stringify([...(workspaceMemberRelationFilterValues ?? [])].sort())}]`
-    : workspaceMemberRelationFieldMetadataId;
+  if (!isDefined(workspaceMemberRelationFilterFieldMetadataId)) {
+    return `${workspaceMemberRelationFieldMetadataId}>${memberFieldKey}`;
+  }
 
-  return `${relationKey}>${memberFieldKey}`;
+  const sortedFilterValues = JSON.stringify(
+    [...(workspaceMemberRelationFilterValues ?? [])].sort(),
+  );
+
+  return `${workspaceMemberRelationFieldMetadataId}[${workspaceMemberRelationFilterFieldMetadataId}=${sortedFilterValues}]>${memberFieldKey}`;
 };
