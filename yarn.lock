@@ -4186,7 +4186,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.27.6, @babel/runtime@npm:^7.29.2, @babel/runtime@npm:^7.29.7":
+"@babel/runtime@npm:^7.27.6, @babel/runtime@npm:^7.29.2":
   version: 7.29.7
   resolution: "@babel/runtime@npm:7.29.7"
   checksum: 10c0/ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
@@ -4385,32 +4385,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@base-ui/react@npm:^1.5.0":
-  version: 1.8.0
-  resolution: "@base-ui/react@npm:1.8.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.29.7"
-    "@base-ui/utils": "npm:0.4.0"
-    "@floating-ui/react-dom": "npm:^2.1.9"
-    "@floating-ui/utils": "npm:^0.2.12"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@date-fns/tz": ^1.2.0
-    "@types/react": ^17 || ^18 || ^19
-    date-fns: ^4.0.0
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@date-fns/tz":
-      optional: true
-    "@types/react":
-      optional: true
-    date-fns:
-      optional: true
-  checksum: 10c0/bf3faa8891fe6c9695a07b30caa3349f9ffc067f0efd381bb6ed12d68400a2d273ab0f764dd07c5cc6b25f5bc6df6a5688e0164d4e2500ad07efaec8bdd88896
-  languageName: node
-  linkType: hard
-
 "@base-ui/react@npm:^1.9.0":
   version: 1.9.0
   resolution: "@base-ui/react@npm:1.9.0"
@@ -4453,25 +4427,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/5611442ac37066774277cd3360d16ebc3f599dc7b8efdfdfbf5b66b6d2eb6e87a18c0f9922b061818850e781d9bbc70aa5fc4ffb1dfd7fb234eefc401e070090
-  languageName: node
-  linkType: hard
-
-"@base-ui/utils@npm:0.4.0":
-  version: 0.4.0
-  resolution: "@base-ui/utils@npm:0.4.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.29.7"
-    "@floating-ui/utils": "npm:^0.2.12"
-    reselect: "npm:^5.2.0"
-    use-sync-external-store: "npm:^1.6.0"
-  peerDependencies:
-    "@types/react": ^17 || ^18 || ^19
-    react: ^17 || ^18 || ^19
-    react-dom: ^17 || ^18 || ^19
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: 10c0/dd32220d13d42ed2cf0d0ae18e02bf9ece5c54d6a26e49c9449514d66d38b1fee51c875f7d9d21484a326b7a8a2c33c95be620e8a5976b7b6f3bfa27572b6baf
   languageName: node
   linkType: hard
 
@@ -11621,26 +11576,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/cypress@npm:24.0.6":
-  version: 24.0.6
-  resolution: "@nx/cypress@npm:24.0.6"
-  dependencies:
-    "@nx/devkit": "npm:24.0.6"
-    "@nx/eslint": "npm:24.0.6"
-    "@nx/js": "npm:24.0.6"
-    "@phenomnomnominal/tsquery": "npm:~6.2.0"
-    semver: "npm:^7.6.3"
-    tree-kill: "npm:^1.2.2"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    cypress: ">= 13 < 17"
-  peerDependenciesMeta:
-    cypress:
-      optional: true
-  checksum: 10c0/6d8c5f2e40ee4aac3d934711af3e54939462a4705e7a773457277fd923deab2150e158635b921fde739517131850fe83b2b2de9f2fac78c7b46832b2a604ab3d
-  languageName: node
-  linkType: hard
-
 "@nx/devkit@npm:24.0.6":
   version: 24.0.6
   resolution: "@nx/devkit@npm:24.0.6"
@@ -11847,27 +11782,6 @@ __metadata:
     babel-plugin-react-compiler:
       optional: true
   checksum: 10c0/2e183a9604f9b1af0217043e2e7d3da7009d40ba756acfffa45126858581fc09b72161a59b955599251bf3d7edb9f05b32c68549dd8cfa64d25ec1a4a3012437
-  languageName: node
-  linkType: hard
-
-"@nx/storybook@npm:24.0.6":
-  version: 24.0.6
-  resolution: "@nx/storybook@npm:24.0.6"
-  dependencies:
-    "@nx/cypress": "npm:24.0.6"
-    "@nx/devkit": "npm:24.0.6"
-    "@nx/eslint": "npm:24.0.6"
-    "@nx/js": "npm:24.0.6"
-    "@phenomnomnominal/tsquery": "npm:~6.2.0"
-    semver: "npm:^7.6.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@nx/web": 24.0.6
-    storybook: ">=8.0.0 <11.0.0"
-  peerDependenciesMeta:
-    "@nx/web":
-      optional: true
-  checksum: 10c0/bcca494f047b25b0b04a5c7ec911f56bdb56022daa56e3e92b95d4baf08ad13b61b9892fdfa6c3eb625e53d2c24f75f921297cf53f1ab88032c2b60aa7ea543c
   languageName: node
   linkType: hard
 
@@ -18761,7 +18675,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@twentyhq/companion@workspace:packages/twenty-companion"
   dependencies:
-    "@base-ui/react": "npm:^1.5.0"
     "@electron/packager": "npm:^20.3.0"
     "@fontsource/inter": "npm:^5.2.8"
     "@lingui/cli": "npm:5.9.5"
@@ -41981,7 +41894,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reselect@npm:^5.2.0, reselect@npm:^5.3.0":
+"reselect@npm:^5.3.0":
   version: 5.3.0
   resolution: "reselect@npm:5.3.0"
   checksum: 10c0/c79728e4f315152bfb2d82456d35075b705392d9e72c485d7d9b1061bd80af628416216d80f02a42f24dbb24d738aec7fec45806930aaa1d17c32e9875fa1bd6
@@ -46017,8 +45930,6 @@ __metadata:
   dependencies:
     "@nx/jest": "npm:24.0.6"
     "@nx/react": "npm:24.0.6"
-    "@nx/storybook": "npm:24.0.6"
-    "@nx/web": "npm:24.0.6"
     "@types/react": "npm:^19.2.0"
     "@types/react-dom": "npm:^19.2.0"
     "@yarnpkg/types": "npm:^4.0.0"
@@ -46050,7 +45961,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-sdk@workspace:packages/twenty-sdk"
   dependencies:
-    "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^24.0.0"
     "@types/react": "npm:^19.2.0"
@@ -46059,7 +45969,6 @@ __metadata:
     "@vitest/coverage-v8": "npm:^4.0.18"
     esbuild: "npm:^0.28.1"
     preact: "npm:^11.0.0"
-    prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
     rollup-plugin-dts: "npm:^6.4.1"
@@ -46069,7 +45978,6 @@ __metadata:
     twenty-ui: "workspace:*"
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
-    vite-plugin-dts: "npm:^4.5.4"
   languageName: unknown
   linkType: soft
 

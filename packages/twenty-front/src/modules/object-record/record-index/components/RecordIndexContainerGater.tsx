@@ -5,7 +5,7 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordIndexViewBar } from '@/object-record/record-index/components/RecordIndexViewBar';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { ScopedRelationAliasesProvider } from '@/object-record/record-column-scope/components/ScopedRelationAliasesProvider';
+import { RecordFieldColumnsProvider } from '@/object-record/record-column-scope/components/RecordFieldColumnsProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
@@ -107,7 +107,7 @@ export const RecordIndexContainerGater = memo(() => {
         <RecordComponentInstanceContextsWrapper
           componentInstanceId={recordIndexId}
         >
-          <ScopedRelationAliasesProvider>
+          <RecordFieldColumnsProvider>
             <CommandMenuComponentInstanceContext.Provider
               value={{
                 instanceId: getCommandMenuIdFromRecordIndexId(recordIndexId),
@@ -123,7 +123,7 @@ export const RecordIndexContainerGater = memo(() => {
                 {indexContent}
               </PageCardLayout>
             </CommandMenuComponentInstanceContext.Provider>
-          </ScopedRelationAliasesProvider>
+          </RecordFieldColumnsProvider>
         </RecordComponentInstanceContextsWrapper>
         <RecordIndexLoadBaseOnContextStoreEffect />
         <RecordIndexViewFieldsSSESyncEffect />

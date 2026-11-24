@@ -35,7 +35,6 @@ import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflo
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { CoreWorkflowTriggerService } from 'src/engine/core-modules/workflow/services/core-workflow-trigger.service';
-import { getCoreWorkflowVisibilityFromIsPrivate } from 'src/engine/core-modules/workflow/utils/get-core-workflow-visibility-from-is-private.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -609,9 +608,6 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,
       isPrivate: coreWorkflow.isPrivate,
-      visibility: getCoreWorkflowVisibilityFromIsPrivate(
-        coreWorkflow.isPrivate,
-      ),
       canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt,
       updatedAt: coreWorkflow.updatedAt,

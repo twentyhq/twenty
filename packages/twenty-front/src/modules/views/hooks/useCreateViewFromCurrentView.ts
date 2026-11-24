@@ -79,7 +79,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         calendarFieldMetadataId,
         calendarEndFieldMetadataId,
         type,
-        visibility,
+        isPrivate,
       }: Partial<
         Pick<
           GraphQLView,
@@ -90,7 +90,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           | 'calendarFieldMetadataId'
           | 'calendarEndFieldMetadataId'
           | 'type'
-          | 'visibility'
+          | 'isPrivate'
         >
       >,
       shouldCopyFiltersAndSortsAndAggregate?: boolean,
@@ -155,7 +155,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewType === ViewType.CALENDAR
                 ? calendarEndFieldMetadataId
                 : undefined,
-            visibility,
+            isPrivate,
           },
         },
         objectMetadataItem.id,

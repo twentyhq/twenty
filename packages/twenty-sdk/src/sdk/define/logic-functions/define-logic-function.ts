@@ -1,4 +1,5 @@
 import { HTTPMethod } from 'twenty-shared/types';
+import { LOGIC_FUNCTION_MAX_RETRY_LIMIT } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
@@ -41,6 +42,24 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
   ) {
     errors.push(
       'Server route trigger only supports the GET and POST http methods',
+    );
+  }
+
+  if (
+    isDefined(config.onJobFailure) &&
+    typeof config.onJobFailure !== 'function'
+  ) {
+    errors.push('Logic function onJobFailure must be a function');
+  }
+
+  if (
+    isDefined(config.retryLimit) &&
+    (!Number.isInteger(config.retryLimit) ||
+      config.retryLimit < 0 ||
+      config.retryLimit > LOGIC_FUNCTION_MAX_RETRY_LIMIT)
+  ) {
+    errors.push(
+      `Logic function retryLimit must be an integer between 0 and ${LOGIC_FUNCTION_MAX_RETRY_LIMIT}`,
     );
   }
 

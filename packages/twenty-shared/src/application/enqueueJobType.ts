@@ -3,12 +3,14 @@ export type EnqueueJobOptions = {
   delayMs?: number;
 };
 
+/** @deprecated Use `EnqueueJobsInput` instead. */
 export type EnqueueJobInput = EnqueueJobOptions & {
   logicFunctionUniversalIdentifier: string;
   payload?: Record<string, unknown>;
   jobId?: string;
 };
 
+/** @deprecated Use `EnqueueJobsResult` instead. */
 export type EnqueueJobResult = {
   enqueued: boolean;
   logicFunctionUniversalIdentifier: string;
@@ -22,6 +24,7 @@ export type EnqueueJobItem = {
 
 export type EnqueueJobsInput = EnqueueJobOptions & {
   logicFunctionUniversalIdentifier: string;
+  /** @deprecated Use `jobs` instead. */
   payloads?: Record<string, unknown>[];
   jobs?: EnqueueJobItem[];
 };
@@ -35,6 +38,7 @@ export type EnqueueJobsResult = {
   enqueued: boolean;
   logicFunctionUniversalIdentifier: string;
   enqueuedJobsCount: number;
+  /** @deprecated Use `jobs` instead. */
   jobIds: string[];
   jobs: EnqueuedJob[];
   availableBytes?: number | null;
