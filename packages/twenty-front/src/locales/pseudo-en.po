@@ -2662,6 +2662,7 @@ msgstr ""
 
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
 msgstr ""
 
@@ -17167,6 +17168,7 @@ msgid "john.doe@example.com"
 msgstr ""
 
 #. js-lingui-id: fSPjtl
+#: src/pages/auth/SignInUp.tsx
 #: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
 msgstr ""
