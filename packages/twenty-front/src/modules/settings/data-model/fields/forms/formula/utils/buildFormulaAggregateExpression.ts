@@ -142,7 +142,6 @@ const buildAggregatedPath = ({
     : `${relationFieldName}.${fieldMetadataItem.name}`;
 };
 
-// Incomplete conditions are left out; undefined when the aggregate itself is incomplete
 export const buildFormulaAggregateExpression = ({
   builderState: {
     relationFieldName,
