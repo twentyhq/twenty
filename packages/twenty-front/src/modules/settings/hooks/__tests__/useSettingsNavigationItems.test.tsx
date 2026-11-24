@@ -153,7 +153,7 @@ describe('useSettingsNavigationItems', () => {
     );
 
     expect(billingItem?.isHidden).toBe(true);
-    expect(billingItem?.path).toBe(SettingsPath.Billing);
+    expect(billingItem?.path).toBe(SettingsPath.BillingLimits);
   });
 
   it('should hide billing navigation until billing config is loaded', () => {
@@ -182,6 +182,52 @@ describe('useSettingsNavigationItems', () => {
 
     expect(billingItem?.isHidden).toBe(true);
   });
+
+  it.each([
+    {
+      permissionFlags: [PermissionFlagType.BILLING],
+      isHidden: false,
+      path: SettingsPath.Billing,
+    },
+    {
+      permissionFlags: [PermissionFlagType.WORKSPACE],
+      isHidden: false,
+      path: SettingsPath.BillingLimits,
+    },
+    {
+      permissionFlags: [
+        PermissionFlagType.BILLING,
+        PermissionFlagType.WORKSPACE,
+      ],
+      isHidden: false,
+      path: SettingsPath.Billing,
+    },
+    {
+      permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
+      isHidden: true,
+      path: SettingsPath.BillingLimits,
+    },
+  ])(
+    'should set billing navigation to $path, hidden $isHidden, with $permissionFlags',
+    ({ permissionFlags, isHidden, path }) => {
+      jotaiStore.set(billingState.atom, {
+        ...mockBilling,
+        isBillingEnabled: true,
+      });
+      setPermissionFlags(permissionFlags);
+
+      const { result } = renderHook(() => useSettingsNavigationItems(), {
+        wrapper: Wrapper,
+      });
+
+      const billingItem = result.current
+        .find((section) => section.label === 'Workspace')
+        ?.items.find((item) => item.label === 'Billing');
+
+      expect(billingItem?.isHidden).toBe(isHidden);
+      expect(billingItem?.path).toBe(path);
+    },
+  );
 
   it('should show user section items regardless of permissions', () => {
     setPermissionFlags([]);
