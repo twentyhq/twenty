@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.63.0', 1795511362339)
+@RegisteredInstanceCommand('2.63.0', 1795518016864)
 export class AddSourceFieldForeignKeyToFieldPermissionFastInstanceCommand
   implements FastInstanceCommand
 {
