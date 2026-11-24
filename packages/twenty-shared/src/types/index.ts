@@ -378,6 +378,7 @@ export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
 export type { ViewFilterValue } from './ViewFilterValue';
 export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
+export { ViewPresetFilter } from './ViewPresetFilter';
 export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';
