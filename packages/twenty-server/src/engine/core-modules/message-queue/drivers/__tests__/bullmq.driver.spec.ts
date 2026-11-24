@@ -4,6 +4,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { type WorkspaceQueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { DEFAULT_JOB_PRIORITY } from 'src/engine/core-modules/message-queue/constants/default-job-priority.constant';
 import { QUEUE_JOB_CHANGED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-changed-event.constant';
+import { QUEUE_JOB_FAILED_EVENT } from 'src/engine/core-modules/message-queue/constants/queue-job-failed-event.constant';
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
 import {
   FAIR_REBASE_STEP,
@@ -292,7 +293,10 @@ describe('BullMQDriver job change events', () => {
   const eventEmitter = { emit: jest.fn() };
   const driver = new BullMQDriver(
     {} as never,
-    { recordHistogram: jest.fn() } as never,
+    {
+      recordHistogram: jest.fn(),
+      incrementCounterForEvent: jest.fn(),
+    } as never,
     mockTwentyConfigService as never,
     eventEmitter as never,
   );
@@ -360,6 +364,61 @@ describe('BullMQDriver job change events', () => {
     );
 
     expect(eventEmitter.emit).not.toHaveBeenCalled();
+  });
+
+  const getFailedJobListeners = () => {
+    driver.work(MessageQueue.workspaceQueue, async () => {});
+    const workerInstances = mockWorkerConstructor.mock.results;
+    const worker = workerInstances[workerInstances.length - 1].value;
+
+    return worker.on.mock.calls
+      .filter(([name]: [string, unknown]) => name === 'failed')
+      .map(([, listener]: [string, (...args: unknown[]) => void]) => listener);
+  };
+
+  const failedJob = {
+    id: 'job-id',
+    name: 'LogicFunctionTriggerJob',
+    data: { logicFunctionId: 'logic-function-id' },
+    opts: {},
+    attemptsMade: 2,
+    timestamp: 1,
+  };
+
+  it('reports a job that failed for good', () => {
+    const job = { ...failedJob, finishedOn: 2 };
+    const error = new Error('job stalled more than allowable limit');
+
+    error.name = 'UnrecoverableError';
+
+    for (const onFailed of getFailedJobListeners()) {
+      onFailed(job, error);
+    }
+
+    expect(eventEmitter.emit).toHaveBeenCalledWith(QUEUE_JOB_FAILED_EVENT, {
+      queueName: MessageQueue.workspaceQueue,
+      job: {
+        id: 'job-id',
+        name: 'LogicFunctionTriggerJob',
+        data: { logicFunctionId: 'logic-function-id' },
+        attemptsMade: 2,
+      },
+      error: {
+        name: 'UnrecoverableError',
+        message: 'job stalled more than allowable limit',
+      },
+    });
+  });
+
+  it('does not report a failed attempt that will be retried', () => {
+    for (const onFailed of getFailedJobListeners()) {
+      onFailed(failedJob, new Error('Lambda unreachable'));
+    }
+
+    expect(eventEmitter.emit).not.toHaveBeenCalledWith(
+      QUEUE_JOB_FAILED_EVENT,
+      expect.anything(),
+    );
   });
 });
 
