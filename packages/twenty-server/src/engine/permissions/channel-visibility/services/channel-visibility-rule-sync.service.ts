@@ -122,12 +122,14 @@ export class ChannelVisibilityRuleSyncService {
                 [MessageChannelVisibility.METADATA]: [
                   calendarEvent.fields.title.universalIdentifier,
                   calendarEvent.fields.description.universalIdentifier,
+                  calendarEvent.fields.callRecordings.universalIdentifier,
                 ],
               },
             }),
             ...[
               ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
               STANDARD_OBJECTS.attachment.universalIdentifier,
+              STANDARD_OBJECTS.callRecording.universalIdentifier,
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
             })),
