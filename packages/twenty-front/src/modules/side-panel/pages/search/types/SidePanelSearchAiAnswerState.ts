@@ -2,6 +2,10 @@ import { type SidePanelSearchAiAnswer } from '@/side-panel/pages/search/types/Si
 
 export type SidePanelSearchAiAnswerState =
   | { status: 'idle' }
+  | {
+      status: 'quickAnswerAvailable';
+      reason: 'notAQuestion' | 'automaticLimitReached';
+    }
   | { status: 'loading' }
   | { status: 'loaded'; answer: SidePanelSearchAiAnswer }
   | { status: 'failed' };

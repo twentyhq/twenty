@@ -5,9 +5,12 @@ import { SIDE_PANEL_SEARCH_AI_ANSWER_MIN_QUESTION_LENGTH } from '@/side-panel/pa
 import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchResultItem';
 import { type SidePanelSearchAiAnswerCandidate } from '@/side-panel/pages/search/types/SidePanelSearchAiAnswerCandidate';
 import { type SidePanelSearchAiAnswerState } from '@/side-panel/pages/search/types/SidePanelSearchAiAnswerState';
+import { type SidePanelSearchAiAnswerTrigger } from '@/side-panel/pages/search/types/SidePanelSearchAiAnswerTrigger';
 import { fetchSidePanelSearchAiAnswer } from '@/side-panel/pages/search/utils/fetchSidePanelSearchAiAnswer';
+import { isEligibleForAutomaticSidePanelSearchAiAnswer } from '@/side-panel/pages/search/utils/isEligibleForAutomaticSidePanelSearchAiAnswer';
 import { useEffect, useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
+import { v4 } from 'uuid';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type SidePanelSearchAiAnswerRequest = {
@@ -16,6 +19,11 @@ type SidePanelSearchAiAnswerRequest = {
 };
 
 const IDLE_STATE: SidePanelSearchAiAnswerState = { status: 'idle' };
+const LOADING_STATE: SidePanelSearchAiAnswerState = { status: 'loading' };
+const QUICK_ANSWER_AVAILABLE_STATE: SidePanelSearchAiAnswerState = {
+  status: 'quickAnswerAvailable',
+  reason: 'notAQuestion',
+};
 
 export const useSidePanelSearchAiAnswer = ({
   question,
@@ -32,6 +40,9 @@ export const useSidePanelSearchAiAnswer = ({
   const isAvailable =
     hasAiPermission &&
     question.length >= SIDE_PANEL_SEARCH_AI_ANSWER_MIN_QUESTION_LENGTH;
+  const isAutomatic = isEligibleForAutomaticSidePanelSearchAiAnswer(question);
+
+  const [searchSessionId] = useState(() => v4());
 
   const requestKey = JSON.stringify([question, objectFilter]);
   const [settledRequestKey] = useDebounce(
@@ -55,33 +66,59 @@ export const useSidePanelSearchAiAnswer = ({
 
   const [answerRequest, setAnswerRequest] =
     useState<SidePanelSearchAiAnswerRequest | null>(null);
+  const [manualRequestKey, setManualRequestKey] = useState<string | null>(null);
 
   // Dropped during render, so returning to an earlier query never flashes its old answer
   if (answerRequest !== null && answerRequest.requestKey !== requestKey) {
     setAnswerRequest(null);
   }
 
-  const shouldRequestAnswer =
-    isAvailable && areSearchResultsCurrent && settledRequestKey === requestKey;
+  if (manualRequestKey !== null && manualRequestKey !== requestKey) {
+    setManualRequestKey(null);
+  }
+
+  const getTrigger = (): SidePanelSearchAiAnswerTrigger | null => {
+    if (manualRequestKey === requestKey) {
+      return 'manual';
+    }
+
+    return isAutomatic && settledRequestKey === requestKey ? 'automatic' : null;
+  };
+
+  const trigger = isAvailable && areSearchResultsCurrent ? getTrigger() : null;
 
   useEffect(() => {
-    if (!shouldRequestAnswer) {
+    if (trigger === null) {
       return;
     }
 
     const abortController = new AbortController();
 
-    setAnswerRequest({ requestKey, state: { status: 'loading' } });
+    setAnswerRequest({ requestKey, state: LOADING_STATE });
 
     fetchSidePanelSearchAiAnswer({
       question,
       candidates,
+      trigger,
+      searchScope: objectFilter,
+      searchSessionId,
       signal: abortController.signal,
     })
-      .then((answer) => {
-        if (!abortController.signal.aborted) {
-          setAnswerRequest({ requestKey, state: { status: 'loaded', answer } });
+      .then((response) => {
+        if (abortController.signal.aborted) {
+          return;
         }
+
+        setAnswerRequest({
+          requestKey,
+          state:
+            response.kind === 'limited'
+              ? {
+                  status: 'quickAnswerAvailable',
+                  reason: 'automaticLimitReached',
+                }
+              : { status: 'loaded', answer: response },
+        });
       })
       .catch(() => {
         if (!abortController.signal.aborted) {
@@ -90,12 +127,36 @@ export const useSidePanelSearchAiAnswer = ({
       });
 
     return () => abortController.abort();
-  }, [shouldRequestAnswer, requestKey, question, candidates]);
+  }, [
+    trigger,
+    requestKey,
+    question,
+    objectFilter,
+    candidates,
+    searchSessionId,
+  ]);
 
-  const answerState =
-    isAvailable && answerRequest?.requestKey === requestKey
-      ? answerRequest.state
-      : IDLE_STATE;
+  const requestQuickAnswer = () => setManualRequestKey(requestKey);
 
-  return { answerState };
+  const getAnswerState = (): SidePanelSearchAiAnswerState => {
+    if (!isAvailable) {
+      return IDLE_STATE;
+    }
+
+    if (answerRequest?.requestKey === requestKey) {
+      return answerRequest.state;
+    }
+
+    if (manualRequestKey === requestKey) {
+      return LOADING_STATE;
+    }
+
+    return isAutomatic ? IDLE_STATE : QUICK_ANSWER_AVAILABLE_STATE;
+  };
+
+  return {
+    answerState: getAnswerState(),
+    requestQuickAnswer,
+    searchSessionId,
+  };
 };

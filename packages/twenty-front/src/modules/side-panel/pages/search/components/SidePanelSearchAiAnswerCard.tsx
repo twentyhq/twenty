@@ -3,6 +3,7 @@ import { useOpenAskAiPageWithPreprompt } from '@/ai-chat/composer/hooks/useOpenA
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useOpenSidePanelSearchRecord } from '@/side-panel/pages/search/hooks/useOpenSidePanelSearchRecord';
 import { type SidePanelSearchAiAnswerState } from '@/side-panel/pages/search/types/SidePanelSearchAiAnswerState';
+import { sendSidePanelSearchAskAiHandoff } from '@/side-panel/pages/search/utils/sendSidePanelSearchAskAiHandoff';
 import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { styled } from '@linaria/react';
@@ -47,14 +48,25 @@ const StyledActions = styled.div`
   display: flex;
 `;
 
+const StyledQuickAnswerRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
 type SidePanelSearchAiAnswerCardProps = {
   question: string;
   answerState: Exclude<SidePanelSearchAiAnswerState, { status: 'idle' }>;
+  searchSessionId: string;
+  onRequestQuickAnswer: () => void;
 };
 
 export const SidePanelSearchAiAnswerCard = ({
   question,
   answerState,
+  searchSessionId,
+  onRequestQuickAnswer,
 }: SidePanelSearchAiAnswerCardProps) => {
   const { t } = useLingui();
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -63,12 +75,44 @@ export const SidePanelSearchAiAnswerCard = ({
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
 
   const handleAskInNewChat = () => {
+    sendSidePanelSearchAskAiHandoff({ searchSessionId, answerState });
+
     void openAskAiPageWithPreprompt({
       serializedDocument:
         serializePlainTextAsAdvancedTextEditorDocument(question),
       mode: 'PREFILL',
     });
   };
+
+  const askInNewChatButton = (
+    <Button
+      size="sm"
+      startIcon={<IconMessageCirclePlus />}
+      onClick={handleAskInNewChat}
+    >
+      {t`Ask in a new chat`}
+    </Button>
+  );
+
+  if (answerState.status === 'quickAnswerAvailable') {
+    return (
+      <StyledQuickAnswerRow>
+        <Button
+          size="sm"
+          startIcon={<IconSparkles />}
+          onClick={onRequestQuickAnswer}
+        >
+          {t`Get a quick answer`}
+        </Button>
+        {askInNewChatButton}
+        {answerState.reason === 'automaticLimitReached' && (
+          <Text size="sm" color="tertiary">
+            {t`Automatic answers are paused for now.`}
+          </Text>
+        )}
+      </StyledQuickAnswerRow>
+    );
+  }
 
   const renderBody = () => {
     if (answerState.status === 'loading') {
@@ -130,15 +174,7 @@ export const SidePanelSearchAiAnswerCard = ({
           <Text size="sm" color="tertiary">{t`AI answer`}</Text>
         </StyledHeader>
         {renderBody()}
-        <StyledActions>
-          <Button
-            size="sm"
-            startIcon={<IconMessageCirclePlus />}
-            onClick={handleAskInNewChat}
-          >
-            {t`Ask in a new chat`}
-          </Button>
-        </StyledActions>
+        <StyledActions>{askInNewChatButton}</StyledActions>
       </StyledContent>
     </Card.Root>
   );

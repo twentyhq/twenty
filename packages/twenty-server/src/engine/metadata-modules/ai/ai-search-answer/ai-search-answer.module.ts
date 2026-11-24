@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiSearchAnswerController } from 'src/engine/metadata-modules/ai/ai-search-answer/controllers/ai-search-answer.controller';
 import { AiSearchAnswerService } from 'src/engine/metadata-modules/ai/ai-search-answer/services/ai-search-answer.service';
@@ -15,6 +17,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     PermissionsModule,
     AiBillingModule,
     RecordCrudModule,
+    ThrottlerModule,
+    MetricsModule,
   ],
   controllers: [AiSearchAnswerController],
   providers: [AiSearchAnswerService],

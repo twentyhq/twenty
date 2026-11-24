@@ -2123,6 +2123,42 @@ export class ConfigVariables {
   INVITATION_SENDING_BY_EMAIL_THROTTLE_LIMIT = 10;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Minimum delay in milliseconds between two automatic AI search answers for one member',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  AI_SEARCH_ANSWER_AUTOMATIC_COOLDOWN_IN_MS = 3_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time window in milliseconds for the automatic AI search answer allowances',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  AI_SEARCH_ANSWER_AUTOMATIC_ALLOWANCE_WINDOW_IN_MS = 3_600_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of automatic AI search answers one member can get per allowance window',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  AI_SEARCH_ANSWER_AUTOMATIC_USER_ALLOWANCE = 30;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of automatic AI search answers one workspace can get per allowance window',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  AI_SEARCH_ANSWER_AUTOMATIC_WORKSPACE_ALLOWANCE = 300;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SSL,
     description: 'Path to the SSL key for enabling HTTPS in local development',
     type: ConfigVariableType.STRING,

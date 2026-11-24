@@ -5,10 +5,12 @@ import {
   Header,
   HttpCode,
   Post,
+  Res,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
+import { type Response } from 'express';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
@@ -23,6 +25,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { AiSearchAnswerService } from 'src/engine/metadata-modules/ai/ai-search-answer/services/ai-search-answer.service';
+import { aiSearchAnswerAskAiHandoffInputSchema } from 'src/engine/metadata-modules/ai/ai-search-answer/schemas/ai-search-answer-ask-ai-handoff-input.schema';
 import { aiSearchAnswerInputSchema } from 'src/engine/metadata-modules/ai/ai-search-answer/schemas/ai-search-answer-input.schema';
 import { type AiSearchAnswerResponse } from 'src/engine/metadata-modules/ai/ai-search-answer/types/ai-search-answer-response.type';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
@@ -64,6 +67,7 @@ export class AiSearchAnswerController {
     @Body() body: unknown,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<AiSearchAnswerResponse> {
     const parsedInput = aiSearchAnswerInputSchema.safeParse(body);
 
@@ -71,11 +75,40 @@ export class AiSearchAnswerController {
       throw new BadRequestException('Invalid search answer request');
     }
 
+    const clientAbortController = new AbortController();
+
+    response.on('close', () => {
+      if (!response.writableFinished) {
+        clientAbortController.abort();
+      }
+    });
+
     return this.aiSearchAnswerService.answer({
       input: parsedInput.data,
       workspace,
       userWorkspaceId,
       authContext: getWorkspaceAuthContext(),
+      clientSignal: clientAbortController.signal,
+    });
+  }
+
+  @Post('search-answer/ask-ai-handoff')
+  @HttpCode(204)
+  async recordAskAiHandoff(
+    @Body() body: unknown,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<void> {
+    const parsedInput = aiSearchAnswerAskAiHandoffInputSchema.safeParse(body);
+
+    if (!parsedInput.success) {
+      throw new BadRequestException('Invalid search answer handoff event');
+    }
+
+    await this.aiSearchAnswerService.recordAskAiHandoff({
+      input: parsedInput.data,
+      workspaceId: workspace.id,
+      userWorkspaceId,
     });
   }
 }

@@ -551,7 +551,7 @@ export class AiModelRegistryService {
     );
   }
 
-  private getFirstAvailableModelFromList({
+  getFirstAvailableModelFromList({
     modelIds,
     aiDataPolicy,
   }: {

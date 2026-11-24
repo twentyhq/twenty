@@ -111,6 +111,9 @@ describe('useSidePanelSearchAiAnswer', () => {
         { objectNameSingular: 'company', recordId: 'acme-id' },
         { objectNameSingular: 'company', recordId: 'globex-id' },
       ],
+      trigger: 'automatic',
+      searchScope: null,
+      searchSessionId: result.current.searchSessionId,
     });
     expect(result.current.answerState).toEqual({ status: 'loading' });
 
@@ -128,7 +131,7 @@ describe('useSidePanelSearchAiAnswer', () => {
     mockFetchAnswer.mockResolvedValue(acmeAnswer);
 
     const { result, rerender } = renderAnswerHook({
-      question: 'Acme',
+      question: 'Where is Acme?',
       objectFilter: null,
       searchResultItems: [ACME],
       areSearchResultsCurrent: true,
@@ -267,5 +270,71 @@ describe('useSidePanelSearchAiAnswer', () => {
 
     expect(result.current.answerState).toEqual({ status: 'idle' });
     expect(mockFetchAnswer).not.toHaveBeenCalled();
+  });
+
+  it('only offers a quick answer for plain searches and asks once it is requested', async () => {
+    mockFetchAnswer.mockResolvedValue(acmeAnswer);
+
+    const { result } = renderAnswerHook({
+      question: 'Acme website',
+      objectFilter: 'company',
+      searchResultItems: [ACME],
+      areSearchResultsCurrent: true,
+    });
+
+    await waitForTypingPause();
+
+    expect(mockFetchAnswer).not.toHaveBeenCalled();
+    expect(result.current.answerState).toEqual({
+      status: 'quickAnswerAvailable',
+      reason: 'notAQuestion',
+    });
+
+    await act(async () => {
+      result.current.requestQuickAnswer();
+    });
+
+    expect(mockFetchAnswer).toHaveBeenCalledTimes(1);
+    expect(mockFetchAnswer.mock.calls[0][0]).toMatchObject({
+      question: 'Acme website',
+      trigger: 'manual',
+      searchScope: 'company',
+    });
+    expect(result.current.answerState).toEqual({
+      status: 'loaded',
+      answer: acmeAnswer,
+    });
+  });
+
+  it('falls back to a quick answer action once the automatic allowance is used up', async () => {
+    mockFetchAnswer.mockResolvedValueOnce({ kind: 'limited' });
+    mockFetchAnswer.mockResolvedValueOnce(acmeAnswer);
+
+    const { result } = renderAnswerHook({
+      question: 'Where is Acme based?',
+      objectFilter: null,
+      searchResultItems: [ACME],
+      areSearchResultsCurrent: true,
+    });
+
+    await waitForTypingPause();
+
+    expect(result.current.answerState).toEqual({
+      status: 'quickAnswerAvailable',
+      reason: 'automaticLimitReached',
+    });
+
+    await act(async () => {
+      result.current.requestQuickAnswer();
+    });
+
+    expect(mockFetchAnswer).toHaveBeenCalledTimes(2);
+    expect(mockFetchAnswer.mock.calls[1][0]).toMatchObject({
+      trigger: 'manual',
+    });
+    expect(result.current.answerState).toEqual({
+      status: 'loaded',
+      answer: acmeAnswer,
+    });
   });
 });

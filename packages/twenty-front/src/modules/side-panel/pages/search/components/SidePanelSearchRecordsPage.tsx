@@ -45,12 +45,13 @@ export const SidePanelSearchRecordsPage = () => {
     sidePanelSearchObjectFilter,
   } = useSidePanelSearchRecords();
   const { openSidePanelSearchRecord } = useOpenSidePanelSearchRecord();
-  const { answerState } = useSidePanelSearchAiAnswer({
-    question: trimmedSidePanelSearch,
-    objectFilter: sidePanelSearchObjectFilter,
-    searchResultItems,
-    areSearchResultsCurrent,
-  });
+  const { answerState, requestQuickAnswer, searchSessionId } =
+    useSidePanelSearchAiAnswer({
+      question: trimmedSidePanelSearch,
+      objectFilter: sidePanelSearchObjectFilter,
+      searchResultItems,
+      areSearchResultsCurrent,
+    });
   const isMobile = useIsMobile();
 
   const selectableItemIds = useMemo(
@@ -78,6 +79,8 @@ export const SidePanelSearchRecordsPage = () => {
             <SidePanelSearchAiAnswerCard
               question={trimmedSidePanelSearch}
               answerState={answerState}
+              searchSessionId={searchSessionId}
+              onRequestQuickAnswer={requestQuickAnswer}
             />
           </StyledAiAnswerContainer>
         )}

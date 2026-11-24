@@ -13,6 +13,9 @@ export const aiSearchAnswerInputSchema = z.object({
       }),
     )
     .max(AI_SEARCH_ANSWER_MAX_CANDIDATES),
+  trigger: z.enum(['automatic', 'manual']),
+  searchScope: z.string().min(1).max(255).nullable(),
+  searchSessionId: z.guid(),
 });
 
 export type AiSearchAnswerInput = z.infer<typeof aiSearchAnswerInputSchema>;
