@@ -1530,6 +1530,11 @@ export class WorkspaceService {
       await queryRunner.release();
     }
 
+    await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+      workspaceId,
+      flatMapsKeys: ['flatWorkflowMaps', 'flatWorkflowVersionMaps'],
+    });
+
     try {
       await prefillWorkflowCommandMenuItems({
         workspaceId,

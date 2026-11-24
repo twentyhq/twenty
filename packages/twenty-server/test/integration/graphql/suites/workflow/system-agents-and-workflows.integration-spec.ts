@@ -4,6 +4,8 @@ import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/cre
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
 import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const CORE_WORKFLOWS_QUERY = `
   query CoreWorkflows($filter: CoreWorkflowFilterInput) {
     coreWorkflows(first: 200, filter: $filter) {
@@ -110,6 +112,11 @@ describe('system agents and workflows (e2e)', () => {
       [coreWorkflowId],
     );
 
+    await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatWorkflowMaps'],
+    );
+
     await workflowGraphqlRequest(
       `
         mutation DeleteCoreWorkflows($input: DeleteCoreWorkflowsInput!) {
@@ -183,6 +190,11 @@ describe('system agents and workflows (e2e)', () => {
     await global.testDataSource.query(
       `UPDATE core."workflow" SET "isSystem" = true WHERE id = $1`,
       [coreWorkflowId],
+    );
+
+    await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatWorkflowMaps'],
     );
 
     const withoutSystem = await listCoreWorkflows(NON_SYSTEM_FILTER);

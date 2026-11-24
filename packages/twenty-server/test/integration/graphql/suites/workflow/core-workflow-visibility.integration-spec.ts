@@ -313,6 +313,10 @@ describe('core workflow visibility (e2e)', () => {
         `UPDATE core."workflow" SET "createdByUserWorkspaceId" = NULL WHERE id = $1`,
         [ownerlessCoreWorkflowId],
       );
+
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
     });
 
     afterAll(async () => {
@@ -433,6 +437,10 @@ describe('core workflow visibility (e2e)', () => {
         [coreWorkflowId],
       );
 
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+
       try {
         const response = await asOtherMember(CORE_WORKFLOW_VERSIONS_QUERY, {
           workspaceWorkflowId,
@@ -445,6 +453,10 @@ describe('core workflow visibility (e2e)', () => {
           `UPDATE core."workflow" SET "workspaceWorkflowId" = $2 WHERE id = $1`,
           [coreWorkflowId, workspaceWorkflowId],
         );
+
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
       }
     });
 
@@ -453,6 +465,12 @@ describe('core workflow visibility (e2e)', () => {
         `UPDATE core."workflowVersion" SET "workflowId" = NULL WHERE "coreWorkflowId" = $1`,
         [coreWorkflowId],
       );
+
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'flatWorkflowVersionMaps',
+      ]);
 
       try {
         const response = await workflowGraphqlRequest(
@@ -471,6 +489,12 @@ describe('core workflow visibility (e2e)', () => {
           `UPDATE core."workflowVersion" SET "workflowId" = $2 WHERE "coreWorkflowId" = $1`,
           [coreWorkflowId, workspaceWorkflowId],
         );
+
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'flatWorkflowVersionMaps',
+        ]);
       }
     });
 

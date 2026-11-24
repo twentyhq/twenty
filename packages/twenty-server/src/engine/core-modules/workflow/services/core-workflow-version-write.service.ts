@@ -231,6 +231,11 @@ export class CoreWorkflowVersionWriteService {
             `UPDATE core."workflow" SET "updatedAt" = now() WHERE "workspaceId" = $1 AND "id" = $2`,
             [workspaceId, flatWorkflowVersion.coreWorkflowId],
           );
+
+          await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+            workspaceId,
+            flatMapsKeys: ['flatWorkflowMaps'],
+          });
         }
       },
     );
