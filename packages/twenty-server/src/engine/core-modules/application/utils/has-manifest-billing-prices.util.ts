@@ -4,5 +4,5 @@ import {
 } from 'twenty-shared/application';
 
 export const hasManifestBillingPrices = (
-  billing: ApplicationBilling | undefined,
+  billing: Pick<ApplicationBilling, 'prices'> | undefined,
 ): boolean => (billing?.prices ?? []).some(isApplicationBillingPrice);

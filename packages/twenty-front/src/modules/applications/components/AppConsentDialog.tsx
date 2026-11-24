@@ -44,7 +44,7 @@ const StyledContent = styled.div`
   flex-direction: column;
   flex-shrink: 0;
   margin: auto 0;
-  max-width: 400px;
+  max-width: ${themeCssVariables.modal.size.md.width};
   width: 100%;
 `;
 
