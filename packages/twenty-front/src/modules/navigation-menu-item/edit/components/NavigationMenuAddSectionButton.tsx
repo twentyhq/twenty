@@ -11,17 +11,14 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { NAVIGATION_MENU_BUILT_IN_SECTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuBuiltInSections';
 import { canAddBuiltInSectionToContainer } from '@/navigation-menu-item/common/utils/canAddBuiltInSectionToContainer';
-import { navigationMenuDropdownOpenRequestState } from '@/navigation-menu-item/common/states/navigationMenuDropdownOpenRequestState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { NavigationMenuAddSectionHiddenItems } from '@/navigation-menu-item/edit/components/NavigationMenuAddSectionHiddenItems';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
-import { NavigationMenuItemDropdownOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemDropdownOpenEffect';
 import { NavigationMenuItemSelectableItem } from '@/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem';
 import { useHiddenNavigationMenuItemsInTab } from '@/navigation-menu-item/edit/hooks/useHiddenNavigationMenuItemsInTab';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
-import { getNavigationMenuAddSectionDropdownId } from '@/navigation-menu-item/edit/utils/getNavigationMenuAddSectionDropdownId';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -29,7 +26,6 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -65,12 +61,8 @@ export const NavigationMenuAddSectionButton = ({
     navigationMenuItemIdToRenameState,
   );
   const { closeDropdown } = useCloseDropdown();
-  const [
-    navigationMenuDropdownOpenRequest,
-    setNavigationMenuDropdownOpenRequest,
-  ] = useAtomState(navigationMenuDropdownOpenRequestState);
   const { toggleDropdown } = useToggleDropdown();
-  const dropdownId = getNavigationMenuAddSectionDropdownId(containerId);
+  const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
 
   if (!isCustomizableSidebarEnabled) {
     return null;
@@ -107,12 +99,6 @@ export const NavigationMenuAddSectionButton = ({
     <NavigationDrawerSection>
       <NavigationMenuItemEntrance>
         <DropdownRoot dropdownId={dropdownId} type="menu">
-          {navigationMenuDropdownOpenRequest?.dropdownId === dropdownId && (
-            <NavigationMenuItemDropdownOpenEffect
-              dropdownId={dropdownId}
-              onOpen={() => setNavigationMenuDropdownOpenRequest(null)}
-            />
-          )}
           <Dropdown.Trigger
             nativeButton={false}
             render={

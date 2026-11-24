@@ -18,7 +18,8 @@ import {
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
-import { AI_AGENTS_NAVIGATION_SECTION_ID } from '@/navigation-menu-item/display/built-in-sections/constants/AiAgentsNavigationSectionId';
+
+const AI_AGENTS_NAVIGATION_SECTION_ID = 'AiAgents';
 
 type NavigationMenuAiAgentsSectionProps = {
   headerAction?: ReactNode;

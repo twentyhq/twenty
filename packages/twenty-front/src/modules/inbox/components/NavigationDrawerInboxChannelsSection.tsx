@@ -17,7 +17,8 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
-import { INBOX_CHANNELS_NAVIGATION_SECTION_ID } from '@/inbox/constants/InboxChannelsNavigationSectionId';
+
+const INBOX_CHANNELS_NAVIGATION_SECTION_ID = 'AiChatChannels';
 
 type NavigationDrawerInboxChannelsSectionProps = {
   headerAction?: ReactNode;

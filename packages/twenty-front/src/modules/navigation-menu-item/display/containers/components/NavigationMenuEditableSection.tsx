@@ -4,7 +4,6 @@ import { useNavigationMenuContainerItems } from '@/navigation-menu-item/display/
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { StyledNavigationMenuItemSectionContentGapOffset } from '@/navigation-menu-item/display/sections/components/StyledNavigationMenuItemSectionContentGapOffset';
 import { NavigationMenuSectionMenu } from '@/navigation-menu-item/edit/components/NavigationMenuSectionMenu';
-import { getNavigationMenuSectionNavigationSectionId } from '@/navigation-menu-item/display/utils/getNavigationMenuSectionNavigationSectionId';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 type NavigationMenuEditableSectionProps = {
@@ -18,7 +17,7 @@ export const NavigationMenuEditableSection = ({
   section,
 }: NavigationMenuEditableSectionProps) => {
   const { isNavigationSectionOpen, toggleNavigationSection } =
-    useNavigationSection(getNavigationMenuSectionNavigationSectionId(section));
+    useNavigationSection(`navigation-menu-section-${section.id}`);
   const { topLevelItems, folderChildrenById } = useNavigationMenuContainerItems(
     section.id,
   );
