@@ -76,9 +76,7 @@ export const buildMcpServerBundledApplication = (
           name: mcpServer.name,
           label: mcpServer.label,
           url: mcpServer.url,
-          connectionProvider: {
-            universalIdentifier: connectionProviderUniversalIdentifier,
-          },
+          connectionProviderUniversalIdentifier,
         },
       ],
       objects: [],

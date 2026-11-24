@@ -18,6 +18,7 @@ import {
   ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewKey,
+  ViewPresetFilter,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -115,6 +116,11 @@ export class CreateViewInput {
   @IsString()
   @Field({ nullable: true })
   anyFieldFilterValue?: string;
+
+  @IsOptional()
+  @IsEnum(ViewPresetFilter)
+  @Field(() => ViewPresetFilter, { nullable: true })
+  presetFilter?: ViewPresetFilter;
 
   @IsOptional()
   @IsEnum(ViewCalendarLayout)
