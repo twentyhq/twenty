@@ -29,4 +29,5 @@ export const toMarketplaceConnectListingAppDetailDTO = ({
   requestedCapabilities: [],
   requestedIframeMediaPermissions: [],
   billsCredits: false,
+  billingPrices: [],
 });

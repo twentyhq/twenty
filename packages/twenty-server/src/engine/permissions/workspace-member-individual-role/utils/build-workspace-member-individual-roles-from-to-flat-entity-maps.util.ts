@@ -1,4 +1,7 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import {
+  getFieldPermissionUniversalIdentifier,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
@@ -11,9 +14,13 @@ import {
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
 } from 'src/engine/permissions/workspace-member-individual-role/constants/workspace-member-individual-role.constant';
-import { type WorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
+import {
+  type UnreadableNestedFieldDeclaration,
+  type WorkspaceMemberIndividualRole,
+} from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
+import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
@@ -36,6 +43,69 @@ type WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,
   WorkspaceMemberIndividualRoleFlatEntityMapsKey
 >;
+
+const withUnreadableNestedFields = ({
+  fieldPermissions,
+  unreadableNestedFields = [],
+  applicationUniversalIdentifier,
+  roleUniversalIdentifier,
+  now,
+}: {
+  fieldPermissions: UniversalFlatFieldPermission[];
+  unreadableNestedFields?: UnreadableNestedFieldDeclaration[];
+  applicationUniversalIdentifier: string;
+  roleUniversalIdentifier: string;
+  now: string;
+}): UniversalFlatFieldPermission[] => {
+  const nestedFieldPermissions = unreadableNestedFields.map(
+    ({
+      objectUniversalIdentifier,
+      fieldUniversalIdentifier,
+      sourceFieldUniversalIdentifier,
+    }): UniversalFlatFieldPermission => ({
+      universalIdentifier: getFieldPermissionUniversalIdentifier({
+        applicationUniversalIdentifier,
+        roleUniversalIdentifier,
+        fieldUniversalIdentifier,
+        rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+      }),
+      applicationUniversalIdentifier,
+      roleUniversalIdentifier,
+      objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
+      rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+      rowLevelPermissionRuleUniversalIdentifier: null,
+      sourceFieldMetadataUniversalIdentifier: sourceFieldUniversalIdentifier,
+      canReadFieldValue: null,
+      canUpdateFieldValue: null,
+      createdAt: now,
+      updatedAt: now,
+    }),
+  );
+  const findNestedFieldPermission = ({
+    universalIdentifier,
+  }: UniversalFlatFieldPermission) =>
+    nestedFieldPermissions.find(
+      (nestedFieldPermission) =>
+        nestedFieldPermission.universalIdentifier === universalIdentifier,
+    );
+
+  return [
+    ...fieldPermissions.map((fieldPermission) => ({
+      ...fieldPermission,
+      sourceFieldMetadataUniversalIdentifier:
+        findNestedFieldPermission(fieldPermission)
+          ?.sourceFieldMetadataUniversalIdentifier ?? null,
+    })),
+    ...nestedFieldPermissions.filter(
+      (nestedFieldPermission) =>
+        !fieldPermissions.some(
+          ({ universalIdentifier }) =>
+            universalIdentifier === nestedFieldPermission.universalIdentifier,
+        ),
+    ),
+  ];
+};
 
 const buildUniversalFlatEntityMaps = <
   TUniversalFlatEntity extends { universalIdentifier: string },
@@ -142,7 +212,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   };
 
   const desiredEntities = individualRoles.map(
-    ({ holder, recordsPermissions }) => {
+    ({ holder, recordsPermissions, unreadableNestedFields }) => {
       const roleUniversalIdentifier =
         getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
       const roleManifest: RoleManifest = {
@@ -169,6 +239,8 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           workspaceCustomApplicationUniversalIdentifier,
         now,
       };
+      const recordsPermissionsEntities =
+        fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(converterArgs);
       const buildRoleTarget = (userWorkspaceId: string) => {
         const roleTargetUniversalIdentifier =
           existingFlatRoleTargets.find(
@@ -218,9 +290,15 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           holder.type === 'userWorkspace'
             ? buildRoleTarget(holder.userWorkspaceId)
             : undefined,
-        ...fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(
-          converterArgs,
-        ),
+        ...recordsPermissionsEntities,
+        fieldPermissions: withUnreadableNestedFields({
+          fieldPermissions: recordsPermissionsEntities.fieldPermissions,
+          unreadableNestedFields,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          roleUniversalIdentifier,
+          now,
+        }),
       };
     },
   );

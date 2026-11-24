@@ -6,10 +6,33 @@ const INPUT = {
   name: 'Companies',
   source: 'export const Component = () => <div />;',
   query: { objectName: 'company', select: ['name'], limit: 20 },
-  sampleRecords: [{ name: 'Acme' }],
+  sampleRecords: [{ id: '11111111-1111-4111-8111-111111111111', name: 'Acme' }],
 };
 
 describe('frontComponentDraftSchema', () => {
+  it.each([undefined, null, 42, 'not-a-uuid'])(
+    'requires a fictional record ID for record-page previews: %s',
+    (id) => {
+      const result = frontComponentDraftSchema.safeParse({
+        ...INPUT,
+        pageLayoutType: PageLayoutType.RECORD_PAGE,
+        sampleRecords: [{ name: 'Acme', id }],
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0].path).toEqual(['sampleRecords', 0, 'id']);
+    },
+  );
+
+  it('keeps record IDs optional for dashboard samples', () => {
+    expect(
+      frontComponentDraftSchema.safeParse({
+        ...INPUT,
+        pageLayoutType: PageLayoutType.DASHBOARD,
+        sampleRecords: [{ name: 'Acme' }],
+      }).success,
+    ).toBe(true);
+  });
   it('requires sample records to preview the component', () => {
     const result = frontComponentDraftSchema.safeParse({
       ...INPUT,

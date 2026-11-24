@@ -10,6 +10,7 @@ import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { validateFlatViewCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util';
 import { validateFlatViewPresetFilter } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util';
+import { validateFlatViewTypeObject } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util';
 import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
 
 export const validateFlatViewCreation = ({
@@ -160,6 +161,7 @@ export const validateFlatViewCreation = ({
 
   validationResult.errors.push(
     ...validateFlatViewPresetFilter({ flatView: flatViewToValidate }),
+    ...validateFlatViewTypeObject({ flatView: flatViewToValidate }),
   );
 
   return validationResult;
