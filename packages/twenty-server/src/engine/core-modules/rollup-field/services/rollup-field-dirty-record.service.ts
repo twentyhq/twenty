@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -34,7 +36,16 @@ export class RollupFieldDirtyRecordService {
       this.getDirtyRecordIdsKey({ workspaceId, objectMetadataId }),
       recordIds,
     );
-    await this.scheduleRecompute({ workspaceId, objectMetadataId });
+
+    // Saves the enqueue round trips on every batch while a recompute is pending
+    const scheduledMarker = await this.cacheStorageService.acquireLock({
+      key: this.getRecomputeScheduledKey({ workspaceId, objectMetadataId }),
+      ttl: ROLLUP_FIELD_RECOMPUTE_DEBOUNCE_MS,
+    });
+
+    if (isDefined(scheduledMarker)) {
+      await this.scheduleRecompute({ workspaceId, objectMetadataId });
+    }
   }
 
   async popDirtyRecordIds({
@@ -42,6 +53,11 @@ export class RollupFieldDirtyRecordService {
     objectMetadataId,
     size,
   }: RecomputeDirtyRollupRecordsJobData & { size: number }): Promise<string[]> {
+    // Cleared before popping so ids added from now on schedule another run
+    await this.cacheStorageService.del(
+      this.getRecomputeScheduledKey({ workspaceId, objectMetadataId }),
+    );
+
     return this.cacheStorageService.setPop(
       this.getDirtyRecordIdsKey({ workspaceId, objectMetadataId }),
       size,
@@ -65,6 +81,13 @@ export class RollupFieldDirtyRecordService {
         isWorkspaceJob: true,
       },
     );
+  }
+
+  private getRecomputeScheduledKey({
+    workspaceId,
+    objectMetadataId,
+  }: RecomputeDirtyRollupRecordsJobData): string {
+    return `recompute-scheduled:${workspaceId}:${objectMetadataId}`;
   }
 
   private getDirtyRecordIdsKey({

@@ -1,12 +1,12 @@
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type RollupFieldWatchPlans } from 'src/engine/core-modules/rollup-field/types/rollup-field-watch-plan.type';
 import { buildRollupFieldComputationPlans } from 'src/engine/core-modules/rollup-field/utils/build-rollup-field-computation-plans.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
+import { findRollupFlatFieldMetadatas } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-rollup-flat-field-metadatas.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export const buildRollupFieldWatchPlans = ({
@@ -18,15 +18,9 @@ export const buildRollupFieldWatchPlans = ({
 }): RollupFieldWatchPlans => {
   const objectMetadataIdsWithRollups = [
     ...new Set(
-      Object.values(flatFieldMetadataMaps.byUniversalIdentifier)
-        .filter(isDefined)
-        .filter((flatFieldMetadata) =>
-          isFlatFieldMetadataOfType(
-            flatFieldMetadata,
-            FieldMetadataType.ROLLUP,
-          ),
-        )
-        .map(({ objectMetadataId }) => objectMetadataId),
+      findRollupFlatFieldMetadatas(flatFieldMetadataMaps).map(
+        ({ objectMetadataId }) => objectMetadataId,
+      ),
     ),
   ];
   const watchPlansByChildObjectMetadataId: RollupFieldWatchPlans['watchPlansByChildObjectMetadataId'] =
@@ -52,15 +46,12 @@ export const buildRollupFieldWatchPlans = ({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     })) {
-      const filterFieldNames = rollupFlatFieldMetadata.settings.filters
-        .map(({ fieldMetadataId }) =>
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: fieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          }),
-        )
-        .filter(isDefined)
-        .map(({ name }) => name);
+      const filterFieldNames = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: rollupFlatFieldMetadata.settings.filters.map(
+          ({ fieldMetadataId }) => fieldMetadataId,
+        ),
+        flatEntityMaps: flatFieldMetadataMaps,
+      }).map(({ name }) => name);
 
       watchPlansByChildObjectMetadataId[childFlatObjectMetadata.id] = [
         ...(watchPlansByChildObjectMetadataId[childFlatObjectMetadata.id] ??

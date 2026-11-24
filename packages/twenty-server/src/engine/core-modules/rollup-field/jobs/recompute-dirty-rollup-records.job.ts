@@ -22,6 +22,10 @@ export class RecomputeDirtyRollupRecordsJob {
         size: ROLLUP_FIELD_DIRTY_RECORDS_PER_JOB,
       });
 
+    if (recordIds.length === 0) {
+      return;
+    }
+
     try {
       await this.rollupFieldComputationService.recomputeRollupFieldsOfRecords({
         ...jobData,
@@ -32,6 +36,7 @@ export class RecomputeDirtyRollupRecordsJob {
         ...jobData,
         recordIds,
       });
+      await this.rollupFieldDirtyRecordService.scheduleRecompute(jobData);
 
       throw error;
     }

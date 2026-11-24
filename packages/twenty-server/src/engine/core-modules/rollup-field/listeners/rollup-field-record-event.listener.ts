@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RollupFieldWatchPlans } from 'src/engine/core-modules/rollup-field/types/rollup-field-watch-plan.type';
 import { RollupFieldDirtyRecordService } from 'src/engine/core-modules/rollup-field/services/rollup-field-dirty-record.service';
 import { findDirtyRollupRecordIdsByObjectMetadataId } from 'src/engine/core-modules/rollup-field/utils/find-dirty-rollup-record-ids-by-object-metadata-id.util';
 import { getRollupFieldWatchPlans } from 'src/engine/core-modules/rollup-field/utils/get-rollup-field-watch-plans.util';
@@ -26,9 +27,12 @@ export class RollupFieldRecordEventListener {
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
   async handleRecordsAdded(batch: RecordEventBatch): Promise<void> {
-    await this.markRecordsHoldingRollupsDirty(batch);
+    const watchPlans = await this.getWatchPlans(batch.workspaceId);
+
+    await this.markRecordsHoldingRollupsDirty({ ...batch, watchPlans });
     await this.markRecordsAggregatingEventsDirty({
       ...batch,
+      watchPlans,
       isRecordUpdate: false,
     });
   }
@@ -38,6 +42,7 @@ export class RollupFieldRecordEventListener {
   async handleRecordsRemoved(batch: RecordEventBatch): Promise<void> {
     await this.markRecordsAggregatingEventsDirty({
       ...batch,
+      watchPlans: await this.getWatchPlans(batch.workspaceId),
       isRecordUpdate: false,
     });
   }
@@ -46,6 +51,7 @@ export class RollupFieldRecordEventListener {
   async handleRecordsUpdated(batch: RecordEventBatch): Promise<void> {
     await this.markRecordsAggregatingEventsDirty({
       ...batch,
+      watchPlans: await this.getWatchPlans(batch.workspaceId),
       isRecordUpdate: true,
     });
   }
@@ -55,10 +61,8 @@ export class RollupFieldRecordEventListener {
     workspaceId,
     objectMetadata,
     events,
-  }: RecordEventBatch): Promise<void> {
-    const { objectMetadataIdsWithRollups } =
-      await this.getWatchPlans(workspaceId);
-
+    watchPlans: { objectMetadataIdsWithRollups },
+  }: RecordEventBatch & { watchPlans: RollupFieldWatchPlans }): Promise<void> {
     if (!objectMetadataIdsWithRollups.includes(objectMetadata.id)) {
       return;
     }
@@ -74,10 +78,12 @@ export class RollupFieldRecordEventListener {
     workspaceId,
     objectMetadata,
     events,
+    watchPlans: { watchPlansByChildObjectMetadataId },
     isRecordUpdate,
-  }: RecordEventBatch & { isRecordUpdate: boolean }): Promise<void> {
-    const { watchPlansByChildObjectMetadataId } =
-      await this.getWatchPlans(workspaceId);
+  }: RecordEventBatch & {
+    watchPlans: RollupFieldWatchPlans;
+    isRecordUpdate: boolean;
+  }): Promise<void> {
     const watchPlans = watchPlansByChildObjectMetadataId[objectMetadata.id];
 
     if (!isDefined(watchPlans)) {
@@ -91,18 +97,21 @@ export class RollupFieldRecordEventListener {
         isRecordUpdate,
       });
 
-    for (const [objectMetadataId, recordIds] of Object.entries(
-      dirtyRecordIdsByObjectMetadataId,
-    )) {
-      await this.rollupFieldDirtyRecordService.markRecordsDirty({
-        workspaceId,
-        objectMetadataId,
-        recordIds,
-      });
-    }
+    await Promise.all(
+      Object.entries(dirtyRecordIdsByObjectMetadataId).map(
+        ([objectMetadataId, recordIds]) =>
+          this.rollupFieldDirtyRecordService.markRecordsDirty({
+            workspaceId,
+            objectMetadataId,
+            recordIds,
+          }),
+      ),
+    );
   }
 
-  private async getWatchPlans(workspaceId: string) {
+  private async getWatchPlans(
+    workspaceId: string,
+  ): Promise<RollupFieldWatchPlans> {
     return getRollupFieldWatchPlans(
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',

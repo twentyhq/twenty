@@ -120,7 +120,7 @@ export const SettingsDataModelFieldRollupForm = ({
             relationFieldMetadataItems.find(
               (relationField) =>
                 relationField.id === value.relationFieldMetadataId,
-            )?.relation?.targetObjectMetadata.id,
+            )?.relation.targetObjectMetadata.id,
         );
         const relatedFieldMetadataItems =
           relatedObjectMetadataItem?.fields ?? [];

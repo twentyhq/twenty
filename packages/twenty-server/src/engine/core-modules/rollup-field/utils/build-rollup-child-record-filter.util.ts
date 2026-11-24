@@ -4,25 +4,23 @@ import {
   RecordFilterGroupLogicalOperator,
   ViewFilterGroupLogicalOperator,
 } from 'twenty-shared/types';
-import {
-  computeRecordGqlOperationFilter,
-  convertViewFilterValueToString,
-  getFieldMetadataValueType,
-} from 'twenty-shared/utils';
+import { convertViewFilterValueToString } from 'twenty-shared/utils';
 
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { computeRecordGqlOperationFilterFromFlatMaps } from 'src/engine/utils/compute-record-gql-operation-filter-from-flat-maps.util';
 
 export const buildRollupChildRecordFilter = ({
   settings: { filters, filterGroups },
-  filterFlatFieldMetadatas,
+  flatFieldMetadataMaps,
+  flatObjectMetadataMaps,
 }: {
   settings: Pick<FieldMetadataRollupSettings, 'filters' | 'filterGroups'>;
-  filterFlatFieldMetadatas: Pick<
-    OrmFlatFieldMetadata,
-    'id' | 'name' | 'label' | 'type' | 'settings'
-  >[];
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
 }): RecordGqlOperationFilter =>
-  computeRecordGqlOperationFilter({
+  computeRecordGqlOperationFilterFromFlatMaps({
     filterValueDependencies: {},
     recordFilters: filters.map((filter) => ({
       fieldMetadataId: filter.fieldMetadataId,
@@ -39,10 +37,6 @@ export const buildRollupChildRecordFilter = ({
           ? RecordFilterGroupLogicalOperator.OR
           : RecordFilterGroupLogicalOperator.AND,
     })),
-    fieldMetadataItems: filterFlatFieldMetadatas.map((flatFieldMetadata) => ({
-      id: flatFieldMetadata.id,
-      name: flatFieldMetadata.name,
-      label: flatFieldMetadata.label,
-      type: getFieldMetadataValueType(flatFieldMetadata),
-    })),
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
   });

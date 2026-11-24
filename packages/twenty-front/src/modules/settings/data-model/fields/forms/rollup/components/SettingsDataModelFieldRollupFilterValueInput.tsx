@@ -3,9 +3,12 @@ import { type RollupSettingsFormFilter } from '@/settings/data-model/fields/form
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useLingui } from '@lingui/react/macro';
-import { isString } from '@sniptt/guards';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getFieldMetadataValueType, parseJson } from 'twenty-shared/utils';
+import {
+  convertViewFilterValueToString,
+  getFieldMetadataValueType,
+  parseJson,
+} from 'twenty-shared/utils';
 
 type SettingsDataModelFieldRollupFilterValueInputProps = {
   filter: RollupSettingsFormFilter;
@@ -22,9 +25,7 @@ export const SettingsDataModelFieldRollupFilterValueInput = ({
 }: SettingsDataModelFieldRollupFilterValueInputProps) => {
   const { t } = useLingui();
   const fieldType = getFieldMetadataValueType(fieldMetadataItem);
-  const valueAsString = isString(filter.value)
-    ? filter.value
-    : JSON.stringify(filter.value);
+  const valueAsString = convertViewFilterValueToString(filter.value);
 
   if (fieldType === FieldMetadataType.BOOLEAN) {
     return (
