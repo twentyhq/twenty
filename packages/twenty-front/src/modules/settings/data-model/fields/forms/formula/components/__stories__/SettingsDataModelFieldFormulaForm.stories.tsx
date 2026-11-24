@@ -79,7 +79,7 @@ export const WithLookup: Story = {
   },
 };
 
-export const WithRollup: Story = {
+export const RejectsRollup: Story = {
   decorators: [buildFormDecorator('arrayLength(noteTargets)')],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
