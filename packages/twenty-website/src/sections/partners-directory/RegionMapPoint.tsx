@@ -8,16 +8,18 @@ import { partnerBaseRegion } from './partner-base-region';
 import { REGION_MAP_WINDOW } from './region-map-window.data';
 import { resolvePartnerCoordinates } from './resolve-partner-coordinates';
 
-// The map image's own frame (2400 / 787). The map covers its box, so when
-// the box is narrower the image, and the point on it, lose both sides.
+// The map image's own frame (2400 / 787), centred and covering its box as
+// the image does: a narrower box loses the map's sides, a wider one (the
+// profile's full-bleed band) its top and bottom, and the point follows.
 const MapFrame = styled.div`
   aspect-ratio: 2400 / 787;
-  height: 100%;
   left: 50%;
+  min-height: 100%;
+  min-width: 100%;
   pointer-events: none;
   position: absolute;
-  top: 0;
-  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 // A white dot, cut out of the region's dashes by a black edge, ringed in

@@ -21,10 +21,12 @@ import {
   DURATION,
   EASING,
   fontFamily,
+  HERO_COMPOSITION,
   mediaUp,
   MENU_HEIGHT_PX,
   radius,
   REDUCED_MOTION,
+  RHYTHM,
   semanticColor,
   spacing,
   typeRampDeclarations,
@@ -33,7 +35,6 @@ import {
   Body,
   Button,
   ExternalLink,
-  Field,
   Heading,
   SectionShell,
   SectionStack,
@@ -45,46 +46,67 @@ import { PartnerMark } from './PartnerMark';
 import { partnerBaseRegion } from './partner-base-region';
 import { RegionMapPoint } from './RegionMapPoint';
 
-// The partner's region: the same still as its directory card
-// (public/images/partners/regions), dashes in the region's accent on black like
-// the customer story covers, with the partner's place on it.
-const MapBand = styled.div`
+const MARK_SIZE_PX = 72;
+
+// The partner's region, edge to edge as the band's full-bleed background: the
+// same still as its directory card (public/images/partners/regions), dashes
+// in the region's accent on black like the customer story covers, with the
+// partner's place on it.
+const MapFill = styled.div`
   background-color: ${color('black')};
-  border: 1px solid ${semanticColor.line};
-  border-radius: ${radius(2)};
-  height: 200px;
+  inset: 0;
   overflow: hidden;
+  position: absolute;
+`;
+
+// Gives the band its height and holds the mark on its lower edge, as on the
+// app page.
+const BandRoom = styled.div`
+  height: ${spacing(50)};
   position: relative;
 
   ${mediaUp('md')} {
-    aspect-ratio: 2400 / 787;
-    height: auto;
+    height: ${spacing(100)};
   }
 `;
 
+// On the band's lower edge at the content's left edge, half over the map. A white ring, the
+// mark's own radius, keeps a dark logo apart from the dark map.
+const BandMark = styled.div`
+  border-radius: ${radius(1.5)};
+  box-shadow: 0 0 0 ${spacing(1)} ${color('white')};
+  display: flex;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  transform: translateY(50%);
+`;
+
+// Under the band, the title sits a fixed step below the mark at every width:
+// the section's own top padding minus the mark's half that hangs into it.
 const Header = styled.div`
-  align-items: start;
-  display: grid;
-  gap: ${spacing(5)};
-  grid-template-columns: auto minmax(0, 1fr);
+  margin-top: calc(
+    ${MARK_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.base)}
+  );
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
 
   ${mediaUp('md')} {
-    align-items: center;
-    gap: ${spacing(6)};
+    margin-top: calc(
+      ${MARK_SIZE_PX / 2}px + ${spacing(6)} - ${spacing(RHYTHM.section.top.md)}
+    );
   }
-`;
-
-const HeaderText = styled.div`
-  min-width: 0;
 
   & > * + * {
     margin-top: ${spacing(2)};
   }
 `;
 
-// Below md the side column comes after the content, so the header keeps the action.
+// Below md the side column comes after the content, so the header keeps the
+// call; from md it heads the side column.
 const HeaderAction = styled.div`
-  grid-column: 1 / -1;
+  && {
+    margin-top: ${spacing(6)};
+  }
 
   ${mediaUp('md')} {
     display: none;
@@ -114,7 +136,7 @@ const Main = styled.div`
   min-width: 0;
 
   & > * + * {
-    margin-top: ${spacing(14)};
+    margin-top: ${spacing(16)};
   }
 `;
 
@@ -124,24 +146,35 @@ const Block = styled.div`
   }
 `;
 
+// A part of the profile, set like the app page's story: a small sans title,
+// then its content, at the story's reading width.
+const Part = styled.div`
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
+
+  & > * + * {
+    margin-top: ${spacing(3)};
+  }
+`;
+
+// Items apart by space alone, no rules between them: the app story's steps,
+// 8px between list items, 16px between items that carry a title and a line.
 const Rows = styled.ul`
   list-style: none;
   padding: 0;
 
   & > li + li {
-    border-top: 1px solid ${semanticColor.line};
+    margin-top: ${spacing(4)};
   }
 
-  & > li {
-    padding-block: ${spacing(3)};
+  &[data-dense] > li + li {
+    margin-top: ${spacing(2)};
   }
 `;
 
+// Groups apart by space alone, no rules between them.
 const Side = styled.aside`
   & > * + * {
-    border-top: 1px solid ${semanticColor.line};
-    margin-top: ${spacing(6)};
-    padding-top: ${spacing(6)};
+    margin-top: ${spacing(8)};
   }
 
   ${mediaUp('md')} {
@@ -149,6 +182,26 @@ const Side = styled.aside`
     top: calc(${MENU_HEIGHT_PX}px + ${spacing(8)});
   }
 `;
+
+// Label above its value, as on the app page: the label is muted small text
+// so the value carries the weight.
+const FactStack = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > * + * {
+    margin-top: ${spacing(1.5)};
+  }
+`;
+
+const Fact = ({ children, label }: { children: ReactNode; label: string }) => (
+  <FactStack>
+    <Body as="span" muted size="xs">
+      {label}
+    </Body>
+    {children}
+  </FactStack>
+);
 
 const SideGroup = styled.div`
   & > * + * {
@@ -159,7 +212,7 @@ const SideGroup = styled.div`
 const SideLinks = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${spacing(2)};
+  gap: ${spacing(1.5)};
 `;
 
 // Quiet links, as on the app page: muted, with the brand's thin arrow.
@@ -249,11 +302,6 @@ export function PartnerDetail({
       ? i18n._(PARTNER_SCOPE_LABELS[scope])
       : titleCaseFallback(scope),
   );
-  const skills = [
-    ...new Map(
-      partner.skills.map((skill) => [skill.trim().toLowerCase(), skill.trim()]),
-    ).values(),
-  ];
   const others = partners.filter(
     (candidate) => candidate.slug !== partner.slug,
   );
@@ -282,85 +330,84 @@ export function PartnerDetail({
 
   return (
     <>
-      <SectionShell rhythm="section" scheme="light">
-        <SectionStack>
-          <MapBand aria-hidden>
+      <SectionShell
+        background={
+          <MapFill>
             <NextImage
               alt=""
               fill
               priority
-              sizes="(max-width: 921px) 100vw, 1440px"
+              sizes="100vw"
               src={`/images/partners/regions/${baseRegion.toLowerCase()}.webp`}
               style={{ objectFit: 'cover' }}
             />
             <RegionMapPoint partner={partner} />
-          </MapBand>
-          <Header>
+          </MapFill>
+        }
+        fullBleedBackground
+        rhythm="flush"
+        scheme="light"
+      >
+        <BandRoom>
+          <BandMark>
             <PartnerMark
               markUrl={partner.profilePictureUrl}
               name={partner.name}
-              sizePx={72}
+              sizePx={MARK_SIZE_PX}
             />
-            <HeaderText>
-              <Heading as="h1" size="md" weight="light" wrap="normal">
-                {partner.name}
-              </Heading>
-              {place.length > 0 && (
-                <Body muted size="sm">
-                  {place}
-                </Body>
-              )}
-            </HeaderText>
+          </BandMark>
+        </BandRoom>
+      </SectionShell>
+      <SectionShell connectsUp rhythm="section" scheme="light">
+        <SectionStack>
+          <Header>
+            <Heading as="h1" size="md" weight="light" wrap="normal">
+              {partner.name}
+            </Heading>
+            {place.length > 0 && (
+              <Body muted size="sm">
+                {place}
+              </Body>
+            )}
             <HeaderAction>{primary}</HeaderAction>
           </Header>
           <Columns>
             <Main>
               <AppStory markdown={partner.description} />
-              {(scopes.length > 0 || skills.length > 0) && (
-                <Block>
-                  <Heading as="h2" size="sm" weight="light">
+              {scopes.length > 0 && (
+                <Part>
+                  <Heading as="h2" family="sans" size="xs" weight="medium">
                     {i18n._(MARKETPLACE_COPY.partnerScopeHeading)}
                   </Heading>
-                  {scopes.length > 0 && (
-                    <Rows>
-                      {scopes.map((scope) => (
-                        <li key={scope}>
-                          <Body size="sm">{scope}</Body>
-                        </li>
-                      ))}
-                    </Rows>
-                  )}
-                  {skills.length > 0 && (
-                    <Field label={i18n._(msg`Technical skills`)}>
-                      <Body muted size="sm">
-                        {skills.join(', ')}
-                      </Body>
-                    </Field>
-                  )}
-                </Block>
+                  <Rows data-dense="">
+                    {scopes.map((scope) => (
+                      <li key={scope}>
+                        <Body size="sm">{scope}</Body>
+                      </li>
+                    ))}
+                  </Rows>
+                </Part>
               )}
               {partner.services.length > 0 && (
-                <Block>
-                  <Heading as="h2" size="sm" weight="light">
+                <Part>
+                  <Heading as="h2" family="sans" size="xs" weight="medium">
                     {i18n._(msg`Services`)}
                   </Heading>
                   <Rows>
                     {partner.services.map((service) => (
                       <li key={service.title}>
-                        <Body size="sm" weight="medium">
-                          {service.title}
-                        </Body>
+                        <Body size="sm">{service.title}</Body>
                         <Body muted size="sm">
                           {service.description}
                         </Body>
                       </li>
                     ))}
                   </Rows>
-                </Block>
+                </Part>
               )}
               {partner.portfolio.length > 0 && (
-                <Block>
-                  <Heading as="h2" size="sm" weight="light">
+                <Part>
+                  <Heading as="h2" family="sans" size="xs" weight="medium">
                     {i18n._(msg`Case studies`)}
                   </Heading>
                   <Rows>
@@ -369,51 +416,44 @@ export function PartnerDetail({
                         <Body muted size="xs">
                           {caseStudy.client}
                         </Body>
-                        <Body size="sm" weight="medium">
-                          {caseStudy.title}
-                        </Body>
+                        <Body size="sm">{caseStudy.title}</Body>
                       </li>
                     ))}
                   </Rows>
-                </Block>
+                </Part>
               )}
             </Main>
             <Side aria-label={i18n._(msg`Partner facts and contact`)}>
+              <SideAction>{primary}</SideAction>
               <SideGroup>
-                {place.length > 0 && (
-                  <Field label={i18n._(msg`Based in`)}>
-                    <Body size="sm">{place}</Body>
-                  </Field>
-                )}
                 {regions.length > 0 && (
-                  <Field label={i18n._(msg`Regions served`)}>
+                  <Fact label={i18n._(msg`Regions served`)}>
                     <Body size="sm">{regions}</Body>
-                  </Field>
+                  </Fact>
                 )}
                 {languages.length > 0 && (
-                  <Field label={i18n._(msg`Languages`)}>
+                  <Fact label={i18n._(msg`Languages`)}>
                     <Body size="sm">{languages}</Body>
-                  </Field>
+                  </Fact>
                 )}
-                <SideAction>{primary}</SideAction>
               </SideGroup>
               {(isDefined(hourly) ||
                 (isDefined(minimum) && minimum !== '$0')) && (
                 <SideGroup>
                   {isDefined(hourly) && (
-                    <Field label={i18n._(msg`Hourly`)}>
+                    <Fact label={i18n._(msg`Hourly`)}>
                       <Body size="sm">{i18n._(msg`${hourly}/hr`)}</Body>
-                    </Field>
+                    </Fact>
                   )}
                   {isDefined(minimum) && minimum !== '$0' && (
-                    <Field label={i18n._(msg`Project minimum`)}>
+                    <Fact label={i18n._(msg`Project minimum`)}>
                       <Body size="sm">{minimum}</Body>
-                    </Field>
+                    </Fact>
                   )}
                 </SideGroup>
               )}
               {links.length > 0 && (
-                <Field label={i18n._(msg`Reach out`)}>
+                <Fact label={i18n._(msg`Reach out`)}>
                   <SideLinks>
                     {links.map((link) => (
                       <SideLink href={link.href} key={link.href}>
@@ -422,7 +462,7 @@ export function PartnerDetail({
                       </SideLink>
                     ))}
                   </SideLinks>
-                </Field>
+                </Fact>
               )}
             </Side>
           </Columns>

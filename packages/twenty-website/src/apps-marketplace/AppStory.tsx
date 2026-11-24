@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   FONT_WEIGHT,
   fontFamily,
+  HERO_COMPOSITION,
   radius,
   semanticColor,
   spacing,
@@ -19,7 +20,8 @@ const Story = styled.div`
   color: ${semanticColor.inkMuted};
   font-family: ${fontFamily('sans')};
   ${typeRampDeclarations('bodySm')}
-  max-width: 624px;
+  // The header tagline's measure: one reading width on the page.
+  max-width: ${HERO_COMPOSITION.bodyMeasurePx}px;
 
   & > * + * {
     margin-top: ${spacing(4)};
@@ -42,7 +44,8 @@ const Story = styled.div`
 
   & > h2,
   & > h3 {
-    margin-top: ${spacing(14)};
+    // The gap between the page's two columns.
+    margin-top: ${spacing(16)};
   }
 
   & > :first-child {
@@ -54,14 +57,16 @@ const Story = styled.div`
     margin-top: ${spacing(3)};
   }
 
+  // Emphasis by colour alone: ink on muted, at the text's own weight, so a
+  // paragraph holds two styles, not three.
   & strong {
     color: ${semanticColor.ink};
-    font-weight: ${FONT_WEIGHT.medium};
+    font-weight: inherit;
   }
 
   & ul,
   & ol {
-    padding-left: ${spacing(5)};
+    padding-left: ${spacing(4)};
   }
 
   & ul {
@@ -90,7 +95,7 @@ const Story = styled.div`
     border-radius: ${radius(1)};
     color: ${semanticColor.ink};
     font-family: ${fontFamily('mono')};
-    font-size: 0.85em;
+    ${typeRampDeclarations('bodyXs')}
     padding: 1px ${spacing(1)};
   }
 
@@ -98,7 +103,7 @@ const Story = styled.div`
     color: ${semanticColor.ink};
     text-decoration: underline;
     text-decoration-color: ${semanticColor.lineStrong};
-    text-underline-offset: 3px;
+    text-underline-offset: 2px;
   }
 
   & a:hover {

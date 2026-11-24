@@ -75,9 +75,13 @@ const Content = styled.div`
   padding: ${spacing(6)};
 `;
 
-// Half of the 40px logo sits on the band, as on the app cards.
+// Half of the 40px logo sits on the band, as on the app cards. A white ring,
+// the mark's own radius, keeps a dark logo apart from the dark map.
 const Logo = styled.div`
   align-self: flex-start;
+  border-radius: ${radius(1.5)};
+  box-shadow: 0 0 0 ${spacing(1)} ${color('white')};
+  display: flex;
   margin-top: calc(-1 * (${spacing(6)} + ${spacing(5)}));
   position: relative;
 `;
