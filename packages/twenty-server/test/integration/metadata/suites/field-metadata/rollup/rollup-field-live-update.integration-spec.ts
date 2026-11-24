@@ -11,16 +11,21 @@ import {
 } from 'test/integration/metadata/suites/field-metadata/rollup/utils/setup-rollup-test-objects.util';
 import { teardownRollupTestObjects } from 'test/integration/metadata/suites/field-metadata/rollup/utils/teardown-rollup-test-objects.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   AggregateOperations,
   FieldMetadataType,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
+import { type RollupFieldDirtyRecordService } from 'src/engine/core-modules/rollup-field/services/rollup-field-dirty-record.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const FIRST_PROJECT_ID = '20202020-a0a3-4000-8000-000000000001';
 const SECOND_PROJECT_ID = '20202020-a0a3-4000-8000-000000000002';
 const FIRST_TASK_ID = '20202020-a0a3-4000-8000-0000000000a1';
 const SECOND_TASK_ID = '20202020-a0a3-4000-8000-0000000000a2';
+const THIRD_TASK_ID = '20202020-a0a3-4000-8000-0000000000a3';
 const DONE_FILTER_ID = '20202020-a0a3-4000-8000-0000000000f1';
 const ROLLUP_GQL_FIELDS = 'taskCount totalEstimate doneEstimate lastDueAt';
 
@@ -242,6 +247,40 @@ describe('Rollup field live update', () => {
     expect(await findProject(SECOND_PROJECT_ID)).toMatchObject({
       taskCount: 0,
       totalEstimate: null,
+    });
+  });
+
+  it('recomputes a parent whose previous recompute died after taking it', async () => {
+    await makeGraphqlApiRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'rollupTask',
+        objectMetadataPluralName: 'rollupTasks',
+        gqlFields: 'id',
+        data: [
+          {
+            id: THIRD_TASK_ID,
+            name: 'Third task',
+            projectId: FIRST_PROJECT_ID,
+            estimate: 3,
+          },
+        ],
+      }),
+    );
+
+    // Takes the dirty parent like a recompute would, then never completes it
+    const takenRecordIds =
+      await getAppProviderByClassName<RollupFieldDirtyRecordService>(
+        'RollupFieldDirtyRecordService',
+      ).popDirtyRecordIds({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        objectMetadataId: testObjects.projectObjectMetadataId,
+        size: 100,
+      });
+
+    expect(takenRecordIds).toContain(FIRST_PROJECT_ID);
+    expect(await findProject(FIRST_PROJECT_ID)).toMatchObject({
+      taskCount: 2,
+      totalEstimate: 8,
     });
   });
 });
