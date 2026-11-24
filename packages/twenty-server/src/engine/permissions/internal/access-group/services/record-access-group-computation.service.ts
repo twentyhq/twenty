@@ -11,7 +11,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import {
-  ACCESS_GROUP_SYNC_READ_LOCK_OPTIONS,
+  ACCESS_GROUP_SYNC_LOCK_OPTIONS,
   buildAccessGroupSyncLockKey,
 } from 'src/engine/permissions/internal/access-group/constants/access-group-sync-lock.constant';
 import { RECOMPUTE_RECORD_ACCESS_GROUP_IDS_OF_RECORDS_JOB_NAME } from 'src/engine/permissions/internal/access-group/constants/recompute-record-access-group-ids-of-records-job-name.constant';
@@ -99,7 +99,7 @@ export class RecordAccessGroupComputationService {
               groupHashes: addedGroupHashes,
             }),
           buildAccessGroupSyncLockKey(workspaceId),
-          ACCESS_GROUP_SYNC_READ_LOCK_OPTIONS,
+          ACCESS_GROUP_SYNC_LOCK_OPTIONS,
         )
       : [];
 
@@ -472,7 +472,7 @@ export class RecordAccessGroupComputationService {
           objectMetadataIds,
         }),
       buildAccessGroupSyncLockKey(workspaceId),
-      ACCESS_GROUP_SYNC_READ_LOCK_OPTIONS,
+      ACCESS_GROUP_SYNC_LOCK_OPTIONS,
     );
   }
 }
