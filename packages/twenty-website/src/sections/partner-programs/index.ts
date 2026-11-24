@@ -1,5 +1,3 @@
-export { CreatorHeroRoom } from './CreatorHeroRoom';
-export { CreatorHeroScene } from './CreatorHeroScene';
 export { CREATOR_STEPPER_STEPS } from './creator-stepper-steps.data';
 export { CreatorApplyButton } from './CreatorApplyButton';
 export { CreatorAudiences } from './CreatorAudiences';
@@ -7,3 +5,5 @@ export { PartnerLevels } from './PartnerLevels';
 export { ProgramExplainer } from './ProgramExplainer';
 export { ProgramHero } from './ProgramHero';
 export { INTEGRATOR_STEPS } from './integrator-steps.data';
+export { CREATOR_HERO_BACKDROP } from './creator-hero-backdrop';
+export { ProgramHeroVisual } from './ProgramHeroVisual';
