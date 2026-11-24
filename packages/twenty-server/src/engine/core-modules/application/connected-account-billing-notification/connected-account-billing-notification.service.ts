@@ -62,6 +62,7 @@ export class ConnectedAccountBillingNotificationService {
     handle,
     userWorkspaceId,
     connectionProviderDisplayName,
+    billedAt,
   }: NotifyBillingMembersArgs): Promise<void> {
     const prices =
       await this.applicationBillingPriceService.findConnectedAccountPrices({
@@ -104,7 +105,9 @@ export class ConnectedAccountBillingNotificationService {
     }
 
     const connectedBy = getWorkspaceMemberDisplayName(connectingMember);
-    const formattedPrices = prices.map(formatApplicationBillingPrice).join(', ');
+    const formattedPrices = prices
+      .map(formatApplicationBillingPrice)
+      .join(', ');
 
     await this.agentInboxService.sendMessage({
       workspaceId,
@@ -112,7 +115,7 @@ export class ConnectedAccountBillingNotificationService {
       input: {
         workspaceMemberIds: recipientWorkspaceMemberIds,
         threadKey: BILLED_CONNECTED_ACCOUNTS_THREAD_KEY,
-        idempotencyKey: connectedAccountId,
+        idempotencyKey: `${connectedAccountId}:${billedAt}`,
         title: `${application.name} connected accounts`,
         text: `${connectedBy} connected the ${connectionProviderDisplayName} account ${handle}. It adds ${formattedPrices} to your workspace subscription.`,
       },

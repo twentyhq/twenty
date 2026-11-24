@@ -295,6 +295,7 @@ export class ConnectionProviderConnectedAccountService {
           handle,
           userWorkspaceId,
           connectionProviderDisplayName,
+          billedAt: new Date().toISOString(),
         },
       ],
       workspaceId,

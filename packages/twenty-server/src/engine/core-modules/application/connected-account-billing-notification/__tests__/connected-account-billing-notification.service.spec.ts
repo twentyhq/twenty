@@ -18,6 +18,7 @@ const BILLED_CONNECTED_ACCOUNT = {
   handle: 'jane@linkedin.com',
   userWorkspaceId: 'jane-user-workspace-id',
   connectionProviderDisplayName: 'LinkedIn',
+  billedAt: '2026-11-24T10:00:00.000Z',
 };
 
 const MONTHLY_CONNECTED_ACCOUNT_PRICE = {
@@ -129,7 +130,7 @@ describe('ConnectedAccountBillingNotificationService', () => {
       input: {
         workspaceMemberIds: ['admin-member-id'],
         threadKey: 'billed-connected-accounts',
-        idempotencyKey: BILLED_CONNECTED_ACCOUNT.connectedAccountId,
+        idempotencyKey: 'connected-account-id:2026-11-24T10:00:00.000Z',
         title: 'LinkedIn connected accounts',
         text: 'jane Doe connected the LinkedIn account jane@linkedin.com. It adds $7.00 / month per connected account to your workspace subscription.',
       },

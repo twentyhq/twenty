@@ -4,4 +4,5 @@ export type ConnectedAccountBilledEvent = {
   handle: string;
   userWorkspaceId: string;
   connectionProviderDisplayName: string;
+  billedAt: string;
 };
