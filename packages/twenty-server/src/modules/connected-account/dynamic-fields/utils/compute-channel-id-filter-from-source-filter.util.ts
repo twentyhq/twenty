@@ -15,7 +15,7 @@ const isSourceMatchingFilter = ({
   dynamicFieldName,
   dynamicFieldFilter,
 }: {
-  source: ChannelAssociationSource;
+  source: Pick<ChannelAssociationSource, 'handle' | 'accountOwnerId'>;
   dynamicFieldName: string;
   dynamicFieldFilter: StringFilter & UUIDFilter;
 }): boolean => {
