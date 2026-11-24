@@ -2,7 +2,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { In } from 'typeorm';
 
-import { type AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795528202227-add-default-layout-navigation-menu-items.command';
+import { type AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795528202227-add-default-layout-navigation-menu-items.command';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -50,7 +50,7 @@ const removeDefaultLayoutItems = async () => {
   ]);
 };
 
-describe('2-63 workspace command - add default layout navigation menu items (integration)', () => {
+describe('2-64 workspace command - add default layout navigation menu items (integration)', () => {
   let command: AddDefaultLayoutNavigationMenuItemsCommand;
   let navigationMenuItemsBefore: NavigationMenuItemRow[];
 

@@ -1,4 +1,4 @@
-import { buildDefaultLayoutNavigationMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-63/utils/build-default-layout-navigation-menu-items-to-create.util';
+import { buildDefaultLayoutNavigationMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-64/utils/build-default-layout-navigation-menu-items-to-create.util';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { STANDARD_NAVIGATION_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant';
 

@@ -7,20 +7,20 @@ import { v4 } from 'uuid';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildDefaultLayoutNavigationMenuItemsToCreate } from 'src/database/commands/upgrade-version-command/2-63/utils/build-default-layout-navigation-menu-items-to-create.util';
+import { buildFavoritesNavigationMenuSectionToCreate } from 'src/database/commands/upgrade-version-command/2-64/utils/build-favorites-navigation-menu-section-to-create.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.63.0', 1795528202227)
+@RegisteredWorkspaceCommand('2.64.0', 1795527933153)
 @Command({
-  name: 'upgrade:2-63:add-default-layout-navigation-menu-items',
+  name: 'upgrade:2-64:add-favorites-navigation-menu-section',
   description:
-    'Add the Inbox section at the top of Home and the Chats tab to the navigation menu',
+    'Add the standard Favorites section at the top of Home in the navigation menu',
 })
-export class AddDefaultLayoutNavigationMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
+export class AddFavoritesNavigationMenuSectionCommand extends ProvisionedWorkspaceCommandRunner {
   @Inject(WorkspaceCacheService)
   private readonly workspaceCacheService: WorkspaceCacheService;
 
@@ -50,23 +50,22 @@ export class AddDefaultLayoutNavigationMenuItemsCommand extends ProvisionedWorks
         { workspaceId },
       );
 
-    const navigationMenuItemsToCreate =
-      buildDefaultLayoutNavigationMenuItemsToCreate({
-        navigationMenuItems: Object.values(
-          flatNavigationMenuItemMaps.byUniversalIdentifier,
-        ).filter(isDefined),
-        generateId: v4,
-        twentyStandardApplication: twentyStandardFlatApplication,
-        workspaceId,
-        now: new Date().toISOString(),
-      });
+    const favoritesSection = buildFavoritesNavigationMenuSectionToCreate({
+      navigationMenuItems: Object.values(
+        flatNavigationMenuItemMaps.byUniversalIdentifier,
+      ).filter(isDefined),
+      sectionId: v4(),
+      twentyStandardApplication: twentyStandardFlatApplication,
+      workspaceId,
+      now: new Date().toISOString(),
+    });
 
-    if (navigationMenuItemsToCreate.length === 0) {
+    if (!isDefined(favoritesSection)) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: adding ${navigationMenuItemsToCreate.length} default sidebar items (Inbox section, Chats tab)`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: adding the Favorites sidebar section at the top of Home`,
     );
 
     if (options.dryRun) {
@@ -83,7 +82,7 @@ export class AddDefaultLayoutNavigationMenuItemsCommand extends ProvisionedWorks
             twentyStandardFlatApplication.universalIdentifier,
           allFlatEntityOperationByMetadataName: {
             navigationMenuItem: {
-              flatEntityToCreate: navigationMenuItemsToCreate,
+              flatEntityToCreate: [favoritesSection],
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
