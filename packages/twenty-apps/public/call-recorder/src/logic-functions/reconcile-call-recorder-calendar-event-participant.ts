@@ -12,6 +12,7 @@ import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functio
 import { type CallRecorderReconciliationResult } from 'src/logic-functions/types/call-recorder-reconciliation-result.type';
 import { getCalendarEventIdsFromParticipantEvents } from 'src/logic-functions/domain/get-calendar-event-ids-from-participant-events.util';
 import { fetchMemberRecordingPreferenceByUserWorkspaceId } from 'src/logic-functions/data/fetch-member-recording-preference-by-user-workspace-id.util';
+import { fetchUpcomingCalendarEvents } from 'src/logic-functions/data/fetch-upcoming-calendar-events.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 
@@ -53,12 +54,30 @@ export const reconcileCallRecorderCalendarEventParticipantHandler = async (
     };
   }
 
+  const client = new CoreApiClient({ fetch: fetchWithRateLimitRetry });
+  const upcomingCalendarEventIds = new Set(
+    (await fetchUpcomingCalendarEvents(client, new Date())).map(
+      (upcomingCalendarEvent) => upcomingCalendarEvent.id,
+    ),
+  );
+  const upcomingChangedCalendarEventIds = calendarEventIds.filter(
+    (calendarEventId) => upcomingCalendarEventIds.has(calendarEventId),
+  );
+
+  if (!isNonEmptyArray(upcomingChangedCalendarEventIds)) {
+    return { skipped: true, reason: 'no upcoming calendar event' };
+  }
+
   const reconciliationResults = await reconcileCallRecorderForCalendarEventIds({
-    client: new CoreApiClient({ fetch: fetchWithRateLimitRetry }),
-    calendarEventIds,
+    client,
+    calendarEventIds: upcomingChangedCalendarEventIds,
   });
 
-  return { reconciled: true, calendarEventIds, reconciliationResults };
+  return {
+    reconciled: true,
+    calendarEventIds: upcomingChangedCalendarEventIds,
+    reconciliationResults,
+  };
 };
 
 export default defineLogicFunction({

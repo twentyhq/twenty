@@ -7,6 +7,7 @@ import { type MemberRecordingPreference } from 'src/logic-functions/types/member
 
 const reconcileMock = vi.hoisted(() => vi.fn());
 const fetchMemberRecordingPreferencesMock = vi.hoisted(() => vi.fn());
+const fetchUpcomingCalendarEventsMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({ CoreApiClient: class {} }));
 
@@ -21,6 +22,10 @@ vi.mock(
       fetchMemberRecordingPreferencesMock,
   }),
 );
+
+vi.mock('src/logic-functions/data/fetch-upcoming-calendar-events.util', () => ({
+  fetchUpcomingCalendarEvents: fetchUpcomingCalendarEventsMock,
+}));
 
 const buildBatch = (calendarEventIds: string[]) => ({
   events: calendarEventIds.map((calendarEventId, index) => ({
@@ -42,10 +47,16 @@ const setMemberRecordingPreferences = (
     ),
   );
 
+const setUpcomingCalendarEventIds = (calendarEventIds: string[]) =>
+  fetchUpcomingCalendarEventsMock.mockResolvedValue(
+    calendarEventIds.map((id) => ({ id, startsAt: undefined })),
+  );
+
 describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     reconcileMock.mockResolvedValue([]);
+    setUpcomingCalendarEventIds(['calendar-event-1', 'calendar-event-2']);
   });
 
   it.each<[MemberRecordingPreference]>([['INTERNAL'], ['EXTERNAL']])(
@@ -73,6 +84,31 @@ describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
 
   it('does nothing when no member records by internal or external meetings', async () => {
     setMemberRecordingPreferences(['ALL', 'NONE']);
+
+    const result = await reconcileCallRecorderCalendarEventParticipantHandler(
+      buildBatch(['calendar-event-1']),
+    );
+
+    expect(reconcileMock).not.toHaveBeenCalled();
+    expect(result).toMatchObject({ skipped: true });
+  });
+
+  it('leaves out meetings that are not upcoming', async () => {
+    setMemberRecordingPreferences(['INTERNAL']);
+    setUpcomingCalendarEventIds(['calendar-event-2']);
+
+    await reconcileCallRecorderCalendarEventParticipantHandler(
+      buildBatch(['calendar-event-1', 'calendar-event-2']),
+    );
+
+    expect(reconcileMock).toHaveBeenCalledWith(
+      expect.objectContaining({ calendarEventIds: ['calendar-event-2'] }),
+    );
+  });
+
+  it('does nothing when none of the meetings is upcoming', async () => {
+    setMemberRecordingPreferences(['EXTERNAL']);
+    setUpcomingCalendarEventIds([]);
 
     const result = await reconcileCallRecorderCalendarEventParticipantHandler(
       buildBatch(['calendar-event-1']),
