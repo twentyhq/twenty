@@ -43,12 +43,19 @@ export const rule = defineRule({
     return {
       ...visitors,
       ClassDeclaration: (node: any): void => {
-        visitors.ClassDeclaration?.(node);
+        const hasRootOperations = hasMemberDecoratedWith(
+          node,
+          ROOT_OPERATION_DECORATOR_NAMES,
+        );
 
-        if (
-          !hasMemberDecoratedWith(node, RESOLVE_FIELD_DECORATOR_NAMES) ||
-          !hasMemberDecoratedWith(node, ROOT_OPERATION_DECORATOR_NAMES)
-        ) {
+        // The root rule already reports class-level guard issues on a class with root operations
+        if (!hasRootOperations) {
+          visitors.ClassDeclaration?.(node);
+
+          return;
+        }
+
+        if (!hasMemberDecoratedWith(node, RESOLVE_FIELD_DECORATOR_NAMES)) {
           return;
         }
 

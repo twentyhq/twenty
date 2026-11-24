@@ -85,6 +85,37 @@ ruleTester.run(RULE_NAME, rule, {
   invalid: [
     {
       code: `
+        @UseGuards(AccessPolicyGuard(VIEW_READ_ACCESS_POLICY))
+        @UseGuards(CustomPermissionGuard)
+        class TestResolver {
+          @Query()
+          testQuery() {}
+
+          @ResolveField(() => String)
+          @UseGuards(NoPermissionGuard)
+          testField() {}
+        }
+      `,
+      errors: [
+        { messageId: 'classGuardOnRootsAndFieldResolvers' },
+        { messageId: 'classGuardOnRootsAndFieldResolvers' },
+      ],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(NoPermissionGuard)
+        @UseGuards(CustomPermissionGuard)
+        class TestResolver {
+          @ResolveField(() => String)
+          testField() {}
+        }
+      `,
+      errors: [{ messageId: 'stackedUseGuards' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
         class TestResolver {
           @ResolveField(() => String)
           testField() {}

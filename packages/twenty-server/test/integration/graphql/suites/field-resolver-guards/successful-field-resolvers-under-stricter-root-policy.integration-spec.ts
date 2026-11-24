@@ -9,13 +9,14 @@ import { setupApplicationWithResources } from 'test/integration/metadata/suites/
 import { setupApplicationWithVariable } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
-// A member without permission flags is admitted by the looser roots and
-// refused by the policies of the root operations in these resolver classes
+// Where a looser root returns the type, a member without permission flags reaches
+// the fields through it; otherwise the fields are reached through their own roots
 describe('Field resolvers of a resolver class whose root operations require a stricter policy', () => {
   it('should resolve the Application fields for a member without permission flag', async () => {
     const application = await setupApplicationWithVariable({
@@ -225,7 +226,7 @@ describe('Field resolvers of a resolver class whose root operations require a st
     }
   });
 
-  it('should resolve the AgentChatThread fields for an admin', async () => {
+  it('should resolve the AgentChatThread fields through their own root, the only one returning the type', async () => {
     const response = await makeMetadataApiRequest({
       query: gql`
         mutation CreateChatThread {
@@ -252,13 +253,15 @@ describe('Field resolvers of a resolver class whose root operations require a st
         totalOutputCredits: 0,
       });
     } finally {
-      await destroyAgentChatThread({
-        threadId: response.body.data.createChatThread.id,
-      });
+      const threadId = response.body.data?.createChatThread?.id;
+
+      if (isDefined(threadId)) {
+        await destroyAgentChatThread({ threadId });
+      }
     }
   });
 
-  it('should resolve the DpaAgreement field for an admin', async () => {
+  it('should resolve the DpaAgreement field through its own root, the only one returning the type', async () => {
     const [{ id: agreementId }] = await globalThis.testDataSource.query(
       `INSERT INTO core."dpaAgreement"
          ("type", "templateVersion", "region", "processorEntity",
@@ -293,7 +296,7 @@ describe('Field resolvers of a resolver class whose root operations require a st
     }
   });
 
-  it('should resolve the CalendarChannel field for an admin', async () => {
+  it('should resolve the CalendarChannel field through its own root, the only one returning the type', async () => {
     const response = await makeMetadataApiRequest({
       query: gql`
         query MyCalendarChannels {

@@ -789,20 +789,25 @@ describe('AccessPolicyGuard', () => {
     });
 
     it('should refuse a principal the same way as on a root operation', async () => {
-      const fieldResult = await runGuardedFieldQuery({
+      const query = {
         guard: USER_SESSIONS_ONLY_GUARD,
         request: REQUEST_BY_PRINCIPAL_VARIANT.apiKey,
         providers: [ACCESS_POLICY_SERVICE_PROVIDER],
-      });
+      };
+
+      const fieldResult = await runGuardedFieldQuery(query);
+      const rootResult = await runGuardedQuery(query);
+
+      const fieldError = fieldResult.errors?.[0];
+      const rootError = rootResult.errors?.[0];
 
       expect(fieldResult.errors).toHaveLength(1);
-      expect(fieldResult.errors?.[0]?.path).toEqual(['parent', 'guardedField']);
-      expect(fieldResult.errors?.[0]?.message).toBe(
-        AUTH_PRINCIPAL_REFUSED_MESSAGE,
-      );
-      expect(fieldResult.errors?.[0]?.originalError).toBeInstanceOf(
-        ForbiddenException,
-      );
+      expect(fieldError?.path).toEqual(['parent', 'guardedField']);
+      expect(fieldError?.message).toBe(AUTH_PRINCIPAL_REFUSED_MESSAGE);
+      expect(fieldError?.originalError).toBeInstanceOf(ForbiddenException);
+      expect(rootError?.originalError).toBeInstanceOf(ForbiddenException);
+      expect(fieldError?.message).toBe(rootError?.message);
+      expect(fieldError?.extensions).toEqual(rootError?.extensions);
     });
 
     it('should report a request without credentials as UNAUTHENTICATED', async () => {
