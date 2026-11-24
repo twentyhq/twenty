@@ -47,7 +47,7 @@ const findPathUnsupportedInStoredFormula = ({
   fields,
 }: {
   paths: string[];
-  fields: ValidationRuleFieldDescriptor[];
+  fields: Pick<ValidationRuleFieldDescriptor, 'name' | 'relationType'>[];
 }): string | undefined => {
   const toOneRelationNames = new Set(
     fields

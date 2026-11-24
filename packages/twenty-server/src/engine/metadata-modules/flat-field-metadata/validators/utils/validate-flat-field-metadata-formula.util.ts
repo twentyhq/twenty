@@ -231,17 +231,22 @@ export const validateFlatFieldMetadataFormula = ({
       fields,
     }),
     // Only the types are checked here, so any table stands for the related records
-    resolveAggregationSource: (relationFieldName) =>
-      fields.some(
+    resolveAggregationSource: (relationFieldName) => {
+      const isToManyRelation = fields.some(
         (field) =>
           field.name === relationFieldName &&
           field.relationType === RelationType.ONE_TO_MANY,
-      )
-        ? {
-            tableSql: escapeIdentifier(relationFieldName),
-            joinColumnName: 'id',
-          }
-        : undefined,
+      );
+
+      if (!isToManyRelation) {
+        return undefined;
+      }
+
+      return {
+        tableSql: escapeIdentifier(relationFieldName),
+        joinColumnName: 'id',
+      };
+    },
   });
 
   if (!sqlCompilation.isValid) {
