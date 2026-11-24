@@ -30,6 +30,7 @@ import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { TwoFactorAuthenticationMethodSummaryDTO } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-method.dto';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { ObjectRecordsPermissionsDTO } from 'src/engine/permissions/dtos/object-records-permissions.dto';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
@@ -70,8 +71,14 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
   @Column()
   userId: string;
 
-  @Column({ nullable: true })
-  defaultAvatarUrl: string;
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    select: false,
+    insert: false,
+    update: false,
+  })
+  defaultAvatarUrl: WasRemovedInUpgrade<string>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

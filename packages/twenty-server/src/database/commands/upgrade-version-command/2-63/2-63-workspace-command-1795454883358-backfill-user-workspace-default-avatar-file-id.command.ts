@@ -69,15 +69,19 @@ export class BackfillUserWorkspaceDefaultAvatarFileIdCommand extends Provisioned
       `${options.dryRun ? '[DRY RUN] Would backfill' : 'Backfilling'} ${avatarFilesToBackfill.length} default avatar file id(s) in workspace ${workspaceId}, ${avatarFiles.length - avatarFilesToBackfill.length} pointing to a missing file`,
     );
 
-    if (options.dryRun) {
+    if (options.dryRun || !isNonEmptyArray(avatarFilesToBackfill)) {
       return;
     }
 
-    for (const { userWorkspaceId, fileId } of avatarFilesToBackfill) {
-      await this.dataSource.query(
-        `UPDATE "core"."userWorkspace" SET "defaultAvatarFileId" = $1 WHERE "id" = $2`,
-        [fileId, userWorkspaceId],
-      );
-    }
+    await this.dataSource.query(
+      `UPDATE "core"."userWorkspace" AS "userWorkspace"
+       SET "defaultAvatarFileId" = "backfill"."fileId"
+       FROM unnest($1::uuid[], $2::uuid[]) AS "backfill"("userWorkspaceId", "fileId")
+       WHERE "userWorkspace"."id" = "backfill"."userWorkspaceId"`,
+      [
+        avatarFilesToBackfill.map(({ userWorkspaceId }) => userWorkspaceId),
+        avatarFilesToBackfill.map(({ fileId }) => fileId),
+      ],
+    );
   }
 }
