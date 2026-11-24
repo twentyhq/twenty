@@ -1,7 +1,6 @@
 const UPDATED_AT_FIELD_NAME = 'updatedAt';
 
-// Every update moves updatedAt, which record events leave out of their updated fields.
-// Only for related records: on the record itself, the recompute's own write would mark it again
+// For related records only: events omit updatedAt, and on the record itself the recompute's write would loop
 export const isWatchedFieldUpdated = ({
   updatedFields,
   watchedFieldNames,
