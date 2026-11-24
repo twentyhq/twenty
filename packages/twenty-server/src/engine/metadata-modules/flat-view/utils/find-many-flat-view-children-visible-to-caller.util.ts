@@ -7,8 +7,8 @@ import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filte
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
-import { isViewAvailableToUser } from 'src/engine/metadata-modules/view/utils/is-view-available-to-user.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 
 type FlatViewChildByIdsKey = {
   viewFilterGroupIds: FlatViewFilterGroup;
@@ -18,14 +18,13 @@ type FlatViewChildByIdsKey = {
 };
 
 // Without a viewId, the children of every view available to the user
-export const findManyFlatViewChildrenAvailableToUser = <
+export const findManyFlatViewChildrenVisibleToCaller = <
   TFlatViewChildIdsKey extends keyof FlatViewChildByIdsKey,
 >({
   flatViewMaps,
   flatViewChildMaps,
   flatViewChildIdsKey,
   viewId,
-  userWorkspaceId,
 }: {
   flatViewMaps: FlatEntityMaps<FlatView>;
   flatViewChildMaps: FlatEntityMaps<
@@ -33,14 +32,12 @@ export const findManyFlatViewChildrenAvailableToUser = <
   >;
   flatViewChildIdsKey: TFlatViewChildIdsKey;
   viewId?: string;
-  userWorkspaceId: string | undefined;
 }): FlatViewChildByIdsKey[TFlatViewChildIdsKey][] => {
   const flatViews = isDefined(viewId)
-    ? [findFlatViewAvailableToUser({ viewId, flatViewMaps, userWorkspaceId })]
+    ? [findFlatViewVisibleToCaller({ viewId, flatViewMaps })]
     : Object.values(flatViewMaps.byUniversalIdentifier).filter(
         (flatView) =>
-          isDefined(flatView) &&
-          isViewAvailableToUser({ flatView, userWorkspaceId }),
+          isDefined(flatView) && isViewVisibleToCaller({ view: flatView }),
       );
 
   return flatViews
