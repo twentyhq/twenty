@@ -8920,7 +8920,6 @@ export type View = {
   calendarLayout?: Maybe<ViewCalendarLayout>;
   createdAt: Scalars['DateTime']['output'];
   createdByUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   groupLoadLimit?: Maybe<Scalars['Int']['output']>;
   icon: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
@@ -8973,7 +8972,6 @@ export type ViewField = {
   aggregateOperation?: Maybe<AggregateOperations>;
   applicationId: Scalars['UUID']['output'];
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
@@ -8997,7 +8995,6 @@ export type ViewField = {
 export type ViewFieldGroup = {
   __typename?: 'ViewFieldGroup';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
@@ -9080,7 +9077,6 @@ export type ViewFieldRelationScopeSortInput = {
 export type ViewFilter = {
   __typename?: 'ViewFilter';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   operand: ViewFilterOperand;
@@ -9097,7 +9093,6 @@ export type ViewFilter = {
 export type ViewFilterGroup = {
   __typename?: 'ViewFilterGroup';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   logicalOperator: ViewFilterGroupLogicalOperator;
   parentViewFilterGroupId?: Maybe<Scalars['UUID']['output']>;
@@ -9135,7 +9130,6 @@ export enum ViewFilterOperand {
 export type ViewGroup = {
   __typename?: 'ViewGroup';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldValue: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isVisible: Scalars['Boolean']['output'];
@@ -9167,7 +9161,6 @@ export enum ViewPresetFilter {
 export type ViewSort = {
   __typename?: 'ViewSort';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   direction: ViewSortDirection;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];

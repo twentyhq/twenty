@@ -5873,7 +5873,6 @@ input UpdateViewFieldGroupInput {
 }
 
 input UpdateViewFieldGroupInputUpdates {
-  deletedAt: String @deprecated(reason: "Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.")
   isVisible: Boolean
   name: String
   position: Float
@@ -6493,7 +6492,6 @@ type View {
   calendarLayout: ViewCalendarLayout
   createdAt: DateTime!
   createdByUserWorkspaceId: UUID
-  deletedAt: DateTime
   groupLoadLimit: Int
   icon: String!
   id: UUID!
@@ -6541,7 +6539,6 @@ type ViewField {
   aggregateOperation: AggregateOperations
   applicationId: UUID!
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
@@ -6563,7 +6560,6 @@ type ViewField {
 
 type ViewFieldGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   isActive: Boolean!
   isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
@@ -6640,7 +6636,6 @@ input ViewFieldRelationScopeSortInput {
 
 type ViewFilter {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   operand: ViewFilterOperand!
@@ -6656,7 +6651,6 @@ type ViewFilter {
 
 type ViewFilterGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   logicalOperator: ViewFilterGroupLogicalOperator!
   parentViewFilterGroupId: UUID
@@ -6693,7 +6687,6 @@ enum ViewFilterOperand {
 
 type ViewGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldValue: String!
   id: UUID!
   isVisible: Boolean!
@@ -6724,7 +6717,6 @@ enum ViewPresetFilter {
 
 type ViewSort {
   createdAt: DateTime!
-  deletedAt: DateTime
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
