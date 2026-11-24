@@ -1,22 +1,23 @@
 import { msg } from '@lingui/core/macro';
 import {
   type DocumentNode,
-  type FieldNode,
   type FragmentDefinitionNode,
   type SelectionNode,
   Kind,
 } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
-import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
+import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/utils/graphql-build-fragment-map.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export type GraphqlQueryComplexityLimits = {
   maximumAllowedFields?: number;
   maximumAllowedRootResolvers?: number;
   maximumAllowedNestedFields?: number;
-  checkDuplicateRootResolvers?: boolean;
+  shouldCheckDuplicateRootResolvers?: boolean;
 };
+
+type FragmentMap = Map<string, FragmentDefinitionNode>;
 
 type FragmentMetadata = {
   fieldsCount: number;
@@ -24,27 +25,35 @@ type FragmentMetadata = {
   rootFieldNames: Set<string>;
 };
 
-type AnalysisResult = {
+type SelectionSetAnalysis = {
+  fieldsCount: number;
+  maxDepth: number;
+  rootFieldNames: string[];
+};
+
+type DocumentAnalysis = {
   requestedFieldsCount: number;
   requestedRootResolversCount: number;
   maxNestedDepth: number;
-  rootResolverNames: string[];
 };
 
-export const validateGraphqlQueryComplexityOrThrow = (
-  document: DocumentNode,
-  {
+export const validateGraphqlQueryComplexityOrThrow = ({
+  document,
+  limits: {
     maximumAllowedFields,
     maximumAllowedRootResolvers,
     maximumAllowedNestedFields,
-    checkDuplicateRootResolvers = false,
-  }: GraphqlQueryComplexityLimits,
-): void => {
-  const analysis = analyzeDocument(
+    shouldCheckDuplicateRootResolvers = false,
+  },
+}: {
+  document: DocumentNode;
+  limits: GraphqlQueryComplexityLimits;
+}): void => {
+  const analysis = analyzeDocument({
     document,
-    graphQLBuildFragmentMap(document),
-    checkDuplicateRootResolvers,
-  );
+    fragmentMap: graphQLBuildFragmentMap(document),
+    shouldCheckDuplicateRootResolvers,
+  });
 
   if (
     isDefined(maximumAllowedNestedFields) &&
@@ -80,40 +89,41 @@ export const validateGraphqlQueryComplexityOrThrow = (
   }
 };
 
-const resolveFragmentMetadata = (
-  fragmentName: string,
-  fragmentMap: Map<string, FragmentDefinitionNode>,
-): FragmentMetadata | undefined => {
+const resolveFragmentMetadata = ({
+  fragmentName,
+  fragmentMap,
+}: {
+  fragmentName: string;
+  fragmentMap: FragmentMap;
+}): FragmentMetadata | undefined => {
   const fragment = fragmentMap.get(fragmentName);
 
   if (!isDefined(fragment)) {
     return undefined;
   }
 
-  const metadata = analyzeSelectionSet(
-    fragment.selectionSet.selections,
+  const metadata = analyzeSelectionSet({
+    selections: fragment.selectionSet.selections,
     fragmentMap,
-    0,
-  );
+    currentDepth: 0,
+  });
 
-  const result: FragmentMetadata = {
+  return {
     fieldsCount: metadata.fieldsCount,
     depth: metadata.maxDepth,
     rootFieldNames: new Set(metadata.rootFieldNames),
   };
-
-  return result;
 };
 
-const analyzeSelectionSet = (
-  selections: readonly SelectionNode[],
-  fragmentMap: Map<string, FragmentDefinitionNode>,
-  currentDepth: number,
-): {
-  fieldsCount: number;
-  maxDepth: number;
-  rootFieldNames: string[];
-} => {
+const analyzeSelectionSet = ({
+  selections,
+  fragmentMap,
+  currentDepth,
+}: {
+  selections: readonly SelectionNode[];
+  fragmentMap: FragmentMap;
+  currentDepth: number;
+}): SelectionSetAnalysis => {
   let fieldsCount = 0;
   let maxDepth = currentDepth;
   const rootFieldNames: string[] = [];
@@ -121,10 +131,7 @@ const analyzeSelectionSet = (
   for (const selection of selections) {
     switch (selection.kind) {
       case Kind.FIELD: {
-        const fieldNode = selection as FieldNode;
-
-        // Skip introspection fields
-        if (fieldNode.name.value.startsWith('__')) {
+        if (selection.name.value.startsWith('__')) {
           continue;
         }
 
@@ -134,15 +141,15 @@ const analyzeSelectionSet = (
         maxDepth = Math.max(maxDepth, fieldDepth);
 
         if (currentDepth === 0) {
-          rootFieldNames.push(fieldNode.name.value);
+          rootFieldNames.push(selection.name.value);
         }
 
-        if (fieldNode.selectionSet) {
-          const nestedResult = analyzeSelectionSet(
-            fieldNode.selectionSet.selections,
+        if (isDefined(selection.selectionSet)) {
+          const nestedResult = analyzeSelectionSet({
+            selections: selection.selectionSet.selections,
             fragmentMap,
-            fieldDepth,
-          );
+            currentDepth: fieldDepth,
+          });
 
           fieldsCount += nestedResult.fieldsCount;
           maxDepth = Math.max(maxDepth, nestedResult.maxDepth);
@@ -151,35 +158,30 @@ const analyzeSelectionSet = (
       }
 
       case Kind.INLINE_FRAGMENT: {
-        if (selection.selectionSet) {
-          const nestedResult = analyzeSelectionSet(
-            selection.selectionSet.selections,
-            fragmentMap,
-            currentDepth,
-          );
+        const nestedResult = analyzeSelectionSet({
+          selections: selection.selectionSet.selections,
+          fragmentMap,
+          currentDepth,
+        });
 
-          fieldsCount += nestedResult.fieldsCount;
-          maxDepth = Math.max(maxDepth, nestedResult.maxDepth);
-
-          for (const name of nestedResult.rootFieldNames) {
-            rootFieldNames.push(name);
-          }
-        }
+        fieldsCount += nestedResult.fieldsCount;
+        maxDepth = Math.max(maxDepth, nestedResult.maxDepth);
+        rootFieldNames.push(...nestedResult.rootFieldNames);
         break;
       }
 
       case Kind.FRAGMENT_SPREAD: {
-        const fragmentName = selection.name.value;
-        const metadata = resolveFragmentMetadata(fragmentName, fragmentMap);
+        const metadata = resolveFragmentMetadata({
+          fragmentName: selection.name.value,
+          fragmentMap,
+        });
 
         if (isDefined(metadata)) {
           fieldsCount += metadata.fieldsCount;
           maxDepth = Math.max(maxDepth, currentDepth + metadata.depth);
 
           if (currentDepth === 0) {
-            for (const name of metadata.rootFieldNames) {
-              rootFieldNames.push(name);
-            }
+            rootFieldNames.push(...metadata.rootFieldNames);
           }
         }
         break;
@@ -190,46 +192,46 @@ const analyzeSelectionSet = (
   return { fieldsCount, maxDepth, rootFieldNames };
 };
 
-const analyzeDocument = (
-  document: DocumentNode,
-  fragmentMap: Map<string, FragmentDefinitionNode>,
-  checkDuplicateRootResolvers: boolean,
-): AnalysisResult => {
+const analyzeDocument = ({
+  document,
+  fragmentMap,
+  shouldCheckDuplicateRootResolvers,
+}: {
+  document: DocumentNode;
+  fragmentMap: FragmentMap;
+  shouldCheckDuplicateRootResolvers: boolean;
+}): DocumentAnalysis => {
   let requestedFieldsCount = 0;
   let requestedRootResolversCount = 0;
   let maxNestedDepth = 0;
-  const rootResolverNames: string[] = [];
+  const rootResolverNames = new Set<string>();
 
   for (const definition of document.definitions) {
-    if (
-      definition.kind === Kind.OPERATION_DEFINITION &&
-      definition.selectionSet
-    ) {
-      const result = analyzeSelectionSet(
-        definition.selectionSet.selections,
-        fragmentMap,
-        0,
-      );
+    if (definition.kind !== Kind.OPERATION_DEFINITION) {
+      continue;
+    }
 
-      requestedFieldsCount += result.fieldsCount;
-      maxNestedDepth = Math.max(maxNestedDepth, result.maxDepth);
+    const result = analyzeSelectionSet({
+      selections: definition.selectionSet.selections,
+      fragmentMap,
+      currentDepth: 0,
+    });
 
-      for (const name of result.rootFieldNames) {
-        requestedRootResolversCount++;
-        if (checkDuplicateRootResolvers && rootResolverNames.includes(name)) {
-          throw new UserInputError(`Duplicate root resolver: "${name}"`, {
-            userFriendlyMessage: msg`Duplicate root resolver found. Each root resolver can only be called once per document.`,
-          });
-        }
-        rootResolverNames.push(name);
+    requestedFieldsCount += result.fieldsCount;
+    maxNestedDepth = Math.max(maxNestedDepth, result.maxDepth);
+
+    for (const name of result.rootFieldNames) {
+      requestedRootResolversCount++;
+
+      if (shouldCheckDuplicateRootResolvers && rootResolverNames.has(name)) {
+        throw new UserInputError(`Duplicate root resolver: "${name}"`, {
+          userFriendlyMessage: msg`Duplicate root resolver found. Each root resolver can only be called once per document.`,
+        });
       }
+
+      rootResolverNames.add(name);
     }
   }
 
-  return {
-    requestedFieldsCount,
-    requestedRootResolversCount,
-    maxNestedDepth,
-    rootResolverNames,
-  };
+  return { requestedFieldsCount, requestedRootResolversCount, maxNestedDepth };
 };

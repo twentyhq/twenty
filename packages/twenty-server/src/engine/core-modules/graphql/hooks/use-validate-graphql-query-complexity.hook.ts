@@ -29,7 +29,7 @@ export const useValidateGraphqlQueryComplexity = (
         ),
       });
 
-      validateGraphqlQueryComplexityOrThrow(document, limits);
+      validateGraphqlQueryComplexityOrThrow({ document, limits });
     };
   },
 });

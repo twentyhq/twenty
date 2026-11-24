@@ -1,7 +1,7 @@
 import { type DocumentNode, type FieldNode, Kind } from 'graphql';
 
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
-import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
+import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/utils/graphql-build-fragment-map.util';
 
 export const graphQLExtractTopLevelFields = (
   document: DocumentNode,

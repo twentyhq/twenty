@@ -48,7 +48,7 @@ export const adminPanelModuleFactory = async (
         maximumAllowedFields: twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
         maximumAllowedRootResolvers: 10,
         maximumAllowedNestedFields: 10,
-        checkDuplicateRootResolvers: true,
+        shouldCheckDuplicateRootResolvers: true,
       }),
     ],
     path: `/${ApiPath.AdminPanel}`,

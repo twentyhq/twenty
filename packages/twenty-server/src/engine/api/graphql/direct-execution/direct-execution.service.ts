@@ -23,11 +23,12 @@ import { computeGraphQLDirectExecutionQueryCost } from 'src/engine/api/graphql/d
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
 import { applyGraphqlVariableDefaults } from 'src/engine/api/graphql/direct-execution/utils/apply-graphql-variable-defaults.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
-import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
+import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/utils/graphql-build-fragment-map.util';
 import { graphQLBuildPartialResolveInfo } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-partial-resolve-info.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { graphQLFormatResultFromSelectedFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-format-result-from-selected-fields.util';
 import { getGraphqlFieldSelections } from 'src/engine/api/graphql/workspace-resolver-builder/utils/get-graphql-field-selections.util';
+import { getWorkspaceGraphqlQueryComplexityLimits } from 'src/engine/api/graphql/graphql-config/utils/get-workspace-graphql-query-complexity-limits.util';
 import { WorkspaceGraphqlSchemaSDLService } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/workspace-graphql-schema-sdl.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import { WorkspaceResolverRunnerService } from 'src/engine/api/graphql/direct-execution/services/workspace-resolver-runner.service';
@@ -144,13 +145,11 @@ export class DirectExecutionService {
         req.body.operationName,
       );
 
-      validateGraphqlQueryComplexityOrThrow(document, {
-        maximumAllowedFields:
-          this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
-        maximumAllowedRootResolvers: this.twentyConfigService.get(
-          'GRAPHQL_MAX_ROOT_RESOLVERS',
+      validateGraphqlQueryComplexityOrThrow({
+        document,
+        limits: getWorkspaceGraphqlQueryComplexityLimits(
+          this.twentyConfigService,
         ),
-        checkDuplicateRootResolvers: true,
       });
 
       const fragmentMap = graphQLBuildFragmentMap(document);

@@ -2,7 +2,7 @@ import { parse } from 'graphql';
 
 import { computeGraphQLDirectExecutionQueryCost } from 'src/engine/api/graphql/direct-execution/utils/compute-graphql-direct-execution-query-cost.util';
 import { extractArgumentsFromAst } from 'src/engine/api/graphql/direct-execution/utils/extract-arguments-from-ast.util';
-import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/direct-execution/utils/graphql-build-fragment-map.util';
+import { graphQLBuildFragmentMap } from 'src/engine/api/graphql/utils/graphql-build-fragment-map.util';
 import { graphQLExtractTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/graphql-extract-top-level-fields.util';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 

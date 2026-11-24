@@ -212,7 +212,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       const error = validateQuery(query, {
         maximumAllowedNestedFields: 5,
-        checkDuplicateRootResolvers: false,
+        shouldCheckDuplicateRootResolvers: false,
       });
 
       expect(error).toBeNull();
@@ -235,7 +235,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
 
       const error = validateQuery(query, {
         maximumAllowedNestedFields: 3,
-        checkDuplicateRootResolvers: false,
+        shouldCheckDuplicateRootResolvers: false,
       });
 
       expect(error).not.toBeNull();
@@ -273,7 +273,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
     });
   });
 
-  describe('checkDuplicateRootResolvers', () => {
+  describe('shouldCheckDuplicateRootResolvers', () => {
     it('should fail when duplicate root resolvers are detected', () => {
       const query = `
         query {
@@ -287,7 +287,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
       `;
 
       const error = validateQuery(query, {
-        checkDuplicateRootResolvers: true,
+        shouldCheckDuplicateRootResolvers: true,
       });
 
       expect(error).not.toBeNull();
@@ -308,7 +308,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
       `;
 
       const error = validateQuery(query, {
-        checkDuplicateRootResolvers: true,
+        shouldCheckDuplicateRootResolvers: true,
       });
 
       expect(error).not.toBeNull();
@@ -331,7 +331,7 @@ describe('useValidateGraphqlQueryComplexity', () => {
       `;
 
       const error = validateQuery(query, {
-        checkDuplicateRootResolvers: true,
+        shouldCheckDuplicateRootResolvers: true,
       });
 
       expect(error).not.toBeNull();

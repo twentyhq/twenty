@@ -13,6 +13,7 @@ import { ApiPath } from 'twenty-shared/types';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
+import { getWorkspaceGraphqlQueryComplexityLimits } from 'src/engine/api/graphql/graphql-config/utils/get-workspace-graphql-query-complexity-limits.util';
 import { useDirectExecution } from 'src/engine/api/graphql/direct-execution/hooks/use-direct-execution.hook';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 import { CoreEngineModule } from 'src/engine/core-modules/core-engine.module';
@@ -66,14 +67,9 @@ export class GraphQLConfigService implements GqlOptionsFactory<
         i18nService: this.i18nService,
         twentyConfigService: this.twentyConfigService,
       }),
-      useValidateGraphqlQueryComplexity({
-        maximumAllowedFields:
-          this.twentyConfigService.get('GRAPHQL_MAX_FIELDS'),
-        maximumAllowedRootResolvers: this.twentyConfigService.get(
-          'GRAPHQL_MAX_ROOT_RESOLVERS',
-        ),
-        checkDuplicateRootResolvers: true,
-      }),
+      useValidateGraphqlQueryComplexity(
+        getWorkspaceGraphqlQueryComplexityLimits(this.twentyConfigService),
+      ),
     ];
 
     if (Sentry.isInitialized()) {
