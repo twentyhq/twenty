@@ -9,12 +9,12 @@ export const resolveEffectiveFieldMetadataOptionColumns = ({
   universalFlatFieldMetadataOption: UniversalFlatFieldMetadataOption;
   workspaceCustomApplicationUniversalIdentifier?: string;
 }): FieldMetadataOptionColumns => {
-  const { value, label, color, position, isActive } =
+  const { value, label, color, description, position, isActive } =
     resolveEffectiveFlatEntity({
       metadataName: 'fieldMetadataOption',
       flatEntity: universalFlatFieldMetadataOption,
       authorContext: { workspaceCustomApplicationUniversalIdentifier },
     });
 
-  return { value, label, color, position, isActive };
+  return { value, label, color, description, position, isActive };
 };

@@ -58,6 +58,14 @@
     background: var(--t-background-transparent-lighter);
     border: var(--tw-chip-border-width) solid var(--t-border-color-strong);
   }
+  &[data-padding='sm'] {
+    --tw-chip-padding-start: var(--t-spacing-1);
+    --tw-chip-padding-end: var(--t-spacing-1);
+  }
+  &[data-padding='md'] {
+    --tw-chip-padding-start: var(--t-spacing-2);
+    --tw-chip-padding-end: var(--t-spacing-2);
+  }
   &:disabled,
   &[aria-disabled='true'],
   &[data-disabled] {

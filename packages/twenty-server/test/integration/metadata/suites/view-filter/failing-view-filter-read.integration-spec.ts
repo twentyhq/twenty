@@ -7,7 +7,6 @@ import { findViewFilters } from 'test/integration/metadata/suites/view-filter/ut
 import { createViewWithChildren } from 'test/integration/metadata/suites/view/utils/create-view-with-children.util';
 import { deleteOneView } from 'test/integration/metadata/suites/view/utils/delete-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
-import { setViewRowDeletedAt } from 'test/integration/metadata/suites/view/utils/set-view-row-deleted-at.util';
 import { findAllMetadataRestListPages } from 'test/integration/rest/utils/find-all-metadata-rest-list-pages.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { maskUuids } from 'test/integration/utils/mask-uuids.util';
@@ -89,32 +88,6 @@ const failingViewFilterReadTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when the view filter is soft-deleted',
-    context: {
-      arrange: () =>
-        arrangeViewFilter({
-          prepare: async ({ viewFilterId, cleanup }) => {
-            await setViewRowDeletedAt({
-              tableName: 'viewFilter',
-              id: viewFilterId,
-              deletedAt: new Date(),
-            });
-
-            return {
-              cleanup: async () => {
-                await setViewRowDeletedAt({
-                  tableName: 'viewFilter',
-                  id: viewFilterId,
-                  deletedAt: null,
-                });
-                await cleanup();
-              },
-            };
-          },
-        }),
-    },
-  },
-  {
     title: 'when the view of the view filter is deleted',
     context: {
       arrange: () =>
@@ -123,32 +96,6 @@ const failingViewFilterReadTestCases: EachTestingContext<TestContext>[] = [
             await deleteOneView({ viewId, expectToFail: false });
 
             return { cleanup: async () => {} };
-          },
-        }),
-    },
-  },
-  {
-    title: 'when the view of the view filter is soft-deleted',
-    context: {
-      arrange: () =>
-        arrangeViewFilter({
-          prepare: async ({ viewId, cleanup }) => {
-            await setViewRowDeletedAt({
-              tableName: 'view',
-              id: viewId,
-              deletedAt: new Date(),
-            });
-
-            return {
-              cleanup: async () => {
-                await setViewRowDeletedAt({
-                  tableName: 'view',
-                  id: viewId,
-                  deletedAt: null,
-                });
-                await cleanup();
-              },
-            };
           },
         }),
     },

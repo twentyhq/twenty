@@ -6,6 +6,7 @@ import {
   type FieldMetadataComplexOption,
   type TagColor,
 } from 'twenty-shared/types';
+import { OPTION_DESCRIPTION_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
 const OPTION_WITHOUT_LABEL: MalformedFieldOptionInput = {
@@ -53,6 +54,22 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
   {
     failing: [
       ...fuzzedOptionsStringFieldFailingTestCases,
+      {
+        title: 'should fail with a too long option description',
+        context: {
+          input: {
+            options: [
+              {
+                label: 'Option 1',
+                value: 'OPTION_1',
+                color: 'green',
+                position: 1,
+                description: 'a'.repeat(OPTION_DESCRIPTION_MAX_CHAR_LENGTH + 1),
+              },
+            ],
+          },
+        },
+      },
       {
         title: 'should fail with invalid option id',
         context: {
@@ -339,6 +356,31 @@ export const SELECT_AND_MULTI_SELECT_OPERATION_AGNOSTIC_SUCCESSFUL_AND_FAILING_T
               value: 'OPTION_1',
               color: 'gray',
               position: 1,
+            },
+          ],
+        },
+      },
+      {
+        title: 'should store a trimmed option description',
+        context: {
+          input: {
+            options: [
+              {
+                label: 'Option 1',
+                value: 'OPTION_1',
+                color: 'green',
+                position: 1,
+                description: '  Pricing sent, waiting for a signature  ',
+              },
+            ],
+          },
+          expectedOptions: [
+            {
+              label: 'Option 1',
+              value: 'OPTION_1',
+              color: 'green',
+              position: 1,
+              description: 'Pricing sent, waiting for a signature',
             },
           ],
         },

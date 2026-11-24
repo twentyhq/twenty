@@ -23,7 +23,6 @@ export const AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT = gql`
     id
     displayName
     loginToken
-    inviteHash
     personalInviteToken
     workspaceUrls {
       subdomainUrl

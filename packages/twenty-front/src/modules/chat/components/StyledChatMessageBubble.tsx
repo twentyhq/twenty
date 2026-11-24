@@ -1,22 +1,36 @@
 import { styled } from '@linaria/react';
 
+import { StyledChatMessageRow } from '@/chat/components/StyledChatMessageRow';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-export const StyledChatMessageBubble = styled.div<{
+type ChatMessageBubbleProps = {
   isUser?: boolean;
   isOtherMember?: boolean;
-}>`
-  background: ${({ isUser, isOtherMember }) => {
-    if (isOtherMember) {
-      return themeCssVariables.background.secondary;
-    }
+};
 
-    if (isUser) {
-      return themeCssVariables.background.tertiary;
-    }
+const getBubbleBackground = ({
+  isUser,
+  isOtherMember,
+  ownBackground,
+}: ChatMessageBubbleProps & { ownBackground: string }) => {
+  if (isOtherMember) {
+    return themeCssVariables.background.secondary;
+  }
 
-    return 'transparent';
-  }};
+  if (isUser) {
+    return ownBackground;
+  }
+
+  return 'transparent';
+};
+
+export const StyledChatMessageBubble = styled.div<ChatMessageBubbleProps>`
+  background: ${({ isUser, isOtherMember }) =>
+    getBubbleBackground({
+      isUser,
+      isOtherMember,
+      ownBackground: themeCssVariables.background.tertiary,
+    })};
   border-radius: ${({ isUser }) =>
     isUser ? themeCssVariables.border.radius.lgRound : '0'};
   box-shadow: ${({ isOtherMember }) =>
@@ -33,7 +47,11 @@ export const StyledChatMessageBubble = styled.div<{
   max-width: 100%;
   overflow-wrap: break-word;
   padding: ${({ isUser }) =>
-    isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
+    isUser
+      ? `${themeCssVariables.spacing[0.5]} ${themeCssVariables.spacing[3]}`
+      : '0'};
+  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
   white-space: normal;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
   /* Pre-wrap on the container turns newlines between blocks into spacing; only code pre-wraps. */
@@ -75,5 +93,14 @@ export const StyledChatMessageBubble = styled.div<{
     color: ${themeCssVariables.font.color.secondary};
     margin: ${themeCssVariables.spacing[2]} 0;
     padding-left: ${themeCssVariables.spacing[2]};
+  }
+
+  ${StyledChatMessageRow}[data-hover-card]:hover & {
+    background: ${({ isUser, isOtherMember }) =>
+      getBubbleBackground({
+        isUser,
+        isOtherMember,
+        ownBackground: themeCssVariables.background.quaternary,
+      })};
   }
 `;

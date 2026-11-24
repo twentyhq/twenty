@@ -25,7 +25,7 @@ export const WorkflowExpectedOutputBodyInput = ({
   const [errorVisible, setErrorVisible] = useState(false);
 
   const handleChange = (value: string | null) => {
-    if (readonly === true) {
+    if (readonly) {
       return;
     }
 

@@ -33,6 +33,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const TIMELINE_ACTIVITY_TYPE_WRITE_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -62,6 +63,7 @@ export class TimelineActivityTypeResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async label(
     @Parent() timelineActivityType: TimelineActivityTypeDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
