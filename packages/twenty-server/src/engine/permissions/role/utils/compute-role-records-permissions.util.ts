@@ -194,7 +194,11 @@ const buildUnreadableAndUneditableFields = ({
   };
 };
 
-const NO_FIELDS = { unreadableFields: [], uneditableFields: [] };
+const NO_FIELDS = {
+  unreadableFields: [],
+  uneditableFields: [],
+  unreadableNestedFields: [],
+};
 
 const buildUnreadableNestedFields = (
   fieldPermissions: RoleDefinitionForRecordsPermissions['fieldPermissions'],
@@ -206,7 +210,7 @@ const buildUnreadableNestedFields = (
         : [],
   );
 
-  return unreadableNestedFields.length > 0 ? { unreadableNestedFields } : {};
+  return { unreadableNestedFields };
 };
 
 const buildObjectRecordsPermissions = ({
