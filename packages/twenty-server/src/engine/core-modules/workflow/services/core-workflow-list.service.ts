@@ -6,56 +6,28 @@ import {
   decodeCursor,
   encodeCursorData,
 } from 'src/engine/api/common/utils/cursors.util';
-import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import { type CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
 import { type CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { type WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { type CoreWorkflowCursor } from 'src/engine/core-modules/workflow/types/core-workflow-cursor.type';
-import { type CoreWorkflowReadCaller } from 'src/engine/core-modules/workflow/types/core-workflow-read-caller.type';
+import { type CoreWorkflowReader } from 'src/engine/core-modules/workflow/types/core-workflow-reader.type';
 import { buildCoreWorkflowFilterPredicate } from 'src/engine/core-modules/workflow/utils/build-core-workflow-filter-predicate.util';
 import { buildCoreWorkflowVersionSummaries } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-summaries.util';
 import { buildCoreWorkflowCursor } from 'src/engine/core-modules/workflow/utils/build-core-workflow-cursor.util';
 import { compareCoreWorkflowCursors } from 'src/engine/core-modules/workflow/utils/compare-core-workflow-cursors.util';
 import { fromFlatWorkflowToCoreWorkflowDto } from 'src/engine/core-modules/workflow/utils/from-flat-workflow-to-core-workflow-dto.util';
+import { isFlatWorkflowReadableByReader } from 'src/engine/core-modules/workflow/utils/is-flat-workflow-readable-by-reader.util';
 import { getCoreWorkflowCurrentVersion } from 'src/engine/core-modules/workflow/utils/get-core-workflow-current-version.util';
-import { isCoreWorkflowVisibleToUser } from 'src/engine/core-modules/workflow/utils/is-core-workflow-visible-to-user.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { paginateMetadataItemsByKeyset } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-items-by-keyset.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type CoreWorkflowReader = CoreWorkflowReadCaller & {
-  userWorkspaceId: string | undefined;
-};
-
 type FlatWorkflowWithStatuses = FlatWorkflow & {
   statuses: WorkflowStatus[];
 };
-
-const isFlatWorkflowReadableByReader = ({
-  flatWorkflow,
-  userWorkspaceId,
-  callerApplication,
-  workspaceCustomApplicationId,
-}: CoreWorkflowReader & {
-  flatWorkflow: Pick<
-    FlatWorkflow,
-    'isPrivate' | 'createdByUserWorkspaceId' | 'applicationId'
-  >;
-}): boolean =>
-  isCoreWorkflowVisibleToUser({
-    isPrivate: flatWorkflow.isPrivate,
-    createdByUserWorkspaceId: flatWorkflow.createdByUserWorkspaceId,
-    userWorkspaceId,
-  }) &&
-  canCallerReachApplication({
-    callingApplication: callerApplication,
-    applicationId: flatWorkflow.applicationId,
-    operation: 'read',
-    workspaceCustomApplicationId,
-  });
 
 @Injectable()
 export class CoreWorkflowListService {
