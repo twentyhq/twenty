@@ -2,9 +2,11 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { NAVIGATION_MENU_TAB_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/NavigationMenuTabIconDefault';
 import { currentNavigationMenuItemFolderIdFamilyState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdFamilyState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
-import { useNavigationMenuTabIdsWithUnreadChats } from '@/navigation-menu-item/display/hooks/useNavigationMenuTabIdsWithUnreadChats';
+import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
+import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -45,7 +47,7 @@ type MobileNavigationBarItem = {
   label: string;
   Icon: IconComponent;
   onClick: () => void;
-  isUnread?: boolean;
+  attention?: InboxChatAttention | null;
   hasDividerAfter?: boolean;
 };
 
@@ -70,8 +72,9 @@ export const useMobileNavigationBarItems = (): {
     containerId: null,
   });
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
-  const { tabIdsWithUnreadChats, unreadOpenThreadCount } =
-    useNavigationMenuTabIdsWithUnreadChats();
+  const { getTabChatAttention } = useNavigationMenuChatAttention();
+  const getNavigationMenuTabAttentionLabel =
+    useGetNavigationMenuTabAttentionLabel();
   const setCurrentNavigationMenuTabId = useSetAtomState(
     currentNavigationMenuTabIdState,
   );
@@ -127,6 +130,8 @@ export const useMobileNavigationBarItems = (): {
     navigate(AppPath.Home, { replace: isSettingsDrawer });
   };
 
+  const homeChatAttention = getTabChatAttention(null);
+
   const getActiveItemName = (): MobileNavigationBarItemName | '' => {
     if (pathname !== AppPath.Home) {
       return '';
@@ -142,23 +147,26 @@ export const useMobileNavigationBarItems = (): {
     items: [
       {
         name: 'home',
-        label: t`Home`,
+        label: getNavigationMenuTabAttentionLabel({
+          tabName: t`Home`,
+          attention: homeChatAttention,
+        }),
         Icon: IconHome,
         onClick: () => openHomePageOnTab(null),
+        attention: homeChatAttention,
       },
       ...navigationMenuTabs.map((tab, index): MobileNavigationBarItem => {
-        const isOpenOnHomePage =
-          pathname === AppPath.Home && activeNavigationMenuTab?.id === tab.id;
-        const isUnread = !isOpenOnHomePage && tabIdsWithUnreadChats.has(tab.id);
+        const attention = getTabChatAttention(tab.id);
 
         return {
           name: `tab-${tab.id}`,
-          label: isUnread
-            ? t`${tab.name}, ${unreadOpenThreadCount} unread`
-            : tab.name,
+          label: getNavigationMenuTabAttentionLabel({
+            tabName: tab.name,
+            attention,
+          }),
           Icon: getIcon(tab.icon ?? NAVIGATION_MENU_TAB_ICON_DEFAULT),
           onClick: () => openHomePageOnTab(tab.id),
-          isUnread,
+          attention,
           hasDividerAfter: index === navigationMenuTabs.length - 1,
         };
       }),

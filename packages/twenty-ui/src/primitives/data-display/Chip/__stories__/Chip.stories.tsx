@@ -405,6 +405,30 @@ export const Outline: Story = {
   },
 };
 
+export const MediumPadding: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    children: 'Today',
+    variant: 'soft',
+    shape: 'round',
+    size: 'md',
+    padding: 'md',
+  },
+  play: async ({ canvasElement }) => {
+    const chip = within(canvasElement).getByText('Today').parentElement;
+
+    if (!isDefined(chip)) {
+      throw new Error('Chip not found');
+    }
+
+    const chipStyle = getComputedStyle(chip);
+
+    await expect(chip.getBoundingClientRect().height).toBe(24);
+    await expect(chipStyle.paddingInlineStart).toBe('8px');
+    await expect(chipStyle.paddingInlineEnd).toBe('8px');
+  },
+};
+
 export const OutlineFlexLayout: Story = {
   decorators: [ComponentDecorator],
   render: () => (

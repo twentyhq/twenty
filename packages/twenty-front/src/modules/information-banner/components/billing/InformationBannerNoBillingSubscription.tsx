@@ -28,7 +28,7 @@ const InformationBannerNoBillingSubscriptionContent = ({
   });
 
   const hasPermissionToSubscribe = useHasPermissionFlag(
-    PermissionFlagType.WORKSPACE,
+    PermissionFlagType.BILLING,
   );
 
   return (

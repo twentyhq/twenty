@@ -14,7 +14,7 @@ import {
   WorkflowVersionEntity,
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -53,7 +53,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
     private readonly coreWorkflowVersionWriteService: CoreWorkflowVersionWriteService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
@@ -545,7 +545,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowVersionDTO> {
     const coreWorkflow =
-      await this.coreWorkflowIdResolutionService.resolveCoreWorkflowOrThrow({
+      await this.coreWorkflowAccessService.findEditableCoreWorkflowOrThrow({
         workspaceId,
         userWorkspaceId,
         coreWorkflowId,

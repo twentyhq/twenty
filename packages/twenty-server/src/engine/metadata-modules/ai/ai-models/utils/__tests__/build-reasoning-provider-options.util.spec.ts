@@ -3,6 +3,7 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GROQ,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
@@ -128,6 +129,12 @@ describe('buildReasoningProviderOptions', () => {
       'google/gemini-3.7-flash@low',
       'low',
       { google: { thinkingConfig: { thinkingLevel: 'low' } } },
+    ],
+    [
+      AI_SDK_GROQ,
+      'groq/openai/gpt-oss-120b@medium',
+      'medium',
+      { groq: { reasoningEffort: 'medium' } },
     ],
     [
       AI_SDK_MISTRAL,

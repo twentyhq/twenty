@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 import GraphQLJSON from 'graphql-type-json';
 import { ApiPath } from 'twenty-shared/types';
 
+import { GRAPHQL_FIELD_RESOLVER_ENHANCERS } from 'src/engine/api/graphql/graphql-config/constants/graphql-field-resolver-enhancers.constant';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { METADATA_GRAPHQL_OPERATIONS_TO_CACHE } from 'src/engine/api/graphql/graphql-config/constants/metadata-graphql-operations-to-cache.constant';
@@ -38,6 +39,7 @@ export const metadataModuleFactory = async (
     autoSchemaFile: true,
     include: [MetadataGraphQLApiModule, ModulesModule],
     resolverSchemaScope: 'metadata',
+    fieldResolverEnhancers: GRAPHQL_FIELD_RESOLVER_ENHANCERS,
     buildSchemaOptions: {
       orphanedTypes: [ClientConfig],
     },
