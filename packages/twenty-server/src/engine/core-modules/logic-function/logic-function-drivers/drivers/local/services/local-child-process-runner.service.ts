@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { LOGIC_FUNCTION_TIMEOUT_ERROR_TYPE } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-timeout-error-type.constant';
 import { buildLocalChildProcessEnv } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-env.util';
 import { buildLocalChildProcessNodeFlags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-node-flags.util';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
@@ -270,7 +271,11 @@ export class LocalChildProcessRunnerService {
           );
           timeout = setTimeout(
             () =>
-              resolve({ ok: false, error: `Timed out after ${timeoutMs}ms` }),
+              resolve({
+                ok: false,
+                error: `Timed out after ${timeoutMs}ms`,
+                errorType: LOGIC_FUNCTION_TIMEOUT_ERROR_TYPE,
+              }),
             timeoutMs,
           );
           child.send({ type: 'run', payload, context }, (error) => {
