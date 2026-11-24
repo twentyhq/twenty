@@ -271,13 +271,11 @@ export class CreateNavigationMenuItemTool extends BaseTool<
           scope: 'workspace',
           type: NavigationMenuItemType.SECTION,
         });
-        const isAlreadyInContainer =
-          (input.builtInSectionKey === 'favorites' && containerId === null) ||
-          workspaceSections.some(
-            (section) =>
-              section.builtInSectionKey === input.builtInSectionKey &&
-              (section.parentId ?? null) === containerId,
-          );
+        const isAlreadyInContainer = workspaceSections.some(
+          (section) =>
+            section.builtInSectionKey === input.builtInSectionKey &&
+            (section.parentId ?? null) === containerId,
+        );
 
         if (isAlreadyInContainer) {
           return {

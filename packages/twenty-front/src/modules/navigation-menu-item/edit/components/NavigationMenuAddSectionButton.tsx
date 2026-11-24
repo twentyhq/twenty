@@ -24,7 +24,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -37,6 +37,10 @@ const StyledAddSectionIcon = styled.span`
   display: flex;
   justify-content: center;
   width: ${themeCssVariables.spacing[6]};
+
+  .section-title-container:hover & {
+    color: ${themeCssVariables.font.color.secondary};
+  }
 `;
 
 type NavigationMenuAddSectionButtonProps = {
@@ -61,7 +65,7 @@ export const NavigationMenuAddSectionButton = ({
     navigationMenuItemIdToRenameState,
   );
   const { closeDropdown } = useCloseDropdown();
-  const { toggleDropdown } = useToggleDropdown();
+  const { openDropdown } = useOpenDropdown();
   const dropdownId = `navigation-menu-add-section-${containerId ?? 'home'}`;
 
   if (!isCustomizableSidebarEnabled) {
@@ -106,7 +110,7 @@ export const NavigationMenuAddSectionButton = ({
                 <NavigationDrawerSectionTitle
                   label={t`Add section`}
                   onClick={() =>
-                    toggleDropdown({
+                    openDropdown({
                       dropdownComponentInstanceIdFromProps: dropdownId,
                     })
                   }
@@ -123,7 +127,8 @@ export const NavigationMenuAddSectionButton = ({
           <DropdownContent
             side="right"
             align="start"
-            width={GenericDropdownContentWidth.Large}
+            width={GenericDropdownContentWidth.ExtraLarge}
+            aria-label={t`Add section`}
           >
             {isNonEmptyArray(builtInSectionsToOffer) && (
               <>

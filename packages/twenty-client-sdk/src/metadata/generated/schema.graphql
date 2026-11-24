@@ -1003,7 +1003,7 @@ type AutocompleteResult {
 type AvailableWorkspace {
   displayName: String
   id: UUID!
-  inviteHash: String
+  inviteHash: String @deprecated(reason: "Always null. Will be removed.")
   loginToken: String
   logo: String
   personalInviteToken: String
@@ -1342,6 +1342,31 @@ enum CalendarChannelVisibility {
 
 type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarEventRecurrenceInput {
+  daysOfWeek: [CalendarEventRecurrenceWeekday!]
+  endDate: String
+  endOccurrenceCount: Int
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int
+}
+
+enum CalendarEventRecurrenceWeekday {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
 }
 
 type CallRecordingSummaryConfiguration {
@@ -1697,6 +1722,7 @@ input CreateCalendarEventInput {
   endsAt: String!
   isFullDay: Boolean
   location: String
+  recurrence: CalendarEventRecurrenceInput
   sendInvitations: Boolean
   startsAt: String!
   timeZone: String

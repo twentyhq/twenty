@@ -6,6 +6,7 @@ import {
   AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
+  AI_SDK_GROQ,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
@@ -96,6 +97,8 @@ export const buildReasoningProviderOptions = (
           },
         },
       };
+    case AI_SDK_GROQ:
+      return isDefined(effort) ? { groq: { reasoningEffort: effort } } : {};
     case AI_SDK_MISTRAL:
       return isDefined(effort) ? { mistral: { reasoningEffort: effort } } : {};
     case AI_SDK_XAI:

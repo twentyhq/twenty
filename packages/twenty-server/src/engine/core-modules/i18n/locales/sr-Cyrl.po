@@ -394,13 +394,13 @@ msgstr "Виџет угнежђене релације мора да корис�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot be tied to a row level permission rule"
-msgstr ""
+msgstr "Угнежђено нечитљиво поље не може бити повезано са правилом дозволе на нивоу реда"
 
 #. js-lingui-id: +cMY8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot use itself as its source"
-msgstr ""
+msgstr "Угнежђено нечитљиво поље не може користити само себе као извор"
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -497,6 +497,11 @@ msgstr "Запис са овом вредношћу већ постоји."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "Снимак састанка"
+
+#. js-lingui-id: l+tyko
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
+msgstr "Понављање се завршава или на recurrence.endDate или након recurrence.endOccurrenceCount, али не обоје"
 
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -777,12 +782,12 @@ msgstr "Члан радног простора"
 #. js-lingui-id: EAIj51
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a field and at least one value"
-msgstr ""
+msgstr "Филтер односа чланова радног простора захтева поље и најмање једну вредност"
 
 #. js-lingui-id: mZ5k8L
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a workspace member relation"
-msgstr ""
+msgstr "Филтер односа чланова радног простора захтева однос чланова радног простора"
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3179,7 +3184,7 @@ msgstr "Изаберите једну особу или једну улогу с
 #. js-lingui-id: 8+4T+u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field and the values to keep on the related records"
-msgstr ""
+msgstr "Изаберите поље и вредности које желите да задржите у повезаним записима"
 
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3194,7 +3199,7 @@ msgstr "Изаберите објекат који емитује овај ти�
 #. js-lingui-id: fr9dvq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the relation of the workspace member to filter"
-msgstr ""
+msgstr "Изаберите однос члана радног простора по којем желите да филтрирате"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5728,7 +5733,7 @@ msgstr "Поље \"{workspaceMemberRelationFieldName}\" није релациј�
 #. js-lingui-id: yfFA+h
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
-msgstr ""
+msgstr "Поље \"{workspaceMemberRelationFilterFieldName}\" није поље избора, текста или логичко поље повезаних записа"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -6182,7 +6187,7 @@ msgstr "Операнд филтера није подржан за ову врс
 #. js-lingui-id: twPawb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Filter the related records on one of their select, text or boolean fields"
-msgstr ""
+msgstr "Филтрирајте повезане записе према једном од њихових поља избора, текста или логичких поља"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10541,12 +10546,12 @@ msgstr "Опција \"{optionLabel}\" долази уз поље и не мож
 #. js-lingui-id: xTWr3W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "Опис опције „{optionLabel}“ премашује {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} знакова"
 
 #. js-lingui-id: cCRBHe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" has an invalid description"
-msgstr ""
+msgstr "Опција „{optionLabel}“ има неважећи опис"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -11786,6 +11791,16 @@ msgstr "Записи се не могу сортирати према релац
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
 msgstr "Записи уз које је приложена ова нит"
+
+#. js-lingui-id: Q/3t6e
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
+msgstr "recurrence.endDate мора бити датум у формату YYYY-MM-DD на датум почетка догађаја ({firstOccurrenceDate}) или након њега"
+
+#. js-lingui-id: wM8dZb
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
+msgstr "recurrence.interval и recurrence.endOccurrenceCount морају бити позитивни цели бројеви"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13451,12 +13466,12 @@ msgstr "Наслов изворног документа"
 #. js-lingui-id: gAdogO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field metadata not found"
-msgstr ""
+msgstr "Метаподаци изворног поља нису пронађени"
 
 #. js-lingui-id: 8Fgyo1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field not found"
-msgstr ""
+msgstr "Изворно поље није пронађено"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -15931,7 +15946,7 @@ msgstr "Ова верзија апликације је већ инсталир�
 #. js-lingui-id: lJw5/K
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "This view type is not available on this object"
-msgstr ""
+msgstr "Овај тип приказа није доступан за овај објекат"
 
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -17569,7 +17584,7 @@ msgstr "Приказ за ажурирање није пронађен"
 #. js-lingui-id: OZdSbV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "View type is not available on the view object"
-msgstr ""
+msgstr "Тип приказа није доступан за објекат приказа"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -18415,7 +18430,7 @@ msgstr "Метаподаци поља релације члана радног �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation filter field metadata not found"
-msgstr ""
+msgstr "Метаподаци поља филтера односа члана радног простора нису пронађени"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

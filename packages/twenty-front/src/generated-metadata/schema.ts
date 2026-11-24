@@ -1084,6 +1084,7 @@ export type AvailableWorkspace = {
   __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  /** @deprecated Always null. Will be removed. */
   inviteHash?: Maybe<Scalars['String']['output']>;
   loginToken?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
@@ -1438,6 +1439,31 @@ export type CalendarConfiguration = {
   __typename?: 'CalendarConfiguration';
   configurationType: WidgetConfigurationType;
 };
+
+export enum CalendarEventRecurrenceFrequency {
+  DAILY = 'DAILY',
+  MONTHLY = 'MONTHLY',
+  WEEKLY = 'WEEKLY',
+  YEARLY = 'YEARLY'
+}
+
+export type CalendarEventRecurrenceInput = {
+  daysOfWeek?: InputMaybe<Array<CalendarEventRecurrenceWeekday>>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  endOccurrenceCount?: InputMaybe<Scalars['Int']['input']>;
+  frequency: CalendarEventRecurrenceFrequency;
+  interval?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export enum CalendarEventRecurrenceWeekday {
+  FRIDAY = 'FRIDAY',
+  MONDAY = 'MONDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
+  THURSDAY = 'THURSDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY'
+}
 
 export type CallRecordingSummaryConfiguration = {
   __typename?: 'CallRecordingSummaryConfiguration';
@@ -1814,6 +1840,7 @@ export type CreateCalendarEventInput = {
   endsAt: Scalars['String']['input'];
   isFullDay?: InputMaybe<Scalars['Boolean']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
+  recurrence?: InputMaybe<CalendarEventRecurrenceInput>;
   sendInvitations?: InputMaybe<Scalars['Boolean']['input']>;
   startsAt: Scalars['String']['input'];
   timeZone?: InputMaybe<Scalars['String']['input']>;

@@ -394,13 +394,13 @@ msgstr "Un widget de relație îmbricată trebuie să folosească aspectul de ta
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot be tied to a row level permission rule"
-msgstr ""
+msgstr "Un câmp imbricat care nu poate fi citit nu poate fi asociat cu o regulă de permisiuni la nivel de rând"
 
 #. js-lingui-id: +cMY8o
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "A nested unreadable field cannot use itself as its source"
-msgstr ""
+msgstr "Un câmp imbricat care nu poate fi citit nu se poate folosi pe sine ca sursă"
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -497,6 +497,11 @@ msgstr "O înregistrare cu această valoare există deja."
 msgctxt "objectMetadata.description"
 msgid "A recording of a meeting"
 msgstr "O înregistrare a unei întâlniri"
+
+#. js-lingui-id: l+tyko
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "A recurrence ends either on recurrence.endDate or after recurrence.endOccurrenceCount, not both"
+msgstr "O recurență se încheie fie la recurrence.endDate, fie după recurrence.endOccurrenceCount, nu ambele"
 
 #. js-lingui-id: TmGFqW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-target.util.ts
@@ -777,12 +782,12 @@ msgstr "Un membru al spațiului de lucru"
 #. js-lingui-id: EAIj51
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a field and at least one value"
-msgstr ""
+msgstr "Un filtru de relație pentru membrul spațiului de lucru necesită un câmp și cel puțin o valoare"
 
 #. js-lingui-id: mZ5k8L
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation filter needs a workspace member relation"
-msgstr ""
+msgstr "Un filtru de relație pentru membrul spațiului de lucru necesită o relație pentru membrul spațiului de lucru"
 
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3179,7 +3184,7 @@ msgstr "Alegeți o persoană sau un rol cu care să partajați."
 #. js-lingui-id: 8+4T+u
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field and the values to keep on the related records"
-msgstr ""
+msgstr "Alegeți câmpul și valorile de păstrat în înregistrările asociate"
 
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -3194,7 +3199,7 @@ msgstr "Alegeți obiectul care emite acest tip de activitate din cronologie."
 #. js-lingui-id: fr9dvq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the relation of the workspace member to filter"
-msgstr ""
+msgstr "Alegeți relația membrului spațiului de lucru după care să filtrați"
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5728,7 +5733,7 @@ msgstr "Câmpul \"{workspaceMemberRelationFieldName}\" nu este o relație unu-la
 #. js-lingui-id: yfFA+h
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
-msgstr ""
+msgstr "Câmpul \"{workspaceMemberRelationFilterFieldName}\" nu este un câmp de tip selecție, text sau boolean al înregistrărilor asociate"
 
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
@@ -6182,7 +6187,7 @@ msgstr "Operandul de filtrare nu este acceptat pentru acest tip de câmp"
 #. js-lingui-id: twPawb
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Filter the related records on one of their select, text or boolean fields"
-msgstr ""
+msgstr "Filtrați înregistrările asociate după unul dintre câmpurile lor de tip selecție, text sau boolean"
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10541,12 +10546,12 @@ msgstr "Opțiunea \"{optionLabel}\" este inclusă în câmp și nu poate fi elim
 #. js-lingui-id: xTWr3W
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
-msgstr ""
+msgstr "Descrierea opțiunii \"{optionLabel}\" depășește {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} de caractere"
 
 #. js-lingui-id: cCRBHe
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
 msgid "Option \"{optionLabel}\" has an invalid description"
-msgstr ""
+msgstr "Opțiunea \"{optionLabel}\" are o descriere nevalidă"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -11786,6 +11791,16 @@ msgstr "Înregistrările nu pot fi sortate după o relație a înregistrării as
 msgctxt "fieldMetadata.description"
 msgid "Records this thread is attached to"
 msgstr "Înregistrări la care este atașat acest fir de conversație"
+
+#. js-lingui-id: Q/3t6e
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.endDate must be a YYYY-MM-DD date on or after the event's start date ({firstOccurrenceDate})"
+msgstr "recurrence.endDate trebuie să fie o dată în format YYYY-MM-DD la sau după data de început a evenimentului ({firstOccurrenceDate})"
+
+#. js-lingui-id: wM8dZb
+#: src/modules/calendar/calendar-event-creation-manager/utils/normalize-calendar-event-recurrence.util.ts
+msgid "recurrence.interval and recurrence.endOccurrenceCount must be positive whole numbers"
+msgstr "recurrence.interval și recurrence.endOccurrenceCount trebuie să fie numere întregi pozitive"
 
 #. js-lingui-id: TPccfi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13451,12 +13466,12 @@ msgstr "Titlul documentului sursă"
 #. js-lingui-id: gAdogO
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field metadata not found"
-msgstr ""
+msgstr "Metadatele câmpului sursă nu au fost găsite"
 
 #. js-lingui-id: 8Fgyo1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-field-permission-unreadable-nested-source.util.ts
 msgid "Source field not found"
-msgstr ""
+msgstr "Câmpul sursă nu a fost găsit"
 
 #. js-lingui-id: o0N9e6
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
@@ -15931,7 +15946,7 @@ msgstr "Această versiune a aplicației este deja instalată în acest spațiu d
 #. js-lingui-id: lJw5/K
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "This view type is not available on this object"
-msgstr ""
+msgstr "Acest tip de vizualizare nu este disponibil pentru acest obiect"
 
 #. js-lingui-id: 2s7ieZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-workflow-validator.service.ts
@@ -17569,7 +17584,7 @@ msgstr "Vizualizarea pentru actualizare nu a fost găsită"
 #. js-lingui-id: OZdSbV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-type-object.util.ts
 msgid "View type is not available on the view object"
-msgstr ""
+msgstr "Tipul de vizualizare nu este disponibil pentru obiectul de vizualizare"
 
 #. js-lingui-id: RvdHYC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
@@ -18415,7 +18430,7 @@ msgstr "Metadatele câmpului de relație al membrului spațiului de lucru nu au 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation filter field metadata not found"
-msgstr ""
+msgstr "Metadatele câmpului de filtrare a relației membrului spațiului de lucru nu au fost găsite"
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
