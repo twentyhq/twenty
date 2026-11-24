@@ -18,7 +18,6 @@ export const isCalendarEventInternal = ({
   }
 
   const ownerDomain = getEmailDomain(ownerHandle);
-  // Sharing a free-mail domain with the owner says nothing about belonging to the workspace.
   const workspaceDomain =
     isDefined(ownerDomain) && !FREE_EMAIL_PROVIDER_DOMAINS.includes(ownerDomain)
       ? ownerDomain
@@ -27,7 +26,7 @@ export const isCalendarEventInternal = ({
   return participants.every(
     ({ handle, isWorkspaceMember }) =>
       isWorkspaceMember ||
-      handle?.toLowerCase() === ownerHandle.toLowerCase() ||
+      handle?.trim().toLowerCase() === ownerHandle.trim().toLowerCase() ||
       (isDefined(workspaceDomain) &&
         getEmailDomain(handle) === workspaceDomain),
   );

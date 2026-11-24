@@ -64,14 +64,22 @@ describe('isCalendarEventInternal', () => {
     ).toBe(false);
   });
 
-  it('does not treat a shared free-mail domain as the workspace', () => {
-    expect(
-      isInternal({
-        ownerHandle: 'ada@gmail.com',
-        participants: [{ handle: 'buyer@gmail.com', isWorkspaceMember: false }],
-      }),
-    ).toBe(false);
-  });
+  it.each([
+    ['ada@gmail.com', 'buyer@gmail.com'],
+    ['ada@hotmail.fr', 'buyer@hotmail.fr'],
+  ])(
+    'does not treat the free-mail domain of %s as the workspace',
+    (ownerHandle, participantHandle) => {
+      expect(
+        isInternal({
+          ownerHandle,
+          participants: [
+            { handle: participantHandle, isWorkspaceMember: false },
+          ],
+        }),
+      ).toBe(false);
+    },
+  );
 
   it('counts the owner as internal on a free-mail address', () => {
     expect(

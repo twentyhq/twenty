@@ -10,6 +10,7 @@ import {
 } from 'src/logic-functions/data/fetch-all-nodes.util';
 import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
+import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
 
 type CalendarEventNode = {
   id: string;
@@ -26,7 +27,7 @@ type CalendarEventNode = {
     edges?: { node?: { calendarChannelId?: string | null } | null }[] | null;
   } | null;
   calendarEventParticipants?: {
-    pageInfo?: { hasNextPage?: boolean | null } | null;
+    totalCount?: number | null;
     edges?:
       | {
           node?: {
@@ -73,7 +74,8 @@ export const fetchCalendarEventsByFilter = async (
                 edges: { node: { calendarChannelId: true } },
               },
               calendarEventParticipants: {
-                pageInfo: { hasNextPage: true },
+                // A nested relation returns at most 60 records and never reports a next page.
+                totalCount: true,
                 edges: { node: { handle: true, workspaceMemberId: true } },
               },
             },
@@ -113,12 +115,11 @@ export const fetchCalendarEventsByFilter = async (
       .map((edge) => edge.node)
       .filter(isDefined)
       .map((participant) => ({
-        handle: isNonEmptyString(participant.handle)
-          ? participant.handle
-          : undefined,
+        handle: normalizeOptionalString(participant.handle),
         isWorkspaceMember: isNonEmptyString(participant.workspaceMemberId),
       })),
     hasUnlistedParticipants:
-      calendarEvent.calendarEventParticipants?.pageInfo?.hasNextPage ?? false,
+      (calendarEvent.calendarEventParticipants?.totalCount ?? 0) >
+      (calendarEvent.calendarEventParticipants?.edges ?? []).length,
   }));
 };
