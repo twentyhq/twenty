@@ -51,7 +51,8 @@ preferences → Call Recorder**, **Meetings to record** offers:
 - **All my meetings**, the default.
 - **Only internal meetings**: meetings where everyone invited is a workspace
   member or on your email domain.
-- **Only external meetings**: meetings with at least one other person.
+- **Only external meetings**: meetings with at least one person from outside
+  your company.
 - **None of my meetings**: the recorder never joins on its own.
 
 Your email domain is the one of the calendar you connected. A personal address

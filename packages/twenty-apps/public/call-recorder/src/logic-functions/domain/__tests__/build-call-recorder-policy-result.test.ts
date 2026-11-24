@@ -177,28 +177,30 @@ describe('buildCallRecorderPolicyResult', () => {
       calendarEvent: buildCalendarEventInput({
         calendarChannelIds: ['calendar-channel-1', 'calendar-channel-2'],
         participants: [
-          { handle: 'ada@acme.com', isWorkspaceMember: false },
-          { handle: 'grace@partner.com', isWorkspaceMember: false },
+          { handle: 'grace@partner.com', isWorkspaceMember: true },
+          { handle: 'ada@acme.com', isWorkspaceMember: true },
+          { handle: 'bob@acme.com', isWorkspaceMember: false },
         ],
       }),
       calendarChannelOwnerByCalendarChannelId: new Map([
         [
           'calendar-channel-1',
-          { userWorkspaceId: 'user-workspace-1', handle: 'ada@acme.com' },
+          { userWorkspaceId: 'user-workspace-1', handle: 'grace@partner.com' },
         ],
         [
           'calendar-channel-2',
-          { userWorkspaceId: 'user-workspace-2', handle: 'grace@partner.com' },
+          { userWorkspaceId: 'user-workspace-2', handle: 'ada@acme.com' },
         ],
       ]),
       memberRecordingPreferenceByUserWorkspaceId: new Map([
         ['user-workspace-1', 'INTERNAL'],
-        ['user-workspace-2', 'EXTERNAL'],
+        ['user-workspace-2', 'INTERNAL'],
       ]),
       now: NOW,
     });
 
     expect(policyResult.shouldRequestBot).toBe(true);
+    expect(policyResult.reason).toBe('RECORDING_ENABLED');
   });
 
   it('does not request a bot when the choice of the member who has the meeting cannot be read', () => {
