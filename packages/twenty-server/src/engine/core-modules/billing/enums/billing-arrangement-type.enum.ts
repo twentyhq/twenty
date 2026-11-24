@@ -28,4 +28,5 @@ export const ADMIN_MANAGED_BILLING_ARRANGEMENT_TYPES: BillingArrangementType[] =
     BillingArrangementType.COMMITTED_SEATS,
     BillingArrangementType.FREE_SEATS,
     BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
+    BillingArrangementType.TRIAL_EXTENSION,
   ];
