@@ -30052,6 +30052,11 @@ msgstr "A exportação foi interrompida. Tente novamente."
 msgid "The fields below are now available as variables in the next steps."
 msgstr "Os campos abaixo agora estão disponíveis como variáveis nas próximas etapas."
 
+#. js-lingui-id: UbUlij
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The first value that is set, or nothing when none is."
+msgstr "O primeiro valor definido ou nada quando nenhum estiver definido."
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -30061,6 +30066,11 @@ msgstr "O contrato completo com campos preenchidos para sua implantação."
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "O ícone que o seu acionador de fluxo de trabalho irá exibir no menu de comando"
+
+#. js-lingui-id: Qp6vM+
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The largest of the numbers. Values that are not numbers are ignored."
+msgstr "O maior dos números. Valores que não são números são ignorados."
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30144,6 +30154,11 @@ msgstr "O número de itens na lista, ou 0 quando não for uma lista."
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
 msgstr "O número de unidades inteiras da primeira data até a segunda, negativo quando a segunda é anterior. Minutos e horas são tempo decorrido; unidades mais longas contam dias e meses do calendário, em UTC."
 
+#. js-lingui-id: wmIQo4
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number rounded to a number of decimals."
+msgstr "O número arredondado para uma quantidade de casas decimais."
+
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -30179,6 +30194,11 @@ msgstr "Não foi possível resolver a configuração da relação."
 msgid "The role attached to this webhook."
 msgstr "A função associada a este webhook."
 
+#. js-lingui-id: eHwsp0
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The second value when the condition is true, otherwise the third."
+msgstr "O segundo valor quando a condição é verdadeira; caso contrário, o terceiro."
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -30199,10 +30219,25 @@ msgstr "Os registros selecionados (até {maxRecordsFormatted}) serão passados p
 msgid "The shared email you want to use."
 msgstr "O email compartilhado que você deseja usar."
 
+#. js-lingui-id: CZF2sj
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The smallest of the numbers. Values that are not numbers are ignored."
+msgstr "O menor dos números. Valores que não são números são ignorados."
+
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
 msgstr "O início da unidade que contém a data, em UTC. As semanas começam na segunda-feira."
+
+#. js-lingui-id: hdgKJ2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in lower case."
+msgstr "O texto em minúsculas."
+
+#. js-lingui-id: P/EZTH
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in upper case."
+msgstr "O texto em maiúsculas."
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30250,6 +30285,11 @@ msgstr "O uso ao qual este limite se aplica."
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The value a field had before the update. Empty when the record is created."
 msgstr "O valor que um campo tinha antes da atualização. Vazio quando o registro é criado."
+
+#. js-lingui-id: cXlUXr
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The values joined as one text. Values that are not set are skipped."
+msgstr "Os valores unidos como um texto. Valores que não estão definidos são ignorados."
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
