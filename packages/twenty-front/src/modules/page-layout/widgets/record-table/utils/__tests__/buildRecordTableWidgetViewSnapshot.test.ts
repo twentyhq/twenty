@@ -1,14 +1,13 @@
 import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshot';
-import { ViewVisibility } from '~/generated-metadata/graphql';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 describe('buildRecordTableWidgetViewSnapshot', () => {
   const objectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
-  it('should create the widget view with WORKSPACE visibility so it is shared with all workspace members', () => {
+  it('should create a non-private widget view so it is shared with all workspace members', () => {
     const { view } = buildRecordTableWidgetViewSnapshot(objectMetadataItem);
 
-    expect(view.visibility).toBe(ViewVisibility.WORKSPACE);
+    expect(view.isPrivate).toBe(false);
   });
 
   it('should keep the label identifier view field visible and in the lowest position', () => {

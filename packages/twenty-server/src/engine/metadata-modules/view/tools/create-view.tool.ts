@@ -23,6 +23,7 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 
 const createViewInputSchema = z.object({
   name: z.string().describe('View name'),
@@ -120,7 +121,9 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
     context: { workspaceId, userWorkspaceId, authContext },
   }: ToolExecuteArgs<typeof createViewInputSchema>): Promise<ToolOutput> {
     await this.viewAccessService.canUserCreateView({
-      visibility: input.visibility,
+      isPrivate:
+        resolveViewIsPrivateFromInput({ visibility: input.visibility }) ??
+        false,
       accessContext: { workspaceId, userWorkspaceId, authContext },
     });
 

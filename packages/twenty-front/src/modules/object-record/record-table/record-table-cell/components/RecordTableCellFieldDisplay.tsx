@@ -1,6 +1,6 @@
 import { ScopedRelationLookupFieldDisplay } from '@/object-record/record-column-scope/components/ScopedRelationLookupFieldDisplay';
 import { ScopedRelationSummaryFieldDisplay } from '@/object-record/record-column-summary/components/ScopedRelationSummaryFieldDisplay';
-import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
+import { useRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useRecordFieldColumnKind';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -11,25 +11,30 @@ export const RecordTableCellFieldDisplay = () => {
   const { recordField } = useContext(RecordTableCellContext);
   const { isForbidden } = useContext(FieldContext);
 
-  const scopedRelationAlias = useScopedRelationAlias(recordField.id);
-  const lookupTarget = scopedRelationAlias?.lookupTarget;
+  const columnKind = useRecordFieldColumnKind(recordField.id);
 
-  if (isDefined(scopedRelationAlias?.summary) && !isForbidden) {
+  if (isForbidden) {
+    return <FieldDisplay />;
+  }
+
+  if (columnKind.kind === 'summary' && isDefined(columnKind.summary)) {
     return (
       <ScopedRelationSummaryFieldDisplay
-        responseKey={scopedRelationAlias.responseKey}
-        summary={scopedRelationAlias.summary}
+        responseKey={columnKind.scopedRelationAlias.responseKey}
+        summary={columnKind.summary}
       />
     );
   }
 
-  if (!isDefined(lookupTarget) || isForbidden) {
-    return <FieldDisplay />;
+  if (columnKind.kind === 'scopedLookup') {
+    return (
+      <ScopedRelationLookupFieldDisplay
+        lookupTargetFieldDefinition={
+          columnKind.lookupTarget.lookupTargetFieldDefinition
+        }
+      />
+    );
   }
 
-  return (
-    <ScopedRelationLookupFieldDisplay
-      lookupTargetFieldDefinition={lookupTarget.lookupTargetFieldDefinition}
-    />
-  );
+  return <FieldDisplay />;
 };
