@@ -4,7 +4,7 @@ import {
 } from '@/ai/constants/agent-chat-thread-preset-filter.const';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
-export const computeAgentChatTabThreadFieldGqlFilter = ({
+export const computeAgentChatThreadPresetFieldsGqlFilter = ({
   presetFilter,
   workspaceMemberId,
 }: {

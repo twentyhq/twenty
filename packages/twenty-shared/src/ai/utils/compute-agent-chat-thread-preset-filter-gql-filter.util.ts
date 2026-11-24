@@ -2,7 +2,7 @@ import {
   AGENT_CHAT_THREAD_PRESET_FILTER,
   type AgentChatThreadPresetFilter,
 } from '@/ai/constants/agent-chat-thread-preset-filter.const';
-import { computeAgentChatTabThreadFieldGqlFilter } from '@/ai/utils/compute-agent-chat-tab-thread-field-gql-filter.util';
+import { computeAgentChatThreadPresetFieldsGqlFilter } from '@/ai/utils/compute-agent-chat-thread-preset-fields-gql-filter.util';
 import { computeViewPresetFilterGqlFilter } from '@/ai/utils/compute-view-preset-filter-gql-filter.util';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 import { ViewPresetFilter } from '@/types/ViewPresetFilter';
@@ -12,7 +12,7 @@ type PresetFilterArgs = {
   workspaceMemberId: string;
 };
 
-const VIEW_PRESET_FILTER_BY_TAB: Record<
+const VIEW_PRESET_FILTER_BY_AGENT_CHAT_THREAD_PRESET_FILTER: Record<
   AgentChatThreadPresetFilter,
   ViewPresetFilter
 > = {
@@ -31,12 +31,13 @@ export const computeAgentChatThreadPresetFilterGqlFilter = ({
   presetFilter,
   workspaceMemberId,
 }: PresetFilterArgs): RecordGqlOperationFilter => ({
-  ...computeAgentChatTabThreadFieldGqlFilter({
+  ...computeAgentChatThreadPresetFieldsGqlFilter({
     presetFilter,
     workspaceMemberId,
   }),
   ...computeViewPresetFilterGqlFilter({
-    presetFilter: VIEW_PRESET_FILTER_BY_TAB[presetFilter],
+    presetFilter:
+      VIEW_PRESET_FILTER_BY_AGENT_CHAT_THREAD_PRESET_FILTER[presetFilter],
     currentWorkspaceMemberId: workspaceMemberId,
   }),
 });

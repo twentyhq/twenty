@@ -1,16 +1,16 @@
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
-export const computeMemberArchivedWithoutActivitySinceGqlFilters = ({
+export const computePersonalArchivedWithoutActivitySinceGqlFilters = ({
   workspaceMemberId,
-  snoozedUntil,
+  isSnoozed,
 }: {
   workspaceMemberId: string;
-  snoozedUntil: 'NULL' | 'NOT_NULL';
+  isSnoozed: boolean;
 }): RecordGqlOperationFilter[] => {
   const subscribedParticipant = {
     workspaceMemberId: { eq: workspaceMemberId },
     isSubscribed: { eq: true },
-    snoozedUntil: { is: snoozedUntil },
+    snoozedUntil: { is: isSnoozed ? 'NOT_NULL' : 'NULL' },
   };
 
   return [

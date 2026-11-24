@@ -33,7 +33,7 @@ const { JANE, JONY } = WORKSPACE_MEMBER_DATA_SEED_IDS;
 
 type ThreadStateStep = (threadId: string) => Promise<unknown>;
 
-const runMemberAction =
+const runPersonalInboxAction =
   (action: AgentChatInboxAction): ThreadStateStep =>
   async (threadId) =>
     assertGraphQLSuccessfulResponse(
@@ -74,15 +74,15 @@ const addNewActivity: ThreadStateStep = (threadId) =>
     text: 'New activity',
   });
 
-const MEMBER_THREAD_STATES: ThreadStateStep[][] = [
+const PERSONAL_THREAD_STATES: ThreadStateStep[][] = [
   [],
-  [runMemberAction('ARCHIVE')],
-  [runMemberAction('ARCHIVE'), addNewActivity],
-  [runMemberAction('SNOOZE')],
-  [runMemberAction('SNOOZE'), addNewActivity],
-  [runMemberAction('UNSUBSCRIBE')],
+  [runPersonalInboxAction('ARCHIVE')],
+  [runPersonalInboxAction('ARCHIVE'), addNewActivity],
+  [runPersonalInboxAction('SNOOZE')],
+  [runPersonalInboxAction('SNOOZE'), addNewActivity],
+  [runPersonalInboxAction('UNSUBSCRIBE')],
   [mentionJane],
-  [mentionJane, runMemberAction('READ')],
+  [mentionJane, runPersonalInboxAction('READ')],
 ];
 
 const CHANNEL_THREAD_STATES: ThreadStateStep[][] = [
@@ -149,10 +149,10 @@ describe('Chat view preset filters through the record API', () => {
   };
 
   it('lists the same chats as the inbox tabs for each personal preset', async () => {
-    const { threadIds } = await createThreadsInStates(MEMBER_THREAD_STATES);
+    const { threadIds } = await createThreadsInStates(PERSONAL_THREAD_STATES);
     const threads = await findThreads({ id: { in: threadIds } });
 
-    expect(threads).toHaveLength(MEMBER_THREAD_STATES.length);
+    expect(threads).toHaveLength(PERSONAL_THREAD_STATES.length);
 
     for (const [viewPresetFilter, tabPresetFilter] of [
       [ViewPresetFilter.INBOX_OPEN, AGENT_CHAT_THREAD_PRESET_FILTER.OPEN],

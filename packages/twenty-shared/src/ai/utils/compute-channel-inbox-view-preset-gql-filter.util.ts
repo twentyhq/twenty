@@ -1,7 +1,7 @@
 import { type ChannelInboxViewPresetFilter } from '@/ai/types/ChannelInboxViewPresetFilter';
 import { type RecordGqlOperationFilter } from '@/types/RecordGqlOperationFilter';
 
-export const computeChannelInboxStatusGqlFilter = (
+export const computeChannelInboxViewPresetGqlFilter = (
   presetFilter: ChannelInboxViewPresetFilter,
 ): RecordGqlOperationFilter => {
   if (presetFilter === 'INBOX_CHANNEL_OPEN') {
