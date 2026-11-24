@@ -2,6 +2,9 @@ import { Dialog, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { getCurrencyPrefix } from '@/localization/utils/getCurrencyPrefix';
+import { type ApplicationBillingPrice } from '~/generated-metadata/graphql';
 import { buildApplicationBillingSummary } from '@/marketplace/utils/buildApplicationBillingSummary';
 import { buildApplicationCapabilitySummary } from '@/marketplace/utils/buildApplicationCapabilitySummary';
 import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/utils/buildApplicationIframeMediaPermissionSummary';
@@ -36,6 +39,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   requestedCapabilities?: string[];
   requestedIframeMediaPermissions?: readonly IframeMediaPermission[];
   billsCredits?: boolean;
+  billingPrices?: ApplicationBillingPrice[];
   isListed?: boolean;
   onAuthorize: () => void;
   isInstalling?: boolean;
@@ -142,11 +146,13 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   requestedCapabilities = [],
   requestedIframeMediaPermissions = [],
   billsCredits = false,
+  billingPrices,
   isListed = false,
   onAuthorize,
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
   const { t } = useLingui();
+  const { formatNumber } = useNumberFormat();
   const { closeDialog } = useDialog();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -186,7 +192,15 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       ...buildApplicationIframeMediaPermissionSummary(
         requestedIframeMediaPermissions,
       ),
-      ...buildApplicationBillingSummary(billsCredits),
+      ...buildApplicationBillingSummary({
+        billsCredits,
+        billingPrices: billingPrices ?? [],
+        formatAmount: ({ amountCents, currency }) =>
+          `${getCurrencyPrefix(currency)}${formatNumber(amountCents / 100, {
+            decimals: 2,
+            minimumDecimals: 2,
+          })}`,
+      }),
     ];
     // The summary builders translate through the global i18n
   }, [
@@ -197,6 +211,8 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     objectLabelsByUniversalIdentifier,
     appObjectUniversalIdentifiers,
     billsCredits,
+    billingPrices,
+    formatNumber,
   ]);
 
   const handleAuthorize = () => {

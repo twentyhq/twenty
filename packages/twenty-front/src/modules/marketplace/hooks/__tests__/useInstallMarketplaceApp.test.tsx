@@ -70,10 +70,9 @@ describe('useInstallMarketplaceApp', () => {
       },
     );
 
-    await act(async () => {
-      await result.current.install();
-    });
+    const isInstallQueued = await act(() => result.current.install());
 
+    expect(isInstallQueued).toBe(true);
     expect(result.current.isInstalling).toBe(true);
     expect(result.current.installProgress).toBeUndefined();
 
