@@ -91,7 +91,7 @@ describe('compileFormulaFieldToSql', () => {
     {
       type: FieldMetadataType.DATE,
       expression: 'dateAdd(dueDate, 2, "QUARTER")',
-      sql: `(CASE WHEN ((("record"."dueDate")::timestamp + make_interval(months => ((CASE WHEN trunc(2::numeric) BETWEEN -40000 AND 40000 THEN trunc(2::numeric) END) * 3)::integer))::date) BETWEEN '0001-01-01'::date AND '9999-12-31'::date THEN ((("record"."dueDate")::timestamp + make_interval(months => ((CASE WHEN trunc(2::numeric) BETWEEN -40000 AND 40000 THEN trunc(2::numeric) END) * 3)::integer))::date) END)`,
+      sql: `(CASE WHEN (((CASE WHEN ("record"."dueDate")::timestamp BETWEEN '0001-01-01'::timestamp AND '9999-12-31 23:59:59.999'::timestamp THEN ("record"."dueDate")::timestamp END) + make_interval(months => ((CASE WHEN trunc(2::numeric) BETWEEN -16000 AND 16000 THEN trunc(2::numeric) END) * 3)::integer))::date) BETWEEN '0001-01-01'::date AND '9999-12-31'::date THEN (((CASE WHEN ("record"."dueDate")::timestamp BETWEEN '0001-01-01'::timestamp AND '9999-12-31 23:59:59.999'::timestamp THEN ("record"."dueDate")::timestamp END) + make_interval(months => ((CASE WHEN trunc(2::numeric) BETWEEN -16000 AND 16000 THEN trunc(2::numeric) END) * 3)::integer))::date) END)`,
     },
     {
       type: FieldMetadataType.SELECT,
@@ -177,6 +177,11 @@ describe('compileFormulaFieldToSql', () => {
       errorMessage: 'dateAdd needs a date, but got text',
     },
     {
+      type: FieldMetadataType.NUMBER,
+      expression: 'dateDiff("0000-01-01", now, "DAY")',
+      errorMessage: 'dateDiff needs a date, but got text',
+    },
+    {
       type: FieldMetadataType.TEXT,
       expression: 'payload',
       errorMessage: '"payload" cannot be read by a formula',
@@ -200,4 +205,19 @@ describe('compileFormulaFieldToSql', () => {
       });
     },
   );
+
+  it('should refuse a formula whose SQL grows past the size limit', () => {
+    const nestedDateDifference = Array.from({ length: 11 }).reduce<string>(
+      (expression) =>
+        `dateDiff(now, dateAdd(now, ${expression}, "YEAR"), "MONTH")`,
+      '1',
+    );
+
+    expect(
+      compile({
+        type: FieldMetadataType.NUMBER,
+        expression: nestedDateDifference,
+      }),
+    ).toEqual({ isValid: false, errorMessage: 'This formula is too complex' });
+  });
 });

@@ -6,6 +6,7 @@ export type ValidationRuleErrorCode =
   | 'EXPRESSION_TOO_LONG'
   | 'BRACKET_ACCESS'
   | 'SPACED_MEMBER_DOT'
+  | 'WRONG_ARGUMENT_COUNT'
   | 'NOT_A_VALUE'
   | 'UNKNOWN_FIELD'
   | 'UNKNOWN_SUBFIELD'

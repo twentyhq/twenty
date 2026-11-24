@@ -216,7 +216,10 @@ export type {
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectRecordsOperationType } from './ObjectRecordsOperationType';
-export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
+export type {
+  UnreadableNestedFieldPermission,
+  ObjectRecordsPermissions,
+} from './ObjectRecordsPermissions';
 export { ObjectSharingReach } from './ObjectSharingReach';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
@@ -382,6 +385,7 @@ export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
 export type { ViewFilterValue } from './ViewFilterValue';
 export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
+export { ViewPresetFilter } from './ViewPresetFilter';
 export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';

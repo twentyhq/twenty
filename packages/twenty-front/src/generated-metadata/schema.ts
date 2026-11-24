@@ -61,6 +61,7 @@ export type Agent = {
   responseFormat?: Maybe<Scalars['JSON']['output']>;
   roleId?: Maybe<Scalars['UUID']['output']>;
   triggers: Array<Scalars['JSON']['output']>;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -632,6 +633,34 @@ export type ApplicationAuthorization = {
   userId: Scalars['UUID']['output'];
   workspaceId: Scalars['UUID']['output'];
 };
+
+export type ApplicationBillingPrice = {
+  __typename?: 'ApplicationBillingPrice';
+  amountCents: Scalars['Int']['output'];
+  billingPeriod: ApplicationBillingPricePeriod;
+  currency: ApplicationBillingPriceCurrency;
+  label: Scalars['String']['output'];
+  per?: Maybe<ApplicationBillingPriceUnit>;
+  type: ApplicationBillingPriceType;
+  universalIdentifier: Scalars['String']['output'];
+};
+
+export enum ApplicationBillingPriceCurrency {
+  USD = 'USD'
+}
+
+export enum ApplicationBillingPricePeriod {
+  MONTHLY = 'MONTHLY'
+}
+
+export enum ApplicationBillingPriceType {
+  RECURRING = 'RECURRING'
+}
+
+export enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT = 'CONNECTED_ACCOUNT',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
+}
 
 export type ApplicationCapabilityGrant = {
   __typename?: 'ApplicationCapabilityGrant';
@@ -2128,6 +2157,7 @@ export type CreateViewInput = {
   /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn?: InputMaybe<ViewOpenRecordIn>;
   position?: InputMaybe<Scalars['Float']['input']>;
+  presetFilter?: InputMaybe<ViewPresetFilter>;
   shouldDisplayGroupsAsTabs?: InputMaybe<Scalars['Boolean']['input']>;
   shouldHideEmptyGroups?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ViewType>;
@@ -2641,6 +2671,7 @@ export enum FeatureFlagKey {
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
   IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
@@ -2650,7 +2681,8 @@ export enum FeatureFlagKey {
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
-  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED',
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED = 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 }
 
 export type Field = {
@@ -3384,6 +3416,7 @@ export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
   aboutDescription?: Maybe<Scalars['String']['output']>;
   author?: Maybe<Scalars['String']['output']>;
+  billingPrices: Array<ApplicationBillingPrice>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
   connectUrl?: Maybe<Scalars['String']['output']>;
@@ -7162,6 +7195,8 @@ export type RowLevelPermissionPredicate = {
   value?: Maybe<Scalars['JSON']['output']>;
   workspaceMemberFieldMetadataId?: Maybe<Scalars['String']['output']>;
   workspaceMemberRelationFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFilterFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  workspaceMemberRelationFilterValues?: Maybe<Array<Scalars['String']['output']>>;
   workspaceMemberSubFieldName?: Maybe<Scalars['String']['output']>;
 };
 
@@ -7244,6 +7279,8 @@ export type RowLevelPermissionRulePredicateInput = {
   value?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   workspaceMemberRelationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberRelationFilterFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  workspaceMemberRelationFilterValues?: InputMaybe<Array<Scalars['String']['input']>>;
   workspaceMemberSubFieldName?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -8876,6 +8913,7 @@ export type View = {
   /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
   openRecordIn: ViewOpenRecordIn;
   position: Scalars['Float']['output'];
+  presetFilter?: Maybe<ViewPresetFilter>;
   shouldDisplayGroupsAsTabs?: Maybe<Scalars['Boolean']['output']>;
   shouldHideEmptyGroups: Scalars['Boolean']['output'];
   type: ViewType;
@@ -9089,6 +9127,16 @@ export enum ViewOpenRecordIn {
   SIDE_PANEL = 'SIDE_PANEL'
 }
 
+export enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE = 'INBOX_CHANNEL_DONE',
+  INBOX_CHANNEL_OPEN = 'INBOX_CHANNEL_OPEN',
+  INBOX_CHANNEL_SNOOZED = 'INBOX_CHANNEL_SNOOZED',
+  INBOX_DONE = 'INBOX_DONE',
+  INBOX_MENTIONS = 'INBOX_MENTIONS',
+  INBOX_OPEN = 'INBOX_OPEN',
+  INBOX_SNOOZED = 'INBOX_SNOOZED'
+}
+
 export type ViewSort = {
   __typename?: 'ViewSort';
   createdAt: Scalars['DateTime']['output'];
@@ -9112,6 +9160,7 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   CALENDAR_WIDGET = 'CALENDAR_WIDGET',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
+  INBOX = 'INBOX',
   KANBAN = 'KANBAN',
   KANBAN_WIDGET = 'KANBAN_WIDGET',
   LIST = 'LIST',

@@ -8,6 +8,8 @@ const AUTH_GUARD_NAMES = [
 
 const ACCESS_POLICY_GUARD_NAME = 'AccessPolicyGuard';
 
+const NO_PERMISSION_GUARD_NAME = 'NoPermissionGuard';
+
 // A named constant when several entry points share the operation, else an inline policy
 const ACCESS_POLICY_CONSTANT_NAME_PATTERN = /^[A-Z][A-Z0-9_]*_ACCESS_POLICY$/;
 
@@ -120,6 +122,15 @@ export const typedTokenHelpers = {
         (arg.type === 'Identifier' && AUTH_GUARD_NAMES.includes(arg.name)) ||
         isAccessPolicyGuardWithPolicy(arg),
     ),
+
+  nodeHasAccessPolicyOrNoPermissionGuard: (node: any): boolean =>
+    getUseGuardsArguments(node).some(
+      (arg: any) =>
+        (arg.type === 'Identifier' && arg.name === NO_PERMISSION_GUARD_NAME) ||
+        isAccessPolicyGuardWithPolicy(arg),
+    ),
+
+  getUseGuardsDecorators,
 
   getAccessPolicyGuardsWithoutPolicy: (node: any): any[] =>
     getUseGuardsArguments(node).filter(

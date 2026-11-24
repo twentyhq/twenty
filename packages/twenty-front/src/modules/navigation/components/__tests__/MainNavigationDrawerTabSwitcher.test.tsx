@@ -19,6 +19,7 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
+import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import {
   GetAgentChatOpenThreadsSummaryDocument,
   PermissionFlagType,
@@ -43,6 +44,25 @@ jest.mock(
 );
 
 let mockIsInboxEnabled = true;
+let mockChatAttention: {
+  chatAttention: InboxChatAttention | null;
+  unreadOpenThreadCount: number;
+  getTabChatAttention: (tabId: string | null) => InboxChatAttention | null;
+} | null = null;
+
+jest.mock(
+  '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
+  () => {
+    const actualModule = jest.requireActual(
+      '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention',
+    );
+
+    return {
+      useNavigationMenuChatAttention: () =>
+        mockChatAttention ?? actualModule.useNavigationMenuChatAttention(),
+    };
+  },
+);
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: () => mockIsInboxEnabled,
@@ -125,6 +145,7 @@ describe('MainNavigationDrawerTabSwitcher', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsInboxEnabled = true;
+    mockChatAttention = null;
 
     jest.mocked(useNavigationDrawerTabs).mockReturnValue([
       {
@@ -292,5 +313,37 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(screen.getByRole('button', { name: 'Home' })).not.toHaveAttribute(
       'aria-current',
     );
+  });
+
+  it('keeps the attention on the open sidebar tab', () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+    jest.mocked(useActiveNavigationMenuTab).mockReturnValue(salesTab);
+    mockChatAttention = {
+      chatAttention: 'needs-input',
+      unreadOpenThreadCount: 0,
+      getTabChatAttention: () => 'needs-input',
+    };
+
+    renderTabSwitcher();
+
+    expect(
+      screen.getByRole('button', { name: 'Sales, needs your input' }),
+    ).toHaveAttribute('aria-current', 'true');
+  });
+
+  it('marks Home when a chat section sits at its top level', () => {
+    mockChatAttention = {
+      chatAttention: 'unread',
+      unreadOpenThreadCount: 0,
+      getTabChatAttention: (tabId) => (tabId === null ? 'unread' : null),
+    };
+
+    renderTabSwitcher();
+
+    expect(
+      screen.getByRole('button', { name: 'Home, unread' }),
+    ).toBeInTheDocument();
   });
 });

@@ -11,6 +11,7 @@ type OptionRow = {
   value: string;
   label: string;
   color: string | null;
+  description: string | null;
   position: number;
   isActive: boolean;
   overrides: Record<string, object> | null;
@@ -38,7 +39,7 @@ const findStageField = async (): Promise<{
 
 const findOptionRows = async (fieldMetadataId: string): Promise<OptionRow[]> =>
   globalThis.testDataSource.query(
-    `SELECT option."universalIdentifier", option.value, option.label, option.color, option.position,
+    `SELECT option."universalIdentifier", option.value, option.label, option.color, option.description, option.position,
         option."isActive", option.overrides,
         option."applicationId" = workspace."workspaceCustomApplicationId" AS "isOwnedByWorkspace"
       FROM core."fieldMetadataOption" option
@@ -242,6 +243,37 @@ describe('a workspace overrides the options of a standard field', () => {
         ({ value }) => value === 'ON_HOLD',
       ),
     ).toBe(false);
+  });
+
+  it('stores a description on a standard option as an override', async () => {
+    const description = 'Pricing sent, waiting for a signature';
+    const { options: currentOptions } = await findStageField();
+
+    const { data } = await updateStageOptions({
+      fieldMetadataId,
+      expectToFail: false,
+      options: currentOptions.map((option) =>
+        option.value === 'PROPOSAL' ? { ...option, description } : option,
+      ),
+    });
+
+    expect(
+      findOrThrow(
+        data.updateOneField.options,
+        ({ value }) => value === 'PROPOSAL',
+      ).description,
+    ).toBe(description);
+    expect(
+      findOrThrow(
+        await findOptionRows(fieldMetadataId),
+        ({ value }) => value === 'PROPOSAL',
+      ),
+    ).toMatchObject({
+      description: null,
+      overrides: {
+        [workspaceCustomApplicationUniversalIdentifier]: { description },
+      },
+    });
   });
 
   it('refuses to deactivate the default option', async () => {
