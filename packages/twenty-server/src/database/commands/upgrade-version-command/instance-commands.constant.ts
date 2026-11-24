@@ -339,7 +339,7 @@ import { AddPresetFilterToViewFastInstanceCommand } from 'src/database/commands/
 import { AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523223000-add-workspace-member-relation-filter-to-row-level-permission-predicate';
 import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523227174-add-source-field-to-field-permission';
 import { AddInboxViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795526052553-add-inbox-view-type';
-import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-slow-1795527654000-add-user-workspace-default-avatar-file-id';
+import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-slow-1795536145181-add-user-workspace-default-avatar-file-id';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
