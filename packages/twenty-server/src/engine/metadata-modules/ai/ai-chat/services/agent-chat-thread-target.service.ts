@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
-import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findAgentChatThreadTargetJoinColumnName } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-thread-target-join-column-name.util';
 import {
@@ -36,7 +34,6 @@ export class AgentChatThreadTargetService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   // chat turns run in a queue worker, so the sender's context is passed to write the link as them
@@ -44,7 +41,7 @@ export class AgentChatThreadTargetService {
     await this.writeLinkToReadableRecord({
       ...args,
       writeLink: async (link) => {
-        const repository = this.getThreadTargetRepository(args.authContext);
+        const repository = this.getThreadTargetRepository();
 
         // only standard legs have a unique index, so custom-object links are deduplicated by lookup
         if (await repository.existsBy(link)) {
@@ -59,8 +56,7 @@ export class AgentChatThreadTargetService {
   async detachThreadFromRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,
-      writeLink: (link) =>
-        this.getThreadTargetRepository(args.authContext).softDelete(link),
+      writeLink: (link) => this.getThreadTargetRepository().softDelete(link),
     });
   }
 
@@ -74,13 +70,6 @@ export class AgentChatThreadTargetService {
   }: ThreadRecordLinkArgs & {
     writeLink: (link: Record<string, string>) => Promise<unknown>;
   }): Promise<void> {
-    if (isApplicationAuthContext(authContext)) {
-      await this.sharingService.getCallerWritableThreadOrThrow({
-        authContext,
-        threadId,
-      });
-    }
-
     const joinColumnName = await this.resolveJoinColumnNameOrThrow({
       workspaceId,
       objectNameSingular,
@@ -97,15 +86,7 @@ export class AgentChatThreadTargetService {
     }, authContext);
   }
 
-  private getThreadTargetRepository(authContext: WorkspaceAuthContext) {
-    // App authorship grants thread access outside the ORM row permissions.
-    // Thread authorization and target-record readability are checked before this write.
-    if (isApplicationAuthContext(authContext)) {
-      return this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
-        AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
-      );
-    }
-
+  private getThreadTargetRepository() {
     return this.workspaceOrmManager.getRepository(
       AGENT_CHAT_THREAD_TARGET_OBJECT_METADATA_NAME,
     );
