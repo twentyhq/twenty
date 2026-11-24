@@ -95,14 +95,12 @@ export const useFindManyRecordIndexTableParams = (
   const currentViewPresetGqlOperationFilter =
     useCurrentViewPresetGqlOperationFilter();
 
-  const combinedFilter = combineFilters(
-    [
-      currentFilters,
-      recordGroupFilter,
-      anyFieldFilter,
-      currentViewPresetGqlOperationFilter,
-    ].filter(isDefined),
-  );
+  const combinedFilter = combineFilters([
+    currentFilters,
+    recordGroupFilter,
+    anyFieldFilter,
+    currentViewPresetGqlOperationFilter,
+  ]);
 
   return {
     objectNameSingular,

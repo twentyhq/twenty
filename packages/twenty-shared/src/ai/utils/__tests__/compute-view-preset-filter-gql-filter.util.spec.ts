@@ -23,6 +23,18 @@ const FILED_WITHOUT_ACTIVITY_SINCE = [
 ];
 
 describe('computeViewPresetFilterGqlFilter', () => {
+  it.each([null, undefined])(
+    'adds no condition for a view whose preset is %s',
+    (presetFilter) => {
+      expect(
+        computeViewPresetFilterGqlFilter({
+          presetFilter,
+          currentWorkspaceMemberId: WORKSPACE_MEMBER_ID,
+        }),
+      ).toEqual({});
+    },
+  );
+
   it.each(PERSONAL_PRESET_FILTERS)(
     'leaves direct messages out of %s',
     (presetFilter) => {

@@ -11,7 +11,7 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
-import { computeViewPresetGqlOperationFilter } from '@/views/utils/computeViewPresetGqlOperationFilter';
+import { computeViewPresetFilterGqlFilter } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 export const computeContextStoreGraphqlFilterFromStore = ({
@@ -80,8 +80,8 @@ export const computeContextStoreGraphqlFilterFromStore = ({
       currentWorkspaceMemberId: currentWorkspaceMember?.id,
       timeZone: userTimezone,
     },
-    currentViewPresetGqlOperationFilter: computeViewPresetGqlOperationFilter({
-      view: currentView,
+    currentViewPresetGqlOperationFilter: computeViewPresetFilterGqlFilter({
+      presetFilter: currentView?.presetFilter,
       currentWorkspaceMemberId: currentWorkspaceMember?.id,
     }),
     contextStoreAnyFieldFilterValue: store.get(

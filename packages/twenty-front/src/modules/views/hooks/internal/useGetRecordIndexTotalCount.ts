@@ -65,12 +65,10 @@ export const useGetRecordIndexTotalCount = () => {
     id: { COUNT: number };
   }>({
     objectNameSingular: objectMetadataItem.nameSingular,
-    filter: combineFilters(
-      [
-        { ...filter, ...anyFieldFilter },
-        currentViewPresetGqlOperationFilter,
-      ].filter(isDefined),
-    ),
+    filter: combineFilters([
+      { ...filter, ...anyFieldFilter },
+      currentViewPresetGqlOperationFilter,
+    ]),
     recordGqlFieldsAggregate: {
       id: [AggregateOperations.COUNT],
     },

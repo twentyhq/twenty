@@ -131,14 +131,12 @@ export const useRecordIndexGroupsAggregatesGroupBy = ({
       skip ||
       !isDefined(recordAggregateGqlField),
     variables: {
-      filter: combineFilters(
-        [
-          anyFieldFilter,
-          requestFilters,
-          recordGroupOptionsFilter,
-          currentViewPresetGqlOperationFilter,
-        ].filter(isDefined),
-      ),
+      filter: combineFilters([
+        anyFieldFilter,
+        requestFilters,
+        recordGroupOptionsFilter,
+        currentViewPresetGqlOperationFilter,
+      ]),
       groupBy: {
         ...groupByGqlInput,
       },

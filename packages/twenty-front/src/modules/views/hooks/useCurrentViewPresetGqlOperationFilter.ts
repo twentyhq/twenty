@@ -4,12 +4,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
-import { computeViewPresetGqlOperationFilter } from '@/views/utils/computeViewPresetGqlOperationFilter';
+import { computeViewPresetFilterGqlFilter } from 'twenty-shared/ai';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 export const useCurrentViewPresetGqlOperationFilter = (
   contextStoreInstanceId?: string,
-): RecordGqlOperationFilter | undefined => {
+): RecordGqlOperationFilter => {
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
     contextStoreInstanceId,
@@ -21,8 +21,8 @@ export const useCurrentViewPresetGqlOperationFilter = (
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  return computeViewPresetGqlOperationFilter({
-    view: currentView,
+  return computeViewPresetFilterGqlFilter({
+    presetFilter: currentView?.presetFilter,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
 };

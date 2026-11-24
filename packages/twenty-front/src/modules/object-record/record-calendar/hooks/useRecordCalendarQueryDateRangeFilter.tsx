@@ -94,14 +94,12 @@ export const useRecordCalendarQueryDateRangeFilter = (
     });
 
   return {
-    dateRangeFilter: combineFilters(
-      [
-        dateRangeFilterAfter,
-        dateRangeFilterBefore,
-        viewFilter,
-        anyFieldFilter,
-        currentViewPresetGqlOperationFilter,
-      ].filter(isDefined),
-    ),
+    dateRangeFilter: combineFilters([
+      dateRangeFilterAfter,
+      dateRangeFilterBefore,
+      viewFilter,
+      anyFieldFilter,
+      currentViewPresetGqlOperationFilter,
+    ]),
   };
 };

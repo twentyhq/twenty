@@ -108,9 +108,13 @@ export const computeViewPresetFilterGqlFilter = ({
   presetFilter,
   currentWorkspaceMemberId,
 }: {
-  presetFilter: `${ViewPresetFilter}`;
+  presetFilter: `${ViewPresetFilter}` | null | undefined;
   currentWorkspaceMemberId: string | undefined;
 }): RecordGqlOperationFilter => {
+  if (!isDefined(presetFilter)) {
+    return {};
+  }
+
   switch (presetFilter) {
     case 'INBOX_OPEN':
     case 'INBOX_SNOOZED':

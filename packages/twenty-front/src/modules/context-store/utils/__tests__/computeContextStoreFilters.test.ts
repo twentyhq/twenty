@@ -32,7 +32,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
-      currentViewPresetGqlOperationFilter: undefined,
+      currentViewPresetGqlOperationFilter: {},
     });
 
     expect(filters).toEqual({
@@ -71,7 +71,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: 'any field search',
-      currentViewPresetGqlOperationFilter: undefined,
+      currentViewPresetGqlOperationFilter: {},
     });
 
     // Explicitly selected records must be targeted as-is, even if they would
@@ -108,7 +108,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: 'Airtable',
-      currentViewPresetGqlOperationFilter: undefined,
+      currentViewPresetGqlOperationFilter: {},
     });
 
     const serializedFilters = JSON.stringify(filters);
@@ -147,7 +147,7 @@ describe('computeContextStoreFilters', () => {
       fieldMetadataItems: personObjectMetadataItem.fields,
       filterValueDependencies: mockFilterValueDependencies,
       contextStoreAnyFieldFilterValue: '',
-      currentViewPresetGqlOperationFilter: undefined,
+      currentViewPresetGqlOperationFilter: {},
     });
 
     expect(filters).toEqual({

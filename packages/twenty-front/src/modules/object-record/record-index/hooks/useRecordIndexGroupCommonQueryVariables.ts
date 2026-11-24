@@ -18,7 +18,6 @@ import { useCurrentViewPresetGqlOperationFilter } from '@/views/hooks/useCurrent
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
-  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -96,14 +95,12 @@ export const useRecordIndexGroupCommonQueryVariables = () => {
   const currentViewPresetGqlOperationFilter =
     useCurrentViewPresetGqlOperationFilter();
 
-  const combinedFilters = combineFilters(
-    [
-      anyFieldFilter,
-      requestFilters,
-      recordGroupOptionsFilter,
-      currentViewPresetGqlOperationFilter,
-    ].filter(isDefined),
-  );
+  const combinedFilters = combineFilters([
+    anyFieldFilter,
+    requestFilters,
+    recordGroupOptionsFilter,
+    currentViewPresetGqlOperationFilter,
+  ]);
 
   const recordGroupsLimit = visibleRecordGroupDefinitions.length;
 

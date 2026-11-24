@@ -123,14 +123,12 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { data, loading, refetch } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: combineFilters(
-      [
-        requestFilters,
-        recordGroupFilter,
-        anyFieldFilter,
-        currentViewPresetGqlOperationFilter,
-      ].filter(isDefined),
-    ),
+    filter: combineFilters([
+      requestFilters,
+      recordGroupFilter,
+      anyFieldFilter,
+      currentViewPresetGqlOperationFilter,
+    ]),
     skip: !isDefined(aggregateOperationForViewField),
   });
 

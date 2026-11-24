@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { computeViewPresetFilterGqlFilter } from 'twenty-shared/ai';
 import {
   CompositeFieldSubFieldName,
   type ObjectRecord,
@@ -59,7 +60,6 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { ViewFilterGroupService } from 'src/engine/metadata-modules/view-filter-group/services/view-filter-group.service';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { computeViewPresetGqlOperationFilter } from 'src/engine/metadata-modules/view/utils/compute-view-preset-gql-operation-filter.util';
 import { isViewVisibleToCaller } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-caller.util';
 import { formatColumnNameForRelationField } from 'src/engine/twenty-orm/utils/format-column-name-for-relation-field.util';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -308,8 +308,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
             timeZone: 'UTC', // TODO: see if we use workspace member timezone here
           },
         }),
-        computeViewPresetGqlOperationFilter({
-          view: visibleView,
+        computeViewPresetFilterGqlFilter({
+          presetFilter: visibleView?.presetFilter,
           currentWorkspaceMemberId,
         }),
       ]),
