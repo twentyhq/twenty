@@ -42,6 +42,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   triggers: [JSON!]!
+  universalIdentifier: UUID!
   updatedAt: DateTime!
 }
 
