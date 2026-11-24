@@ -30,6 +30,7 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 const COMMAND_MENU_ITEM_READ_ACCESS_POLICY: AccessPolicy = {
   authPrincipals: {
@@ -75,6 +76,7 @@ export class CommandMenuItemResolver {
   ) {}
 
   @ResolveField(() => String)
+  @UseGuards(NoPermissionGuard)
   async label(
     @Parent() commandMenuItem: CommandMenuItemDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -93,6 +95,7 @@ export class CommandMenuItemResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async shortLabel(
     @Parent() commandMenuItem: CommandMenuItemDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -109,6 +112,7 @@ export class CommandMenuItemResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async icon(
     @Parent() commandMenuItem: CommandMenuItemDTO,
     @Context() context: { loaders: IDataloaders } & I18nContext,
@@ -125,6 +129,7 @@ export class CommandMenuItemResolver {
   }
 
   @ResolveField(() => FrontComponentDTO, { nullable: true })
+  @UseGuards(NoPermissionGuard)
   async frontComponent(
     @Parent() commandMenuItem: CommandMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
