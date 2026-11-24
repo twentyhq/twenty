@@ -28,6 +28,11 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AddAgentChatThreadParticipantsInput = {
+  threadId: Scalars['UUID']['input'];
+  workspaceMemberIds: Array<Scalars['UUID']['input']>;
+};
+
 export type AddQuerySubscriptionInput = {
   eventStreamId: Scalars['String']['input'];
   operationSignature: Scalars['JSON']['input'];
@@ -2429,6 +2434,7 @@ export enum EngineComponentKey {
   GO_TO_WORKFLOWS = 'GO_TO_WORKFLOWS',
   HIDE_DELETED_RECORDS = 'HIDE_DELETED_RECORDS',
   IMPORT_RECORDS = 'IMPORT_RECORDS',
+  MANAGE_AI_CHAT_PARTICIPANTS = 'MANAGE_AI_CHAT_PARTICIPANTS',
   MARK_AI_CHAT_AS_DONE = 'MARK_AI_CHAT_AS_DONE',
   MARK_AI_CHAT_AS_READ = 'MARK_AI_CHAT_AS_READ',
   MARK_AI_CHAT_AS_UNREAD = 'MARK_AI_CHAT_AS_UNREAD',
@@ -3716,6 +3722,7 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
+  addAgentChatThreadParticipants: Array<Scalars['UUID']['output']>;
   addQueryToEventStream: Scalars['Boolean']['output'];
   approveApplicationIframeMediaPermissions: Application;
   archiveInboxThread: Scalars['Boolean']['output'];
@@ -4049,6 +4056,11 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAddAgentChatMessageReactionArgs = {
   emoji: Scalars['String']['input'];
   messageId: Scalars['UUID']['input'];
+};
+
+
+export type MutationAddAgentChatThreadParticipantsArgs = {
+  input: AddAgentChatThreadParticipantsInput;
 };
 
 

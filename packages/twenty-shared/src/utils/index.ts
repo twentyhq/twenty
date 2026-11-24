@@ -67,8 +67,11 @@ export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDate
 export { deepMerge } from './deepMerge';
 export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAccountPerformEmailOperation';
 export { formatEmailAddress } from './email/formatEmailAddress';
+export { getDomainFromEmail } from './email/getDomainFromEmail';
 export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
 export { getSendableEmailHandles } from './email/getSendableEmailHandles';
+export { isWorkDomain } from './email/isWorkDomain';
+export { isWorkEmail } from './email/isWorkEmail';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';

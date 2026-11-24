@@ -1,0 +1,1 @@
+export const WHATSAPP_AVATAR_MAX_SIZE_BYTES = 5 * 1024 * 1024;
