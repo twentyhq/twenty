@@ -30,11 +30,15 @@ export const resolveCallRecorderPolicyResult = ({
     return botNotRequired('PREFERENCE_OFF');
   }
 
-  if (
-    !isNonEmptyArray(input.ownerUserWorkspaceIds) &&
-    input.callRecorderPreference !== CallRecorderPreference.ON
-  ) {
+  const isRecordingForced =
+    input.callRecorderPreference === CallRecorderPreference.ON;
+
+  if (!isRecordingForced && !isNonEmptyArray(input.ownerRecordingPreferences)) {
     return botNotRequired('NO_OWNER');
+  }
+
+  if (!isRecordingForced && !input.ownerRecordingPreferences.includes('ALL')) {
+    return botNotRequired('OWNERS_OPTED_OUT');
   }
 
   if (!isNonEmptyString(input.conferenceLinkUrl)) {

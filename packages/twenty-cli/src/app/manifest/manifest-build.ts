@@ -66,6 +66,9 @@ import {
   type TimelineActivityTypeManifest,
   type ViewManifest,
   type WorkflowManifest,
+  withDeprecatedConnectionProviderReferences,
+  withDeprecatedMcpServerReferences,
+  withDeprecatedMessagingProviderReferences,
 } from 'twenty-shared/application';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -295,7 +298,9 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        connectionProviders.push(extract.config);
+        connectionProviders.push(
+          withDeprecatedConnectionProviderReferences(extract.config),
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         connectionProvidersFilePaths.push(relativePath);
@@ -307,7 +312,9 @@ export const buildManifest = async (
             appPath,
             filePath,
           });
-        messagingProviders.push(extract.config);
+        messagingProviders.push(
+          withDeprecatedMessagingProviderReferences(extract.config),
+        );
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         messagingProvidersFilePaths.push(relativePath);
@@ -318,7 +325,7 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        mcpServers.push(extract.config);
+        mcpServers.push(withDeprecatedMcpServerReferences(extract.config));
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         mcpServersFilePaths.push(relativePath);
