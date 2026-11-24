@@ -156,7 +156,6 @@ export class StoredFormulaFieldComputationService {
       : undefined;
   }
 
-  // Only the records whose stored value differs are written, so an unchanged value emits no event
   private async recomputeRecordsBatch({
     flatObjectMetadata,
     columnExpressions,

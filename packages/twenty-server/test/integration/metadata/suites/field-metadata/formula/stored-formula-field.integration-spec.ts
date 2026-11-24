@@ -75,7 +75,13 @@ describe('Stored formula fields', () => {
     return createOneField;
   };
 
-  const runMutation = async (query: string, variables = {}) => {
+  const runMutation = async ({
+    query,
+    variables = {},
+  }: {
+    query: string;
+    variables?: Record<string, unknown>;
+  }) => {
     const response = await makeGraphqlApiRequest({
       query: gql(query),
       variables,
@@ -88,32 +94,32 @@ describe('Stored formula fields', () => {
 
   const createGadget = async (data: Record<string, unknown>) =>
     (
-      await runMutation(
-        `mutation CreateGadget($data: StoredFormulaGadgetCreateInput!) {
+      await runMutation({
+        query: `mutation CreateGadget($data: StoredFormulaGadgetCreateInput!) {
           createStoredFormulaGadget(data: $data) { id }
         }`,
-        { data },
-      )
+        variables: { data },
+      })
     ).createStoredFormulaGadget.id;
 
   const updateGadget = (id: string, data: Record<string, unknown>) =>
-    runMutation(
-      `mutation UpdateGadget($id: UUID!, $data: StoredFormulaGadgetUpdateInput!) {
+    runMutation({
+      query: `mutation UpdateGadget($id: UUID!, $data: StoredFormulaGadgetUpdateInput!) {
         updateStoredFormulaGadget(id: $id, data: $data) { id }
       }`,
-      { id, data },
-    );
+      variables: { id, data },
+    });
 
   const findSupplier = async (id: string) => {
     await waitForAllJobsToFinish();
 
     return (
-      await runMutation(
-        `query FindSupplier($id: UUID!) {
+      await runMutation({
+        query: `query FindSupplier($id: UUID!) {
           storedFormulaSupplier(filter: { id: { eq: $id } }) { ${SUPPLIER_GQL_FIELDS} }
         }`,
-        { id },
-      )
+        variables: { id },
+      })
     ).storedFormulaSupplier;
   };
 
@@ -150,14 +156,14 @@ describe('Stored formula fields', () => {
     });
 
     firstSupplierId = (
-      await runMutation(
-        `mutation { createStoredFormulaSupplier(data: { name: "Acme", weight: 2 }) { id } }`,
-      )
+      await runMutation({
+        query: `mutation { createStoredFormulaSupplier(data: { name: "Acme", weight: 2 }) { id } }`,
+      })
     ).createStoredFormulaSupplier.id;
     secondSupplierId = (
-      await runMutation(
-        `mutation { createStoredFormulaSupplier(data: { name: "Globex" }) { id } }`,
-      )
+      await runMutation({
+        query: `mutation { createStoredFormulaSupplier(data: { name: "Globex" }) { id } }`,
+      })
     ).createStoredFormulaSupplier.id;
 
     // Created before the formulas, so their first values come from the backfill
@@ -285,12 +291,12 @@ describe('Stored formula fields', () => {
   });
 
   it('should recompute when a field of the record itself changes', async () => {
-    await runMutation(
-      `mutation UpdateSupplier($id: UUID!) {
+    await runMutation({
+      query: `mutation UpdateSupplier($id: UUID!) {
         updateStoredFormulaSupplier(id: $id, data: { weight: 3 }) { id }
       }`,
-      { id: firstSupplierId },
-    );
+      variables: { id: firstSupplierId },
+    });
 
     expect(await findSupplier(firstSupplierId)).toMatchObject({
       weightedCount: 6,
@@ -311,40 +317,40 @@ describe('Stored formula fields', () => {
   it('should leave out a deleted related record, count it again once restored, and leave out a destroyed one', async () => {
     const filter = { id: { in: [firstGadgetId] } };
 
-    await runMutation(
-      `mutation DeleteGadgets($filter: StoredFormulaGadgetFilterInput!) {
+    await runMutation({
+      query: `mutation DeleteGadgets($filter: StoredFormulaGadgetFilterInput!) {
         deleteStoredFormulaGadgets(filter: $filter) { id }
       }`,
-      { filter },
-    );
+      variables: { filter },
+    });
 
     expect(await findSupplier(secondSupplierId)).toMatchObject({
       gadgetCount: 1,
     });
 
-    await runMutation(
-      `mutation RestoreGadgets($filter: StoredFormulaGadgetFilterInput!) {
+    await runMutation({
+      query: `mutation RestoreGadgets($filter: StoredFormulaGadgetFilterInput!) {
         restoreStoredFormulaGadgets(filter: $filter) { id }
       }`,
-      { filter },
-    );
+      variables: { filter },
+    });
 
     expect(await findSupplier(secondSupplierId)).toMatchObject({
       gadgetCount: 2,
     });
 
-    await runMutation(
-      `mutation DeleteGadgets($filter: StoredFormulaGadgetFilterInput!) {
+    await runMutation({
+      query: `mutation DeleteGadgets($filter: StoredFormulaGadgetFilterInput!) {
         deleteStoredFormulaGadgets(filter: $filter) { id }
       }`,
-      { filter },
-    );
-    await runMutation(
-      `mutation DestroyGadgets($filter: StoredFormulaGadgetFilterInput!) {
+      variables: { filter },
+    });
+    await runMutation({
+      query: `mutation DestroyGadgets($filter: StoredFormulaGadgetFilterInput!) {
         destroyStoredFormulaGadgets(filter: $filter) { id }
       }`,
-      { filter },
-    );
+      variables: { filter },
+    });
 
     expect(await findSupplier(secondSupplierId)).toMatchObject({
       gadgetCount: 1,

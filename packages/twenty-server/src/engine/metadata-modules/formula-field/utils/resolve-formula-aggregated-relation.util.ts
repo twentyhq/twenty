@@ -8,7 +8,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// Undefined unless the relation is one-to-many and both of its ends still exist
 export const resolveFormulaAggregatedRelation = ({
   relationFlatFieldMetadata,
   flatObjectMetadataMaps,

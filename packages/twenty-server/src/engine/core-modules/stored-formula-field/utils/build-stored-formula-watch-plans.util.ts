@@ -11,7 +11,6 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { resolveFormulaAggregatedRelation } from 'src/engine/metadata-modules/formula-field/utils/resolve-formula-aggregated-relation.util';
 
-// Derived from the bindings, which name every field a stored formula reads
 export const buildStoredFormulaWatchPlans = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,

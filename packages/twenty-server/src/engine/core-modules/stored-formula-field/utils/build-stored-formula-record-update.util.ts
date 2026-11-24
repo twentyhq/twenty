@@ -2,7 +2,6 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
 
-// Composite fields are written as one object of their sub-fields
 export const buildStoredFormulaRecordUpdate = ({
   columnExpressions,
   values,
