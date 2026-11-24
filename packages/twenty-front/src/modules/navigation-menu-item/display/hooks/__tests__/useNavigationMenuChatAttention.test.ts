@@ -20,7 +20,7 @@ const buildSection = ({
   builtInSectionKey,
 }: {
   id: string;
-  parentId: string;
+  parentId: string | null;
   builtInSectionKey: string | null;
 }): NavigationMenuItem => ({
   id,
@@ -63,6 +63,11 @@ describe('useNavigationMenuChatAttention', () => {
           builtInSectionKey: 'aiChatChannels',
         }),
         buildSection({
+          id: 'favorite-chats-section',
+          parentId: null,
+          builtInSectionKey: 'aiChatFavorites',
+        }),
+        buildSection({
           id: 'sales-section',
           parentId: 'sales-tab',
           builtInSectionKey: null,
@@ -81,6 +86,7 @@ describe('useNavigationMenuChatAttention', () => {
     expect(result.current.chatAttention).toBe('needs-input');
     expect(result.current.getTabChatAttention('chats-tab')).toBe('needs-input');
     expect(result.current.getTabChatAttention('sales-tab')).toBeNull();
+    expect(result.current.getTabChatAttention(null)).toBe('needs-input');
   });
 
   it('flags an unread mention as unread', () => {
