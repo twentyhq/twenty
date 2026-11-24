@@ -1,3 +1,6 @@
+import semver from 'semver';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandNameOrThrow } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name-or-throw.util';
 
@@ -16,7 +19,22 @@ export const resolveCompletedVersionFromCursor = ({
   const cursorIndex = stepNames.indexOf(cursor.name);
 
   if (cursorIndex === -1) {
-    return null;
+    const lastStepName = stepNames.at(-1);
+
+    if (!isDefined(lastStepName)) {
+      return null;
+    }
+
+    const unknownCursorVersion = semver.valid(cursor.name.split('_')[0]);
+    const lastStepVersion = extractVersionFromCommandNameOrThrow(lastStepName);
+
+    // During a rolling deploy the next release moves the cursor onto a command
+    // this pod does not know, which means every command it does know is done.
+    return isDefined(unknownCursorVersion) &&
+      isDefined(semver.valid(lastStepVersion)) &&
+      semver.gt(unknownCursorVersion, lastStepVersion)
+      ? lastStepVersion
+      : null;
   }
 
   const cursorVersion = extractVersionFromCommandNameOrThrow(cursor.name);

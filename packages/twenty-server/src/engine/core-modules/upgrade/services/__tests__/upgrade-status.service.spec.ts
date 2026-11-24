@@ -96,6 +96,19 @@ describe('UpgradeStatusService completed versions', () => {
       expectedVersion: null,
     },
     {
+      description:
+        'credits every known version when a newer release owns the cursor',
+      stepNames: [OLDEST_COMMAND, MIDDLE_COMMAND],
+      cursor: { name: '999.0.0_InstanceCommand_9', status: 'completed' },
+      expectedVersion: NEWEST_VERSION,
+    },
+    {
+      description: 'rejects an unknown cursor from an older version',
+      stepNames: [MIDDLE_COMMAND],
+      cursor: { name: '0.1.0_WorkspaceCommand_0', status: 'completed' },
+      expectedVersion: null,
+    },
+    {
       description: 'rejects a missing cursor',
       stepNames: [MIDDLE_COMMAND],
       cursor: null,
