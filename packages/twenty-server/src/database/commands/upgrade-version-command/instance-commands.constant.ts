@@ -339,7 +339,7 @@ import { AddPresetFilterToViewFastInstanceCommand } from 'src/database/commands/
 import { AddWorkspaceMemberRelationFilterToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523223000-add-workspace-member-relation-filter-to-row-level-permission-predicate';
 import { AddSourceFieldToFieldPermissionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795523227174-add-source-field-to-field-permission';
 import { AddInboxViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795526052553-add-inbox-view-type';
-import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795485960153-drop-legacy-workflow-version-id-columns';
+import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795538016002-drop-legacy-workflow-version-id-columns';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
