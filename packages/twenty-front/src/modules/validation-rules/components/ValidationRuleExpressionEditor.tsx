@@ -110,6 +110,8 @@ type ValidationRuleExpressionEditorProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   onChange: (expression: string) => void;
+  compileExpression?: typeof compileValidationRuleExpression;
+  ariaLabel?: string;
 };
 
 export const ValidationRuleExpressionEditor = ({
@@ -117,6 +119,8 @@ export const ValidationRuleExpressionEditor = ({
   fields,
   editorFields,
   onChange,
+  compileExpression = compileValidationRuleExpression,
+  ariaLabel,
 }: ValidationRuleExpressionEditorProps) => {
   const { t } = useLingui();
 
@@ -196,7 +200,7 @@ export const ValidationRuleExpressionEditor = ({
     editorProps: {
       attributes: {
         role: 'textbox',
-        'aria-label': t`Condition`,
+        'aria-label': ariaLabel ?? t`Condition`,
         spellcheck: 'false',
       },
       handleKeyDown: (_view, event) => handleEditorKeyDown(event),
@@ -258,10 +262,7 @@ export const ValidationRuleExpressionEditor = ({
     return true;
   };
 
-  const compilationResult = compileValidationRuleExpression({
-    expression: value,
-    fields,
-  });
+  const compilationResult = compileExpression({ expression: value, fields });
   const errorMessage =
     value.trim().length > 0 && !compilationResult.isValid
       ? getValidationRuleErrorMessage(compilationResult)
