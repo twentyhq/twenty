@@ -71,9 +71,12 @@ export const computeFormulaFieldUpdatesAfterFieldRenames = ({
       },
     );
 
-    // A reserved name would change what the rewritten expression means, so the formula is left to fail
+    if (renamedPaths.length === 0) {
+      continue;
+    }
+
+    // A reserved name cannot be written into the expression, so the unchanged formula is revalidated and refuses the rename
     if (
-      renamedPaths.length === 0 ||
       renamedPaths.some(({ path, newFieldName }) =>
         isValidationRuleReservedName({
           name: newFieldName,
@@ -81,6 +84,8 @@ export const computeFormulaFieldUpdatesAfterFieldRenames = ({
         }),
       )
     ) {
+      universalFlatFieldMetadataToUpdate[universalIdentifier] =
+        universalFlatFieldMetadata;
       continue;
     }
 

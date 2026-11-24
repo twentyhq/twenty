@@ -119,6 +119,15 @@ export const toDateLikeValue = (
     return undefined;
   }
 
+  const year = expressionDate.isDateOnly
+    ? expressionDate.date.year
+    : expressionDate.dateTime.withTimeZone('UTC').year;
+
+  // Postgres has no year zero, so its date casts reject what Temporal accepts
+  if (year < 1 || year > 9999) {
+    return undefined;
+  }
+
   if (expressionDate.isDateOnly) {
     return {
       sql: `${escapeLiteral(expressionDate.date.toString())}::date`,
