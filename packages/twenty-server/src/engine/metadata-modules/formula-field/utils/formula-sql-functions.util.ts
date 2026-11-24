@@ -30,10 +30,10 @@ import {
 type FormulaSqlFunction = {
   minimumArgumentCount: number;
   maximumArgumentCount: number;
-  compile: (
-    formulaSqlValues: FormulaSqlValue[],
-    usage: string,
-  ) => FormulaSqlValue;
+  compile: (input: {
+    formulaSqlValues: FormulaSqlValue[];
+    usage: string;
+  }) => FormulaSqlValue;
 };
 
 const DATE_PART_SQL_FIELDS: Record<
@@ -175,7 +175,7 @@ const buildTextCaseFunction = (
 ): FormulaSqlFunction => ({
   minimumArgumentCount: 1,
   maximumArgumentCount: 1,
-  compile: ([text], usage) => ({
+  compile: ({ formulaSqlValues: [text], usage }) => ({
     sql: `${sqlFunctionName}(${assertFormulaSqlTypeOrThrow({ value: text, type: 'text', usage }).sql})`,
     type: 'text',
   }),
@@ -186,7 +186,7 @@ const buildNumberListFunction = (
 ): FormulaSqlFunction => ({
   minimumArgumentCount: 1,
   maximumArgumentCount: Infinity,
-  compile: (formulaSqlValues, usage) => ({
+  compile: ({ formulaSqlValues, usage }) => ({
     sql: `${sqlFunctionName}(${formulaSqlValues.map((value) => assertFormulaSqlTypeOrThrow({ value, type: 'number', usage }).sql).join(', ')})`,
     type: 'number',
   }),
@@ -196,7 +196,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   isDefined: {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
-    compile: ([value]) => ({
+    compile: ({ formulaSqlValues: [value] }) => ({
       sql: `(${value.sql} IS NOT NULL)`,
       type: 'boolean',
     }),
@@ -204,7 +204,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   isEmpty: {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
-    compile: ([value]) => ({
+    compile: ({ formulaSqlValues: [value] }) => ({
       sql: compileEmptiness({ value, isEmptyExpected: true }),
       type: 'boolean',
     }),
@@ -212,7 +212,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   isNonEmptyString: {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
-    compile: ([value], usage) => {
+    compile: ({ formulaSqlValues: [value], usage }) => {
       if (
         value.type !== 'text' &&
         value.type !== 'date' &&
@@ -232,7 +232,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   includes: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([container, value], usage) => {
+    compile: ({ formulaSqlValues: [container, value], usage }) => {
       const searchedText = assertFormulaSqlTypeOrThrow({
         value,
         type: 'text',
@@ -255,7 +255,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   arrayLength: {
     minimumArgumentCount: 1,
     maximumArgumentCount: 1,
-    compile: ([list], usage) => ({
+    compile: ({ formulaSqlValues: [list], usage }) => ({
       sql: `COALESCE(cardinality(${assertFormulaSqlTypeOrThrow({ value: list, type: 'textArray', usage }).sql}), 0)::numeric`,
       type: 'number',
     }),
@@ -263,7 +263,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   dateDiff: {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
-    compile: ([from, to, unit], usage) => ({
+    compile: ({ formulaSqlValues: [from, to, unit], usage }) => ({
       sql: compileDateDifference({
         from: toDateLikeValueOrThrow({ value: from, usage }),
         to: toDateLikeValueOrThrow({ value: to, usage }),
@@ -279,7 +279,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   dateAdd: {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
-    compile: ([date, amount, unitValue], usage) => {
+    compile: ({ formulaSqlValues: [date, amount, unitValue], usage }) => {
       const dateLikeValue = toDateLikeValueOrThrow({
         value: date,
         usage,
@@ -310,7 +310,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   dateTrunc: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([date, unit], usage) => {
+    compile: ({ formulaSqlValues: [date, unit], usage }) => {
       const dateLikeValue = toDateLikeValueOrThrow({
         value: date,
         usage,
@@ -332,7 +332,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   datePart: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([date, part], usage) => {
+    compile: ({ formulaSqlValues: [date, part], usage }) => {
       const sqlField =
         DATE_PART_SQL_FIELDS[
           getFormulaSqlUnitOrThrow({
@@ -351,7 +351,10 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   if: {
     minimumArgumentCount: 3,
     maximumArgumentCount: 3,
-    compile: ([condition, valueIfTrue, valueIfFalse], usage) => {
+    compile: ({
+      formulaSqlValues: [condition, valueIfTrue, valueIfFalse],
+      usage,
+    }) => {
       const [unifiedValueIfTrue, unifiedValueIfFalse] =
         unifyFormulaSqlValuesOrThrow({
           left: valueIfTrue,
@@ -368,7 +371,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   coalesce: {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
-    compile: (formulaSqlValues, usage) => {
+    compile: ({ formulaSqlValues, usage }) => {
       const unifiedValues = unifyAll({ formulaSqlValues, usage });
 
       return {
@@ -380,7 +383,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   concat: {
     minimumArgumentCount: 1,
     maximumArgumentCount: Infinity,
-    compile: (formulaSqlValues, usage) => ({
+    compile: ({ formulaSqlValues, usage }) => ({
       sql: `(${formulaSqlValues
         .map((value) => toTextOperandOrThrow({ value, usage }))
         .join(' || ')})`,
@@ -395,7 +398,7 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   roundTo: {
     minimumArgumentCount: 2,
     maximumArgumentCount: 2,
-    compile: ([number, decimals], usage) => ({
+    compile: ({ formulaSqlValues: [number, decimals], usage }) => ({
       sql: `round(${assertFormulaSqlTypeOrThrow({ value: number, type: 'number', usage }).sql}, LEAST(GREATEST(trunc(${toNumberOperandOrThrow({ value: decimals, usage })}), 0), 20)::integer)`,
       type: 'number',
     }),
@@ -403,7 +406,10 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
   isInRelativeDateRange: {
     minimumArgumentCount: 4,
     maximumArgumentCount: 4,
-    compile: ([date, direction, amount, unit], usage) => ({
+    compile: ({
+      formulaSqlValues: [date, direction, amount, unit],
+      usage,
+    }) => ({
       sql: compileRelativeDateRange({
         date: toDateLikeValueOrThrow({
           value: date,
@@ -457,5 +463,5 @@ export const compileFormulaSqlFunctionOrThrow = ({
     });
   }
 
-  return compile(formulaSqlValues, name);
+  return compile({ formulaSqlValues, usage: name });
 };
