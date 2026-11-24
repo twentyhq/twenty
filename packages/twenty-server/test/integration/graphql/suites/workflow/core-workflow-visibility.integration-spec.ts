@@ -531,161 +531,161 @@ describe('core workflow visibility (e2e)', () => {
         visibility: 'PRIVATE',
       });
     });
-  });
 
-  describe('lifecycle and draft edits on a private workflow', () => {
-    const MANUAL_TRIGGER = {
-      name: 'Manual Trigger',
-      type: 'MANUAL',
-      settings: { outputSchema: {} },
-      nextStepIds: [],
-      position: { x: 0, y: 0 },
-    };
+    describe('lifecycle and draft edits on a private workflow', () => {
+      const MANUAL_TRIGGER = {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      };
 
-    let draftWorkflow: {
-      coreWorkflowId: string;
-      coreWorkflowVersionId: string;
-    };
-    let activeWorkflow: {
-      coreWorkflowId: string;
-      coreWorkflowVersionId: string;
-    };
+      let draftWorkflow: {
+        coreWorkflowId: string;
+        coreWorkflowVersionId: string;
+      };
+      let activeWorkflow: {
+        coreWorkflowId: string;
+        coreWorkflowVersionId: string;
+      };
 
-    const lifecycleService = () =>
-      getAppProviderByClassName<CoreWorkflowLifecycleWorkspaceService>(
-        'CoreWorkflowLifecycleWorkspaceService',
-      );
-
-    beforeAll(async () => {
-      draftWorkflow = await createCoreWorkflow({
-        name: 'Private Workflow Draft',
-      });
-
-      await updateCoreWorkflowVersionTrigger({
-        coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
-        trigger: MANUAL_TRIGGER,
-      });
-      await createCoreWorkflowVersionStep({
-        coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
-        stepType: 'FIND_RECORDS',
-      });
-
-      activeWorkflow = await createActiveManualWorkflow(
-        'Private Workflow Active',
-      );
-
-      for (const { coreWorkflowId } of [draftWorkflow, activeWorkflow]) {
-        const response = await setVisibility(
-          coreWorkflowId,
-          WorkflowVisibility.PRIVATE,
+      const lifecycleService = () =>
+        getAppProviderByClassName<CoreWorkflowLifecycleWorkspaceService>(
+          'CoreWorkflowLifecycleWorkspaceService',
         );
 
-        expect(response.body.errors).toBeUndefined();
-      }
-    });
+      beforeAll(async () => {
+        draftWorkflow = await createCoreWorkflow({
+          name: 'Private Workflow Draft',
+        });
 
-    afterAll(async () => {
-      const coreWorkflowIds = [draftWorkflow, activeWorkflow]
-        .filter(isDefined)
-        .map(({ coreWorkflowId }) => coreWorkflowId);
-
-      for (const coreWorkflowId of coreWorkflowIds) {
-        await setVisibility(coreWorkflowId, WorkflowVisibility.WORKSPACE);
-      }
-
-      await deleteCoreWorkflows({ coreWorkflowIds });
-    });
-
-    it('refuses to validate its version for another member', async () => {
-      await expect(
-        lifecycleService().validateCoreWorkflowVersion({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        await updateCoreWorkflowVersionTrigger({
           coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
-        }),
-      ).rejects.toThrow('is private to another member');
-    });
-
-    it('still validates its version for its creator', async () => {
-      await expect(
-        lifecycleService().validateCoreWorkflowVersion({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          trigger: MANUAL_TRIGGER,
+        });
+        await createCoreWorkflowVersionStep({
           coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
-        }),
-      ).resolves.toBe(true);
-    });
+          stepType: 'FIND_RECORDS',
+        });
 
-    it('refuses to activate its draft for another member', async () => {
-      const response = await asOtherMember(
-        `mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
-          activateCoreWorkflowVersion(coreWorkflowVersionId: $coreWorkflowVersionId)
-        }`,
-        { coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId },
-      );
+        activeWorkflow = await createActiveManualWorkflow(
+          'Private Workflow Active',
+        );
 
-      expect(response.body.errors).toBeDefined();
+        for (const { coreWorkflowId } of [draftWorkflow, activeWorkflow]) {
+          const response = await setVisibility(
+            coreWorkflowId,
+            WorkflowVisibility.PRIVATE,
+          );
 
-      const version = await findCoreWorkflowVersion({
-        coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+          expect(response.body.errors).toBeUndefined();
+        }
       });
 
-      expect(version.status).toBe('DRAFT');
-    });
+      afterAll(async () => {
+        const coreWorkflowIds = [draftWorkflow, activeWorkflow]
+          .filter(isDefined)
+          .map(({ coreWorkflowId }) => coreWorkflowId);
 
-    it('refuses to deactivate its active version for another member', async () => {
-      const response = await asOtherMember(
-        `mutation DeactivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
-          deactivateCoreWorkflowVersion(coreWorkflowVersionId: $coreWorkflowVersionId)
-        }`,
-        { coreWorkflowVersionId: activeWorkflow.coreWorkflowVersionId },
-      );
+        for (const coreWorkflowId of coreWorkflowIds) {
+          await setVisibility(coreWorkflowId, WorkflowVisibility.WORKSPACE);
+        }
 
-      expect(response.body.errors).toBeDefined();
-
-      const version = await findCoreWorkflowVersion({
-        coreWorkflowVersionId: activeWorkflow.coreWorkflowVersionId,
+        await deleteCoreWorkflows({ coreWorkflowIds });
       });
 
-      expect(version.status).toBe('ACTIVE');
-    });
-
-    it('refuses to edit its draft trigger for another member', async () => {
-      const response = await asOtherMember(
-        `mutation UpdateCoreWorkflowVersionTrigger(
-          $input: UpdateCoreWorkflowVersionTriggerInput!
-        ) {
-          updateCoreWorkflowVersionTrigger(input: $input) {
-            trigger
-          }
-        }`,
-        {
-          input: {
+      it('refuses to validate its version for another member', async () => {
+        await expect(
+          lifecycleService().validateCoreWorkflowVersion({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
             coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
-            trigger: { ...MANUAL_TRIGGER, name: 'Renamed by another member' },
+          }),
+        ).rejects.toThrow('is private to another member');
+      });
+
+      it('still validates its version for its creator', async () => {
+        await expect(
+          lifecycleService().validateCoreWorkflowVersion({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+            coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+          }),
+        ).resolves.toBe(true);
+      });
+
+      it('refuses to activate its draft for another member', async () => {
+        const response = await asOtherMember(
+          `mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+            activateCoreWorkflowVersion(coreWorkflowVersionId: $coreWorkflowVersionId)
+          }`,
+          { coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId },
+        );
+
+        expect(response.body.errors).toBeDefined();
+
+        const version = await findCoreWorkflowVersion({
+          coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+        });
+
+        expect(version.status).toBe('DRAFT');
+      });
+
+      it('refuses to deactivate its active version for another member', async () => {
+        const response = await asOtherMember(
+          `mutation DeactivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+            deactivateCoreWorkflowVersion(coreWorkflowVersionId: $coreWorkflowVersionId)
+          }`,
+          { coreWorkflowVersionId: activeWorkflow.coreWorkflowVersionId },
+        );
+
+        expect(response.body.errors).toBeDefined();
+
+        const version = await findCoreWorkflowVersion({
+          coreWorkflowVersionId: activeWorkflow.coreWorkflowVersionId,
+        });
+
+        expect(version.status).toBe('ACTIVE');
+      });
+
+      it('refuses to edit its draft trigger for another member', async () => {
+        const response = await asOtherMember(
+          `mutation UpdateCoreWorkflowVersionTrigger(
+            $input: UpdateCoreWorkflowVersionTriggerInput!
+          ) {
+            updateCoreWorkflowVersionTrigger(input: $input) {
+              trigger
+            }
+          }`,
+          {
+            input: {
+              coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+              trigger: { ...MANUAL_TRIGGER, name: 'Renamed by another member' },
+            },
           },
-        },
-      );
+        );
 
-      expect(response.body.errors).toBeDefined();
+        expect(response.body.errors).toBeDefined();
 
-      const version = await findCoreWorkflowVersion({
-        coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+        const version = await findCoreWorkflowVersion({
+          coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+        });
+
+        expect(version.trigger).toMatchObject({ name: 'Manual Trigger' });
       });
 
-      expect(version.trigger).toMatchObject({ name: 'Manual Trigger' });
-    });
+      it('still lets its creator activate the draft', async () => {
+        await activateCoreWorkflowVersion({
+          coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+        });
 
-    it('still lets its creator activate the draft', async () => {
-      await activateCoreWorkflowVersion({
-        coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+        const version = await findCoreWorkflowVersion({
+          coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
+        });
+
+        expect(version.status).toBe('ACTIVE');
       });
-
-      const version = await findCoreWorkflowVersion({
-        coreWorkflowVersionId: draftWorkflow.coreWorkflowVersionId,
-      });
-
-      expect(version.status).toBe('ACTIVE');
     });
   });
 

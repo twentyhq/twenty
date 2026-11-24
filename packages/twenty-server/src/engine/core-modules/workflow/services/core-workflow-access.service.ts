@@ -10,7 +10,6 @@ import { getReachableApplications } from 'src/engine/core-modules/application/ut
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { buildCoreWorkflowNotFoundException } from 'src/engine/core-modules/workflow/utils/build-core-workflow-not-found-exception.util';
-import { buildPrivateCoreWorkflowException } from 'src/engine/core-modules/workflow/utils/build-private-core-workflow-exception.util';
 import { isCoreWorkflowVisibleToUser } from 'src/engine/core-modules/workflow/utils/is-core-workflow-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -235,7 +234,7 @@ export class CoreWorkflowAccessService {
     );
 
     if (isDefined(inaccessibleCoreWorkflow)) {
-      throw buildPrivateCoreWorkflowException(inaccessibleCoreWorkflow.id);
+      throw this.buildPrivateCoreWorkflowException(inaccessibleCoreWorkflow.id);
     }
   }
 
@@ -436,8 +435,19 @@ export class CoreWorkflowAccessService {
     );
 
     if (isDefined(inaccessibleCoreWorkflow)) {
-      throw buildPrivateCoreWorkflowException(inaccessibleCoreWorkflow.id);
+      throw this.buildPrivateCoreWorkflowException(inaccessibleCoreWorkflow.id);
     }
+  }
+
+  private buildPrivateCoreWorkflowException(coreWorkflowId: string) {
+    return new WorkflowQueryValidationException(
+      `Core workflow '${coreWorkflowId}' is private to another member`,
+      WorkflowQueryValidationExceptionCode.FORBIDDEN,
+      {
+        // Same message as a missing workflow, so a private one does not announce that it exists.
+        userFriendlyMessage: msg`Workflow not found`,
+      },
+    );
   }
 
   private async findInaccessibleCoreWorkflows({
