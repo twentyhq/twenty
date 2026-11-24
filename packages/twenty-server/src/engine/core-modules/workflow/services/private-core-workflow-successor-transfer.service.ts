@@ -12,7 +12,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class CoreWorkflowOwnershipTransferService {
+export class PrivateCoreWorkflowSuccessorTransferService {
   constructor(
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
@@ -20,7 +20,7 @@ export class CoreWorkflowOwnershipTransferService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async transferWorkflowsOwnershipToSuccessor({
+  async transferPrivateWorkflowsToSuccessor({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
@@ -29,44 +29,43 @@ export class CoreWorkflowOwnershipTransferService {
   }): Promise<void> {
     const { workspaceId } = removedUserWorkspace;
 
-    const workflowsOfRemovedMember = await this.coreWorkflowRepository.find(
-      workspaceId,
-      {
-        select: { id: true, isPrivate: true },
-        where: { createdByUserWorkspaceId: removedUserWorkspace.id },
-      },
-    );
+    const { flatWorkflowMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+      ]);
 
-    if (!isNonEmptyArray(workflowsOfRemovedMember)) {
+    const privateWorkflowIds = Object.values(
+      flatWorkflowMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatWorkflow) =>
+          flatWorkflow.createdByUserWorkspaceId === removedUserWorkspace.id &&
+          flatWorkflow.isPrivate,
+      )
+      .map((flatWorkflow) => flatWorkflow.id);
+
+    if (!isNonEmptyArray(privateWorkflowIds)) {
       return;
     }
 
-    const privateWorkflowIds = workflowsOfRemovedMember
-      .filter(({ isPrivate }) => isPrivate)
-      .map(({ id }) => id);
+    const successorUserWorkspace =
+      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
+        removedUserWorkspace,
+        actingUserWorkspaceId,
+      });
 
-    const successorUserWorkspace = isNonEmptyArray(privateWorkflowIds)
-      ? await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
-          removedUserWorkspace,
-          actingUserWorkspaceId,
-        })
-      : undefined;
-
-    if (isDefined(successorUserWorkspace)) {
-      await this.coreWorkflowRepository.update(
-        workspaceId,
-        {
-          id: In(privateWorkflowIds),
-          createdByUserWorkspaceId: removedUserWorkspace.id,
-        },
-        { createdByUserWorkspaceId: successorUserWorkspace.id },
-      );
+    if (!isDefined(successorUserWorkspace)) {
+      return;
     }
 
     await this.coreWorkflowRepository.update(
       workspaceId,
-      { createdByUserWorkspaceId: removedUserWorkspace.id },
-      { createdByUserWorkspaceId: null },
+      {
+        id: In(privateWorkflowIds),
+        createdByUserWorkspaceId: removedUserWorkspace.id,
+      },
+      { createdByUserWorkspaceId: successorUserWorkspace.id },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

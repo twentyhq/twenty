@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { AgentOwnershipTransferService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-ownership-transfer.service';
+import { PrivateAgentSuccessorTransferService } from 'src/engine/metadata-modules/ai/ai-agent/services/private-agent-successor-transfer.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { CoreWorkflowOwnershipTransferService } from 'src/engine/core-modules/workflow/services/core-workflow-ownership-transfer.service';
+import { PrivateCoreWorkflowSuccessorTransferService } from 'src/engine/core-modules/workflow/services/private-core-workflow-successor-transfer.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
-import { ViewOwnershipTransferService } from 'src/engine/metadata-modules/view/services/view-ownership-transfer.service';
+import { PrivateViewSuccessorTransferService } from 'src/engine/metadata-modules/view/services/private-view-successor-transfer.service';
 import { RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 
 @Injectable()
@@ -12,9 +12,9 @@ export class UserWorkspaceSuccessorTransferService {
   constructor(
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
     private readonly recordShareSystemWriteService: RecordShareSystemWriteService,
-    private readonly viewOwnershipTransferService: ViewOwnershipTransferService,
-    private readonly coreWorkflowOwnershipTransferService: CoreWorkflowOwnershipTransferService,
-    private readonly agentOwnershipTransferService: AgentOwnershipTransferService,
+    private readonly privateViewSuccessorTransferService: PrivateViewSuccessorTransferService,
+    private readonly privateCoreWorkflowSuccessorTransferService: PrivateCoreWorkflowSuccessorTransferService,
+    private readonly privateAgentSuccessorTransferService: PrivateAgentSuccessorTransferService,
   ) {}
 
   async transferToSuccessor({
@@ -39,19 +39,21 @@ export class UserWorkspaceSuccessorTransferService {
       actingUserWorkspaceId,
     });
 
-    await this.viewOwnershipTransferService.transferViewsOwnershipToSuccessor({
-      removedUserWorkspace,
-      actingUserWorkspaceId,
-    });
-
-    await this.coreWorkflowOwnershipTransferService.transferWorkflowsOwnershipToSuccessor(
+    await this.privateViewSuccessorTransferService.transferPrivateViewsToSuccessor(
       {
         removedUserWorkspace,
         actingUserWorkspaceId,
       },
     );
 
-    await this.agentOwnershipTransferService.transferAgentsOwnershipToSuccessor(
+    await this.privateCoreWorkflowSuccessorTransferService.transferPrivateWorkflowsToSuccessor(
+      {
+        removedUserWorkspace,
+        actingUserWorkspaceId,
+      },
+    );
+
+    await this.privateAgentSuccessorTransferService.transferPrivateAgentsToSuccessor(
       {
         removedUserWorkspace,
         actingUserWorkspaceId,

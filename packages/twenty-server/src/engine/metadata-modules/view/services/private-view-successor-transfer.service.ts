@@ -13,7 +13,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class ViewOwnershipTransferService {
+export class PrivateViewSuccessorTransferService {
   constructor(
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
     @InjectWorkspaceScopedRepository(ViewEntity)
@@ -21,7 +21,7 @@ export class ViewOwnershipTransferService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async transferViewsOwnershipToSuccessor({
+  async transferPrivateViewsToSuccessor({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
@@ -35,45 +35,36 @@ export class ViewOwnershipTransferService {
       ['flatViewMaps'],
     );
 
-    const viewsOfRemovedMember = Object.values(
-      flatViewMaps.byUniversalIdentifier,
-    )
+    const privateViewIds = Object.values(flatViewMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(
         (flatView) =>
-          flatView.createdByUserWorkspaceId === removedUserWorkspace.id,
-      );
+          flatView.createdByUserWorkspaceId === removedUserWorkspace.id &&
+          getEffectiveViewIsPrivate(flatView) !== false,
+      )
+      .map((flatView) => flatView.id);
 
-    if (!isNonEmptyArray(viewsOfRemovedMember)) {
+    if (!isNonEmptyArray(privateViewIds)) {
       return;
     }
 
-    const privateViewIds = viewsOfRemovedMember
-      .filter((flatView) => getEffectiveViewIsPrivate(flatView) !== false)
-      .map((flatView) => flatView.id);
+    const successorUserWorkspace =
+      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
+        removedUserWorkspace,
+        actingUserWorkspaceId,
+      });
 
-    const successorUserWorkspace = isNonEmptyArray(privateViewIds)
-      ? await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
-          removedUserWorkspace,
-          actingUserWorkspaceId,
-        })
-      : undefined;
-
-    if (isDefined(successorUserWorkspace)) {
-      await this.viewRepository.update(
-        workspaceId,
-        {
-          id: In(privateViewIds),
-          createdByUserWorkspaceId: removedUserWorkspace.id,
-        },
-        { createdByUserWorkspaceId: successorUserWorkspace.id },
-      );
+    if (!isDefined(successorUserWorkspace)) {
+      return;
     }
 
     await this.viewRepository.update(
       workspaceId,
-      { createdByUserWorkspaceId: removedUserWorkspace.id },
-      { createdByUserWorkspaceId: null },
+      {
+        id: In(privateViewIds),
+        createdByUserWorkspaceId: removedUserWorkspace.id,
+      },
+      { createdByUserWorkspaceId: successorUserWorkspace.id },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

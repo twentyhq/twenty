@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserWorkspaceSuccessorModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor.module';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AgentOwnershipTransferService } from 'src/engine/metadata-modules/ai/ai-agent/services/agent-ownership-transfer.service';
+import { PrivateAgentSuccessorTransferService } from 'src/engine/metadata-modules/ai/ai-agent/services/private-agent-successor-transfer.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -14,9 +14,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
-    AgentOwnershipTransferService,
+    PrivateAgentSuccessorTransferService,
     provideWorkspaceScopedRepository(AgentEntity),
   ],
-  exports: [AgentOwnershipTransferService],
+  exports: [PrivateAgentSuccessorTransferService],
 })
-export class AgentOwnershipTransferModule {}
+export class PrivateAgentSuccessorTransferModule {}

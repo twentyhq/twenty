@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserWorkspaceSuccessorModule } from 'src/engine/core-modules/user-workspace/user-workspace-successor.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { ViewOwnershipTransferService } from 'src/engine/metadata-modules/view/services/view-ownership-transfer.service';
+import { PrivateViewSuccessorTransferService } from 'src/engine/metadata-modules/view/services/private-view-successor-transfer.service';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -14,9 +14,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCacheModule,
   ],
   providers: [
-    ViewOwnershipTransferService,
+    PrivateViewSuccessorTransferService,
     provideWorkspaceScopedRepository(ViewEntity),
   ],
-  exports: [ViewOwnershipTransferService],
+  exports: [PrivateViewSuccessorTransferService],
 })
-export class ViewOwnershipTransferModule {}
+export class PrivateViewSuccessorTransferModule {}

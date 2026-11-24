@@ -12,7 +12,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class AgentOwnershipTransferService {
+export class PrivateAgentSuccessorTransferService {
   constructor(
     private readonly userWorkspaceSuccessorService: UserWorkspaceSuccessorService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -20,7 +20,7 @@ export class AgentOwnershipTransferService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async transferAgentsOwnershipToSuccessor({
+  async transferPrivateAgentsToSuccessor({
     removedUserWorkspace,
     actingUserWorkspaceId,
   }: {
@@ -29,41 +29,41 @@ export class AgentOwnershipTransferService {
   }): Promise<void> {
     const { workspaceId } = removedUserWorkspace;
 
-    const agentsOfRemovedMember = await this.agentRepository.find(workspaceId, {
-      select: { id: true, isPrivate: true },
-      where: { createdByUserWorkspaceId: removedUserWorkspace.id },
-    });
+    const { flatAgentMaps } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['flatAgentMaps'],
+    );
 
-    if (!isNonEmptyArray(agentsOfRemovedMember)) {
+    const privateAgentIds = Object.values(flatAgentMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (flatAgent) =>
+          flatAgent.createdByUserWorkspaceId === removedUserWorkspace.id &&
+          flatAgent.isPrivate,
+      )
+      .map((flatAgent) => flatAgent.id);
+
+    if (!isNonEmptyArray(privateAgentIds)) {
       return;
     }
 
-    const privateAgentIds = agentsOfRemovedMember
-      .filter(({ isPrivate }) => isPrivate)
-      .map(({ id }) => id);
+    const successorUserWorkspace =
+      await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
+        removedUserWorkspace,
+        actingUserWorkspaceId,
+      });
 
-    const successorUserWorkspace = isNonEmptyArray(privateAgentIds)
-      ? await this.userWorkspaceSuccessorService.findSuccessorUserWorkspace({
-          removedUserWorkspace,
-          actingUserWorkspaceId,
-        })
-      : undefined;
-
-    if (isDefined(successorUserWorkspace)) {
-      await this.agentRepository.update(
-        workspaceId,
-        {
-          id: In(privateAgentIds),
-          createdByUserWorkspaceId: removedUserWorkspace.id,
-        },
-        { createdByUserWorkspaceId: successorUserWorkspace.id },
-      );
+    if (!isDefined(successorUserWorkspace)) {
+      return;
     }
 
     await this.agentRepository.update(
       workspaceId,
-      { createdByUserWorkspaceId: removedUserWorkspace.id },
-      { createdByUserWorkspaceId: null },
+      {
+        id: In(privateAgentIds),
+        createdByUserWorkspaceId: removedUserWorkspace.id,
+      },
+      { createdByUserWorkspaceId: successorUserWorkspace.id },
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
