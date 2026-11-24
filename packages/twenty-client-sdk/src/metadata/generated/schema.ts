@@ -2339,6 +2339,7 @@ export interface MessageCampaignSendBlockerDTO {
 }
 
 export interface MessageChannel {
+    canStartConversation: Scalars['Boolean']
     connectedAccount?: ConnectedAccountPublicDTO
     connectedAccountId: Scalars['UUID']
     contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy
@@ -2701,6 +2702,7 @@ export interface Mutation {
     signUpInWorkspace: SignUp
     skipSyncEmailOnboardingStep: OnboardingStepSuccess
     snoozeAgentChatThreadInChannel: Scalars['Boolean']
+    startAppChannelConversation: SendAppChannelMessageOutput
     startChannelSync: ChannelSyncSuccess
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     stopAgentChatStream: Scalars['Boolean']
@@ -7331,6 +7333,7 @@ export interface MessageCampaignSendBlockerDTOGenqlSelection{
 }
 
 export interface MessageChannelGenqlSelection{
+    canStartConversation?: boolean | number
     connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
     connectedAccountId?: boolean | number
     contactAutoCreationPolicy?: boolean | number
@@ -7674,6 +7677,7 @@ export interface MutationGenqlSelection{
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null), workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null)} })
     skipSyncEmailOnboardingStep?: (OnboardingStepSuccessGenqlSelection & { __args: {isAutoSkipped: Scalars['Boolean']} })
     snoozeAgentChatThreadInChannel?: { __args: {snoozedUntil: Scalars['DateTime'], threadId: Scalars['UUID']} }
+    startAppChannelConversation?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: StartAppChannelConversationInput} })
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
@@ -8919,6 +8923,8 @@ export interface StandaloneRichTextConfigurationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface StartAppChannelConversationInput {idempotencyKey: Scalars['UUID'],messageChannelId: Scalars['UUID'],personId: Scalars['UUID'],text: Scalars['String']}
 
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
