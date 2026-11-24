@@ -137,6 +137,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       calendarLayout: null,
       shouldHideEmptyGroups: false,
       shouldDisplayGroupsAsTabs: false,
+      presetFilter: null,
       kanbanColumnWidth: null,
       groupLoadLimit: 20,
       anyFieldFilterValue: null,
