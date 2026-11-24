@@ -1401,7 +1401,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       insertedIds,
     ).getMany<ObjectRecord>({ noFormatting: true });
 
-    const formattedAfter = this.formatResult<ObjectRecord[]>(recordsAfter);
+    const formattedAfter = this.formatEventRecords(recordsAfter);
 
     for (const action of [
       DatabaseEventAction.CREATED,
@@ -2013,9 +2013,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const actions = MUTATION_EVENT_ACTIONS_BY_KIND[kind];
 
-    const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+    const formattedBefore = this.formatEventRecords(recordsBefore);
     const formattedAfter = isDefined(recordsAfter)
-      ? this.formatResult<ObjectRecord[]>(recordsAfter)
+      ? this.formatEventRecords(recordsAfter)
       : undefined;
 
     for (const action of actions) {
@@ -2036,6 +2036,31 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         );
       }
     }
+  }
+
+  // Event snapshots read stored columns, where a computed column holds no meaningful value
+  private formatEventRecords(records: ObjectRecord[]): ObjectRecord[] {
+    const computedFieldNames = new Set(
+      (this.options.tableShape.computedColumnShapes ?? []).map(
+        ({ columnName }) =>
+          this.options.tableShape.columnShapeByColumnName[columnName]
+            ?.fieldName,
+      ),
+    );
+    const formattedRecords = this.formatResult<ObjectRecord[]>(records);
+
+    if (computedFieldNames.size === 0) {
+      return formattedRecords;
+    }
+
+    return formattedRecords.map((record) => ({
+      ...Object.fromEntries(
+        Object.entries(record).filter(
+          ([fieldName]) => !computedFieldNames.has(fieldName),
+        ),
+      ),
+      id: record.id,
+    }));
   }
 
   private async onBeforeExecute(
