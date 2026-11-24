@@ -91,6 +91,9 @@
       "ignore": ["src/styles/abstracts/**"],
       "ignoreDependencies": ["@storybook/addon-coverage", "@swc/core"]
     },
+    "packages/create-twenty-app": {
+      "ignoreDependencies": ["jest-environment-node"]
+    },
     "packages/twenty-cli": {
       "entry": ["scripts/**/*.mjs"],
       "ignoreDependencies": ["vite-tsconfig-paths"]
@@ -111,6 +114,9 @@
     "packages/twenty-website": {
       "entry": ["lingui.config.ts", "wyw-in-js.config.cjs"],
       "ignoreDependencies": ["@lingui/swc-plugin"]
+    },
+    "packages/twenty-zapier": {
+      "ignoreDependencies": ["jest-environment-node"]
     }
   }
 }

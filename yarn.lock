@@ -25989,6 +25989,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^20.0.0"
     jest: "npm:29.7.0"
+    jest-environment-node: "npm:^29.4.1"
     typescript: "npm:^5.9.3"
     vite: "npm:^8.0.0"
   bin:
@@ -33115,7 +33116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-node@npm:^29.7.0":
+"jest-environment-node@npm:^29.4.1, jest-environment-node@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-environment-node@npm:29.7.0"
   dependencies:
@@ -46336,6 +46337,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     dotenv: "npm:^16.4.5"
     jest: "npm:29.7.0"
+    jest-environment-node: "npm:^29.4.1"
     rimraf: "npm:^3.0.2"
     ts-jest: "npm:^29.1.1"
     twenty-shared: "workspace:*"
