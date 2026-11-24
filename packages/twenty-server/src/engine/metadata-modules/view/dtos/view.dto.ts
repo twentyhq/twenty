@@ -138,8 +138,12 @@ export class ViewDTO {
   @Field(() => [ViewFieldGroupDTO])
   viewFieldGroups?: ViewFieldGroupDTO[];
 
+  @Field(() => Boolean, { nullable: false })
+  isPrivate: boolean;
+
   @Field(() => ViewVisibility, {
     nullable: false,
+    deprecationReason: 'Use isPrivate instead',
   })
   visibility: ViewVisibility;
 
