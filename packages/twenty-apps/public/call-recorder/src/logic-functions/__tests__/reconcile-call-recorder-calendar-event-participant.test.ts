@@ -49,7 +49,11 @@ const setMemberRecordingPreferences = (
 
 const setUpcomingCalendarEventIds = (upcomingCalendarEventIds: string[]) =>
   fetchUpcomingCalendarEventsMock.mockImplementation(
-    async (_client: unknown, _now: Date, candidateCalendarEventIds: string[]) =>
+    async ({
+      candidateCalendarEventIds,
+    }: {
+      candidateCalendarEventIds: string[];
+    }) =>
       upcomingCalendarEventIds
         .filter((id) => candidateCalendarEventIds.includes(id))
         .map((id) => ({ id, startsAt: undefined })),

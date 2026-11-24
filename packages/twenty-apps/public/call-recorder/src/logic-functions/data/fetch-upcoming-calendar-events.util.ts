@@ -1,5 +1,6 @@
-import { isUndefined } from '@sniptt/guards';
+import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
 import {
@@ -14,12 +15,19 @@ type UpcomingCalendarEventNode = {
   startsAt?: string | null;
 };
 
-export const fetchUpcomingCalendarEvents = async (
-  client: CoreApiClient,
-  now: Date,
-  candidateCalendarEventIds?: string[],
-): Promise<UpcomingCalendarEvent[]> => {
-  if (candidateCalendarEventIds?.length === 0) {
+export const fetchUpcomingCalendarEvents = async ({
+  client,
+  now,
+  candidateCalendarEventIds,
+}: {
+  client: CoreApiClient;
+  now: Date;
+  candidateCalendarEventIds?: string[];
+}): Promise<UpcomingCalendarEvent[]> => {
+  if (
+    isDefined(candidateCalendarEventIds) &&
+    !isNonEmptyArray(candidateCalendarEventIds)
+  ) {
     return [];
   }
 

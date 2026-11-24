@@ -1,3 +1,4 @@
+import { type MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchCalendarChannelOwnerByCalendarChannelId } from 'src/logic-functions/data/fetch-calendar-channel-owner-by-calendar-channel-id.util';
@@ -9,7 +10,7 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   MetadataApiClient: class {
     query = metadataQueryMock;
 
-    constructor(options: unknown) {
+    constructor(options: ConstructorParameters<typeof MetadataApiClient>[0]) {
       metadataClientOptionsMock(options);
     }
   },

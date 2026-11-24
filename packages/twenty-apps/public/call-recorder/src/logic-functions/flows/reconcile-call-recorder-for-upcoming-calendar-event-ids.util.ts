@@ -17,7 +17,11 @@ export const reconcileCallRecorderForUpcomingCalendarEventIds = async ({
   }
 
   const upcomingChangedCalendarEventIds = (
-    await fetchUpcomingCalendarEvents(client, new Date(), calendarEventIds)
+    await fetchUpcomingCalendarEvents({
+      client,
+      now: new Date(),
+      candidateCalendarEventIds: calendarEventIds,
+    })
   ).map((upcomingCalendarEvent) => upcomingCalendarEvent.id);
 
   if (!isNonEmptyArray(upcomingChangedCalendarEventIds)) {
