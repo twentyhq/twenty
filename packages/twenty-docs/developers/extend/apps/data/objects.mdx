@@ -159,6 +159,40 @@ When you read a field's `options` from the metadata API, two properties describe
 - `isActive: false` marks an option the workspace deactivated. Records keep the value, but it is no longer offered when picking a value.
 - `applicationId` is present on an option that another application than the field's owns, such as an option the workspace added to your field. It is read-only and ignored when you write options.
 
+### Rollup fields
+
+A `ROLLUP` field summarizes the records behind one of the object's one-to-many relations. Its `universalSettings` refer to fields by universal identifier:
+
+```ts
+defineField({
+  universalIdentifier: '6f1e8f32-6a0c-4b0e-9a4e-2f7b1c9d0e11',
+  objectUniversalIdentifier: COMPANY_UNIVERSAL_IDENTIFIER,
+  type: FieldType.ROLLUP,
+  name: 'openDealAmount',
+  label: 'Open deal amount',
+  universalSettings: {
+    relationFieldMetadataUniversalIdentifier: COMPANY_DEALS_FIELD_UNIVERSAL_IDENTIFIER,
+    aggregateOperation: 'SUM',
+    aggregatedFieldMetadataUniversalIdentifier: DEAL_AMOUNT_FIELD_UNIVERSAL_IDENTIFIER,
+    filters: [
+      {
+        id: 'a3c1d2e4-5b6f-4a7b-8c9d-0e1f2a3b4c5d',
+        fieldMetadataUniversalIdentifier: DEAL_STAGE_FIELD_UNIVERSAL_IDENTIFIER,
+        operand: 'IS_NOT',
+        value: ['WON'],
+      },
+    ],
+    filterGroups: [],
+    resultType: 'NUMBER',
+  },
+});
+```
+
+- `aggregateOperation` is `COUNT`, `SUM`, `AVG`, `MIN` or `MAX`. `COUNT` takes no aggregated field; `SUM` and `AVG` need a `NUMBER` field; `MIN` and `MAX` take a `NUMBER`, `DATE` or `DATE_TIME` field.
+- `resultType` must match what the operation produces: `NUMBER`, or the date type of the field for `MIN` and `MAX` of a date. The sync refuses a mismatch.
+- Filters use fixed values; operands relative to today (`IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`) are refused.
+- A rollup is always nullable, cannot be unique, and is never written by your app: the server computes it in the background and keeps it up to date. `defineField` reports a rollup without `universalSettings`, or set as unique.
+
 ## Default values
 
 Literal string defaults must be wrapped in single quotes **inside** the string — `defaultValue: "'Draft'"`, not `defaultValue: "Draft"`. That's why the `status` field above uses `` `'${PostCardStatus.DRAFT}'` ``.
