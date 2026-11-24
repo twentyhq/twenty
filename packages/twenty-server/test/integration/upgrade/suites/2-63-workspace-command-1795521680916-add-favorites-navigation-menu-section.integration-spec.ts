@@ -1,6 +1,9 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { type AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-workspace-command-1795521680916-add-favorites-navigation-menu-section.command';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
@@ -30,19 +33,23 @@ const readNavigationMenuItems = async (): Promise<NavigationMenuItemRow[]> =>
     [SEED_APPLE_WORKSPACE_ID],
   );
 
-const removeFavoritesSection = async () => {
-  await getCoreRepository<NavigationMenuItemEntity>(
-    NavigationMenuItemEntity,
-  ).delete({
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
-    universalIdentifier: FAVORITES_SECTION_UNIVERSAL_IDENTIFIER,
-  });
+const getNavigationMenuItemRepository = () =>
+  getCoreRepository<NavigationMenuItemEntity>(NavigationMenuItemEntity);
 
-  await getAppProviderByClassName<WorkspaceCacheService>(
+const recomputeNavigationMenuItemCache = () =>
+  getAppProviderByClassName<WorkspaceCacheService>(
     'WorkspaceCacheService',
   ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
     'flatNavigationMenuItemMaps',
   ]);
+
+const removeFavoritesSection = async () => {
+  await getNavigationMenuItemRepository().delete({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    universalIdentifier: FAVORITES_SECTION_UNIVERSAL_IDENTIFIER,
+  });
+
+  await recomputeNavigationMenuItemCache();
 };
 
 describe('2-63 workspace command - add favorites navigation menu section (integration)', () => {
@@ -102,5 +109,49 @@ describe('2-63 workspace command - add favorites navigation menu section (integr
     expect(favoritesSection.position).toBeLessThan(
       Math.min(0, ...otherHomeRootPositions),
     );
+  });
+
+  it('skips a workspace whose Favorites section was moved into a tab', async () => {
+    await removeFavoritesSection();
+
+    const repository = getNavigationMenuItemRepository();
+    const referenceItem = await repository.findOneOrFail({
+      where: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        userWorkspaceId: IsNull(),
+      },
+    });
+    const tab = await repository.save({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: referenceItem.applicationId,
+      universalIdentifier: v4(),
+      type: NavigationMenuItemType.TAB,
+      name: 'Tab',
+      position: 100,
+    });
+
+    await repository.save({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: referenceItem.applicationId,
+      universalIdentifier: v4(),
+      type: NavigationMenuItemType.SECTION,
+      builtInSectionKey: 'favorites',
+      parentId: tab.id,
+      position: 0,
+    });
+    await recomputeNavigationMenuItemCache();
+
+    await runCommand();
+
+    const favoritesSections = (await readNavigationMenuItems()).filter(
+      ({ builtInSectionKey }) => builtInSectionKey === 'favorites',
+    );
+
+    expect(favoritesSections).toHaveLength(1);
+    expect(favoritesSections[0].parentId).toBe(tab.id);
+
+    await repository.delete({ id: tab.id });
+    await recomputeNavigationMenuItemCache();
+    await runCommand();
   });
 });

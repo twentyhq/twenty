@@ -68,9 +68,9 @@ describe('buildFavoritesNavigationMenuSectionToCreate', () => {
     expect(build([buildItem({ builtInSectionKey: 'favorites' })])).toBeNull();
   });
 
-  it('should still add it when Favorites only sits in a tab', () => {
+  it('should skip a workspace whose Favorites section was moved into a tab', () => {
     expect(
       build([buildItem({ builtInSectionKey: 'favorites', parentId: 'tab' })]),
-    ).not.toBeNull();
+    ).toBeNull();
   });
 });

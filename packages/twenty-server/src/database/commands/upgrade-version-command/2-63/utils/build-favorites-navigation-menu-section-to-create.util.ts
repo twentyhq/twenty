@@ -30,16 +30,12 @@ export const buildFavoritesNavigationMenuSectionToCreate = ({
     (item) => !isDefined(item.userWorkspaceId) && !isDefined(item.parentId),
   );
 
-  const isFavoritesSectionAlreadyThere =
-    navigationMenuItems.some(
-      (item) =>
-        item.universalIdentifier ===
-        favoritesSectionDefinition.universalIdentifier,
-    ) ||
-    homeRootItems.some(
-      (item) =>
-        item.builtInSectionKey === favoritesSectionDefinition.builtInSectionKey,
-    );
+  const isFavoritesSectionAlreadyThere = navigationMenuItems.some(
+    (item) =>
+      item.universalIdentifier ===
+        favoritesSectionDefinition.universalIdentifier ||
+      item.builtInSectionKey === favoritesSectionDefinition.builtInSectionKey,
+  );
 
   if (isFavoritesSectionAlreadyThere) {
     return null;
