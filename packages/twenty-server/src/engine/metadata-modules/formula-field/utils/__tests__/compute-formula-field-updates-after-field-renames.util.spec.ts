@@ -144,15 +144,12 @@ describe('computeFormulaFieldUpdatesAfterFieldRenames', () => {
     ).toEqual({});
   });
 
-  it('should send the unchanged formula back to validation when the new name is reserved', () => {
+  it('should leave formulas untouched when the new name is reserved', () => {
     expect(
       computeRenamedExpressions({
         renamedFieldUniversalIdentifier: 'gadget-price-uid',
         newFieldName: 'now',
       }),
-    ).toEqual({
-      'gadget-total-uid':
-        EXISTING_FIELDS['gadget-total-uid']?.universalSettings,
-    });
+    ).toEqual({});
   });
 });
