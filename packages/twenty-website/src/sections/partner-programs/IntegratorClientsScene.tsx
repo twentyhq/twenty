@@ -99,14 +99,18 @@ export function IntegratorClientsScene() {
   useEffect(() => {
     const frame = frameRef.current;
     if (!isDefined(frame)) return;
-    const stage = createHalftoneDotStage(frame, { fov: 28 });
+    const stage = createHalftoneDotStage(frame, {
+      cellPx: 7,
+      fov: 28,
+      shape: 'mixed',
+    });
     if (!isDefined(stage)) return;
     const reducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
     stage.camera.position.set(0, 5.6, 10.5);
-    stage.camera.lookAt(0, 0.9, 0);
+    stage.camera.lookAt(0, 0.3, 0);
 
     const geometry = new RoundedBoxGeometry(
       LAYER_SIZE,
