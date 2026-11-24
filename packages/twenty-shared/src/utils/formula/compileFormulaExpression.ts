@@ -1,6 +1,7 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
 import { RelationType } from '@/types/RelationType';
+import { type FieldMetadataFormulaEvaluation } from '@/types/FieldMetadataFormulaEvaluation';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { compileExpression } from '@/utils/expression/compileExpression';
@@ -69,9 +70,12 @@ const findPathUnsupportedInStoredFormula = ({
 export const compileFormulaExpression = ({
   expression,
   fields,
+  evaluation,
 }: {
   expression: string;
   fields: ValidationRuleFieldDescriptor[];
+  // The field's evaluation, which the other expression of a currency formula can make stored
+  evaluation?: FieldMetadataFormulaEvaluation;
 }): ValidationRuleCompilationResult => {
   const compilation = compileExpression({
     expression,
@@ -115,13 +119,15 @@ export const compileFormulaExpression = ({
     };
   }
 
-  const unsupportedPath =
+  const isStored =
+    evaluation === 'STORED' ||
     getFormulaEvaluationFromBindings({
       bindings: compilation.bindings,
       fields,
-    }) === 'STORED'
-      ? findPathUnsupportedInStoredFormula({ paths, fields })
-      : undefined;
+    }) === 'STORED';
+  const unsupportedPath = isStored
+    ? findPathUnsupportedInStoredFormula({ paths, fields })
+    : undefined;
 
   if (isDefined(unsupportedPath)) {
     return {
