@@ -23,6 +23,8 @@ describe('findLogicFunctionUniversalIdentifiersToWarmUp', () => {
             description: null,
             runtime: LogicFunctionRuntime.NODE22,
             timeoutSeconds: 300,
+            jobFailureHandlerName: null,
+            retryLimit: null,
             checksum: null,
             isBuildUpToDate: false,
             executionMode: LogicFunctionExecutionMode.LIVE,
