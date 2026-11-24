@@ -331,7 +331,9 @@ import { AddConditionalAvailabilityToPageLayoutWidgetFastInstanceCommand } from 
 import { RelatedRecordPathOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795470470000-related-record-path-overridable-entity';
 import { AddViewIsPrivateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477704494-add-view-is-private';
 import { BackfillViewIsPrivateOverridesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-slow-1795477704495-backfill-view-is-private-overrides';
-import { AddFieldMetadataOptionDescriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795477707848-add-field-metadata-option-description';
+import { RelaxWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795478750333-relax-workflow-visibility';
+import { AddFieldMetadataOptionDescriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-63/2-63-instance-command-fast-1795487959769-add-field-metadata-option-description';
+import { DropWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795439685598-drop-workflow-visibility';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -665,5 +667,7 @@ export const INSTANCE_COMMANDS = [
   RelatedRecordPathOverridableEntityFastInstanceCommand,
   AddViewIsPrivateFastInstanceCommand,
   BackfillViewIsPrivateOverridesSlowInstanceCommand,
+  RelaxWorkflowVisibilityFastInstanceCommand,
   AddFieldMetadataOptionDescriptionFastInstanceCommand,
+  DropWorkflowVisibilityFastInstanceCommand,
 ];
