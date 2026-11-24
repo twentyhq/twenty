@@ -2,10 +2,10 @@ import { type AiChatRestoreEditorContentEventDetail } from '@/ai-chat/composer/t
 import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThrow';
 import { useCallback, useEffect, useLayoutEffect } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { TOUCH_DEVICE_MEDIA_QUERY } from 'twenty-ui/utilities';
 
 import { useAdvancedTextEditor } from '@/advanced-text-editor/hooks/useAdvancedTextEditor';
 import { deserializeAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/deserializeAdvancedTextEditorDocument';
-import { handleAiChatEditorKeyDown } from '@/ai-chat/composer/utils/handleAiChatEditorKeyDown';
 import { serializeAiChatEditorDraft } from '@/ai-chat/composer/utils/serializeAiChatEditorDraft';
 import { AI_CHAT_EDITOR_PROFILE } from '@/ai-chat/composer/constants/AiChatEditorProfile';
 import { AI_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai-chat/composer/constants/AiChatRestoreEditorContentEventName';
@@ -18,9 +18,11 @@ import { aiChatComposerDraftsState } from '@/ai-chat/states/composer/aiChatCompo
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { getAiChatAssistantMentionSearchResults } from '@/ai-chat/composer/utils/getAiChatAssistantMentionSearchResults';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
+import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
@@ -68,8 +70,39 @@ export const useAiChatEditor = ({ onSend }: UseAiChatEditorParams) => {
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
-      handleKeyDown: (view, event) =>
-        handleAiChatEditorKeyDown({ view, event, onSend }),
+      handleKeyDown: (view, event) => {
+        if (event.key === 'Enter' && !event.shiftKey) {
+          const isSuggestionMenuOpen = [
+            MENTION_SUGGESTION_PLUGIN_KEY,
+            SKILL_SUGGESTION_PLUGIN_KEY,
+          ].some(
+            (pluginKey) => pluginKey.getState(view.state)?.active === true,
+          );
+          if (isSuggestionMenuOpen) {
+            return false;
+          }
+
+          // Touch keyboards have no Shift+Enter, so return inserts the same line break and the send button sends
+          if (window.matchMedia(TOUCH_DEVICE_MEDIA_QUERY).matches) {
+            view.dispatch(
+              view.state.tr
+                .replaceSelectionWith(
+                  view.state.schema.nodes.hardBreak.create(),
+                )
+                .scrollIntoView(),
+            );
+            return true;
+          }
+
+          event.preventDefault();
+          onSend({
+            element: view.dom,
+            text: view.state.doc.textContent,
+          });
+          return true;
+        }
+        return false;
+      },
       handlePaste: (_view, event) => {
         const clipboardData = event.clipboardData;
 
