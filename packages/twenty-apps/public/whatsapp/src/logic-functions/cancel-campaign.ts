@@ -17,7 +17,9 @@ const handler = async (params: RoutePayload<unknown>): Promise<TemplateRouteResu
   }
 
   const { campaignId } = parsedParams.data;
-  const { whatsAppCampaign } = await new CoreApiClient({ runAs: 'user' }).query({
+  // the update runs as the member too, so only roles that can edit campaigns can cancel one
+  const userClient = new CoreApiClient({ runAs: 'user' });
+  const { whatsAppCampaign } = await userClient.query({
     whatsAppCampaign: { __args: { filter: { id: { eq: campaignId } } }, id: true, cancelledAt: true },
   });
 
@@ -25,13 +27,19 @@ const handler = async (params: RoutePayload<unknown>): Promise<TemplateRouteResu
     return { success: false, error: 'WhatsApp campaign not found' };
   }
 
-  if (!isDefined(whatsAppCampaign.cancelledAt)) {
-    await new CoreApiClient().mutation({
+  if (isDefined(whatsAppCampaign.cancelledAt)) {
+    return { success: true };
+  }
+
+  try {
+    await userClient.mutation({
       updateWhatsAppCampaign: {
         __args: { id: campaignId, data: { cancelledAt: new Date().toISOString() } },
         id: true,
       },
     });
+  } catch {
+    return { success: false, error: 'Could not cancel this campaign. Check that your role can edit WhatsApp campaigns.' };
   }
 
   return { success: true };
