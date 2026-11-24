@@ -55,13 +55,7 @@ export class WorkflowEntity extends SyncableEntity implements PrivatableEntity {
   @Column({ type: 'text', nullable: true })
   versionDefinitionHash: string | null;
 
-  @Column({
-    type: 'uuid',
-    nullable: true,
-    select: false,
-    insert: false,
-    update: false,
-  })
+  @Column({ type: 'uuid', nullable: true })
   lastPublishedVersionId: WasRemovedInUpgrade<string | null>;
 
   @WasIntroducedInUpgrade({
