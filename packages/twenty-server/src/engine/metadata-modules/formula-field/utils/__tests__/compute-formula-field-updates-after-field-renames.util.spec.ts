@@ -1,21 +1,26 @@
 import { FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK } from 'src/engine/metadata-modules/formula-field/__mocks__/formula-field-flat-entity-maps.mock';
-import { computeFormulaFieldUpdatesAfterFieldRename } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-updates-after-field-rename.util';
+import { computeFormulaFieldUpdatesAfterFieldRenames } from 'src/engine/metadata-modules/formula-field/utils/compute-formula-field-updates-after-field-renames.util';
 
 const EXISTING_FIELDS =
   FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK.byUniversalIdentifier;
 
-const computeRenamedExpressions = (
-  args: Partial<
-    Parameters<typeof computeFormulaFieldUpdatesAfterFieldRename>[0]
-  > &
-    Pick<
-      Parameters<typeof computeFormulaFieldUpdatesAfterFieldRename>[0],
-      'renamedFieldUniversalIdentifier' | 'newFieldName'
-    >,
-) =>
+const computeRenamedExpressions = ({
+  renamedFieldUniversalIdentifier,
+  newFieldName,
+  newFieldNameByUniversalIdentifier = new Map([
+    [renamedFieldUniversalIdentifier, newFieldName],
+  ]),
+  ...args
+}: Partial<
+  Parameters<typeof computeFormulaFieldUpdatesAfterFieldRenames>[0]
+> & {
+  renamedFieldUniversalIdentifier: string;
+  newFieldName: string;
+}) =>
   Object.fromEntries(
     Object.entries(
-      computeFormulaFieldUpdatesAfterFieldRename({
+      computeFormulaFieldUpdatesAfterFieldRenames({
+        newFieldNameByUniversalIdentifier,
         existingUniversalFlatFieldMetadataByUniversalIdentifier:
           EXISTING_FIELDS,
         pendingUniversalFlatFieldMetadataUpdateByUniversalIdentifier: {},
@@ -28,7 +33,28 @@ const computeRenamedExpressions = (
     ]),
   );
 
-describe('computeFormulaFieldUpdatesAfterFieldRename', () => {
+describe('computeFormulaFieldUpdatesAfterFieldRenames', () => {
+  it('should apply every rename of the batch to a formula that reads several renamed fields', () => {
+    expect(
+      computeRenamedExpressions({
+        renamedFieldUniversalIdentifier: 'gadget-price-uid',
+        newFieldName: 'unitPrice',
+        newFieldNameByUniversalIdentifier: new Map([
+          ['gadget-price-uid', 'unitPrice'],
+          ['gadget-quantity-uid', 'units'],
+        ]),
+      })['gadget-total-uid'],
+    ).toEqual({
+      formula: {
+        expression: 'unitPrice * units',
+        bindings: {
+          unitPrice: 'gadget-price-uid',
+          units: 'gadget-quantity-uid',
+        },
+      },
+    });
+  });
+
   it('should rewrite the formulas of the object that read the renamed field', () => {
     expect(
       computeRenamedExpressions({
