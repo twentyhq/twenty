@@ -2,6 +2,7 @@ import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEf
 import { COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID } from '@/command-menu-item/constants/CommandMenuAskAiFallbackItemId';
 import { COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT } from '@/command-menu-item/constants/CommandMenuInlineSearchRecordsLimit';
 import { COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER } from '@/command-menu-item/constants/CommandMenuItemSectionsInDisplayOrder';
+import { COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID } from '@/command-menu-item/constants/CommandMenuNoRecordsFoundItemId';
 import { COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID } from '@/command-menu-item/constants/CommandMenuSeeMoreRecordsItemId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuAskAiFallbackItem } from '@/command-menu-item/display/components/CommandMenuAskAiFallbackItem';
@@ -83,8 +84,6 @@ const INITIAL_SECTIONS_TOGGLE_STATE: CommandMenuItemSectionsToggleState = {
   closedSectionsWhileSearching: { search: '', sections: [] },
 };
 
-const COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID = 'command-menu-no-records-found';
-
 export const SidePanelCommandMenuItemDisplayPage = () => {
   const { t } = useLingui();
   const { appActions } = useCommandMenuAppActions();
@@ -119,7 +118,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     searchResultItems,
     loading: isSearchingRecords,
     error: searchRecordsError,
-  } = useSidePanelSearchRecords({ shouldSkipEmptySearch: true });
+  } = useSidePanelSearchRecords({
+    shouldSkipEmptySearch: true,
+    shouldIgnoreObjectFilter: true,
+  });
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
     useFilterCommandMenuItemsWithSidePanelSearch({
@@ -146,9 +148,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     () =>
       pinnedFirstCommandMenuItems.filter(
         (item) =>
-          item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK &&
-          item.engineComponentKey !==
-            EngineComponentKey.SEARCH_RECORDS_FALLBACK,
+          item.availabilityType === CommandMenuItemAvailabilityType.FALLBACK,
       ),
     [pinnedFirstCommandMenuItems],
   );
@@ -254,6 +254,24 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     return getSectionAppActions(section).map((item) => item.id);
   };
 
+  const hasMatchingCommand = COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.some(
+    (section) =>
+      section !== 'ASK_AI' &&
+      section !== 'SEARCH' &&
+      (commandMenuItemsBySection[section].length > 0 ||
+        getSectionExtraItemIds(section).length > 0),
+  );
+
+  const displayedFallbackCommandMenuItems =
+    isSearchActive && !hasMatchingCommand
+      ? fallbackCommandMenuItems.filter(
+          (item) =>
+            !hasMoreSearchResultItems ||
+            item.engineComponentKey !==
+              EngineComponentKey.SEARCH_RECORDS_FALLBACK,
+        )
+      : [];
+
   const getSectionRowItemIds = (
     section: DisplayedCommandMenuItemSection,
   ): string[] => {
@@ -267,7 +285,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         ...(hasMoreSearchResultItems
           ? [COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID]
           : []),
-        ...fallbackCommandMenuItems.map((item) => item.id),
+        ...displayedFallbackCommandMenuItems.map((item) => item.id),
       ];
     }
 
@@ -384,7 +402,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           disabled
         />
       )}
-      {fallbackCommandMenuItems.map((item) => (
+      {displayedFallbackCommandMenuItems.map((item) => (
         <CommandMenuItemRenderer item={item} key={item.id} />
       ))}
     </>

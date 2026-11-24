@@ -378,7 +378,7 @@ export const SearchWithoutMatchingItemsAndWithoutFallback: Story = {
   },
 };
 
-export const SearchWithoutMatchingItemsReplacesSearchFallback: Story = {
+export const SearchWithoutMatchingItemsAndWithFallback: Story = {
   decorators: [
     createDecorator({
       commandMenuItems: [...PINNED_ITEMS, OTHER_ITEM, FALLBACK_ITEM],
@@ -390,7 +390,7 @@ export const SearchWithoutMatchingItemsReplacesSearchFallback: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('No records found')).toBeVisible();
-    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
+    expect(canvas.getByText('Search records')).toBeVisible();
   },
 };
 
@@ -408,7 +408,7 @@ export const SearchWithoutMatchingItemsOffersAskAi: Story = {
 
     expect(await canvas.findByText('“mike”')).toBeVisible();
     expect(canvas.getAllByText('Ask AI')).toHaveLength(2);
-    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
+    expect(canvas.getByText('Search records')).toBeVisible();
   },
 };
 

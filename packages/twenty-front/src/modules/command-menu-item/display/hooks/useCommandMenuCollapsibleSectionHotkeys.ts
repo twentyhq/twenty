@@ -26,6 +26,10 @@ export const useCommandMenuCollapsibleSectionHotkeys = ({
 
   const handleArrowKey =
     (key: 'ArrowLeft' | 'ArrowRight') => (keyboardEvent: KeyboardEvent) => {
+      if (!store.get(hasUserSelectedSidePanelListItemState.atom)) {
+        return;
+      }
+
       const action = getCommandMenuSectionKeyboardAction({
         key,
         selectedItemId: store.get(

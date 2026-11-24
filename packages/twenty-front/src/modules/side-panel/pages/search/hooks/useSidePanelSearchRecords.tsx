@@ -12,10 +12,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 type UseSidePanelSearchRecordsParams = {
   shouldSkipEmptySearch?: boolean;
+  shouldIgnoreObjectFilter?: boolean;
 };
 
 export const useSidePanelSearchRecords = ({
   shouldSkipEmptySearch = false,
+  shouldIgnoreObjectFilter = false,
 }: UseSidePanelSearchRecordsParams = {}) => {
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
   const sidePanelSearchObjectFilter = useAtomStateValue(
@@ -26,7 +28,9 @@ export const useSidePanelSearchRecords = ({
   const [deferredSidePanelSearch] = useDebounce(trimmedSidePanelSearch, 300);
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const includedObjectNameSingulars = useSearchableObjectNameSingulars({
-    selectedObjectNameSingular: sidePanelSearchObjectFilter,
+    selectedObjectNameSingular: shouldIgnoreObjectFilter
+      ? null
+      : sidePanelSearchObjectFilter,
   });
 
   const hasNoSearchableObject = includedObjectNameSingulars.length === 0;
