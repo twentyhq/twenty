@@ -46,14 +46,20 @@ export const GettingStartedAppInstallButton = ({
   const marketplaceAppDetail = data?.findMarketplaceAppDetail;
   const { install, isInstalling } = useInstallMarketplaceApp({
     universalIdentifier,
-    onCompleted: () =>
-      void updateGettingStarted({
-        completedStepActionKey: GettingStartedStepActionKey.INSTALL_APP,
-      }),
   });
   const modalInstanceId = `getting-started-install-${universalIdentifier}`;
 
-  if (isInstalled) {
+  const handleAuthorize = async () => {
+    const isInstallQueued = await install();
+
+    if (isInstallQueued) {
+      void updateGettingStarted({
+        completedStepActionKey: GettingStartedStepActionKey.INSTALL_APP,
+      });
+    }
+  };
+
+  if (isInstalled || isInstalling) {
     return (
       <StyledInstalledMark role="img" aria-label={t`${appLabel} installed`}>
         <IconCircleCheck size={theme.icon.size.lg} />
@@ -66,7 +72,6 @@ export const GettingStartedAppInstallButton = ({
       <IconButton
         size="sm"
         aria-label={t`Install ${appLabel}`}
-        loading={isInstalling}
         disabled={!isDefined(marketplaceAppDetail)}
         onClick={() => openDialog(modalInstanceId)}
       >
@@ -87,7 +92,7 @@ export const GettingStartedAppInstallButton = ({
           }
           billsCredits={marketplaceAppDetail.billsCredits}
           isListed={marketplaceAppDetail.isListed}
-          onAuthorize={install}
+          onAuthorize={() => void handleAuthorize()}
           isInstalling={isInstalling}
         />
       )}

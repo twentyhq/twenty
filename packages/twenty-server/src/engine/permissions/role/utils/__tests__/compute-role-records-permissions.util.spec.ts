@@ -105,6 +105,7 @@ const computeObjectPermissions = ({
       fieldPermissions: fieldPermissions.map((fieldPermission) => ({
         ...fieldPermission,
         objectMetadataId: OBJECT_METADATA_ID,
+        sourceFieldMetadataId: null,
       })),
       rowLevelPermissionRules,
       rowLevelPermissionPredicates: [

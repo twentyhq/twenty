@@ -358,6 +358,9 @@ const ALL_RECORDS_UNDER_RECORDS_PERMISSIONS =
 const FIELD_RESTRICTION_LISTS =
   'written as unreadableFields and uneditableFields under its object or rule';
 
+const NOT_IN_APP_MANIFESTS_YET =
+  'only set on individual roles, which are not exported';
+
 const NESTED_IN_RULE =
   'a predicate and a predicate group are written under their rule';
 const PREDICATE_GROUP_OPERATIONS_GAP =
@@ -809,6 +812,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
       rowLevelPermissionPredicateGroupUniversalIdentifier:
         FIELD_RESTRICTION_LISTS,
       rowLevelPermissionRuleUniversalIdentifier: FIELD_RESTRICTION_LISTS,
+      sourceFieldMetadataUniversalIdentifier: NOT_IN_APP_MANIFESTS_YET,
     },
   },
   {

@@ -207,7 +207,6 @@ const createWorkflowOrBuildFailure = async ({
     await assertAiAgentStepsRunReusableAgentsOrThrow({
       deps,
       workspaceId,
-      userWorkspaceId,
       steps,
     });
 
@@ -262,12 +261,10 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
 const assertAiAgentStepsRunReusableAgentsOrThrow = async ({
   deps,
   workspaceId,
-  userWorkspaceId,
   steps,
 }: {
   deps: Pick<CreateCompleteWorkflowToolDeps, 'workflowAiAgentStepAgentService'>;
   workspaceId: string;
-  userWorkspaceId: string | undefined;
   steps: WorkflowAction[];
 }): Promise<void> => {
   const agentIds = new Set(
@@ -285,7 +282,6 @@ const assertAiAgentStepsRunReusableAgentsOrThrow = async ({
       deps.workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow({
         agentId,
         workspaceId,
-        userWorkspaceId,
       }),
     ),
   );
