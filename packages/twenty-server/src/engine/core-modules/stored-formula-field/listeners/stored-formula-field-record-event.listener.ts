@@ -33,7 +33,8 @@ export class StoredFormulaFieldRecordEventListener {
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
   async handleRecordsAdded(batch: RecordEventBatch): Promise<void> {
-    await this.markRecordsDirty(batch, {
+    await this.markRecordsDirty({
+      batch,
       isRecordUpdate: false,
       includeOwnRecords: true,
     });
@@ -42,7 +43,8 @@ export class StoredFormulaFieldRecordEventListener {
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleRecordsRemoved(batch: RecordEventBatch): Promise<void> {
-    await this.markRecordsDirty(batch, {
+    await this.markRecordsDirty({
+      batch,
       isRecordUpdate: false,
       includeOwnRecords: false,
     });
@@ -50,19 +52,22 @@ export class StoredFormulaFieldRecordEventListener {
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleRecordsUpdated(batch: RecordEventBatch): Promise<void> {
-    await this.markRecordsDirty(batch, {
+    await this.markRecordsDirty({
+      batch,
       isRecordUpdate: true,
       includeOwnRecords: true,
     });
   }
 
-  private async markRecordsDirty(
-    batch: RecordEventBatch,
-    {
-      isRecordUpdate,
-      includeOwnRecords,
-    }: { isRecordUpdate: boolean; includeOwnRecords: boolean },
-  ): Promise<void> {
+  private async markRecordsDirty({
+    batch,
+    isRecordUpdate,
+    includeOwnRecords,
+  }: {
+    batch: RecordEventBatch;
+    isRecordUpdate: boolean;
+    includeOwnRecords: boolean;
+  }): Promise<void> {
     const watchPlans = getStoredFormulaWatchPlans(
       await this.workspaceCacheService.getOrRecompute(batch.workspaceId, [
         'flatObjectMetadataMaps',

@@ -33,13 +33,21 @@ export class StoredFormulaFieldDirtyRecordService {
     }
 
     await this.cacheStorageService.setAdd(
-      this.getKey('dirty-record-ids', { workspaceId, objectMetadataId }),
+      this.getKey({
+        prefix: 'dirty-record-ids',
+        workspaceId,
+        objectMetadataId,
+      }),
       recordIds,
     );
 
     // Saves the enqueue round trips on every batch while a recompute is pending
     const isFirstMarkSinceLastRun = await this.cacheStorageService.setIfAbsent(
-      this.getKey('recompute-scheduled', { workspaceId, objectMetadataId }),
+      this.getKey({
+        prefix: 'recompute-scheduled',
+        workspaceId,
+        objectMetadataId,
+      }),
       true,
       STORED_FORMULA_FIELD_RECOMPUTE_DEBOUNCE_MS,
     );
@@ -56,18 +64,24 @@ export class StoredFormulaFieldDirtyRecordService {
   }: RecomputeDirtyStoredFormulaRecordsJobData & { size: number }): Promise<
     string[]
   > {
-    const dirtyRecordIdsKey = this.getKey('dirty-record-ids', {
+    const dirtyRecordIdsKey = this.getKey({
+      prefix: 'dirty-record-ids',
       workspaceId,
       objectMetadataId,
     });
-    const processingRecordIdsKey = this.getKey('processing-record-ids', {
+    const processingRecordIdsKey = this.getKey({
+      prefix: 'processing-record-ids',
       workspaceId,
       objectMetadataId,
     });
 
     // Cleared before popping so ids added from now on schedule another run
     await this.cacheStorageService.del(
-      this.getKey('recompute-scheduled', { workspaceId, objectMetadataId }),
+      this.getKey({
+        prefix: 'recompute-scheduled',
+        workspaceId,
+        objectMetadataId,
+      }),
     );
 
     // Ids left by a run that died before completing go back in the queue
@@ -101,7 +115,11 @@ export class StoredFormulaFieldDirtyRecordService {
     recordIds: string[];
   }): Promise<void> {
     await this.cacheStorageService.setRemove(
-      this.getKey('processing-record-ids', { workspaceId, objectMetadataId }),
+      this.getKey({
+        prefix: 'processing-record-ids',
+        workspaceId,
+        objectMetadataId,
+      }),
       recordIds,
     );
   }
@@ -125,16 +143,16 @@ export class StoredFormulaFieldDirtyRecordService {
     );
   }
 
-  private getKey(
+  private getKey({
+    prefix,
+    workspaceId,
+    objectMetadataId,
+  }: RecomputeDirtyStoredFormulaRecordsJobData & {
     prefix:
       | 'dirty-record-ids'
       | 'processing-record-ids'
-      | 'recompute-scheduled',
-    {
-      workspaceId,
-      objectMetadataId,
-    }: RecomputeDirtyStoredFormulaRecordsJobData,
-  ): string {
+      | 'recompute-scheduled';
+  }): string {
     return `${prefix}:${workspaceId}:${objectMetadataId}`;
   }
 }
