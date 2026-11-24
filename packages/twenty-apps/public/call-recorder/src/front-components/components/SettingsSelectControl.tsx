@@ -4,19 +4,19 @@ import { Select } from 'twenty-ui/primitives/input';
 
 import { EMPTY_OPTION_LABEL } from 'src/front-components/constants/empty-option-label.constant';
 
-type TranscriptProviderControlProps = {
+type SettingsSelectControlProps = {
   value: string;
   options: { label: string; value: string }[];
   labelledBy: string;
   onChange: (value: string) => void;
 };
 
-export const TranscriptProviderControl = ({
+export const SettingsSelectControl = ({
   value,
   options,
   labelledBy,
   onChange,
-}: TranscriptProviderControlProps) => (
+}: SettingsSelectControlProps) => (
   <Select.Root<string>
     items={options}
     value={isNonEmptyString(value) ? value : null}
