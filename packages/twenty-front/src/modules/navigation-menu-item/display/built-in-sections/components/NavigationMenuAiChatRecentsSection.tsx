@@ -50,7 +50,7 @@ export const NavigationMenuAiChatRecentsSection = ({
     isDirectMessageEnabled,
   });
 
-  if (isLoading && threads.length === 0) {
+  if (isLoading && !isDefined(headerAction)) {
     return isExpanded ? <AiChatSkeletonLoader /> : null;
   }
 
