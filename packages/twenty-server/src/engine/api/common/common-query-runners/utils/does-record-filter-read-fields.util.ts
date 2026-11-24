@@ -2,7 +2,6 @@ import { isPlainObject } from 'twenty-shared/utils';
 
 const LOGICAL_OPERATORS = ['and', 'or', 'not'];
 
-// Walks a record filter of any nesting, so it takes the raw filter value
 export const doesRecordFilterReadFields = ({
   filter,
   fieldNames,
