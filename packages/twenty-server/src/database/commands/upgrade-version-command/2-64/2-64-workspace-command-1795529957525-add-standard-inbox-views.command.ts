@@ -19,9 +19,14 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const INBOX_THREAD = STANDARD_OBJECTS.agentChatThread;
 
-const INBOX_VIEW_UNIVERSAL_IDENTIFIERS = Object.values(INBOX_THREAD.views).map(
-  (view) => view.universalIdentifier,
-);
+const INBOX_VIEW_UNIVERSAL_IDENTIFIERS = [
+  INBOX_THREAD.views.open.universalIdentifier,
+  INBOX_THREAD.views.needsInput.universalIdentifier,
+  INBOX_THREAD.views.mentions.universalIdentifier,
+  INBOX_THREAD.views.assignedToMe.universalIdentifier,
+  INBOX_THREAD.views.snoozed.universalIdentifier,
+  INBOX_THREAD.views.done.universalIdentifier,
+];
 
 const INBOX_VIEW_FILTER_UNIVERSAL_IDENTIFIERS = [
   INBOX_THREAD.views.needsInput.viewFilters.pendingQuestionMessageIdIsNotEmpty
