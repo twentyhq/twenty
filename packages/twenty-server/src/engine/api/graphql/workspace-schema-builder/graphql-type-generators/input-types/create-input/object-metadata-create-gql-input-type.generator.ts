@@ -7,8 +7,11 @@ import {
   isInputObjectType,
   isObjectType,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, pascalCase } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataTypeWritable,
+  pascalCase,
+} from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { RelationFieldMetadataGqlInputTypeGenerator } from 'src/engine/api/graphql/workspace-schema-builder/graphql-type-generators/input-types/relation-field-metadata-gql-type.generator';
@@ -67,7 +70,7 @@ export class ObjectMetadataCreateGqlInputTypeGenerator {
     const allGeneratedFields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of fields) {
-      if (fieldMetadata.type === FieldMetadataType.ROLLUP) {
+      if (!isFieldMetadataTypeWritable(fieldMetadata.type)) {
         continue;
       }
 

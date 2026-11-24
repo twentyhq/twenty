@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type JSONSchema7 } from 'json-schema';
 import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataTypeWritable } from 'twenty-shared/utils';
 
 import { filesFieldSchema } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { SHARED_VALUE_JSON_SCHEMAS } from 'src/engine/core-modules/record-crud/json-schemas/shared-value-definitions.json-schema';
@@ -169,8 +169,7 @@ export const generateRecordPropertiesJsonSchema = ({
   for (const field of objectMetadata.fields) {
     if (
       SYSTEM_MANAGED_FIELD_NAMES.has(field.name) ||
-      field.type === FieldMetadataType.TS_VECTOR ||
-      field.type === FieldMetadataType.ROLLUP ||
+      !isFieldMetadataTypeWritable(field.type) ||
       nonUpdatableFieldMetadataIds?.has(field.id)
     ) {
       continue;

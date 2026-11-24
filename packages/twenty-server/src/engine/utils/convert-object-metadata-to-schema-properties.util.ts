@@ -4,7 +4,11 @@ import {
   NumberDataType,
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
-import { isDefined, getFieldMetadataValueType } from 'twenty-shared/utils';
+import {
+  getFieldMetadataValueType,
+  isDefined,
+  isFieldMetadataTypeWritable,
+} from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
@@ -109,7 +113,7 @@ export const convertObjectMetadataToSchemaProperties = ({
     if (
       !isFieldAvailable(field, forResponse) ||
       field.type === FieldMetadataType.TS_VECTOR ||
-      (!forResponse && field.type === FieldMetadataType.ROLLUP)
+      (!forResponse && !isFieldMetadataTypeWritable(field.type))
     ) {
       return node;
     }
