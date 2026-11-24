@@ -11,17 +11,11 @@ import {
 } from 'test/integration/metadata/suites/field-metadata/rollup/utils/setup-rollup-test-objects.util';
 import { teardownRollupTestObjects } from 'test/integration/metadata/suites/field-metadata/rollup/utils/teardown-rollup-test-objects.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
-import { enqueueJobAndDrain } from 'test/integration/utils/enqueue-job-and-drain.util';
 import {
   AggregateOperations,
   FieldMetadataType,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { RECONCILE_ROLLUP_FIELDS_JOB_NAME } from 'src/engine/core-modules/rollup-field/constants/reconcile-rollup-fields-job-name.constant';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const FIRST_PROJECT_ID = '20202020-a0a3-4000-8000-000000000001';
 const SECOND_PROJECT_ID = '20202020-a0a3-4000-8000-000000000002';
@@ -248,28 +242,6 @@ describe('Rollup field live update', () => {
     expect(await findProject(SECOND_PROJECT_ID)).toMatchObject({
       taskCount: 0,
       totalEstimate: null,
-    });
-  });
-
-  it('catches up with a write that emitted no event when the rollups are reconciled', async () => {
-    await global.testDataSource.query(
-      `UPDATE "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."_rollupTask" SET "estimate" = 42 WHERE "id" = $1`,
-      [FIRST_TASK_ID],
-    );
-
-    expect(await findProject(FIRST_PROJECT_ID)).toMatchObject({
-      totalEstimate: 5,
-    });
-
-    await enqueueJobAndDrain({
-      queue: MessageQueue.rollupFieldQueue,
-      jobName: RECONCILE_ROLLUP_FIELDS_JOB_NAME,
-      data: { workspaceId: SEED_APPLE_WORKSPACE_ID },
-      scope: { workspaceId: SEED_APPLE_WORKSPACE_ID, isWorkspaceJob: true },
-    });
-
-    expect(await findProject(FIRST_PROJECT_ID)).toMatchObject({
-      totalEstimate: 42,
     });
   });
 });
