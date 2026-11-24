@@ -1176,6 +1176,12 @@ msgstr ""
 msgid "Agent with name \"{name}\" already exists"
 msgstr ""
 
+#. js-lingui-id: 6KWIu6
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
+msgid "Agents"
+msgstr ""
+
 #. js-lingui-id: wqJIjz
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-base-graph-fields.util.ts
 msgid "Aggregate field is required for graph widget"
@@ -2032,6 +2038,12 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Automatically assigned"
+msgstr ""
+
+#. js-lingui-id: J9HcLf
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Automations"
 msgstr ""
 
 #. js-lingui-id: bhFnpx
@@ -6547,6 +6559,12 @@ msgctxt "commandMenuItem.label"
 msgid "Go to Admin Panel Settings"
 msgstr ""
 
+#. js-lingui-id: zPVvLp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Agents"
+msgstr ""
+
 #. js-lingui-id: iLqs3S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -6629,6 +6647,12 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Settings"
+msgstr ""
+
+#. js-lingui-id: 7rUSjX
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Go to Workflows"
 msgstr ""
 
 #. js-lingui-id: cvJ2e6
@@ -18275,9 +18299,9 @@ msgctxt "fieldMetadata.label"
 msgid "WorkflowRun"
 msgstr ""
 
-#. js-lingui-id: zSsbOe
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
-msgctxt "navigationMenuItem.name"
+#. js-lingui-id: RWPUPQ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.shortLabel"
 msgid "Workflows"
 msgstr ""
 
