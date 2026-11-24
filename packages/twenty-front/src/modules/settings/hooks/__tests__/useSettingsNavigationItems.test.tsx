@@ -153,7 +153,7 @@ describe('useSettingsNavigationItems', () => {
     );
 
     expect(billingItem?.isHidden).toBe(true);
-    expect(billingItem?.path).toBe(SettingsPath.BillingLimits);
+    expect(billingItem?.path).toBe(SettingsPath.Billing);
   });
 
   it('should hide billing navigation until billing config is loaded', () => {
@@ -184,32 +184,11 @@ describe('useSettingsNavigationItems', () => {
   });
 
   it.each([
-    {
-      permissionFlags: [PermissionFlagType.BILLING],
-      isHidden: false,
-      path: SettingsPath.Billing,
-    },
-    {
-      permissionFlags: [PermissionFlagType.WORKSPACE],
-      isHidden: false,
-      path: SettingsPath.BillingLimits,
-    },
-    {
-      permissionFlags: [
-        PermissionFlagType.BILLING,
-        PermissionFlagType.WORKSPACE,
-      ],
-      isHidden: false,
-      path: SettingsPath.Billing,
-    },
-    {
-      permissionFlags: [PermissionFlagType.WORKSPACE_MEMBERS],
-      isHidden: true,
-      path: SettingsPath.BillingLimits,
-    },
+    { permissionFlags: [PermissionFlagType.BILLING], isHidden: false },
+    { permissionFlags: [PermissionFlagType.WORKSPACE], isHidden: true },
   ])(
-    'should set billing navigation to $path, hidden $isHidden, with $permissionFlags',
-    ({ permissionFlags, isHidden, path }) => {
+    'should set billing navigation hidden to $isHidden with $permissionFlags',
+    ({ permissionFlags, isHidden }) => {
       jotaiStore.set(billingState.atom, {
         ...mockBilling,
         isBillingEnabled: true,
@@ -225,7 +204,6 @@ describe('useSettingsNavigationItems', () => {
         ?.items.find((item) => item.label === 'Billing');
 
       expect(billingItem?.isHidden).toBe(isHidden);
-      expect(billingItem?.path).toBe(path);
     },
   );
 

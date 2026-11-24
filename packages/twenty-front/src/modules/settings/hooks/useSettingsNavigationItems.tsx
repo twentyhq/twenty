@@ -119,14 +119,10 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         },
         {
           label: t`Billing`,
-          path: permissionFlagMap[PermissionFlagType.BILLING]
-            ? SettingsPath.Billing
-            : SettingsPath.BillingLimits,
+          path: SettingsPath.Billing,
           Icon: IconCreditCard,
           isHidden:
-            !isBillingEnabled ||
-            (!permissionFlagMap[PermissionFlagType.BILLING] &&
-              !permissionFlagMap[PermissionFlagType.WORKSPACE]),
+            !isBillingEnabled || !permissionFlagMap[PermissionFlagType.BILLING],
         },
         {
           label: t`Developers`,
