@@ -19,6 +19,7 @@ import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata
 import { validateFlatFieldMetadataDisabledFieldPermissionActions } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-disabled-field-permission-actions.util';
 import { validateFlatFieldMetadataFormula } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
+import { validateFlatFieldMetadataNameReadByFormulas } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-read-by-formulas.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
 import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util';
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -218,6 +219,11 @@ export class FlatFieldMetadataValidatorService {
           universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
           universalFlatObjectMetadata: flatObjectMetadata,
           buildOptions,
+        }),
+        ...validateFlatFieldMetadataNameReadByFormulas({
+          universalIdentifier: flatFieldMetadataToValidate.universalIdentifier,
+          name: flatFieldMetadataToValidate.name,
+          universalFlatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
         }),
       );
     }
