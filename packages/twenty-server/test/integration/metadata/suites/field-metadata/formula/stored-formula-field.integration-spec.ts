@@ -78,7 +78,7 @@ describe('Stored formula fields', () => {
     return createOneField;
   };
 
-  const runMutation = async ({
+  const runGraphqlOperation = async ({
     query,
     variables = {},
   }: {
@@ -97,7 +97,7 @@ describe('Stored formula fields', () => {
 
   const createGadget = async (data: Record<string, unknown>) =>
     (
-      await runMutation({
+      await runGraphqlOperation({
         query: `mutation CreateGadget($data: StoredFormulaGadgetCreateInput!) {
           createStoredFormulaGadget(data: $data) { id }
         }`,
@@ -106,7 +106,7 @@ describe('Stored formula fields', () => {
     ).createStoredFormulaGadget.id;
 
   const updateGadget = (id: string, data: Record<string, unknown>) =>
-    runMutation({
+    runGraphqlOperation({
       query: `mutation UpdateGadget($id: UUID!, $data: StoredFormulaGadgetUpdateInput!) {
         updateStoredFormulaGadget(id: $id, data: $data) { id }
       }`,
@@ -117,7 +117,7 @@ describe('Stored formula fields', () => {
     await waitForAllJobsToFinish();
 
     return (
-      await runMutation({
+      await runGraphqlOperation({
         query: `query FindSupplier($id: UUID!) {
           storedFormulaSupplier(filter: { id: { eq: $id } }) { ${SUPPLIER_GQL_FIELDS} }
         }`,
@@ -159,12 +159,12 @@ describe('Stored formula fields', () => {
     });
 
     firstSupplierId = (
-      await runMutation({
+      await runGraphqlOperation({
         query: `mutation { createStoredFormulaSupplier(data: { name: "Acme", weight: 2 }) { id } }`,
       })
     ).createStoredFormulaSupplier.id;
     secondSupplierId = (
-      await runMutation({
+      await runGraphqlOperation({
         query: `mutation { createStoredFormulaSupplier(data: { name: "Globex" }) { id } }`,
       })
     ).createStoredFormulaSupplier.id;
@@ -294,7 +294,7 @@ describe('Stored formula fields', () => {
   });
 
   it('should recompute when a field of the record itself changes', async () => {
-    await runMutation({
+    await runGraphqlOperation({
       query: `mutation UpdateSupplier($id: UUID!) {
         updateStoredFormulaSupplier(id: $id, data: { weight: 3 }) { id }
       }`,
@@ -320,7 +320,7 @@ describe('Stored formula fields', () => {
   it('should leave out a deleted related record, count it again once restored, and leave out a destroyed one', async () => {
     const filter = { id: { in: [firstGadgetId] } };
 
-    await runMutation({
+    await runGraphqlOperation({
       query: `mutation DeleteGadgets($filter: StoredFormulaGadgetFilterInput!) {
         deleteStoredFormulaGadgets(filter: $filter) { id }
       }`,
@@ -331,7 +331,7 @@ describe('Stored formula fields', () => {
       gadgetCount: 1,
     });
 
-    await runMutation({
+    await runGraphqlOperation({
       query: `mutation RestoreGadgets($filter: StoredFormulaGadgetFilterInput!) {
         restoreStoredFormulaGadgets(filter: $filter) { id }
       }`,
@@ -342,13 +342,13 @@ describe('Stored formula fields', () => {
       gadgetCount: 2,
     });
 
-    await runMutation({
+    await runGraphqlOperation({
       query: `mutation DeleteGadgets($filter: StoredFormulaGadgetFilterInput!) {
         deleteStoredFormulaGadgets(filter: $filter) { id }
       }`,
       variables: { filter },
     });
-    await runMutation({
+    await runGraphqlOperation({
       query: `mutation DestroyGadgets($filter: StoredFormulaGadgetFilterInput!) {
         destroyStoredFormulaGadgets(filter: $filter) { id }
       }`,
