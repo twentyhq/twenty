@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { AddFavoritesNavigationMenuSectionCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795527933153-add-favorites-navigation-menu-section.command';
 import { BackfillUserWorkspaceDefaultAvatarFileIdCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795536145182-backfill-user-workspace-default-avatar-file-id.command';
 import { AddStandardInboxViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538284087-add-standard-inbox-views.command';
+import { RemoveChannelAssociationAccountOwnerAndHandleCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795541015901-remove-channel-association-account-owner-and-handle.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddFavoritesNavigationMenuSectionCommand,
     BackfillUserWorkspaceDefaultAvatarFileIdCommand,
     AddStandardInboxViewsCommand,
+    RemoveChannelAssociationAccountOwnerAndHandleCommand,
   ],
 })
 export class V2_64_UpgradeVersionCommandModule {}

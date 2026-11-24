@@ -19,13 +19,6 @@ type MessageToRefresh = Pick<
   'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
 >;
 
-type MessageChannelMessageAssociationSource = Partial<
-  Pick<
-    MessageChannelMessageAssociationWorkspaceEntity,
-    'accountOwnerId' | 'handle'
-  >
->;
-
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
   existingThreadInDB?: Pick<MessageThreadWorkspaceEntity, 'id'>;
@@ -51,8 +44,7 @@ type MessageAccumulator = {
     | 'messageExternalId'
     | 'messageThreadExternalId'
     | 'direction'
-  > &
-    MessageChannelMessageAssociationSource;
+  >;
 };
 @Injectable()
 export class MessagingMessageService {
@@ -60,19 +52,12 @@ export class MessagingMessageService {
 
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  public async saveMessagesWithinTransaction({
-    messages,
-    messageChannelId,
-    transactionScope,
-    workspaceId,
-    associationSource,
-  }: {
-    messages: MessageWithParticipants[];
-    messageChannelId: string;
-    transactionScope: WorkspaceTransactionScope;
-    workspaceId: string;
-    associationSource: MessageChannelMessageAssociationSource;
-  }): Promise<{
+  public async saveMessagesWithinTransaction(
+    messages: MessageWithParticipants[],
+    messageChannelId: string,
+    transactionScope: WorkspaceTransactionScope,
+    workspaceId: string,
+  ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     refetchedMessageChannelMessageAssociationIds: string[];
     sentDraftMessageIds: string[];
@@ -248,7 +233,6 @@ export class MessagingMessageService {
               messageExternalId: message.externalId,
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
-              ...associationSource,
             };
 
             associationToCreateByMessageId.set(

@@ -58,16 +58,4 @@ export const buildMessageChannelMessageAssociationStandardFlatIndexMetadatas =
       twentyStandardApplicationId,
       now,
     }),
-    accountOwnerIdIndex: createStandardIndexFlatMetadata({
-      objectName,
-      workspaceId,
-      context: {
-        indexName: 'accountOwnerIdIndex',
-        relatedFieldNames: ['accountOwner'],
-      },
-      standardObjectMetadataRelatedEntityIds,
-      dependencyFlatEntityMaps,
-      twentyStandardApplicationId,
-      now,
-    }),
   });
