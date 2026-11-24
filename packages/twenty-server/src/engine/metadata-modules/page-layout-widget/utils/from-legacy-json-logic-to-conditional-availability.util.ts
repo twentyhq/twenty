@@ -6,8 +6,8 @@ import {
   isString,
 } from '@sniptt/guards';
 import {
-  type ConditionalAvailabilityLogicalOperator,
   type ConditionalAvailabilityNode,
+  joinConditionalAvailabilityNodes,
 } from 'twenty-shared/conditional-availability';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
@@ -70,30 +70,6 @@ const toSelectedRecordsCall = ({
     arguments: isDefined(value)
       ? [...propertyArguments, { type: 'LITERAL', value }]
       : propertyArguments,
-  };
-};
-
-const toGroupNode = ({
-  logicalOperator,
-  children,
-}: {
-  logicalOperator: ConditionalAvailabilityLogicalOperator;
-  children: ConditionalAvailabilityNode[];
-}): ConditionalAvailabilityNode => {
-  const [onlyChild] = children;
-
-  if (children.length === 1 && isDefined(onlyChild)) {
-    return onlyChild;
-  }
-
-  return {
-    type: 'GROUP',
-    logicalOperator,
-    children: children.flatMap((child) =>
-      child.type === 'GROUP' && child.logicalOperator === logicalOperator
-        ? child.children
-        : [child],
-    ),
   };
 };
 
@@ -203,9 +179,9 @@ const toMembershipNode = ({
     return undefined;
   }
 
-  return toGroupNode({
+  return joinConditionalAvailabilityNodes({
     logicalOperator: 'OR',
-    children: secondOperand.map((value) =>
+    nodes: secondOperand.map((value) =>
       toSelectedRecordsCall({
         functionName: 'everyEquals',
         propertyPath: memberPropertyPath,
@@ -292,9 +268,9 @@ export const fromLegacyJsonLogicToConditionalAvailability = (
     );
 
     return children.every(isDefined)
-      ? toGroupNode({
+      ? joinConditionalAvailabilityNodes({
           logicalOperator: operator === 'and' ? 'AND' : 'OR',
-          children,
+          nodes: children,
         })
       : undefined;
   }

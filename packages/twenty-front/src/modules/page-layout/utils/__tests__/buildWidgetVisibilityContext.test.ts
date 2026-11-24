@@ -1,3 +1,4 @@
+import { EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityGlobalContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 
 describe('buildWidgetVisibilityContext', () => {
@@ -5,12 +6,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: true,
       isInSidePanel: false,
+      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
-      featureFlags: {},
+      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
   });
 
@@ -18,12 +20,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: true,
+      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
-      featureFlags: {},
+      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
   });
 
@@ -31,12 +34,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: true,
       isInSidePanel: true,
+      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
-      featureFlags: {},
+      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
   });
 
@@ -44,12 +48,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
+      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [],
-      featureFlags: {},
+      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
   });
 
@@ -58,12 +63,13 @@ describe('buildWidgetVisibilityContext', () => {
       isMobile: false,
       isInSidePanel: false,
       targetRecord: { id: 'a', status: 'DRAFT' },
+      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
-      featureFlags: {},
+      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
   });
 
@@ -71,7 +77,10 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
-      featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
+      globalContext: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
+      },
     });
 
     expect(result.featureFlags).toEqual({ IS_AI_CHAT_INBOX_ENABLED: true });
@@ -82,6 +91,7 @@ describe('buildWidgetVisibilityContext', () => {
       isMobile: false,
       isInSidePanel: false,
       targetRecord: undefined,
+      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
     });
 
     expect(result.selectedRecords).toEqual([]);

@@ -16,7 +16,9 @@ export { CONDITIONAL_AVAILABILITY_SYMBOL_BY_COMPARISON_OPERATOR } from './consta
 export { CONDITIONAL_AVAILABILITY_VARIABLE_PATH_PATTERN } from './constants/ConditionalAvailabilityVariablePathPattern';
 export { CONDITIONAL_AVAILABILITY_VARIABLES } from './constants/ConditionalAvailabilityVariables';
 export type { ConditionalAvailabilityComparisonOperator } from './types/ConditionalAvailabilityComparisonOperator';
+export type { ConditionalAvailabilityContextByMetadataName } from './types/ConditionalAvailabilityContextByMetadataName';
 export type { ConditionalAvailabilityDevice } from './types/ConditionalAvailabilityDevice';
+export type { ConditionalAvailabilityGlobalContext } from './types/ConditionalAvailabilityGlobalContext';
 export type { ConditionalAvailabilityLogicalOperator } from './types/ConditionalAvailabilityLogicalOperator';
 export type { ConditionalAvailabilityMetadataName } from './types/ConditionalAvailabilityMetadataName';
 export type { ConditionalAvailabilityNode } from './types/ConditionalAvailabilityNode';
@@ -31,6 +33,7 @@ export { conditionalAvailabilityStrictParser } from './utils/conditionalAvailabi
 export { createArrayPropertyCheck } from './utils/createArrayPropertyCheck';
 export { evaluateConditionalAvailabilityExpression } from './utils/evaluateConditionalAvailabilityExpression';
 export { evaluateConditionalAvailabilityNode } from './utils/evaluateConditionalAvailabilityNode';
+export { joinConditionalAvailabilityNodes } from './utils/joinConditionalAvailabilityNodes';
 export { listConditionalAvailabilityNodes } from './utils/listConditionalAvailabilityNodes';
 export { parseConditionalAvailabilityExpression } from './utils/parseConditionalAvailabilityExpression';
 export { printConditionalAvailabilityNode } from './utils/printConditionalAvailabilityNode';
