@@ -1,0 +1,22 @@
+// Phrases that signal filler rather than a claim about the industry.
+export const INDUSTRY_BANNED_PHRASES: readonly string[] = [
+  'all-in-one',
+  'best-in-class',
+  'cutting-edge',
+  'effortless',
+  'empower',
+  'game-changer',
+  'holistic',
+  'innovative',
+  'leverage',
+  'next-generation',
+  'one-stop',
+  'revolutionize',
+  'robust',
+  'seamless',
+  'streamline',
+  'supercharge',
+  'synergy',
+  'unlock',
+  'world-class',
+];

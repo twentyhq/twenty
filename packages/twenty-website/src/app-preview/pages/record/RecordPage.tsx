@@ -17,6 +17,7 @@ import { RecordNotes } from './RecordNotes';
 import { RecordTasks } from './RecordTasks';
 import { RecordTimeline } from './RecordTimeline';
 import { recordTabs } from './record-tabs';
+import { RecordWidget } from './RecordWidget';
 
 const Shell = styled.div`
   display: flex;
@@ -303,7 +304,8 @@ const TabInner = styled.span`
 const { FieldIconGlyph, FieldValueRenderer } = recordFieldValue;
 
 export function RecordPage({ page }: { page: RecordPageDefinition }) {
-  const { record, notes, timeline, tasks, files, emails, calendar } = page;
+  const { record, notes, timeline, tasks, files, emails, calendar, widget } =
+    page;
   const availableTabs = recordTabs.getAvailable(page);
   const controlledTabLabel = page.activeTabLabel;
   const isControlled = controlledTabLabel !== undefined;
@@ -417,7 +419,7 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
 
       <CenterPanel>
         <TabBar>
-          {recordTabs.LIST.map((tab) => {
+          {recordTabs.getStrip(page).map((tab) => {
             const isActive = tab.label === activeTabLabel;
 
             return (
@@ -430,13 +432,18 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
               >
                 <TabInner>
                   <tab.Icon size={16} stroke={THEME_LIGHT.icon.stroke.sm} />
-                  {tab.label}
+                  {tab.label === 'Widget' && widget
+                    ? widget.tabLabel
+                    : tab.label}
                 </TabInner>
               </Tab>
             );
           })}
         </TabBar>
 
+        {activeTabLabel === 'Widget' && widget ? (
+          <RecordWidget widget={widget} />
+        ) : null}
         {activeTabLabel === 'Timeline' && timeline ? (
           <RecordTimeline timeline={timeline} />
         ) : null}

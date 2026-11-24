@@ -9,6 +9,7 @@ import {
   IconRepeat,
   IconSearch,
   IconSitemap,
+  IconSparkles,
 } from '@tabler/icons-react';
 
 import { EASING, REDUCED_MOTION } from '@/tokens';
@@ -31,6 +32,7 @@ const NODE_ICON_MAP: Record<string, typeof IconPlug> = {
   repeat: IconRepeat,
   search: IconSearch,
   sitemap: IconSitemap,
+  sparkles: IconSparkles,
 };
 
 const NODE_ICON_COLORS: Record<string, string> = {

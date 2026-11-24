@@ -85,6 +85,7 @@ export function PreviewAppLayout({
   revealedObjectIds,
   rightAside,
   workspaceEntries,
+  workspaceName,
 }: {
   activeItem?: SidebarItemDef;
   activeItemId: string;
@@ -102,6 +103,7 @@ export function PreviewAppLayout({
   revealedObjectIds: string[];
   rightAside?: ReactNode;
   workspaceEntries: SidebarEntry[];
+  workspaceName?: string;
 }) {
   if (panelOnly && rightAside !== undefined) {
     return <PanelOnlyRoot>{rightAside}</PanelOnlyRoot>;
@@ -125,6 +127,7 @@ export function PreviewAppLayout({
         openFolderIds={openFolderIds}
         selectedItemId={activeItemId}
         workspace={workspaceEntries}
+        workspaceName={workspaceName}
       />
       <PageCard data-compact-workflow={compactWorkflowPage ? '' : undefined}>
         <PreviewNavbar

@@ -11,14 +11,17 @@ import { AppWindow } from './stage/AppWindow';
 import { ProductFrame } from './stage/ProductFrame';
 import { WindowOrderProvider } from './stage/WindowOrderProvider';
 import { Terminal } from './terminal/Terminal';
+import { type AppPreviewConfig } from './types';
 
 // The product mockup: navigable sidebar + the object pages, presented
 // as a draggable/resizable desktop window (the old hero's identity), with
 // the AI Terminal floating beside it. The chat's object-creation beats
 // drive the sidebar reveals and page jumps.
 export function AppPreview({
+  config = APP_PREVIEW_CONFIG,
   mode = 'windowed',
 }: {
+  config?: AppPreviewConfig;
   mode?: 'static' | 'windowed';
 }) {
   useEffect(
@@ -28,7 +31,7 @@ export function AppPreview({
       }),
     [],
   );
-  const experience = useAppPreviewExperience(APP_PREVIEW_CONFIG);
+  const experience = useAppPreviewExperience(config);
   const {
     activeItem,
     activeItemId,
@@ -44,7 +47,7 @@ export function AppPreview({
     <PreviewAppLayout
       activeItem={activeItem}
       activeItemId={activeItemId}
-      favorites={APP_PREVIEW_CONFIG.sidebar.favorites}
+      favorites={config.sidebar.favorites}
       highlightedItemId={highlightedItemId}
       navbarActions={activePage.header.navbarActions}
       navbarLabel={activeItem.label}
@@ -54,6 +57,7 @@ export function AppPreview({
       page={activePage}
       revealedObjectIds={revealedObjectIds}
       workspaceEntries={sidebarEntries}
+      workspaceName={config.sidebar.workspaceName}
     />
   );
 

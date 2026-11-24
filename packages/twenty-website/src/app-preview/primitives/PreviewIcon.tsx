@@ -1,10 +1,15 @@
 import { styled } from '@linaria/react';
 import {
   IconBook,
+  IconBriefcase,
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconCheckbox,
+  IconCoins,
+  IconFileText,
   IconFolder,
+  IconHome,
+  IconKey,
   IconLayoutDashboard,
   IconLink,
   IconMapPin,
@@ -12,10 +17,15 @@ import {
   IconPlanet,
   IconPlayerPlay,
   IconRocket,
+  IconSchool,
+  IconSearch,
   IconSettings,
   IconSettingsAutomation,
+  IconShieldCheck,
+  IconTag,
   IconTargetArrow,
   IconUser,
+  IconUsers,
   IconVersions,
 } from '@tabler/icons-react';
 import { type ReactNode } from 'react';
@@ -29,24 +39,34 @@ import { FaviconLogo } from './FaviconLogo';
 import { APP_PREVIEW_TONES } from '@/tokens/app-preview/app-preview-tones';
 import { type SidebarIcon } from '../types';
 
-// String keys are the derived standard-object icon names with the Icon
-// prefix dropped (the drift check pins the bindings to twenty-server).
+// String keys are tabler names with the Icon prefix dropped: the
+// standard-object icons plus the custom objects industry pages model.
 const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   book: IconBook,
+  briefcase: IconBriefcase,
   buildingSkyscraper: IconBuildingSkyscraper,
   calendarEvent: IconCalendarEvent,
   checkbox: IconCheckbox,
+  coins: IconCoins,
+  fileText: IconFileText,
   folder: IconFolder,
+  home: IconHome,
+  key: IconKey,
   layoutDashboard: IconLayoutDashboard,
   mapPin: IconMapPin,
   notes: IconNotes,
   planet: IconPlanet,
   playerPlay: IconPlayerPlay,
   rocket: IconRocket,
+  school: IconSchool,
+  search: IconSearch,
   settings: IconSettings,
   settingsAutomation: IconSettingsAutomation,
+  shieldCheck: IconShieldCheck,
+  tag: IconTag,
   targetArrow: IconTargetArrow,
   user: IconUser,
+  users: IconUsers,
   versions: IconVersions,
 };
 

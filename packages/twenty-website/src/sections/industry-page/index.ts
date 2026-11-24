@@ -1,0 +1,1 @@
+export { IndustryPage } from './IndustryPage';

@@ -16,6 +16,7 @@ import { APP_PREVIEW_CHROME } from '@/app-preview/app-preview-chrome';
 import { SidebarFolder } from './SidebarFolder';
 import { SidebarItem } from './SidebarItem';
 import { SidebarModeSwitcher } from './SidebarModeSwitcher';
+import { PreviewAvatar } from '../primitives/PreviewAvatar';
 import { renderPreviewIcon } from '../primitives/PreviewIcon';
 import { isSidebarFolder } from './is-sidebar-folder';
 import { type SidebarEntry, type SidebarItemDef } from '../types';
@@ -209,6 +210,7 @@ export function PreviewSidebar({
   openFolderIds,
   selectedItemId,
   workspace,
+  workspaceName,
 }: {
   desktopMode?: DesktopSidebarMode;
   favorites: SidebarItemDef[];
@@ -218,6 +220,7 @@ export function PreviewSidebar({
   openFolderIds?: string[];
   selectedItemId: string;
   workspace: SidebarEntry[];
+  workspaceName?: string;
 }) {
   const visibleWorkspace = workspace.filter((entry) =>
     isSidebarFolder(entry) ? true : !entry.hidden,
@@ -230,8 +233,14 @@ export function PreviewSidebar({
     <SidebarPanel aria-hidden data-desktop-mode={desktopMode}>
       <Header>
         <HeaderLeft>
-          <AppleWorkspaceMark sizePx={16} />
-          <WorkspaceName>Apple</WorkspaceName>
+          {workspaceName ? (
+            <PreviewAvatar size={16} square tone="gray">
+              {workspaceName.charAt(0)}
+            </PreviewAvatar>
+          ) : (
+            <AppleWorkspaceMark sizePx={16} />
+          )}
+          <WorkspaceName>{workspaceName ?? 'Apple'}</WorkspaceName>
           <DesktopOnly>
             <IconChevronDown
               color={THEME_LIGHT.font.color.extraLight}

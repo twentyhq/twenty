@@ -103,4 +103,22 @@ describe('recordTabs.getAvailable', () => {
   it('should return no tabs for an empty record', () => {
     expect(recordTabs.getAvailable(basePage)).toEqual([]);
   });
+
+  it('should put a custom widget tab first when the page has one', () => {
+    const page: RecordPageDefinition = {
+      ...basePage,
+      notes: [note],
+      widget: {
+        tabLabel: 'Offers',
+        title: 'Offer comparison',
+        columns: ['Buyer'],
+        rows: [],
+      },
+    };
+
+    expect(recordTabs.getAvailable(page).map((tab) => tab.label)).toEqual([
+      'Widget',
+      'Notes',
+    ]);
+  });
 });

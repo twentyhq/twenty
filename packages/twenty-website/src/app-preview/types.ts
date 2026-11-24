@@ -303,6 +303,22 @@ export type RecordCalendarDay = {
   events: RecordCalendarEvent[];
 };
 
+// A custom record tab, as a front component would add one in the product.
+export type RecordWidgetRow = {
+  id: string;
+  cells: CellValue[];
+  highlighted?: boolean;
+};
+
+export type RecordWidgetDefinition = {
+  tabLabel: string;
+  title: string;
+  caption?: string;
+  columns: string[];
+  rows: RecordWidgetRow[];
+  footnote?: string;
+};
+
 export type RecordPageDefinition = {
   type: 'record';
   activeTabLabel?: string;
@@ -325,6 +341,7 @@ export type RecordPageDefinition = {
   files?: RecordFile[];
   emails?: RecordEmail[];
   calendar?: RecordCalendarDay[];
+  widget?: RecordWidgetDefinition;
 };
 
 export type PageDefinition =
@@ -377,6 +394,8 @@ export type SidebarFolderDef = {
 export type SidebarEntry = SidebarItemDef | SidebarFolderDef;
 
 export type AppPreviewSidebarConfig = {
+  // Unset keeps the homepage's Apple workspace.
+  workspaceName?: string;
   favorites: SidebarItemDef[];
   initialActiveItemId: string;
   initialOpenFolderIds: string[];
