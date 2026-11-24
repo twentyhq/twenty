@@ -142,7 +142,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   };
 
   const desiredEntities = individualRoles.map(
-    ({ holder, recordsPermissions }) => {
+    ({ holder, recordsPermissions, unreadableNestedFields }) => {
       const roleUniversalIdentifier =
         getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
       const roleManifest: RoleManifest = {
@@ -218,9 +218,10 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           holder.type === 'userWorkspace'
             ? buildRoleTarget(holder.userWorkspaceId)
             : undefined,
-        ...fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(
-          converterArgs,
-        ),
+        ...fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
+          ...converterArgs,
+          unreadableNestedFields,
+        }),
       };
     },
   );

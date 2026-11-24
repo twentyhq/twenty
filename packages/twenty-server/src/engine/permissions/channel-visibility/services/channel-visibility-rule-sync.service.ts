@@ -130,17 +130,6 @@ export class ChannelVisibilityRuleSyncService {
               STANDARD_OBJECTS.attachment.universalIdentifier,
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
-              ...(objectUniversalIdentifier ===
-                messageThread.universalIdentifier && {
-                unreadableFields: [
-                  {
-                    fieldUniversalIdentifier:
-                      messageThread.fields.subject.universalIdentifier,
-                    sourceFieldUniversalIdentifier:
-                      message.fields.subject.universalIdentifier,
-                  },
-                ],
-              }),
             })),
           ].map((objectRecordsPermissions) => ({
             ...objectRecordsPermissions,
@@ -151,6 +140,15 @@ export class ChannelVisibilityRuleSyncService {
             canDestroyAllRecords: false,
           })),
         },
+        unreadableNestedFields: [
+          {
+            objectUniversalIdentifier: messageThread.universalIdentifier,
+            fieldUniversalIdentifier:
+              messageThread.fields.subject.universalIdentifier,
+            sourceFieldUniversalIdentifier:
+              message.fields.subject.universalIdentifier,
+          },
+        ],
       })),
     });
   }

@@ -155,22 +155,29 @@ describe('fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow', () => {
   });
 
   it('should read a nested unreadable field as hidden only through a parent that cannot read its source', () => {
-    const { fieldPermissions } = convert({
-      recordsPermissions: {
-        objects: [
-          {
-            objectUniversalIdentifier: 'messageThread',
-            unreadableFields: [
-              'secret',
+    const { fieldPermissions } =
+      fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
+        roleManifest: {
+          ...ROLE,
+          recordsPermissions: {
+            objects: [
               {
-                fieldUniversalIdentifier: 'subject',
-                sourceFieldUniversalIdentifier: 'messageSubject',
+                objectUniversalIdentifier: 'messageThread',
+                unreadableFields: ['secret'],
               },
             ],
           },
+        },
+        applicationUniversalIdentifier: APPLICATION,
+        now: NOW,
+        unreadableNestedFields: [
+          {
+            objectUniversalIdentifier: 'messageThread',
+            fieldUniversalIdentifier: 'subject',
+            sourceFieldUniversalIdentifier: 'messageSubject',
+          },
         ],
-      },
-    });
+      });
 
     expect(fieldPermissions).toMatchObject([
       {

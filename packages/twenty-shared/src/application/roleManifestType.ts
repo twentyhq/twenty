@@ -51,17 +51,9 @@ export type RowLevelPermissionRulePredicateGroupManifest =
     predicateGroups?: RowLevelPermissionRulePredicateGroupManifest[];
   };
 
-// The object form hides the field only on records reached through a related record path whose parent cannot read the source field
-export type UnreadableFieldManifest =
-  | string
-  | {
-      fieldUniversalIdentifier: string;
-      sourceFieldUniversalIdentifier: string;
-    };
-
 // fieldPermissionIdentifiers names a stored field permission whose identifier is not the derived one
 export type FieldRestrictionsManifest = {
-  unreadableFields?: UnreadableFieldManifest[];
+  unreadableFields?: string[];
   uneditableFields?: string[];
   fieldPermissionIdentifiers?: {
     fieldUniversalIdentifier: string;

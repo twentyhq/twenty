@@ -40,7 +40,6 @@ type RoleChildren = {
     objectUniversalIdentifier: string;
     fieldUniversalIdentifier: string;
     rowLevelPermissionRuleUniversalIdentifier: string | null;
-    sourceFieldUniversalIdentifier: string | null;
     canReadFieldValue: boolean | null;
     canUpdateFieldValue: boolean | null;
     universalIdentifier: string;
@@ -198,11 +197,6 @@ export const reconstructRolesManifest = ({
             metadataName: 'fieldPermission',
             fieldMetadataUniversalIdentifier:
               flatFieldPermission.fieldMetadataUniversalIdentifier,
-          }) ??
-          getUnresolvableFieldReferenceReason({
-            metadataName: 'fieldPermission',
-            fieldMetadataUniversalIdentifier:
-              flatFieldPermission.sourceFieldMetadataUniversalIdentifier,
           }),
       }) === 'nested'
     ) {
@@ -215,8 +209,6 @@ export const reconstructRolesManifest = ({
           flatFieldPermission.fieldMetadataUniversalIdentifier,
         rowLevelPermissionRuleUniversalIdentifier:
           flatFieldPermission.rowLevelPermissionRuleUniversalIdentifier,
-        sourceFieldUniversalIdentifier:
-          flatFieldPermission.sourceFieldMetadataUniversalIdentifier,
         canReadFieldValue: flatFieldPermission.canReadFieldValue ?? null,
         canUpdateFieldValue: flatFieldPermission.canUpdateFieldValue ?? null,
         universalIdentifier: flatFieldPermission.universalIdentifier,

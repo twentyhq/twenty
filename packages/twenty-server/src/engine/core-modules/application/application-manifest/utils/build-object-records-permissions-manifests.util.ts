@@ -3,9 +3,8 @@ import {
   getFieldPermissionUniversalIdentifier,
   type ObjectRecordsPermissionsManifest,
   type RowLevelPermissionRuleManifest,
-  type UnreadableFieldManifest,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 type AllRecordsPermissionsManifest = Omit<
   ObjectRecordsPermissionsManifest,
@@ -16,7 +15,6 @@ type FieldRestriction = {
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
   rowLevelPermissionRuleUniversalIdentifier: string | null;
-  sourceFieldUniversalIdentifier: string | null;
   canReadFieldValue: boolean | null;
   canUpdateFieldValue: boolean | null;
   universalIdentifier: string;
@@ -32,17 +30,9 @@ const buildFieldLists = ({
   fieldRestrictions: FieldRestriction[];
   predicateGroupUniversalIdentifier: string | null;
 }): FieldRestrictionsManifest => {
-  const unreadableFields: UnreadableFieldManifest[] = [
-    ...fieldRestrictions
-      .filter(({ canReadFieldValue }) => canReadFieldValue === false)
-      .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier),
-    ...fieldRestrictions.flatMap(
-      ({ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }) =>
-        isDefined(sourceFieldUniversalIdentifier)
-          ? [{ fieldUniversalIdentifier, sourceFieldUniversalIdentifier }]
-          : [],
-    ),
-  ];
+  const unreadableFields = fieldRestrictions
+    .filter(({ canReadFieldValue }) => canReadFieldValue === false)
+    .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);
   const uneditableFields = fieldRestrictions
     .filter(({ canUpdateFieldValue }) => canUpdateFieldValue === false)
     .map(({ fieldUniversalIdentifier }) => fieldUniversalIdentifier);

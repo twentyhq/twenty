@@ -1,5 +1,4 @@
 import { msg } from '@lingui/core/macro';
-import { isString } from '@sniptt/guards';
 import {
   type FieldRestrictionsManifest,
   flattenRowLevelPermissionRuleManifests,
@@ -30,14 +29,22 @@ const ALL_RECORDS_PERMISSION_KEYS = [
   'canDestroyAllRecords',
 ] as const;
 
+export type UnreadableNestedFieldDeclaration = {
+  objectUniversalIdentifier: string;
+  fieldUniversalIdentifier: string;
+  sourceFieldUniversalIdentifier: string;
+};
+
 export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
   roleManifest,
   applicationUniversalIdentifier,
   now,
+  unreadableNestedFields = [],
 }: {
   roleManifest: RoleManifest;
   applicationUniversalIdentifier: string;
   now: string;
+  unreadableNestedFields?: UnreadableNestedFieldDeclaration[];
 }): {
   objectPermissions: UniversalFlatObjectPermission[];
   fieldPermissions: UniversalFlatFieldPermission[];
@@ -58,24 +65,21 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
     unreadableFields = [],
     uneditableFields = [],
     fieldPermissionIdentifiers = [],
+    objectUnreadableNestedFields = [],
     rowLevelPermissionRuleUniversalIdentifier,
     rowLevelPermissionPredicateGroupUniversalIdentifier,
   }: FieldRestrictionsManifest & {
     objectUniversalIdentifier: string;
+    objectUnreadableNestedFields?: UnreadableNestedFieldDeclaration[];
     rowLevelPermissionRuleUniversalIdentifier: string | null;
     rowLevelPermissionPredicateGroupUniversalIdentifier: string | null;
-  }): UniversalFlatFieldPermission[] => {
-    const alwaysUnreadableFields = unreadableFields.filter(isString);
-    const unreadableNestedFields = unreadableFields.flatMap(
-      (unreadableField) => (isString(unreadableField) ? [] : [unreadableField]),
-    );
-
+  }): UniversalFlatFieldPermission[] =>
     // A declared field permission that restricts nothing still gets its row, so a stored restriction is lifted
-    return [
+    [
       ...new Set([
-        ...alwaysUnreadableFields,
+        ...unreadableFields,
         ...uneditableFields,
-        ...unreadableNestedFields.map(
+        ...objectUnreadableNestedFields.map(
           ({ fieldUniversalIdentifier }) => fieldUniversalIdentifier,
         ),
         ...fieldPermissionIdentifiers.map(
@@ -102,14 +106,12 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       rowLevelPermissionRuleUniversalIdentifier,
       sourceFieldMetadataUniversalIdentifier:
-        unreadableNestedFields.find(
+        objectUnreadableNestedFields.find(
           (unreadableNestedField) =>
             unreadableNestedField.fieldUniversalIdentifier ===
             fieldUniversalIdentifier,
         )?.sourceFieldUniversalIdentifier ?? null,
-      canReadFieldValue: alwaysUnreadableFields.includes(
-        fieldUniversalIdentifier,
-      )
+      canReadFieldValue: unreadableFields.includes(fieldUniversalIdentifier)
         ? false
         : null,
       canUpdateFieldValue: uneditableFields.includes(fieldUniversalIdentifier)
@@ -118,7 +120,6 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       createdAt: now,
       updatedAt: now,
     }));
-  };
 
   const rules = objects.flatMap(
     ({ objectUniversalIdentifier, rowLevelRecordsPermissions = [] }) =>
@@ -150,6 +151,11 @@ export const fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow = ({
       ...objects.flatMap((objectRecordsPermissionsManifest) =>
         buildFieldPermissions({
           ...objectRecordsPermissionsManifest,
+          objectUnreadableNestedFields: unreadableNestedFields.filter(
+            (unreadableNestedField) =>
+              unreadableNestedField.objectUniversalIdentifier ===
+              objectRecordsPermissionsManifest.objectUniversalIdentifier,
+          ),
           rowLevelPermissionRuleUniversalIdentifier: null,
           rowLevelPermissionPredicateGroupUniversalIdentifier: null,
         }),
