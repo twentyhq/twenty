@@ -19,7 +19,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: false,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -39,7 +39,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -59,7 +59,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -79,7 +79,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -99,7 +99,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: undefined,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -119,7 +119,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: [],
+          ownerRecordingPreferences: [],
           callRecorderPreference: undefined,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -139,7 +139,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: [],
+          ownerRecordingPreferences: [],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -154,12 +154,92 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
+  it('does not request a bot when every member who has the meeting chose to record none', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerRecordingPreferences: ['NONE', 'NONE'],
+          callRecorderPreference: undefined,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'OWNERS_OPTED_OUT',
+    });
+  });
+
+  it('requires a bot when one of the members who have the meeting chose to record all', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerRecordingPreferences: ['NONE', 'ALL'],
+          callRecorderPreference: undefined,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: true,
+      reason: 'RECORDING_ENABLED',
+    });
+  });
+
+  it('requires a bot for an ON meeting whose members all chose to record none', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerRecordingPreferences: ['NONE'],
+          callRecorderPreference: CallRecorderPreference.ON,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: true,
+      reason: 'RECORDING_ENABLED',
+    });
+  });
+
+  it('does not request a bot for an OFF meeting whose member chose to record all', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          isCalendarBotSchedulingEnabled: true,
+          ownerRecordingPreferences: ['ALL'],
+          callRecorderPreference: CallRecorderPreference.OFF,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'PREFERENCE_OFF',
+    });
+  });
+
   it('lets an OFF event preference opt out of workspace auto-recording', () => {
     expect(
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.OFF,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -179,7 +259,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: undefined,
           isCanceled: false,
           startsAt: PAST_STARTS_AT,
@@ -199,7 +279,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: undefined,
           isCanceled: true,
           startsAt: FUTURE_STARTS_AT,
@@ -219,7 +299,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: BEYOND_HORIZON_STARTS_AT,
@@ -239,7 +319,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: LAST_HOUR_OF_HORIZON_STARTS_AT,
@@ -259,7 +339,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
@@ -279,7 +359,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           isCalendarBotSchedulingEnabled: true,
-          ownerUserWorkspaceIds: ['user-workspace-1'],
+          ownerRecordingPreferences: ['ALL'],
           callRecorderPreference: CallRecorderPreference.ON,
           isCanceled: false,
           startsAt: '',

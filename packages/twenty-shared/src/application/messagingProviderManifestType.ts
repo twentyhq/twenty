@@ -4,8 +4,14 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 export type MessagingProviderManifest = SyncableEntityOptions & {
   name: string;
   displayName: string;
-  connectionProvider: SyncableEntityOptions;
+  connectionProviderUniversalIdentifier?: string;
+  sendMessageLogicFunctionUniversalIdentifier?: string;
+  markThreadAsReadLogicFunctionUniversalIdentifier?: string;
+  /** @deprecated Use `connectionProviderUniversalIdentifier` instead. */
+  connectionProvider?: SyncableEntityOptions;
+  /** @deprecated Use `sendMessageLogicFunctionUniversalIdentifier` instead. */
   sendMessageLogicFunction?: SyncableEntityOptions;
+  /** @deprecated Use `markThreadAsReadLogicFunctionUniversalIdentifier` instead. */
   markThreadAsReadLogicFunction?: SyncableEntityOptions;
   conversationStyle?: MessagingProviderConversationStyle;
 };

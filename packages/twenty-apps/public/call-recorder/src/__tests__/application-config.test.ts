@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import applicationConfig from 'src/application-config';
 import { CALL_RECORDER_MAPPED_VARIABLE_KEYS } from 'src/front-components/constants/call-recorder-settings-layout.constant';
+import { CALL_RECORDER_MEMBER_RECORDING_PREFERENCE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-member-recording-preference-env-var-name';
 import { CALL_RECORDER_STYLE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-style-env-var-name';
 import { CALL_RECORDER_STYLES } from 'src/logic-functions/constants/call-recorder-styles';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-transcript-provider-env-var-name';
+import { MEMBER_RECORDING_PREFERENCES } from 'src/logic-functions/constants/member-recording-preferences';
 import { RECALL_ASYNC_TRANSCRIPT_PROVIDERS } from 'src/logic-functions/constants/recall-async-transcript-providers';
 
 describe('application config', () => {
@@ -12,11 +14,13 @@ describe('application config', () => {
     expect(applicationConfig.errors).toEqual([]);
   });
 
-  it('lays out every non-deprecated application variable in the settings component', () => {
+  it('lays out every non-deprecated workspace variable in the settings component', () => {
     const activeVariableKeys = Object.entries(
       applicationConfig.config.applicationVariables ?? {},
     )
-      .filter(([, variable]) => variable.isDeprecated !== true)
+      .filter(
+        ([, variable]) => !variable.isDeprecated && variable.scope !== 'USER',
+      )
       .map(([key]) => key);
 
     expect([...CALL_RECORDER_MAPPED_VARIABLE_KEYS].sort()).toEqual(
@@ -33,6 +37,18 @@ describe('application config', () => {
     expect(options.map((option) => option.value).sort()).toEqual(
       [...CALL_RECORDER_STYLES].sort(),
     );
+  });
+
+  it('offers every member recording preference as a per-member select option', () => {
+    const variable =
+      applicationConfig.config.applicationVariables?.[
+        CALL_RECORDER_MEMBER_RECORDING_PREFERENCE_ENV_VAR_NAME
+      ];
+
+    expect(variable?.scope).toBe('USER');
+    expect(
+      (variable?.options ?? []).map((option) => option.value).sort(),
+    ).toEqual([...MEMBER_RECORDING_PREFERENCES].sort());
   });
 
   it('offers every supported transcript provider as a select option', () => {

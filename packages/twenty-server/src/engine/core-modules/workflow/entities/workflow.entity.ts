@@ -12,8 +12,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { WorkflowVisibility } from 'twenty-shared/types';
-
 import { ADD_JOB_CONFIG_TO_WORKFLOW_AND_LOGIC_FUNCTION_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-58/add-job-config-to-workflow-and-logic-function-upgrade-command-name.constant';
 import { DROP_JOB_CONFIG_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-61/drop-job-config-upgrade-command-name.constant';
 import { ADD_IS_SYSTEM_TO_AGENT_AND_WORKFLOW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-46/add-is-system-to-agent-and-workflow-upgrade-command-name.constant';
@@ -29,6 +27,7 @@ import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { type PrivatableEntity } from 'src/engine/permissions/metadata-permissions/types/privatable-entity.type';
 
 @Entity({ name: 'workflow', schema: 'core' })
 @WasIntroducedInUpgrade({
@@ -36,17 +35,12 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 })
 @Index('IDX_WORKFLOW_WORKSPACE_ID', ['workspaceId'])
 @Index('IDX_WORKFLOW_APPLICATION_ID', ['applicationId'])
-@Index('IDX_WORKFLOW_VISIBILITY_CREATED_BY', [
-  'workspaceId',
-  'visibility',
-  'createdByUserWorkspaceId',
-])
 @Index('IDX_WORKFLOW_IS_PRIVATE_CREATED_BY', [
   'workspaceId',
   'isPrivate',
   'createdByUserWorkspaceId',
 ])
-export class WorkflowEntity extends SyncableEntity {
+export class WorkflowEntity extends SyncableEntity implements PrivatableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -88,13 +82,12 @@ export class WorkflowEntity extends SyncableEntity {
   })
   @Column({
     type: 'varchar',
-    nullable: false,
-    default: WorkflowVisibility.WORKSPACE,
+    nullable: true,
     select: false,
     insert: false,
     update: false,
   })
-  visibility: WasRemovedInUpgrade<WorkflowVisibility>;
+  visibility: WasRemovedInUpgrade<'PRIVATE' | 'WORKSPACE' | null>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:

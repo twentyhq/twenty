@@ -34,6 +34,7 @@ import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewOpenRecordIn,
+  ViewPresetFilter,
   ViewSortDirection,
   ViewType,
   ViewVisibility,
@@ -188,6 +189,7 @@ const VIEW_MANIFEST: ViewManifest = {
   shouldHideEmptyGroups: true,
   groupLoadLimit: 25,
   anyFieldFilterValue: 'acme',
+  presetFilter: ViewPresetFilter.INBOX_OPEN,
   kanbanColumnWidth: 240,
   kanbanAggregateOperation: AggregateOperations.SUM,
   kanbanAggregateOperationFieldMetadataUniversalIdentifier: FIELD_UID,
@@ -570,7 +572,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
         },
       }),
     ),
-    renamedProperties: {},
+    renamedProperties: { isPrivate: 'visibility' },
     workspaceLocalProperties: [
       'isActive',
       'universalOverrides',
@@ -895,6 +897,9 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'no manifest slot yet for a predicate reached through a relation',
       workspaceMemberRelationFieldMetadataUniversalIdentifier:
         WORKSPACE_MEMBER_RELATION_GAP,
+      workspaceMemberRelationFilterFieldMetadataUniversalIdentifier:
+        WORKSPACE_MEMBER_RELATION_GAP,
+      workspaceMemberRelationFilterValues: WORKSPACE_MEMBER_RELATION_GAP,
       rowLevelPermissionRuleUniversalIdentifier: NESTED_IN_RULE,
     },
   },
@@ -1014,7 +1019,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     renamedProperties: {
       objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
     },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {},
   },
 ];

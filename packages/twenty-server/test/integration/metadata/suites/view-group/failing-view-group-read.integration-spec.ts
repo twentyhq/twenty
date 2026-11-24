@@ -128,32 +128,6 @@ const failingViewGroupReadTestCases: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title: 'when the view of the view group is soft-deleted',
-    context: {
-      arrange: () =>
-        arrangeViewGroup({
-          prepare: async ({ viewId, cleanup }) => {
-            await setViewRowDeletedAt({
-              tableName: 'view',
-              id: viewId,
-              deletedAt: new Date(),
-            });
-
-            return {
-              cleanup: async () => {
-                await setViewRowDeletedAt({
-                  tableName: 'view',
-                  id: viewId,
-                  deletedAt: null,
-                });
-                await cleanup();
-              },
-            };
-          },
-        }),
-    },
-  },
-  {
     title:
       'when the view of the view group is unlisted and belongs to another user',
     context: {

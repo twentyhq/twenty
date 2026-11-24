@@ -100,7 +100,7 @@ export class WorkspaceExportService {
     const fieldMetadataOptionRows: (FieldMetadataOptionRowForOptions & {
       fieldMetadataId: string;
     })[] = await this.dataSource.query(
-      `SELECT "fieldMetadataId", "universalIdentifier", value, label, color, position
+      `SELECT "fieldMetadataId", "universalIdentifier", value, label, color, description, position
         FROM core."fieldMetadataOption" WHERE "workspaceId" = $1`,
       [workspaceId],
     );
