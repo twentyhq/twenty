@@ -60,7 +60,7 @@ export const useExecuteAiChatThreadStatusAction = () => {
     }
 
     if (action === 'assign') {
-      openAssignAiChatInSidePanel(threadIds);
+      openAssignAiChatInSidePanel({ threadIds });
       return;
     }
 

@@ -1,6 +1,9 @@
 import { isValidUuid } from 'twenty-shared/utils';
 import { z } from 'zod';
 
+import { CalendarEventRecurrenceFrequencyEnum } from 'src/modules/calendar/calendar-event-creation-manager/enums/calendar-event-recurrence-frequency.enum';
+import { CalendarEventRecurrenceWeekdayEnum } from 'src/modules/calendar/calendar-event-creation-manager/enums/calendar-event-recurrence-weekday.enum';
+
 export const CreateCalendarEventToolInputZodSchema = z.object({
   title: z.string().describe('The title of the calendar event'),
   description: z
@@ -56,5 +59,41 @@ export const CreateCalendarEventToolInputZodSchema = z.object({
     .describe(
       'The UUID of the connected account to create the event on. Provide only if known; otherwise leave blank to use the default calendar account.',
     )
+    .optional(),
+  recurrence: z
+    .object({
+      frequency: z
+        .enum(CalendarEventRecurrenceFrequencyEnum)
+        .describe(
+          'How often the event repeats. MONTHLY repeats on the day of the month of startsAt, YEARLY on its month and day.',
+        ),
+      interval: z
+        .number()
+        .int()
+        .min(1)
+        .describe('Repeat every N days, weeks, months or years. Defaults to 1.')
+        .optional(),
+      daysOfWeek: z
+        .array(z.enum(CalendarEventRecurrenceWeekdayEnum))
+        .describe(
+          'WEEKLY only: the days the event repeats on. The day of startsAt is always included.',
+        )
+        .optional(),
+      endDate: z
+        .string()
+        .describe(
+          'Last date the event can repeat on, inclusive, as YYYY-MM-DD in the event time zone. Omit for no end. Do not combine with endOccurrenceCount.',
+        )
+        .optional(),
+      endOccurrenceCount: z
+        .number()
+        .int()
+        .min(1)
+        .describe(
+          'Total number of occurrences, the first one included. Do not combine with endDate.',
+        )
+        .optional(),
+    })
+    .describe('Makes the event repeat. Omit for a single event.')
     .optional(),
 });

@@ -1,13 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
-import { WorkflowVisibility } from 'twenty-shared/types';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -26,12 +19,4 @@ export class UpdateCoreWorkflowInput {
   @IsOptional()
   @IsBoolean()
   isPrivate?: boolean;
-
-  @Field(() => WorkflowVisibility, {
-    nullable: true,
-    deprecationReason: 'Use isPrivate instead',
-  })
-  @IsOptional()
-  @IsEnum(WorkflowVisibility)
-  visibility?: WorkflowVisibility;
 }

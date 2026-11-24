@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { IconPlus } from 'twenty-ui/icon';
 
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { CoreAgentIcon } from '@/object-core/agents/components/CoreAgentIcon';
 import { useCreateCoreAgent } from '@/object-core/agents/hooks/useCreateCoreAgent';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -13,6 +14,7 @@ import { getSortedNonSystemAgents } from '@/object-core/agents/utils/getSortedNo
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   FindManyAgentsDocument,
   PermissionFlagType,
@@ -30,6 +32,9 @@ export const NavigationMenuAiAgentsSection = ({
 }: NavigationMenuAiAgentsSectionProps) => {
   const { t } = useLingui();
   const { pathname } = useLocation();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const { data, refetch } = useQuery(FindManyAgentsDocument, {
     fetchPolicy: 'cache-and-network',
@@ -78,7 +83,7 @@ export const NavigationMenuAiAgentsSection = ({
           <NavigationDrawerItem
             key={agent.id}
             label={agent.label}
-            to={agentLink}
+            to={isLayoutCustomizationModeEnabled ? undefined : agentLink}
             Icon={() => (
               <CoreAgentIcon
                 agentId={agent.id}
