@@ -64,13 +64,13 @@ describe('private metadata webhooks (integration)', () => {
     expect(
       await findSentRecordIds({
         metadataName: 'view',
-        record: { id: unlistedViewId, visibility: ViewVisibility.UNLISTED },
+        record: { id: unlistedViewId, isPrivate: true },
       }),
     ).toEqual([]);
     expect(
       await findSentRecordIds({
         metadataName: 'view',
-        record: { id: workspaceViewId, visibility: ViewVisibility.WORKSPACE },
+        record: { id: workspaceViewId, isPrivate: false },
       }),
     ).toEqual([workspaceViewId]);
   });

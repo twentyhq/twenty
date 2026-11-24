@@ -13,8 +13,10 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { assignAiChatThreadIdsComponentState } from '@/side-panel/states/assignAiChatThreadIdsComponentState';
+import { shouldGoBackAfterAssignAiChatComponentState } from '@/side-panel/states/shouldGoBackAfterAssignAiChatComponentState';
 import { getAssignAiChatMemberOptions } from '@/side-panel/pages/assign-ai-chat/utils/getAssignAiChatMemberOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -36,6 +38,9 @@ export const SidePanelAssignAiChatPage = () => {
   const assignAiChatThreadIds = useAtomComponentStateValue(
     assignAiChatThreadIdsComponentState,
   );
+  const shouldGoBackAfterAssignAiChat = useAtomComponentStateValue(
+    shouldGoBackAfterAssignAiChatComponentState,
+  );
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
@@ -46,6 +51,7 @@ export const SidePanelAssignAiChatPage = () => {
   );
   const { assignAiChatThreads } = useAssignAiChatThreads();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const [search, setSearch] = useState('');
 
   if (assignAiChatThreadIds.length === 0) {
@@ -61,7 +67,11 @@ export const SidePanelAssignAiChatPage = () => {
   const isUnassignShown = hasAssignee && !isNonEmptyString(search.trim());
 
   const handleAssign = (assigneeWorkspaceMemberId: string | null) => {
-    void closeSidePanelMenu();
+    if (shouldGoBackAfterAssignAiChat) {
+      goBackFromSidePanel();
+    } else {
+      void closeSidePanelMenu();
+    }
     void assignAiChatThreads({
       threadIds: assignAiChatThreadIds,
       assigneeWorkspaceMemberId,

@@ -127,7 +127,7 @@ describe('removing a member from the workspace', () => {
 
   it('hands their private views and workflows to the admin removing them', async () => {
     expect(await findViewOwnership(privateViewId)).toEqual({
-      visibility: ViewVisibility.UNLISTED,
+      isPrivate: true,
       createdByUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
     });
     expect(await findWorkflowOwner(privateCoreWorkflowId)).toBe(
@@ -137,7 +137,7 @@ describe('removing a member from the workspace', () => {
 
   it('leaves their shared views and workflows shared, without a creator', async () => {
     expect(await findViewOwnership(sharedViewId)).toEqual({
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
       createdByUserWorkspaceId: null,
     });
     expect(await findWorkflowOwner(sharedCoreWorkflowId)).toBeNull();

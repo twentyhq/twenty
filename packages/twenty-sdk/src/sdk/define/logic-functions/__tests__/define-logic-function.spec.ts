@@ -419,4 +419,40 @@ describe('defineLogicFunction', () => {
 
     expect(result.success).toBe(true);
   });
+
+  it('should accept an onJobFailure handler and a retryLimit', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      onJobFailure: async () => {},
+      retryLimit: 3,
+    };
+
+    expect(defineLogicFunction(config).config).toEqual(config);
+  });
+
+  it('should reject an onJobFailure that is not a function', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      // @ts-expect-error a reference is not accepted, only a function
+      onJobFailure: { universalIdentifier: 'not-a-function' },
+    });
+
+    expect(result.errors).toContain(
+      'Logic function onJobFailure must be a function',
+    );
+  });
+
+  it.each([-1, 1.5, 11])('should reject retryLimit %s', (retryLimit) => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      retryLimit,
+    });
+
+    expect(result.errors).toContain(
+      'Logic function retryLimit must be an integer between 0 and 10',
+    );
+  });
 });

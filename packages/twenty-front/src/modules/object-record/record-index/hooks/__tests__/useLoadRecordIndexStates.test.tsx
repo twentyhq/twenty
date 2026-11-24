@@ -7,7 +7,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { type View } from '@/views/types/View';
 import { act } from 'react';
-import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
+import { ViewType } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -36,7 +36,7 @@ const makeView = (
   position: 0,
   icon: 'IconTable',
   anyFieldFilterValue,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   isActive: true,
 });
 
