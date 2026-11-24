@@ -81,27 +81,26 @@ const buildCoreWorkflowCursorComparator =
     orderBy: CoreWorkflowOrderByField;
     orderByDirection: CoreWorkflowOrderByDirection;
   }) =>
-  (
-    firstCursor: CoreWorkflowCursor,
-    secondCursor: CoreWorkflowCursor,
-  ): number => {
+  ({
+    firstCursor,
+    secondCursor,
+  }: {
+    firstCursor: CoreWorkflowCursor;
+    secondCursor: CoreWorkflowCursor;
+  }): number => {
     const directionFactor =
       orderByDirection === CoreWorkflowOrderByDirection.ASC ? 1 : -1;
-    const isFirstSortValueNull = firstCursor.sortValue === null;
-    const isSecondSortValueNull = secondCursor.sortValue === null;
+    const firstSortValue = firstCursor.sortValue;
+    const secondSortValue = secondCursor.sortValue;
 
-    if (isFirstSortValueNull !== isSecondSortValueNull) {
-      return isFirstSortValueNull ? 1 : -1;
+    if (isDefined(firstSortValue) !== isDefined(secondSortValue)) {
+      return isDefined(firstSortValue) ? -1 : 1;
     }
 
     const sortValueComparison =
-      firstCursor.sortValue === null || secondCursor.sortValue === null
-        ? 0
-        : compareSortValues({
-            orderBy,
-            firstSortValue: firstCursor.sortValue,
-            secondSortValue: secondCursor.sortValue,
-          });
+      isDefined(firstSortValue) && isDefined(secondSortValue)
+        ? compareSortValues({ orderBy, firstSortValue, secondSortValue })
+        : 0;
 
     return (
       directionFactor *
@@ -131,7 +130,12 @@ const isCoreWorkflowReadableByReader = ({
   userWorkspaceId,
   callerApplication,
   workspaceCustomApplicationId,
-}: CoreWorkflowReader & { flatWorkflow: FlatWorkflow }): boolean =>
+}: CoreWorkflowReader & {
+  flatWorkflow: Pick<
+    FlatWorkflow,
+    'isPrivate' | 'createdByUserWorkspaceId' | 'applicationId'
+  >;
+}): boolean =>
   isCoreWorkflowVisibleToUser({
     isPrivate: flatWorkflow.isPrivate,
     createdByUserWorkspaceId: flatWorkflow.createdByUserWorkspaceId,
@@ -302,7 +306,10 @@ export class CoreWorkflowListService {
         } satisfies CoreWorkflowCursor,
       }))
       .sort((firstEntry, secondEntry) =>
-        compareCursors(firstEntry.cursor, secondEntry.cursor),
+        compareCursors({
+          firstCursor: firstEntry.cursor,
+          secondCursor: secondEntry.cursor,
+        }),
       );
 
     const afterCursor = isDefined(after)
@@ -311,7 +318,9 @@ export class CoreWorkflowListService {
 
     const coreWorkflowsAfterCursor = isDefined(afterCursor)
       ? matchingCoreWorkflows.filter(
-          ({ cursor }) => compareCursors(cursor, afterCursor) > 0,
+          ({ cursor }) =>
+            compareCursors({ firstCursor: cursor, secondCursor: afterCursor }) >
+            0,
         )
       : matchingCoreWorkflows;
 

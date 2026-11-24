@@ -38,6 +38,13 @@ import { type AgentConversationWriterService } from 'src/engine/metadata-modules
 import { type AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 
+const recomputeAppleWorkflowCaches = (
+  cacheKeyNames: ('flatWorkflowMaps' | 'flatWorkflowVersionMaps')[],
+) =>
+  getAppProviderByClassName<WorkspaceCacheService>(
+    'WorkspaceCacheService',
+  ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, cacheKeyNames);
+
 const client = request(`http://localhost:${APP_PORT}`);
 
 const graphqlRequestAs = (
@@ -314,9 +321,7 @@ describe('core workflow visibility (e2e)', () => {
         [ownerlessCoreWorkflowId],
       );
 
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+      await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
     });
 
     afterAll(async () => {
@@ -437,9 +442,7 @@ describe('core workflow visibility (e2e)', () => {
         [coreWorkflowId],
       );
 
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+      await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
 
       try {
         const response = await asOtherMember(CORE_WORKFLOW_VERSIONS_QUERY, {
@@ -454,9 +457,7 @@ describe('core workflow visibility (e2e)', () => {
           [coreWorkflowId, workspaceWorkflowId],
         );
 
-        await getAppProviderByClassName<WorkspaceCacheService>(
-          'WorkspaceCacheService',
-        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+        await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
       }
     });
 
@@ -466,11 +467,7 @@ describe('core workflow visibility (e2e)', () => {
         [coreWorkflowId],
       );
 
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatWorkflowVersionMaps',
-      ]);
+      await recomputeAppleWorkflowCaches(['flatWorkflowVersionMaps']);
 
       try {
         const response = await workflowGraphqlRequest(
@@ -490,11 +487,7 @@ describe('core workflow visibility (e2e)', () => {
           [coreWorkflowId, workspaceWorkflowId],
         );
 
-        await getAppProviderByClassName<WorkspaceCacheService>(
-          'WorkspaceCacheService',
-        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-          'flatWorkflowVersionMaps',
-        ]);
+        await recomputeAppleWorkflowCaches(['flatWorkflowVersionMaps']);
       }
     });
 
@@ -877,9 +870,7 @@ describe('core workflow visibility (e2e)', () => {
         [ownerlessPrivateCoreWorkflowId],
       );
 
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+      await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
     });
 
     afterAll(async () => {
@@ -889,9 +880,7 @@ describe('core workflow visibility (e2e)', () => {
           [ownerlessPrivateCoreWorkflowId],
         );
 
-        await getAppProviderByClassName<WorkspaceCacheService>(
-          'WorkspaceCacheService',
-        ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+        await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
 
         await deleteCoreWorkflows({
           coreWorkflowIds: [ownerlessPrivateCoreWorkflowId],
@@ -926,9 +915,7 @@ describe('core workflow visibility (e2e)', () => {
         [contestedCoreWorkflowId],
       );
 
-      await getAppProviderByClassName<WorkspaceCacheService>(
-        'WorkspaceCacheService',
-      ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatWorkflowMaps']);
+      await recomputeAppleWorkflowCaches(['flatWorkflowMaps']);
     });
 
     afterAll(async () => {

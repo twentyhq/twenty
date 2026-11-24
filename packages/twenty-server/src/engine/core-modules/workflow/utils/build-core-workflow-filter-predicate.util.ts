@@ -202,7 +202,9 @@ const parseRelativeDateRange = (
   };
 };
 
-const getUpdatedAtTime = ({ updatedAt }: CoreWorkflowFilterCandidate) =>
+const getUpdatedAtTime = ({
+  updatedAt,
+}: Pick<CoreWorkflowFilterCandidate, 'updatedAt'>): number =>
   Date.parse(updatedAt);
 
 const buildUpdatedAtRangePredicate =
@@ -231,7 +233,9 @@ const buildNameContainsPredicate = ({
   };
 };
 
-const isNameEmpty = ({ name }: CoreWorkflowFilterCandidate): boolean =>
+const isNameEmpty = ({
+  name,
+}: Pick<CoreWorkflowFilterCandidate, 'name'>): boolean =>
   !isDefined(name) || name === '';
 
 const buildHasAnyOfStatusesPredicate =
