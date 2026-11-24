@@ -1,22 +1,20 @@
+import { type AgentChatChannelViewCandidateMaps } from 'src/engine/metadata-modules/agent-chat-channel/types/agent-chat-channel-view-candidate-maps.type';
 import { type AgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/agent-chat-channel/types/agent-chat-channel-views-to-create.type';
 import { buildAgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-views-to-create.util';
 import { findAgentChatChannelFlatViews } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-flat-views.util';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
-export const buildMissingAgentChatChannelViewsToCreate = ({
+export const buildMissingAgentChatChannelViewsToCreate = <
+  TFlatView extends Pick<FlatView, 'presetFilter'>,
+>({
   channelIds,
   flatViewMaps,
   flatViewFilterMaps,
   applicationUniversalIdentifier,
-  now,
 }: {
   channelIds: string[];
   applicationUniversalIdentifier: string;
-  now: string;
-} & Pick<
-  AllFlatEntityMaps,
-  'flatViewMaps' | 'flatViewFilterMaps'
->): AgentChatChannelViewsToCreate => {
+} & AgentChatChannelViewCandidateMaps<TFlatView>): AgentChatChannelViewsToCreate => {
   const channelViewsToCreate = channelIds.map((channelId) =>
     buildAgentChatChannelViewsToCreate({
       channelId,
@@ -26,7 +24,6 @@ export const buildMissingAgentChatChannelViewsToCreate = ({
         flatViewFilterMaps,
       }).map(({ presetFilter }) => presetFilter),
       applicationUniversalIdentifier,
-      now,
     }),
   );
 

@@ -1,24 +1,26 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { ViewFilterOperand } from 'twenty-shared/types';
+import { ViewFilterOperand, type ViewPresetFilter } from 'twenty-shared/types';
 import { arrayOfUuidOrVariableSchema, isDefined } from 'twenty-shared/utils';
 
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
-import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
+import { AGENT_CHAT_CHANNEL_VIEW_DEFINITIONS } from 'src/engine/metadata-modules/agent-chat-channel/constants/agent-chat-channel-view-definitions.constant';
+import { type AgentChatChannelViewCandidateMaps } from 'src/engine/metadata-modules/agent-chat-channel/types/agent-chat-channel-view-candidate-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
 const CHANNEL_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.fields.channelId.universalIdentifier;
 
-export const findAgentChatChannelFlatViews = ({
+const CHANNEL_VIEW_PRESET_FILTERS: (ViewPresetFilter | null)[] =
+  AGENT_CHAT_CHANNEL_VIEW_DEFINITIONS.map(({ presetFilter }) => presetFilter);
+
+export const findAgentChatChannelFlatViews = <
+  TFlatView extends Pick<FlatView, 'presetFilter'>,
+>({
   channelId,
   flatViewMaps,
   flatViewFilterMaps,
 }: {
   channelId: string;
-} & Pick<
-  AllFlatEntityMaps,
-  'flatViewMaps' | 'flatViewFilterMaps'
->): FlatView[] => {
+} & AgentChatChannelViewCandidateMaps<TFlatView>): TFlatView[] => {
   const viewUniversalIdentifiers = Object.values(
     flatViewFilterMaps.byUniversalIdentifier,
   )
@@ -43,8 +45,13 @@ export const findAgentChatChannelFlatViews = ({
     })
     .map((viewFilter) => viewFilter.viewUniversalIdentifier);
 
-  return findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
-    flatEntityMaps: flatViewMaps,
-    universalIdentifiers: [...new Set(viewUniversalIdentifiers)],
-  });
+  return [...new Set(viewUniversalIdentifiers)]
+    .map(
+      (viewUniversalIdentifier) =>
+        flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+    )
+    .filter(isDefined)
+    .filter(({ presetFilter }) =>
+      CHANNEL_VIEW_PRESET_FILTERS.includes(presetFilter),
+    );
 };

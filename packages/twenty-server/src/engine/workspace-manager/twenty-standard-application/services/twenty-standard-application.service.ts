@@ -8,7 +8,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { buildMissingAgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-missing-agent-chat-channel-views-to-create.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -149,8 +148,6 @@ export class TwentyStandardApplicationService {
           .byUniversalIdentifier,
       ),
     });
-
-    await this.seedAgentChatChannelViewsOrThrow({ workspaceId });
   }
 
   private async setStandardApplicationDefaultRoleOrThrow({
@@ -247,73 +244,6 @@ export class TwentyStandardApplicationService {
       throw new WorkspaceMigrationBuilderException(
         result,
         `Multiple validation errors occurred while seeding initial object views for workspace ${workspaceId}`,
-      );
-    }
-  }
-
-  // A view filter value holds the channel id, which only exists once the
-  // sync has created the channel
-  private async seedAgentChatChannelViewsOrThrow({
-    workspaceId,
-  }: {
-    workspaceId: string;
-  }): Promise<void> {
-    const { flatAgentChatChannelMaps, flatViewMaps, flatViewFilterMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatAgentChatChannelMaps',
-        'flatViewMaps',
-        'flatViewFilterMaps',
-      ]);
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const { viewsToCreate, viewFiltersToCreate } =
-      buildMissingAgentChatChannelViewsToCreate({
-        channelIds: Object.values(
-          flatAgentChatChannelMaps.byUniversalIdentifier,
-        )
-          .filter(isDefined)
-          .map(({ id }) => id),
-        flatViewMaps,
-        flatViewFilterMaps,
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-        now: new Date().toISOString(),
-      });
-
-    if (viewsToCreate.length === 0) {
-      return;
-    }
-
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            view: {
-              flatEntityToCreate: viewsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            viewFilter: {
-              flatEntityToCreate: viewFiltersToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-        },
-      );
-
-    if (result.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        result,
-        `Multiple validation errors occurred while seeding inbox channel views for workspace ${workspaceId}`,
       );
     }
   }

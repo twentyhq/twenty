@@ -21,6 +21,7 @@ import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/service
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -76,6 +77,7 @@ export class DevSeederWorkspaceService {
     private readonly devSeederWorkflowPendingInputService: DevSeederWorkflowPendingInputWorkspaceService,
     private readonly devSeederAgentChatPendingInputService: DevSeederAgentChatPendingInputWorkspaceService,
     private readonly devSeederAgentChatChannelService: DevSeederAgentChatChannelWorkspaceService,
+    private readonly agentChatChannelMetadataService: AgentChatChannelMetadataService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -140,6 +142,10 @@ export class DevSeederWorkspaceService {
       {
         workspaceId,
       },
+    );
+
+    await this.agentChatChannelMetadataService.createMissingChannelViews(
+      workspaceId,
     );
 
     await this.sdkClientGenerationService.generateSdkClientForApplication({

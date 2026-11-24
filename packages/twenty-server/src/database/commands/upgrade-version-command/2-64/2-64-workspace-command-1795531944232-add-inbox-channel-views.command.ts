@@ -76,7 +76,6 @@ export class AddInboxChannelViewsCommand extends ProvisionedWorkspaceCommandRunn
         flatViewFilterMaps,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
-        now: new Date().toISOString(),
       });
 
     if (viewsToCreate.length === 0) {
@@ -92,7 +91,7 @@ export class AddInboxChannelViewsCommand extends ProvisionedWorkspaceCommandRunn
     }
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           shouldDeferActions: false,
           isSystemBuild: true,
