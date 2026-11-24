@@ -60,6 +60,7 @@ export default async function PartnersPage({
               <GetMatchedButton label={msg`Get matched`} variant="outlined" />
             </>
           }
+          partners={partners}
         />
         <PartnersServices />
         <PartnersDirectory
