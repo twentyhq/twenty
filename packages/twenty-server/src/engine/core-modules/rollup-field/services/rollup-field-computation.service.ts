@@ -159,7 +159,7 @@ export class RollupFieldComputationService {
     plans,
     recordIds,
   }: {
-    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
     plans: RollupFieldComputationPlan[];
     recordIds: string[];
   }): Promise<void> {
