@@ -4,7 +4,9 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { getExpressionArgumentCountError } from '@/utils/expression/getExpressionArgumentCountError';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
+import { isDefined } from '@/utils/validation/isDefined';
 import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
@@ -72,6 +74,18 @@ export const compileExpression = ({
       errorMessage: `Write ${path} without spaces around the dot`,
       errorCode: 'SPACED_MEMBER_DOT',
       errorParams: { path },
+    };
+  }
+
+  const argumentCountError = getExpressionArgumentCountError(
+    parsedExpression.tokens,
+  );
+
+  if (isDefined(argumentCountError)) {
+    return {
+      isValid: false,
+      errorCode: 'WRONG_ARGUMENT_COUNT',
+      ...argumentCountError,
     };
   }
 
