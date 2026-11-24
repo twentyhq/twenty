@@ -7,6 +7,7 @@ import { IconPlayerPlay } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { useCoreAgentTestHint } from '@/object-core/agents/hooks/useCoreAgentTestHint';
 import { useTestCoreAgent } from '@/object-core/agents/hooks/useTestCoreAgent';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -41,6 +42,7 @@ export const CoreAgentTestForm = ({ agent }: CoreAgentTestFormProps) => {
   const [message, setMessage] = useState('');
   const { testCoreAgent, isTestingCoreAgent } = useTestCoreAgent(agent);
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
+  const testHint = useCoreAgentTestHint(agent);
 
   const canTest = isNonEmptyString(message.trim()) && !isTestingCoreAgent;
 
@@ -65,7 +67,10 @@ export const CoreAgentTestForm = ({ agent }: CoreAgentTestFormProps) => {
         <TextArea
           textAreaId={`core-agent-test-message-${agent.id}`}
           label={t`Message`}
-          placeholder={t`Summarize what changed on Acme this week`}
+          placeholder={
+            testHint?.placeholder ?? t`Summarize what changed on Acme this week`
+          }
+          description={testHint?.description}
           minRows={4}
           maxRows={12}
           value={message}
