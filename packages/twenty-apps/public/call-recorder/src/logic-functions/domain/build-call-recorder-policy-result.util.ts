@@ -1,8 +1,10 @@
 import { isString } from '@sniptt/guards';
 
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { UNREADABLE_MEMBER_RECORDING_PREFERENCE } from 'src/logic-functions/constants/unreadable-member-recording-preference';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
+import { type MemberRecordingPreference } from 'src/logic-functions/types/member-recording-preference.type';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
 import { resolveCallRecorderPolicyResult } from 'src/logic-functions/domain/resolve-call-recorder-policy-result.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
@@ -10,10 +12,15 @@ import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-cal
 export const buildCallRecorderPolicyResult = ({
   calendarEvent,
   ownerUserWorkspaceIdByCalendarChannelId,
+  memberRecordingPreferenceByUserWorkspaceId,
   now,
 }: {
   calendarEvent: CallRecorderPolicyCalendarEventInput;
   ownerUserWorkspaceIdByCalendarChannelId: Map<string, string>;
+  memberRecordingPreferenceByUserWorkspaceId: Map<
+    string,
+    MemberRecordingPreference
+  >;
   now: Date;
 }): CallRecorderPolicyResultForCalendarEvent => {
   const realMeetingKey = computeRealMeetingKey({
@@ -31,11 +38,17 @@ export const buildCallRecorderPolicyResult = ({
     input: {
       isCalendarBotSchedulingEnabled: isCalendarBotSchedulingEnabled(),
       callRecorderPreference,
-      ownerUserWorkspaceIds: calendarEvent.calendarChannelIds
+      ownerRecordingPreferences: calendarEvent.calendarChannelIds
         .map((calendarChannelId) =>
           ownerUserWorkspaceIdByCalendarChannelId.get(calendarChannelId),
         )
-        .filter(isString),
+        .filter(isString)
+        .map(
+          (ownerUserWorkspaceId) =>
+            memberRecordingPreferenceByUserWorkspaceId.get(
+              ownerUserWorkspaceId,
+            ) ?? UNREADABLE_MEMBER_RECORDING_PREFERENCE,
+        ),
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
