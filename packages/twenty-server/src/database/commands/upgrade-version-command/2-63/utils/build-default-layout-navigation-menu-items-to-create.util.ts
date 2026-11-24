@@ -15,6 +15,8 @@ type ExistingNavigationMenuItem = Pick<
   | 'type'
 >;
 
+const CUSTOM_TAB_LIMIT = 3;
+
 const CHATS_TAB_SECTIONS = [
   STANDARD_NAVIGATION_MENU_ITEMS.chatsTabFavoriteChats,
   STANDARD_NAVIGATION_MENU_ITEMS.chatsTabChannels,
@@ -133,17 +135,18 @@ export const buildDefaultLayoutNavigationMenuItemsToCreate = ({
   const chatsTabSectionsToCreate = CHATS_TAB_SECTIONS.filter(
     (sectionDefinition) => !isAlreadyThere(sectionDefinition),
   );
+  const tabPositions = workspaceItems
+    .filter((item) => item.type === NavigationMenuItemType.TAB)
+    .map((item) => item.position);
 
   if (
     isAlreadyThere(chatsTabDefinition) ||
-    chatsTabSectionsToCreate.length === 0
+    chatsTabSectionsToCreate.length === 0 ||
+    tabPositions.length >= CUSTOM_TAB_LIMIT
   ) {
     return itemsToCreate;
   }
 
-  const tabPositions = workspaceItems
-    .filter((item) => item.type === NavigationMenuItemType.TAB)
-    .map((item) => item.position);
   const chatsTab = buildRow({
     id: generateId(),
     universalIdentifier: chatsTabDefinition.universalIdentifier,

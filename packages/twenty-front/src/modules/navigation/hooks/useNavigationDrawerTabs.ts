@@ -1,5 +1,4 @@
 import { useLingui } from '@lingui/react/macro';
-import { isBuiltInSectionKey } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   IconComment,
@@ -9,9 +8,7 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 
-import { AI_CHAT_BUILT_IN_SECTION_KEYS } from '@/navigation-menu-item/common/constants/AiChatBuiltInSectionKeys';
-import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
-import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { NAVIGATION_DRAWER_MODE_ORDER } from '@/navigation/constants/NavigationDrawerModeOrder';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
@@ -41,9 +38,7 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const { isBuiltInSectionAvailable } =
-    useNavigationMenuBuiltInSectionAvailability();
+  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
@@ -69,15 +64,6 @@ export const useNavigationDrawerTabs = (): NavigationDrawerTabOption[] => {
       label: t`Settings`,
     },
   };
-
-  const hasAiChatSectionInSidebar =
-    isCustomizableSidebarEnabled &&
-    workspaceNavigationMenuItems.some(
-      ({ builtInSectionKey }) =>
-        isBuiltInSectionKey(builtInSectionKey) &&
-        AI_CHAT_BUILT_IN_SECTION_KEYS.includes(builtInSectionKey) &&
-        isBuiltInSectionAvailable(builtInSectionKey),
-    );
 
   const isTabShown = (tab: NavigationDrawerActiveTab) => {
     switch (tab) {

@@ -112,4 +112,18 @@ describe('buildDefaultLayoutNavigationMenuItemsToCreate', () => {
       ]),
     ).toEqual([]);
   });
+
+  it('should skip the Chats tab when the workspace already has as many tabs as the sidebar shows', () => {
+    const tabs = [0, 1, 2].map((position) =>
+      buildItem({
+        universalIdentifier: `tab-${position}`,
+        type: NavigationMenuItemType.TAB,
+        position,
+      }),
+    );
+
+    expect(
+      build([...tabs, buildItem({ builtInSectionKey: 'aiChatInbox' })]),
+    ).toEqual([]);
+  });
 });
