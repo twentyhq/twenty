@@ -1,4 +1,4 @@
-const emailProviders = `0.pl
+export const NEWLINE_SEPARATED_EMAIL_PROVIDER_DOMAINS = `0.pl
 0-00.usa.cc
 001.igg.biz
 0039.cf
@@ -16345,5 +16345,3 @@ zzom.co.ukhitmail.com
 zzom.co.uksina.com
 zzz.com
 zzz.pl`;
-
-export const emailProvidersSet = new Set(emailProviders.split('\n'));

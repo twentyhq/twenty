@@ -10806,6 +10806,12 @@ msgstr "קבוצת סינון תצוגת אב לא נמצאה"
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId ו-folderId חייבים להתאים. השימוש ב-folderId הוצא משימוש, יש להשתמש ב-parentId."
 
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "משתתפים"
+
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"

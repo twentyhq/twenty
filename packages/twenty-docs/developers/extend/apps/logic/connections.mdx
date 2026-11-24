@@ -52,13 +52,13 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app that returns a stable id for the
   // upstream account, run before the tokens are saved. See "Identify the
   // connected account".
-  // identifyAccountLogicFunction: { universalIdentifier: '2f1e0d9c-...-...' },
+  // identifyAccountLogicFunctionUniversalIdentifier: '2f1e0d9c-...-...',
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
-  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-...-...',
   // Optional: a logic function in this app to run right after a connection is
   // removed. See "Run a logic function on disconnect".
-  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
+  // onDisconnectLogicFunctionUniversalIdentifier: '4d5e6f70-...-...',
 });
 ```
 
@@ -121,18 +121,14 @@ export default defineConnectionProvider({
   displayName: 'Front',
   type: 'api-key',
   scope: 'WORKSPACE',
-  identifyAccountLogicFunction: {
-    universalIdentifier: '16801854-29d2-4a90-9d56-333210647bcd',
-  },
-  onConnectLogicFunction: {
-    universalIdentifier: '53bc562a-2932-4452-bbda-4de8345a2cef',
-  },
+  identifyAccountLogicFunctionUniversalIdentifier: '16801854-29d2-4a90-9d56-333210647bcd',
+  onConnectLogicFunctionUniversalIdentifier: '53bc562a-2932-4452-bbda-4de8345a2cef',
 });
 ```
 
 **Add connection** and **Reconnect** open a settings page where the member pastes the key. Twenty stores it encrypted on the connection, and `getConnection` returns it as `accessToken`, with `providerType: 'api-key'`. Twenty never refreshes or revokes it: when the service rejects it, call `reportConnectionAuthFailure` so the member is asked to reconnect with a new one.
 
-Declare an `identifyAccountLogicFunction` (see "Identify the connected account"). It runs with the pasted key as `accessToken` before anything is saved, so one call to the service's "who am I" endpoint both checks the key and names the connection. If it throws, the key is rejected and the member sees the error. Without it, any non-empty key is saved and the connection is named after the member's email.
+Declare an `identifyAccountLogicFunctionUniversalIdentifier` (see "Identify the connected account"). It runs with the pasted key as `accessToken` before anything is saved, so one call to the service's "who am I" endpoint both checks the key and names the connection. If it throws, the key is rejected and the member sees the error. Without it, any non-empty key is saved and the connection is named after the member's email.
 
 API key providers ship with Twenty 2.59.0: declare `"engines": { "twenty": ">=2.59.0" }` in your app's `package.json`.
 
@@ -152,20 +148,18 @@ export default defineConnectionProvider({
   type: 'custom',
   scope: 'USER',
   custom: {
-    authorizeLogicFunction: {
-      universalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
-    },
-    callbackLogicFunction: {
-      universalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
-    },
+    authorizeLogicFunctionUniversalIdentifier: 'c4a1e2b3-6d5f-4a7b-8c9d-0e1f2a3b4c5d',
+    callbackLogicFunctionUniversalIdentifier: 'd5b2f3c4-7e6a-4b8c-9d0e-1f2a3b4c5d6e',
   },
-  onConnectLogicFunction: {
-    universalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
-  },
+  onConnectLogicFunctionUniversalIdentifier: 'e6c3a4d5-8f7b-4c9d-0e1f-2a3b4c5d6e7f',
 });
 ```
 
-**Add connection** and **Reconnect** work as for OAuth. Twenty checks the member may connect, signs a short-lived state for the attempt, and runs `authorizeLogicFunction` with a `callbackUrl` that carries it. Return where to send the user:
+<Note>
+References to a logic function or a connection provider are written as `...UniversalIdentifier: '<uuid>'`. The earlier `{ universalIdentifier: '<uuid>' }` object form (for example `onConnectLogicFunction: { universalIdentifier }`) is deprecated: it is still accepted, but will be removed in a future release.
+</Note>
+
+**Add connection** and **Reconnect** work as for OAuth. Twenty checks the member may connect, signs a short-lived state for the attempt, and runs the authorize logic function with a `callbackUrl` that carries it. Return where to send the user:
 
 ```ts src/logic-functions/handlers/linkedin-authorize-handler.ts
 import { type AuthorizeConnectionPayload } from 'twenty-sdk/logic-function';
@@ -200,7 +194,7 @@ export const linkedinAuthorizeHandler = async ({
 };
 ```
 
-Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs `callbackLogicFunction` for each request with its method, query parameters (without `state`), headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
+Hand `callbackUrl` to the service unchanged. Twenty accepts it as a browser redirect (`GET`) and as a server notification (`POST`), and runs the callback logic function for each request with its method, query parameters (without `state`), headers, parsed body and `rawBody` (the exact request bytes, `null` on `GET`). Return the account the request proves, or `null` when it carries none — typically the browser coming back while the account id travels by notification:
 
 ```ts src/logic-functions/handlers/linkedin-callback-handler.ts
 import { type ConnectionCallbackPayload } from 'twenty-sdk/logic-function';
@@ -261,9 +255,9 @@ The callback returns:
 | `handle`            | Optional label shown for the connection. Defaults to the member's email.                                                                       |
 | `accessToken`       | Optional per-account token, stored encrypted and returned by `getConnection`. Leave it out when your app calls the service with its own key. |
 
-Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and `onConnectLogicFunction` does not run. `onConnectLogicFunction` runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused. Services commonly retry notifications: a repeat for an account already connected updates that connection, so returning the same account again is safe.
+Both functions run while the member waits on a redirect, so their timeout is capped at 10 seconds. A failure or an invalid return aborts the connection: nothing is saved and the on-connect logic function does not run. The on-connect logic function runs when a connection is created, reconnected or restored, not again when the service reports an account that is already connected. The state expires after an hour, so a notification arriving later is refused. Services commonly retry notifications: a repeat for an account already connected updates that connection, so returning the same account again is safe.
 
-Twenty does not refresh or revoke custom connections. Release what the service holds for the account in `onDisconnectLogicFunction`.
+Twenty does not refresh or revoke custom connections. Release what the service holds for the account in the logic function set as `onDisconnectLogicFunctionUniversalIdentifier`.
 
 A provider's `type`, like its `scope`, cannot change once it is synced: to move a service between `oauth`, `oauth-discovery`, `custom` and `api-key`, declare a new provider with a new `universalIdentifier`.
 
@@ -275,7 +269,7 @@ Custom providers ship with Twenty 2.52.0.
 
 When a user clicks **Reconnect**, nothing stops them from authorizing a different upstream account than the one the connection was made with: Slack workspace B instead of workspace A, another GitHub organization, another Google account. Without a way to tell the two apart, Twenty would overwrite A's tokens with B's and everything your app built on that connection would quietly start talking to B.
 
-Set `identifyAccountLogicFunction` to a logic function in the same app that returns a stable id for the account behind the freshly issued token:
+Set `identifyAccountLogicFunctionUniversalIdentifier` to a logic function in the same app that returns a stable id for the account behind the freshly issued token:
 
 ```ts src/connection-providers/slack-connection.ts
 import { defineConnectionProvider } from 'twenty-sdk/define';
@@ -290,9 +284,7 @@ export default defineConnectionProvider({
   oauth: {
     /* ... */
   },
-  identifyAccountLogicFunction: {
-    universalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-  },
+  identifyAccountLogicFunctionUniversalIdentifier: SLACK_IDENTIFY_ACCOUNT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 });
 ```
 
@@ -367,7 +359,7 @@ Identification ships with Twenty 2.48.0. If your app relies on it, declare `"eng
 
 <Accordion title="Run a logic function on connect" description="React the moment a connection is established">
 
-Some providers hand you data at connect time that you need to persist before the connection is usable — the classic example is Slack, where the OAuth response identifies the workspace's `team_id` that inbound events will be keyed by. Set `onConnectLogicFunction` to reference a logic function in the same app (by its `universalIdentifier`), and it runs right after the `ConnectedAccount` is created.
+Some providers hand you data at connect time that you need to persist before the connection is usable — the classic example is Slack, where the OAuth response identifies the workspace's `team_id` that inbound events will be keyed by. Set `onConnectLogicFunctionUniversalIdentifier` to reference a logic function in the same app (by its `universalIdentifier`), and it runs right after the `ConnectedAccount` is created.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -379,9 +371,7 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs claimSlackTeam after every successful Slack connection.
-  onConnectLogicFunction: {
-    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
-  },
+  onConnectLogicFunctionUniversalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
 });
 ```
 
@@ -401,7 +391,7 @@ From there use `getConnection(connectedAccountId)` to read the fresh access toke
 
 <Accordion title="Run a logic function on disconnect" description="Clean up when a connection is disconnected or removed">
 
-Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunction` to reference a logic function in the same app, and it runs when the connection is disconnected and again when it is deleted.
+Anything an app claims at connect time has to be released when the connection goes away. A Slack integration that claims a `team_id` on connect, for instance, has to release that claim so another workspace can connect the same Slack team. Set `onDisconnectLogicFunctionUniversalIdentifier` to reference a logic function in the same app, and it runs when the connection is disconnected and again when it is deleted.
 
 ```ts src/connection-providers/slack-connection.ts
 export default defineConnectionProvider({
@@ -413,9 +403,7 @@ export default defineConnectionProvider({
     /* ... */
   },
   // Runs releaseSlackTeam after every Slack disconnection.
-  onDisconnectLogicFunction: {
-    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
-  },
+  onDisconnectLogicFunctionUniversalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
 });
 ```
 
@@ -550,7 +538,7 @@ The provider's `scope` decides which one its new connections get:
 
 A provider has exactly one scope. If your app needs both a shared credential and one per member for the same service (a bot token and each member's own account, say), declare two providers.
 
-A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it through the regular disconnect path (`onDisconnectLogicFunction`, token revocation, channel cleanup), and members connect again through the new provider.
+A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it through the regular disconnect path (`onDisconnectLogicFunctionUniversalIdentifier`, token revocation, channel cleanup), and members connect again through the new provider.
 
 Adding or reconnecting a **Just for me** connection requires the User Apps permission, and adding or reconnecting a **Workspace shared** one requires the Workspace Apps permission.
 
