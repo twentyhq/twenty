@@ -5,7 +5,7 @@ import { InputGroup } from 'twenty-ui/primitives/input';
 import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 
@@ -29,14 +29,14 @@ export const MainNavigationDrawerSearchField = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const isExpanded = useIsNavigationDrawerContentExpanded();
-  const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
+  const { openSidePanelMenu } = useSidePanelMenu();
 
   if (!isExpanded) {
     return (
       <NavigationDrawerItem
         label={t`Search`}
         Icon={IconSearch}
-        onClick={openRecordsSearchPage}
+        onClick={openSidePanelMenu}
         triggerEvent="CLICK"
       />
     );
@@ -45,7 +45,7 @@ export const MainNavigationDrawerSearchField = () => {
   return (
     <InputGroup
       render={
-        <StyledSearchButton type="button" onClick={openRecordsSearchPage} />
+        <StyledSearchButton type="button" onClick={openSidePanelMenu} />
       }
       startElement={<IconSearch size={theme.icon.size.md} aria-hidden />}
       endElement={<Shortcut shortcut={['Mod', 'K']} />}
