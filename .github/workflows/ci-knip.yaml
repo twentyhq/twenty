@@ -63,6 +63,8 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
+      - name: Build twenty-shared
+        run: npx nx build twenty-shared
       - name: Run knip on every workspace's dependencies
         run: npx knip --include dependencies,devDependencies --treat-config-hints-as-errors
   ci-knip-status-check:
