@@ -218,7 +218,10 @@ export type {
 export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectRecordsOperationType } from './ObjectRecordsOperationType';
-export type { ObjectRecordsPermissions } from './ObjectRecordsPermissions';
+export type {
+  UnreadableNestedFieldPermission,
+  ObjectRecordsPermissions,
+} from './ObjectRecordsPermissions';
 export { ObjectSharingReach } from './ObjectSharingReach';
 export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';

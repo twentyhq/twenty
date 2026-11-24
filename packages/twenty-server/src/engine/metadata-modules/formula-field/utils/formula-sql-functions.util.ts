@@ -19,6 +19,7 @@ import {
   assertFormulaSqlTypeOrThrow,
   describeFormulaSqlType,
   fromUtcTimestamp,
+  keepFormulaSqlValueInRange,
   toDateLikeValueOrThrow,
   toNumberOperandOrThrow,
   toTextOperandOrThrow,
@@ -304,7 +305,11 @@ const FORMULA_SQL_FUNCTIONS: Partial<Record<string, FormulaSqlFunction>> = {
       });
 
       return fromUtcTimestamp({
-        timestampSql: `${toUtcTimestamp(dateLikeValue)} + ${interval}`,
+        timestampSql: `${keepFormulaSqlValueInRange({
+          sql: toUtcTimestamp(dateLikeValue),
+          minimumSql: `'0001-01-01'::timestamp`,
+          maximumSql: `'9999-12-31 23:59:59.999'::timestamp`,
+        })} + ${interval}`,
         type:
           dateLikeValue.type === 'date' && unit !== 'MINUTE' && unit !== 'HOUR'
             ? 'date'

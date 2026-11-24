@@ -166,13 +166,14 @@ export const SettingsObjectFieldEdit = () => {
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
       settings,
       defaultValue,
-      formula: isDefined(fieldMetadataItem)
-        ? (getFieldMetadataFormulaExpression(fieldMetadataItem) ?? '')
-        : '',
-      formulaCurrencyCode: isDefined(fieldMetadataItem)
-        ? (getFieldMetadataFormulaCurrencyCodeExpression(fieldMetadataItem) ??
-          '')
-        : '',
+      formula:
+        getFieldMetadataFormulaExpression({
+          settings: fieldMetadataItem?.settings,
+        }) ?? '',
+      formulaCurrencyCode:
+        getFieldMetadataFormulaCurrencyCodeExpression({
+          settings: fieldMetadataItem?.settings,
+        }) ?? '',
     },
   });
 

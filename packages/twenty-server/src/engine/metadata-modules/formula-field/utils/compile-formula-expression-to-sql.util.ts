@@ -6,6 +6,7 @@ import {
   parseExpressionInstructions,
 } from 'twenty-shared/utils';
 
+import { FORMULA_SQL_MAX_LENGTH } from 'src/engine/metadata-modules/formula-field/constants/formula-sql-max-length.constant';
 import { FormulaSqlCompilationException } from 'src/engine/metadata-modules/formula-field/exceptions/formula-sql-compilation.exception';
 import { type FormulaSqlAggregationSource } from 'src/engine/metadata-modules/formula-field/types/formula-sql-aggregation-source.type';
 import { type FormulaSqlValue } from 'src/engine/metadata-modules/formula-field/types/formula-sql-value.type';
@@ -256,6 +257,17 @@ const compileInstructions = ({
         throw new FormulaSqlCompilationException({
           message: 'This syntax is not supported in a formula',
         });
+    }
+
+    const lastEntry = stack[stack.length - 1];
+
+    if (
+      lastEntry?.kind === 'value' &&
+      lastEntry.value.sql.length > FORMULA_SQL_MAX_LENGTH
+    ) {
+      throw new FormulaSqlCompilationException({
+        message: 'This formula is too complex',
+      });
     }
   }
 

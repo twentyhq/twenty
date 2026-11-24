@@ -2130,6 +2130,11 @@ msgstr "新增一個 {objectLabelSingular}"
 msgid "Add a card below to update your billing details and retry your payment."
 msgstr "在下方新增卡片，以更新您的帳單詳細資料並重試付款。"
 
+#. js-lingui-id: vzJ7AQ
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
+msgid "Add a description"
+msgstr ""
+
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
 msgid "Add a fallback value to avoid empty personalization"
@@ -2364,6 +2369,11 @@ msgstr "新增自訂端點、私有閘道，或其他區域。"
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Add Custom Provider"
 msgstr "新增自訂供應商"
+
+#. js-lingui-id: PGPGsL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Add description"
+msgstr ""
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -10469,6 +10479,8 @@ msgstr "描述您希望 AI 實現的功能..."
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
@@ -11343,6 +11355,11 @@ msgstr "編輯欄位"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Edit data structure and fields"
 msgstr "編輯數據結構和欄位"
+
+#. js-lingui-id: O32mmL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Edit description"
+msgstr ""
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -24390,6 +24407,11 @@ msgstr "閱讀系統提示詞以瞭解 AI 的運作方式"
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr "閱讀系統提示詞以瞭解 AI 的運作方式 (~{0} 個詞元)"
 
+#. js-lingui-id: SIPs3V
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
+msgstr ""
+
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
 msgid "Read your profile"
@@ -30052,6 +30074,11 @@ msgstr "匯出已中斷。請再試一次。"
 msgid "The fields below are now available as variables in the next steps."
 msgstr "下方欄位現在可在後續步驟中作為變數使用。"
 
+#. js-lingui-id: UbUlij
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The first value that is set, or nothing when none is."
+msgstr "第一個已設定的值；若皆未設定，則不傳回任何內容。"
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -30061,6 +30088,11 @@ msgstr "針對您的部署所套用欄位後的完整協議。"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "您的工作流程觸發器在指令選單中顯示的圖示"
+
+#. js-lingui-id: Qp6vM+
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The largest of the numbers. Values that are not numbers are ignored."
+msgstr "數字中的最大值。非數字的值會被忽略。"
 
 #. js-lingui-id: RYl4Q1
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
@@ -30144,6 +30176,11 @@ msgstr "清單中的項目數量；若不是清單則為 0。"
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
 msgstr "從第一個日期到第二個日期的完整單位數；若第二個日期較早則為負數。分鐘和小時為經過時間；較長的單位在 UTC 中按日曆日和月份計算。"
 
+#. js-lingui-id: wmIQo4
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number rounded to a number of decimals."
+msgstr "四捨五入至指定小數位數的數字。"
+
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -30179,6 +30216,11 @@ msgstr "無法解析關聯設定。"
 msgid "The role attached to this webhook."
 msgstr "附加至此 Webhook 的角色。"
 
+#. js-lingui-id: eHwsp0
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The second value when the condition is true, otherwise the third."
+msgstr "條件為 true 時的第二個值，否則為第三個值。"
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -30199,10 +30241,25 @@ msgstr ""
 msgid "The shared email you want to use."
 msgstr "您要使用的共用電子郵件。"
 
+#. js-lingui-id: CZF2sj
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The smallest of the numbers. Values that are not numbers are ignored."
+msgstr "數值中的最小值。不是數字的值會被忽略。"
+
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
 msgstr "包含該日期的單位之起始時間，採用 UTC。每週從星期一開始。"
+
+#. js-lingui-id: hdgKJ2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in lower case."
+msgstr "小寫文字。"
+
+#. js-lingui-id: P/EZTH
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in upper case."
+msgstr "大寫文字。"
 
 #. js-lingui-id: V27DQk
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/utils/resolveMcpToolTestArgumentsOrThrow.ts
@@ -30250,6 +30307,11 @@ msgstr "此限制所適用的使用量。"
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The value a field had before the update. Empty when the record is created."
 msgstr "欄位在更新前的值。建立記錄時為空。"
+
+#. js-lingui-id: cXlUXr
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The values joined as one text. Values that are not set are skipped."
+msgstr "將值串連為一段文字。未設定的值會被略過。"
 
 #. js-lingui-id: uWikAA
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -34189,6 +34251,11 @@ msgstr "小工具"
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Widget Settings"
 msgstr "小工具設定"
+
+#. js-lingui-id: 0LuHF2
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Widget visibility rule tree"
+msgstr ""
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
