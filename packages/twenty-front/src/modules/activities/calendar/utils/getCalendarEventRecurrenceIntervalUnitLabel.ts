@@ -1,10 +1,13 @@
 import { plural } from '@lingui/core/macro';
 import { CalendarEventRecurrenceFrequency } from '~/generated-metadata/graphql';
 
-export const getCalendarEventRecurrenceIntervalUnitLabel = (
-  frequency: CalendarEventRecurrenceFrequency,
-  interval: number,
-) => {
+export const getCalendarEventRecurrenceIntervalUnitLabel = ({
+  frequency,
+  interval,
+}: {
+  frequency: CalendarEventRecurrenceFrequency;
+  interval: number;
+}) => {
   switch (frequency) {
     case CalendarEventRecurrenceFrequency.DAILY:
       return plural(interval, { one: 'day', other: 'days' });

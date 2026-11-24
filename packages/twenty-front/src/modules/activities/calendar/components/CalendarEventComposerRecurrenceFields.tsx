@@ -123,10 +123,10 @@ export const CalendarEventComposerRecurrenceFields = ({
     return frequencyFieldRow;
   }
 
-  const intervalUnitLabel = getCalendarEventRecurrenceIntervalUnitLabel(
-    recurrence.frequency,
-    recurrence.interval,
-  );
+  const intervalUnitLabel = getCalendarEventRecurrenceIntervalUnitLabel({
+    frequency: recurrence.frequency,
+    interval: recurrence.interval,
+  });
   const isWeekly =
     recurrence.frequency === CalendarEventRecurrenceFrequency.WEEKLY;
   const { end } = recurrence;
