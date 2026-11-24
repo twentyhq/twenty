@@ -1,9 +1,7 @@
 import { styled } from '@linaria/react';
 
-import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
+import { color, fontFamily } from '@/tokens';
 import { cssVariableStyle } from '@/ui/css-variable-style';
-
-const shell = PRODUCT_STEPPER_SCENE.shell;
 
 // One light card centred in the stepper's frame. With data-scrub, every
 // animation inside is paused and its playhead set by the scroll (see scrub
@@ -11,7 +9,7 @@ const shell = PRODUCT_STEPPER_SCENE.shell;
 const Stage = styled.div`
   align-items: center;
   display: flex;
-  font-family: ${shell.font};
+  font-family: ${fontFamily('sans')};
   height: 100%;
   justify-content: center;
   opacity: 0.7;
@@ -50,54 +48,82 @@ const scrub = (progress: number | undefined, timelineMs: number) =>
         }),
       };
 
-const Card = styled.div`
-  background: ${shell.background};
-  border: 1px solid ${shell.borderMedium};
-  border-radius: 8px;
-  box-shadow: ${PRODUCT_STEPPER_SCENE.cardShadow};
+// The home stepper's dark panels: a black panel titled with an icon, rows on
+// charcoal with their bottom-right corner cut, labels in mono capitals.
+const ROW_CUT_PX = 10;
+
+const Panel = styled.div`
+  background: ${color('black')};
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
   max-width: 440px;
+  padding: 8px;
   width: 86%;
 `;
 
-const CardHeader = styled.div`
+const PanelHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${shell.borderLight};
-  color: ${shell.text};
+  color: ${color('white')};
   display: flex;
-  font-size: 15px;
+  font-family: ${fontFamily('sans')};
+  font-size: 18px;
   font-weight: 500;
-  gap: 8px;
-  padding: 16px 20px;
+  gap: 10px;
+  padding: 10px 8px 8px;
 `;
 
-const CardBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 20px;
+const Row = styled.div`
+  align-items: center;
+  background: ${color('charcoal')};
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - ${ROW_CUT_PX}px),
+    calc(100% - ${ROW_CUT_PX}px) 100%,
+    0 100%
+  );
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 14px 16px;
 `;
 
-const Label = styled.span`
-  color: ${shell.textTertiary};
+const RowLabel = styled.span`
+  color: ${color('silver')};
+  font-family: ${fontFamily('mono')};
   font-size: 13px;
-  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 `;
 
-const Value = styled.span`
-  color: ${shell.text};
-  font-size: 14px;
+const RowValue = styled.span`
+  color: ${color('white')};
+  font-family: ${fontFamily('sans')};
+  font-size: 15px;
+`;
+
+// A quiet line under the rows: a rule, a total, a footnote.
+const PanelNote = styled.span`
+  color: ${color('silver')};
+  font-family: ${fontFamily('mono')};
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+  padding: 6px 8px 4px;
+  text-transform: uppercase;
 `;
 
 export const STEP_CARD_CHROME = {
+  Panel,
+  PanelNote,
+  PanelHeader,
+  Row,
+  RowLabel,
+  RowValue,
   scrub,
   scrubTime,
   timelineDelay,
-  Card,
-  CardBody,
-  CardHeader,
-  Label,
   Stage,
-  Value,
 };

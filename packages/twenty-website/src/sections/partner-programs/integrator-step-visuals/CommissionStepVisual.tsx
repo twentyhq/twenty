@@ -3,26 +3,26 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
+import { IconBuilding, IconChartBar } from '@tabler/icons-react';
 
 import { useAnimatedNumber } from '@/platform/motion';
-import { DURATION, EASING, REDUCED_MOTION } from '@/tokens';
-import { PRODUCT_STEPPER_SCENE } from '@/tokens/feature-scenes/product-stepper-scene';
+import { color, DURATION, EASING, fontFamily, REDUCED_MOTION } from '@/tokens';
 import { cssVariableStyle } from '@/ui/css-variable-style';
 
 import { STEP_CARD_CHROME } from './step-card-chrome';
 
 const {
-  Card,
-  CardBody,
-  CardHeader,
-  Label,
+  Panel,
+  PanelHeader,
+  PanelNote,
+  Row,
+  RowLabel,
+  RowValue,
   Stage,
   scrub,
   scrubTime,
   timelineDelay,
 } = STEP_CARD_CHROME;
-const shell = PRODUCT_STEPPER_SCENE.shell;
-const accent = PRODUCT_STEPPER_SCENE.layout.accent;
 
 // The Earnings section's figures: 20% of the Organization seat price.
 const SEAT_PRICE_USD = 39;
@@ -34,6 +34,9 @@ const CLIENTS = [
   { name: msg`Northwind Studio`, seats: 25 },
   { name: msg`Globex`, seats: 10 },
 ];
+
+// Each client's icon in one of the site's accents.
+const CLIENT_TINTS = [color('green'), color('pink'), color('yellow')];
 
 const commissionFor = (seats: number) =>
   Math.round(seats * SEAT_PRICE_USD * COMMISSION_SHARE);
@@ -51,55 +54,42 @@ const USD = new Intl.NumberFormat('en-US', {
 
 // Rows land one after the other, then the months fill in. On scroll it
 // follows the reader; when the stepper swipes it plays each time the step
-// becomes active; reduced motion shows the card done.
+// becomes active; reduced motion shows the panel done.
 const ROW_STAGGER_MS = 180;
 const MONTH_DELAY_MS = 700;
 const MONTH_STAGGER_MS = 70;
 const ROWS_MS = 2 * ROW_STAGGER_MS + 400;
 const TIMELINE_MS = MONTH_DELAY_MS + MONTH_COUNT * MONTH_STAGGER_MS + 300;
 
-const Period = styled.span`
-  color: ${shell.textTertiary};
-  font-size: 13px;
-  font-weight: 400;
+const Period = styled(RowLabel)`
   margin-left: auto;
 `;
 
 const Total = styled.div`
   align-items: baseline;
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  padding: 4px 8px 8px;
 `;
 
 const Figure = styled.span`
-  color: ${shell.text};
+  color: ${color('white')};
+  font-family: ${fontFamily('sans')};
   font-size: 40px;
   font-variant-numeric: tabular-nums;
   font-weight: 500;
   line-height: 1;
 `;
 
-const Rows = styled.ul`
-  border-top: 1px solid ${shell.borderLight};
-  list-style: none;
-  padding: 0;
-`;
+// Icon, client, seats, commission.
+const ClientRow = styled(Row)`
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
 
-const Row = styled.li`
-  align-items: center;
-  border-bottom: 1px solid ${shell.borderLight};
-  color: ${shell.text};
-  display: grid;
-  font-size: 14px;
-  gap: 12px;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  padding: 10px 0;
-
-  &:nth-child(2) {
+  &[data-index='1'] {
     --d: ${ROW_STAGGER_MS}ms;
   }
 
-  &:nth-child(3) {
+  &[data-index='2'] {
     --d: ${2 * ROW_STAGGER_MS}ms;
   }
 
@@ -124,15 +114,9 @@ const Row = styled.li`
   }
 `;
 
-const Seats = styled.span`
-  color: ${shell.textTertiary};
-  font-size: 13px;
-`;
-
-const Amount = styled.span`
-  color: ${accent};
+const Amount = styled(RowValue)`
+  color: ${color('green')};
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
 `;
 
 // One bar per month: the share is paid every month for a year.
@@ -141,14 +125,14 @@ const Months = styled.div`
   display: grid;
   gap: 4px;
   grid-template-columns: repeat(${MONTH_COUNT}, 1fr);
-  height: 72px;
+  height: 56px;
+  padding: 8px 8px 0;
 `;
 
 const Month = styled.span`
-  background: ${accent};
+  background: ${color('green')};
   border-radius: 2px;
   height: 100%;
-  opacity: 0.85;
   transform-origin: bottom;
 
   [data-active] & {
@@ -199,41 +183,39 @@ export function CommissionStepVisual({
       data-active={active ? '' : undefined}
       {...scrub(progress, TIMELINE_MS)}
     >
-      <Card>
-        <CardHeader>
+      <Panel>
+        <PanelHeader>
+          <IconChartBar size={20} stroke={1.5} />
           {i18n._(msg`Commission`)}
           <Period>{i18n._(msg`This month`)}</Period>
-        </CardHeader>
-        <CardBody>
-          <Total>
-            <Figure>{USD.format(total)}</Figure>
-            <Label>{i18n._(msg`20% of seat revenue`)}</Label>
-          </Total>
-          <Rows>
-            {CLIENTS.map(({ name, seats }) => (
-              <Row key={name.id}>
-                <span>{i18n._(name)}</span>
-                <Seats>{i18n._(msg`${seats} seats`)}</Seats>
-                <Amount>{USD.format(commissionFor(seats))}</Amount>
-              </Row>
-            ))}
-          </Rows>
-          <Months>
-            {Array.from({ length: MONTH_COUNT }, (_, monthIndex) => (
-              <Month
-                key={monthIndex}
-                style={cssVariableStyle({
-                  '--d': `${MONTH_DELAY_MS + monthIndex * MONTH_STAGGER_MS}ms`,
-                })}
-              />
-            ))}
-          </Months>
-          <Axis>
-            <Label>{i18n._(msg`Month 1`)}</Label>
-            <Label>{i18n._(msg`Month 12`)}</Label>
-          </Axis>
-        </CardBody>
-      </Card>
+        </PanelHeader>
+        <Total>
+          <Figure>{USD.format(total)}</Figure>
+          <RowLabel>{i18n._(msg`20% of seat revenue`)}</RowLabel>
+        </Total>
+        {CLIENTS.map(({ name, seats }, index) => (
+          <ClientRow data-index={index} key={name.id}>
+            <IconBuilding color={CLIENT_TINTS[index]} size={20} stroke={1.5} />
+            <RowValue>{i18n._(name)}</RowValue>
+            <RowLabel>{i18n._(msg`${seats} seats`)}</RowLabel>
+            <Amount>{USD.format(commissionFor(seats))}</Amount>
+          </ClientRow>
+        ))}
+        <Months>
+          {Array.from({ length: MONTH_COUNT }, (_, monthIndex) => (
+            <Month
+              key={monthIndex}
+              style={cssVariableStyle({
+                '--d': `${MONTH_DELAY_MS + monthIndex * MONTH_STAGGER_MS}ms`,
+              })}
+            />
+          ))}
+        </Months>
+        <Axis>
+          <PanelNote>{i18n._(msg`Month 1`)}</PanelNote>
+          <PanelNote>{i18n._(msg`Month 12`)}</PanelNote>
+        </Axis>
+      </Panel>
     </Stage>
   );
 }
