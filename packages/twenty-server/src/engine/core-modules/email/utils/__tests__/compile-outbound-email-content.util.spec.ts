@@ -384,6 +384,12 @@ describe('compileOutboundEmailContent', () => {
     expect(plainText).toBe('Dear Nick,\n\nThanks,\nJane');
   });
 
+  it('should compile a document with no content', async () => {
+    const html = await compileDocument({ type: 'doc', content: [] });
+
+    expect(html).toContain('</html>');
+  });
+
   describe('unsafe URL schemes', () => {
     it('should drop javascript: hrefs from buttons, links and images', async () => {
       const html = await compileDocument({
