@@ -9,5 +9,6 @@ export const VIEW_GROUP_FRAGMENT = gql`
     viewId
     createdAt
     updatedAt
+    deletedAt
   }
 `;

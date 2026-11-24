@@ -12,6 +12,7 @@ export const VIEW_FIELD_GROUP_FRAGMENT = gql`
     isActive
     createdAt
     updatedAt
+    deletedAt
     viewFields {
       ...ViewFieldFragment
     }

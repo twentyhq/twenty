@@ -9,6 +9,7 @@ export const VIEW_SORT_FRAGMENT = gql`
     relationTargetFieldMetadataId
     viewId
     createdAt
+    deletedAt
     updatedAt
   }
 `;

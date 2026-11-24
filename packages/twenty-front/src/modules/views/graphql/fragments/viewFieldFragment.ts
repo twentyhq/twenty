@@ -40,5 +40,6 @@ export const VIEW_FIELD_FRAGMENT = gql`
     isActive
     createdAt
     updatedAt
+    deletedAt
   }
 `;
