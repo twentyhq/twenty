@@ -1,5 +1,6 @@
 import { CommandFactory } from 'nest-commander';
 
+import { setPgDateTypeParser } from 'src/database/pg/set-pg-date-type-parser';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
@@ -8,6 +9,8 @@ import { shouldCaptureException } from 'src/engine/utils/global-exception-handle
 import { CommandModule } from './command.module';
 
 async function bootstrap() {
+  setPgDateTypeParser();
+
   const errorHandler = (err: Error) => {
     loggerService.error(err?.message, err?.name);
 
