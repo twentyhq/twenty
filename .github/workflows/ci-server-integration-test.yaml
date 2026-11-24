@@ -49,7 +49,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
         run: |
           run_id=$(gh api "repos/$REPOSITORY/actions/artifacts?name=integration-test-timings&per_page=100" \
-            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "main" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty' || true)
+            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "main" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty') || run_id=''
           echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
       - name: Download latest recorded timings
         id: download-timings
