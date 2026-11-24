@@ -1,4 +1,8 @@
-import { type ObjectRecord } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  type StringFilter,
+  type UUIDFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -9,7 +13,10 @@ import { type ChannelAssociationChannelRow } from 'src/modules/connected-account
 import { type ChannelAssociationDynamicFieldContext } from 'src/modules/connected-account/dynamic-fields/types/channel-association-dynamic-field-context.type';
 import { computeChannelIdFilterFromSourceFilter } from 'src/modules/connected-account/dynamic-fields/utils/compute-channel-id-filter-from-source-filter.util';
 
-export abstract class ChannelAssociationDynamicFieldResolver implements DynamicFieldResolverInstance<ChannelAssociationDynamicFieldContext> {
+export abstract class ChannelAssociationDynamicFieldResolver implements DynamicFieldResolverInstance<
+  ChannelAssociationDynamicFieldContext,
+  StringFilter & UUIDFilter
+> {
   abstract readonly objectUniversalIdentifier: string;
   abstract readonly channelIdColumnName: string;
 
@@ -60,7 +67,10 @@ export abstract class ChannelAssociationDynamicFieldResolver implements DynamicF
     context,
   }: {
     record: ObjectRecord;
-    context: ChannelAssociationDynamicFieldContext;
+    context: Pick<
+      ChannelAssociationDynamicFieldContext,
+      'channelAssociationSourceByChannelId'
+    >;
   }): Partial<ObjectRecord> {
     const source = context.channelAssociationSourceByChannelId.get(
       record[this.channelIdColumnName],
@@ -78,8 +88,11 @@ export abstract class ChannelAssociationDynamicFieldResolver implements DynamicF
     context,
   }: {
     dynamicFieldName: string;
-    dynamicFieldFilter: Record<string, unknown>;
-    context: ChannelAssociationDynamicFieldContext;
+    dynamicFieldFilter: StringFilter & UUIDFilter;
+    context: Pick<
+      ChannelAssociationDynamicFieldContext,
+      'channelAssociationSources'
+    >;
   }): ObjectRecordFilter {
     return computeChannelIdFilterFromSourceFilter({
       channelIdColumnName: this.channelIdColumnName,

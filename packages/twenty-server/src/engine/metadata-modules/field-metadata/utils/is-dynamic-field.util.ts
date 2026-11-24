@@ -1,4 +1,4 @@
-import { DYNAMIC_FIELD_UNIVERSAL_IDENTIFIERS } from '../constants/dynamic-field-universal-identifiers.constant';
+import { DYNAMIC_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/engine/metadata-modules/field-metadata/constants/dynamic-field-universal-identifiers.constant';
 
 export const isDynamicField = ({
   universalIdentifier,

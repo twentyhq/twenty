@@ -1,8 +1,11 @@
-import { type ObjectRecord } from 'twenty-shared/types';
+import { type LeafFilter, type ObjectRecord } from 'twenty-shared/types';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-export type DynamicFieldResolverInstance<TContext = unknown> = {
+export type DynamicFieldResolverInstance<
+  TContext = unknown,
+  TDynamicFieldFilter extends NonNullable<LeafFilter> = NonNullable<LeafFilter>,
+> = {
   readonly objectUniversalIdentifier: string;
   readonly sourceColumnNames: readonly string[];
   loadContext(args: { workspaceId: string }): Promise<TContext>;
@@ -12,7 +15,7 @@ export type DynamicFieldResolverInstance<TContext = unknown> = {
   }): Partial<ObjectRecord>;
   computeSourceFilter(args: {
     dynamicFieldName: string;
-    dynamicFieldFilter: Record<string, unknown>;
+    dynamicFieldFilter: TDynamicFieldFilter;
     context: TContext;
   }): ObjectRecordFilter;
 };

@@ -17,18 +17,18 @@ const isSourceMatchingFilter = ({
 }: {
   source: ChannelAssociationSource;
   dynamicFieldName: string;
-  dynamicFieldFilter: Record<string, unknown>;
+  dynamicFieldFilter: StringFilter & UUIDFilter;
 }): boolean => {
   if (dynamicFieldName === 'handle') {
     return isMatchingStringFilter({
-      stringFilter: dynamicFieldFilter as StringFilter,
+      stringFilter: dynamicFieldFilter,
       value: source.handle,
     });
   }
 
   return isDefined(source.accountOwnerId)
     ? isMatchingUUIDFilter({
-        uuidFilter: dynamicFieldFilter as UUIDFilter,
+        uuidFilter: dynamicFieldFilter,
         value: source.accountOwnerId,
       })
     : dynamicFieldFilter.is === 'NULL';
@@ -42,7 +42,7 @@ export const computeChannelIdFilterFromSourceFilter = ({
 }: {
   channelIdColumnName: string;
   dynamicFieldName: string;
-  dynamicFieldFilter: Record<string, unknown>;
+  dynamicFieldFilter: StringFilter & UUIDFilter;
   channelAssociationSources: ChannelAssociationSource[];
 }): ObjectRecordFilter => {
   const channelIds = channelAssociationSources

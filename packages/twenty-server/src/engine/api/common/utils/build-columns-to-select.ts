@@ -35,14 +35,19 @@ export const buildColumnsToSelect = ({
     fieldsToSelect[columnName] = true;
   }
 
-  for (const dynamicFieldColumnName of getDynamicFieldColumnNames({
+  const dynamicFieldColumnNames = getDynamicFieldColumnNames({
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  })) {
-    delete fieldsToSelect[dynamicFieldColumnName];
-  }
+  });
 
-  return { ...fieldsToSelect, id: true };
+  return {
+    ...Object.fromEntries(
+      Object.entries(fieldsToSelect).filter(
+        ([columnName]) => !dynamicFieldColumnNames.includes(columnName),
+      ),
+    ),
+    id: true,
+  };
 };
 
 const getRequiredRelationColumns = ({

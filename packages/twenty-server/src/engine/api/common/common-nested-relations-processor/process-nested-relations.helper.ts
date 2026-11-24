@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDynamicField } from 'twenty-shared/metadata';
+import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined, isEmptyObject, isValidUuid } from 'twenty-shared/utils';
 
@@ -75,32 +75,35 @@ export class ProcessNestedRelationsHelper {
   public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
     args: ProcessNestedRelationsArgs<T>,
   ): Promise<CommonRelationsAggregatedValues> {
-    return await this.processNestedRelationsWithLimiter(
-      args,
-      createConcurrencyLimiter(NESTED_RELATION_QUERY_MAX_CONCURRENCY),
-      this.dynamicFieldService.createContextLoader(
+    return await this.processNestedRelationsWithLimiter({
+      ...args,
+      relationQueryLimiter: createConcurrencyLimiter(
+        NESTED_RELATION_QUERY_MAX_CONCURRENCY,
+      ),
+      loadDynamicFieldContext: this.dynamicFieldService.createContextLoader(
         args.authContext.workspace.id,
       ),
-    );
+    });
   }
 
   private async processNestedRelationsWithLimiter<
     T extends ObjectRecord = ObjectRecord,
-  >(
-    {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      parentObjectMetadataItem,
-      parentObjectRecords,
-      selection,
-      limit,
-      authContext,
-      useReplica = false,
-      repository,
-    }: ProcessNestedRelationsArgs<T>,
-    relationQueryLimiter: ConcurrencyLimiter,
-    loadDynamicFieldContext: DynamicFieldContextLoader,
-  ): Promise<CommonRelationsAggregatedValues> {
+  >({
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    selection,
+    limit,
+    authContext,
+    useReplica = false,
+    repository,
+    relationQueryLimiter,
+    loadDynamicFieldContext,
+  }: ProcessNestedRelationsArgs<T> & {
+    relationQueryLimiter: ConcurrencyLimiter;
+    loadDynamicFieldContext: DynamicFieldContextLoader;
+  }): Promise<CommonRelationsAggregatedValues> {
     await this.dynamicFieldService.assignDynamicFieldValuesToRecords({
       loadContext: loadDynamicFieldContext,
       flatObjectMetadata: parentObjectMetadataItem,
@@ -337,21 +340,19 @@ export class ProcessNestedRelationsHelper {
       );
 
     const nestedRelationsAggregatedValues =
-      await this.processNestedRelationsWithLimiter(
-        {
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          parentObjectMetadataItem: targetObjectMetadata,
-          parentObjectRecords: relationResults as ObjectRecord[],
-          selection: relationSelection.selection,
-          limit,
-          authContext,
-          useReplica,
-          repository,
-        },
+      await this.processNestedRelationsWithLimiter({
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        parentObjectMetadataItem: targetObjectMetadata,
+        parentObjectRecords: relationResults as ObjectRecord[],
+        selection: relationSelection.selection,
+        limit,
+        authContext,
+        useReplica,
+        repository,
         relationQueryLimiter,
         loadDynamicFieldContext,
-      );
+      });
 
     // After the nested load: a to-one relation is assigned as a copy, so nested rows must already be on it
     this.assignRelationResults({

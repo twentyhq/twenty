@@ -1,4 +1,4 @@
-import { isDynamicField } from 'twenty-shared/metadata';
+import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
@@ -86,10 +86,13 @@ export const mapDynamicFieldFilters = ({
   flatFieldMetadataMaps,
   mapDynamicFieldFilter,
 }: MapDynamicFieldFiltersArgs): ObjectRecordFilter => {
-  const mapNestedFilter = (
-    nestedFilter: ObjectRecordFilter,
-    nestedFlatObjectMetadata: FlatObjectMetadata = flatObjectMetadata,
-  ) =>
+  const mapNestedFilter = ({
+    nestedFilter,
+    nestedFlatObjectMetadata = flatObjectMetadata,
+  }: {
+    nestedFilter: ObjectRecordFilter;
+    nestedFlatObjectMetadata?: FlatObjectMetadata;
+  }) =>
     mapDynamicFieldFilters({
       filter: nestedFilter,
       flatObjectMetadata: nestedFlatObjectMetadata,
@@ -104,13 +107,13 @@ export const mapDynamicFieldFilters = ({
   for (const [key, value] of Object.entries(filter)) {
     if ((key === 'and' || key === 'or') && Array.isArray(value)) {
       untouchedFilter[key] = value.map((nestedFilter) =>
-        mapNestedFilter(nestedFilter),
+        mapNestedFilter({ nestedFilter }),
       );
       continue;
     }
 
     if (key === 'not' && isPlainObject(value)) {
-      untouchedFilter[key] = mapNestedFilter(value);
+      untouchedFilter[key] = mapNestedFilter({ nestedFilter: value });
       continue;
     }
 
@@ -142,7 +145,10 @@ export const mapDynamicFieldFilters = ({
     }
 
     untouchedFilter[key] = isDefined(relationTargetFlatObjectMetadata)
-      ? mapNestedFilter(value, relationTargetFlatObjectMetadata)
+      ? mapNestedFilter({
+          nestedFilter: value,
+          nestedFlatObjectMetadata: relationTargetFlatObjectMetadata,
+        })
       : value;
   }
 

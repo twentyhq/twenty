@@ -1,4 +1,4 @@
-import { isDynamicField } from 'twenty-shared/metadata';
+import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
 import { RelationType } from 'twenty-shared/types';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';

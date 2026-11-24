@@ -49,9 +49,7 @@ export class DynamicFieldService {
       Promise<unknown>
     >();
 
-    return <TContext>(
-      dynamicFieldResolver: DynamicFieldResolverInstance<TContext>,
-    ) => {
+    return (dynamicFieldResolver) => {
       const loadingContext =
         loadingContextByDynamicFieldResolver.get(dynamicFieldResolver) ??
         dynamicFieldResolver.loadContext({ workspaceId });
@@ -61,7 +59,7 @@ export class DynamicFieldService {
         loadingContext,
       );
 
-      return loadingContext as Promise<TContext>;
+      return loadingContext;
     };
   }
 

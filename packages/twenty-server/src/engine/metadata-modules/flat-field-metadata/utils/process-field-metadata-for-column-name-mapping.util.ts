@@ -1,4 +1,4 @@
-import { isDynamicField } from 'twenty-shared/metadata';
+import { isDynamicField } from 'src/engine/metadata-modules/field-metadata/utils/is-dynamic-field.util';
 import {
   type CompositeType,
   compositeTypeDefinitions,

@@ -1,4 +1,4 @@
-import { STANDARD_OBJECTS } from './standard-object.constant';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 export const DYNAMIC_FIELD_UNIVERSAL_IDENTIFIERS: readonly string[] = [
   STANDARD_OBJECTS.calendarChannelEventAssociation.fields.accountOwner
