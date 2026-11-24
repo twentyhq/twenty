@@ -2,10 +2,10 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 
 import { useAiChatPageThreadId } from '@/ai-chat/hooks/useAiChatPageThreadId';
-import { useAiChatThreadClick } from '@/ai-chat/threads/hooks/useAiChatThreadClick';
 import { NavigationDrawerInboxFavoritesSection } from '@/inbox/components/NavigationDrawerInboxFavoritesSection';
 import { inboxFavoriteChannelsSelector } from '@/inbox/states/selectors/inboxFavoriteChannelsSelector';
 import { inboxFavoriteThreadsSelector } from '@/inbox/states/selectors/inboxFavoriteThreadsSelector';
+import { useNavigationMenuAiChatThreadClick } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatThreadClick';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuAiChatFavoritesSectionProps = {
@@ -17,9 +17,7 @@ export const NavigationMenuAiChatFavoritesSection = ({
 }: NavigationMenuAiChatFavoritesSectionProps) => {
   const { t } = useLingui();
   const currentThreadId = useAiChatPageThreadId();
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: true,
-  });
+  const { handleThreadClick } = useNavigationMenuAiChatThreadClick();
   const inboxFavoriteThreads = useAtomStateValue(inboxFavoriteThreadsSelector);
   const inboxFavoriteChannels = useAtomStateValue(
     inboxFavoriteChannelsSelector,
