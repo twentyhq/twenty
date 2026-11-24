@@ -20,6 +20,31 @@ export class RecomputeDirtyStoredFormulaRecordsJob {
   async handle(
     jobData: RecomputeDirtyStoredFormulaRecordsJobData,
   ): Promise<void> {
+    const isRunAcquired =
+      await this.storedFormulaFieldDirtyRecordService.acquireRecomputeRun(
+        jobData,
+      );
+
+    if (!isRunAcquired) {
+      await this.storedFormulaFieldDirtyRecordService.scheduleRecompute(
+        jobData,
+      );
+
+      return;
+    }
+
+    try {
+      await this.recomputeNextDirtyRecords(jobData);
+    } finally {
+      await this.storedFormulaFieldDirtyRecordService.releaseRecomputeRun(
+        jobData,
+      );
+    }
+  }
+
+  private async recomputeNextDirtyRecords(
+    jobData: RecomputeDirtyStoredFormulaRecordsJobData,
+  ): Promise<void> {
     const recordIds =
       await this.storedFormulaFieldDirtyRecordService.popDirtyRecordIds({
         ...jobData,
