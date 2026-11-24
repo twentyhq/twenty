@@ -1,10 +1,9 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWorkDomain } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { isWorkDomain } from 'src/utils/is-work-email';
 
 export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   contacts: Contact[],

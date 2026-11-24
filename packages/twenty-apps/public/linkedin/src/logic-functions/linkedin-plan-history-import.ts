@@ -15,12 +15,14 @@ import { enqueueLinkedinImportHistoryJob } from 'src/logic-functions/utils/enque
 import { failLinkedinHistoryImportJob } from 'src/logic-functions/utils/fail-linkedin-history-import-job.util';
 import { getActiveLinkedinHistoryImportState } from 'src/logic-functions/utils/get-active-linkedin-history-import-state.util';
 import { getLinkedinPlanHistoryImportJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
+import { getLinkedinSettings } from 'src/logic-functions/utils/get-linkedin-settings.util';
 import {
   getLinkedinHistoryImportPlanning,
   getLinkedinHistoryImportProgress,
   saveLinkedinHistoryImportChunkChats,
   saveLinkedinHistoryImportPlanning,
 } from 'src/logic-functions/utils/linkedin-history-import-kv.util';
+import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type UnipileChat } from 'src/unipile/types/unipile-chat.type';
 import { listUnipileChats } from 'src/unipile/utils/list-unipile-chats.util';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
@@ -203,9 +205,11 @@ const planLimitedHistoryImport = async ({
 
 const planHistoryImport = async ({
   payload,
+  importPolicy,
   conversationLimit,
 }: {
   payload: LinkedinPlanHistoryImportJobPayload;
+  importPolicy: LinkedinImportPolicy;
   conversationLimit: number | undefined;
 }): Promise<LinkedinPlanHistoryImportResult> => {
   const { connectedAccountId, runId } = payload;
@@ -257,6 +261,21 @@ const planHistoryImport = async ({
       return continueFromHere(error.retryAfterSeconds * 1000);
     }
   };
+
+  if (importPolicy === 'SELECTED') {
+    const { selectedChats } = await getLinkedinSettings(connectedAccountId);
+
+    // The import job reads each conversation itself, so none is read here
+    return planLimitedHistoryImport({
+      payload,
+      chats: selectedChats.map(({ id, name }) => ({
+        id,
+        name,
+        is_group: false,
+        is_1to1: false,
+      })),
+    });
+  }
 
   const inboxIds = await pauseOnRateLimit(() =>
     listUnipileInboxIds(unipileAccountId),
@@ -363,6 +382,7 @@ export const linkedinPlanHistoryImportHandler = async (
   try {
     return await planHistoryImport({
       payload,
+      importPolicy: state.importPolicy,
       conversationLimit: state.conversationLimit,
     });
   } catch (error) {
@@ -390,7 +410,7 @@ export default defineLogicFunction({
   universalIdentifier: LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-plan-history-import',
   description:
-    'Lists the most recent past LinkedIn conversations of a connection across its inboxes, up to the limit of the run, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
+    'Lists the past LinkedIn conversations of a connection to import, the selected ones or the most recent ones across its inboxes up to the limit of the run, stores them page by page for the import jobs and starts the import chain; hands over to a new planning job when its time runs out.',
   timeoutSeconds: LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS,
   handler: linkedinPlanHistoryImportHandler,
 });

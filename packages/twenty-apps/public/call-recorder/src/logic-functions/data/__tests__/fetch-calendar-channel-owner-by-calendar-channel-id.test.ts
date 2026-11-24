@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { fetchOwnerUserWorkspaceIdByCalendarChannelId } from 'src/logic-functions/data/fetch-owner-user-workspace-id-by-calendar-channel-id.util';
+import { fetchCalendarChannelOwnerByCalendarChannelId } from 'src/logic-functions/data/fetch-calendar-channel-owner-by-calendar-channel-id.util';
 
 const metadataQueryMock = vi.hoisted(() => vi.fn());
 const metadataClientOptionsMock = vi.hoisted(() => vi.fn());
@@ -15,39 +15,53 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   },
 }));
 
-describe('fetchOwnerUserWorkspaceIdByCalendarChannelId', () => {
+describe('fetchCalendarChannelOwnerByCalendarChannelId', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('maps each calendar channel to the member who connected its account', async () => {
+  it('maps each calendar channel to the member who connected its account and the address it syncs', async () => {
     metadataQueryMock.mockResolvedValue({
       calendarChannels: [
         {
           id: 'calendar-channel-1',
+          handle: 'ada@acme.com',
           connectedAccount: { userWorkspaceId: 'user-workspace-1' },
         },
         {
           id: 'calendar-channel-2',
+          handle: 'grace@acme.com',
           connectedAccount: { userWorkspaceId: 'user-workspace-2' },
         },
       ],
     });
 
-    expect(await fetchOwnerUserWorkspaceIdByCalendarChannelId()).toEqual(
+    expect(await fetchCalendarChannelOwnerByCalendarChannelId()).toEqual(
       new Map([
-        ['calendar-channel-1', 'user-workspace-1'],
-        ['calendar-channel-2', 'user-workspace-2'],
+        [
+          'calendar-channel-1',
+          { userWorkspaceId: 'user-workspace-1', handle: 'ada@acme.com' },
+        ],
+        [
+          'calendar-channel-2',
+          { userWorkspaceId: 'user-workspace-2', handle: 'grace@acme.com' },
+        ],
       ]),
     );
   });
 
   it('leaves out a calendar channel whose connected account is gone', async () => {
     metadataQueryMock.mockResolvedValue({
-      calendarChannels: [{ id: 'calendar-channel-1', connectedAccount: null }],
+      calendarChannels: [
+        {
+          id: 'calendar-channel-1',
+          handle: 'ada@acme.com',
+          connectedAccount: null,
+        },
+      ],
     });
 
-    expect(await fetchOwnerUserWorkspaceIdByCalendarChannelId()).toEqual(
+    expect(await fetchCalendarChannelOwnerByCalendarChannelId()).toEqual(
       new Map(),
     );
   });
@@ -55,7 +69,7 @@ describe('fetchOwnerUserWorkspaceIdByCalendarChannelId', () => {
   it('reads the calendar channels as the application', async () => {
     metadataQueryMock.mockResolvedValue({ calendarChannels: [] });
 
-    await fetchOwnerUserWorkspaceIdByCalendarChannelId();
+    await fetchCalendarChannelOwnerByCalendarChannelId();
 
     expect(metadataClientOptionsMock).toHaveBeenCalledWith(
       expect.objectContaining({ runAs: 'application' }),
@@ -66,7 +80,7 @@ describe('fetchOwnerUserWorkspaceIdByCalendarChannelId', () => {
     metadataQueryMock.mockRejectedValue(new Error('permission denied'));
 
     await expect(
-      fetchOwnerUserWorkspaceIdByCalendarChannelId(),
+      fetchCalendarChannelOwnerByCalendarChannelId(),
     ).rejects.toThrow('permission denied');
   });
 });
