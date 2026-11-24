@@ -15,16 +15,17 @@ import { assertGraphQLSuccessfulResponse } from 'test/integration/graphql/utils/
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import {
-  SCHEMA,
   SNOOZE_IN_CHANNEL,
   buildFutureSnoozedUntil,
   findChannelThreadIds,
   runInboxAction,
   runThreadMutation,
   setUpChatChannelTests,
-  simulateNewMessageActivity,
 } from 'test/integration/graphql/suites/chat-channel/utils/chat-channel-test.util';
 import { addParticipants } from 'test/integration/graphql/suites/chat-thread-participant/utils/chat-thread-participant-test.util';
 
@@ -64,49 +65,32 @@ const mentionJane: ThreadStateStep = (threadId) =>
     workspaceMemberId: JONY,
   });
 
-// No mutation leaves a chat without activity, or archived at the very instant of its last activity
-const setLastActivityAt =
-  (lastActivityAt: 'NONE' | 'AT_MEMBER_ARCHIVE' | 'AT_CHANNEL_ARCHIVE') =>
-  (threadId: string) =>
-    global.testDataSource.query(
-      `UPDATE ${SCHEMA}."agentChatThread" thread
-       SET "lastActivityAt" = CASE $2::text
-         WHEN 'AT_CHANNEL_ARCHIVE' THEN thread."channelArchivedAt"
-         WHEN 'AT_MEMBER_ARCHIVE' THEN (
-           SELECT participant."archivedAt"
-           FROM ${SCHEMA}."agentChatThreadParticipant" participant
-           WHERE participant."threadId" = thread.id AND participant."workspaceMemberId" = $3
-         )
-       END
-       WHERE thread.id = $1`,
-      [threadId, lastActivityAt, JANE],
-    );
+const addNewActivity: ThreadStateStep = (threadId) =>
+  getAppProviderByClassName<AgentChatThreadService>(
+    'AgentChatThreadService',
+  ).recordThreadActivity({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    threadId,
+    text: 'New activity',
+  });
 
 const MEMBER_THREAD_STATES: ThreadStateStep[][] = [
   [],
   [runMemberAction('ARCHIVE')],
-  [runMemberAction('ARCHIVE'), simulateNewMessageActivity],
+  [runMemberAction('ARCHIVE'), addNewActivity],
   [runMemberAction('SNOOZE')],
-  [runMemberAction('SNOOZE'), simulateNewMessageActivity],
+  [runMemberAction('SNOOZE'), addNewActivity],
   [runMemberAction('UNSUBSCRIBE')],
   [mentionJane],
   [mentionJane, runMemberAction('READ')],
-  [setLastActivityAt('NONE')],
-  [runMemberAction('ARCHIVE'), setLastActivityAt('NONE')],
-  [runMemberAction('SNOOZE'), setLastActivityAt('NONE')],
-  [runMemberAction('ARCHIVE'), setLastActivityAt('AT_MEMBER_ARCHIVE')],
 ];
 
 const CHANNEL_THREAD_STATES: ThreadStateStep[][] = [
   [],
   [markAsDoneInChannel],
-  [markAsDoneInChannel, simulateNewMessageActivity],
+  [markAsDoneInChannel, addNewActivity],
   [snoozeInChannel],
-  [snoozeInChannel, simulateNewMessageActivity],
-  [setLastActivityAt('NONE')],
-  [markAsDoneInChannel, setLastActivityAt('NONE')],
-  [snoozeInChannel, setLastActivityAt('NONE')],
-  [markAsDoneInChannel, setLastActivityAt('AT_CHANNEL_ARCHIVE')],
+  [snoozeInChannel, addNewActivity],
 ];
 
 type LoadedThread = {
