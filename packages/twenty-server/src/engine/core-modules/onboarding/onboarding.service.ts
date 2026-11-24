@@ -3,7 +3,12 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { isNumber } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { assertUnreachable, isDefined, isNonEmptyArray, isWorkEmail } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  isDefined,
+  isNonEmptyArray,
+  isWorkEmail,
+} from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 

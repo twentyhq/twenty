@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { getDomainFromEmail, isDefined, isWorkDomain } from 'twenty-shared/utils';
+import {
+  getDomainFromEmail,
+  isDefined,
+  isWorkDomain,
+} from 'twenty-shared/utils';
 import {
   type WorkspaceCompanyEnrichment,
   type WorkspaceEnrichmentResult,

@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { getDomainFromEmail, isWorkEmail } from 'twenty-shared/utils';
 
-
 export const isSameWorkDomainInvitation = ({
   senderEmail,
   inviteeEmail,

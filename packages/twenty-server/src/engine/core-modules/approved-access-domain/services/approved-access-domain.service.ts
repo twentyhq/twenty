@@ -4,7 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { SendApprovedAccessDomainValidation, renderEmail } from 'twenty-emails';
 import { FileFolder, SettingsPath } from 'twenty-shared/types';
-import { getDomainFromEmail, getSettingsPath, isDefined, isWorkDomain } from 'twenty-shared/utils';
+import {
+  getDomainFromEmail,
+  getSettingsPath,
+  isDefined,
+  isWorkDomain,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';

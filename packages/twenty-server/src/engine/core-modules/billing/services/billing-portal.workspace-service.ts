@@ -3,7 +3,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { assertIsDefinedOrThrow, getDomainFromEmail, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  getDomainFromEmail,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Not, Repository } from 'typeorm';
 
