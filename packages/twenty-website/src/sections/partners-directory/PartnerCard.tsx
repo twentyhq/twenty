@@ -14,7 +14,6 @@ import {
   EASING,
   FONT_WEIGHT,
   fontFamily,
-  fontSize,
   radius,
   REDUCED_MOTION,
   semanticColor,
@@ -76,24 +75,17 @@ const Content = styled.div`
   padding: ${spacing(6)};
 `;
 
+// Half of the 40px logo sits on the band, as on the app cards.
 const Logo = styled.div`
   align-self: flex-start;
+  margin-top: calc(-1 * (${spacing(6)} + ${spacing(5)}));
+  position: relative;
 `;
 
 const Text = styled.div`
   & > * + * {
     margin-top: ${spacing(1.5)};
   }
-`;
-
-// The case-study cards' mono label.
-const Regions = styled.p`
-  color: ${semanticColor.inkMuted};
-  font-family: ${fontFamily('mono')};
-  font-size: ${fontSize(3)};
-  font-weight: ${FONT_WEIGHT.medium};
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 `;
 
 // The home cards' heading (three-cards): headingXs, sans, medium.
@@ -165,7 +157,7 @@ type PartnerCardProps = {
 export function PartnerCard({ partner }: PartnerCardProps) {
   const { i18n } = useLingui();
   const headingId = `partners-cell-${partner.slug}`;
-  const { regionLine, languageNames, languageValue, price } = describePartner(
+  const { languageNames, languageValue, price } = describePartner(
     partner,
     i18n,
   );
@@ -195,7 +187,6 @@ export function PartnerCard({ partner }: PartnerCardProps) {
           />
         </Logo>
         <Text>
-          {regionLine.length > 0 && <Regions>{regionLine}</Regions>}
           <Name id={headingId}>
             <NameLink href={`/partners/profile/${partner.slug}`}>
               {partner.name}

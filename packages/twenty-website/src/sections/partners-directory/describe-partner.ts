@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { formatUsdRate } from '@/partners-marketplace/format-usd-rate';
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
-import { SERVED_GEO_LABELS } from '@/partners-marketplace/served-geo-labels';
 import { SPOKEN_LANGUAGE_LABELS } from '@/partners-marketplace/spoken-language-labels';
 import { titleCaseFallback } from '@/partners-marketplace/title-case-fallback';
 
@@ -25,9 +24,6 @@ export const describePartner = (partner: MarketplacePartner, i18n: I18n) => {
     ]
       .filter(Boolean)
       .join(', '),
-    regionLine: partner.region
-      .map((served) => i18n._(SERVED_GEO_LABELS[served]))
-      .join(' · '),
     languageNames,
     languageValue:
       languageNames.length > 3
