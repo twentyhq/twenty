@@ -2095,12 +2095,18 @@ msgstr ""
 #: src/modules/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionHeaderAddDropdown.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 msgid "Add"
 msgstr ""
 
 #. js-lingui-id: ly4D79
 #: src/modules/ui/input/components/AddSelectOptionDropdownSection.tsx
 msgid "Add \"{optionName}\" to options"
+msgstr ""
+
+#. js-lingui-id: AQVwJ5
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "Add {checkedCount}"
 msgstr ""
 
 #. js-lingui-id: OYMnsg
@@ -2117,6 +2123,11 @@ msgstr ""
 #. js-lingui-id: rUVyfz
 #: src/modules/settings/billing/components/UpdatePaymentMethodModal.tsx
 msgid "Add a card below to update your billing details and retry your payment."
+msgstr ""
+
+#. js-lingui-id: vzJ7AQ
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
+msgid "Add a description"
 msgstr ""
 
 #. js-lingui-id: uXkGAw
@@ -2354,6 +2365,11 @@ msgstr ""
 msgid "Add Custom Provider"
 msgstr ""
 
+#. js-lingui-id: PGPGsL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Add description"
+msgstr ""
+
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Add details for guests"
@@ -2523,6 +2539,12 @@ msgstr ""
 #. js-lingui-id: 7YdkgZ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/AgentOutputSchemaBuilder.tsx
 msgid "Add Output Field"
+msgstr ""
+
+#. js-lingui-id: aY6gdO
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Add participants"
 msgstr ""
 
 #. js-lingui-id: ZqKhbh
@@ -4632,6 +4654,7 @@ msgstr ""
 
 #. js-lingui-id: ojKCLU
 #: src/modules/inbox/components/InboxThreadDetailsDropdown.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 msgid "Assignee"
 msgstr ""
 
@@ -10451,6 +10474,8 @@ msgstr ""
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/mcp-servers/components/SettingsMcpServerToolsTable.tsx
@@ -11324,6 +11349,11 @@ msgstr ""
 #. js-lingui-id: DMIYL8
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Edit data structure and fields"
+msgstr ""
+
+#. js-lingui-id: O32mmL
+#: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
+msgid "Edit description"
 msgstr ""
 
 #. js-lingui-id: ZwR0Vd
@@ -20499,6 +20529,7 @@ msgid "No apps found"
 msgstr ""
 
 #. js-lingui-id: 3bvkPk
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsAssigneeItem.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "No assignee"
 msgstr ""
@@ -20924,6 +20955,11 @@ msgstr ""
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "No members match your search"
+msgstr ""
+
+#. js-lingui-id: 5bqxVl
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
+msgid "No members to add"
 msgstr ""
 
 #. js-lingui-id: IohPnt
@@ -22979,6 +23015,12 @@ msgstr ""
 msgid "Parameters"
 msgstr ""
 
+#. js-lingui-id: MZHPuB
+#: src/modules/side-panel/hooks/useOpenAiChatParticipantsInSidePanel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
+msgid "Participants"
+msgstr ""
+
 #. js-lingui-id: 71zZ31
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
@@ -24322,6 +24364,11 @@ msgstr ""
 #. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1 }, )
 #: src/pages/settings/ai/components/SettingsAiSystemPromptsSection.tsx
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
+msgstr ""
+
+#. js-lingui-id: SIPs3V
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
 msgstr ""
 
 #. js-lingui-id: afMuDE
@@ -26618,6 +26665,7 @@ msgstr ""
 #. js-lingui-id: AaDUlx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
 #: src/modules/inbox/components/InboxDirectMessageMemberPicker.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "Search members"
 msgstr ""
@@ -28485,6 +28533,11 @@ msgstr ""
 msgid "Some log data was dropped to fit the size limit ({0} entries, {1} bytes)."
 msgstr ""
 
+#. js-lingui-id: FUT0ml
+#: src/modules/ai-chat/threads/hooks/useAddParticipantsToAiChatThread.ts
+msgid "Some members could not be added."
+msgstr ""
+
 #. js-lingui-id: XG7UMq
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Some records"
@@ -29980,6 +30033,11 @@ msgstr ""
 msgid "The fields below are now available as variables in the next steps."
 msgstr ""
 
+#. js-lingui-id: UbUlij
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The first value that is set, or nothing when none is."
+msgstr ""
+
 #. js-lingui-id: 21Xjwu
 #: src/pages/settings/legal/SettingsLegalDpaNew.tsx
 msgid "The full agreement with fields resolved for your deployment."
@@ -29988,6 +30046,11 @@ msgstr ""
 #. js-lingui-id: diO3fm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "The icon your workflow trigger will display in the command menu"
+msgstr ""
+
+#. js-lingui-id: Qp6vM+
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The largest of the numbers. Values that are not numbers are ignored."
 msgstr ""
 
 #. js-lingui-id: RYl4Q1
@@ -30072,6 +30135,11 @@ msgstr ""
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
 msgstr ""
 
+#. js-lingui-id: wmIQo4
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The number rounded to a number of decimals."
+msgstr ""
+
 #. js-lingui-id: L97sPr
 #: src/pages/not-found/NotFound.tsx
 msgid "The page you're seeking is either gone or never was. Let's get you back on track"
@@ -30107,6 +30175,11 @@ msgstr ""
 msgid "The role attached to this webhook."
 msgstr ""
 
+#. js-lingui-id: eHwsp0
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The second value when the condition is true, otherwise the third."
+msgstr ""
+
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "the selected object"
@@ -30127,9 +30200,24 @@ msgstr ""
 msgid "The shared email you want to use."
 msgstr ""
 
+#. js-lingui-id: CZF2sj
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The smallest of the numbers. Values that are not numbers are ignored."
+msgstr ""
+
 #. js-lingui-id: XWiOdK
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The start of the unit containing the date, in UTC. Weeks start on Monday."
+msgstr ""
+
+#. js-lingui-id: hdgKJ2
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in lower case."
+msgstr ""
+
+#. js-lingui-id: P/EZTH
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The text in upper case."
 msgstr ""
 
 #. js-lingui-id: V27DQk
@@ -30177,6 +30265,11 @@ msgstr ""
 #. js-lingui-id: S3wM+7
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
 msgid "The value a field had before the update. Empty when the record is created."
+msgstr ""
+
+#. js-lingui-id: cXlUXr
+#: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
+msgid "The values joined as one text. Values that are not set are skipped."
 msgstr ""
 
 #. js-lingui-id: uWikAA
@@ -34118,6 +34211,11 @@ msgstr ""
 msgid "Widget Settings"
 msgstr ""
 
+#. js-lingui-id: 0LuHF2
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Widget visibility rule tree"
+msgstr ""
+
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34503,6 +34601,7 @@ msgstr ""
 
 #. js-lingui-id: wtxjAY
 #: src/modules/settings/event-logs/components/EventLogFilters.tsx
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAddAiChatParticipantsPage.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Workspace members"
@@ -34726,6 +34825,7 @@ msgstr ""
 #: src/modules/ai-chat/messages/components/AiChatMessageReplyQuote.tsx
 #: src/modules/ai-chat/utils/getAiChatSenderLabel.ts
 #: src/modules/object-record/record-sharing/utils/getRecordShareLabel.ts
+#: src/modules/side-panel/pages/ai-chat-participants/components/SidePanelAiChatParticipantsPage.tsx
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
 msgid "You"
 msgstr ""

@@ -762,6 +762,16 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Un membro dello spazio di lavoro"
 
+#. js-lingui-id: EAIj51
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a field and at least one value"
+msgstr ""
+
+#. js-lingui-id: mZ5k8L
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a workspace member relation"
+msgstr ""
+
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
@@ -3154,6 +3164,11 @@ msgstr "Scegli un tipo di attività della cronologia esistente da sostituire"
 msgid "Choose one person or one role to share with."
 msgstr "Scegli una persona o un ruolo con cui condividere."
 
+#. js-lingui-id: 8+4T+u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field and the values to keep on the related records"
+msgstr ""
+
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
@@ -3163,6 +3178,11 @@ msgstr "Scegli il campo da leggere nei record correlati"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
 msgstr "Scegli l'oggetto che emette questo tipo di attività della cronologia"
+
+#. js-lingui-id: fr9dvq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the relation of the workspace member to filter"
+msgstr ""
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5693,6 +5713,11 @@ msgstr "Il campo \"{workspaceMemberFieldName}\" non è un campo dell'oggetto wor
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
 msgstr "Il campo \"{workspaceMemberRelationFieldName}\" non è una relazione uno-a-molti dell'oggetto workspaceMember"
 
+#. js-lingui-id: yfFA+h
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
+msgstr ""
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6141,6 +6166,11 @@ msgstr "Il filtro su \"{0}\" utilizza opzioni {invalidValuesText} che non esisto
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "L'operando del filtro non è supportato per questo tipo di campo"
+
+#. js-lingui-id: twPawb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Filter the related records on one of their select, text or boolean fields"
+msgstr ""
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10496,6 +10526,16 @@ msgstr "Fase dell'opportunità"
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
 msgstr "L'opzione \"{optionLabel}\" è inclusa nel campo e non può essere rimossa. Disattivarla invece."
 
+#. js-lingui-id: xTWr3W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
+msgstr ""
+
+#. js-lingui-id: cCRBHe
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" has an invalid description"
+msgstr ""
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10805,6 +10845,12 @@ msgstr "Gruppo filtro vista principale non trovato"
 #: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId e folderId devono corrispondere. folderId è deprecato, usa parentId."
+
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "Partecipanti"
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -15641,6 +15687,11 @@ msgstr "Questa autorizzazione è disabilitata sull'oggetto e non può essere con
 msgid "This plan is not available."
 msgstr "Questo piano non è disponibile."
 
+#. js-lingui-id: oGIo+g
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "This preset filter is not available on this object"
+msgstr "Questo filtro predefinito non è disponibile su questo oggetto"
+
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
@@ -17423,6 +17474,11 @@ msgstr "Vista non trovata dopo l'upsert"
 msgid "View not found for widget"
 msgstr "Vista non trovata per il widget"
 
+#. js-lingui-id: s4TNbU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "View preset filter must belong to the view object"
+msgstr "Il filtro predefinito della vista deve appartenere all'oggetto della vista"
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -18323,6 +18379,12 @@ msgstr "Campi della pagina del record del membro dello spazio di lavoro"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
 msgstr "Metadati del campo di relazione del membro dell'area di lavoro non trovati"
+
+#. js-lingui-id: L8uUWk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation filter field metadata not found"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

@@ -762,6 +762,16 @@ msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Et arbeidsområdemedlem"
 
+#. js-lingui-id: EAIj51
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a field and at least one value"
+msgstr ""
+
+#. js-lingui-id: mZ5k8L
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "A workspace member relation filter needs a workspace member relation"
+msgstr ""
+
 #. js-lingui-id: /WlOrK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "A workspace member relation needs the field to read on its related records"
@@ -3154,6 +3164,11 @@ msgstr "Velg en eksisterende tidslinjeaktivitetstype som skal overstyres."
 msgid "Choose one person or one role to share with."
 msgstr "Velg én person eller én rolle å dele med."
 
+#. js-lingui-id: 8+4T+u
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the field and the values to keep on the related records"
+msgstr ""
+
 #. js-lingui-id: IkeRn2
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Choose the field to read on the related records"
@@ -3163,6 +3178,11 @@ msgstr "Velg feltet som skal leses på de relaterte postene"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
 msgid "Choose the object that emits this timeline activity type"
 msgstr "Velg objektet som utsteder denne tidslinjeaktivitetstypen."
+
+#. js-lingui-id: fr9dvq
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Choose the relation of the workspace member to filter"
+msgstr ""
 
 #. js-lingui-id: PDwfT5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -5693,6 +5713,11 @@ msgstr "Feltet \"{workspaceMemberFieldName}\" er ikke et felt i workspaceMember-
 msgid "Field \"{workspaceMemberRelationFieldName}\" is not a one-to-many relation of the workspaceMember object"
 msgstr "Feltet \"{workspaceMemberRelationFieldName}\" er ikke en én-til-mange-relasjon for workspaceMember-objektet"
 
+#. js-lingui-id: yfFA+h
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{workspaceMemberRelationFilterFieldName}\" is not a select, text or boolean field of the related records"
+msgstr ""
+
 #. js-lingui-id: CKPTLC
 #. placeholder {0}: query.objectName
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
@@ -6141,6 +6166,11 @@ msgstr "Filtrering på \"{0}\" bruker alternativ(er) {invalidValuesText} som ikk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "Filteroperand støttes ikke for denne felttypen"
+
+#. js-lingui-id: twPawb
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Filter the related records on one of their select, text or boolean fields"
+msgstr ""
 
 #. js-lingui-id: dzteua
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
@@ -10496,6 +10526,16 @@ msgstr "Mulighetens fase"
 msgid "Option \"{optionLabel}\" comes with the field and cannot be removed. Deactivate it instead."
 msgstr "Alternativet \"{optionLabel}\" følger med feltet og kan ikke fjernes. Deaktiver det i stedet."
 
+#. js-lingui-id: xTWr3W
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" description exceeds {OPTION_DESCRIPTION_MAX_CHAR_LENGTH} characters"
+msgstr ""
+
+#. js-lingui-id: cCRBHe
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-description.util.ts
+msgid "Option \"{optionLabel}\" has an invalid description"
+msgstr ""
+
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
 msgid "Option \"{optionLabel}\" has an unsupported color"
@@ -10805,6 +10845,12 @@ msgstr "Foreldrevisningsfiltergruppe ble ikke funnet"
 #: src/engine/metadata-modules/navigation-menu-item/utils/resolve-navigation-menu-item-parent-id-alias.util.ts
 msgid "parentId and folderId must match. folderId is deprecated, use parentId."
 msgstr "parentId og folderId må samsvare. folderId er foreldet, bruk parentId."
+
+#. js-lingui-id: EBFc2s
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgctxt "commandMenuItem.label"
+msgid "Participants"
+msgstr "Deltakere"
 
 #. js-lingui-id: vTA2Ms
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
@@ -15641,6 +15687,11 @@ msgstr "Denne tillatelsen er deaktivert på objektet og kan ikke gis"
 msgid "This plan is not available."
 msgstr "Denne planen er ikke tilgjengelig."
 
+#. js-lingui-id: oGIo+g
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "This preset filter is not available on this object"
+msgstr "Dette forhåndsinnstilte filteret er ikke tilgjengelig på dette objektet"
+
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
@@ -17423,6 +17474,11 @@ msgstr "Visning ble ikke funnet etter upsert"
 msgid "View not found for widget"
 msgstr "Visning ble ikke funnet for widgeten"
 
+#. js-lingui-id: s4TNbU
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-preset-filter.util.ts
+msgid "View preset filter must belong to the view object"
+msgstr "Forhåndsinnstilt visningsfilter må tilhøre visningsobjektet"
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -18323,6 +18379,12 @@ msgstr "Felt på oppføringssiden for arbeidsområdemedlem"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Workspace member relation field metadata not found"
 msgstr "Metadata for relasjonsfelt for arbeidsområdemedlem ble ikke funnet"
+
+#. js-lingui-id: L8uUWk
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Workspace member relation filter field metadata not found"
+msgstr ""
 
 #. js-lingui-id: 62xYnj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts

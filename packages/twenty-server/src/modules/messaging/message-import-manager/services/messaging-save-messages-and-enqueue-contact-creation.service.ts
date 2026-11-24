@@ -7,7 +7,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isWorkEmail } from 'twenty-shared/utils';
 import { Any, In, IsNull } from 'typeorm';
 
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -37,7 +37,6 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { type PersonHandleField } from 'src/modules/match-participant/person-handle-field/types/person-handle-field.type';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {

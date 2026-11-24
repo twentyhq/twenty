@@ -156,6 +156,7 @@ export const createStandardViewFlatMetadata = <
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
     anyFieldFilterValue: null,
+    presetFilter: null,
     isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,

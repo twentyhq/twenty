@@ -1671,7 +1671,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -3592,6 +3592,8 @@ export interface RowLevelPermissionPredicate {
     value?: Scalars['JSON']
     workspaceMemberFieldMetadataId?: Scalars['String']
     workspaceMemberRelationFieldMetadataId?: Scalars['String']
+    workspaceMemberRelationFilterFieldMetadataId?: Scalars['String']
+    workspaceMemberRelationFilterValues?: Scalars['String'][]
     workspaceMemberSubFieldName?: Scalars['String']
     __typename: 'RowLevelPermissionPredicate'
 }
@@ -4256,6 +4258,7 @@ export interface View {
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn: ViewOpenRecordIn
     position: Scalars['Float']
+    presetFilter?: ViewPresetFilter
     shouldDisplayGroupsAsTabs?: Scalars['Boolean']
     shouldHideEmptyGroups: Scalars['Boolean']
     type: ViewType
@@ -4408,6 +4411,8 @@ export interface ViewGroup {
 export type ViewKey = 'INDEX'
 
 export type ViewOpenRecordIn = 'RECORD_PAGE' | 'SIDE_PANEL'
+
+export type ViewPresetFilter = 'INBOX_CHANNEL_DONE' | 'INBOX_CHANNEL_OPEN' | 'INBOX_CHANNEL_SNOOZED' | 'INBOX_DONE' | 'INBOX_MENTIONS' | 'INBOX_OPEN' | 'INBOX_SNOOZED'
 
 export interface ViewSort {
     createdAt: Scalars['DateTime']
@@ -6269,7 +6274,7 @@ export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scala
 
 export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),presetFilter?: (ViewPresetFilter | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
@@ -8619,6 +8624,8 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     value?: boolean | number
     workspaceMemberFieldMetadataId?: boolean | number
     workspaceMemberRelationFieldMetadataId?: boolean | number
+    workspaceMemberRelationFilterFieldMetadataId?: boolean | number
+    workspaceMemberRelationFilterValues?: boolean | number
     workspaceMemberSubFieldName?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8656,7 +8663,7 @@ export interface RowLevelPermissionRuleInput {canCreateRecords?: (Scalars['Boole
 
 export interface RowLevelPermissionRulePredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,position?: (Scalars['Float'] | null),predicateGroups?: (RowLevelPermissionRulePredicateGroupInput[] | null),predicates?: (RowLevelPermissionRulePredicateInput[] | null)}
 
-export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberRelationFieldMetadataId?: (Scalars['UUID'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
+export interface RowLevelPermissionRulePredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,position?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberRelationFieldMetadataId?: (Scalars['UUID'] | null),workspaceMemberRelationFilterFieldMetadataId?: (Scalars['UUID'] | null),workspaceMemberRelationFilterValues?: (Scalars['String'][] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RowLevelRecordsPermissionsGenqlSelection{
     canCreateRecords?: boolean | number
@@ -9624,6 +9631,7 @@ export interface ViewGenqlSelection{
     /** @deprecated Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
     openRecordIn?: boolean | number
     position?: boolean | number
+    presetFilter?: boolean | number
     shouldDisplayGroupsAsTabs?: boolean | number
     shouldHideEmptyGroups?: boolean | number
     type?: boolean | number
@@ -13514,7 +13522,8 @@ export const enumFeatureFlagKey = {
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
-   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED: 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' as const
+   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED: 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' as const,
+   IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED: 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED' as const
 }
 
 export const enumFieldDisplayMode = {
@@ -14014,6 +14023,16 @@ export const enumViewKey = {
 export const enumViewOpenRecordIn = {
    RECORD_PAGE: 'RECORD_PAGE' as const,
    SIDE_PANEL: 'SIDE_PANEL' as const
+}
+
+export const enumViewPresetFilter = {
+   INBOX_CHANNEL_DONE: 'INBOX_CHANNEL_DONE' as const,
+   INBOX_CHANNEL_OPEN: 'INBOX_CHANNEL_OPEN' as const,
+   INBOX_CHANNEL_SNOOZED: 'INBOX_CHANNEL_SNOOZED' as const,
+   INBOX_DONE: 'INBOX_DONE' as const,
+   INBOX_MENTIONS: 'INBOX_MENTIONS' as const,
+   INBOX_OPEN: 'INBOX_OPEN' as const,
+   INBOX_SNOOZED: 'INBOX_SNOOZED' as const
 }
 
 export const enumViewSortDirection = {

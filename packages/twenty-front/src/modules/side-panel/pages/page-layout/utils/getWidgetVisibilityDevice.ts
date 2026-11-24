@@ -6,16 +6,24 @@ import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-av
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const getWidgetVisibilityDevice = (
+type GetWidgetVisibilityDeviceParams = {
   widget:
     | Pick<
         PageLayoutWidget,
         'conditionalAvailabilityExpression' | 'conditionalAvailability'
       >
-    | undefined,
-): WidgetVisibilityDevice => {
-  // TODO(@neo773): the legacy text rule is read for widgets not converted yet; drop these three checks one release after stored rules are converted to trees
-  const legacyExpression = widget?.conditionalAvailabilityExpression;
+    | undefined;
+  isWidgetConditionalAvailabilityEnabled: boolean;
+};
+
+export const getWidgetVisibilityDevice = ({
+  widget,
+  isWidgetConditionalAvailabilityEnabled,
+}: GetWidgetVisibilityDeviceParams): WidgetVisibilityDevice => {
+  // TODO(@neo773): a workspace without the flag still reads its legacy text rule; drop these three checks with the two legacy rule columns
+  const legacyExpression = isWidgetConditionalAvailabilityEnabled
+    ? undefined
+    : widget?.conditionalAvailabilityExpression;
 
   if (legacyExpression === EXPRESSION_DEVICE_MOBILE) {
     return 'MOBILE';

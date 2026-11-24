@@ -1,6 +1,8 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import {
+  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
@@ -121,5 +123,48 @@ describe('filterVisibleWidgets', () => {
     });
 
     expect(widgets).toHaveLength(originalLength);
+  });
+
+  describe('when the workspace reads the conditional availability tree only', () => {
+    const context = {
+      device: 'DESKTOP' as const,
+      selectedRecords: [],
+      featureFlags: {
+        [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: true,
+      },
+    };
+
+    it('should hide a widget whose tree does not match', () => {
+      const widgets = [
+        createMockWidget('widget-1'),
+        {
+          ...createMockWidget('widget-2'),
+          conditionalAvailability: buildDeviceConditionalAvailability('MOBILE'),
+        },
+      ];
+
+      const result = filterVisibleWidgets({ widgets, context });
+
+      expect(result.map((widget) => widget.id)).toEqual(['widget-1']);
+    });
+
+    it('should ignore the legacy rules of a widget', () => {
+      const widgets = [
+        createMockWidget('widget-1', {
+          and: [{ '===': [{ var: 'device' }, 'MOBILE'] }],
+        }),
+        {
+          ...createMockWidget('widget-2'),
+          conditionalAvailabilityExpression: 'device == "MOBILE"',
+        },
+      ];
+
+      const result = filterVisibleWidgets({ widgets, context });
+
+      expect(result.map((widget) => widget.id)).toEqual([
+        'widget-1',
+        'widget-2',
+      ]);
+    });
   });
 });

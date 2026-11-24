@@ -2041,6 +2041,7 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
@@ -2550,6 +2551,7 @@ enum FeatureFlagKey {
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED
 }
 
 type Field {
@@ -4814,6 +4816,8 @@ type RowLevelPermissionPredicate {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: String
+  workspaceMemberRelationFilterFieldMetadataId: String
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -4894,6 +4898,8 @@ input RowLevelPermissionRulePredicateInput {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberRelationFilterFieldMetadataId: UUID
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -6476,6 +6482,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
@@ -6674,6 +6681,16 @@ enum ViewKey {
 enum ViewOpenRecordIn {
   RECORD_PAGE
   SIDE_PANEL
+}
+
+enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE
+  INBOX_CHANNEL_OPEN
+  INBOX_CHANNEL_SNOOZED
+  INBOX_DONE
+  INBOX_MENTIONS
+  INBOX_OPEN
+  INBOX_SNOOZED
 }
 
 type ViewSort {
