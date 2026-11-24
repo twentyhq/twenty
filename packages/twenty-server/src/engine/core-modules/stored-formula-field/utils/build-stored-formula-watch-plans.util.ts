@@ -33,6 +33,29 @@ export const buildStoredFormulaWatchPlans = ({
     string,
     Set<string>
   > = {};
+  const createRelatedRecordWatchPlan = ({
+    planKey,
+    relatedObjectMetadataId,
+    objectMetadataId,
+    joinColumnName,
+  }: {
+    planKey: string;
+    relatedObjectMetadataId: string;
+    objectMetadataId: string;
+    joinColumnName: string;
+  }) => {
+    const plan = {
+      objectMetadataId,
+      joinColumnName,
+      watchedFieldNames: new Set([joinColumnName]),
+    };
+
+    relatedRecordWatchPlanByPlanKey.set(planKey, plan);
+    (relatedRecordWatchPlansByObjectMetadataId[relatedObjectMetadataId] ??=
+      []).push(plan);
+
+    return plan;
+  };
   const findBoundFlatFieldMetadata = (universalIdentifier: string) =>
     findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatFieldMetadataMaps,
@@ -78,19 +101,14 @@ export const buildStoredFormulaWatchPlans = ({
 
       const { relatedFlatObjectMetadata, joinColumnName } = aggregatedRelation;
       const planKey = `${relatedFlatObjectMetadata.id}:${objectMetadataId}:${joinColumnName}`;
-      let plan = relatedRecordWatchPlanByPlanKey.get(planKey);
-
-      if (!isDefined(plan)) {
-        plan = {
+      const plan =
+        relatedRecordWatchPlanByPlanKey.get(planKey) ??
+        createRelatedRecordWatchPlan({
+          planKey,
+          relatedObjectMetadataId: relatedFlatObjectMetadata.id,
           objectMetadataId,
           joinColumnName,
-          watchedFieldNames: new Set([joinColumnName]),
-        };
-        relatedRecordWatchPlanByPlanKey.set(planKey, plan);
-        (relatedRecordWatchPlansByObjectMetadataId[
-          relatedFlatObjectMetadata.id
-        ] ??= []).push(plan);
-      }
+        });
 
       if (isDefined(memberSegment) && isDefined(boundFieldName)) {
         plan.watchedFieldNames.add(boundFieldName);

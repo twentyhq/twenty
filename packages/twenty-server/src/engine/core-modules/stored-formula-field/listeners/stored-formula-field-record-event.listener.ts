@@ -36,7 +36,7 @@ export class StoredFormulaFieldRecordEventListener {
     await this.markRecordsDirty({
       batch,
       isRecordUpdate: false,
-      includeOwnRecords: true,
+      shouldIncludeOwnRecords: true,
     });
   }
 
@@ -46,7 +46,7 @@ export class StoredFormulaFieldRecordEventListener {
     await this.markRecordsDirty({
       batch,
       isRecordUpdate: false,
-      includeOwnRecords: false,
+      shouldIncludeOwnRecords: false,
     });
   }
 
@@ -55,18 +55,18 @@ export class StoredFormulaFieldRecordEventListener {
     await this.markRecordsDirty({
       batch,
       isRecordUpdate: true,
-      includeOwnRecords: true,
+      shouldIncludeOwnRecords: true,
     });
   }
 
   private async markRecordsDirty({
     batch,
     isRecordUpdate,
-    includeOwnRecords,
+    shouldIncludeOwnRecords,
   }: {
     batch: RecordEventBatch;
     isRecordUpdate: boolean;
-    includeOwnRecords: boolean;
+    shouldIncludeOwnRecords: boolean;
   }): Promise<void> {
     const watchPlans = getStoredFormulaWatchPlans(
       await this.workspaceCacheService.getOrRecompute(batch.workspaceId, [
@@ -77,7 +77,7 @@ export class StoredFormulaFieldRecordEventListener {
     const markDirtyParameters = { ...batch, watchPlans, isRecordUpdate };
 
     await Promise.all([
-      includeOwnRecords
+      shouldIncludeOwnRecords
         ? this.markOwnRecordsDirty(markDirtyParameters)
         : undefined,
       this.markRelatedRecordsDirty(markDirtyParameters),
