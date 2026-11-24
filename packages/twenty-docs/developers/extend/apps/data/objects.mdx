@@ -136,6 +136,7 @@ The full set of `FieldType` values, exported from `twenty-sdk/define`:
 | Composite               | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS` (`universalSettings.type`: `'url'` (default) / `'domain'` — a domain field stores the bare host, so `https://www.acme.com/careers` is written as `acme.com`, and a value that is not a host is rejected), `CURRENCY`, `ACTOR`, `FILES` |
 | Identifiers & relations | `UUID`, `RELATION`, `MORPH_RELATION` (see [Relations](/developers/extend/apps/data/relations))                                                                                                                                                                                             |
 | System                  | `TS_VECTOR` (full-text search vector, managed by the server)                                                                                                                                                                                                                               |
+| Computed                | `ROLLUP` (count, sum, average, min or max of the records behind a one-to-many relation, computed by the server and read-only)                                                                                                                                                              |
 
 Composite types store multiple sub-fields (e.g. `FULL_NAME` = first + last name; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` and `MULTI_SELECT` require an `options` array as in the example above.
 
