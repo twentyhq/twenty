@@ -18,6 +18,7 @@ const StyledContainer = styled.div`
 export const TextArea = ({
   textAreaId,
   label,
+  description,
   disabled,
   height,
   placeholder,
@@ -82,6 +83,7 @@ export const TextArea = ({
           height,
         }}
       />
+      {description && <Field.Description>{description}</Field.Description>}
     </Field.Root>
   );
 };

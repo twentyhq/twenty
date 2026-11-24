@@ -40,10 +40,10 @@ const agent: CoreAgent = {
   updatedAt: '2026-01-01T00:00:00.000Z',
 };
 
-const renderForm = () => {
+const renderForm = (agentOverrides: Partial<CoreAgent> = {}) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({ apolloMocks: [] });
 
-  return render(<CoreAgentTestForm agent={agent} />, {
+  return render(<CoreAgentTestForm agent={{ ...agent, ...agentOverrides }} />, {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Wrapper>
         <I18nProvider i18n={i18n}>{children}</I18nProvider>
@@ -74,4 +74,25 @@ it('runs the agent with the typed message', async () => {
   expect(mockTestCoreAgent).toHaveBeenCalledWith(
     'Which workflows ran this week?',
   );
+});
+
+it('explains how a scheduled agent normally runs', () => {
+  renderForm({
+    triggers: [
+      {
+        id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
+        type: 'CRON',
+        isActive: true,
+        instructions: 'Send the weekly digest',
+        settings: { pattern: '0 9 * * 1' },
+      },
+    ],
+  });
+
+  expect(
+    screen.getByText(/This agent normally runs .*, without a message/),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByPlaceholderText('Do your scheduled task now'),
+  ).toBeInTheDocument();
 });
