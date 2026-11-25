@@ -1,8 +1,7 @@
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import { type WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
-import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
-import { getCallerUserWorkspaceId } from 'src/engine/permissions/metadata-permissions/utils/get-caller-user-workspace-id.util';
+import { canCallerChangePrivatableEntityPrivacy } from 'src/engine/permissions/metadata-permissions/utils/can-caller-change-privatable-entity-privacy.util';
 
 export const fromFlatWorkflowToCoreWorkflowDto = ({
   flatWorkflow,
@@ -20,9 +19,8 @@ export const fromFlatWorkflowToCoreWorkflowDto = ({
   workspaceWorkflowId: flatWorkflow.workspaceWorkflowId,
   isSystem: flatWorkflow.isSystem,
   isPrivate: flatWorkflow.isPrivate,
-  canChangeVisibility: canChangeCoreWorkflowVisibility({
-    createdByUserWorkspaceId: flatWorkflow.createdByUserWorkspaceId,
-    userWorkspaceId: getCallerUserWorkspaceId(),
+  canChangeVisibility: canCallerChangePrivatableEntityPrivacy({
+    privatableEntity: flatWorkflow,
   }),
   createdAt: flatWorkflow.createdAt,
   updatedAt: flatWorkflow.updatedAt,

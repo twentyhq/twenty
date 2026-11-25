@@ -15,14 +15,19 @@ const PRIVACY_GQL_FIELDS = `
   visibility
 `;
 
-const readViewIsPrivate = async (viewId: string): Promise<boolean> => {
+const readViewPrivacy = async (
+  viewId: string,
+): Promise<{ isPrivate: boolean; createdByUserWorkspaceId: string | null }> => {
   const [view] = await globalThis.testDataSource.query(
-    `SELECT "isPrivate" FROM core."view" WHERE id = $1`,
+    `SELECT "isPrivate", "createdByUserWorkspaceId" FROM core."view" WHERE id = $1`,
     [viewId],
   );
 
-  return view.isPrivate;
+  return view;
 };
+
+const readViewIsPrivate = async (viewId: string): Promise<boolean> =>
+  (await readViewPrivacy(viewId)).isPrivate;
 
 describe('view isPrivate input (integration)', () => {
   let companyObjectMetadataId: string;
@@ -117,5 +122,41 @@ describe('view isPrivate input (integration)', () => {
       visibility: ViewVisibility.WORKSPACE,
     });
     expect(await readViewIsPrivate(view.id)).toBe(false);
+  });
+
+  it('should refuse to make a shared view private for a member who did not create it', async () => {
+    const view = await createView({});
+    const privacyBefore = await readViewPrivacy(view.id);
+
+    expect(privacyBefore.createdByUserWorkspaceId).not.toBeNull();
+
+    const { errors } = await updateOneView({
+      viewId: view.id,
+      input: { id: view.id, isPrivate: true },
+      gqlFields: PRIVACY_GQL_FIELDS,
+      expectToFail: true,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    });
+
+    expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+    expect(await readViewPrivacy(view.id)).toEqual(privacyBefore);
+  });
+
+  it('should let the creator make their shared view private', async () => {
+    const view = await createView({});
+    const { createdByUserWorkspaceId } = await readViewPrivacy(view.id);
+
+    const { errors } = await updateOneView({
+      viewId: view.id,
+      input: { id: view.id, isPrivate: true },
+      gqlFields: PRIVACY_GQL_FIELDS,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(await readViewPrivacy(view.id)).toEqual({
+      isPrivate: true,
+      createdByUserWorkspaceId,
+    });
   });
 });
