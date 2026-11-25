@@ -13,7 +13,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { computeTwentyStandardApplicationAllFlatEntityMapsWithLegacyAgentChatNames } from 'src/database/commands/upgrade-version-command/2-42/utils/compute-twenty-standard-application-all-flat-entity-maps-with-legacy-agent-chat-names.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -73,11 +73,13 @@ export class AddAgentMessageReactionObjectCommand extends ProvisionedWorkspaceCo
         { workspaceId },
       );
     const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
+      computeTwentyStandardApplicationAllFlatEntityMapsWithLegacyAgentChatNames(
+        {
+          now: new Date().toISOString(),
+          workspaceId,
+          twentyStandardApplicationId: twentyStandardFlatApplication.id,
+        },
+      );
 
     const objectsToCreate =
       getStandardFlatEntitiesToCreateOrThrow<FlatObjectMetadata>({
