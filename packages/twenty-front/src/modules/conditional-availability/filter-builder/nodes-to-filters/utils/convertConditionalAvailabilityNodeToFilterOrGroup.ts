@@ -1,7 +1,7 @@
-import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
-import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
-import { convertConditionalAvailabilityComparisonNodeToFilter } from '@/conditional-availability/utils/convertConditionalAvailabilityComparisonNodeToFilter';
-import { mergeConditionalAvailabilityFilters } from '@/conditional-availability/utils/mergeConditionalAvailabilityFilters';
+import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
+import { convertConditionalAvailabilityComparisonNodeToFilter } from '@/conditional-availability/filter-builder/nodes-to-filters/utils/convertConditionalAvailabilityComparisonNodeToFilter';
+import { mergeConditionalAvailabilityFilters } from '@/conditional-availability/filter-builder/nodes-to-filters/utils/mergeConditionalAvailabilityFilters';
 import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { v4 } from 'uuid';

@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilter } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilter';
 import { type ConditionalEvaluationLogicalOperator } from 'twenty-shared/conditional-evaluation';
 
 export type ConditionalAvailabilityFilterGroup = {

@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/types/ConditionalAvailabilityFilterVariable';
+import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterVariable';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 export const getConditionalAvailabilityFilterVariablePath = ({
