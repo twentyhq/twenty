@@ -1,6 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/types/ConditionalAvailabilityCurrentUserContext';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ConditionalAvailabilityCurrentUserContext } from 'twenty-shared/conditional-availability';
 
 export const buildConditionalAvailabilityCurrentUserContext = ({
   featureFlags,

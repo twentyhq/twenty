@@ -1,7 +1,6 @@
-import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
 import { convertConditionalAvailabilityNodeToFilterOrGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToFilterOrGroup';
-import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
+import { validateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/validateConditionalAvailabilityFilterGroup';
 import {
   type ConditionalAvailabilityMetadataName,
   type ConditionalAvailabilityNode,
@@ -11,23 +10,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-export const getConditionalAvailabilityEditorStateFromNode = ({
+export const convertConditionalAvailabilityNodeToFilterGroup = ({
   node,
   metadataName,
 }: {
-  node: ConditionalAvailabilityNode | null;
+  node: ConditionalAvailabilityNode;
   metadataName: ConditionalAvailabilityMetadataName;
-}): ConditionalAvailabilityEditorState => {
-  if (!isDefined(node)) {
-    return { mode: 'everyone' };
-  }
-
+}): ConditionalAvailabilityFilterGroup | null => {
   const filterOrGroup = convertConditionalAvailabilityNodeToFilterOrGroup({
     node,
   });
 
   if (!isDefined(filterOrGroup)) {
-    return { mode: 'unsupportedRule' };
+    return null;
   }
 
   const filterGroupAroundSingleFilter: ConditionalAvailabilityFilterGroup = {
@@ -47,20 +42,16 @@ export const getConditionalAvailabilityEditorStateFromNode = ({
       child.children.some((groupChild) => groupChild.type === 'filterGroup'),
   );
 
-  const editorState: ConditionalAvailabilityEditorState = {
-    mode: 'customRule',
+  const filterGroupValidation = validateConditionalAvailabilityFilterGroup({
     filterGroup,
-  };
-  const editorStateValidation = validateConditionalAvailabilityEditorState({
-    editorState,
     metadataName,
   });
 
   const isStoredNodeWrittenBackUnchanged =
-    editorStateValidation.status === 'valid' &&
-    isDeeplyEqual(editorStateValidation.node, node);
+    filterGroupValidation.isValid &&
+    isDeeplyEqual(filterGroupValidation.node, node);
 
   return !hasGroupInsideGroup && isStoredNodeWrittenBackUnchanged
-    ? editorState
-    : { mode: 'unsupportedRule' };
+    ? filterGroup
+    : null;
 };

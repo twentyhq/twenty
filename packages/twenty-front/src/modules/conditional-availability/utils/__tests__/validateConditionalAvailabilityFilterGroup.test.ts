@@ -3,7 +3,7 @@ import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availabil
 import { removeConditionalAvailabilityFiltersOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityFiltersOrGroups';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/utils/updateConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterGroup';
-import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
+import { validateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/validateConditionalAvailabilityFilterGroup';
 import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
@@ -47,33 +47,15 @@ const FILTER_GROUP: ConditionalAvailabilityFilterGroup = {
 };
 
 const validateFilterGroup = (filterGroup: ConditionalAvailabilityFilterGroup) =>
-  validateConditionalAvailabilityEditorState({
-    editorState: { mode: 'customRule', filterGroup },
+  validateConditionalAvailabilityFilterGroup({
+    filterGroup,
     metadataName: 'pageLayoutWidget',
   });
 
-describe('validateConditionalAvailabilityEditorState', () => {
-  it('should return no node for everyone', () => {
-    expect(
-      validateConditionalAvailabilityEditorState({
-        editorState: { mode: 'everyone' },
-        metadataName: 'pageLayoutWidget',
-      }),
-    ).toEqual({ status: 'valid', node: null });
-  });
-
-  it('should refuse a rule the builder has no filters for', () => {
-    expect(
-      validateConditionalAvailabilityEditorState({
-        editorState: { mode: 'unsupportedRule' },
-        metadataName: 'pageLayoutWidget',
-      }),
-    ).toEqual({ status: 'invalid', reason: 'unsupportedRule' });
-  });
-
+describe('validateConditionalAvailabilityFilterGroup', () => {
   it('should return no node when no filter has a value', () => {
     expect(validateFilterGroup({ ...FILTER_GROUP, children: [] })).toEqual({
-      status: 'valid',
+      isValid: true,
       node: null,
     });
 
@@ -82,7 +64,7 @@ describe('validateConditionalAvailabilityEditorState', () => {
         ...FILTER_GROUP,
         children: [DEVICE_FILTER_WITHOUT_VALUE],
       }),
-    ).toEqual({ status: 'valid', node: null });
+    ).toEqual({ isValid: true, node: null });
   });
 
   it('should refuse a filter holding the same value twice', () => {
@@ -99,12 +81,12 @@ describe('validateConditionalAvailabilityEditorState', () => {
           },
         ],
       }),
-    ).toEqual({ status: 'invalid', reason: 'invalidFilters' });
+    ).toEqual({ isValid: false, reason: 'invalidFilters' });
   });
 
   it('should skip a filter without value, and write it once it has one', () => {
     expect(validateFilterGroup(FILTER_GROUP)).toEqual({
-      status: 'valid',
+      isValid: true,
       node: ROLE_NODE,
     });
 
@@ -115,7 +97,7 @@ describe('validateConditionalAvailabilityEditorState', () => {
     });
 
     expect(validateFilterGroup(filterGroupWithMobileDevice)).toEqual({
-      status: 'valid',
+      isValid: true,
       node: {
         type: 'GROUP',
         logicalOperator: 'AND',
@@ -134,7 +116,7 @@ describe('validateConditionalAvailabilityEditorState', () => {
 
     expect(filterGroupWithoutDeviceFilter.children).toEqual([ROLE_FILTER]);
     expect(validateFilterGroup(filterGroupWithoutDeviceFilter)).toEqual({
-      status: 'valid',
+      isValid: true,
       node: ROLE_NODE,
     });
   });
@@ -154,7 +136,7 @@ describe('validateConditionalAvailabilityEditorState', () => {
     });
 
     expect(validateFilterGroup(filterGroupJoinedWithOr)).toEqual({
-      status: 'valid',
+      isValid: true,
       node: {
         type: 'GROUP',
         logicalOperator: 'OR',

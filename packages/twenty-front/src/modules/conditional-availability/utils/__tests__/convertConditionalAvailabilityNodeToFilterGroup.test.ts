@@ -1,5 +1,5 @@
 import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
-import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
+import { convertConditionalAvailabilityNodeToFilterGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToFilterGroup';
 import {
   buildDeviceConditionalAvailability,
   type ConditionalAvailabilityLogicalOperator,
@@ -52,16 +52,14 @@ const workspaceMemberIsNot = (workspaceMemberId: string) =>
 
 const DEVICE_IS_MOBILE = buildDeviceConditionalAvailability('MOBILE');
 
-const getEditorState = (node: ConditionalAvailabilityNode | null) =>
-  getConditionalAvailabilityEditorStateFromNode({
+const convertToFilterGroup = (node: ConditionalAvailabilityNode) =>
+  convertConditionalAvailabilityNodeToFilterGroup({
     node,
     metadataName: 'pageLayoutWidget',
   });
 
 const getFilterGroupOrThrow = (node: ConditionalAvailabilityNode) => {
-  const editorState = getEditorState(node);
-  const filterGroup =
-    editorState.mode === 'customRule' ? editorState.filterGroup : undefined;
+  const filterGroup = convertToFilterGroup(node);
 
   assertIsDefinedOrThrow(filterGroup);
 
@@ -74,11 +72,7 @@ const getFilterGroupOrThrow = (node: ConditionalAvailabilityNode) => {
   return filterGroup;
 };
 
-describe('getConditionalAvailabilityEditorStateFromNode', () => {
-  it('should read no rule as everyone', () => {
-    expect(getEditorState(null)).toEqual({ mode: 'everyone' });
-  });
-
+describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
   it('should read a chain of roles as one filter and a device as another', () => {
     const filterGroup = getFilterGroupOrThrow(
       group('AND', [
@@ -246,6 +240,6 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
       }),
     },
   ])('should not read $title as filters', ({ node }) => {
-    expect(getEditorState(node)).toEqual({ mode: 'unsupportedRule' });
+    expect(convertToFilterGroup(node)).toBeNull();
   });
 });

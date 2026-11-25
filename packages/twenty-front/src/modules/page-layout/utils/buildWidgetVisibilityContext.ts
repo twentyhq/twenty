@@ -1,5 +1,5 @@
+import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/types/ConditionalAvailabilityCurrentUserContext';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
-import { type ConditionalAvailabilityCurrentUserContext } from 'twenty-shared/conditional-availability';
 import { isDefined } from 'twenty-shared/utils';
 
 type BuildWidgetVisibilityContextParams = {
