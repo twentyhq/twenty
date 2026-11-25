@@ -1989,11 +1989,6 @@ msgstr ""
 msgid "Access"
 msgstr ""
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr ""
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7535,11 +7530,6 @@ msgstr ""
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
-msgstr ""
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
 msgstr ""
 
 #. js-lingui-id: LzmTuU

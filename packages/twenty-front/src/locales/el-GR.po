@@ -99,7 +99,7 @@ msgstr "· ΔΩΡΕΑΝ"
 #. js-lingui-id: eNVoMO
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
-msgstr ""
+msgstr "Το \"{fieldName}\" έχει πολλές εγγραφές: διαβάστε το μέσα σε count(), sum(), avg(), min() ή max()"
 
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -139,7 +139,7 @@ msgstr "Το \"{path}\" διαβάζει μια σχέση, αλλά οι προ
 #. js-lingui-id: bkN3QG
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 msgid "“{prompt}”"
-msgstr ""
+msgstr "“{prompt}”"
 
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -149,7 +149,7 @@ msgstr "Το \"{subfieldName}\" δεν είναι υποπεδίο του \"{fie
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -655,7 +655,7 @@ msgstr "{allowedFieldCount} από {fieldCount} πεδία"
 #. js-lingui-id: QbSIWf
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "{amount} / month"
-msgstr ""
+msgstr "{amount} / μήνα"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -690,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "{applicationsCount} εφαρμογή επί πληρωμή"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount} εφαρμογές επί πληρωμή"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -936,17 +936,17 @@ msgstr "Η {functionName} δέχεται τουλάχιστον {minimumArgument
 #. js-lingui-id: aGSMaz
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() cannot contain another aggregate"
-msgstr ""
+msgstr "Το {functionName}() δεν μπορεί να περιέχει άλλη συνάθροιση"
 
 #. js-lingui-id: gT6Kkm
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
-msgstr ""
+msgstr "Το {functionName}() χρειάζεται μια σχέση, για παράδειγμα count(tasks) ή sum(deals.amount)"
 
 #. js-lingui-id: vN+0eR
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() reads related records, which only a formula can do"
-msgstr ""
+msgstr "Το {functionName}() διαβάζει συσχετιζόμενες εγγραφές, κάτι που μπορεί να κάνει μόνο ένας τύπος"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1189,22 +1189,22 @@ msgstr "Το {providerDisplayName} OAuth δεν έχει ακόμη ρυθμισ
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity} λογαριασμός"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity} λογαριασμοί"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity} μέλος"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity} μέλη"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1852,7 +1852,7 @@ msgstr "Ανοίγει μια φόρμα για το άτομο που ξεκι�
 #. js-lingui-id: QbGaDs
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
-msgstr ""
+msgstr "Ένας τύπος που συγκεντρώνει συσχετιζόμενες εγγραφές αποθηκεύεται, επομένως δεν μπορεί να διαβάσει το \"{path}\". Συγκεντρώστε σε αυτό το πεδίο και διαβάστε το από έναν άλλο τύπο."
 
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
@@ -1897,7 +1897,7 @@ msgstr "Πρέπει να επιλεγεί ένας ρόλος για το κλ�
 #. js-lingui-id: /852Zy
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A stored formula cannot read \"{path}\""
-msgstr ""
+msgstr "Ένας αποθηκευμένος τύπος δεν μπορεί να διαβάσει το \"{path}\""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1993,11 +1993,6 @@ msgstr "Αποδεκτές και υπογεγραμμένες DPA για αυτ
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Πρόσβαση"
-
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Ομάδες πρόσβασης"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -4231,7 +4226,7 @@ msgstr "Απόστροφος και τελεία"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "εφαρμογή"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4451,7 +4446,7 @@ msgstr "Εγκεκριμένοι Τομείς"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "εφαρμογές"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -5406,17 +5401,17 @@ msgstr "Χρεώστε πιστώσεις στον χώρο εργασίας σ�
 #. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price}"
-msgstr ""
+msgstr "Χρεώστε τον χώρο εργασίας σας {price}"
 
 #. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price} per account"
-msgstr ""
+msgstr "Χρεώστε τον χώρο εργασίας σας {price} ανά λογαριασμό"
 
 #. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price} per member"
-msgstr ""
+msgstr "Χρεώστε τον χώρο εργασίας σας {price} ανά μέλος"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5446,7 +5441,7 @@ msgstr "Χρέωση - Ρυθμίσεις"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "Email χρέωσης"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6339,7 +6334,7 @@ msgstr "Αλλαγή avatar"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "Αλλαγή email χρέωσης"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7253,7 +7248,7 @@ msgstr "Σύμπτυξη"
 #. js-lingui-id: 9prKyv
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
-msgstr ""
+msgstr "Σύμπτυξη {heading}"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -7541,11 +7536,6 @@ msgstr "Προεπισκόπηση στοιχείου με δείγματα δε
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Σύνταξη email"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Υπολογίστε τις ομάδες πρόσβασης που θα χρησιμοποιούν οι λίστες εγγραφών για δικαιώματα σε επίπεδο γραμμής. Ενεργοποιήστε το μετά την ολοκλήρωση της αναβάθμισης του χώρου εργασίας."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
@@ -13221,7 +13211,7 @@ msgstr "Επέκταση"
 #. js-lingui-id: AgpQjB
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Expand {heading}"
-msgstr ""
+msgstr "Ανάπτυξη {heading}"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -23369,7 +23359,7 @@ msgstr "Επί πληρωμή εφαρμογή"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "Εφαρμογές επί πληρωμή που είναι εγκατεστημένες σε αυτόν τον χώρο εργασίας. Οι τιμές προστίθενται στο τιμολόγιό σας"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23596,7 +23586,7 @@ msgstr "ανά μέλος"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "Ανά μήνα"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24776,7 +24766,7 @@ msgstr "Δικαιώματα Ανάγνωσης/Επεξεργασίας/Δια�
 #. js-lingui-id: +a9H8X
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
 msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
-msgstr ""
+msgstr "Διαβάζει συσχετιζόμενες εγγραφές, επομένως η τιμή αποθηκεύεται και ενημερώνεται στο παρασκήνιο λίγα δευτερόλεπτα μετά την αλλαγή τους."
 
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
@@ -27102,7 +27092,7 @@ msgstr "Επιλογές αναζήτησης"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "Αναζήτηση ή ερώτηση..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27397,7 +27387,7 @@ msgstr "Δείτε περισσότερα"
 #. js-lingui-id: ssRcpB
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See more results"
-msgstr ""
+msgstr "Δείτε περισσότερα αποτελέσματα"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -30347,7 +30337,7 @@ msgstr "Το API endpoint για τον πάροχό σας που είναι σ
 #. js-lingui-id: UIpkEz
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The average of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "Ο μέσος όρος ενός αριθμητικού πεδίου στις συσχετιζόμενες εγγραφές ή σε εκείνες που πληρούν τη συνθήκη."
 
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -30392,7 +30382,7 @@ msgstr "Ο κωδικός του συνεργάτη του Twenty που σας 
 #. js-lingui-id: h7Af0y
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
-msgstr ""
+msgstr "Η συνθήκη του {functionName}() δεν μπορεί να διαβάσει το \"{relationFieldName}\""
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30502,7 +30492,7 @@ msgstr "Το εικονίδιο που θα εμφανίζεται για την
 #. js-lingui-id: hP+z/5
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
-msgstr ""
+msgstr "Ο μεγαλύτερος αριθμός ή η πιο πρόσφατη ημερομηνία μεταξύ των συσχετιζόμενων εγγραφών. Με απλές τιμές, όπως max(a, b), η μεγαλύτερη από αυτές."
 
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30589,7 +30579,7 @@ msgstr "Ο αριθμός των στοιχείων στη λίστα ή 0 ότ�
 #. js-lingui-id: vXwRDS
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
-msgstr ""
+msgstr "Ο αριθμός των συσχετιζόμενων εγγραφών ή εκείνων που πληρούν τη συνθήκη. Για παράδειγμα count(tasks, tasks.status == \"TODO\")."
 
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30664,7 +30654,7 @@ msgstr "Το κοινόχρηστο email που θέλετε να χρησιμ�
 #. js-lingui-id: q2NONu
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
-msgstr ""
+msgstr "Ο μικρότερος αριθμός ή η παλαιότερη ημερομηνία μεταξύ των συσχετιζόμενων εγγραφών. Με απλές τιμές, όπως min(a, b), η μικρότερη από αυτές."
 
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30711,7 +30701,7 @@ msgstr "Το εργαλείο εκτελείται χωρίς ορίσματα."
 #. js-lingui-id: 6XWxWG
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The total of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "Το σύνολο ενός αριθμητικού πεδίου στις συσχετιζόμενες εγγραφές ή σε εκείνες που πληρούν τη συνθήκη."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

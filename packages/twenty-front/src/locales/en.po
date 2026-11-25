@@ -1989,11 +1989,6 @@ msgstr "Accepted and signed DPAs for this workspace, with their template version
 msgid "Access"
 msgstr "Access"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Access groups"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7536,11 +7531,6 @@ msgstr "Component preview with sample data"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Compose email"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
