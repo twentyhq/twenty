@@ -9,7 +9,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -96,8 +95,6 @@ export class CompleteViewUpsertService {
     filters?: CompleteViewFilterSpec[];
     sorts?: CompleteViewSortSpec[];
   }): Promise<ViewDTO> {
-    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
-
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -146,7 +143,6 @@ export class CompleteViewUpsertService {
           name,
           icon,
           calendarEndFieldMetadataId,
-          userWorkspaceId,
           applicationUniversalIdentifier,
           flatViewMaps,
           flatViewGroupMaps,
@@ -165,7 +161,6 @@ export class CompleteViewUpsertService {
           calendarLayout,
           calendarFieldMetadataId,
           calendarEndFieldMetadataId,
-          userWorkspaceId,
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
           flatFieldMetadataOptionMaps,
@@ -264,7 +259,6 @@ export class CompleteViewUpsertService {
     calendarLayout,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
-    userWorkspaceId,
     flatApplication,
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps,
@@ -281,7 +275,6 @@ export class CompleteViewUpsertService {
     calendarLayout?: ViewCalendarLayout;
     calendarFieldMetadataId?: string;
     calendarEndFieldMetadataId?: string;
-    userWorkspaceId?: string;
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
@@ -309,7 +302,6 @@ export class CompleteViewUpsertService {
           calendarFieldMetadataId,
           calendarEndFieldMetadataId,
         },
-        createdByUserWorkspaceId: userWorkspaceId,
         flatApplication,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
@@ -341,7 +333,6 @@ export class CompleteViewUpsertService {
     name,
     icon,
     calendarEndFieldMetadataId,
-    userWorkspaceId,
     applicationUniversalIdentifier,
     flatViewMaps,
     flatViewGroupMaps,
@@ -352,7 +343,6 @@ export class CompleteViewUpsertService {
     name?: string;
     icon?: string;
     calendarEndFieldMetadataId?: string;
-    userWorkspaceId?: string;
     applicationUniversalIdentifier: string;
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
     flatViewGroupMaps: AllFlatEntityMaps['flatViewGroupMaps'];
@@ -379,7 +369,6 @@ export class CompleteViewUpsertService {
         flatViewGroupMaps,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,
-        userWorkspaceId,
         callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
           applicationUniversalIdentifier,

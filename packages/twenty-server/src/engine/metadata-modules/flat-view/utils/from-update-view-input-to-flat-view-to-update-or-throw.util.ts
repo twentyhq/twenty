@@ -39,7 +39,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   flatViewGroupMaps,
   flatFieldMetadataMaps,
   flatFieldMetadataOptionMaps,
-  userWorkspaceId,
   callerApplicationUniversalIdentifier,
   workspaceCustomApplicationUniversalIdentifier,
 }: {
@@ -48,7 +47,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   flatViewGroupMaps: FlatViewGroupMaps;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatFieldMetadataOptionMaps: FlatFieldMetadataOptionMaps;
-  userWorkspaceId?: string;
   callerApplicationUniversalIdentifier: string;
   workspaceCustomApplicationUniversalIdentifier: string;
 }): {
@@ -230,13 +228,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     metadataName: 'view',
     flatEntity: existingFlatViewToUpdate,
   });
-
-  const isPrivacyChanging =
-    isDefined(isPrivate) && isPrivate !== effectiveExistingFlatView.isPrivate;
-
-  if (isPrivacyChanging && isDefined(userWorkspaceId)) {
-    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
-  }
 
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     metadataName: 'view',

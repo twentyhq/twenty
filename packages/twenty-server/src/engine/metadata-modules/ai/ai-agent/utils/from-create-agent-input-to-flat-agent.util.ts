@@ -17,7 +17,6 @@ export type FromCreateAgentInputToFlatAgentArgs = {
   createAgentInput: CreateAgentInput;
   isSystem: boolean;
   workspaceId: string;
-  userWorkspaceId: string | undefined;
   flatApplication: FlatApplication;
   flatRoleMaps: AllFlatEntityMaps['flatRoleMaps'];
 };
@@ -26,7 +25,6 @@ export const fromCreateAgentInputToFlatAgent = ({
   createAgentInput: rawCreateAgentInput,
   isSystem,
   workspaceId,
-  userWorkspaceId,
   flatApplication,
   flatRoleMaps,
 }: FromCreateAgentInputToFlatAgentArgs): {
@@ -67,7 +65,7 @@ export const fromCreateAgentInputToFlatAgent = ({
     modelConfiguration: createAgentInput.modelConfiguration ?? null,
     triggers: createAgentInput.triggers ?? [],
     isPrivate,
-    createdByUserWorkspaceId: userWorkspaceId ?? null,
+    createdByUserWorkspaceId: null,
     navigationMenuItemIds: [],
     navigationMenuItemUniversalIdentifiers: [],
     createdAt,

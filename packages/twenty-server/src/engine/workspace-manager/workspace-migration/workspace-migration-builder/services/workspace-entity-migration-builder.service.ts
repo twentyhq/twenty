@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
@@ -22,6 +22,8 @@ import { MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-en
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { assignPrivatableEntityCreatorOnCreate } from 'src/engine/permissions/metadata-permissions/utils/assign-privatable-entity-creator-on-create.util';
+import { keepPrivatableEntityCreatorOnUpdate } from 'src/engine/permissions/metadata-permissions/utils/keep-privatable-entity-creator-on-update.util';
 import { getPrivatableEntityPrivacyValidationErrors } from 'src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
@@ -250,11 +252,16 @@ export abstract class WorkspaceEntityMigrationBuilderService<
           flatEntityMaps: createdFlatEntityMaps,
         });
 
-      const universalFlatEntityToCreate =
-        resetUniversalFlatEntityForeignKeyAggregators({
+      const universalFlatEntityToCreate = assignPrivatableEntityCreatorOnCreate(
+        {
           metadataName: this.metadataName,
-          universalFlatEntity: rawUniversalflatEntityToCreate,
-        });
+          universalFlatEntity: resetUniversalFlatEntityForeignKeyAggregators({
+            metadataName: this.metadataName,
+            universalFlatEntity: rawUniversalflatEntityToCreate,
+          }),
+          authContext: buildOptions.authContext,
+        },
+      );
 
       const universalIdentifierToDelete =
         universalFlatEntityToCreate.universalIdentifier;
@@ -334,19 +341,32 @@ export abstract class WorkspaceEntityMigrationBuilderService<
         );
       }
 
+      const fromFlatEntity =
+        fromFlatEntityMaps.byUniversalIdentifier[
+          flatEntityToUpdateUniversalIdentifier
+        ];
+      const update = keepPrivatableEntityCreatorOnUpdate({
+        metadataName: this.metadataName,
+        update: flatEntityUpdate.update,
+        authContext: buildOptions.authContext,
+      });
+
+      if (
+        isEmptyObject(update) &&
+        flatEntityUpdate.nonUpdatablePropertyDivergences.length === 0
+      ) {
+        continue;
+      }
+
       const validationResult = await this.validateFlatEntityUpdate({
         finalFlatEntityMaps,
-        flatEntityUpdate: flatEntityUpdate.update,
+        flatEntityUpdate: update,
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps,
         workspaceId,
         buildOptions,
         additionalCacheDataMaps,
         universalIdentifier: flatEntityToUpdateUniversalIdentifier,
       });
-      const fromFlatEntity =
-        fromFlatEntityMaps.byUniversalIdentifier[
-          flatEntityToUpdateUniversalIdentifier
-        ];
       const centralizedUpdateErrors = [
         ...this.validateNoNonUpdatablePropertyDivergence(
           flatEntityUpdate.nonUpdatablePropertyDivergences,
@@ -357,7 +377,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
               fromUniversalFlatEntity: fromFlatEntity,
               toUniversalFlatEntity: {
                 ...fromFlatEntity,
-                ...flatEntityUpdate.update,
+                ...update,
               },
               authContext: buildOptions.authContext,
             })
@@ -401,11 +421,11 @@ export abstract class WorkspaceEntityMigrationBuilderService<
 
       const updatedFlatEntity: MetadataUniversalFlatEntity<T> = {
         ...existingFlatEntity,
-        ...flatEntityUpdate.update,
+        ...update,
       };
 
       const diff = Object.fromEntries(
-        Object.entries(flatEntityUpdate.update).map(([key, after]) => [
+        Object.entries(update).map(([key, after]) => [
           key,
           {
             before:

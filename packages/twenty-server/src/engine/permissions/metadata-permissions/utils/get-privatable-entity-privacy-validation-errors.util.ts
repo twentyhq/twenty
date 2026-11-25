@@ -58,17 +58,12 @@ const isAllowedPrivacy = ({
     );
   }
 
-  const isPrivacyChanging =
-    from.isPrivate !== to.isPrivate ||
-    from.createdByUserWorkspaceId !== to.createdByUserWorkspaceId;
-
   return (
-    !isPrivacyChanging ||
-    (canCallerChangePrivatableEntityPrivacy({
+    from.isPrivate === to.isPrivate ||
+    canCallerChangePrivatableEntityPrivacy({
       privatableEntity: from,
       authContext,
-    }) &&
-      to.createdByUserWorkspaceId === callerUserWorkspaceId)
+    })
   );
 };
 
