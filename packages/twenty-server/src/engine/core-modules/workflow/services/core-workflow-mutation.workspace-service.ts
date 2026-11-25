@@ -6,7 +6,8 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow } from 'src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util';
+import { fromUpdateCoreWorkflowInputToFlatWorkflowToUpdate } from 'src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update.util';
+import { PRIVATABLE_ENTITY_PRIVACY_CHANGE_NOT_ALLOWED_CODE } from 'src/engine/permissions/metadata-permissions/constants/privatable-entity-privacy-change-not-allowed-code.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
@@ -391,7 +392,7 @@ export class CoreWorkflowMutationWorkspaceService {
     }
 
     const flatWorkflowToUpdate =
-      fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
+      fromUpdateCoreWorkflowInputToFlatWorkflowToUpdate({
         existingFlatWorkflow,
         name,
         isPrivate,
@@ -412,6 +413,16 @@ export class CoreWorkflowMutationWorkspaceService {
         },
       });
     } catch (error) {
+      if (this.isWorkflowPrivacyChangeRefusedByValidation(error)) {
+        throw new WorkflowQueryValidationException(
+          `Core workflow '${coreWorkflowId}' can only have its visibility changed by its creator`,
+          WorkflowQueryValidationExceptionCode.FORBIDDEN,
+          {
+            userFriendlyMessage: msg`Only the person who created this workflow can change who sees it`,
+          },
+        );
+      }
+
       const ownershipConditionNotMetException =
         this.findWorkflowOwnershipConditionNotMetException(error);
 
@@ -445,6 +456,20 @@ export class CoreWorkflowMutationWorkspaceService {
         name,
       });
     }
+  }
+
+  private isWorkflowPrivacyChangeRefusedByValidation(error: unknown): boolean {
+    return (
+      error instanceof WorkspaceMigrationBuilderException &&
+      error.failedWorkspaceMigrationBuildResult.report.workflow.some(
+        (failedWorkflowValidation) =>
+          failedWorkflowValidation.errors.some(
+            (validationError) =>
+              validationError.code ===
+              PRIVATABLE_ENTITY_PRIVACY_CHANGE_NOT_ALLOWED_CODE,
+          ),
+      )
+    );
   }
 
   private findWorkflowOwnershipConditionNotMetException(

@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { computeAgentPrivacyUpdateOrThrow } from 'src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util';
+import { computeAgentPrivacyUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update.util';
 import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import {
   AiException,
@@ -216,7 +216,7 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       update: updatedEditableProperties,
     }),
     overrides,
-    ...computeAgentPrivacyUpdateOrThrow({
+    ...computeAgentPrivacyUpdate({
       existingFlatAgent,
       isPrivate: rawUpdateAgentInput.isPrivate,
       userWorkspaceId,
