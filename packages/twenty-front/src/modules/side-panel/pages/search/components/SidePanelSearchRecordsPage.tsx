@@ -1,5 +1,7 @@
 import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
+import { CommandMenuItemSectionGroup } from '@/command-menu-item/display/components/CommandMenuItemSectionGroup';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { SidePanelSearchRecordItem } from '@/side-panel/pages/search/components/SidePanelSearchRecordItem';
 import { SidePanelSearchRecordPreviewCard } from '@/side-panel/pages/search/components/SidePanelSearchRecordPreviewCard';
@@ -8,11 +10,11 @@ import { useSidePanelSearchRecordPreviewItem } from '@/side-panel/pages/search/h
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { css } from '@linaria/core';
-import { useLingui } from '@lingui/react/macro';
+import groupBy from 'lodash.groupby';
 import { useMemo, useRef } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { capitalize, isDefined } from 'twenty-shared/utils';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 // The card brings its own surface, so the tooltip only contributes the shadow.
 const previewTooltipClass = css`
@@ -23,14 +25,27 @@ const previewTooltipClass = css`
 `;
 
 export const SidePanelSearchRecordsPage = () => {
-  const { t } = useLingui();
+  const theme = useTheme();
+  const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
   const { searchResultItems, loading, noResults, error } =
     useSidePanelSearchRecords();
   const isMobile = useIsMobile();
 
-  const selectableItemIds = useMemo(
-    () => searchResultItems.map((item) => item.id),
+  const searchResultItemsByObjectNameSingular = useMemo(
+    () =>
+      Object.entries(
+        groupBy(searchResultItems, (item) => item.objectNameSingular),
+      ),
     [searchResultItems],
+  );
+
+  const selectableItemIds = useMemo(
+    () =>
+      searchResultItemsByObjectNameSingular.flatMap(
+        ([, objectSearchResultItems]) =>
+          objectSearchResultItems.map((item) => item.id),
+      ),
+    [searchResultItemsByObjectNameSingular],
   );
 
   const previewAnchorRef = useRef<HTMLDivElement>(null);
@@ -48,18 +63,42 @@ export const SidePanelSearchRecordsPage = () => {
         loading={loading}
         noResults={noResults}
       >
-        {searchResultItems.length > 0 && (
-          <SidePanelGroup heading={t`Results`}>
-            {searchResultItems.map((item) => (
-              <SidePanelSearchRecordItem
-                key={item.id}
-                item={item}
-                anchorRef={
-                  previewedItem?.id === item.id ? previewAnchorRef : undefined
-                }
-              />
-            ))}
-          </SidePanelGroup>
+        {searchResultItemsByObjectNameSingular.map(
+          ([objectNameSingular, objectSearchResultItems]) => {
+            const objectMetadataItem = readableObjectMetadataItems.find(
+              (item) => item.nameSingular === objectNameSingular,
+            );
+
+            return (
+              <CommandMenuItemSectionGroup
+                key={objectNameSingular}
+                heading={capitalize(
+                  objectMetadataItem?.labelPlural ?? objectNameSingular,
+                )}
+                context={{
+                  icon: (
+                    <ObjectMetadataIcon
+                      objectMetadataItem={objectMetadataItem}
+                      size={theme.icon.size.md}
+                    />
+                  ),
+                }}
+              >
+                {objectSearchResultItems.map((item) => (
+                  <SidePanelSearchRecordItem
+                    key={item.id}
+                    item={item}
+                    shouldDisplayObjectLabel={false}
+                    anchorRef={
+                      previewedItem?.id === item.id
+                        ? previewAnchorRef
+                        : undefined
+                    }
+                  />
+                ))}
+              </CommandMenuItemSectionGroup>
+            );
+          },
         )}
       </SidePanelList>
 

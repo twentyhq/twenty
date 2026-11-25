@@ -13,11 +13,13 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 type SidePanelSearchRecordItemProps = {
   item: SearchResultItem;
   anchorRef?: Ref<HTMLDivElement>;
+  shouldDisplayObjectLabel?: boolean;
 };
 
 export const SidePanelSearchRecordItem = ({
   item,
   anchorRef,
+  shouldDisplayObjectLabel = true,
 }: SidePanelSearchRecordItemProps) => {
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
@@ -52,7 +54,7 @@ export const SidePanelSearchRecordItem = ({
         <CommandMenuItem
           id={item.id}
           label={item.label}
-          description={item.objectLabel}
+          description={shouldDisplayObjectLabel ? item.objectLabel : undefined}
           onClick={handleClick}
           LeftComponent={
             <Avatar
