@@ -4,6 +4,7 @@ import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/con
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariableOperators';
 import { type ConditionalAvailabilityLogicalOperator } from 'twenty-shared/conditional-availability';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 export const mergeConditionalAvailabilityFilters = ({
@@ -43,7 +44,9 @@ export const mergeConditionalAvailabilityFilters = ({
     );
 
   const filterValuesLogicalOperator =
-    comparisonOperator === 'EQUAL' ? 'OR' : 'AND';
+    comparisonOperator === 'EQUAL'
+      ? doNotTranslate('OR')
+      : doNotTranslate('AND');
 
   const hasValueInCommon = filterOrGroup.values.some((value) =>
     previousFilterOrGroup.values.includes(value),

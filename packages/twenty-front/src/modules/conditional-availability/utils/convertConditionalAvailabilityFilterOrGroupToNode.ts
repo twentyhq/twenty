@@ -6,6 +6,7 @@ import {
   type ConditionalAvailabilityNode,
   joinConditionalAvailabilityNodes,
 } from 'twenty-shared/conditional-availability';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 export const convertConditionalAvailabilityFilterOrGroupToNode = ({
@@ -52,6 +53,9 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
       left: { type: 'VARIABLE', path: variablePath },
       right: { type: 'LITERAL', value },
     })),
-    logicalOperator: comparisonOperator === 'EQUAL' ? 'OR' : 'AND',
+    logicalOperator:
+      comparisonOperator === 'EQUAL'
+        ? doNotTranslate('OR')
+        : doNotTranslate('AND'),
   });
 };

@@ -2,6 +2,7 @@ import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availabil
 import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
 import { convertConditionalAvailabilityNodeToFilterOrGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToFilterOrGroup';
 import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -22,7 +23,7 @@ export const convertConditionalAvailabilityNodeToFilterGroup = ({
   const filterGroupAroundSingleFilter: ConditionalAvailabilityFilterGroup = {
     type: 'filterGroup',
     id: v4(),
-    logicalOperator: 'AND',
+    logicalOperator: doNotTranslate('AND'),
     children: [filterOrGroup],
   };
   const filterGroup =
