@@ -77,10 +77,10 @@ export class BillingSubscriptionItemResolver {
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    const application = await this.findInstalledApplication(
+    const application = await this.findInstalledApplication({
       billingSubscriptionItem,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
     return application?.name ?? null;
   }
@@ -91,10 +91,10 @@ export class BillingSubscriptionItemResolver {
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    const application = await this.findInstalledApplication(
+    const application = await this.findInstalledApplication({
       billingSubscriptionItem,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
     if (!isDefined(application)) {
       return null;
@@ -114,10 +114,10 @@ export class BillingSubscriptionItemResolver {
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | null> {
-    const application = await this.findInstalledApplication(
+    const application = await this.findInstalledApplication({
       billingSubscriptionItem,
-      workspace.id,
-    );
+      workspaceId: workspace.id,
+    });
 
     return (
       application?.acceptedBillingPrices?.find(
@@ -129,10 +129,16 @@ export class BillingSubscriptionItemResolver {
     );
   }
 
-  private async findInstalledApplication(
-    billingSubscriptionItem: BillingSubscriptionItemEntity,
-    workspaceId: string,
-  ): Promise<FlatApplication | null> {
+  private async findInstalledApplication({
+    billingSubscriptionItem,
+    workspaceId,
+  }: {
+    billingSubscriptionItem: Pick<
+      BillingSubscriptionItemEntity,
+      'billingProduct'
+    >;
+    workspaceId: string;
+  }): Promise<FlatApplication | null> {
     const applicationUniversalIdentifier =
       billingSubscriptionItem.billingProduct?.metadata
         .applicationUniversalIdentifier;
