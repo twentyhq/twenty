@@ -16,10 +16,6 @@ import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
-import {
-  restoreRoleWideAccessToChannelObjects,
-  revokeRoleWideAccessToChannelObjects,
-} from 'test/integration/permissions/channel-visibility/utils/role-wide-access-to-channel-objects.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
@@ -112,12 +108,10 @@ describe('Message channel visibility (integration)', () => {
     );
 
     await syncChannelVisibilityRules();
-    await revokeRoleWideAccessToChannelObjects();
     await waitForAllJobsToFinish();
   }, 120000);
 
   afterAll(async () => {
-    await restoreRoleWideAccessToChannelObjects();
     await channel?.cleanup().catch(() => undefined);
   });
 

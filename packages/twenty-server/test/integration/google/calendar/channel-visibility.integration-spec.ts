@@ -18,10 +18,6 @@ import { connectMessagingAccount } from 'test/integration/utils/connect-messagin
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
 import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar-channel-list-fetch.util';
-import {
-  restoreRoleWideAccessToChannelObjects,
-  revokeRoleWideAccessToChannelObjects,
-} from 'test/integration/permissions/channel-visibility/utils/role-wide-access-to-channel-objects.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
@@ -122,12 +118,10 @@ describe('Calendar channel visibility (integration)', () => {
     );
 
     await syncChannelVisibilityRules();
-    await revokeRoleWideAccessToChannelObjects();
     await waitForAllJobsToFinish();
   }, 120000);
 
   afterAll(async () => {
-    await restoreRoleWideAccessToChannelObjects();
     await channel?.cleanup().catch(() => undefined);
   });
 

@@ -6,6 +6,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { ChannelVisibilityModule } from 'src/engine/permissions/channel-visibility/channel-visibility.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RoleAssignmentModule } from 'src/engine/permissions/role-assignment/role-assignment.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -21,6 +22,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     TwentyStandardApplicationModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity, WorkspaceEntity]),
     RoleModule,
+    ChannelVisibilityModule,
     RoleAssignmentModule,
     ApplicationModule,
     TypeOrmModule.forFeature([RoleEntity]),

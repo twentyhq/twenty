@@ -9,10 +9,6 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
-import {
-  restoreRoleWideAccessToChannelObjects,
-  revokeRoleWideAccessToChannelObjects,
-} from 'test/integration/permissions/channel-visibility/utils/role-wide-access-to-channel-objects.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -180,12 +176,10 @@ describe('channel visibility through row level rules (integration)', () => {
     });
 
     await syncChannelVisibilityRules();
-    await revokeRoleWideAccessToChannelObjects();
     await waitForAllJobsToFinish();
   });
 
   afterAll(async () => {
-    await restoreRoleWideAccessToChannelObjects();
     for (const attachmentId of [companyAttachmentId, messageAttachmentId]) {
       await destroyRecord({
         objectMetadataSingularName: 'attachment',
