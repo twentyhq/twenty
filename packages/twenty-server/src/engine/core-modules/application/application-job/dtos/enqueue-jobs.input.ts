@@ -22,6 +22,7 @@ import { ENQUEUE_JOB_MIN_DELAY_MS } from 'src/engine/core-modules/application/ap
 import { ENQUEUE_JOB_MIN_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-min-retry-limit.constant';
 import { MAX_JOBS_PER_ENQUEUE } from 'src/engine/core-modules/application/application-job/constants/max-jobs-per-enqueue.constant';
 import { EnqueueJobItemInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-job-item.input';
+import { EnqueueJobsLimiterInputDTO } from 'src/engine/core-modules/application/application-job/dtos/enqueue-jobs-limiter.input';
 
 @InputType('EnqueueJobsInput')
 export class EnqueueJobsInputDTO implements EnqueueJobsInput {
@@ -61,4 +62,10 @@ export class EnqueueJobsInputDTO implements EnqueueJobsInput {
   @IsOptional()
   @Field(() => Int, { nullable: true })
   delayMs?: number;
+
+  @ValidateNested()
+  @Type(() => EnqueueJobsLimiterInputDTO)
+  @IsOptional()
+  @Field(() => EnqueueJobsLimiterInputDTO, { nullable: true })
+  limiter?: EnqueueJobsLimiterInputDTO;
 }
