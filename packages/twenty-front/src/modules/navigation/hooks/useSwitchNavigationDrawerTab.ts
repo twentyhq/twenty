@@ -1,3 +1,4 @@
+import { useStore } from 'jotai';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -24,7 +25,6 @@ import {
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -55,13 +55,12 @@ export const useSwitchNavigationDrawerTab = () => {
   const setNavigationDrawerActiveTab = useSetAtomState(
     navigationDrawerActiveTabState,
   );
-  const [currentNavigationMenuTabId, setCurrentNavigationMenuTabId] =
-    useAtomState(currentNavigationMenuTabIdState);
+  const store = useStore();
+  const setCurrentNavigationMenuTabId = useSetAtomState(
+    currentNavigationMenuTabIdState,
+  );
   const isCustomizableSidebarEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
-  );
-  const isLayoutCustomizationModeEnabled = useAtomStateValue(
-    isLayoutCustomizationModeEnabledState,
   );
   const { openNavigationMenuTabFirstEntry } =
     useOpenNavigationMenuTabFirstEntry();
@@ -113,15 +112,15 @@ export const useSwitchNavigationDrawerTab = () => {
 
     return openNavigationMenuTabFirstEntry({
       tabId,
-      replace: isSettingsDrawer,
+      shouldReplace: isSettingsDrawer,
     });
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
     const shouldOpenFirstItem =
       isCustomizableSidebarEnabled &&
-      !isLayoutCustomizationModeEnabled &&
-      tabId !== currentNavigationMenuTabId;
+      !store.get(isLayoutCustomizationModeEnabledState.atom) &&
+      tabId !== store.get(currentNavigationMenuTabIdState.atom);
 
     setCurrentNavigationMenuTabId(tabId);
 

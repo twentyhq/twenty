@@ -5,7 +5,6 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { type AiChatChannel } from '@/ai-chat/threads/types/AiChatChannel';
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { sortAiChatThreadsByLastActivityDesc } from '@/ai-chat/threads/utils/sortAiChatThreadsByLastActivityDesc';
-import { type InboxThreadListItemData } from '@/inbox/types/InboxThreadListItemData';
 import { filterInboxRecentThreads } from '@/inbox/utils/filterInboxRecentThreads';
 import { type NavigationMenuTabEntry } from '@/navigation-menu-item/common/types/NavigationMenuTabEntry';
 import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
@@ -21,9 +20,12 @@ export const getNavigationMenuBuiltInSectionEntry = ({
 }: {
   builtInSectionKey: string;
   favoriteChannels: Pick<AiChatChannel, 'id'>[];
-  favoriteThreads: InboxThreadListItemData[];
+  favoriteThreads: Pick<AiChatThreadRecord, 'id'>[];
   accessibleChannels: Pick<AiChatChannel, 'id'>[];
-  recentThreads: AiChatThreadRecord[];
+  recentThreads: Pick<
+    AiChatThreadRecord,
+    'id' | 'conversationType' | 'lastActivityAt' | 'updatedAt'
+  >[];
   agents: { id: string; isSystem: boolean; label: string }[];
 }): NavigationMenuTabEntry | null => {
   switch (builtInSectionKey) {

@@ -1,7 +1,6 @@
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath } from 'twenty-shared/utils';
 
-import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 import { getNavigationMenuBuiltInSectionEntry } from '@/navigation-menu-item/display/utils/getNavigationMenuBuiltInSectionEntry';
 
 const buildThread = ({
@@ -10,12 +9,11 @@ const buildThread = ({
 }: {
   id: string;
   lastActivityAt: string;
-}) =>
-  ({
-    id,
-    lastActivityAt,
-    updatedAt: lastActivityAt,
-  }) as AiChatThreadRecord;
+}) => ({
+  id,
+  lastActivityAt,
+  updatedAt: lastActivityAt,
+});
 
 const EMPTY_DATA = {
   favoriteChannels: [],

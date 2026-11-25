@@ -22,7 +22,6 @@ import { getNavigationMenuTabFirstEntry } from '@/navigation-menu-item/display/u
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -41,10 +40,7 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
     workspaceNavigationMenuItemsByFolder,
     userNavigationMenuItemsByFolder,
   } = useNavigationMenuItemsByFolder();
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
   const { isBuiltInSectionAvailable } =
     useNavigationMenuBuiltInSectionAvailability();
   const isAiChatInboxEnabled = useIsFeatureEnabled(
@@ -60,14 +56,14 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
 
   const openNavigationMenuTabEntry = ({
     entry,
-    replace,
+    shouldReplace,
   }: {
     entry: NavigationMenuTabEntry;
-    replace: boolean;
+    shouldReplace: boolean;
   }) => {
     switch (entry.type) {
       case 'link':
-        navigate(entry.link, { replace });
+        navigate(entry.link, { replace: shouldReplace });
         return;
       case 'inboxPresetFilter':
         openInboxPresetFilter(entry.presetFilter);
@@ -83,10 +79,10 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
 
   const openNavigationMenuTabFirstEntry = ({
     tabId,
-    replace,
+    shouldReplace,
   }: {
     tabId: string;
-    replace: boolean;
+    shouldReplace: boolean;
   }) => {
     const builtInSectionData = {
       favoriteChannels: store.get(inboxFavoriteChannelsSelector.atom),
@@ -111,10 +107,10 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
         (item) => !isDefined(item.parentId),
       ),
       favoriteNavigationMenuItemsByFolder: userNavigationMenuItemsByFolder,
-      objectMetadataItems,
-      views,
+      objectMetadataItems: store.get(objectMetadataItemsSelector.atom),
+      views: store.get(viewsSelector.atom),
       objectPermissionsByObjectMetadataId,
-      permissionFlagMap,
+      permissionFlagMap: store.get(permissionFlagMapSelector.atom),
       getBuiltInSectionEntry: (builtInSectionKey) =>
         isBuiltInSectionAvailable(builtInSectionKey)
           ? getNavigationMenuBuiltInSectionEntry({
@@ -128,7 +124,7 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
       return false;
     }
 
-    openNavigationMenuTabEntry({ entry: firstEntry, replace });
+    openNavigationMenuTabEntry({ entry: firstEntry, shouldReplace });
 
     return true;
   };
