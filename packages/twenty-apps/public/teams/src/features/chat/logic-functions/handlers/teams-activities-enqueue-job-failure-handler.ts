@@ -38,10 +38,11 @@ export const teamsActivitiesEnqueueJobFailureHandler = async ({
     teamsActivityId,
   });
 
-  if (
-    !isDefined(request) ||
-    !UNFINISHED_STATUSES.includes(request.status ?? '')
-  ) {
+  if (!isDefined(request)) {
+    return { skipped: true, reason: 'Request was never recorded' };
+  }
+
+  if (!UNFINISHED_STATUSES.includes(request.status ?? '')) {
     return { skipped: true, reason: 'Request is already finished' };
   }
 
