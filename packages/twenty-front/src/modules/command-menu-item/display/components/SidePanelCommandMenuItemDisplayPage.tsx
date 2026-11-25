@@ -47,6 +47,7 @@ import {
   IconCommand,
   IconPlus,
   IconSearch,
+  IconSearchOff,
   IconSparkles,
   IconTable,
   type IconComponent,
@@ -292,11 +293,14 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         getSectionExtraItemIds(section).length > 0),
   );
 
+  const isRecordSearchFallbackRedundant =
+    hasMoreSearchResultItems || shouldDisplayNoRecordsFound;
+
   const displayedFallbackCommandMenuItems =
     isSearchActive && !hasMatchingCommand
       ? fallbackCommandMenuItems.filter(
           (item) =>
-            !hasMoreSearchResultItems ||
+            !isRecordSearchFallbackRedundant ||
             item.engineComponentKey !==
               EngineComponentKey.SEARCH_RECORDS_FALLBACK,
         )
@@ -431,7 +435,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
         <CommandMenuItem
           id={COMMAND_MENU_NO_RECORDS_FOUND_ITEM_ID}
           label={t`No records found`}
-          Icon={IconSearch}
+          Icon={IconSearchOff}
           disabled
         />
       )}

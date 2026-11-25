@@ -408,7 +408,7 @@ export const SearchWithoutMatchingItemsAndWithFallback: Story = {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByText('No records found')).toBeVisible();
-    expect(canvas.getByText('Search records')).toBeVisible();
+    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
   },
 };
 
@@ -426,7 +426,8 @@ export const SearchWithoutMatchingItemsOffersAskAi: Story = {
 
     expect(await canvas.findByText('“mike”')).toBeVisible();
     expect(canvas.getAllByText('Ask AI')).toHaveLength(2);
-    expect(canvas.getByText('Search records')).toBeVisible();
+    expect(await canvas.findByText('No records found')).toBeVisible();
+    expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
   },
 };
 

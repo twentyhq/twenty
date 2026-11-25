@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { CommandMenuItemSectionHeading } from '@/command-menu-item/display/components/CommandMenuItemSectionHeading';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -26,16 +26,6 @@ const StyledToggle = styled.span`
   margin-left: auto;
 `;
 
-const StyledChevron = styled.span`
-  display: inline-flex;
-  transition: transform
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-
-  &[data-opened='true'] {
-    transform: rotate(180deg);
-  }
-`;
-
 type CommandMenuItemCollapsibleSectionHeadingProps = {
   headerItemId: string;
   heading: string;
@@ -54,6 +44,7 @@ export const CommandMenuItemCollapsibleSectionHeading = ({
   children,
 }: CommandMenuItemCollapsibleSectionHeadingProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
@@ -61,6 +52,7 @@ export const CommandMenuItemCollapsibleSectionHeading = ({
   );
 
   const toggleLabel = isOpen ? t`Collapse ${heading}` : t`Expand ${heading}`;
+  const ToggleIcon = isOpen ? IconChevronUp : IconChevronDown;
 
   return (
     <SelectableListItem itemId={headerItemId} onEnter={onToggle}>
@@ -76,9 +68,11 @@ export const CommandMenuItemCollapsibleSectionHeading = ({
             aria-expanded={isOpen}
             onClick={onToggle}
           >
-            <StyledChevron aria-hidden data-opened={isOpen}>
-              <IconChevronDown />
-            </StyledChevron>
+            <ToggleIcon
+              aria-hidden
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
           </IconButton>
         </StyledToggle>
       </CommandMenuItemSectionHeading>
