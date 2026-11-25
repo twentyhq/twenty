@@ -12,10 +12,10 @@ const fields = buildValidationRuleEditorFields({
 const getItemName = (item: ValidationRuleHelperItem) =>
   item.kind === 'field' ? item.field.path : item.definition.name;
 
-const compute = (textBeforeCursor: string, isCursorAfterField = false) => {
+const compute = (textBeforeCursor: string, fieldPathBeforeCursor?: string) => {
   const { replaceFromOffset, items } = computeValidationRuleHelperContext({
     textBeforeCursor,
-    isCursorAfterField,
+    fieldPathBeforeCursor,
     fields,
   });
 
@@ -87,7 +87,22 @@ describe('computeValidationRuleHelperContext', () => {
     expect(compute('stage == "amo').names).toEqual([]);
   });
 
-  it('should offer everything right after a field chip', () => {
-    expect(compute('amount', true).names).toContain('isDefined');
+  it('should offer the members of a relation chip and replace the chip', () => {
+    const { replaceFromOffset, names } = compute(
+      'isDefined(company',
+      'company',
+    );
+
+    expect(replaceFromOffset).toBe('isDefined('.length);
+    expect(names).toContain('company.employees');
+    expect(names).not.toContain('amount');
+  });
+
+  it('should offer only keywords after a chip without members', () => {
+    const { names } = compute('closeDate', 'closeDate');
+
+    expect(names).toContain('and');
+    expect(names).not.toContain('closeDate');
+    expect(names).not.toContain('isDefined');
   });
 });
