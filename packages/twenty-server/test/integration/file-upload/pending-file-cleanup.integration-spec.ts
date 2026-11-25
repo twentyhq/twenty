@@ -18,6 +18,7 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const LIVE_CONTENT = 'export const version = 1;';
 const ABANDONED_CONTENT = 'export const version = 2;';
+const NEXT_DEPLOY_CONTENT = 'export const version = 3;';
 
 describe('PendingFileCleanupService', () => {
   let storage: FileStorageService;
@@ -86,8 +87,10 @@ describe('PendingFileCleanupService', () => {
     return row;
   };
 
-  const readLiveContent = async () =>
-    (await streamToBuffer(await storage.readFile(location))).toString();
+  const readContent = async (resource: ResourceIdentifier) =>
+    (await streamToBuffer(await storage.readFile(resource))).toString();
+
+  const readLiveContent = () => readContent(location);
 
   beforeAll(() => {
     storage = getAppProviderByClassName('FileStorageService');
@@ -105,6 +108,8 @@ describe('PendingFileCleanupService', () => {
   });
 
   afterEach(async () => {
+    jest.restoreAllMocks();
+
     for (const fileId of stagedFileIds) {
       await storage.deleteFileObject(quarantineOf(fileId));
     }
@@ -138,6 +143,31 @@ describe('PendingFileCleanupService', () => {
     expect((await findRow(id)).status).toBe(FILE_STATUS.PENDING);
     expect(await readLiveContent()).toBe(LIVE_CONTENT);
     expect(await storage.checkFileExists(quarantineOf(id))).toBe(true);
+  });
+
+  it('leaves a row alone when a deploy re-stages it after the cron loaded it', async () => {
+    const { id } = await deploy(LIVE_CONTENT);
+
+    await stage(ABANDONED_CONTENT);
+    await ageBeyondMaxPendingAge(id);
+
+    const restoreRestagedFile = storage.restoreRestagedFile.bind(storage);
+
+    jest
+      .spyOn(storage, 'restoreRestagedFile')
+      .mockImplementation(async (args) => {
+        if (args.file.id === id) {
+          await stage(NEXT_DEPLOY_CONTENT);
+        }
+
+        return restoreRestagedFile(args);
+      });
+
+    await cleanup.cleanupStaleFiles();
+
+    expect((await findRow(id)).status).toBe(FILE_STATUS.PENDING);
+    expect(await readLiveContent()).toBe(LIVE_CONTENT);
+    expect(await readContent(quarantineOf(id))).toBe(NEXT_DEPLOY_CONTENT);
   });
 
   it('deletes an abandoned new row with both of its objects', async () => {

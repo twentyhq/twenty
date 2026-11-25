@@ -10,6 +10,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type FindOptionsWhere,
+  LessThan,
   Like,
   type QueryRunner,
   type UpdateResult,
@@ -767,20 +768,14 @@ export class FileStorageService {
   async restoreRestagedFile({
     file,
     resourceIdentifier,
+    staleThreshold,
   }: {
     file: Pick<FileEntity, 'id' | 'path' | 'applicationId' | 'size'>;
     resourceIdentifier: ResourceIdentifier;
+    staleThreshold: Date;
   }): Promise<boolean> {
     return this.cacheLockService.withLock(
       async () => {
-        await this.deleteFileObject({
-          ...resourceIdentifier,
-          resourcePath: buildPendingUploadResourcePath({
-            fileId: file.id,
-            resourcePath: resourceIdentifier.resourcePath,
-          }),
-        });
-
         const storedFileInfo =
           await this.readStoredFileInfo(resourceIdentifier);
 
@@ -790,19 +785,35 @@ export class FileStorageService {
 
         const { affected } = await this.fileRepository.update(
           resourceIdentifier.workspaceId,
-          { id: file.id, status: FILE_STATUS.PENDING },
+          {
+            id: file.id,
+            status: FILE_STATUS.PENDING,
+            updatedAt: LessThan(staleThreshold),
+          },
           { status: FILE_STATUS.UPLOADED, ...storedFileInfo },
         );
 
+        if (affected === 0) {
+          return true;
+        }
+
         const sizeDelta = storedFileInfo.size - Number(file.size);
 
-        if (affected !== 0 && sizeDelta !== 0) {
+        if (sizeDelta !== 0) {
           await this.applyStorageStockDelta({
             workspaceId: resourceIdentifier.workspaceId,
             applicationId: file.applicationId,
             delta: { [UsageUnit.BYTE]: sizeDelta },
           });
         }
+
+        await this.deleteFileObject({
+          ...resourceIdentifier,
+          resourcePath: buildPendingUploadResourcePath({
+            fileId: file.id,
+            resourcePath: resourceIdentifier.resourcePath,
+          }),
+        });
 
         return true;
       },

@@ -119,20 +119,23 @@ export class PendingFileCleanupService {
         const isRestaged = file.createdAt.getTime() < file.updatedAt.getTime();
 
         if (isDefined(location) && isRestaged) {
-          const isRestored = await this.fileStorageService.restoreRestagedFile({
-            file,
-            resourceIdentifier: location,
-          });
+          const hasLiveObject =
+            await this.fileStorageService.restoreRestagedFile({
+              file,
+              resourceIdentifier: location,
+              staleThreshold,
+            });
 
-          if (isRestored) {
+          if (hasLiveObject) {
             continue;
           }
         }
 
-        // Delete only while still PENDING, so a file completeFileUpload just promoted is left untouched.
+        // Delete only while still PENDING and stale, so a file just promoted or re-staged is left untouched.
         const { affected } = await this.fileRepository.delete({
           id: file.id,
           status: FILE_STATUS.PENDING,
+          updatedAt: LessThan(staleThreshold),
         });
 
         if (!isDefined(affected) || affected === 0) {
