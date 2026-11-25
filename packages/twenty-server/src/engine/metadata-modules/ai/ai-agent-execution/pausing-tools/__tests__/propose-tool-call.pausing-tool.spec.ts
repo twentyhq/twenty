@@ -335,18 +335,18 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
         },
       });
       expect(completion.answerText).toBe(
-        'Send response: "Meeting request from Maya".',
+        'Send response "Meeting request from Maya".',
       );
     });
 
     it('words a rejection with the reject label', async () => {
       const completion = await parseBookingCall().complete({
-        output: { decision: 'reject' },
+        output: { decision: 'reject', feedback: 'Ask me next week' },
         context: { executeTool: jest.fn() },
       });
 
       expect(completion.answerText).toBe(
-        'Not now: "Meeting request from Maya".',
+        'Not now "Meeting request from Maya": Ask me next week',
       );
     });
   });

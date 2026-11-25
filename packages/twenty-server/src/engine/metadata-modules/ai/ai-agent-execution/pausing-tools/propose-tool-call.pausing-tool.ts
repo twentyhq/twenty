@@ -163,43 +163,27 @@ const buildApprovedArguments = (
   return toolArguments;
 };
 
-const buildApprovalAnswerText = ({
-  proposal,
+const buildAnswerText = ({
+  answer,
+  feedback,
+}: {
+  answer: string;
+  feedback: string | undefined;
+}): string =>
+  isNonEmptyString(feedback) ? `${answer}: ${feedback}` : `${answer}.`;
+
+const buildApprovalAnswer = ({
+  proposal: { labels, summary, toolName },
   approvedToolName,
-  feedback,
 }: {
-  proposal: ProposedToolCall;
+  proposal: Pick<ProposedToolCall, 'labels' | 'summary' | 'toolName'>;
   approvedToolName: string;
-  feedback: string | undefined;
 }): string => {
-  const approveLabel = proposal.labels?.approve;
-  const approval =
-    approvedToolName !== proposal.toolName
-      ? `Approve "${proposal.summary}", running ${approvedToolName} instead`
-      : isNonEmptyString(approveLabel)
-        ? `${approveLabel}: "${proposal.summary}"`
-        : `Approve "${proposal.summary}"`;
+  if (approvedToolName !== toolName) {
+    return `Approve "${summary}", running ${approvedToolName} instead`;
+  }
 
-  return isNonEmptyString(feedback)
-    ? `${approval}: ${feedback}`
-    : `${approval}.`;
-};
-
-const buildRejectionAnswerText = ({
-  proposal,
-  feedback,
-}: {
-  proposal: ProposedToolCall;
-  feedback: string | undefined;
-}): string => {
-  const rejectLabel = proposal.labels?.reject;
-  const rejection = isNonEmptyString(rejectLabel)
-    ? `${rejectLabel}: "${proposal.summary}"`
-    : `Reject "${proposal.summary}"`;
-
-  return isNonEmptyString(feedback)
-    ? `${rejection}: ${feedback}`
-    : `${rejection}.`;
+  return `${labels?.approve ?? 'Approve'} "${summary}"`;
 };
 
 export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
@@ -229,16 +213,18 @@ export const PROPOSE_TOOL_CALL_PAUSING_TOOL = definePausingTool<
             ...(hasFeedback ? { feedback } : {}),
           } satisfies ProposeToolCallToolResult,
         },
-        answerText: buildRejectionAnswerText({ proposal, feedback }),
+        answerText: buildAnswerText({
+          answer: `${proposal.labels?.reject ?? 'Reject'} "${proposal.summary}"`,
+          feedback,
+        }),
       };
     }
 
     const approvedToolName = isReadable
       ? (output.toolName ?? proposal.toolName)
       : proposal.toolName;
-    const answerText = buildApprovalAnswerText({
-      proposal,
-      approvedToolName,
+    const answerText = buildAnswerText({
+      answer: buildApprovalAnswer({ proposal, approvedToolName }),
       feedback,
     });
 

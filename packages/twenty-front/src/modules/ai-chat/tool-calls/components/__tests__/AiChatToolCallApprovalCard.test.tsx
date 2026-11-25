@@ -188,24 +188,7 @@ describe('AiChatToolCallApprovalCard', () => {
       );
     });
 
-    it('runs the tool from its own approve label', async () => {
-      const user = userEvent.setup();
-
-      renderCard({ proposal: BOOKING_PROPOSAL });
-
-      await user.click(screen.getByRole('button', { name: 'Send response' }));
-
-      expect(answerAiChatToolCall).toHaveBeenCalledWith(
-        expect.objectContaining({
-          response: {
-            decision: 'approve',
-            arguments: { bookingId: 'booking-1' },
-          },
-        }),
-      );
-    });
-
-    it('runs the tool with the decision its component set', async () => {
+    it('runs the tool with the decision its component set from its own approve label', async () => {
       const user = userEvent.setup();
 
       renderCard({ proposal: BOOKING_PROPOSAL });
