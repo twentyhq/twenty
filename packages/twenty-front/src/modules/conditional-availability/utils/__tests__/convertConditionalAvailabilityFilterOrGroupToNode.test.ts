@@ -4,6 +4,7 @@ import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional
 import { createEmptyConditionalAvailabilityFilter } from '@/conditional-availability/utils/createEmptyConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilter } from '@/conditional-availability/utils/updateConditionalAvailabilityFilter';
 import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterGroup';
+import { updateConditionalAvailabilityFilterOperator } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterOperator';
 import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
@@ -13,7 +14,7 @@ const ROLE_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',
   id: 'role-filter',
   variable: 'currentRole',
-  operator: 'EQUAL',
+  operator: 'isAnyOf',
   values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER],
 };
 
@@ -76,27 +77,54 @@ describe('convertConditionalAvailabilityFilterOrGroupToNode', () => {
     });
   });
 
-  it('should join several values with "or" when equal and with "and" when not equal', () => {
-    const roleValues = [
-      ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
-      SALES_ROLE_UNIVERSAL_IDENTIFIER,
-    ];
+  it('should join "is any of" values with "or" and "is none of" values with "and"', () => {
+    const roleFilterWithTwoValues: ConditionalAvailabilityFilter = {
+      ...ROLE_FILTER,
+      values: [
+        ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
+        SALES_ROLE_UNIVERSAL_IDENTIFIER,
+      ],
+    };
 
     expect(
-      convertToNode({
-        ...FILTER_GROUP,
-        children: [{ ...ROLE_FILTER, values: roleValues }],
-      }),
+      convertToNode({ ...FILTER_GROUP, children: [roleFilterWithTwoValues] }),
     ).toMatchObject({ type: 'GROUP', logicalOperator: 'OR' });
 
     expect(
       convertToNode({
         ...FILTER_GROUP,
         children: [
-          { ...ROLE_FILTER, operator: 'NOT_EQUAL', values: roleValues },
+          updateConditionalAvailabilityFilterOperator({
+            filter: roleFilterWithTwoValues,
+            operator: 'isNoneOf',
+          }),
         ],
       }),
     ).toMatchObject({ type: 'GROUP', logicalOperator: 'AND' });
+  });
+
+  it('should clear the values when the new operator holds one value and the filter has several', () => {
+    const workspaceMemberFilter: ConditionalAvailabilityFilter = {
+      type: 'filter',
+      id: 'workspace-member-filter',
+      variable: 'currentWorkspaceMember',
+      operator: 'isAnyOf',
+      values: ['member-1', 'member-2'],
+    };
+
+    expect(
+      updateConditionalAvailabilityFilterOperator({
+        filter: workspaceMemberFilter,
+        operator: 'is',
+      }),
+    ).toEqual({ ...workspaceMemberFilter, operator: 'is', values: [] });
+
+    expect(
+      updateConditionalAvailabilityFilterOperator({
+        filter: workspaceMemberFilter,
+        operator: 'isNoneOf',
+      }),
+    ).toEqual({ ...workspaceMemberFilter, operator: 'isNoneOf' });
   });
 
   it('should join the filters of the root with "or" once its operator is changed', () => {

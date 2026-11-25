@@ -1,5 +1,6 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
+import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterVariablePath } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariablePath';
 import {
   type ConditionalAvailabilityNode,
@@ -40,14 +41,17 @@ export const convertConditionalAvailabilityFilterOrGroupToNode = ({
   const variablePath = getConditionalAvailabilityFilterVariablePath({
     variable,
   });
+  const comparisonOperator = getConditionalAvailabilityFilterComparisonOperator(
+    { operator },
+  );
 
   return joinConditionalAvailabilityNodes({
     nodes: values.map((value) => ({
       type: 'COMPARISON',
-      operator,
+      operator: comparisonOperator,
       left: { type: 'VARIABLE', path: variablePath },
       right: { type: 'LITERAL', value },
     })),
-    logicalOperator: operator === 'EQUAL' ? 'OR' : 'AND',
+    logicalOperator: comparisonOperator === 'EQUAL' ? 'OR' : 'AND',
   });
 };

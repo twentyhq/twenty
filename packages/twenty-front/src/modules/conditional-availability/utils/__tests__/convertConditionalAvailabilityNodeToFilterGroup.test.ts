@@ -80,7 +80,7 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
         {
           type: 'filter',
           variable: 'currentRole',
-          operator: 'EQUAL',
+          operator: 'isAnyOf',
           values: [
             ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             SALES_ROLE_UNIVERSAL_IDENTIFIER,
@@ -89,14 +89,25 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
         {
           type: 'filter',
           variable: 'device',
-          operator: 'EQUAL',
+          operator: 'is',
           values: ['MOBILE'],
         },
       ],
     });
   });
 
-  it('should read excluded workspace members as one filter', () => {
+  it('should read one workspace member as "is not" and several as "is none of"', () => {
+    expect(
+      getFilterGroupOrThrow(workspaceMemberIsNot(WORKSPACE_MEMBER_ID)).children,
+    ).toMatchObject([
+      {
+        type: 'filter',
+        variable: 'currentWorkspaceMember',
+        operator: 'isNot',
+        values: [WORKSPACE_MEMBER_ID],
+      },
+    ]);
+
     expect(
       getFilterGroupOrThrow({
         type: 'GROUP',
@@ -110,7 +121,7 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       {
         type: 'filter',
         variable: 'currentWorkspaceMember',
-        operator: 'NOT_EQUAL',
+        operator: 'isNoneOf',
         values: [WORKSPACE_MEMBER_ID, OTHER_WORKSPACE_MEMBER_ID],
       },
     ]);
@@ -147,6 +158,22 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
           { variable: 'device', values: ['MOBILE'] },
         ],
       },
+    ]);
+  });
+
+  it('should keep two devices joined by "or" as two filters', () => {
+    const filterGroup = getFilterGroupOrThrow({
+      type: 'GROUP',
+      logicalOperator: 'OR',
+      children: [
+        DEVICE_IS_MOBILE,
+        buildDeviceConditionalAvailability('DESKTOP'),
+      ],
+    });
+
+    expect(filterGroup.children).toMatchObject([
+      { variable: 'device', operator: 'is', values: ['MOBILE'] },
+      { variable: 'device', operator: 'is', values: ['DESKTOP'] },
     ]);
   });
 
@@ -221,6 +248,14 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       }),
     },
     {
+      title: 'a device excluded',
+      node: comparison({
+        operator: 'NOT_EQUAL',
+        variablePath: 'device',
+        value: 'MOBILE',
+      }),
+    },
+    {
       title: 'a comparison other than "equal" or "not equal"',
       node: {
         type: 'COMPARISON',
@@ -238,8 +273,6 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       }),
     },
   ])('should not read $title as filters', ({ node }) => {
-    expect(
-      convertConditionalAvailabilityNodeToFilterGroup({ node }),
-    ).toBeNull();
+    expect(convertConditionalAvailabilityNodeToFilterGroup({ node })).toBeNull();
   });
 });

@@ -6,38 +6,38 @@ const ROLE_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',
   id: 'role-filter',
   variable: 'currentRole',
-  operator: 'EQUAL',
+  operator: 'isAnyOf',
   values: ['20202020-0000-4000-8000-000000000001'],
 };
 
-const MOBILE_FILTER: ConditionalAvailabilityFilter = {
+const DEVICE_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',
-  id: 'mobile-filter',
+  id: 'device-filter',
   variable: 'device',
-  operator: 'EQUAL',
+  operator: 'is',
   values: ['MOBILE'],
 };
 
-const DESKTOP_FILTER: ConditionalAvailabilityFilter = {
+const WORKSPACE_MEMBER_FILTER: ConditionalAvailabilityFilter = {
   type: 'filter',
-  id: 'desktop-filter',
-  variable: 'device',
-  operator: 'EQUAL',
-  values: ['DESKTOP'],
+  id: 'workspace-member-filter',
+  variable: 'currentWorkspaceMember',
+  operator: 'is',
+  values: ['20202020-1111-4000-8000-000000000001'],
 };
 
-const DEVICE_GROUP: ConditionalAvailabilityFilterGroup = {
+const NESTED_FILTER_GROUP: ConditionalAvailabilityFilterGroup = {
   type: 'filterGroup',
-  id: 'device-group',
-  logicalOperator: 'AND',
-  children: [MOBILE_FILTER, DESKTOP_FILTER],
+  id: 'nested-filter-group',
+  logicalOperator: 'OR',
+  children: [DEVICE_FILTER, WORKSPACE_MEMBER_FILTER],
 };
 
 const FILTER_GROUP: ConditionalAvailabilityFilterGroup = {
   type: 'filterGroup',
   id: 'root',
   logicalOperator: 'AND',
-  children: [ROLE_FILTER, DEVICE_GROUP],
+  children: [ROLE_FILTER, NESTED_FILTER_GROUP],
 };
 
 describe('removeConditionalAvailabilityFilterOrGroup', () => {
@@ -47,38 +47,41 @@ describe('removeConditionalAvailabilityFilterOrGroup', () => {
         filterGroup: FILTER_GROUP,
         filterOrGroupId: ROLE_FILTER.id,
       }).children,
-    ).toEqual([DEVICE_GROUP]);
+    ).toEqual([NESTED_FILTER_GROUP]);
   });
 
   it('should remove a filter inside a group and keep the group', () => {
     expect(
       removeConditionalAvailabilityFilterOrGroup({
         filterGroup: FILTER_GROUP,
-        filterOrGroupId: MOBILE_FILTER.id,
+        filterOrGroupId: DEVICE_FILTER.id,
       }).children,
-    ).toEqual([ROLE_FILTER, { ...DEVICE_GROUP, children: [DESKTOP_FILTER] }]);
+    ).toEqual([
+      ROLE_FILTER,
+      { ...NESTED_FILTER_GROUP, children: [WORKSPACE_MEMBER_FILTER] },
+    ]);
   });
 
   it('should remove a group with all its filters', () => {
     expect(
       removeConditionalAvailabilityFilterOrGroup({
         filterGroup: FILTER_GROUP,
-        filterOrGroupId: DEVICE_GROUP.id,
+        filterOrGroupId: NESTED_FILTER_GROUP.id,
       }).children,
     ).toEqual([ROLE_FILTER]);
   });
 
   it('should drop a group once its last filter is removed', () => {
-    const filterGroupWithoutMobileFilter =
+    const filterGroupWithoutDeviceFilter =
       removeConditionalAvailabilityFilterOrGroup({
         filterGroup: FILTER_GROUP,
-        filterOrGroupId: MOBILE_FILTER.id,
+        filterOrGroupId: DEVICE_FILTER.id,
       });
 
     expect(
       removeConditionalAvailabilityFilterOrGroup({
-        filterGroup: filterGroupWithoutMobileFilter,
-        filterOrGroupId: DESKTOP_FILTER.id,
+        filterGroup: filterGroupWithoutDeviceFilter,
+        filterOrGroupId: WORKSPACE_MEMBER_FILTER.id,
       }).children,
     ).toEqual([ROLE_FILTER]);
   });

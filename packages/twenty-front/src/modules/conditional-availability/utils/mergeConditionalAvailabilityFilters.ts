@@ -1,6 +1,10 @@
 import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
+import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/conditional-availability/utils/canConditionalAvailabilityFilterOperatorHoldSeveralValues';
+import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
+import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariableOperators';
 import { type ConditionalAvailabilityLogicalOperator } from 'twenty-shared/conditional-availability';
+import { isDefined } from 'twenty-shared/utils';
 
 export const mergeConditionalAvailabilityFilters = ({
   previousFilterOrGroup,
@@ -19,25 +23,46 @@ export const mergeConditionalAvailabilityFilters = ({
   if (
     previousFilterOrGroup?.type !== 'filter' ||
     filterOrGroup.type !== 'filter' ||
-    previousFilterOrGroup.variable !== filterOrGroup.variable ||
-    previousFilterOrGroup.operator !== filterOrGroup.operator
+    previousFilterOrGroup.variable !== filterOrGroup.variable
   ) {
     return null;
   }
 
+  const comparisonOperator = getConditionalAvailabilityFilterComparisonOperator(
+    { operator: filterOrGroup.operator },
+  );
+
+  const operatorHoldingSeveralValues =
+    getConditionalAvailabilityFilterVariableOperators({
+      variable: filterOrGroup.variable,
+    }).find(
+      (operator) =>
+        getConditionalAvailabilityFilterComparisonOperator({ operator }) ===
+          comparisonOperator &&
+        canConditionalAvailabilityFilterOperatorHoldSeveralValues({ operator }),
+    );
+
   const filterValuesLogicalOperator =
-    filterOrGroup.operator === 'EQUAL' ? 'OR' : 'AND';
+    comparisonOperator === 'EQUAL' ? 'OR' : 'AND';
 
   const hasValueInCommon = filterOrGroup.values.some((value) =>
     previousFilterOrGroup.values.includes(value),
   );
 
-  if (filterValuesLogicalOperator !== logicalOperator || hasValueInCommon) {
+  if (
+    !isDefined(operatorHoldingSeveralValues) ||
+    getConditionalAvailabilityFilterComparisonOperator({
+      operator: previousFilterOrGroup.operator,
+    }) !== comparisonOperator ||
+    filterValuesLogicalOperator !== logicalOperator ||
+    hasValueInCommon
+  ) {
     return null;
   }
 
   return {
     ...previousFilterOrGroup,
+    operator: operatorHoldingSeveralValues,
     values: [...previousFilterOrGroup.values, ...filterOrGroup.values],
   };
 };
