@@ -90,7 +90,7 @@ export const computeValidationRuleHelperContext = ({
     );
 
     // A second chip would merge into one unknown name, so a member replaces the chip it extends
-    if (fieldBeforeCursor?.hasMembers === true) {
+    if (fieldBeforeCursor?.hasMembers) {
       return {
         replaceFromOffset: cursorOffset - fieldPathBeforeCursor.length,
         items: computeMemberItems({
