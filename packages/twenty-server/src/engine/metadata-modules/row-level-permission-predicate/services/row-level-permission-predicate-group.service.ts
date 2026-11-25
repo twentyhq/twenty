@@ -59,24 +59,34 @@ export class RowLevelPermissionPredicateGroupService {
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
   }
 
-  public async deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles(
-    workspaceId: string,
-  ) {
+  public async deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles({
+    workspaceId,
+    keptPredicateGroupIds,
+  }: {
+    workspaceId: string;
+    keptPredicateGroupIds: string[];
+  }) {
     const { flatRoleMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        { workspaceId, flatMapsKeys: ['flatRoleMaps'] },
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
       );
 
-    // Individual roles carry channel visibility, which does not depend on the RLS entitlement
     const individualRoleIds = Object.values(flatRoleMaps.byUniversalIdentifier)
       .filter(isDefined)
       .filter(isWorkspaceMemberIndividualRole)
       .map(({ id }) => id);
 
-    const criteria: FindOptionsWhere<RowLevelPermissionPredicateGroupEntity> =
-      individualRoleIds.length > 0
-        ? { roleId: Not(In(individualRoleIds)) }
-        : {};
+    const criteria: FindOptionsWhere<RowLevelPermissionPredicateGroupEntity> = {
+      ...(individualRoleIds.length > 0 && {
+        roleId: Not(In(individualRoleIds)),
+      }),
+      ...(keptPredicateGroupIds.length > 0 && {
+        id: Not(In(keptPredicateGroupIds)),
+      }),
+    };
 
     // Checking first keeps the common no-op a read and lets cleanup retry on every pass after a failed attempt
     const hasPredicateGroups =

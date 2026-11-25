@@ -4,6 +4,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
@@ -321,6 +325,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
   let workspaceMemberBlocklistFieldMetadataId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: {
@@ -448,6 +453,7 @@ describe('Row Level Permission Predicate upsert should fail', () => {
 
     expect(adminRole.rowLevelPermissionPredicates).toEqual([]);
     expect(adminRole.rowLevelPermissionPredicateGroups).toEqual([]);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it.each(

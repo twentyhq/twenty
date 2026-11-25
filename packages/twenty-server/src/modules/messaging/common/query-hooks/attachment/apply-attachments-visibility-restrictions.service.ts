@@ -44,17 +44,7 @@ export class ApplyAttachmentsVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      ['featureFlagsMap'],
-    );
-
-    if (
-      isChannelVisibilityEnforcedByIndividualRole({
-        featureFlagsMap,
-        authContext,
-      })
-    ) {
+    if (isChannelVisibilityEnforcedByIndividualRole(authContext)) {
       return;
     }
 
