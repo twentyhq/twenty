@@ -3,7 +3,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
@@ -33,7 +32,6 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class BillingApplicationProductService {
@@ -44,7 +42,6 @@ export class BillingApplicationProductService {
     private readonly stripePriceService: StripePriceService,
     private readonly cacheLockService: CacheLockService,
     private readonly billingSeatService: BillingSeatService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(BillingProductEntity)
     private readonly billingProductRepository: Repository<BillingProductEntity>,
     @InjectRepository(BillingPriceEntity)
@@ -150,24 +147,9 @@ export class BillingApplicationProductService {
     }
   }
 
-  async isApplicationPriceBillingEnabled(
-    workspaceId: string,
-  ): Promise<boolean> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      ['featureFlagsMap'],
-    );
-
-    return featureFlagsMap[FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED];
-  }
-
   private async findDeclaredPrices(
     workspaceId: string,
   ): Promise<DeclaredApplicationPrice[]> {
-    if (!(await this.isApplicationPriceBillingEnabled(workspaceId))) {
-      return [];
-    }
-
     const applications = await this.applicationRepository.find(workspaceId, {
       where: { version: Not(IsNull()) },
     });
