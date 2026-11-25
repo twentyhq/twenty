@@ -111,7 +111,8 @@ export const useSwitchNavigationDrawerTab = () => {
       return true;
     }
 
-    return openNavigationMenuTabFirstEntry(tabId, {
+    return openNavigationMenuTabFirstEntry({
+      tabId,
       replace: isSettingsDrawer,
     });
   };

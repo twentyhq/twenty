@@ -128,10 +128,10 @@ describe('useSwitchNavigationDrawerTab', () => {
 
     act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
 
-    expect(mockOpenNavigationMenuTabFirstEntry).toHaveBeenCalledWith(
-      'chats-tab-id',
-      { replace: false },
-    );
+    expect(mockOpenNavigationMenuTabFirstEntry).toHaveBeenCalledWith({
+      tabId: 'chats-tab-id',
+      replace: false,
+    });
     expect(store.get(currentNavigationMenuTabIdState.atom)).toBe(
       'chats-tab-id',
     );
@@ -160,10 +160,10 @@ describe('useSwitchNavigationDrawerTab', () => {
 
     act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
 
-    expect(mockOpenNavigationMenuTabFirstEntry).toHaveBeenCalledWith(
-      'chats-tab-id',
-      { replace: true },
-    );
+    expect(mockOpenNavigationMenuTabFirstEntry).toHaveBeenCalledWith({
+      tabId: 'chats-tab-id',
+      replace: true,
+    });
     expect(result.current.location.pathname).toBe('/settings/profile');
     expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
       NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,

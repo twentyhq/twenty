@@ -16,11 +16,13 @@ type FoldersWithChildren = Parameters<
   typeof flattenNavigationMenuItemsWithFolderChildren
 >[1];
 
-type GetNavigationMenuTabFirstEntryArgs = Omit<
+type GetNavigationMenuTabFirstEntryArgs = Pick<
   Parameters<typeof getWorkspaceSidebarOrphanItemsInDisplayOrder>[0],
-  | 'containerId'
-  | 'includeInaccessibleObjectBackedItems'
-  | 'shouldIncludeTopLevelItems'
+  | 'workspaceNavigationMenuItems'
+  | 'workspaceNavigationMenuItemsSorted'
+  | 'objectMetadataItems'
+  | 'views'
+  | 'objectPermissionsByObjectMetadataId'
 > & {
   tabId: string;
   workspaceNavigationMenuItemsByFolder: FoldersWithChildren;
@@ -41,10 +43,13 @@ export const getNavigationMenuTabFirstEntry = ({
   getBuiltInSectionEntry,
   ...orphanItemsArgs
 }: GetNavigationMenuTabFirstEntryArgs): NavigationMenuTabEntry | null => {
-  const getFirstLinkEntry = (
-    items: NavigationMenuItem[],
-    foldersWithChildren: FoldersWithChildren,
-  ): NavigationMenuTabEntry | null => {
+  const getFirstLinkEntry = ({
+    items,
+    foldersWithChildren,
+  }: {
+    items: NavigationMenuItem[];
+    foldersWithChildren: FoldersWithChildren;
+  }): NavigationMenuTabEntry | null => {
     for (const item of flattenNavigationMenuItemsWithFolderChildren(
       items,
       foldersWithChildren,
@@ -88,20 +93,20 @@ export const getNavigationMenuTabFirstEntry = ({
     section: NavigationMenuItem,
   ): NavigationMenuTabEntry | null => {
     if (section.builtInSectionKey === 'favorites') {
-      return getFirstLinkEntry(
-        favoriteNavigationMenuItems,
-        favoriteNavigationMenuItemsByFolder,
-      );
+      return getFirstLinkEntry({
+        items: favoriteNavigationMenuItems,
+        foldersWithChildren: favoriteNavigationMenuItemsByFolder,
+      });
     }
 
     if (isDefined(section.builtInSectionKey)) {
       return getBuiltInSectionEntry(section.builtInSectionKey);
     }
 
-    return getFirstLinkEntry(
-      getContainerItems(section.id),
-      workspaceNavigationMenuItemsByFolder,
-    );
+    return getFirstLinkEntry({
+      items: getContainerItems(section.id),
+      foldersWithChildren: workspaceNavigationMenuItemsByFolder,
+    });
   };
 
   const tabChildren = sortNavigationMenuContainerChildren({
@@ -117,7 +122,10 @@ export const getNavigationMenuTabFirstEntry = ({
     const entry =
       child.type === NavigationMenuItemType.SECTION
         ? getSectionEntry(child)
-        : getFirstLinkEntry([child], workspaceNavigationMenuItemsByFolder);
+        : getFirstLinkEntry({
+            items: [child],
+            foldersWithChildren: workspaceNavigationMenuItemsByFolder,
+          });
 
     if (isDefined(entry)) {
       return entry;
