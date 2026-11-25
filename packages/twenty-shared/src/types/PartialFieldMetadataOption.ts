@@ -3,6 +3,7 @@ export type PartialFieldMetadataItemOption = {
   label: string;
   position: number;
   value: string;
+  description?: string | null;
   isActive?: boolean;
   applicationId?: string;
 };

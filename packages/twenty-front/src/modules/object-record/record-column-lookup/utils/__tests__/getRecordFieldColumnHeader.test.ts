@@ -1,7 +1,5 @@
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { getRecordFieldColumnHeader } from '@/object-record/record-column-lookup/utils/getRecordFieldColumnHeader';
-import { getRecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
-import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
@@ -19,8 +17,7 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: companyField,
-        lookupTarget: undefined,
-        isScopedRelationColumn: false,
+        columnKind: { kind: 'field' },
         customLabel: undefined,
       }),
     ).toMatchObject({
@@ -34,12 +31,11 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: undefined,
-        isScopedRelationColumn: true,
+        columnKind: { kind: 'scopedRecords' },
         customLabel: undefined,
       }),
     ).toMatchObject({
-      label: `${employeesField.label} · Filtered`,
+      label: `${employeesField.label} · Summary`,
       icon: employeesField.icon,
     });
   });
@@ -48,13 +44,10 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: companyField,
-        lookupTarget: getRecordFieldLookupTarget({
-          recordField: { relationTargetFieldMetadataId: employeesField.id },
-          fieldMetadataItem: companyField,
-          objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
-          isLookupColumnsEnabled: true,
-        }),
-        isScopedRelationColumn: false,
+        columnKind: {
+          kind: 'lookup',
+          lookupTarget: { lookupTargetFieldMetadataItem: employeesField },
+        },
         customLabel: undefined,
       }),
     ).toEqual({
@@ -68,12 +61,14 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: { lookupTargetFieldMetadataItem: companyField },
-        isScopedRelationColumn: true,
+        columnKind: {
+          kind: 'scopedLookup',
+          lookupTarget: { lookupTargetFieldMetadataItem: companyField },
+        },
         customLabel: undefined,
       }),
     ).toEqual({
-      label: `${employeesField.label} · Filtered › ${companyField.label}`,
+      label: `${employeesField.label} · Summary › ${companyField.label}`,
       icon: companyField.icon,
       description: companyField.description,
     });
@@ -83,8 +78,10 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: { lookupTargetFieldMetadataItem: companyField },
-        isScopedRelationColumn: true,
+        columnKind: {
+          kind: 'scopedLookup',
+          lookupTarget: { lookupTargetFieldMetadataItem: companyField },
+        },
         customLabel: 'Main contacts',
       }),
     ).toEqual({
@@ -98,20 +95,20 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: undefined,
-        isScopedRelationColumn: true,
+        columnKind: { kind: 'scopedRecords' },
         customLabel: null,
       }).label,
-    ).toBe(`${employeesField.label} · Filtered`);
+    ).toBe(`${employeesField.label} · Summary`);
   });
 
   it('names a summary column after its relation and its operation', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: undefined,
-        isScopedRelationColumn: true,
-        summary: { aggregateOperation: AggregateOperations.COUNT },
+        columnKind: {
+          kind: 'summary',
+          summary: { aggregateOperation: AggregateOperations.COUNT },
+        },
         customLabel: undefined,
       }).label,
     ).toBe(`${employeesField.label} · Count all`);
@@ -126,11 +123,12 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: undefined,
-        isScopedRelationColumn: true,
-        summary: {
-          aggregateOperation: AggregateOperations.SUM,
-          aggregatedFieldMetadataItem: amountField,
+        columnKind: {
+          kind: 'summary',
+          summary: {
+            aggregateOperation: AggregateOperations.SUM,
+            aggregatedFieldMetadataItem: amountField,
+          },
         },
         customLabel: undefined,
       }).label,
@@ -141,11 +139,22 @@ describe('getRecordFieldColumnHeader', () => {
     expect(
       getRecordFieldColumnHeader({
         fieldMetadataItem: employeesField,
-        lookupTarget: undefined,
-        isScopedRelationColumn: true,
-        summary: { aggregateOperation: AggregateOperations.COUNT },
+        columnKind: {
+          kind: 'summary',
+          summary: { aggregateOperation: AggregateOperations.COUNT },
+        },
         customLabel: 'Team size',
       }).label,
     ).toBe('Team size');
+  });
+
+  it('names a summary of an unreadable field like a filtered column', () => {
+    expect(
+      getRecordFieldColumnHeader({
+        fieldMetadataItem: employeesField,
+        columnKind: { kind: 'summary' },
+        customLabel: undefined,
+      }).label,
+    ).toBe(`${employeesField.label} · Summary`);
   });
 });

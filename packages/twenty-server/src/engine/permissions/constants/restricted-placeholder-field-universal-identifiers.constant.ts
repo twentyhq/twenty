@@ -4,6 +4,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 export const RESTRICTED_PLACEHOLDER_FIELD_UNIVERSAL_IDENTIFIERS: string[] = [
   STANDARD_OBJECTS.message.fields.subject.universalIdentifier,
   STANDARD_OBJECTS.message.fields.text.universalIdentifier,
+  STANDARD_OBJECTS.messageThread.fields.subject.universalIdentifier,
   STANDARD_OBJECTS.calendarEvent.fields.title.universalIdentifier,
   STANDARD_OBJECTS.calendarEvent.fields.description.universalIdentifier,
 ];

@@ -6,6 +6,7 @@ import { IconHistory, IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LINKEDIN_HISTORY_CONVERSATION_LIMITS } from 'src/constants/linkedin-history-conversation-limits.constant';
+import { LinkedinChatPicker } from 'src/front-components/components/LinkedinChatPicker';
 import { LinkedinImportPolicyIcon } from 'src/front-components/components/LinkedinImportPolicyIcon';
 import { LinkedinSyncButton } from 'src/front-components/components/LinkedinSyncButton';
 import { SettingsOptionCardContentSegmentedControl } from 'src/front-components/components/SettingsOptionCardContentSegmentedControl';
@@ -15,6 +16,8 @@ import { StyledSettingsCard } from 'src/front-components/components/StyledSettin
 import { type LinkedinHistoryConversationLimit } from 'src/types/linkedin-history-conversation-limit.type';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
+import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
+import { hasLinkedinHistoryToImport } from 'src/utils/has-linkedin-history-to-import.util';
 
 const StyledStack = styled.div`
   display: flex;
@@ -24,6 +27,7 @@ const StyledStack = styled.div`
 
 type LinkedinImportSectionProps = {
   importPolicy: LinkedinImportPolicy;
+  selectedChats: LinkedinSelectedChat[];
   areGroupChatsImported: boolean;
   historyConversationLimit: LinkedinHistoryConversationLimit;
   historyImport: LinkedinHistoryImportState | null;
@@ -31,6 +35,7 @@ type LinkedinImportSectionProps = {
   isSyncStarting: boolean;
   isSyncCancelling: boolean;
   onChange: (importPolicy: LinkedinImportPolicy) => void;
+  onSelectedChatsChange: (selectedChats: LinkedinSelectedChat[]) => void;
   onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onHistoryConversationLimitChange: (
     historyConversationLimit: LinkedinHistoryConversationLimit,
@@ -41,6 +46,7 @@ type LinkedinImportSectionProps = {
 
 export const LinkedinImportSection = ({
   importPolicy,
+  selectedChats,
   areGroupChatsImported,
   historyConversationLimit,
   historyImport,
@@ -48,6 +54,7 @@ export const LinkedinImportSection = ({
   isSyncStarting,
   isSyncCancelling,
   onChange,
+  onSelectedChatsChange,
   onGroupChatsImportChange,
   onHistoryConversationLimitChange,
   onSync,
@@ -79,38 +86,56 @@ export const LinkedinImportSection = ({
             title: t('Contacts only'),
             description: t('Import chats with people already in Twenty'),
           },
+          {
+            value: 'SELECTED',
+            cardMedia: <LinkedinImportPolicyIcon importPolicy="SELECTED" />,
+            title: t('Selected chats'),
+            description: t('Import only the conversations you pick'),
+            cardContentExpanded: (
+              <LinkedinChatPicker
+                selectedChats={selectedChats}
+                onChange={onSelectedChatsChange}
+              />
+            ),
+          },
         ]}
       />
-      <StyledSettingsCard>
-        <SettingsOptionCardContentToggle
-          Icon={IconUsers}
-          title={t('Import group chats')}
-          description={t('Groups where at least one member is a contact')}
-          checked={areGroupChatsImported}
-          onChange={onGroupChatsImportChange}
-          divider
-        />
-        <SettingsOptionCardContentSegmentedControl
-          Icon={IconHistory}
-          title={t('Past conversations')}
-          description={t('Most recent conversations imported on sync')}
-          options={LINKEDIN_HISTORY_CONVERSATION_LIMITS.map((limit) => ({
-            value: String(limit),
-            label: limit === 0 ? t('None') : String(limit),
-          }))}
-          value={String(historyConversationLimit)}
-          onChange={(value) => {
-            const limit = LINKEDIN_HISTORY_CONVERSATION_LIMITS.find(
-              (candidate) => String(candidate) === value,
-            );
+      {importPolicy !== 'SELECTED' && (
+        <StyledSettingsCard>
+          <SettingsOptionCardContentToggle
+            Icon={IconUsers}
+            title={t('Import group chats')}
+            description={t('Groups where at least one member is a contact')}
+            checked={areGroupChatsImported}
+            onChange={onGroupChatsImportChange}
+            divider
+          />
+          <SettingsOptionCardContentSegmentedControl
+            Icon={IconHistory}
+            title={t('Past conversations')}
+            description={t('Most recent conversations imported on sync')}
+            options={LINKEDIN_HISTORY_CONVERSATION_LIMITS.map((limit) => ({
+              value: String(limit),
+              label: limit === 0 ? t('None') : String(limit),
+            }))}
+            value={String(historyConversationLimit)}
+            onChange={(value) => {
+              const limit = LINKEDIN_HISTORY_CONVERSATION_LIMITS.find(
+                (candidate) => String(candidate) === value,
+              );
 
-            if (isDefined(limit)) {
-              onHistoryConversationLimitChange(limit);
-            }
-          }}
-        />
-      </StyledSettingsCard>
-      {(historyConversationLimit > 0 ||
+              if (isDefined(limit)) {
+                onHistoryConversationLimitChange(limit);
+              }
+            }}
+          />
+        </StyledSettingsCard>
+      )}
+      {(hasLinkedinHistoryToImport({
+        importPolicy,
+        selectedChats,
+        historyConversationLimit,
+      }) ||
         historyImport?.status === 'IMPORTING') && (
         <LinkedinSyncButton
           historyImport={historyImport}

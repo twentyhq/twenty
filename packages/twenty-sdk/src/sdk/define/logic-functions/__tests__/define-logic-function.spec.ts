@@ -330,6 +330,34 @@ describe('defineLogicFunction', () => {
     expect(result.errors).toContain('Cron trigger must have a pattern');
   });
 
+  it('should accept a cron trigger spreadMs', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Daily Report',
+      handler: mockHandler,
+      cronTriggerSettings: { pattern: '0 9 * * *', spreadMs: 60 * 60_000 },
+    } as any);
+
+    expect(result.success).toBe(true);
+  });
+
+  it.each([60_000, 24 * 60 * 60_000 + 1, 150_000.5])(
+    'should return error when cron trigger spreadMs is %s',
+    (spreadMs) => {
+      const result = defineLogicFunction({
+        universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+        name: 'Daily Report',
+        handler: mockHandler,
+        cronTriggerSettings: { pattern: '0 9 * * *', spreadMs },
+      } as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        'Cron trigger spreadMs must be an integer between 120000 and 86400000',
+      );
+    },
+  );
+
   it('should return error when databaseEvent trigger has no eventName', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
@@ -418,5 +446,41 @@ describe('defineLogicFunction', () => {
     });
 
     expect(result.success).toBe(true);
+  });
+
+  it('should accept an onJobFailure handler and a retryLimit', () => {
+    const config = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      onJobFailure: async () => {},
+      retryLimit: 3,
+    };
+
+    expect(defineLogicFunction(config).config).toEqual(config);
+  });
+
+  it('should reject an onJobFailure that is not a function', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      // @ts-expect-error a reference is not accepted, only a function
+      onJobFailure: { universalIdentifier: 'not-a-function' },
+    });
+
+    expect(result.errors).toContain(
+      'Logic function onJobFailure must be a function',
+    );
+  });
+
+  it.each([-1, 1.5, 11])('should reject retryLimit %s', (retryLimit) => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      handler: mockHandler,
+      retryLimit,
+    });
+
+    expect(result.errors).toContain(
+      'Logic function retryLimit must be an integer between 0 and 10',
+    );
   });
 });

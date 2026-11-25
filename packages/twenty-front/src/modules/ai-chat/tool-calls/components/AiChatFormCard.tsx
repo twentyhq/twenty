@@ -43,6 +43,7 @@ export const AiChatFormCard = ({ toolCallId, fields }: AiChatFormCardProps) => {
   return (
     <AiChatFormCardContent
       fields={fields}
+      values={values}
       isSubmitting={isSubmitting}
       isSubmitDisabled={isDefined(error)}
       onFieldChange={({ fieldName, value }) =>

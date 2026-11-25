@@ -25,11 +25,16 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 type RecordFile = { recordId: string; fileId: string };
 
+type RichTextFieldFileSyncContext = Pick<
+  WorkspaceInternalContext,
+  'workspaceId' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+>;
+
 // The record lists every file its rich text fields claimed, released ones included, so only that record can bring one back.
 export class RichTextFieldFileSync {
-  private readonly internalContext: WorkspaceInternalContext;
+  private readonly internalContext: RichTextFieldFileSyncContext;
 
-  constructor(internalContext: WorkspaceInternalContext) {
+  constructor(internalContext: RichTextFieldFileSyncContext) {
     this.internalContext = internalContext;
   }
 
@@ -292,8 +297,7 @@ export class RichTextFieldFileSync {
     }
   }
 
-  // A save that finishes late must not undo a newer one, so the stored document decides, not the one this save submitted.
-  // The record stays locked meanwhile, so a concurrent save cannot rewrite the document between the check and the change.
+  // The locked stored document decides, so a save that finishes late cannot undo a newer one.
   private async setOwnedFilesDeletedWhenStoredDocumentAgrees({
     recordFiles,
     fieldName,

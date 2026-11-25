@@ -1,4 +1,5 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getNavigationMenuItemDescendantIds } from '@/navigation-menu-item/common/utils/getNavigationMenuItemDescendantIds';
@@ -32,7 +33,8 @@ export const useNavigationMenuItemMoveRemove = (
       .filter(
         (item) =>
           (item.parentId ?? rootContainerId) === parentId &&
-          visibleItemIds.has(item.id),
+          (visibleItemIds.has(item.id) ||
+            item.type === NavigationMenuItemType.SECTION),
       )
       .sort((a, b) => a.position - b.position);
   };

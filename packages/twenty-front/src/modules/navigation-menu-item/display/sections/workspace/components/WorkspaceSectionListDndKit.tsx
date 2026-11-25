@@ -11,6 +11,7 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { getNavigationMenuItemListDroppableId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemListDroppableId';
@@ -20,7 +21,10 @@ import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-type WorkspaceSectionListDndKitProps = NavigationMenuItemSectionListDndKitProps;
+type WorkspaceSectionListDndKitProps =
+  NavigationMenuItemSectionListDndKitProps & {
+    hasAddItemRow?: boolean;
+  };
 
 const StyledList = styled.div`
   display: flex;
@@ -42,6 +46,8 @@ export const WorkspaceSectionListDndKit = ({
   folderChildrenById,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
+  renderSection,
+  hasAddItemRow = true,
 }: WorkspaceSectionListDndKitProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -51,13 +57,42 @@ export const WorkspaceSectionListDndKit = ({
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
-  const isAddMenuItemButtonVisible = isLayoutCustomizationModeEnabled;
+  const isAddMenuItemButtonVisible =
+    isLayoutCustomizationModeEnabled && hasAddItemRow;
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const orphanAppendDndIndex = filteredItems.length;
   const listDroppableId = getNavigationMenuItemListDroppableId({
     parentId: containerId,
     navigationMenuItemSection: 'workspace',
   });
+  const renderListEntry = ({
+    item,
+    index,
+  }: {
+    item: NavigationMenuItem;
+    index: number;
+  }) => {
+    if (
+      item.type === NavigationMenuItemType.SECTION &&
+      isDefined(renderSection)
+    ) {
+      return renderSection(item);
+    }
+
+    return (
+      <NavigationMenuItemDisplay
+        item={item}
+        editModeProps={getEditModeProps(item)}
+        isDragging={isDragging}
+        folderChildrenById={folderChildrenById}
+        folderCount={folderCount}
+        onNavigationMenuItemClick={onNavigationMenuItemClick}
+        onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+        orphanIndex={index}
+      />
+    );
+  };
+
   return (
     <StyledList>
       {filteredItems.map((item, index) => (
@@ -76,16 +111,7 @@ export const WorkspaceSectionListDndKit = ({
               !isLayoutCustomizationModeEnabled || workspaceDropDisabled
             }
           >
-            <NavigationMenuItemDisplay
-              item={item}
-              editModeProps={getEditModeProps(item)}
-              isDragging={isDragging}
-              folderChildrenById={folderChildrenById}
-              folderCount={folderCount}
-              onNavigationMenuItemClick={onNavigationMenuItemClick}
-              onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-              orphanIndex={index}
-            />
+            {renderListEntry({ item, index })}
           </NavigationMenuItemSortableItem>
         </StyledListItemRow>
       ))}

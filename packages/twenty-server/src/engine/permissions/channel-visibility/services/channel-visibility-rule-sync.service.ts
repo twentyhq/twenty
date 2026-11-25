@@ -19,7 +19,7 @@ import { type WorkspaceMemberIndividualRoleHolder } from 'src/engine/permissions
 import { WorkspaceMemberIndividualRoleService } from 'src/engine/permissions/workspace-member-individual-role/services/workspace-member-individual-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const { message, calendarEvent } = STANDARD_OBJECTS;
+const { message, messageThread, calendarEvent } = STANDARD_OBJECTS;
 
 @Injectable()
 export class ChannelVisibilityRuleSyncService {
@@ -122,12 +122,14 @@ export class ChannelVisibilityRuleSyncService {
                 [MessageChannelVisibility.METADATA]: [
                   calendarEvent.fields.title.universalIdentifier,
                   calendarEvent.fields.description.universalIdentifier,
+                  calendarEvent.fields.callRecordings.universalIdentifier,
                 ],
               },
             }),
             ...[
               ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
               STANDARD_OBJECTS.attachment.universalIdentifier,
+              STANDARD_OBJECTS.callRecording.universalIdentifier,
             ].map((objectUniversalIdentifier) => ({
               objectUniversalIdentifier,
             })),
@@ -140,6 +142,15 @@ export class ChannelVisibilityRuleSyncService {
             canDestroyAllRecords: false,
           })),
         },
+        unreadableNestedFields: [
+          {
+            objectUniversalIdentifier: messageThread.universalIdentifier,
+            fieldUniversalIdentifier:
+              messageThread.fields.subject.universalIdentifier,
+            sourceFieldUniversalIdentifier:
+              message.fields.subject.universalIdentifier,
+          },
+        ],
       })),
     });
   }

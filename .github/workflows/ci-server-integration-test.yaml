@@ -13,8 +13,8 @@ on:
         required: false
         default: ubuntu-latest
     outputs:
-      timings-run-id:
-        value: ${{ jobs.server-integration-test-timings.outputs.run-id }}
+      has-previous-timings:
+        value: ${{ jobs.server-integration-test-timings.outputs.available }}
     # Okta SSO test tenant used by packages/twenty-server/test/integration/sso
     secrets:
       OKTA_SSO_TEST_CLIENT_SECRET:
@@ -40,7 +40,7 @@ jobs:
     permissions:
       actions: read
     outputs:
-      run-id: ${{ steps.find-timings.outputs.run-id }}
+      available: ${{ steps.upload-timings.outcome == 'success' }}
     steps:
       - name: Find latest recorded timings
         id: find-timings
@@ -49,8 +49,29 @@ jobs:
           REPOSITORY: ${{ github.repository }}
         run: |
           run_id=$(gh api "repos/$REPOSITORY/actions/artifacts?name=integration-test-timings&per_page=100" \
-            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "main" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty')
+            --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "main" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].workflow_run.id // empty') || run_id=''
           echo "run-id=$run_id" >> "$GITHUB_OUTPUT"
+      - name: Download latest recorded timings
+        id: download-timings
+        if: steps.find-timings.outputs.run-id != ''
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: integration-test-timings
+          run-id: ${{ steps.find-timings.outputs.run-id }}
+          github-token: ${{ github.token }}
+          path: previous-timings
+      - name: Share timings with the shards of this run
+        id: upload-timings
+        if: steps.download-timings.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: previous-integration-test-timings
+          path: previous-timings/timings.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 1
 
   server-integration-test:
     needs: server-integration-test-timings
@@ -162,12 +183,10 @@ jobs:
           restore-keys: v4-jest-server-integration-${{ github.ref_name }}-
           path: .cache/jest/packages/twenty-server-integration
       - name: Download integration test timings
-        if: needs.server-integration-test-timings.outputs.run-id != ''
+        if: needs.server-integration-test-timings.outputs.available == 'true'
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: integration-test-timings
-          run-id: ${{ needs.server-integration-test-timings.outputs.run-id }}
-          github-token: ${{ github.token }}
+          name: previous-integration-test-timings
           path: .cache/integration-test-timings
       - name: Server / Run Integration Tests
         if: ${{ !inputs.record-timings }}

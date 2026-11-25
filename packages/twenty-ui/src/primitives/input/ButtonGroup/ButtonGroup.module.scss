@@ -21,22 +21,17 @@
   max-inline-size: 100%;
 
   &[data-framed] {
+    --t-corner-shape: round;
     --tw-button-radius: calc(
-      var(--t-border-radius-sm) - var(--t-spacing-0_5) - 1px
+      var(--t-border-radius-md-round) - var(--t-spacing-0_5) - 1px
     );
 
     align-items: flex-start;
-    backdrop-filter: blur(20px);
-    background-color: var(--t-background-transparent-lighter);
-    border: 1px solid var(--t-border-color-strong);
-    border-radius: var(--t-border-radius-sm);
+    background-color: var(--t-background-primary);
+    border: 1px solid var(--t-border-color-medium);
+    border-radius: var(--t-border-radius-md-round);
+    box-shadow: var(--t-box-shadow-light);
     padding: var(--t-spacing-0_5);
-
-    @include hover-capable {
-      &:hover {
-        box-shadow: var(--t-box-shadow-light);
-      }
-    }
   }
 
   &[data-attached] > :not(:first-child) {

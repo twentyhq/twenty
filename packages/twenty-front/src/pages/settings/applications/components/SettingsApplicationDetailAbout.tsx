@@ -19,7 +19,7 @@ type SettingsApplicationDetailAboutProps = {
   description?: string;
   aboutDescription?: string;
   pricingDescription?: string;
-  billsCredits?: boolean;
+  isPaid?: boolean;
   screenshots?: string[];
   author?: string;
   version?: string;
@@ -135,7 +135,7 @@ export const SettingsApplicationDetailAbout = ({
   description,
   aboutDescription,
   pricingDescription,
-  billsCredits,
+  isPaid,
   screenshots,
   author,
   version,
@@ -184,7 +184,7 @@ export const SettingsApplicationDetailAbout = ({
           installCount={installCount}
           category={category}
           pricingDescription={pricingDescription}
-          billsCredits={billsCredits}
+          isPaid={isPaid}
           developerLinks={developerLinks}
           contentLink={contentLink}
         />

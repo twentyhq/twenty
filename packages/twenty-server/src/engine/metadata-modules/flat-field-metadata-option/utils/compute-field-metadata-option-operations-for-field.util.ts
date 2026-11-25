@@ -30,6 +30,7 @@ const hasOptionColumnsChanged = ({
   currentOptionColumns.value !== targetOptionColumns.value ||
   currentOptionColumns.label !== targetOptionColumns.label ||
   currentOptionColumns.color !== targetOptionColumns.color ||
+  currentOptionColumns.description !== targetOptionColumns.description ||
   currentOptionColumns.position !== targetOptionColumns.position ||
   currentOptionColumns.isActive !== targetOptionColumns.isActive;
 

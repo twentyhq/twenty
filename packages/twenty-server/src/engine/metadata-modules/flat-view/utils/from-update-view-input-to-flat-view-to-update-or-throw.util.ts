@@ -78,9 +78,14 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
 
   const {
     translations: rawTranslations,
-    ...updateViewInputWithoutTranslations
+    isPrivate,
+    ...updateViewInputWithoutTranslationsAndPrivacy
   } = rawUpdateViewInput;
   const translations = rawTranslations ?? [];
+  const updateViewInputWithoutTranslations = {
+    ...updateViewInputWithoutTranslationsAndPrivacy,
+    ...(isDefined(isPrivate) && { isPrivate }),
+  };
 
   const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
     translations,
@@ -221,21 +226,17 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.universalOverrides = null;
   }
 
-  // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
-  // This prevents the view from disappearing for the user making the change
-  if (
-    isDefined(rawUpdateViewInput.visibility) &&
-    rawUpdateViewInput.visibility === 'UNLISTED' &&
-    existingFlatViewToUpdate.visibility === 'WORKSPACE' &&
-    isDefined(userWorkspaceId)
-  ) {
-    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
-  }
-
   const effectiveExistingFlatView = resolveEffectiveFlatEntity({
     metadataName: 'view',
     flatEntity: existingFlatViewToUpdate,
   });
+
+  const isPrivacyChanging =
+    isDefined(isPrivate) && isPrivate !== effectiveExistingFlatView.isPrivate;
+
+  if (isPrivacyChanging && isDefined(userWorkspaceId)) {
+    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
+  }
 
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     metadataName: 'view',

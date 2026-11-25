@@ -15,6 +15,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 type NavigationDrawerInboxChannelNavigationProps = {
   channel: AiChatChannel;
@@ -89,6 +90,9 @@ export const NavigationDrawerInboxChannelNavigation = ({
 
   return (
     <NavigationDrawerItemGroup>
+      {isChannelAccessible && (
+        <NavigationMenuTabFirstItemOpenEffect onOpen={handleClick} />
+      )}
       <NavigationDrawerItem
         label={channel.name}
         secondaryLabel={isChannelAccessible ? undefined : t`Not open to you`}

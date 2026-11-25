@@ -122,8 +122,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Billing,
           Icon: IconCreditCard,
           isHidden:
-            !isBillingEnabled ||
-            !permissionFlagMap[PermissionFlagType.WORKSPACE],
+            !isBillingEnabled || !permissionFlagMap[PermissionFlagType.BILLING],
         },
         {
           label: t`Developers`,
