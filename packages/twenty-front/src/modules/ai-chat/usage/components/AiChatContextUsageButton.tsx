@@ -3,7 +3,7 @@ import { formatAiChatTokens } from '@/ai-chat/usage/utils/formatAiChatTokens';
 import { FloatingPortal, useTransitionStyles } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps, useContext, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { MetricRow } from 'twenty-ui/components/data-display';
@@ -14,6 +14,7 @@ import { IconWindow, IconGauge, IconUser } from 'twenty-ui/icon';
 import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { AiChatComposerActionsRowContext } from '@/ai-chat/contexts/AiChatComposerActionsRowContext';
 import { AiChatContextChatDetails } from '@/ai-chat/usage/components/AiChatContextChatDetails';
 import { AiChatContextUsageDetails } from '@/ai-chat/usage/components/AiChatContextUsageDetails';
 import { AiChatUsageMetricRow } from '@/ai-chat/usage/components/AiChatUsageMetricRow';
@@ -52,6 +53,8 @@ export const AiChatContextUsageButton = () => {
 
   const [isOverflowOpen, setIsOverflowOpen] = useState(false);
 
+  const composerActionsRow = useContext(AiChatComposerActionsRowContext);
+
   const {
     isOpen,
     close,
@@ -68,6 +71,7 @@ export const AiChatContextUsageButton = () => {
       setShowDetails(false);
     },
     shouldStayOpen: isOverflowOpen,
+    boundary: composerActionsRow,
   });
 
   const closeCard = () => {
