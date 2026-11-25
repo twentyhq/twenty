@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -47,6 +52,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
@@ -88,6 +94,7 @@ const CORE_WORKFLOW_READ_ACCESS_POLICY: AccessPolicy = {
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
 )
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class CoreWorkflowResolver {
   constructor(
     private readonly coreWorkflowListService: CoreWorkflowListService,
