@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
+import { type StoredFormulaLookupJoin } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-lookup-join.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -26,7 +27,10 @@ export const buildStoredFormulaColumnExpressions = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   schemaName: string;
   formulaFieldMetadataIds?: string[];
-}): StoredFormulaColumnExpression[] => {
+}): {
+  columnExpressions: StoredFormulaColumnExpression[];
+  lookupJoins: StoredFormulaLookupJoin[];
+} => {
   const storedFormulaFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
@@ -38,16 +42,26 @@ export const buildStoredFormulaColumnExpressions = ({
   );
 
   if (storedFormulaFlatFieldMetadatas.length === 0) {
-    return [];
+    return { columnExpressions: [], lookupJoins: [] };
   }
 
   const tableName = computeObjectTargetTable(flatObjectMetadata);
+  const lookupAliasByRelationFieldName = new Map<string, string>();
   const resolveReference = buildFormulaSqlReferenceResolverFromDescriptors({
     fields: buildFormulaFieldDescriptorsFromFlatEntityMaps({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     }),
+    getLookupAlias: (relationFieldName) => {
+      const lookupAlias =
+        lookupAliasByRelationFieldName.get(relationFieldName) ??
+        `lookup${lookupAliasByRelationFieldName.size}`;
+
+      lookupAliasByRelationFieldName.set(relationFieldName, lookupAlias);
+
+      return lookupAlias;
+    },
   });
   const resolveAggregationSource = buildFormulaSqlAggregationSourceResolver({
     flatObjectMetadata,
@@ -56,7 +70,7 @@ export const buildStoredFormulaColumnExpressions = ({
     schemaName,
   });
 
-  return storedFormulaFlatFieldMetadatas.flatMap(
+  const columnExpressions = storedFormulaFlatFieldMetadatas.flatMap(
     (storedFormulaFlatFieldMetadata): StoredFormulaColumnExpression[] =>
       (
         compileFormulaFieldColumns({
@@ -74,4 +88,11 @@ export const buildStoredFormulaColumnExpressions = ({
         expression: `(${expression ?? 'NULL'})::${sqlType}`,
       })),
   );
+
+  return {
+    columnExpressions,
+    lookupJoins: [...lookupAliasByRelationFieldName].map(
+      ([relationFieldName, alias]) => ({ relationFieldName, alias }),
+    ),
+  };
 };

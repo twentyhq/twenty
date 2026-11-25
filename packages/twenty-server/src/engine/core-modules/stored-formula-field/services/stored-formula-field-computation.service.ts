@@ -8,6 +8,7 @@ import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/st
 import { STORED_FORMULA_FIELD_RECORDS_PER_RUN } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-records-per-run.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-batch-size.constant';
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
+import { type StoredFormulaLookupJoin } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-lookup-join.type';
 import { buildStoredFormulaColumnExpressions } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-column-expressions.util';
 import { buildStoredFormulaRecordUpdate } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-record-update.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -24,6 +25,7 @@ const RECORD_ID_COLUMN = quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, 'id');
 type RecomputeRecordsBatchParameters = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
   columnExpressions: StoredFormulaColumnExpression[];
+  lookupJoins: StoredFormulaLookupJoin[];
   recordIds: string[];
   shouldSkipEventEmission: boolean;
 };
@@ -130,6 +132,45 @@ export class StoredFormulaFieldComputationService {
     }, buildSystemAuthContext(workspaceId));
   }
 
+  async findRecordIdsByJoinColumnValues({
+    workspaceId,
+    objectMetadataId,
+    joinColumnName,
+    joinColumnValues,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    joinColumnName: string;
+    joinColumnValues: string[];
+  }): Promise<string[]> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectMetadataId,
+        flatEntityMaps: getWorkspaceContext().flatObjectMetadataMaps,
+      });
+
+      if (
+        !isDefined(flatObjectMetadata) ||
+        !isNonEmptyArray(joinColumnValues)
+      ) {
+        return [];
+      }
+
+      const rows = await this.workspaceOrmManager
+        .getRepositoryWithoutPermissionChecks(flatObjectMetadata.nameSingular)
+        .createQueryBuilder(COMPUTED_COLUMN_RECORD_ALIAS)
+        .withStoredColumnsOnly()
+        .select(RECORD_ID_COLUMN, 'id')
+        .where(
+          `${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, joinColumnName)} IN (:...joinColumnValues)`,
+          { joinColumnValues },
+        )
+        .getRawMany<{ id: string }>();
+
+      return rows.map(({ id }) => id);
+    }, buildSystemAuthContext(workspaceId));
+  }
+
   private resolveColumnExpressions({
     workspaceId,
     objectMetadataId,
@@ -142,6 +183,7 @@ export class StoredFormulaFieldComputationService {
     | {
         flatObjectMetadata: FlatObjectMetadata;
         columnExpressions: StoredFormulaColumnExpression[];
+        lookupJoins: StoredFormulaLookupJoin[];
       }
     | undefined {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -155,16 +197,17 @@ export class StoredFormulaFieldComputationService {
       return undefined;
     }
 
-    const columnExpressions = buildStoredFormulaColumnExpressions({
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      schemaName: getWorkspaceSchemaName(workspaceId),
-      formulaFieldMetadataIds,
-    });
+    const { columnExpressions, lookupJoins } =
+      buildStoredFormulaColumnExpressions({
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        schemaName: getWorkspaceSchemaName(workspaceId),
+        formulaFieldMetadataIds,
+      });
 
     return isNonEmptyArray(columnExpressions)
-      ? { flatObjectMetadata, columnExpressions }
+      ? { flatObjectMetadata, columnExpressions, lookupJoins }
       : undefined;
   }
 
@@ -192,6 +235,7 @@ export class StoredFormulaFieldComputationService {
   private async recomputeRecordsBatch({
     flatObjectMetadata,
     columnExpressions,
+    lookupJoins,
     recordIds,
     shouldSkipEventEmission,
   }: RecomputeRecordsBatchParameters): Promise<string[]> {
@@ -205,6 +249,13 @@ export class StoredFormulaFieldComputationService {
       .withStoredColumnsOnly()
       .select(RECORD_ID_COLUMN, 'id')
       .where(`${RECORD_ID_COLUMN} IN (:...recordIds)`, { recordIds });
+
+    lookupJoins.forEach(({ relationFieldName, alias }) =>
+      valuesQueryBuilder.leftJoin(
+        `${COMPUTED_COLUMN_RECORD_ALIAS}.${relationFieldName}`,
+        alias,
+      ),
+    );
 
     columnExpressions.forEach(({ columnName, expression }, columnIndex) =>
       valuesQueryBuilder
