@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+import {
+  FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION,
+  FORMULA_EXPRESSION_DESCRIPTION,
+  FORMULA_SETTINGS_DESCRIPTION,
+} from 'src/engine/metadata-modules/field-metadata/tools/constants/formula-settings-description.constant';
 import { SELECT_OPTIONS_DESCRIPTION } from 'src/engine/metadata-modules/field-metadata/tools/constants/select-options-description.constant';
 
 const fieldMetadataOptionInputSchema = z.looseObject({
@@ -33,9 +38,24 @@ export const fieldMetadataOptionsInputSchema = z
   .optional()
   .describe(SELECT_OPTIONS_DESCRIPTION);
 
-export const fieldMetadataSettingsInputSchema = z
-  .record(z.string(), z.unknown())
+const fieldMetadataFormulaInputSchema = z
+  .object({
+    expression: z.string().describe(FORMULA_EXPRESSION_DESCRIPTION),
+    currencyCodeExpression: z
+      .string()
+      .optional()
+      .describe(FORMULA_CURRENCY_CODE_EXPRESSION_DESCRIPTION),
+  })
   .nullable()
   .meta({ type: ['object', 'null'] })
   .optional()
-  .describe('Field settings');
+  .describe(FORMULA_SETTINGS_DESCRIPTION);
+
+export const fieldMetadataSettingsInputSchema = z
+  .looseObject({ formula: fieldMetadataFormulaInputSchema })
+  .nullable()
+  .meta({ type: ['object', 'null'] })
+  .optional()
+  .describe(
+    'Field settings. On update they replace the existing settings, except formula, which is kept unless sent.',
+  );

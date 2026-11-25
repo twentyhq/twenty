@@ -6,6 +6,7 @@ import { BackfillUserWorkspaceDefaultAvatarFileIdCommand } from 'src/database/co
 import { AddStandardInboxViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538284087-add-standard-inbox-views.command';
 import { RenameWorkflowsNavigationFolderToAutomationsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538639852-rename-workflows-navigation-folder-to-automations.command';
 import { AddWorkflowsAndAgentsGoToCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538640852-add-workflows-and-agents-go-to-command-menu-items.command';
+import { UpdateMetadataBuildingSkillFormulaFieldsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795618039870-update-metadata-building-skill-formula-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -25,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddStandardInboxViewsCommand,
     RenameWorkflowsNavigationFolderToAutomationsCommand,
     AddWorkflowsAndAgentsGoToCommandMenuItemsCommand,
+    UpdateMetadataBuildingSkillFormulaFieldsCommand,
   ],
 })
 export class V2_64_UpgradeVersionCommandModule {}
