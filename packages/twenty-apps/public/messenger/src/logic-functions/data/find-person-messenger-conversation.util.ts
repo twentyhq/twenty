@@ -37,7 +37,8 @@ const fetchParticipationsPage = async ({
     messageParticipants: {
       __args: {
         filter: { personId: { eq: personId } },
-        orderBy: [{ createdAt: 'DescNullsLast' }],
+        // not createdAt: the history import creates old messages after newer live ones
+        orderBy: [{ message: { receivedAt: 'DescNullsLast' } }],
         first: PARTICIPATIONS_PAGE_SIZE,
         ...(isNonEmptyString(after) ? { after } : {}),
       },
