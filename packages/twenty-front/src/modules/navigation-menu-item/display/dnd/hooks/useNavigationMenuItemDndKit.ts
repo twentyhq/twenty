@@ -139,7 +139,7 @@ export const useNavigationMenuItemDndKit = (
       isSortable(source) &&
       isDefined(target) &&
       isSortable(target) &&
-      resolved !== null
+      isDefined(resolved)
     ) {
       const sourceDraggable = 'initialGroup' in source ? source : null;
       const initialGroup = sourceDraggable?.initialGroup;
@@ -204,12 +204,12 @@ export const useNavigationMenuItemDndKit = (
     const { source, target } = event.operation;
     const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
-    if (resolved === null || source === null || !isSortable(source)) {
+    if (!isDefined(resolved) || !isDefined(source) || !isSortable(source)) {
       return;
     }
 
     const dropTargetId =
-      target !== null && isSortable(target)
+      isDefined(target) && isSortable(target)
         ? resolved.dropTargetId
         : resolved.effectiveDropTargetId;
     const dropResult = buildDropResult({ source, target, resolved });
