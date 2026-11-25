@@ -6,8 +6,7 @@ import { WHATSAPP_SETTINGS_ROUTE_PATHS } from 'src/constants/whatsapp-settings-r
 import { WHATSAPP_CANCEL_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildWhatsappSettingsView } from 'src/logic-functions/utils/build-whatsapp-settings-view.util';
 import { findOwnWhatsappConnection } from 'src/logic-functions/utils/find-own-whatsapp-connection.util';
-import { getWhatsappHistoryImportState } from 'src/logic-functions/utils/get-whatsapp-history-import-state.util';
-import { finishWhatsappHistoryImport } from 'src/logic-functions/utils/refresh-whatsapp-history-import-state.util';
+import { cancelWhatsappHistoryImport } from 'src/logic-functions/utils/cancel-whatsapp-history-import.util';
 import { type WhatsappSettingsView } from 'src/types/whatsapp-settings-view.type';
 
 export const whatsappCancelHistoryImportHandler = async (
@@ -20,18 +19,7 @@ export const whatsappCancelHistoryImportHandler = async (
     throw new Error('Connect your WhatsApp account first.');
   }
 
-  const state = await getWhatsappHistoryImportState(connection.id);
-
-  if (state?.status === 'IMPORTING') {
-    await finishWhatsappHistoryImport({
-      connectedAccountId: connection.id,
-      state: {
-        ...state,
-        status: 'CANCELLED',
-        finishedAt: new Date().toISOString(),
-      },
-    });
-  }
+  await cancelWhatsappHistoryImport(connection.id);
 
   return buildWhatsappSettingsView(connection);
 };

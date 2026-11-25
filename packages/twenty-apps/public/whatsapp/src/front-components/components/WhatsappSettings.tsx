@@ -61,9 +61,9 @@ export const WhatsappSettings = () => {
   });
   const [pollCount, setPollCount] = useState(0);
 
-  const [isSyncStarting, setIsSyncStarting] = useState(false);
-  const [isSyncCancelling, setIsSyncCancelling] = useState(false);
-  const [syncProgress, setSyncProgress] = useState<{
+  const [isImportRetrying, setIsImportRetrying] = useState(false);
+  const [isImportCancelling, setIsImportCancelling] = useState(false);
+  const [importProgress, setImportProgress] = useState<{
     runId: string;
     progress: number;
   } | null>(null);
@@ -80,7 +80,7 @@ export const WhatsappSettings = () => {
       next: historyImport,
     });
     lastHistoryImportRef.current = historyImport;
-    setSyncProgress((current) =>
+    setImportProgress((current) =>
       getNextWhatsappSyncProgress({ current, historyImport }),
     );
     setState({ step: 'ready', view });
@@ -141,8 +141,8 @@ export const WhatsappSettings = () => {
     });
   };
 
-  const handleSync = async () => {
-    setIsSyncStarting(true);
+  const handleRetryImport = async () => {
+    setIsImportRetrying(true);
 
     try {
       await settingsSaveQueue.whenIdle();
@@ -154,16 +154,16 @@ export const WhatsappSettings = () => {
       );
     } catch {
       enqueueSnackbar({
-        message: t('Could not start the WhatsApp sync. Try again.'),
+        message: t('Could not retry the WhatsApp import. Try again.'),
         variant: 'error',
       });
     } finally {
-      setIsSyncStarting(false);
+      setIsImportRetrying(false);
     }
   };
 
-  const handleCancelSync = async () => {
-    setIsSyncCancelling(true);
+  const handleCancelImport = async () => {
+    setIsImportCancelling(true);
 
     try {
       showView(
@@ -173,11 +173,11 @@ export const WhatsappSettings = () => {
       );
     } catch {
       enqueueSnackbar({
-        message: t('Could not cancel the WhatsApp sync. Try again.'),
+        message: t('Could not cancel the WhatsApp import. Try again.'),
         variant: 'error',
       });
     } finally {
-      setIsSyncCancelling(false);
+      setIsImportCancelling(false);
     }
   };
 
@@ -234,15 +234,14 @@ export const WhatsappSettings = () => {
               importPolicy={view.settings.importPolicy}
               selectedChats={view.settings.selectedChats}
               areGroupChatsImported={view.settings.areGroupChatsImported}
-              historyConversationLimit={view.settings.historyConversationLimit}
               historyImport={view.historyImport}
-              syncProgress={
-                syncProgress?.runId === view.historyImport?.runId
-                  ? syncProgress?.progress
+              importProgress={
+                importProgress?.runId === view.historyImport?.runId
+                  ? importProgress?.progress
                   : undefined
               }
-              isSyncStarting={isSyncStarting}
-              isSyncCancelling={isSyncCancelling}
+              isImportRetrying={isImportRetrying}
+              isImportCancelling={isImportCancelling}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
@@ -252,11 +251,8 @@ export const WhatsappSettings = () => {
               onGroupChatsImportChange={(areGroupChatsImported) =>
                 handleSettingsChange({ areGroupChatsImported })
               }
-              onHistoryConversationLimitChange={(historyConversationLimit) =>
-                handleSettingsChange({ historyConversationLimit })
-              }
-              onSync={handleSync}
-              onCancelSync={handleCancelSync}
+              onRetryImport={handleRetryImport}
+              onCancelImport={handleCancelImport}
             />
             <WhatsappVisibilitySection
               visibility={view.settings.visibility}
