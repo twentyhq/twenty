@@ -8,6 +8,7 @@ export const HERO_COMPOSITION: {
   introGapSpacing: number;
   ctaToVisualGapPx: number;
   belowActionsPx: number;
+  visualBannerHeight: string;
 } = {
   headingMeasurePx: 672,
   bodyMeasurePx: 591,
@@ -17,4 +18,8 @@ export const HERO_COMPOSITION: {
   // included: the partners globe banner at desktop (0.36 × 1100 + 68), which
   // every other hero matches
   belowActionsPx: 464,
+  // every hero's visual banner (the partners globe, the halftone scenes): what
+  // fills the height under the actions at desktop (464 − 68 = 396), scaling
+  // down with the width to 202 on a phone, as the globe always did
+  visualBannerHeight: 'clamp(202px, 36vw, 396px)',
 };

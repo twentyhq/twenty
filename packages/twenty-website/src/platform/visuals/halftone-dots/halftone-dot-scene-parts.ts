@@ -6,6 +6,7 @@ import {
   fontFamily,
   fontSize,
   GUTTER,
+  HERO_COMPOSITION,
   mediaUp,
   radius,
   RHYTHM,
@@ -16,7 +17,7 @@ import {
 // The hero's banner: full bleed, it closes the hero (the partners globe's
 // frame). Height follows the width, within bounds.
 export const SceneBanner = styled.div`
-  height: clamp(300px, 34vw, 460px);
+  height: ${HERO_COMPOSITION.visualBannerHeight};
   margin-bottom: calc(-1 * ${spacing(RHYTHM.hero.bottom.base)});
   margin-inline: calc(-1 * ${spacing(GUTTER.base)});
   overflow: hidden;
@@ -52,6 +53,16 @@ export const SceneTag = styled.div`
   transform: translate(var(--x), var(--y)) translate(-50%, -100%)
     scale(var(--s, 1));
   transform-origin: 50% 100%;
+
+  /* A narrow banner keeps only the scene's main tags: the others would run
+     off its sides or over each other. The stage sets display inline. */
+  &[data-secondary] {
+    visibility: hidden;
+
+    ${mediaUp('md')} {
+      visibility: visible;
+    }
+  }
 `;
 
 // A solid's name, under it.
@@ -72,6 +83,14 @@ export const SceneLabel = styled.div`
 
   &[data-emphasis] {
     color: ${semanticColor.ink};
+  }
+
+  &[data-secondary] {
+    visibility: hidden;
+
+    ${mediaUp('md')} {
+      visibility: visible;
+    }
   }
 `;
 

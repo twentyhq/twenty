@@ -63,7 +63,6 @@ const buildSlots = (appCount: number): Slot[] =>
 
 const Banner = styled(SceneBanner)`
   cursor: grab;
-  height: clamp(320px, 34vw, 520px);
   touch-action: pan-y;
 
   &:active {
@@ -283,8 +282,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       frameCamera();
 
       if (!dragging) {
-        const target =
-          reducedMotion || hoveredRef.current ? 0 : AUTO_SPIN;
+        const target = reducedMotion || hoveredRef.current ? 0 : AUTO_SPIN;
         velocity += (target - velocity) * 0.06;
         spin += velocity;
       }
