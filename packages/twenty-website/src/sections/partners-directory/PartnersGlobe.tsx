@@ -180,15 +180,23 @@ const Placed = styled.div`
 
 // A partner's place: a small blue dot ringed in white, with a wider hit
 // area. The one showing its tag sends out a slow ring.
-// Positioned and hit-tested here; its look is the shared place point.
+// Positioned and hit-tested here; its look is the shared place point. It
+// lies on the sphere as the halftone does: towards the rim it flattens along
+// the surface's slope (--tilt, the screen direction of the sphere's normal;
+// --squash, how far it faces the camera), so it rides the curve instead of
+// sliding over it.
 const GlobePoint = styled.span`
   cursor: pointer;
   left: 0;
   pointer-events: auto;
   position: absolute;
   top: 0;
-  transform: translate(-50%, -50%) scale(var(--point-scale, 1));
-  transition: transform ${DURATION.sm} ${EASING.standard};
+  /* The featured grow eases on its own property; the lie on the sphere
+     changes every frame, so it never transitions. */
+  scale: var(--point-scale, 1);
+  transform: translate(-50%, -50%) rotate(var(--tilt, 0deg))
+    scale(var(--squash, 1), 1) rotate(calc(-1 * var(--tilt, 0deg)));
+  transition: scale ${DURATION.sm} ${EASING.standard};
 
   &::before {
     content: '';
@@ -457,6 +465,7 @@ export function PartnersGlobe({
 
     const world = new THREE.Vector3();
     const toCamera = new THREE.Vector3();
+    const surfaceTip = new THREE.Vector3();
     const shown = globePartners.map(() => 0);
     let featured = -1;
     let featuredAt = -Infinity;
@@ -497,11 +506,22 @@ export function PartnersGlobe({
           .clone()
           .normalize()
           .dot(toCamera.copy(camera.position).sub(world).normalize());
+        // a step out along the sphere's normal, on screen: the way the
+        // surface slopes away at this place
+        surfaceTip
+          .copy(world)
+          .addScaledVector(world.clone().normalize(), 0.05)
+          .project(camera);
         world.project(camera);
         const x = (world.x * 0.5 + 0.5) * width;
         const y = (-world.y * 0.5 + 0.5) * height;
+        const tilt = Math.atan2(
+          (-surfaceTip.y * 0.5 + 0.5) * height - y,
+          (surfaceTip.x * 0.5 + 0.5) * width - x,
+        );
         const inView = towardCamera > 0.15 && y < visibleBottom - 8;
         return {
+          tilt,
           towardCamera,
           x,
           y,
@@ -550,6 +570,14 @@ export function PartnersGlobe({
           point.style.setProperty(
             '--point-scale',
             index === featured ? String(PLACE_POINT_FEATURED_SCALE) : '1',
+          );
+          point.style.setProperty(
+            '--tilt',
+            `${THREE.MathUtils.radToDeg(entry.tilt).toFixed(1)}deg`,
+          );
+          point.style.setProperty(
+            '--squash',
+            THREE.MathUtils.clamp(entry.towardCamera, 0.3, 1).toFixed(3),
           );
         }
         element.style.setProperty('--x', `${entry.x.toFixed(1)}px`);
