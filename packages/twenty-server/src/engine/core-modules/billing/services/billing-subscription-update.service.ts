@@ -53,7 +53,9 @@ import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
+import { addLiveDiscountsToSchedulePhases } from 'src/engine/core-modules/billing/utils/add-live-discounts-to-schedule-phases.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
+import { getExpandedDiscounts } from 'src/engine/core-modules/billing/utils/get-expanded-discounts.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
@@ -513,6 +515,9 @@ export class BillingSubscriptionUpdateService {
           currentPhase: toPhaseUpdateParams(currentPhase),
           subscriptionCurrentPeriodEnd:
             stripeSubscription.items.data[0].current_period_end,
+          subscriptionDiscounts: getExpandedDiscounts(
+            stripeSubscription.discounts,
+          ),
         });
       } else {
         assertIsDefinedOrThrow(nextPhase);
@@ -536,6 +541,9 @@ export class BillingSubscriptionUpdateService {
           nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd:
             stripeSubscription.items.data[0].current_period_end,
+          subscriptionDiscounts: getExpandedDiscounts(
+            stripeSubscription.discounts,
+          ),
         });
       }
     } else {
@@ -582,6 +590,9 @@ export class BillingSubscriptionUpdateService {
           subscriptionCurrentPeriodEnd:
             updatedStripeSubscription?.items.data[0].current_period_end ??
             stripeSubscription.items.data[0].current_period_end,
+          subscriptionDiscounts: getExpandedDiscounts(
+            stripeSubscription.discounts,
+          ),
         });
       }
     }
@@ -810,6 +821,7 @@ export class BillingSubscriptionUpdateService {
     currentPhase,
     nextPhase,
     subscriptionCurrentPeriodEnd,
+    subscriptionDiscounts,
   }: {
     stripeScheduleId: string;
     toUpdateNextPrices: SubscriptionStripePrices;
@@ -817,6 +829,7 @@ export class BillingSubscriptionUpdateService {
     currentPhase: Stripe.SubscriptionScheduleUpdateParams.Phase;
     nextPhase?: Stripe.SubscriptionScheduleUpdateParams.Phase;
     subscriptionCurrentPeriodEnd: number;
+    subscriptionDiscounts: Stripe.Discount[];
   }) {
     const productKeyByPriceId = await this.getProductKeyByPriceId([
       ...new Set(
@@ -845,7 +858,10 @@ export class BillingSubscriptionUpdateService {
     return await this.stripeSubscriptionScheduleService.updateSchedule(
       stripeScheduleId,
       {
-        phases: [toUpdateCurrentPhase, toUpdateNextPhase],
+        phases: addLiveDiscountsToSchedulePhases({
+          phases: [toUpdateCurrentPhase, toUpdateNextPhase],
+          subscriptionDiscounts,
+        }),
       },
     );
   }

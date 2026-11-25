@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FormatNumberOptions } from '@/localization/utils/formatNumber';
 import { BILLING_ARRANGEMENT_SEAT_CAP_MODE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels';
 import { type AdminBillingArrangement } from '@/settings/admin-panel/types/AdminBillingArrangement';
+import { formatAdminBillingCouponTerms } from '@/settings/admin-panel/utils/formatAdminBillingCouponTerms';
 import { getAdminUsageLimitOperationLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitOperationLabel';
 import { getAdminUsageLimitPeriodLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitPeriodLabel';
 import { getAdminUsageLimitResourceLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitResourceLabel';
@@ -42,6 +43,8 @@ export const formatAdminBillingArrangementDetails = ({
     | 'seatCapMode'
     | 'creditAllowance'
     | 'stripeDiscountId'
+    | 'stripeCouponId'
+    | 'coupon'
     | 'stripeCreditNoteId'
     | 'creditGrantId'
     | 'usageLimit'
@@ -80,8 +83,17 @@ export const formatAdminBillingArrangementDetails = ({
 
       return t`${credits} credits/month`;
     }
-    case BillingArrangementType.DISCOUNT:
-      return arrangement.stripeDiscountId ?? EM_DASH;
+    case BillingArrangementType.DISCOUNT: {
+      const { coupon } = arrangement;
+
+      if (!isDefined(coupon)) {
+        return (
+          arrangement.stripeCouponId ?? arrangement.stripeDiscountId ?? EM_DASH
+        );
+      }
+
+      return `${coupon.name ?? coupon.id} · ${formatAdminBillingCouponTerms(coupon)}`;
+    }
     case BillingArrangementType.REFUND:
       return arrangement.stripeCreditNoteId ?? EM_DASH;
     case BillingArrangementType.CREDIT_GRANT:

@@ -69,7 +69,7 @@ export class StripeSubscriptionScheduleService {
   ): Promise<SubscriptionWithSchedule> {
     const subscription = (await this.stripe.subscriptions.retrieve(
       stripeSubscriptionId,
-      { expand: ['schedule'] },
+      { expand: ['schedule', 'discounts'] },
     )) as SubscriptionWithSchedule;
 
     if (!subscription.items.has_more) {
@@ -96,7 +96,7 @@ export class StripeSubscriptionScheduleService {
     const subscriptions = await this.stripe.subscriptions
       .list({
         customer: stripeCustomerId,
-        expand: ['data.schedule'],
+        expand: ['data.schedule', 'data.discounts'],
         limit: 100,
       })
       .autoPagingToArray({ limit: 1000 });

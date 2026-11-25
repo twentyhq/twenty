@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AdminPanelBillingCouponDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-billing-coupon.dto';
 import { AdminPanelWorkspaceBillingArrangementDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing-arrangement.dto';
 import { CreateWorkspaceBillingArrangementInput } from 'src/engine/core-modules/admin-panel/dtos/create-workspace-billing-arrangement.input';
 import { EndWorkspaceBillingArrangementInput } from 'src/engine/core-modules/admin-panel/dtos/end-workspace-billing-arrangement.input';
@@ -54,6 +55,12 @@ export class AdminPanelBillingArrangementResolver {
     return this.adminPanelBillingArrangementService.findWorkspaceBillingArrangements(
       workspaceId,
     );
+  }
+
+  @UseGuards(AccessPolicyGuard(ADMIN_PANEL_ACCESS_POLICY), AdminPanelGuard)
+  @Query(() => [AdminPanelBillingCouponDTO])
+  async billingDiscountCoupons(): Promise<AdminPanelBillingCouponDTO[]> {
+    return this.adminPanelBillingArrangementService.findDiscountCoupons();
   }
 
   @UseGuards(AccessPolicyGuard(ADMIN_PANEL_ACCESS_POLICY), AdminPanelGuard)

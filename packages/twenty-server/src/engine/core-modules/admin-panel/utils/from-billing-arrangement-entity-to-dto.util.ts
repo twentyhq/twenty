@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AdminPanelBillingCouponDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-billing-coupon.dto';
 import { type AdminPanelWorkspaceBillingArrangementDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing-arrangement.dto';
 import { type UserInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { type BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
@@ -14,11 +15,13 @@ export const fromBillingArrangementEntityToDto = ({
   now,
   operatorsById,
   usageLimitsById,
+  couponsById,
 }: {
   arrangement: BillingArrangementEntity;
   now: Date;
   operatorsById: Map<string, UserInfoDTO>;
   usageLimitsById: Map<string, UsageLimitDTO>;
+  couponsById: Map<string, AdminPanelBillingCouponDTO>;
 }): AdminPanelWorkspaceBillingArrangementDTO => ({
   id: arrangement.id,
   type: arrangement.type,
@@ -27,6 +30,10 @@ export const fromBillingArrangementEntityToDto = ({
   seats: arrangement.seats,
   seatCapMode: arrangement.seatCapMode,
   stripeDiscountId: arrangement.stripeDiscountId,
+  stripeCouponId: arrangement.stripeCouponId,
+  coupon: isDefined(arrangement.stripeCouponId)
+    ? (couponsById.get(arrangement.stripeCouponId) ?? null)
+    : null,
   creditAllowance: isDefined(arrangement.creditAllowanceMicro)
     ? toDisplayCredits(arrangement.creditAllowanceMicro)
     : null,

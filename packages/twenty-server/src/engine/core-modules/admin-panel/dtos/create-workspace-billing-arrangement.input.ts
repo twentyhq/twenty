@@ -70,4 +70,10 @@ export class CreateWorkspaceBillingArrangementInput {
   @IsNumber()
   @Min(0)
   creditAllowance?: number;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  stripeCouponId?: string;
 }

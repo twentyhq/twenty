@@ -58,6 +58,9 @@ export class BillingArrangementEntity {
   @Column({ nullable: true, type: 'varchar' })
   stripeDiscountId: string | null;
 
+  @Column({ nullable: true, type: 'varchar' })
+  stripeCouponId: string | null;
+
   @Column({
     nullable: true,
     type: 'bigint',

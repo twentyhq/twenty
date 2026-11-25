@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
+import { StripeCouponService } from 'src/engine/core-modules/billing/stripe/services/stripe-coupon.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeEntitlementService } from 'src/engine/core-modules/billing/stripe/services/stripe-entitlement.service';
 import { StripePriceService } from 'src/engine/core-modules/billing/stripe/services/stripe-price.service';
@@ -36,6 +37,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripePriceService,
     StripeProductService,
     StripeInvoiceService,
+    StripeCouponService,
     provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
   exports: [
@@ -50,6 +52,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     StripeProductService,
     StripeSubscriptionScheduleService,
     StripeInvoiceService,
+    StripeCouponService,
   ],
 })
 export class StripeModule {}

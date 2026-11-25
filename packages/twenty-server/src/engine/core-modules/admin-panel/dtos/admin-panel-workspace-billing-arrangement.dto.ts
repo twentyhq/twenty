@@ -1,6 +1,7 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { AdminPanelBillingCouponDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-billing-coupon.dto';
 import { UserInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
@@ -30,6 +31,12 @@ export class AdminPanelWorkspaceBillingArrangementDTO {
 
   @Field(() => String, { nullable: true })
   stripeDiscountId: string | null;
+
+  @Field(() => String, { nullable: true })
+  stripeCouponId: string | null;
+
+  @Field(() => AdminPanelBillingCouponDTO, { nullable: true })
+  coupon: AdminPanelBillingCouponDTO | null;
 
   @Field(() => Float, { nullable: true })
   creditAllowance: number | null;

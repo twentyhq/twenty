@@ -20,6 +20,7 @@ const draft = (
   seatCapMode: null,
   stripePriceId: null,
   stripeDiscountId: null,
+  stripeCouponId: null,
   creditAllowanceMicro: null,
   stripeCreditNoteId: null,
   creditGrantId: null,
@@ -48,6 +49,7 @@ describe('getBillingArrangementValidationErrors', () => {
       draft({
         type: BillingArrangementType.DISCOUNT,
         stripeDiscountId: 'di_non_profit',
+        stripeCouponId: 'coupon_non_profit',
       }),
     ],
     [
@@ -98,9 +100,24 @@ describe('getBillingArrangementValidationErrors', () => {
   it.each(['', '   '])('treats %p as a missing setting', (stripeDiscountId) => {
     expect(
       getBillingArrangementValidationErrors(
-        draft({ type: BillingArrangementType.DISCOUNT, stripeDiscountId }),
+        draft({
+          type: BillingArrangementType.DISCOUNT,
+          stripeDiscountId,
+          stripeCouponId: 'coupon_non_profit',
+        }),
       ),
     ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeDiscountId' }]);
+  });
+
+  it('requires the coupon of a discount', () => {
+    expect(
+      getBillingArrangementValidationErrors(
+        draft({
+          type: BillingArrangementType.DISCOUNT,
+          stripeDiscountId: 'di_non_profit',
+        }),
+      ),
+    ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeCouponId' }]);
   });
 
   it('reports settings that belong to another type', () => {

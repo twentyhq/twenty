@@ -1,8 +1,9 @@
-import { useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -17,8 +18,10 @@ import { BILLING_ARRANGEMENT_REASON_LABELS } from '@/settings/admin-panel/consta
 import { BILLING_ARRANGEMENT_SEAT_CAP_MODE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementSeatCapModeLabels';
 import { BILLING_ARRANGEMENT_TYPE_LABELS } from '@/settings/admin-panel/constants/BillingArrangementTypeLabels';
 import { CREATE_WORKSPACE_BILLING_ARRANGEMENT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceBillingArrangement';
+import { BILLING_DISCOUNT_COUPONS } from '@/settings/admin-panel/graphql/queries/billingDiscountCoupons';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { WORKSPACE_BILLING_ARRANGEMENTS } from '@/settings/admin-panel/graphql/queries/workspaceBillingArrangements';
+import { formatAdminBillingCouponTerms } from '@/settings/admin-panel/utils/formatAdminBillingCouponTerms';
 import { parseAdminBillingArrangementCreditAllowance } from '@/settings/admin-panel/utils/parseAdminBillingArrangementCreditAllowance';
 import { parseAdminBillingArrangementSeats } from '@/settings/admin-panel/utils/parseAdminBillingArrangementSeats';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
@@ -30,6 +33,7 @@ import {
   BillingArrangementLabel,
   BillingArrangementSeatCapMode,
   BillingArrangementType,
+  type BillingDiscountCouponsQuery,
 } from '~/generated-admin/graphql';
 
 type SettingsAdminWorkspaceBillingArrangementModalProps = {
@@ -52,6 +56,7 @@ const CREATABLE_ARRANGEMENT_TYPES: BillingArrangementType[] = [
   BillingArrangementType.COMMITTED_SEATS,
   BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
   BillingArrangementType.TRIAL_EXTENSION,
+  BillingArrangementType.DISCOUNT,
 ];
 
 const TYPE_DESCRIPTIONS: Partial<
@@ -61,6 +66,7 @@ const TYPE_DESCRIPTIONS: Partial<
   [BillingArrangementType.COMMITTED_SEATS]: msg`At least this many seats are billed until the end date. A hard cap also blocks new members above it.`,
   [BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE]: msg`Replaces the plan's included workspace credits with a fixed amount per month, starting now. Paid and granted credits still add on top.`,
   [BillingArrangementType.TRIAL_EXTENSION]: msg`Moves the end of a running trial to this date. Adding one again replaces the current extension.`,
+  [BillingArrangementType.DISCOUNT]: msg`Applies a Stripe coupon to the seats of the current plan. The coupon sets how long it lasts.`,
 };
 
 export const SettingsAdminWorkspaceBillingArrangementModal = ({
@@ -80,6 +86,7 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
     BillingArrangementSeatCapMode.SOFT,
   );
   const [creditAllowance, setCreditAllowance] = useState('');
+  const [stripeCouponId, setStripeCouponId] = useState('');
   const [endsAt, setEndsAt] = useState<Date | undefined>(undefined);
   const [label, setLabel] = useState<BillingArrangementLabel>(
     BillingArrangementLabel.OTHER,
@@ -101,17 +108,34 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
     type === BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE;
   const isEndsAtRequired =
     isCommittedSeats || type === BillingArrangementType.TRIAL_EXTENSION;
+  const isDiscount = type === BillingArrangementType.DISCOUNT;
+
+  const { data: couponsData } = useQuery<BillingDiscountCouponsQuery>(
+    BILLING_DISCOUNT_COUPONS,
+    {
+      client: apolloAdminClient,
+      skip: !isDiscount,
+    },
+  );
+
+  const couponOptions = (couponsData?.billingDiscountCoupons ?? []).map(
+    (coupon) => ({
+      value: coupon.id,
+      label: `${coupon.name ?? coupon.id} · ${formatAdminBillingCouponTerms(coupon)}`,
+    }),
+  );
 
   const parsedSeats = parseAdminBillingArrangementSeats(seats);
   const parsedCreditAllowance =
     parseAdminBillingArrangementCreditAllowance(creditAllowance);
 
-  const isEndsAtValid = isDefined(endsAt)
-    ? endsAt.getTime() > Date.now()
-    : !isEndsAtRequired;
+  const isEndsAtValid =
+    isDiscount ||
+    (isDefined(endsAt) ? endsAt.getTime() > Date.now() : !isEndsAtRequired);
 
   const isValid =
     isEndsAtValid &&
+    (!isDiscount || isNonEmptyString(stripeCouponId)) &&
     (!isSeatType || isDefined(parsedSeats)) &&
     (!isCreditAllowance || isDefined(parsedCreditAllowance));
 
@@ -122,6 +146,7 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
     setSeats('');
     setSeatCapMode(BillingArrangementSeatCapMode.SOFT);
     setCreditAllowance('');
+    setStripeCouponId('');
     setEndsAt(undefined);
     setLabel(BillingArrangementLabel.OTHER);
     setComment('');
@@ -142,10 +167,11 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
           type,
           label,
           comment: trimmedComment || null,
-          endsAt: endsAt?.toISOString() ?? null,
+          endsAt: isDiscount ? null : (endsAt?.toISOString() ?? null),
           seats: isSeatType ? parsedSeats : null,
           seatCapMode: isCommittedSeats ? seatCapMode : null,
           creditAllowance: isCreditAllowance ? parsedCreditAllowance : null,
+          stripeCouponId: isDiscount ? stripeCouponId : null,
         },
         refetchQueries: [
           WORKSPACE_BILLING_ARRANGEMENTS,
@@ -238,16 +264,31 @@ export const SettingsAdminWorkspaceBillingArrangementModal = ({
                 />
               )}
 
-              <SettingsDatePickerInput
-                instanceId={`${modalInstanceId}-ends-at`}
-                label={isEndsAtRequired ? t`Ends` : t`Ends (optional)`}
-                placeholder={
-                  isEndsAtRequired ? t`Pick the end date` : t`No end date`
-                }
-                value={endsAt}
-                onChange={setEndsAt}
-                isInModal
-              />
+              {isDiscount && (
+                <Select
+                  dropdownId={`${modalInstanceId}-coupon`}
+                  label={t`Coupon`}
+                  value={stripeCouponId}
+                  emptyOption={{ value: '', label: t`Pick a coupon` }}
+                  options={couponOptions}
+                  onChange={setStripeCouponId}
+                  withSearchInput
+                  fullWidth
+                />
+              )}
+
+              {!isDiscount && (
+                <SettingsDatePickerInput
+                  instanceId={`${modalInstanceId}-ends-at`}
+                  label={isEndsAtRequired ? t`Ends` : t`Ends (optional)`}
+                  placeholder={
+                    isEndsAtRequired ? t`Pick the end date` : t`No end date`
+                  }
+                  value={endsAt}
+                  onChange={setEndsAt}
+                  isInModal
+                />
+              )}
 
               <Select
                 dropdownId={`${modalInstanceId}-label`}

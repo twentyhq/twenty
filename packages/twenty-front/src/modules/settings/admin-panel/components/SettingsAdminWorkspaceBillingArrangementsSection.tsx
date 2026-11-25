@@ -136,6 +136,19 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
     ? t(BILLING_ARRANGEMENT_TYPE_LABELS[arrangementPendingEnd.type])
     : '';
 
+  const getEndDialogSubtitle = () => {
+    switch (arrangementPendingEnd?.type) {
+      case BillingArrangementType.TRIAL_EXTENSION:
+        return t`The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one.`;
+      case BillingArrangementType.DISCOUNT:
+        return t`The discount is removed from the Stripe subscription now. Invoices already issued keep it.`;
+      default:
+        return t`The ${pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead.`;
+    }
+  };
+
+  const endDialogSubtitle = getEndDialogSubtitle();
+
   return (
     <Section.Root>
       <SettingsTableListSection<AdminBillingArrangement>
@@ -228,11 +241,7 @@ export const SettingsAdminWorkspaceBillingArrangementsSection = ({
       <ConfirmationDialog
         dialogId={END_BILLING_ARRANGEMENT_DIALOG_ID}
         title={t`End arrangement`}
-        subtitle={
-          arrangementPendingEnd?.type === BillingArrangementType.TRIAL_EXTENSION
-            ? t`The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one.`
-            : t`The ${pendingEndTypeLabel} arrangement stops applying now and stays in the history. It cannot be restarted: add a new one instead.`
-        }
+        subtitle={endDialogSubtitle}
         confirmButtonText={t`End`}
         loading={isEnding}
         onConfirmClick={() => {

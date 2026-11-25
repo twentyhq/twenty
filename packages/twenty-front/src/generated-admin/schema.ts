@@ -102,6 +102,17 @@ export type AdminChatThreadMessages = {
   thread: AdminWorkspaceChatThread;
 };
 
+export type AdminPanelBillingCoupon = {
+  __typename?: 'AdminPanelBillingCoupon';
+  amountOff?: Maybe<Scalars['Int']['output']>;
+  currency?: Maybe<Scalars['String']['output']>;
+  duration: Scalars['String']['output'];
+  durationInMonths?: Maybe<Scalars['Int']['output']>;
+  id: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  percentOff?: Maybe<Scalars['Float']['output']>;
+};
+
 export type AdminPanelHealthServiceData = {
   __typename?: 'AdminPanelHealthServiceData';
   description: Scalars['String']['output'];
@@ -192,6 +203,7 @@ export type AdminPanelWorkspaceBilling = {
 export type AdminPanelWorkspaceBillingArrangement = {
   __typename?: 'AdminPanelWorkspaceBillingArrangement';
   comment?: Maybe<Scalars['String']['output']>;
+  coupon?: Maybe<AdminPanelBillingCoupon>;
   createdAt: Scalars['DateTime']['output'];
   creditAllowance?: Maybe<Scalars['Float']['output']>;
   creditGrantId?: Maybe<Scalars['UUID']['output']>;
@@ -205,6 +217,7 @@ export type AdminPanelWorkspaceBillingArrangement = {
   seats?: Maybe<Scalars['Int']['output']>;
   startsAt: Scalars['DateTime']['output'];
   status: BillingArrangementStatus;
+  stripeCouponId?: Maybe<Scalars['String']['output']>;
   stripeCreditNoteId?: Maybe<Scalars['String']['output']>;
   stripeDiscountId?: Maybe<Scalars['String']['output']>;
   type: BillingArrangementType;
@@ -784,6 +797,7 @@ export type MutationCreateWorkspaceBillingArrangementArgs = {
   label: BillingArrangementLabel;
   seatCapMode?: InputMaybe<BillingArrangementSeatCapMode>;
   seats?: InputMaybe<Scalars['Int']['input']>;
+  stripeCouponId?: InputMaybe<Scalars['String']['input']>;
   type: BillingArrangementType;
   workspaceId: Scalars['UUID']['input'];
 };
@@ -937,6 +951,7 @@ export type Query = {
   __typename?: 'Query';
   adminPanelRecentUsers: Array<AdminPanelRecentUser>;
   adminPanelTopWorkspaces: Array<AdminPanelTopWorkspace>;
+  billingDiscountCoupons: Array<AdminPanelBillingCoupon>;
   findAdminApplicationRegistrationClaims: Array<AdminApplicationRegistrationClaim>;
   findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
   findAdminApplicationRegistrationMonitoring: AdminApplicationMonitoring;

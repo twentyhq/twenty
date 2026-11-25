@@ -22,7 +22,9 @@ import { BillingSubscriptionService } from 'src/engine/core-modules/billing/serv
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
+import { addLiveDiscountsToSchedulePhases } from 'src/engine/core-modules/billing/utils/add-live-discounts-to-schedule-phases.util';
 import { buildTrialEndSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-end-schedule-phases.util';
+import { getExpandedDiscounts } from 'src/engine/core-modules/billing/utils/get-expanded-discounts.util';
 import { getTrialExtensionSyncAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-sync-action.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
@@ -97,6 +99,9 @@ export class BillingTrialExtensionService {
           schedule,
           currentPhase,
           nextPhase,
+          subscriptionDiscounts: getExpandedDiscounts(
+            stripeSubscription.discounts,
+          ),
           trialEnd,
         });
 
@@ -181,6 +186,9 @@ export class BillingTrialExtensionService {
             schedule,
             currentPhase,
             nextPhase,
+            subscriptionDiscounts: getExpandedDiscounts(
+              stripeSubscription.discounts,
+            ),
             trialEnd: 'now',
           });
         }
@@ -263,12 +271,14 @@ export class BillingTrialExtensionService {
     schedule,
     currentPhase,
     nextPhase,
+    subscriptionDiscounts,
     trialEnd,
   }: {
     stripeSubscriptionId: string;
     schedule: Stripe.SubscriptionSchedule | undefined;
     currentPhase: Stripe.SubscriptionSchedule.Phase | undefined;
     nextPhase: Stripe.SubscriptionSchedule.Phase | undefined;
+    subscriptionDiscounts: Stripe.Discount[];
     trialEnd: number | 'now';
   }): Promise<void> {
     if (
@@ -277,10 +287,13 @@ export class BillingTrialExtensionService {
       isDefined(nextPhase)
     ) {
       await this.stripeSubscriptionScheduleService.updateSchedule(schedule.id, {
-        phases: buildTrialEndSchedulePhases({
-          currentPhase: toPhaseUpdateParams(currentPhase),
-          nextPhase: toPhaseUpdateParams(nextPhase),
-          trialEnd,
+        phases: addLiveDiscountsToSchedulePhases({
+          phases: buildTrialEndSchedulePhases({
+            currentPhase: toPhaseUpdateParams(currentPhase),
+            nextPhase: toPhaseUpdateParams(nextPhase),
+            trialEnd,
+          }),
+          subscriptionDiscounts,
         }),
       });
 
@@ -350,6 +363,7 @@ export class BillingTrialExtensionService {
           seatCapMode: null,
           stripePriceId: null,
           stripeDiscountId: null,
+          stripeCouponId: null,
           creditAllowanceMicro: null,
           stripeCreditNoteId: null,
           creditGrantId: null,

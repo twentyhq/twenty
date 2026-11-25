@@ -20,6 +20,7 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
+import { NOT_ENDED_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/not-ended-subscription-statuses.constant';
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -27,6 +28,7 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingApplicationSyncService } from 'src/engine/core-modules/billing/services/billing-application-sync.service';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingDiscountService } from 'src/engine/core-modules/billing/services/billing-discount.service';
 import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -75,6 +77,7 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
     private readonly billingTrialExtensionService: BillingTrialExtensionService,
+    private readonly billingDiscountService: BillingDiscountService,
   ) {}
 
   async processStripeEvent(
@@ -191,6 +194,14 @@ export class BillingWebhookSubscriptionService {
         previousTrialEnd: storedSubscription?.trialEnd ?? null,
         status: incomingSubscription.status,
         trialEnd: incomingSubscription.trialEnd ?? null,
+      });
+
+      await this.billingDiscountService.syncStripeDiscounts({
+        workspaceId,
+        subscription: subscriptionWithSchedule,
+        isSubscriptionLive: NOT_ENDED_SUBSCRIPTION_STATUSES.includes(
+          incomingSubscription.status,
+        ),
       });
     }
 

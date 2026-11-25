@@ -79,6 +79,7 @@ export class UsageLimitInstanceOverrideService {
             seatCapMode: null,
             stripePriceId: null,
             stripeDiscountId: null,
+            stripeCouponId: null,
             creditAllowanceMicro: null,
             stripeCreditNoteId: null,
             creditGrantId: null,

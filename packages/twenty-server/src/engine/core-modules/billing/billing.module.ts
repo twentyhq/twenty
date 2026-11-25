@@ -31,6 +31,7 @@ import { BillingCreditGrantService } from 'src/engine/core-modules/billing/servi
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
+import { BillingDiscountService } from 'src/engine/core-modules/billing/services/billing-discount.service';
 import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
@@ -116,6 +117,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceCurrentBillingSubscriptionCacheService,
     BillingWorkspaceCreditAllowanceService,
     BillingTrialExtensionService,
+    BillingDiscountService,
     BillingApplicationProductService,
     BillingApplicationSyncService,
     BillingApplicationListener,
@@ -140,6 +142,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ResourceCreditService,
     BillingWorkspaceCreditAllowanceService,
     BillingTrialExtensionService,
+    BillingDiscountService,
     BillingApplicationProductService,
     BillingApplicationSyncService,
   ],

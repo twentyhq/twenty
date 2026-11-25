@@ -26,6 +26,8 @@ const arrangement = (
   seats: null,
   seatCapMode: null,
   stripeDiscountId: null,
+  stripeCouponId: null,
+  coupon: null,
   creditAllowance: null,
   stripeCreditNoteId: null,
   creditGrantId: null,
@@ -82,13 +84,34 @@ describe('formatAdminBillingArrangementDetails', () => {
     ).toBe('0.00 credits/month');
   });
 
-  it('shows the Stripe discount a discount mirrors', () => {
+  it('shows the coupon name and terms of a discount', () => {
     expect(
       format({
         type: BillingArrangementType.DISCOUNT,
         stripeDiscountId: 'di_123',
+        stripeCouponId: 'coupon_early',
+        coupon: {
+          __typename: 'AdminPanelBillingCoupon',
+          id: 'coupon_early',
+          name: 'Early adopter',
+          percentOff: 25,
+          amountOff: null,
+          currency: null,
+          duration: 'forever',
+          durationInMonths: null,
+        },
       }),
-    ).toBe('di_123');
+    ).toBe('Early adopter · 25% off forever');
+  });
+
+  it('falls back to the coupon id when Stripe could not be read', () => {
+    expect(
+      format({
+        type: BillingArrangementType.DISCOUNT,
+        stripeDiscountId: 'di_123',
+        stripeCouponId: 'coupon_early',
+      }),
+    ).toBe('coupon_early');
   });
 
   it('shows the scope, value and period of a limit override', () => {

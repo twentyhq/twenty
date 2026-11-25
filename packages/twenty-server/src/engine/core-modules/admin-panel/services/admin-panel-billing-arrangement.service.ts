@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
@@ -6,10 +6,12 @@ import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
+import { type AdminPanelBillingCouponDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-billing-coupon.dto';
 import { type AdminPanelWorkspaceBillingArrangementDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing-arrangement.dto';
 import { type CreateWorkspaceBillingArrangementInput } from 'src/engine/core-modules/admin-panel/dtos/create-workspace-billing-arrangement.input';
 import { type UserInfoDTO } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import { fromBillingArrangementEntityToDto } from 'src/engine/core-modules/admin-panel/utils/from-billing-arrangement-entity-to-dto.util';
+import { fromStripeCouponToDto } from 'src/engine/core-modules/admin-panel/utils/from-stripe-coupon-to-dto.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -28,6 +30,7 @@ import {
 } from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingDiscountService } from 'src/engine/core-modules/billing/services/billing-discount.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
@@ -45,6 +48,10 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class AdminPanelBillingArrangementService {
+  private readonly logger = new Logger(
+    AdminPanelBillingArrangementService.name,
+  );
+
   constructor(
     @InjectMessageQueue(MessageQueue.billingQueue)
     private readonly billingMessageQueueService: MessageQueueService,
@@ -53,6 +60,7 @@ export class AdminPanelBillingArrangementService {
     private readonly billingSeatService: BillingSeatService,
     private readonly billingCreditService: BillingCreditService,
     private readonly billingTrialExtensionService: BillingTrialExtensionService,
+    private readonly billingDiscountService: BillingDiscountService,
     private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserEntity)
@@ -64,9 +72,10 @@ export class AdminPanelBillingArrangementService {
   ): Promise<AdminPanelWorkspaceBillingArrangementDTO[]> {
     const arrangements =
       await this.billingArrangementService.findArrangements(workspaceId);
-    const [operatorsById, usageLimitsById] = await Promise.all([
+    const [operatorsById, usageLimitsById, couponsById] = await Promise.all([
       this.findOperatorsById(arrangements),
       this.findUsageLimitsById({ workspaceId, arrangements }),
+      this.findCouponsById(arrangements),
     ]);
     const now = new Date();
 
@@ -76,8 +85,17 @@ export class AdminPanelBillingArrangementService {
         now,
         operatorsById,
         usageLimitsById,
+        couponsById,
       }),
     );
+  }
+
+  async findDiscountCoupons(): Promise<AdminPanelBillingCouponDTO[]> {
+    this.assertBillingIsEnabled();
+
+    const coupons = await this.billingDiscountService.findSeatOnlyCoupons();
+
+    return coupons.map(fromStripeCouponToDto);
   }
 
   async createWorkspaceBillingArrangement({
@@ -90,6 +108,7 @@ export class AdminPanelBillingArrangementService {
       seats,
       seatCapMode,
       creditAllowance,
+      stripeCouponId,
     },
     grantedByUserId,
   }: {
@@ -110,6 +129,7 @@ export class AdminPanelBillingArrangementService {
       seatCapMode: seatCapMode ?? null,
       stripePriceId: null,
       stripeDiscountId: null,
+      stripeCouponId: null,
       creditAllowanceMicro: isDefined(creditAllowance)
         ? Math.round(creditAllowance * INTERNAL_CREDITS_PER_DISPLAY_CREDIT)
         : null,
@@ -120,6 +140,15 @@ export class AdminPanelBillingArrangementService {
 
     if (type === BillingArrangementType.TRIAL_EXTENSION) {
       return this.extendTrial({ workspaceId, draft, grantedByUserId });
+    }
+
+    if (type === BillingArrangementType.DISCOUNT) {
+      return this.applyDiscount({
+        workspaceId,
+        stripeCouponId,
+        draft,
+        grantedByUserId,
+      });
     }
 
     const arrangement = await this.cacheLockService.withLock(
@@ -180,6 +209,16 @@ export class AdminPanelBillingArrangementService {
     if (type === BillingArrangementType.TRIAL_EXTENSION) {
       return this.toArrangementDto(
         await this.billingTrialExtensionService.revokeTrialExtension({
+          workspaceId,
+          arrangementId: billingArrangementId,
+          revokedByUserId,
+        }),
+      );
+    }
+
+    if (type === BillingArrangementType.DISCOUNT) {
+      return this.toArrangementDto(
+        await this.billingDiscountService.revokeDiscount({
           workspaceId,
           arrangementId: billingArrangementId,
           revokedByUserId,
@@ -256,6 +295,35 @@ export class AdminPanelBillingArrangementService {
     );
   }
 
+  private async applyDiscount({
+    workspaceId,
+    stripeCouponId,
+    draft,
+    grantedByUserId,
+  }: {
+    workspaceId: string;
+    stripeCouponId: string | undefined;
+    draft: BillingArrangementDraft;
+    grantedByUserId: string;
+  }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    if (!isNonEmptyString(stripeCouponId)) {
+      throw new BillingException(
+        `A ${draft.type} arrangement for workspace ${workspaceId} needs a coupon`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
+      );
+    }
+
+    return this.toArrangementDto(
+      await this.billingDiscountService.applyDiscount({
+        workspaceId,
+        stripeCouponId,
+        label: draft.label,
+        comment: draft.comment,
+        grantedByUserId,
+      }),
+    );
+  }
+
   private async toArrangementDto(
     arrangement: BillingArrangementEntity,
   ): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
@@ -267,6 +335,7 @@ export class AdminPanelBillingArrangementService {
         workspaceId: arrangement.workspaceId,
         arrangements: [arrangement],
       }),
+      couponsById: await this.findCouponsById([arrangement]),
     });
   }
 
@@ -329,6 +398,31 @@ export class AdminPanelBillingArrangementService {
         fromUsageLimitEntityToDto(usageLimit),
       ]),
     );
+  }
+
+  private async findCouponsById(
+    arrangements: BillingArrangementEntity[],
+  ): Promise<Map<string, AdminPanelBillingCouponDTO>> {
+    if (!arrangements.some(({ stripeCouponId }) => isDefined(stripeCouponId))) {
+      return new Map();
+    }
+
+    try {
+      const couponsById = await this.billingDiscountService.findCouponsById();
+
+      return new Map(
+        [...couponsById].map(([couponId, coupon]) => [
+          couponId,
+          fromStripeCouponToDto(coupon),
+        ]),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Could not list Stripe coupons for billing arrangements: ${error}`,
+      );
+
+      return new Map();
+    }
   }
 
   private assertBillingIsEnabled(): void {

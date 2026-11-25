@@ -10,6 +10,7 @@ export const CREATE_WORKSPACE_BILLING_ARRANGEMENT = gql`
     $seats: Int
     $seatCapMode: BillingArrangementSeatCapMode
     $creditAllowance: Float
+    $stripeCouponId: String
   ) {
     createWorkspaceBillingArrangement(
       workspaceId: $workspaceId
@@ -20,6 +21,7 @@ export const CREATE_WORKSPACE_BILLING_ARRANGEMENT = gql`
       seats: $seats
       seatCapMode: $seatCapMode
       creditAllowance: $creditAllowance
+      stripeCouponId: $stripeCouponId
     ) {
       id
     }

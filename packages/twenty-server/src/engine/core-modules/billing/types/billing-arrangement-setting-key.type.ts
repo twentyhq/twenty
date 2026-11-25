@@ -8,6 +8,7 @@ export type BillingArrangementSettingKey = keyof Pick<
   | 'seatCapMode'
   | 'stripePriceId'
   | 'stripeDiscountId'
+  | 'stripeCouponId'
   | 'creditAllowanceMicro'
   | 'stripeCreditNoteId'
   | 'creditGrantId'
