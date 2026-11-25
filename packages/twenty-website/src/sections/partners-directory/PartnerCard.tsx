@@ -3,7 +3,6 @@
 import { css } from '@linaria/core';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
 import { richTextExcerpt } from '@/partners-marketplace/rich-text-excerpt';
@@ -24,7 +23,6 @@ import {
 import { Body } from '@/ui';
 
 import { describePartner } from './describe-partner';
-import { partnerBaseRegion } from './partner-base-region';
 import { PartnerMark } from './PartnerMark';
 import { RegionMapPoint } from './RegionMapPoint';
 
@@ -173,13 +171,6 @@ export function PartnerCard({ partner }: PartnerCardProps) {
       id={`partner-${partner.slug}`}
     >
       <Cover aria-hidden>
-        <NextImage
-          alt=""
-          fill
-          sizes="(max-width: 768px) 100vw, 420px"
-          src={`/images/partners/regions/${partnerBaseRegion(partner).toLowerCase()}-cover.webp`}
-          style={{ objectFit: 'cover' }}
-        />
         <RegionMapPoint partner={partner} />
       </Cover>
       <Content>
