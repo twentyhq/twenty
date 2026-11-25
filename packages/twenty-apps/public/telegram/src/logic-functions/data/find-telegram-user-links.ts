@@ -18,6 +18,9 @@ type TelegramUserLinkNode = {
   workspaceMemberId?: string | null;
 };
 
+const toOptionalString = (value: string | null | undefined) =>
+  isNonEmptyString(value) ? value : undefined;
+
 const toTelegramUserLink = (
   node: TelegramUserLinkNode,
 ): TelegramUserLink | undefined => {
@@ -27,8 +30,8 @@ const toTelegramUserLink = (
 
   return {
     id: node.id,
-    telegramUserId: node.telegramUserId || undefined,
-    workspaceMemberId: node.workspaceMemberId || undefined,
+    telegramUserId: toOptionalString(node.telegramUserId),
+    workspaceMemberId: toOptionalString(node.workspaceMemberId),
   };
 };
 
