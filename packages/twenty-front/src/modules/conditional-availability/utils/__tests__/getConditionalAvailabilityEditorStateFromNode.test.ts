@@ -2,6 +2,7 @@ import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional
 import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
 import {
   buildDeviceConditionalAvailability,
+  type ConditionalAvailabilityLogicalOperator,
   type ConditionalAvailabilityNode,
 } from 'twenty-shared/conditional-availability';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
@@ -11,19 +12,12 @@ const SALES_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000002';
 const WORKSPACE_MEMBER_ID = '20202020-1111-4000-8000-000000000001';
 const OTHER_WORKSPACE_MEMBER_ID = '20202020-1111-4000-8000-000000000002';
 
-const and = (
+const group = (
+  logicalOperator: ConditionalAvailabilityLogicalOperator,
   children: ConditionalAvailabilityNode[],
 ): ConditionalAvailabilityNode => ({
   type: 'GROUP',
-  logicalOperator: 'AND',
-  children,
-});
-
-const or = (
-  children: ConditionalAvailabilityNode[],
-): ConditionalAvailabilityNode => ({
-  type: 'GROUP',
-  logicalOperator: 'OR',
+  logicalOperator,
   children,
 });
 
@@ -87,8 +81,8 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
 
   it('should read a chain of roles as one filter and a device as another', () => {
     const filterGroup = getFilterGroupOrThrow(
-      and([
-        or([
+      group('AND', [
+        group('OR', [
           roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
           roleIs(SALES_ROLE_UNIVERSAL_IDENTIFIER),
         ]),
@@ -132,7 +126,7 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
 
     expect(
       getFilterGroupOrThrow(
-        and([
+        group('AND', [
           workspaceMemberIsNot(WORKSPACE_MEMBER_ID),
           workspaceMemberIsNot(OTHER_WORKSPACE_MEMBER_ID),
         ]),
@@ -149,9 +143,12 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
 
   it('should read a nested group of filters', () => {
     const filterGroup = getFilterGroupOrThrow(
-      and([
+      group('AND', [
         roleIs(SALES_ROLE_UNIVERSAL_IDENTIFIER),
-        or([roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER), DEVICE_IS_MOBILE]),
+        group('OR', [
+          roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
+          DEVICE_IS_MOBILE,
+        ]),
       ]),
     );
 
@@ -177,7 +174,10 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
 
   it('should keep two devices joined by "or" as two filters', () => {
     const filterGroup = getFilterGroupOrThrow(
-      or([DEVICE_IS_MOBILE, buildDeviceConditionalAvailability('DESKTOP')]),
+      group('OR', [
+        DEVICE_IS_MOBILE,
+        buildDeviceConditionalAvailability('DESKTOP'),
+      ]),
     );
 
     expect(filterGroup).toMatchObject({
@@ -192,11 +192,14 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
   it.each([
     {
       title: 'a third level of groups',
-      node: and([
+      node: group('AND', [
         DEVICE_IS_MOBILE,
-        or([
+        group('OR', [
           roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
-          and([DEVICE_IS_MOBILE, roleIs(SALES_ROLE_UNIVERSAL_IDENTIFIER)]),
+          group('AND', [
+            DEVICE_IS_MOBILE,
+            roleIs(SALES_ROLE_UNIVERSAL_IDENTIFIER),
+          ]),
         ]),
       ]),
     },
@@ -206,7 +209,7 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
     },
     {
       title: 'the same role twice',
-      node: or([
+      node: group('OR', [
         roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
         roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
       ]),
