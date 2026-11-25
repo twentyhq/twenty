@@ -105,7 +105,7 @@ export const compileFormulaExpression = ({
       bindings: compilation.bindings,
       fields,
     }) === 'STORED';
-  // A stored value is only recomputed when the records it reads change, which now never does
+  // `now` moves without any record changing, so a stored value reading it would go stale
   const unsupportedPath = isStored
     ? paths.find((path) => path === VALIDATION_RULE_NOW_VARIABLE_NAME)
     : undefined;
