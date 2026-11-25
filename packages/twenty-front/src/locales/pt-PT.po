@@ -99,7 +99,7 @@ msgstr "· GRATUITO"
 #. js-lingui-id: eNVoMO
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
-msgstr ""
+msgstr "\"{fieldName}\" tem muitos registros: leia-o dentro de count(), sum(), avg(), min() ou max()"
 
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -139,7 +139,7 @@ msgstr "\"{path}\" lê uma relação, mas os valores anteriores abrangem apenas 
 #. js-lingui-id: bkN3QG
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 msgid "“{prompt}”"
-msgstr ""
+msgstr "“{prompt}”"
 
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -149,7 +149,7 @@ msgstr "\"{subfieldName}\" não é um subcampo de \"{fieldName}\""
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -655,7 +655,7 @@ msgstr "{allowedFieldCount} de {fieldCount} campos"
 #. js-lingui-id: QbSIWf
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "{amount} / month"
-msgstr ""
+msgstr "{amount} / mês"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -690,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "{applicationsCount} aplicativo pago"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount} aplicativos pagos"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -936,17 +936,17 @@ msgstr "{functionName} aceita pelo menos {minimumArgumentCount} argumento(s), ma
 #. js-lingui-id: aGSMaz
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() cannot contain another aggregate"
-msgstr ""
+msgstr "{functionName}() não pode conter outro agregado"
 
 #. js-lingui-id: gT6Kkm
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
-msgstr ""
+msgstr "{functionName}() precisa de uma relação, por exemplo count(tasks) ou sum(deals.amount)"
 
 #. js-lingui-id: vN+0eR
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() reads related records, which only a formula can do"
-msgstr ""
+msgstr "{functionName}() lê registros relacionados, algo que somente uma fórmula pode fazer"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1189,22 +1189,22 @@ msgstr "{providerDisplayName} OAuth ainda não foi configurado pelo administrado
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity} conta"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity} contas"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity} membro"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity} membros"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1852,7 +1852,7 @@ msgstr "Um formulário é aberto para a pessoa que inicia o workflow e é preenc
 #. js-lingui-id: QbGaDs
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
-msgstr ""
+msgstr "Uma fórmula que agrega registros relacionados é armazenada, portanto não pode ler \"{path}\". Agregue neste campo e leia-o de outra fórmula."
 
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
@@ -1897,7 +1897,7 @@ msgstr "Um papel deve ser selecionado para a chave de API"
 #. js-lingui-id: /852Zy
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A stored formula cannot read \"{path}\""
-msgstr ""
+msgstr "Uma fórmula armazenada não pode ler \"{path}\""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -4226,7 +4226,7 @@ msgstr "Apóstrofo e ponto"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "aplicativo"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4446,7 +4446,7 @@ msgstr "Domínios Aprovados"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "aplicativos"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -5401,17 +5401,17 @@ msgstr "Faturar créditos ao seu espaço de trabalho"
 #. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price}"
-msgstr ""
+msgstr "Cobrar do seu espaço de trabalho {price}"
 
 #. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price} per account"
-msgstr ""
+msgstr "Cobrar do seu espaço de trabalho {price} por conta"
 
 #. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price} per member"
-msgstr ""
+msgstr "Fature seu espaço de trabalho {price} por membro"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5441,7 +5441,7 @@ msgstr "Cobrança - Definições"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "E-mail de cobrança"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6334,7 +6334,7 @@ msgstr "Alterar avatar"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "Alterar e-mail de cobrança"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7248,7 +7248,7 @@ msgstr "Colapsar"
 #. js-lingui-id: 9prKyv
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
-msgstr ""
+msgstr "Recolher {heading}"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -13211,7 +13211,7 @@ msgstr "Expandir"
 #. js-lingui-id: AgpQjB
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Expand {heading}"
-msgstr ""
+msgstr "Expandir {heading}"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -23359,7 +23359,7 @@ msgstr "Aplicativo pago"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "Aplicativos pagos instalados neste espaço de trabalho. Os preços são adicionados à sua fatura"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23586,7 +23586,7 @@ msgstr "por membro"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "Por mês"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24766,7 +24766,7 @@ msgstr "Permissões de Leitura/Edição/Eliminação"
 #. js-lingui-id: +a9H8X
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
 msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
-msgstr ""
+msgstr "Lê registros relacionados, portanto o valor é armazenado e atualizado em segundo plano alguns segundos após serem alterados."
 
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
@@ -27092,7 +27092,7 @@ msgstr "Opções de pesquisa"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "Pesquisar ou perguntar..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27387,7 +27387,7 @@ msgstr "Ver mais"
 #. js-lingui-id: ssRcpB
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See more results"
-msgstr ""
+msgstr "Ver mais resultados"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -30337,7 +30337,7 @@ msgstr "O endpoint de API para o seu provedor compatível com OpenAI"
 #. js-lingui-id: UIpkEz
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The average of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "A média de um campo numérico nos registros relacionados ou naqueles que correspondem à condição."
 
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -30382,7 +30382,7 @@ msgstr "O código do parceiro da Twenty que indicou você"
 #. js-lingui-id: h7Af0y
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
-msgstr ""
+msgstr "A condição de {functionName}() não pode ler \"{relationFieldName}\""
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30492,7 +30492,7 @@ msgstr "O ícone que seu gatilho do fluxo de trabalho exibirá no menu de comand
 #. js-lingui-id: hP+z/5
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
-msgstr ""
+msgstr "O maior número ou a data mais recente entre os registros relacionados. Com valores simples, como max(a, b), o maior deles."
 
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30579,7 +30579,7 @@ msgstr "O número de itens na lista ou 0 quando não for uma lista."
 #. js-lingui-id: vXwRDS
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
-msgstr ""
+msgstr "O número de registros relacionados ou daqueles que correspondem à condição. Por exemplo, count(tasks, tasks.status == \"TODO\")."
 
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30654,7 +30654,7 @@ msgstr "O e-mail partilhado que pretende utilizar."
 #. js-lingui-id: q2NONu
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
-msgstr ""
+msgstr "O menor número ou a data mais antiga entre os registros relacionados. Com valores simples, como min(a, b), o menor deles."
 
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30701,7 +30701,7 @@ msgstr "A ferramenta é executada sem argumentos."
 #. js-lingui-id: 6XWxWG
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The total of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "O total de um campo numérico nos registros relacionados ou naqueles que correspondem à condição."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
