@@ -71,7 +71,7 @@ export const ChatThreadWidgetContent = ({
     PermissionFlagType.SEND_EMAIL_TOOL,
   );
   const counterparts = useChatThreadCounterparts(messages);
-  const firstCounterpart = counterparts?.[0];
+  const soleCounterpart = counterparts?.length === 1 ? counterparts[0] : null;
   const { scrollContainerRef, scrollContentRef } = useStickToBottomScroll();
 
   const connectionProvider = applicationsWithPreferences
@@ -131,9 +131,9 @@ export const ChatThreadWidgetContent = ({
               key={messageThreadId}
               channelName={connectionProvider.displayName}
               recipientName={
-                isDefined(firstCounterpart)
+                isDefined(soleCounterpart)
                   ? getDisplayNameFromParticipant({
-                      participant: firstCounterpart,
+                      participant: soleCounterpart,
                     })
                   : null
               }

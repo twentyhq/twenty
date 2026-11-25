@@ -41,7 +41,6 @@ export const ChatThreadNewMessage = ({
 }: ChatThreadNewMessageProps) => {
   const { t } = useLingui();
   const recipientRowRef = useRef<HTMLDivElement>(null);
-  const [firstRecipient] = recipients;
 
   return (
     <StyledContainer>
@@ -75,7 +74,7 @@ export const ChatThreadNewMessage = ({
       <StyledBody />
       <ChatThreadComposer
         channelName={channelName}
-        recipientName={firstRecipient?.name ?? null}
+        recipientName={recipients.length === 1 ? recipients[0].name : null}
         isDisconnected={false}
         isSendDisabled={!isNonEmptyArray(recipients)}
         onSendMessage={onSendMessage}

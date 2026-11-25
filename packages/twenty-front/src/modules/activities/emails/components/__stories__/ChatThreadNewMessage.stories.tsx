@@ -56,6 +56,10 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const recipients = await canvas.findByRole('group', { name: 'Recipients' });
 
+    await expect(
+      canvas.getByPlaceholderText('Write a message'),
+    ).toBeInTheDocument();
+
     const recipientRemoval = within(recipients).getByRole('button', {
       name: 'Remove Thomas Kurian',
     });
