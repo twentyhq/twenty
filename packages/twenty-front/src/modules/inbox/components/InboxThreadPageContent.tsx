@@ -3,7 +3,6 @@ import { type ReactNode } from 'react';
 import { AiChatThreadPageContent } from '@/ai-chat/instance/components/AiChatThreadPageContent';
 import { aiChatThreadIsDirectMessageFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadIsDirectMessageFamilySelector';
 import { InboxDirectMessageTitle } from '@/inbox/components/InboxDirectMessageTitle';
-import { InboxThreadDetailsDropdown } from '@/inbox/components/InboxThreadDetailsDropdown';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type InboxThreadPageContentProps = {
@@ -32,7 +31,6 @@ export const InboxThreadPageContent = ({
         ) : undefined
       }
       headerTitlePrefix={headerTitlePrefix}
-      headerTitleAccessory={<InboxThreadDetailsDropdown threadId={threadId} />}
     />
   );
 };
