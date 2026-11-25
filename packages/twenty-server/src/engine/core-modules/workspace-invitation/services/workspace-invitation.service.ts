@@ -259,6 +259,39 @@ export class WorkspaceInvitationService {
     return 'success';
   }
 
+  async claimWorkspaceInvitation({
+    appTokenId,
+    workspaceId,
+  }: {
+    appTokenId: string;
+    workspaceId: string;
+  }) {
+    const claimResult = await this.appTokenRepository.update(
+      {
+        id: appTokenId,
+        workspaceId,
+        type: In(INVITATION_APP_TOKEN_TYPES),
+        deletedAt: IsNull(),
+      },
+      { deletedAt: new Date() },
+    );
+
+    return (claimResult.affected ?? 0) > 0;
+  }
+
+  async releaseWorkspaceInvitation({
+    appTokenId,
+    workspaceId,
+  }: {
+    appTokenId: string;
+    workspaceId: string;
+  }) {
+    await this.appTokenRepository.update(
+      { id: appTokenId, workspaceId, type: In(INVITATION_APP_TOKEN_TYPES) },
+      { deletedAt: null },
+    );
+  }
+
   async invalidateWorkspaceInvitation(workspaceId: string, email: string) {
     const appToken = await this.getOneWorkspaceInvitation(workspaceId, email);
 

@@ -230,10 +230,32 @@ export class SignInUpService {
       );
     }
 
+    // Claimed before joining so concurrent sign-ins cannot redeem one invitation twice
+    const isInvitationClaimed =
+      await this.workspaceInvitationService.claimWorkspaceInvitation({
+        appTokenId: params.invitation.id,
+        workspaceId: invitationValidation.workspace.id,
+      });
+
+    if (!isInvitationClaimed) {
+      throw new AuthException(
+        'Invitation not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        { userFriendlyMessage: msg`Invitation not found` },
+      );
+    }
+
     const updatedUser = await this.signInUpOnExistingWorkspace({
       workspace: invitationValidation.workspace,
       userData: params.userData,
       roleId: params.invitation.context?.roleId,
+    }).catch(async (error) => {
+      await this.workspaceInvitationService.releaseWorkspaceInvitation({
+        appTokenId: params.invitation.id,
+        workspaceId: invitationValidation.workspace.id,
+      });
+
+      throw error;
     });
 
     if (
