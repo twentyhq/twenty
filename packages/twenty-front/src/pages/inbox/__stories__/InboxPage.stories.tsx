@@ -382,7 +382,7 @@ export const SavedChatNavigationClearsSelection: Story = {
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
       ).getByText(FIRST_THREAD_TITLE),
     );
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
 
     const firstThreadRow = getThreadRow({
       canvasElement,
@@ -413,7 +413,7 @@ export const SavedChatNavigationClearsSelection: Story = {
       canvas.getByRole('button', { name: 'Open saved chat route' }),
     );
     await expect(
-      await canvas.findByRole('button', { name: 'Chat details' }),
+      await canvas.findByRole('region', { name: 'Conversation' }),
     ).toBeVisible();
     await expect(
       canvas.queryByText('2 chats selected'),
@@ -452,14 +452,14 @@ export const CloseConversationPane: Story = {
     });
 
     await expect(
-      canvas.queryByRole('button', { name: 'Chat details' }),
+      canvas.queryByRole('region', { name: 'Conversation' }),
     ).not.toBeInTheDocument();
     await expect(
       canvas.getByRole('button', { name: 'Command Menu' }),
     ).toBeVisible();
 
     await user.click(within(firstThreadRow).getByText(FIRST_THREAD_TITLE));
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
     await waitFor(() =>
       expect(list.getBoundingClientRect().width).toBeCloseTo(
         INBOX_LIST_PANE_WIDTH,
@@ -475,7 +475,7 @@ export const CloseConversationPane: Story = {
 
     await user.click(canvas.getByRole('button', { name: 'Close' }));
     await expect(
-      canvas.queryByRole('button', { name: 'Chat details' }),
+      canvas.queryByRole('region', { name: 'Conversation' }),
     ).not.toBeInTheDocument();
 
     if (!shouldReduceMotion && !MotionGlobalConfig.skipAnimations) {
@@ -504,7 +504,7 @@ export const CloseConversationPane: Story = {
     ).toBeVisible();
 
     await user.keyboard('{ArrowDown}');
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
     await expect(canvas.getAllByText(SECOND_THREAD_TITLE)).toHaveLength(2);
     await waitFor(() =>
       expect(list.getBoundingClientRect().width).toBeCloseTo(splitListWidth, 0),
@@ -538,7 +538,7 @@ export const AskAiAfterClosingConversation: Story = {
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
       ).getByText(FIRST_THREAD_TITLE),
     );
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
 
     const conversation = canvas.getByRole('region', { name: 'Conversation' });
 
@@ -565,7 +565,7 @@ export const ClosedConversationHistory: Story = {
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
       ).getByText(FIRST_THREAD_TITLE),
     );
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
     await user.click(canvas.getByRole('button', { name: 'Close' }));
     archiveThread(FIRST_THREAD_ID);
 
@@ -573,13 +573,13 @@ export const ClosedConversationHistory: Story = {
       expect(canvas.queryByText(FIRST_THREAD_TITLE)).not.toBeInTheDocument(),
     );
     await expect(
-      canvas.queryByRole('button', { name: 'Chat details' }),
+      canvas.queryByRole('region', { name: 'Conversation' }),
     ).not.toBeInTheDocument();
 
     await user.click(
       canvas.getByRole('button', { name: 'Back through history' }),
     );
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
     await expect(canvas.getByText(FIRST_THREAD_TITLE)).toBeVisible();
     await expect(canvas.getAllByText(SECOND_THREAD_TITLE)).toHaveLength(1);
 
@@ -587,7 +587,7 @@ export const ClosedConversationHistory: Story = {
       canvas.getByRole('button', { name: 'Forward through history' }),
     );
     await expect(
-      canvas.queryByRole('button', { name: 'Chat details' }),
+      canvas.queryByRole('region', { name: 'Conversation' }),
     ).not.toBeInTheDocument();
     await waitFor(() =>
       expect(canvas.queryByText(FIRST_THREAD_TITLE)).not.toBeInTheDocument(),
@@ -610,14 +610,14 @@ export const TriageAfterReopeningConversation: Story = {
         getThreadRow({ canvasElement, title: FIRST_THREAD_TITLE }),
       ).getByText(FIRST_THREAD_TITLE),
     );
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
     await user.click(canvas.getByRole('button', { name: 'Close' }));
     await user.click(
       within(
         getThreadRow({ canvasElement, title: SECOND_THREAD_TITLE }),
       ).getByText(SECOND_THREAD_TITLE),
     );
-    await canvas.findByRole('button', { name: 'Chat details' });
+    await canvas.findByRole('region', { name: 'Conversation' });
     archiveThread(SECOND_THREAD_ID);
 
     await waitFor(() => {
@@ -625,7 +625,7 @@ export const TriageAfterReopeningConversation: Story = {
       expect(canvas.getAllByText(FIRST_THREAD_TITLE)).toHaveLength(2);
     });
     await expect(
-      canvas.getByRole('button', { name: 'Chat details' }),
+      canvas.getByRole('region', { name: 'Conversation' }),
     ).toBeVisible();
   },
 };

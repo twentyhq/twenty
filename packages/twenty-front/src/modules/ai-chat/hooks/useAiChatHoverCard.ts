@@ -37,7 +37,7 @@ export const useAiChatHoverCard = ({
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: (open) => {
-      if (!open && shouldStayOpen === true) {
+      if (!open && shouldStayOpen) {
         return;
       }
 
