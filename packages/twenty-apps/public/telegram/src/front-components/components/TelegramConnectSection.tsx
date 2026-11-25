@@ -110,15 +110,22 @@ export const TelegramConnectSection = () => {
             <StyledCommand>{startState.startCommand}</StyledCommand>
           </>
         ) : (
-          <Button
-            type="button"
-            variant="outline"
-            loading={startState.status === 'STARTING'}
-            disabled={startState.status === 'STARTING'}
-            onClick={startTelegramUserLink}
-          >
-            {t('Connect Telegram')}
-          </Button>
+          <>
+            {startState.status === 'EXPIRED' && (
+              <StyledHint>
+                {t('This link has expired. Start a new connection.')}
+              </StyledHint>
+            )}
+            <Button
+              type="button"
+              variant="outline"
+              loading={startState.status === 'STARTING'}
+              disabled={startState.status === 'STARTING'}
+              onClick={startTelegramUserLink}
+            >
+              {t('Connect Telegram')}
+            </Button>
+          </>
         )}
       </StyledActions>
     </Section.Root>
