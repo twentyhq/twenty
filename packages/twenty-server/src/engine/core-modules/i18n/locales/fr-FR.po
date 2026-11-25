@@ -297,7 +297,7 @@ msgstr "Un champ portant ce nom existe déjà."
 #. js-lingui-id: lDO6A7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula cannot read its own value, directly or through other formulas"
-msgstr ""
+msgstr "Une formule ne peut pas lire sa propre valeur, directement ou par l’intermédiaire d’autres formules"
 
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
@@ -4249,12 +4249,12 @@ msgstr "Le modèle Cron \"{pattern}\" est invalide"
 #. js-lingui-id: sJbCNC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spread must be between 2 minutes and 24 hours."
-msgstr ""
+msgstr "La répartition du déclencheur Cron doit être comprise entre 2 minutes et 24 heures."
 
 #. js-lingui-id: GbygrC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spreadMs must be an integer between {CRON_TRIGGER_MIN_SPREAD_MS} and {CRON_TRIGGER_MAX_SPREAD_MS}"
-msgstr ""
+msgstr "La valeur spreadMs du déclencheur Cron doit être un entier compris entre {CRON_TRIGGER_MIN_SPREAD_MS} et {CRON_TRIGGER_MAX_SPREAD_MS}"
 
 #. js-lingui-id: ViG9dm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -10460,7 +10460,7 @@ msgstr "Seule l'application qui possède cet agent peut modifier ses déclencheu
 #. js-lingui-id: xCGjjr
 #: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
 msgid "Only the person who created this can change who sees it"
-msgstr ""
+msgstr "Seule la personne qui a créé ceci peut modifier qui le voit"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

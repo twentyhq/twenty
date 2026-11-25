@@ -297,7 +297,7 @@ msgstr "이 이름의 필드가 이미 존재합니다."
 #. js-lingui-id: lDO6A7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula cannot read its own value, directly or through other formulas"
-msgstr ""
+msgstr "수식은 직접 또는 다른 수식을 통해 자신의 값을 읽을 수 없습니다"
 
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
@@ -4249,12 +4249,12 @@ msgstr "Cron 패턴 \"{pattern}\"이(가) 유효하지 않습니다"
 #. js-lingui-id: sJbCNC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spread must be between 2 minutes and 24 hours."
-msgstr ""
+msgstr "Cron 트리거 분산은 2분에서 24시간 사이여야 합니다."
 
 #. js-lingui-id: GbygrC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spreadMs must be an integer between {CRON_TRIGGER_MIN_SPREAD_MS} and {CRON_TRIGGER_MAX_SPREAD_MS}"
-msgstr ""
+msgstr "Cron 트리거 spreadMs는 {CRON_TRIGGER_MIN_SPREAD_MS}에서 {CRON_TRIGGER_MAX_SPREAD_MS} 사이의 정수여야 합니다"
 
 #. js-lingui-id: ViG9dm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -10460,7 +10460,7 @@ msgstr "이 에이전트를 소유한 애플리케이션만 트리거를 변경�
 #. js-lingui-id: xCGjjr
 #: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
 msgid "Only the person who created this can change who sees it"
-msgstr ""
+msgstr "이 항목을 만든 사람만 볼 수 있는 사람을 변경할 수 있습니다"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts

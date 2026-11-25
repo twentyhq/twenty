@@ -99,7 +99,7 @@ msgstr "· INGYENES"
 #. js-lingui-id: eNVoMO
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
-msgstr ""
+msgstr "\"{fieldName}\" több rekorddal rendelkezik: olvassa be a count(), sum(), avg(), min() vagy max() függvényen belül"
 
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -139,7 +139,7 @@ msgstr "A(z) \"{path}\" kapcsolatot olvas, de a korábbi értékek csak ennek a 
 #. js-lingui-id: bkN3QG
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 msgid "“{prompt}”"
-msgstr ""
+msgstr "„{prompt}”"
 
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -149,7 +149,7 @@ msgstr "\"{subfieldName}\" nem \"{fieldName}\" almezője."
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -652,6 +652,11 @@ msgstr "{allowedFieldCount} a(z) {fieldCount} alapján"
 msgid "{allowedFieldCount} of {fieldCount} fields"
 msgstr "{allowedFieldCount} / {fieldCount} mező"
 
+#. js-lingui-id: QbSIWf
+#: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
+msgid "{amount} / month"
+msgstr "{amount} / hónap"
+
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
@@ -685,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "{applicationsCount} fizetős alkalmazás"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount} fizetős alkalmazás"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -931,17 +936,17 @@ msgstr "A(z) {functionName} legalább {minimumArgumentCount} argumentumot fogad,
 #. js-lingui-id: aGSMaz
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() cannot contain another aggregate"
-msgstr ""
+msgstr "{functionName}() nem tartalmazhat másik aggregátumot"
 
 #. js-lingui-id: gT6Kkm
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
-msgstr ""
+msgstr "{functionName}() kapcsolatot igényel, például count(tasks) vagy sum(deals.amount)"
 
 #. js-lingui-id: vN+0eR
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() reads related records, which only a formula can do"
-msgstr ""
+msgstr "{functionName}() kapcsolódó rekordokat olvas be, amit csak képlet tehet meg"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1184,22 +1189,22 @@ msgstr "A(z) {providerDisplayName} OAuth-ot még nem állította be a szerver re
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity} fiók"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity} fiók"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity} tag"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity} tag"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1847,7 +1852,7 @@ msgstr "Egy űrlap nyílik meg a munkafolyamatot elindító személy számára, 
 #. js-lingui-id: QbGaDs
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
-msgstr ""
+msgstr "A kapcsolódó rekordokat összesítő képlet tárolva van, ezért nem tudja olvasni ezt: \"{path}\". Ebben a mezőben összesítsen, és egy másik képletből olvassa ki."
 
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
@@ -1892,7 +1897,7 @@ msgstr "Egy szerepet kell kiválasztani az API kulcshoz"
 #. js-lingui-id: /852Zy
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A stored formula cannot read \"{path}\""
-msgstr ""
+msgstr "Egy tárolt képlet nem tudja olvasni ezt: \"{path}\""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1988,11 +1993,6 @@ msgstr "Az ehhez a munkaterülethez elfogadott és aláírt DPA-k, a sablon verz
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "Hozzáférés"
-
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Hozzáférési csoportok"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -4226,7 +4226,7 @@ msgstr "Aposztróf és pont"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "alkalmazás"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4446,7 +4446,7 @@ msgstr "Jóváhagyott tartományok"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "alkalmazások"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -5398,20 +5398,20 @@ msgstr "a hónap {startOrdinal}. és {endOrdinal}. napja között"
 msgid "Bill credits to your workspace"
 msgstr "Kreditek számlázása a munkaterületére"
 
-#. js-lingui-id: WVxikw
+#. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month"
-msgstr "Munkaterület számlázása: {amount} / hónap"
+msgid "Bill your workspace {price}"
+msgstr "Munkaterület számlázása: {price}"
 
-#. js-lingui-id: 9nZzfz
+#. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per account"
-msgstr "Munkaterület számlázása: {amount} / hónap fiókonként"
+msgid "Bill your workspace {price} per account"
+msgstr "Munkaterület számlázása: fiókonként {price}"
 
-#. js-lingui-id: iOQoBV
+#. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
-msgid "Bill your workspace {amount} / month per member"
-msgstr "Munkaterület számlázása: {amount} / hónap tagonként"
+msgid "Bill your workspace {price} per member"
+msgstr "Számlázza ki a munkaterületét {price} tagonkénti áron"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5441,7 +5441,7 @@ msgstr "Számlázás - Beállítások"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "Számlázási e-mail-cím"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6334,7 +6334,7 @@ msgstr "Avatar módosítása"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "Számlázási e-mail-cím módosítása"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7248,7 +7248,7 @@ msgstr "Összecsuk"
 #. js-lingui-id: 9prKyv
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
-msgstr ""
+msgstr "{heading} összecsukása"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -7536,11 +7536,6 @@ msgstr "Komponens-előnézet mintaadatokkal"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-mail írása"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Számítsa ki azokat a hozzáférési csoportokat, amelyeket a rekordlisták sorszintű jogosultságokhoz fognak használni. A munkaterület frissítésének befejezése után engedélyezze."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
@@ -13216,7 +13211,7 @@ msgstr "Kibontás"
 #. js-lingui-id: AgpQjB
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Expand {heading}"
-msgstr ""
+msgstr "{heading} kibontása"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -23364,7 +23359,7 @@ msgstr "Fizetős alkalmazás"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "Az ebben a munkaterületben telepített fizetős alkalmazások. Az árak hozzáadódnak a számlájához"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23591,7 +23586,7 @@ msgstr "tagoként"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "Havonta"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24771,7 +24766,7 @@ msgstr "Olvasási/Szerkesztési/Törlési engedélyek"
 #. js-lingui-id: +a9H8X
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
 msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
-msgstr ""
+msgstr "Kapcsolódó rekordokat olvas be, ezért az érték tárolásra kerül, és a módosításuk után néhány másodperccel a háttérben frissül."
 
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
@@ -27097,7 +27092,7 @@ msgstr "Keresési beállítások"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "Keresés vagy kérdezés..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27392,7 +27387,7 @@ msgstr "Továbbiak"
 #. js-lingui-id: ssRcpB
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See more results"
-msgstr ""
+msgstr "További találatok megtekintése"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -28297,11 +28292,6 @@ msgstr "Alak, szín, arc"
 #: src/modules/side-panel/hooks/useOpenShareRecordInSidePanel.ts
 msgid "Share"
 msgstr "Megosztás"
-
-#. js-lingui-id: nmXzns
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Share calendar events across channels"
-msgstr "Naptáresemények megosztása a csatornák között"
 
 #. js-lingui-id: S1jlER
 #: src/modules/settings/privacy/components/SettingsPrivacySharingWithTwenty.tsx
@@ -29428,11 +29418,6 @@ msgstr "Leállítás alatt"
 msgid "Storage"
 msgstr "Tárolás"
 
-#. js-lingui-id: vrUVo4
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
-msgstr "Az ugyanazon szolgáltató több naptára által szinkronizált értekezletet naptárankénti tárolás helyett csak egyszer tárolja."
-
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
 msgid "Store the full URL or just the domain"
@@ -30352,7 +30337,7 @@ msgstr "Az OpenAI-kompatibilis szolgáltató API-végpontja"
 #. js-lingui-id: UIpkEz
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The average of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "A kapcsolódó rekordok vagy a feltételnek megfelelő rekordok számmezőjének átlaga."
 
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -30397,7 +30382,7 @@ msgstr "Az Önt ajánló Twenty-partner kódja"
 #. js-lingui-id: h7Af0y
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
-msgstr ""
+msgstr "A(z) {functionName}() feltétele nem tudja beolvasni a(z) \"{relationFieldName}\" mezőt"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30507,7 +30492,7 @@ msgstr "Az ikon, amit a munkafolyamata megjelenít a parancsmenüben"
 #. js-lingui-id: hP+z/5
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
-msgstr ""
+msgstr "A kapcsolódó rekordok közül a legnagyobb szám vagy a legkésőbbi dátum. Egyszerű értékeknél, például max(a, b) esetén, a legnagyobb ezek közül."
 
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30594,7 +30579,7 @@ msgstr "A listában lévő elemek száma, vagy 0, ha nem lista."
 #. js-lingui-id: vXwRDS
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
-msgstr ""
+msgstr "A kapcsolódó rekordok vagy a feltételnek megfelelő rekordok száma. Például: count(tasks, tasks.status == \"TODO\")."
 
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30669,7 +30654,7 @@ msgstr "A megosztott e-mail, amelyet használni szeretne."
 #. js-lingui-id: q2NONu
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
-msgstr ""
+msgstr "A kapcsolódó rekordok közül a legkisebb szám vagy a legkorábbi dátum. Egyszerű értékeknél, például min(a, b) esetén, a legkisebb ezek közül."
 
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30716,7 +30701,7 @@ msgstr "Az eszköz argumentumok nélkül fut."
 #. js-lingui-id: 6XWxWG
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The total of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "A kapcsolódó rekordok vagy a feltételnek megfelelő rekordok számmezőjének összege."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

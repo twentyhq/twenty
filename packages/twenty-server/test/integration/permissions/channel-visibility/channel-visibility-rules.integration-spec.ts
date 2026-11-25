@@ -23,12 +23,7 @@ import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const FLAGS = [
-  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-  FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-  FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED,
-];
+const FLAGS = [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED];
 
 const revokeRoleWideAccessToChannelObjects = () =>
   getAppProviderByClassName<RevokeRoleWideAccessToChannelObjectsCommand>(

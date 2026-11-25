@@ -61,7 +61,6 @@ export class AccessGroupSyncService {
     const workspaceCache = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       [
-        'featureFlagsMap',
         'rolesPermissions',
         'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',

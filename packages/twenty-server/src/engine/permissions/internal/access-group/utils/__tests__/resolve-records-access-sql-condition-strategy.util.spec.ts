@@ -1,7 +1,4 @@
-import {
-  FeatureFlagKey,
-  type ObjectRecordsPermissions,
-} from 'twenty-shared/types';
+import { type ObjectRecordsPermissions } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -48,10 +45,8 @@ const withRlsRule: ObjectRecordsPermissions = {
 
 const buildRequest = ({
   objectRecordsPermissions,
-  isAccessGroupsEnabled = true,
 }: {
   objectRecordsPermissions: ObjectRecordsPermissions;
-  isAccessGroupsEnabled?: boolean;
 }): Pick<
   PermissionsObjectAccessRequest,
   'principals' | 'metadataMaps' | 'flatObjectMetadata'
@@ -69,9 +64,7 @@ const buildRequest = ({
     flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
     flatFieldMetadataOptionMaps: createEmptyFlatEntityMaps(),
     flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
-    featureFlagsMap: {
-      [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: isAccessGroupsEnabled,
-    },
+    featureFlagsMap: {},
     rolesPermissions: {
       [ROLE_ID]: {
         ...NO_ROLE_RECORDS_PERMISSIONS,
@@ -89,17 +82,6 @@ describe('resolveRecordsAccessSQLConditionStrategy', () => {
         buildRequest({ objectRecordsPermissions: withRlsRule }),
       ),
     ).toBe('accessGroups');
-  });
-
-  it('should stay degraded when the flag is off', () => {
-    expect(
-      resolveRecordsAccessSQLConditionStrategy(
-        buildRequest({
-          objectRecordsPermissions: withRlsRule,
-          isAccessGroupsEnabled: false,
-        }),
-      ),
-    ).toBe('degradedRead');
   });
 
   it('should use the condition without RLS when no role has an RLS rule on the object', () => {
