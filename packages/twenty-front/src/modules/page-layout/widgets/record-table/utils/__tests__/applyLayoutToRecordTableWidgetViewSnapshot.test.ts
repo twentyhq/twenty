@@ -71,7 +71,7 @@ describe('applyLayoutToRecordTableWidgetViewSnapshot', () => {
     });
   });
 
-  it('should keep Compact view when a list becomes another layout', () => {
+  it('should turn Compact view off when a list becomes another layout', () => {
     const listSnapshot = applyLayoutToRecordTableWidgetViewSnapshot({
       widgetViewSnapshot,
       targetViewType: ViewType.LIST_WIDGET,
@@ -84,6 +84,6 @@ describe('applyLayoutToRecordTableWidgetViewSnapshot', () => {
         targetViewType: ViewType.TABLE_WIDGET,
         defaultGroupByFieldMetadataItem: null,
       }).view,
-    ).toMatchObject({ type: ViewType.TABLE_WIDGET, isCompact: true });
+    ).toMatchObject({ type: ViewType.TABLE_WIDGET, isCompact: false });
   });
 });

@@ -112,16 +112,17 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   const { type: updatedViewType, isCompact: updatedIsCompact } =
     updateViewInputWithoutGroupLoadLimit;
 
-  const isViewBecomingCompactByDefault =
+  const isViewTypeChanging =
     isDefined(updatedViewType) &&
-    isViewCompactByDefault(updatedViewType) &&
-    !isViewCompactByDefault(effectiveExistingFlatView.type);
+    updatedViewType !== effectiveExistingFlatView.type;
 
   const editableProperties = extractAndSanitizeObjectStringFields(
     {
       ...updateViewInputWithoutGroupLoadLimit,
-      ...(isViewBecomingCompactByDefault &&
-        !isDefined(updatedIsCompact) && { isCompact: true }),
+      ...(isViewTypeChanging &&
+        !isDefined(updatedIsCompact) && {
+          isCompact: isViewCompactByDefault(updatedViewType),
+        }),
       ...(groupLoadLimit !== undefined && {
         groupLoadLimit: groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       }),
