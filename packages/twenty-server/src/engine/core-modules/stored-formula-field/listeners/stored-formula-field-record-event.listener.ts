@@ -130,19 +130,14 @@ export class StoredFormulaFieldRecordEventListener {
             return;
           }
 
-          await this.storedFormulaFieldDirtyRecordService.markRecordsDirty({
-            workspaceId,
-            objectMetadataId,
-            recordIds:
-              await this.storedFormulaFieldComputationService.findRecordIdsByJoinColumnValues(
-                {
-                  workspaceId,
-                  objectMetadataId,
-                  joinColumnName,
-                  joinColumnValues: lookedUpRecordIds,
-                },
-              ),
-          });
+          await this.storedFormulaFieldComputationService.markRecordsDirtyByJoinColumnValues(
+            {
+              workspaceId,
+              objectMetadataId,
+              joinColumnName,
+              joinColumnValues: lookedUpRecordIds,
+            },
+          );
         },
       ),
     );

@@ -9,6 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-flat-fields-for-flat-object-metadata.util';
 import { buildFormulaFieldDescriptorsFromFlatEntityMaps } from 'src/engine/metadata-modules/formula-field/utils/build-formula-field-descriptors-from-flat-entity-maps.util';
 import { buildFormulaSqlReferenceResolverFromDescriptors } from 'src/engine/metadata-modules/formula-field/utils/build-formula-sql-reference-resolver-from-descriptors.util';
+import { createFormulaLookupAliasAllocator } from 'src/engine/metadata-modules/formula-field/utils/create-formula-lookup-alias-allocator.util';
 import { compileFormulaFieldColumns } from 'src/engine/metadata-modules/formula-field/utils/compile-formula-field-columns.util';
 import {
   type WorkspaceComputedColumnShape,
@@ -45,17 +46,8 @@ export const buildFormulaComputedColumnShapes = ({
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   });
-  const lookupAliasByRelationFieldName = new Map<string, string>();
-
-  const getLookupAlias = (relationFieldName: string): string => {
-    const lookupAlias =
-      lookupAliasByRelationFieldName.get(relationFieldName) ??
-      `lookup${lookupAliasByRelationFieldName.size}`;
-
-    lookupAliasByRelationFieldName.set(relationFieldName, lookupAlias);
-
-    return lookupAlias;
-  };
+  const { getLookupAlias, getLookupShapes } =
+    createFormulaLookupAliasAllocator();
 
   const computedColumnShapes = formulaFlatFieldMetadatas.flatMap(
     (formulaFlatFieldMetadata): WorkspaceComputedColumnShape[] => {
@@ -99,8 +91,6 @@ export const buildFormulaComputedColumnShapes = ({
 
   return {
     computedColumnShapes,
-    computedLookupShapes: [...lookupAliasByRelationFieldName].map(
-      ([relationFieldName, alias]) => ({ alias, relationFieldName }),
-    ),
+    computedLookupShapes: getLookupShapes(),
   };
 };

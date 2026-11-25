@@ -1,4 +1,3 @@
-// The record to mark dirty is in objectMetadataId; joinColumnName links it to the watched record
 export type StoredFormulaRecordWatchPlan = {
   objectMetadataId: string;
   joinColumnName: string;
@@ -6,11 +5,10 @@ export type StoredFormulaRecordWatchPlan = {
 };
 
 export type StoredFormulaWatchPlans = {
-  // Keyed by the related (child) object, whose join column points to the record to mark
   relatedRecordWatchPlansByObjectMetadataId: Partial<
     Record<string, StoredFormulaRecordWatchPlan[]>
   >;
-  // Keyed by the looked-up (parent) object, which the records to mark point to
+  // Unlike related plans, the join column is on the records to mark, which point to the watched one
   lookedUpRecordWatchPlansByObjectMetadataId: Partial<
     Record<string, StoredFormulaRecordWatchPlan[]>
   >;
