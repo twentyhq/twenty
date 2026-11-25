@@ -42,6 +42,11 @@ Nothing to do by hand. The app registers the webhook with Telegram, with the
 secret, each time a member starts connecting their account. After rotating
 `TELEGRAM_WEBHOOK_SECRET`, start one connection to put the new secret in use.
 
+## Who can connect
+
+Only admins can open the app's settings screen. Every other member connects
+their account with **Connect Telegram** in the command menu.
+
 ## How messages are routed
 
 Telegram has no notion of a workspace, so routing is per Telegram account:

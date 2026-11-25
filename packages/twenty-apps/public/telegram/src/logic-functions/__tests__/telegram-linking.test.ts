@@ -135,7 +135,7 @@ describe('connecting a Telegram account', () => {
     kvHolder.kv = kvFake.kv;
     clientHolder.client = coreFake.client;
     telegramCalls = stubTelegramApi({
-      getMe: { id: 1, username: 'TwentyBot' },
+      results: { getMe: { id: 1, username: 'TwentyBot' } },
     });
   });
 
@@ -202,7 +202,7 @@ describe('connecting a Telegram account', () => {
 
     await deliver(buildMessageUpdate(`/start ${token}`));
 
-    const { resolved, handled } = await deliver(buildMessageUpdate('hello'));
+    const { resolved, handled } = await deliver(buildMessageUpdate('/start'));
 
     expect(resolved).toMatchObject({ workspaceId: 'workspace-1' });
     expect(handled).toEqual({ outcome: 'CONNECTED' });
