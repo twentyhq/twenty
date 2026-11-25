@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
+import { canCallerChangePrivatableEntityPrivacy } from 'src/engine/permissions/metadata-permissions/utils/can-caller-change-privatable-entity-privacy.util';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -27,12 +28,16 @@ export const fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow = ({
     return flatWorkflowToUpdate;
   }
 
-  if (!isDefined(userWorkspaceId)) {
+  if (
+    !canCallerChangePrivatableEntityPrivacy({
+      privatableEntity: existingFlatWorkflow,
+    })
+  ) {
     throw new WorkflowQueryValidationException(
-      `Core workflow '${existingFlatWorkflow.id}' can only have its visibility changed by a workspace member`,
+      `Core workflow '${existingFlatWorkflow.id}' can only have its visibility changed by its creator`,
       WorkflowQueryValidationExceptionCode.FORBIDDEN,
       {
-        userFriendlyMessage: msg`Only a workspace member can change who sees a workflow`,
+        userFriendlyMessage: msg`Only the person who created this workflow can change who sees it`,
       },
     );
   }
@@ -40,6 +45,7 @@ export const fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow = ({
   return {
     ...flatWorkflowToUpdate,
     isPrivate,
-    createdByUserWorkspaceId: userWorkspaceId,
+    createdByUserWorkspaceId:
+      userWorkspaceId ?? existingFlatWorkflow.createdByUserWorkspaceId,
   };
 };

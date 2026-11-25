@@ -1,12 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
-import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { canCallerChangePrivatableEntityPrivacy } from 'src/engine/permissions/metadata-permissions/utils/can-caller-change-privatable-entity-privacy.util';
 
 export const computeAgentPrivacyUpdateOrThrow = ({
   existingFlatAgent,
@@ -24,14 +24,11 @@ export const computeAgentPrivacyUpdateOrThrow = ({
     return {};
   }
 
-  const canChangePrivacy =
-    isDefined(userWorkspaceId) &&
-    canChangeCoreWorkflowVisibility({
-      createdByUserWorkspaceId: existingFlatAgent.createdByUserWorkspaceId,
-      userWorkspaceId,
-    });
-
-  if (!canChangePrivacy) {
+  if (
+    !canCallerChangePrivatableEntityPrivacy({
+      privatableEntity: existingFlatAgent,
+    })
+  ) {
     throw new AiException(
       `Agent '${existingFlatAgent.id}' can only have its privacy changed by the member who owns it`,
       AiExceptionCode.AGENT_PRIVACY_CHANGE_NOT_ALLOWED,
@@ -41,5 +38,9 @@ export const computeAgentPrivacyUpdateOrThrow = ({
     );
   }
 
-  return { isPrivate, createdByUserWorkspaceId: userWorkspaceId };
+  return {
+    isPrivate,
+    createdByUserWorkspaceId:
+      userWorkspaceId ?? existingFlatAgent.createdByUserWorkspaceId,
+  };
 };

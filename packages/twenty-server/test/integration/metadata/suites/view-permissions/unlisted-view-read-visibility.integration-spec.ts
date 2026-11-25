@@ -9,14 +9,16 @@ import { findViewChild } from 'test/integration/metadata/suites/view/utils/find-
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/find-view-ownership.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
-import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   ViewFilterGroupLogicalOperator,
   ViewVisibility,
 } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const findViewOrErrorCode = async ({
   viewId,
@@ -102,13 +104,14 @@ describe('unlisted view read visibility (integration)', () => {
 
     ownerlessViewFilterGroupId = data.createViewFilterGroup.id;
 
-    await updateOneView({
-      viewId: ownerlessViewId,
-      input: { id: ownerlessViewId, visibility: ViewVisibility.UNLISTED },
-      gqlFields: 'id',
-      expectToFail: false,
-      token: API_KEY_ACCESS_TOKEN,
-    });
+    await global.testDataSource.query(
+      `UPDATE core."view" SET "isPrivate" = true WHERE id = $1`,
+      [ownerlessViewId],
+    );
+
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatViewMaps']);
   });
 
   afterAll(async () => {

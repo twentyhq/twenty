@@ -1323,7 +1323,7 @@ export class WorkspaceService {
     );
   }
 
-  async handleRemoveWorkspaceMember(
+  private async handleRemoveWorkspaceMember(
     workspaceId: string,
     userId: string,
     softDelete = false,
