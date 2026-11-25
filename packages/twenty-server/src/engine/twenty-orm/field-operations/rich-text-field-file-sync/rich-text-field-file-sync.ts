@@ -14,7 +14,6 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type RawQueryExecutor } from 'src/engine/twenty-orm/field-operations/file-lifecycle/types/raw-query-executor.type';
 import { claimTemporaryFiles } from 'src/engine/twenty-orm/field-operations/file-lifecycle/utils/claim-temporary-files.util';
-import { softDeleteFiles } from 'src/engine/twenty-orm/field-operations/file-lifecycle/utils/soft-delete-files.util';
 import { type RichTextFieldRecordTable } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-record-table.type';
 import { type RichTextFieldWrittenDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-written-document.type';
 import { computeRichTextDocumentColumnNames } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/compute-rich-text-document-column-names.util';
@@ -33,7 +32,7 @@ type RichTextFieldFileSyncContext = Pick<
   'workspaceId' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
 >;
 
-// The record lists every file its rich text fields claimed, released ones included, so only that record can bring one back.
+// The record lists every file its rich text fields claimed, released ones included, so only that record can bring one back while it exists.
 export class RichTextFieldFileSync {
   private readonly internalContext: RichTextFieldFileSyncContext;
 
@@ -212,21 +211,28 @@ export class RichTextFieldFileSync {
     );
   }
 
-  async releaseFiles({
+  // The flag lets another record whose body references the file adopt it, as the record a merge keeps does.
+  async releaseFilesOfDestroyedRecords({
     fileIds,
     executeRawQuery,
   }: {
     fileIds: string[];
     executeRawQuery: RawQueryExecutor;
   }): Promise<void> {
-    await softDeleteFiles({
-      executeRawQuery,
-      workspaceId: this.internalContext.workspaceId,
-      fileIds,
-    });
+    if (fileIds.length === 0) {
+      return;
+    }
+
+    await executeRawQuery(
+      `UPDATE "core"."file"
+       SET "deletedAt" = COALESCE("deletedAt", now()),
+           "settings" = "settings" || '{"isOwnedByDestroyedRecord":true}'::jsonb
+       WHERE "id" = ANY($1::uuid[])
+         AND "workspaceId" = $2`,
+      [fileIds, this.internalContext.workspaceId],
+    );
   }
 
-  // Claims this field's new uploads, and adopts a released file whose owning record was destroyed, such as the duplicate a merge removes.
   private async takeOwnershipOfFiles({
     documentWrites,
     recordTable,
@@ -268,7 +274,6 @@ export class RichTextFieldFileSync {
               ),
             ),
           ],
-          fieldName,
           fieldUniversalIdentifier:
             fieldDocumentWrites[0].fieldUniversalIdentifier,
           recordTable,
@@ -316,15 +321,12 @@ export class RichTextFieldFileSync {
     }
   }
 
-  // A released file stays with its owner; only once no row of the table lists it can another record take it over.
   private async adoptFilesOfDestroyedRecords({
     fileIds,
-    fieldName,
     fieldUniversalIdentifier,
     recordTable,
   }: {
     fileIds: string[];
-    fieldName: string;
     fieldUniversalIdentifier: string;
     recordTable: RichTextFieldRecordTable;
   }): Promise<string[]> {
@@ -332,22 +334,15 @@ export class RichTextFieldFileSync {
       return [];
     }
 
-    const fileIdsColumn = escapeIdentifier(
-      computeRichTextFileIdsColumnName(fieldName),
-    );
-
     const adoptedFiles = await recordTable.executeRawQuery(
       `UPDATE "core"."file" AS "file"
-       SET "deletedAt" = NULL, "updatedAt" = now()
+       SET "deletedAt" = NULL,
+           "settings" = "file"."settings" - 'isOwnedByDestroyedRecord',
+           "updatedAt" = now()
        WHERE "file"."id" = ANY($1::uuid[])
          AND "file"."workspaceId" = $2
-         AND "file"."deletedAt" IS NOT NULL
-         AND "file"."settings"->>'isTemporaryFile' = 'false'
+         AND "file"."settings"->>'isOwnedByDestroyedRecord' = 'true'
          AND starts_with("file"."path", $3)
-         AND NOT EXISTS (
-           SELECT 1 FROM ${recordTable.tableExpression} AS "owner"
-           WHERE "owner".${fileIdsColumn} @> to_jsonb("file"."id"::text)
-         )
        RETURNING "file"."id"`,
       [
         fileIds,

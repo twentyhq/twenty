@@ -2002,7 +2002,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     if (isDefined(richTextFieldFileIdsByRecordIdBeforeDelete)) {
-      await this.richTextFieldFileSync.releaseFiles({
+      await this.richTextFieldFileSync.releaseFilesOfDestroyedRecords({
         fileIds: writtenRecordIds.flatMap(
           (recordId) =>
             richTextFieldFileIdsByRecordIdBeforeDelete.get(recordId) ?? [],

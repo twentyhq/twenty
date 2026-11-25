@@ -6,4 +6,5 @@ export type FileFieldSettings = {
 export type FileSettings = FileFieldSettings & {
   expiresAt?: string;
   isClaimableByRecord?: boolean;
+  isOwnedByDestroyedRecord?: boolean;
 };
