@@ -117,15 +117,17 @@ export class PendingFileCleanupService {
         const location = await this.findStorageLocation(file);
 
         // Deploys re-stage live rows in place; those must keep the object at their final path.
-        if (
-          isDefined(location) &&
-          file.createdAt.getTime() < file.updatedAt.getTime() &&
-          (await this.fileStorageService.restoreRestagedFile({
+        const isRestaged = file.createdAt.getTime() < file.updatedAt.getTime();
+
+        if (isDefined(location) && isRestaged) {
+          const isRestored = await this.fileStorageService.restoreRestagedFile({
             file,
             resourceIdentifier: location,
-          }))
-        ) {
-          continue;
+          });
+
+          if (isRestored) {
+            continue;
+          }
         }
 
         // Delete only while still PENDING, so a file completeFileUpload just promoted is left untouched.
