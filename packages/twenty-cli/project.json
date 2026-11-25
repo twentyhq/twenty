@@ -19,7 +19,9 @@
       }
     },
     "typecheck": {},
-    "lint": {},
+    "lint": {
+      "dependsOn": ["^build", "twenty-oxlint-rules:build"]
+    },
     "test:package": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
