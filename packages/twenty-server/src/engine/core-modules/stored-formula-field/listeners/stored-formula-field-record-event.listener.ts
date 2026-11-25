@@ -6,7 +6,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
 import { type StoredFormulaWatchPlans } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
 import { findStaleStoredFormulaRecordIdsByObjectMetadataId } from 'src/engine/core-modules/stored-formula-field/utils/find-stale-stored-formula-record-ids-by-object-metadata-id.util';
-import { getStoredFormulaWatchPlans } from 'src/engine/core-modules/stored-formula-field/utils/get-stored-formula-watch-plans.util';
+import { getStoredFormulaWatchPlans } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-watch-plans.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { OnDatabaseBatchEvent } from 'src/engine/workspace-event-emitter/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/workspace-event-emitter/enums/database-event-action';

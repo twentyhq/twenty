@@ -5,6 +5,7 @@ import isEqual from 'lodash.isequal';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
+import { STORED_FORMULA_FIELD_RECORDS_PER_RUN } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-records-per-run.constant';
 import { STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-recompute-batch-size.constant';
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
 import { buildStoredFormulaColumnExpressions } from 'src/engine/core-modules/stored-formula-field/utils/build-stored-formula-column-expressions.util';
@@ -92,7 +93,7 @@ export class StoredFormulaFieldComputationService {
         .withStoredColumnsOnly()
         .select(`${RECORD_ID_COLUMN}`, 'id')
         .orderBy(`${RECORD_ID_COLUMN}`, 'ASC')
-        .limit(STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE);
+        .limit(STORED_FORMULA_FIELD_RECORDS_PER_RUN);
 
       if (isDefined(afterRecordId)) {
         recordIdsQueryBuilder.where(`${RECORD_ID_COLUMN} > :afterRecordId`, {
@@ -119,7 +120,7 @@ export class StoredFormulaFieldComputationService {
       });
 
       const hasMoreRecords =
-        recordIds.length === STORED_FORMULA_FIELD_RECOMPUTE_BATCH_SIZE;
+        recordIds.length === STORED_FORMULA_FIELD_RECORDS_PER_RUN;
 
       if (!hasMoreRecords) {
         return null;

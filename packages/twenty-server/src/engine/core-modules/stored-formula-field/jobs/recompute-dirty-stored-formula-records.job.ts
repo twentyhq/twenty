@@ -4,7 +4,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { RECOMPUTE_DIRTY_STORED_FORMULA_RECORDS_JOB_NAME } from 'src/engine/core-modules/stored-formula-field/constants/recompute-dirty-stored-formula-records-job-name.constant';
-import { STORED_FORMULA_FIELD_DIRTY_RECORDS_PER_JOB } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-dirty-records-per-job.constant';
+import { STORED_FORMULA_FIELD_RECORDS_PER_RUN } from 'src/engine/core-modules/stored-formula-field/constants/stored-formula-field-records-per-run.constant';
 import { StoredFormulaFieldComputationService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-computation.service';
 import { StoredFormulaFieldDirtyRecordService } from 'src/engine/core-modules/stored-formula-field/services/stored-formula-field-dirty-record.service';
 import { type RecomputeDirtyStoredFormulaRecordsJobData } from 'src/engine/core-modules/stored-formula-field/types/recompute-dirty-stored-formula-records-job-data.type';
@@ -48,7 +48,7 @@ export class RecomputeDirtyStoredFormulaRecordsJob {
     const recordIds =
       await this.storedFormulaFieldDirtyRecordService.popDirtyRecordIds({
         ...jobData,
-        size: STORED_FORMULA_FIELD_DIRTY_RECORDS_PER_JOB,
+        size: STORED_FORMULA_FIELD_RECORDS_PER_RUN,
       });
 
     if (!isNonEmptyArray(recordIds)) {
@@ -76,7 +76,7 @@ export class RecomputeDirtyStoredFormulaRecordsJob {
       recordIds,
     });
 
-    if (recordIds.length === STORED_FORMULA_FIELD_DIRTY_RECORDS_PER_JOB) {
+    if (recordIds.length === STORED_FORMULA_FIELD_RECORDS_PER_RUN) {
       await this.storedFormulaFieldDirtyRecordService.scheduleRecompute(
         jobData,
       );

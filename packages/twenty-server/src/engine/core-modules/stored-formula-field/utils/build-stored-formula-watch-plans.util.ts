@@ -118,3 +118,37 @@ export const buildStoredFormulaWatchPlans = ({
     watchedOwnFieldNamesByObjectMetadataId,
   };
 };
+
+// The cached maps keep their identity until the metadata changes, so the plans are built once per metadata version
+const storedFormulaWatchPlansByFlatFieldMetadataMaps = new WeakMap<
+  FlatEntityMaps<OrmFlatFieldMetadata>,
+  StoredFormulaWatchPlans
+>();
+
+export const getStoredFormulaWatchPlans = ({
+  flatObjectMetadataMaps,
+  flatFieldMetadataMapsOrm,
+}: {
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMapsOrm: FlatEntityMaps<OrmFlatFieldMetadata>;
+}): StoredFormulaWatchPlans => {
+  const memoizedWatchPlans = storedFormulaWatchPlansByFlatFieldMetadataMaps.get(
+    flatFieldMetadataMapsOrm,
+  );
+
+  if (isDefined(memoizedWatchPlans)) {
+    return memoizedWatchPlans;
+  }
+
+  const watchPlans = buildStoredFormulaWatchPlans({
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+  });
+
+  storedFormulaWatchPlansByFlatFieldMetadataMaps.set(
+    flatFieldMetadataMapsOrm,
+    watchPlans,
+  );
+
+  return watchPlans;
+};
