@@ -12,28 +12,19 @@ import {
   EASING,
   FONT_WEIGHT,
   fontFamily,
-  mediaUp,
   radius,
   REDUCED_MOTION,
   semanticColor,
   spacing,
   typeRampDeclarations,
 } from '@/tokens';
-import { Field } from '@/ui';
 import { cssVariableStyle } from '@/ui/css-variable-style';
 
+import { IntegratorCoinPile } from './IntegratorCoinPile';
 import { INTEGRATOR_LEDGER } from './integrator-ledger-config';
 
-// Tall enough to carry the section, shorter on a phone; both a whole number
-// of dash rows. The lit part of each column is snapped to a whole dash in CSS,
-// so either height draws clean steps.
-const CHART_HEIGHT_PX = { base: 216, md: 324 } as const;
-const DASH_PITCH_PX = 6;
-const MONTHS = Array.from(
-  { length: INTEGRATOR_LEDGER.months },
-  (_, index) => index + 1,
-);
 const READOUT_ENTRANCE_DELAY_MS = 900;
+const SCALE_MARKS = [5, 100, 200, 300] as const;
 
 // No frame: the calculator is the section's content, not a widget in it.
 const Panel = styled.div`
@@ -44,28 +35,16 @@ const Panel = styled.div`
     margin-top: ${spacing(6)};
   }
 
-  /* Wide: figures and slider left, chart right. */
+  /* Wide: the seats and what they earn on the left, the coins on the
+     right. */
   @container (min-width: 880px) {
-    align-items: end;
+    align-items: stretch;
     display: grid;
-    gap: ${spacing(6)} ${spacing(16)};
-    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: ${spacing(16)};
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
 
     & > * + * {
       margin-top: 0;
-    }
-
-    & > * {
-      grid-column: 1;
-    }
-
-    & > :nth-child(1) {
-      align-self: start;
-    }
-
-    & > :nth-child(2) {
-      grid-column: 2;
-      grid-row: 1 / span 3;
     }
   }
 
@@ -135,103 +114,61 @@ const ReadoutValue = styled.output`
   font-weight: ${FONT_WEIGHT.light};
 `;
 
-const Chart = styled.div`
-  & > * + * {
-    margin-top: ${spacing(2)};
+// The seats, what they earn, then the footnote at the column's foot.
+const FiguresColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${spacing(10)};
+
+  & > :last-child {
+    margin-top: auto;
   }
 `;
 
-const Columns = styled.div`
-  border-bottom: 1px solid ${semanticColor.lineStrong};
-  column-gap: ${spacing(1.5)};
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  height: var(--chart-height);
-
-  --chart-height: ${CHART_HEIGHT_PX.base}px;
-
-  ${mediaUp('md')} {
-    --chart-height: ${CHART_HEIGHT_PX.md}px;
-  }
+// The seat count rides the slider's thumb: one control, its value where the
+// hand is. The track keeps the thumb's half width at each end, so the count
+// sits over it at every value.
+const SliderTrack = styled.div`
+  --thumb: 16px;
+  padding-top: ${spacing(12)};
+  position: relative;
 `;
 
-const Column = styled.span`
-  height: 100%;
+const ThumbValue = styled.output`
+  ${typeRampDeclarations('headingSm')}
+  color: ${semanticColor.ink};
+  font-family: ${fontFamily('sans')};
+  font-variant-numeric: tabular-nums;
+  font-weight: ${FONT_WEIGHT.medium};
+  left: calc(var(--thumb) / 2 + var(--share) * (100% - var(--thumb)));
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+`;
+
+// Where the scale's marks fall, as shares of the track.
+const Scale = styled.div`
+  ${typeRampDeclarations('bodyXs')}
+  color: ${semanticColor.inkSubtle};
+  font-family: ${fontFamily('sans')};
+  font-variant-numeric: tabular-nums;
+  height: ${spacing(5)};
+  margin-top: ${spacing(2)};
   position: relative;
 
-  /* How much of the column is lit: its share of the height, snapped to a
-     whole dash, never less than one. */
-  --lit: max(
-    ${DASH_PITCH_PX}px,
-    round(var(--fill) * var(--chart-height), ${DASH_PITCH_PX}px)
-  );
-
-  /* The empty track: every dash a month could still light. */
-  &::before {
-    background-image: repeating-linear-gradient(
-      to top,
-      ${semanticColor.line} 0 2px,
-      transparent 2px ${DASH_PITCH_PX}px
-    );
-    content: '';
-    inset: 0;
-    position: absolute;
-  }
-`;
-
-const ColumnEntrance = styled.span`
-  animation: integratorLedgerColumnIn 700ms ${EASING.standard} both;
-  animation-delay: calc(var(--month) * 55ms + 800ms);
-  inset: 0;
-  position: absolute;
-
-  ${REDUCED_MOTION} {
-    animation: none;
-  }
-`;
-
-const ColumnFill = styled.span`
-  background-color: ${color('blue')};
-  clip-path: inset(calc(var(--chart-height) - var(--lit)) 0 0 0);
-  inset: 0;
-  mask-image: repeating-linear-gradient(
-    to top,
-    black 0 2px,
-    transparent 2px ${DASH_PITCH_PX}px
-  );
-  position: absolute;
-  transition: clip-path ${DURATION.lg} ${EASING.standard};
-
-  ${REDUCED_MOTION} {
-    transition: none;
-  }
-`;
-
-const ColumnCap = styled.span`
-  background-color: ${semanticColor.ink};
-  height: 2px;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: -2px;
-  transform: translateY(calc(var(--chart-height) - var(--lit) + 4px));
-  transition: transform ${DURATION.lg} ${EASING.standard};
-
-  ${REDUCED_MOTION} {
-    transition: none;
-  }
-`;
-
-const MonthTicks = styled.div`
-  column-gap: ${spacing(1.5)};
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-
   & > span {
-    ${typeRampDeclarations('bodyXs')}
-    color: ${semanticColor.inkSubtle};
-    font-family: ${fontFamily('sans')};
-    text-align: center;
+    left: calc(var(--thumb) / 2 + var(--share) * (100% - var(--thumb)));
+    position: absolute;
+    transform: translateX(-50%);
+  }
+
+  & > span:first-child {
+    transform: translateX(calc(-1 * var(--thumb) / 2));
+  }
+
+  & > span:last-child {
+    transform: translateX(calc(-100% + var(--thumb) / 2));
   }
 `;
 
@@ -242,20 +179,33 @@ const SliderBlock = styled.div`
 `;
 
 // The Field label recipe, on a <label> so it targets the slider.
+// The column's labels, at body size so they hold their own next to the
+// figures.
 const SliderHeader = styled.label`
-  ${typeRampDeclarations('bodyXs')}
-  align-items: baseline;
+  ${typeRampDeclarations('bodyMd')}
   color: ${semanticColor.ink};
-  display: flex;
+  display: block;
   font-family: ${fontFamily('sans')};
   font-weight: ${FONT_WEIGHT.medium};
-  justify-content: space-between;
 `;
 
-const SeatValue = styled.span`
-  ${typeRampDeclarations('headingXs')}
-  font-variant-numeric: tabular-nums;
-  font-weight: ${FONT_WEIGHT.regular};
+const ReadoutLabel = styled.p`
+  ${typeRampDeclarations('bodyMd')}
+  color: ${semanticColor.ink};
+  font-family: ${fontFamily('sans')};
+  font-weight: ${FONT_WEIGHT.medium};
+`;
+
+const ReadoutHint = styled.p`
+  ${typeRampDeclarations('bodySm')}
+  color: ${semanticColor.inkMuted};
+  font-family: ${fontFamily('sans')};
+`;
+
+const Readout = styled.div`
+  & > * + * {
+    margin-top: ${spacing(2)};
+  }
 `;
 
 const Slider = styled.input`
@@ -308,14 +258,12 @@ const Footnote = styled.p`
   font-family: ${fontFamily('sans')};
 `;
 
-// A month's share of the chart's height; CSS snaps it to a whole dash.
-const filledFraction = (month: number, seats: number): number => {
-  const { minSeats, maxSeats, months } = INTEGRATOR_LEDGER;
+// How high the coins pile: eased so a small book still shows a few.
+const pileFill = (seats: number): number => {
+  const { minSeats, maxSeats } = INTEGRATOR_LEDGER;
   const seatProgress = (seats - minSeats) / (maxSeats - minSeats);
-  // Eased so small books still draw a readable staircase.
-  const level = 0.3 + 0.7 * seatProgress ** 0.5;
 
-  return (month / months) * level;
+  return 0.12 + 0.88 * seatProgress ** 0.6;
 };
 
 type IntegratorLedgerProps = {
@@ -354,65 +302,64 @@ export function IntegratorLedger({ footnote }: IntegratorLedgerProps) {
   const handleSeatsChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSeats(Number(event.target.value));
   };
+  const scaleShare = (value: number) =>
+    (value - minSeats) / (maxSeats - minSeats);
 
   return (
     <Stack>
       <Panel>
-        <div style={cssVariableStyle({ '--row': 0 })}>
-          <Field
-            hint={i18n._(msg`Estimate, over 12 months`)}
-            label={i18n._(msg`Your commission`)}
-          >
+        <FiguresColumn style={cssVariableStyle({ '--row': 0 })}>
+          <SliderBlock>
+            <SliderHeader htmlFor="integrator-ledger-seats">
+              {i18n._(msg`Seats you bring`)}
+            </SliderHeader>
+            <SliderTrack style={cssVariableStyle({ '--share': seatProgress })}>
+              <ThumbValue htmlFor="integrator-ledger-seats">{seats}</ThumbValue>
+              <Slider
+                id="integrator-ledger-seats"
+                max={maxSeats}
+                min={minSeats}
+                onChange={handleSeatsChange}
+                step={INTEGRATOR_LEDGER.seatStep}
+                style={cssVariableStyle({
+                  '--progress': `${seatProgress * 100}%`,
+                })}
+                type="range"
+                value={seats}
+              />
+              <Scale aria-hidden>
+                {SCALE_MARKS.map((mark) => (
+                  <span
+                    key={mark}
+                    style={cssVariableStyle({ '--share': scaleShare(mark) })}
+                  >
+                    {mark}
+                  </span>
+                ))}
+              </Scale>
+            </SliderTrack>
+          </SliderBlock>
+          <Readout>
+            <ReadoutLabel>{i18n._(msg`Your commission`)}</ReadoutLabel>
             <ReadoutValue aria-live="polite" htmlFor="integrator-ledger-seats">
               {currency.format(shownCommission)}
             </ReadoutValue>
-          </Field>
+            <ReadoutHint>
+              {i18n._(
+                msg`${seats} seats × $${seatPricePerMonth} a month × ${Math.round(commissionRate * 100)}% × ${months} months`,
+              )}
+            </ReadoutHint>
+          </Readout>
+          <Footnote>
+            {i18n._(
+              msg`Estimate on the Organization plan at $${seatPricePerMonth} per seat per month, billed yearly.`,
+            )}{' '}
+            {footnote}
+          </Footnote>
+        </FiguresColumn>
+        <div style={cssVariableStyle({ '--row': 1 })}>
+          <IntegratorCoinPile fill={pileFill(seats)} />
         </div>
-        <Chart aria-hidden style={cssVariableStyle({ '--row': 1 })}>
-          <Columns>
-            {MONTHS.map((month) => (
-              <Column
-                key={month}
-                style={cssVariableStyle({
-                  '--fill': filledFraction(month, seats),
-                  '--month': month,
-                })}
-              >
-                <ColumnEntrance>
-                  <ColumnFill />
-                  <ColumnCap />
-                </ColumnEntrance>
-              </Column>
-            ))}
-          </Columns>
-          <MonthTicks>
-            {MONTHS.map((month) => (
-              <span key={month}>{String(month).padStart(2, '0')}</span>
-            ))}
-          </MonthTicks>
-        </Chart>
-        <SliderBlock style={cssVariableStyle({ '--row': 2 })}>
-          <SliderHeader htmlFor="integrator-ledger-seats">
-            {i18n._(msg`Seats you bring`)}
-            <SeatValue>{seats}</SeatValue>
-          </SliderHeader>
-          <Slider
-            id="integrator-ledger-seats"
-            max={maxSeats}
-            min={minSeats}
-            onChange={handleSeatsChange}
-            step={INTEGRATOR_LEDGER.seatStep}
-            style={cssVariableStyle({ '--progress': `${seatProgress * 100}%` })}
-            type="range"
-            value={seats}
-          />
-        </SliderBlock>
-        <Footnote style={cssVariableStyle({ '--row': 3 })}>
-          {i18n._(
-            msg`Estimate on the Organization plan at $${seatPricePerMonth} per seat per month, billed yearly.`,
-          )}{' '}
-          {footnote}
-        </Footnote>
       </Panel>
     </Stack>
   );

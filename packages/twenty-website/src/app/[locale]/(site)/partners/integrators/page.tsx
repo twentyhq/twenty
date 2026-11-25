@@ -23,7 +23,7 @@ import {
   IntegratorEarnings,
   IntegratorLevelCards,
   PARTNER_LEVELS,
-  IntegratorClientsScene,
+  IntegratorNetworkScene,
   ProgramHero,
 } from '@/sections/partner-programs';
 import { PartnerTestimonials } from '@/sections/testimonials';
@@ -60,6 +60,7 @@ export default async function IntegratorProgramPage({
       <Menu communityStats={communityStats} scheme="light" />
       <main>
         <ProgramHero
+          backdrop={<IntegratorNetworkScene />}
           actions={
             <>
               <IntegratorApplyButton />
@@ -73,7 +74,7 @@ export default async function IntegratorProgramPage({
           body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
           heading={msg`Become a\n*Twenty integrator*`}
           scheme="light"
-          visual={<IntegratorClientsScene />}
+          underMenu
         />
         <IntegratorLevelCards levels={PARTNER_LEVELS} />
         <IntegratorEarnings />

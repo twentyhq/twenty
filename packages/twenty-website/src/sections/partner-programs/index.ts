@@ -13,4 +13,4 @@ export { IntegratorApplyButton } from './IntegratorApplyButton';
 export { IntegratorEarnings } from './IntegratorEarnings';
 export { IntegratorLevelCards } from './IntegratorLevelCards';
 export { PARTNER_LEVELS } from './partner-levels.data';
-export { IntegratorClientsScene } from './IntegratorClientsScene';
+export { IntegratorNetworkScene } from './IntegratorNetworkScene';
