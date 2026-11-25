@@ -15,7 +15,7 @@ import {
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-message-list-fetch-error-handler.service';
-import { computeGmailExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-exclude-search-filter.util';
+import { computeGmailFullSyncListQueries } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-full-sync-list-queries.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import { type GetMessageListsResponse } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
@@ -33,10 +33,7 @@ export class GmailGetMessageListService {
       ConnectedAccountEntity,
       'provider' | 'id' | 'handle'
     >,
-    messageFolders: Pick<
-      MessageFolderEntity,
-      'name' | 'externalId' | 'isSynced' | 'parentFolderId'
-    >[],
+    messageFolders: Pick<MessageFolderEntity, 'externalId' | 'isSynced'>[],
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<GetMessageListsResponse> {
     const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
@@ -47,90 +44,79 @@ export class GmailGetMessageListService {
       auth: oAuth2Client,
     });
 
-    let pageToken: string | undefined;
-    let hasMoreMessages = true;
-
-    const messageExternalIds: string[] = [];
-
-    const excludedSearchFilter = computeGmailExcludeSearchFilter(
-      messageFolders,
-      messageChannel.messageFolderImportPolicy,
-    );
-
-    while (hasMoreMessages) {
-      const messageList = await gmailClient.users.messages
-        .list({
-          userId: 'me',
-          maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
-          pageToken,
-          q: excludedSearchFilter,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
-          );
-          this.logger.error(
-            `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
-          );
-
-          this.gmailMessageListFetchErrorHandler.handleError(error);
-
-          return {
-            data: {
-              messages: [],
-              nextPageToken: undefined,
-            },
-          };
-        });
-
-      const { messages } = messageList.data;
-      const hasMessages = messages && messages.length > 0;
-
-      if (!hasMessages) {
-        break;
-      }
-
-      pageToken = messageList.data.nextPageToken ?? undefined;
-      hasMoreMessages = !!pageToken;
-
-      // @ts-expect-error legacy noImplicitAny
-      messageExternalIds.push(...messages.map((message) => message.id));
-    }
-
-    if (messageExternalIds.length === 0) {
-      return [
-        {
-          messageExternalIds,
-          nextSyncCursor: '',
-          previousSyncCursor: '',
-          messageExternalIdsToDelete: [],
-          folderId: undefined,
-        },
-      ];
-    }
-
-    const firstMessageExternalId = messageExternalIds[0];
-    const firstMessageContent = await gmailClient.users.messages
-      .get({
-        userId: 'me',
-        id: firstMessageExternalId,
-      })
+    const profile = await gmailClient.users
+      .getProfile({ userId: 'me' })
       .catch((error) => {
         this.gmailMessageListFetchErrorHandler.handleError(error);
       });
 
-    const nextSyncCursor = firstMessageContent?.data?.historyId;
+    const nextSyncCursor = profile?.data?.historyId;
 
     if (!nextSyncCursor) {
       throw new MessageImportDriverException(
-        `No historyId found for message ${firstMessageExternalId} for connected account ${connectedAccount.id}`,
+        `No historyId found in profile for connected account ${connectedAccount.id}`,
         MessageImportDriverExceptionCode.NO_NEXT_SYNC_CURSOR,
       );
     }
 
+    const listQueries = computeGmailFullSyncListQueries(
+      messageFolders,
+      messageChannel.messageFolderImportPolicy,
+    );
+
+    const messageExternalIds = new Set<string>();
+
+    for (const { labelIds, searchFilter } of listQueries) {
+      let pageToken: string | undefined;
+      let hasMoreMessages = true;
+
+      while (hasMoreMessages) {
+        const messageList = await gmailClient.users.messages
+          .list({
+            userId: 'me',
+            maxResults: MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
+            pageToken,
+            labelIds,
+            q: searchFilter,
+          })
+          .catch((error) => {
+            this.logger.error(
+              `Connected account ${connectedAccount.id}: Error fetching message list: ${error.message}`,
+            );
+            this.logger.error(
+              `Connected account ${connectedAccount.id}: Error fetching message list: ${JSON.stringify(error)}`,
+            );
+
+            this.gmailMessageListFetchErrorHandler.handleError(error);
+
+            return {
+              data: {
+                messages: [],
+                nextPageToken: undefined,
+              },
+            };
+          });
+
+        const messages = messageList.data.messages ?? [];
+
+        if (messages.length === 0) {
+          break;
+        }
+
+        pageToken = messageList.data.nextPageToken ?? undefined;
+        hasMoreMessages = isNonEmptyString(pageToken);
+
+        for (const message of messages) {
+          if (isNonEmptyString(message.id)) {
+            messageExternalIds.add(message.id);
+          }
+        }
+      }
+    }
+
     return [
       {
-        messageExternalIds,
+        messageExternalIds: [...messageExternalIds],
         nextSyncCursor,
         previousSyncCursor: '',
         messageExternalIdsToDelete: [],
