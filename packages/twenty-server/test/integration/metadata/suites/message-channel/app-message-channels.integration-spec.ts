@@ -22,6 +22,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   ConnectedAccountProvider,
+  FieldActorSource,
   MessageChannelType,
   MessageChannelVisibility,
   MessageParticipantRole,
@@ -833,6 +834,42 @@ describe('app message channels API (e2e)', () => {
         subject: 'Interested in the role',
         text: 'Hi there',
       });
+    });
+
+    it('records the application as the creator of the messages and thread it ingests', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          buildMessage({
+            externalId: `msg-${uuidv4()}`,
+            threadExternalId: `thread-${uuidv4()}`,
+            senderHandle: 'candidate@linkedin.test',
+          }),
+        ],
+      });
+
+      const [{ messageId, messageThreadId }] =
+        response.body.data.ingestAppMessages.messages;
+
+      const createdByRows = await globalThis.testDataSource.query(
+        `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1
+         UNION ALL
+         SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."messageThread" WHERE id = $2`,
+        [messageId, messageThreadId],
+      );
+
+      expect(createdByRows).toEqual([
+        {
+          createdBySource: FieldActorSource.APPLICATION,
+          createdByContext: { applicationId: owningApplicationDbId },
+        },
+        {
+          createdBySource: FieldActorSource.APPLICATION,
+          createdByContext: { applicationId: owningApplicationDbId },
+        },
+      ]);
     });
 
     it('exposes the app channel on the timeline threads of the matched person', async () => {
