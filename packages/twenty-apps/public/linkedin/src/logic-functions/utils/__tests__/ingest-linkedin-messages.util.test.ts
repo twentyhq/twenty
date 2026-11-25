@@ -331,22 +331,6 @@ describe('ingestLinkedinMessages', () => {
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
   });
 
-  it('skips group chats when they are not imported', async () => {
-    mocks.matchLinkedinParticipantPersonId.mockResolvedValue('priya-id');
-
-    await expect(
-      ingest({
-        chat: GROUP_CHAT,
-        settings: {
-          ...DEFAULT_LINKEDIN_SETTINGS,
-          areGroupChatsImported: false,
-        },
-      }),
-    ).resolves.toMatchObject({ ingestedMessageCount: 0 });
-    expect(mocks.matchLinkedinParticipantPersonId).not.toHaveBeenCalled();
-    expect(mocks.resolveCounterpart).not.toHaveBeenCalled();
-  });
-
   it('skips a conversation the member did not select', async () => {
     await expect(
       ingest({
@@ -364,7 +348,7 @@ describe('ingestLinkedinMessages', () => {
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
   });
 
-  it('imports a selected group chat even when nobody in it is in Twenty and group chats are off', async () => {
+  it('imports a selected group chat even when nobody in it is in Twenty', async () => {
     resolveCounterpartsLikeUnipile();
 
     await expect(
@@ -374,7 +358,6 @@ describe('ingestLinkedinMessages', () => {
           ...DEFAULT_LINKEDIN_SETTINGS,
           importPolicy: 'SELECTED',
           selectedChats: [{ id: 'chat-2', name: 'chat-2' }],
-          areGroupChatsImported: false,
         },
       }),
     ).resolves.toMatchObject({

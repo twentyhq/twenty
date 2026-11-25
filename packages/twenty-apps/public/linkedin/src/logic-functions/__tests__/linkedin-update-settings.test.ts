@@ -88,7 +88,6 @@ describe('linkedinUpdateSettingsHandler', () => {
         settings: {
           importPolicy: 'ALL',
           selectedChats: [],
-          areGroupChatsImported: true,
           contactAutoCreationPolicy: 'NONE',
           isNameMatchingEnabled: true,
           areChatsMarkedAsRead: false,
@@ -129,7 +128,6 @@ describe('linkedinUpdateSettingsHandler', () => {
 
   it.each([
     [{ importPolicy: 'CONTACTS_ONLY' }],
-    [{ areGroupChatsImported: false }],
     [{ contactAutoCreationPolicy: 'NONE' }],
     [{ isNameMatchingEnabled: false }],
   ])('imports the past conversations again when saving %o', async (update) => {

@@ -1,15 +1,12 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
 import { Section } from 'twenty-ui/components/layout';
-import { IconUsers } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { LinkedinChatPicker } from 'src/front-components/components/LinkedinChatPicker';
 import { LinkedinHistoryImportStatus } from 'src/front-components/components/LinkedinHistoryImportStatus';
 import { LinkedinImportPolicyIcon } from 'src/front-components/components/LinkedinImportPolicyIcon';
-import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { SettingsRadioCard } from 'src/front-components/components/SettingsRadioCard';
-import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-import-state.type';
 import { type LinkedinImportPolicy } from 'src/types/linkedin-import-policy.type';
 import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type';
@@ -23,14 +20,12 @@ const StyledStack = styled.div`
 type LinkedinImportSectionProps = {
   importPolicy: LinkedinImportPolicy;
   selectedChats: LinkedinSelectedChat[];
-  areGroupChatsImported: boolean;
   historyImport: LinkedinHistoryImportState | null;
   importProgress: number | undefined;
   isImportRetrying: boolean;
   isImportCancelling: boolean;
   onChange: (importPolicy: LinkedinImportPolicy) => void;
   onSelectedChatsChange: (selectedChats: LinkedinSelectedChat[]) => void;
-  onGroupChatsImportChange: (areGroupChatsImported: boolean) => void;
   onRetryImport: () => void;
   onCancelImport: () => void;
 };
@@ -38,14 +33,12 @@ type LinkedinImportSectionProps = {
 export const LinkedinImportSection = ({
   importPolicy,
   selectedChats,
-  areGroupChatsImported,
   historyImport,
   importProgress,
   isImportRetrying,
   isImportCancelling,
   onChange,
   onSelectedChatsChange,
-  onGroupChatsImportChange,
   onRetryImport,
   onCancelImport,
 }: LinkedinImportSectionProps) => (
@@ -89,17 +82,6 @@ export const LinkedinImportSection = ({
           },
         ]}
       />
-      {importPolicy !== 'SELECTED' && (
-        <StyledSettingsCard>
-          <SettingsOptionCardContentToggle
-            Icon={IconUsers}
-            title={t('Import group chats')}
-            description={t('Groups where at least one member is a contact')}
-            checked={areGroupChatsImported}
-            onChange={onGroupChatsImportChange}
-          />
-        </StyledSettingsCard>
-      )}
       {(historyImport?.status === 'IMPORTING' ||
         historyImport?.status === 'FAILED') && (
         <LinkedinHistoryImportStatus

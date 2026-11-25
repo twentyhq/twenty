@@ -13,7 +13,6 @@ const hasChanged = (update: Partial<LinkedinSettings>) =>
 describe('hasLinkedinImportSettingChanged', () => {
   it.each<Partial<LinkedinSettings>>([
     { importPolicy: 'CONTACTS_ONLY' },
-    { areGroupChatsImported: false },
     { contactAutoCreationPolicy: 'NONE' },
     { isNameMatchingEnabled: false },
     { selectedChats: [{ id: 'chat-1', name: 'Ada' }] },

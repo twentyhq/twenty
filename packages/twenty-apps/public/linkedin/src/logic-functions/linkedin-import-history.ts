@@ -126,7 +126,6 @@ export const linkedinImportHistoryHandler = async (
     attachmentCount: 0,
     skippedChatCounts: {
       NOT_SELECTED: 0,
-      GROUP_CHATS_OFF: 0,
       NO_MESSAGES: 0,
       NO_CONTACT: 0,
     },
@@ -365,7 +364,7 @@ export const linkedinImportHistoryHandler = async (
       `${chats.length} chats (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'}), ` +
       `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
       `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ${totals.attachmentCount} attachments, ` +
-      `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.GROUP_CHATS_OFF} group chats, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
+      `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
       `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
   );
 

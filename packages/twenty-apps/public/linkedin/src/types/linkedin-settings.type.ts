@@ -5,7 +5,6 @@ import { type LinkedinSelectedChat } from 'src/types/linkedin-selected-chat.type
 export type LinkedinSettings = {
   importPolicy: LinkedinImportPolicy;
   selectedChats: LinkedinSelectedChat[];
-  areGroupChatsImported: boolean;
   contactAutoCreationPolicy: LinkedinContactAutoCreationPolicy;
   isNameMatchingEnabled: boolean;
   areChatsMarkedAsRead: boolean;

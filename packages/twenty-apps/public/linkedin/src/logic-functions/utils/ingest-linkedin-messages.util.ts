@@ -183,14 +183,6 @@ export const ingestLinkedinMessages = async ({
     return { ...emptyResult, skippedReason: 'NOT_SELECTED' };
   }
 
-  if (
-    isGroupChat &&
-    settings.importPolicy !== 'SELECTED' &&
-    !settings.areGroupChatsImported
-  ) {
-    return { ...emptyResult, skippedReason: 'GROUP_CHATS_OFF' };
-  }
-
   const ingestableMessages = messages.filter(
     (message) => !message.is_event && !message.is_deleted,
   );

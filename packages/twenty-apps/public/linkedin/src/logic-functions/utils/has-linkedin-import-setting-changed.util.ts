@@ -4,7 +4,6 @@ type LinkedinImportSettings = Pick<
   LinkedinSettings,
   | 'importPolicy'
   | 'selectedChats'
-  | 'areGroupChatsImported'
   | 'contactAutoCreationPolicy'
   | 'isNameMatchingEnabled'
 >;
@@ -25,7 +24,6 @@ export const hasLinkedinImportSettingChanged = ({
   next: LinkedinImportSettings;
 }): boolean =>
   previous.importPolicy !== next.importPolicy ||
-  previous.areGroupChatsImported !== next.areGroupChatsImported ||
   previous.contactAutoCreationPolicy !== next.contactAutoCreationPolicy ||
   previous.isNameMatchingEnabled !== next.isNameMatchingEnabled ||
   getSelectedChatIds(previous) !== getSelectedChatIds(next);

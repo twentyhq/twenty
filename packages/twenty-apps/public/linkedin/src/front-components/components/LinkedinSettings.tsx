@@ -232,7 +232,6 @@ export const LinkedinSettings = () => {
             <LinkedinImportSection
               importPolicy={view.settings.importPolicy}
               selectedChats={view.settings.selectedChats}
-              areGroupChatsImported={view.settings.areGroupChatsImported}
               historyImport={view.historyImport}
               importProgress={
                 importProgress?.runId === view.historyImport?.runId
@@ -246,9 +245,6 @@ export const LinkedinSettings = () => {
               }
               onSelectedChatsChange={(selectedChats) =>
                 handleSettingsChange({ selectedChats })
-              }
-              onGroupChatsImportChange={(areGroupChatsImported) =>
-                handleSettingsChange({ areGroupChatsImported })
               }
               onRetryImport={handleRetryImport}
               onCancelImport={handleCancelImport}
