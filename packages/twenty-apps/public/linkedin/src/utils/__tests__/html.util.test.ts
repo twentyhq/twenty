@@ -17,4 +17,12 @@ describe('html', () => {
       html`<div>${html`<b>${'a & b'}</b>`}${null}${undefined}</div>`,
     ).toEqual({ safeHtml: '<div><b>a &amp; b</b></div>' });
   });
+
+  it('escapes an object that only looks like markup this tag built', () => {
+    const forgedMarkup = { safeHtml: '<script>alert(1)</script>' };
+
+    expect(html`<p>${forgedMarkup}</p>`).toEqual({
+      safeHtml: '<p>[object Object]</p>',
+    });
+  });
 });

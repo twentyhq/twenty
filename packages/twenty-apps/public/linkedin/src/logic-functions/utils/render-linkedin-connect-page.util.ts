@@ -18,9 +18,7 @@ export const renderLinkedinConnectPage = ({
         <meta name="referrer" content="no-referrer" />
         <meta name="robots" content="noindex" />
         <title>${title}</title>
-        <style>
-          ${LINKEDIN_CONNECT_PAGE_STYLES}
-        </style>
+        ${LINKEDIN_CONNECT_PAGE_STYLES}
       </head>
       <body>
         <main>

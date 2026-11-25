@@ -7,11 +7,11 @@ import { LINKEDIN_CONNECT_ROUTE_PATH } from 'src/constants/linkedin-connect-rout
 import { LINKEDIN_CONNECT_SUBMIT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinConnectFlow } from 'src/logic-functions/types/linkedin-connect-flow.type';
 import { type LinkedinConnectPendingCheckpoint } from 'src/logic-functions/types/linkedin-connect-pending-checkpoint.type';
-import { type LinkedinConnectSubmission } from 'src/logic-functions/types/linkedin-connect-submission.type';
 import { buildLinkedinConnectHtmlResponse } from 'src/logic-functions/utils/build-linkedin-connect-html-response.util';
 import { buildLinkedinConnectResultResponse } from 'src/logic-functions/utils/build-linkedin-connect-result-response.util';
 import { decodeLinkedinConnectFlow } from 'src/logic-functions/utils/decode-linkedin-connect-flow.util';
 import { getForwardedPublicIpv4 } from 'src/logic-functions/utils/get-forwarded-public-ipv4.util';
+import { parseLinkedinConnectSubmission } from 'src/logic-functions/utils/parse-linkedin-connect-submission.util';
 import { renderLinkedinConnectExpired } from 'src/logic-functions/utils/render-linkedin-connect-expired.util';
 import { renderLinkedinConnectSignIn } from 'src/logic-functions/utils/render-linkedin-connect-sign-in.util';
 import { UNIPILE_INVALID_CREDENTIALS_ERROR_TYPE } from 'src/unipile/constants/unipile-invalid-credentials-error-type.constant';
@@ -187,11 +187,8 @@ const solveCode = async ({
 export const linkedinConnectSubmitHandler = async ({
   body,
   headers,
-}: Pick<
-  RoutePayload<LinkedinConnectSubmission>,
-  'body' | 'headers'
->): Promise<Response> => {
-  const submission = body ?? {};
+}: Pick<RoutePayload, 'body' | 'headers'>): Promise<Response> => {
+  const submission = parseLinkedinConnectSubmission(body);
   const flow = decodeLinkedinConnectFlow(submission.flow);
 
   if (!isDefined(flow)) {

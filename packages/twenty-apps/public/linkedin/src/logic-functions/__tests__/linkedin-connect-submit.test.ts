@@ -158,6 +158,23 @@ describe('linkedinConnectSubmitHandler', () => {
     expect(mocks.startUnipileLinkedinAuthIntent).not.toHaveBeenCalled();
   });
 
+  it('ignores form fields that are not text instead of writing them into the page', async () => {
+    const response = await linkedinConnectSubmitHandler({
+      body: {
+        flow: encodeLinkedinConnectFlow(SIGN_IN_FLOW),
+        username: { safeHtml: '"><script>alert(1)</script>' },
+        password: ['secret'],
+      },
+      headers: {},
+    });
+
+    expect(response.body).toContain(
+      'Enter your email or phone and your password.',
+    );
+    expect(response.body).not.toContain('alert(1)');
+    expect(mocks.startUnipileLinkedinAuthIntent).not.toHaveBeenCalled();
+  });
+
   it('asks for the code LinkedIn sent and keeps the intent for the next step', async () => {
     mocks.startUnipileLinkedinAuthIntent.mockResolvedValue({
       object: 'AuthenticationCheckpoint',
