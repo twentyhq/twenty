@@ -26,7 +26,7 @@ import { type MarketplaceApp } from './marketplace-app';
 const FEATURED_APP_NAMES: readonly string[] = [
   'slack',
   'granola',
-  'microsoft teams',
+  'teams',
 ];
 
 // The partners directory's header.

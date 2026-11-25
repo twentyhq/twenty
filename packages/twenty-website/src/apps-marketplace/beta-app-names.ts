@@ -3,6 +3,6 @@ export const BETA_APP_NAMES: readonly string[] = [
   'apollo',
   'google',
   'granola',
-  'microsoft teams',
+  'teams',
   'fathom',
 ];
