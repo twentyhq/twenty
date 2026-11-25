@@ -9,12 +9,10 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { getSettingsPath } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 import { SettingsBilling } from '~/pages/settings/billing/SettingsBilling';
-import { PermissionFlagsDecorator } from '~/testing/decorators/PermissionFlagsDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
-import { mockedUserData } from '~/testing/mock-data/users';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsBilling',
@@ -41,13 +39,13 @@ export const Default: Story = {
 };
 
 export const BillingEmail: Story = {
-  decorators: [PermissionFlagsDecorator],
-  parameters: { permissionFlags: [PermissionFlagType.BILLING] },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('link', { name: mockedUserData.email }),
+      await canvas.findByRole('button', {
+        name: mockCurrentWorkspace.billingCustomer.stripeCustomerEmail,
+      }),
     ).toBeVisible();
   },
 };

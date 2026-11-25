@@ -1197,6 +1197,7 @@ export type BillingCustomer = {
   __typename?: 'BillingCustomer';
   hasPaymentMethod?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['UUID']['output'];
+  stripeCustomerEmail?: Maybe<Scalars['String']['output']>;
   userCreditsFallback: UserCreditsFallback;
 };
 
@@ -6303,7 +6304,6 @@ export type Query = {
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
   barChartData: BarChartData;
-  billingEmail?: Maybe<Scalars['String']['output']>;
   billingPartnerCode: BillingPartnerCode;
   billingPlans: Array<BillingPlan>;
   billingPortalSession: BillingSession;

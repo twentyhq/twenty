@@ -974,6 +974,7 @@ export interface Billing {
 export interface BillingCustomer {
     hasPaymentMethod?: Scalars['Boolean']
     id: Scalars['UUID']
+    stripeCustomerEmail?: Scalars['String']
     userCreditsFallback: UserCreditsFallback
     __typename: 'BillingCustomer'
 }
@@ -3280,7 +3281,6 @@ export interface Query {
     applicationRegistrationTarballUrl?: Scalars['String']
     applicationSdkClientChecksums?: SdkClientChecksums
     barChartData: BarChartData
-    billingEmail?: Scalars['String']
     billingPartnerCode: BillingPartnerCode
     billingPlans: BillingPlan[]
     billingPortalSession: BillingSession
@@ -5675,6 +5675,7 @@ export interface BillingGenqlSelection{
 export interface BillingCustomerGenqlSelection{
     hasPaymentMethod?: boolean | number
     id?: boolean | number
+    stripeCustomerEmail?: boolean | number
     userCreditsFallback?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -8281,7 +8282,6 @@ export interface QueryGenqlSelection{
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     barChartData?: (BarChartDataGenqlSelection & { __args: {input: BarChartDataInput} })
-    billingEmail?: boolean | number
     billingPartnerCode?: BillingPartnerCodeGenqlSelection
     billingPlans?: BillingPlanGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {forPaymentMethodUpdate?: (Scalars['Boolean'] | null), returnUrlPath?: (Scalars['String'] | null)} })

@@ -33,11 +33,16 @@ export class BillingWebhookCustomerService {
   async processStripeEvent(
     event:
       | Stripe.CustomerCreatedEvent
+      | Stripe.CustomerUpdatedEvent
       | Stripe.PaymentMethodAttachedEvent
       | Stripe.PaymentMethodDetachedEvent,
   ) {
     if (event.type === BillingWebhookEvent.CUSTOMER_CREATED) {
       return this.processCustomerCreated(event.data);
+    }
+
+    if (event.type === BillingWebhookEvent.CUSTOMER_UPDATED) {
+      return this.processCustomerUpdated(event.data);
     }
 
     if (event.type === BillingWebhookEvent.PAYMENT_METHOD_ATTACHED) {
@@ -61,14 +66,49 @@ export class BillingWebhookCustomerService {
       );
     }
 
+    const stripeCustomerEmail =
+      await this.getLiveStripeCustomerEmail(stripeCustomerId);
+
     await this.billingCustomerRepository.upsert(
       workspaceId,
-      { stripeCustomerId },
+      { stripeCustomerId, stripeCustomerEmail },
       {
         conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
+  }
+
+  private async processCustomerUpdated(data: Stripe.CustomerUpdatedEvent.Data) {
+    const stripeCustomerId = data.object.id;
+
+    const workspaceId =
+      await this.getWorkspaceIdFromStripeCustomerId(stripeCustomerId);
+
+    if (!isDefined(workspaceId)) {
+      return;
+    }
+
+    const stripeCustomerEmail =
+      await this.getLiveStripeCustomerEmail(stripeCustomerId);
+
+    await this.billingCustomerRepository.update(
+      workspaceId,
+      { stripeCustomerId },
+      { stripeCustomerEmail },
+    );
+  }
+
+  // Stripe does not order webhook deliveries, so a late event payload can carry an outdated email
+  private async getLiveStripeCustomerEmail(
+    stripeCustomerId: string,
+  ): Promise<string | null> {
+    const { email } =
+      await this.stripeCustomerService.getCustomerPartnerAndEmail(
+        stripeCustomerId,
+      );
+
+    return email;
   }
 
   private async processPaymentMethodAttachedEvent(

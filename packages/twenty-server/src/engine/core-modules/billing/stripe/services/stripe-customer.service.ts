@@ -163,6 +163,7 @@ export class StripeCustomerService {
 
     await this.billingCustomerRepository.insert(workspaceId, {
       stripeCustomerId: customer.id,
+      stripeCustomerEmail: customer.email,
       hasPaymentMethod: false,
     });
 

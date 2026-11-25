@@ -50,7 +50,6 @@ import {
 import { beautifyExactDate } from '~/utils/date-utils';
 
 export const SettingsBillingSubscriptionInfo = ({
-  billingEmail,
   currentWorkspace,
   currentBillingSubscription,
   onManageBilling,
@@ -58,7 +57,6 @@ export const SettingsBillingSubscriptionInfo = ({
   onUpdatePayment,
   isUpdatePaymentDisabled,
 }: {
-  billingEmail?: string | null;
   currentWorkspace: CurrentWorkspace;
   currentBillingSubscription: NonNullable<
     CurrentWorkspace['currentBillingSubscription']
@@ -462,8 +460,9 @@ export const SettingsBillingSubscriptionInfo = ({
         description={subscriptionDescription}
       />
       <SettingsBillingSubscriptionInfoCard
-        billingEmail={billingEmail}
+        billingEmail={currentWorkspace.billingCustomer?.stripeCustomerEmail}
         onBillingEmailClick={onManageBilling}
+        isBillingEmailActionDisabled={isManageBillingDisabled}
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
         creditsSubtotalDetails={creditsSubtotalDetails}

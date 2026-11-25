@@ -2449,6 +2449,9 @@ export default {
             "id": [
                 572
             ],
+            "stripeCustomerEmail": [
+                4
+            ],
             "userCreditsFallback": [
                 678
             ],
@@ -11724,9 +11727,6 @@ export default {
                         "BarChartDataInput!"
                     ]
                 }
-            ],
-            "billingEmail": [
-                4
             ],
             "billingPartnerCode": [
                 127
