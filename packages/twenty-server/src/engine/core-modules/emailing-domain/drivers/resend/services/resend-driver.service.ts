@@ -40,12 +40,8 @@ export class ResendDriver implements EmailingDomainDriverInterface {
   ) {}
 
   async assertDomainIsAvailableOrThrow(
-    input: EmailingDomainResourceInput,
-  ): Promise<void> {
-    this.logger.log(
-      `Resend domains carry no owner, ${input.domain} is not checked against other workspaces`,
-    );
-  }
+    _input: EmailingDomainResourceInput,
+  ): Promise<void> {}
 
   // Resend domains are account-level; workspace attribution travels on each send as a tag.
   async provisionWorkspace(workspaceId: string): Promise<void> {
