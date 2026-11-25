@@ -16,5 +16,4 @@ export type NavigationMenuItemSectionListDndKitProps = {
     navigationMenuItemId: string,
   ) => void;
   renderSection?: (section: NavigationMenuItem) => ReactNode;
-  isAddMenuItemButtonShown?: boolean;
 };

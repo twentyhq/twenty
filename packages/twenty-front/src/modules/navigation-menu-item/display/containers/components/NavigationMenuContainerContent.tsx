@@ -71,7 +71,7 @@ export const NavigationMenuContainerContent = ({
             renderSection={(section) => (
               <NavigationMenuSectionRenderer section={section} />
             )}
-            isAddMenuItemButtonShown={false}
+            hasAddItemRow={false}
           />
         </NavigationDrawerSection>
         <NavigationMenuAddSectionButton containerId={containerId} />

@@ -21,7 +21,10 @@ import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu
 import { WorkspaceSectionAddMenuItemButton } from '@/navigation-menu-item/edit/components/WorkspaceSectionAddMenuItemButton';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 
-type WorkspaceSectionListDndKitProps = NavigationMenuItemSectionListDndKitProps;
+type WorkspaceSectionListDndKitProps =
+  NavigationMenuItemSectionListDndKitProps & {
+    hasAddItemRow?: boolean;
+  };
 
 const StyledList = styled.div`
   display: flex;
@@ -44,7 +47,7 @@ export const WorkspaceSectionListDndKit = ({
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
   renderSection,
-  isAddMenuItemButtonShown = true,
+  hasAddItemRow = true,
 }: WorkspaceSectionListDndKitProps) => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -55,7 +58,7 @@ export const WorkspaceSectionListDndKit = ({
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
   const isAddMenuItemButtonVisible =
-    isLayoutCustomizationModeEnabled && isAddMenuItemButtonShown;
+    isLayoutCustomizationModeEnabled && hasAddItemRow;
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const orphanAppendDndIndex = filteredItems.length;
   const listDroppableId = getNavigationMenuItemListDroppableId({

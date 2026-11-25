@@ -23,6 +23,7 @@ import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hoo
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemMoveDestination';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
+import { isNavigationMenuItemAtContainerTopLevel } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAtContainerTopLevel';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -65,6 +66,13 @@ export const NavigationMenuItemActions = ({
     containerId: null,
   });
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
+  const isAtContainerTopLevel =
+    section === 'workspace' &&
+    isCustomizableSidebarEnabled &&
+    isNavigationMenuItemAtContainerTopLevel({
+      item,
+      items: workspaceNavigationMenuItems,
+    });
   const isMovingAcrossTabs =
     section === 'workspace' && isCustomizableSidebarEnabled;
   const getTabName = (tabId: string | null) =>
@@ -163,22 +171,29 @@ export const NavigationMenuItemActions = ({
       hasSubMenu: true,
       onClick: () => goToPage('folders'),
     },
-    {
-      id: 'before',
-      label: t`Add item before`,
-      Icon: IconRowInsertTop,
-      hasSubMenu: true,
-      onClick: () =>
-        onAdd({ parentId: item.parentId ?? undefined, position: index }),
-    },
-    {
-      id: 'after',
-      label: t`Add item after`,
-      Icon: IconRowInsertBottom,
-      hasSubMenu: true,
-      onClick: () =>
-        onAdd({ parentId: item.parentId ?? undefined, position: index + 1 }),
-    },
+    ...(isAtContainerTopLevel
+      ? []
+      : [
+          {
+            id: 'before',
+            label: t`Add item before`,
+            Icon: IconRowInsertTop,
+            hasSubMenu: true,
+            onClick: () =>
+              onAdd({ parentId: item.parentId ?? undefined, position: index }),
+          },
+          {
+            id: 'after',
+            label: t`Add item after`,
+            Icon: IconRowInsertBottom,
+            hasSubMenu: true,
+            onClick: () =>
+              onAdd({
+                parentId: item.parentId ?? undefined,
+                position: index + 1,
+              }),
+          },
+        ]),
     {
       id: 'remove',
       label: t`Remove from sidebar`,
