@@ -273,6 +273,8 @@ describe('convertConditionalAvailabilityNodeToFilterGroup', () => {
       }),
     },
   ])('should not read $title as filters', ({ node }) => {
-    expect(convertConditionalAvailabilityNodeToFilterGroup({ node })).toBeNull();
+    expect(
+      convertConditionalAvailabilityNodeToFilterGroup({ node }),
+    ).toBeNull();
   });
 });
