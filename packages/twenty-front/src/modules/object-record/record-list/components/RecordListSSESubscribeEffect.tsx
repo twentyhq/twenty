@@ -14,9 +14,9 @@ export const RecordListSSESubscribeEffect = () => {
     useRecordIndexContextOrThrow();
 
   const { filter, orderBy } =
-    useFindManyRecordIndexTableParamsWithoutViewPresetFilter(
+    useFindManyRecordIndexTableParamsWithoutViewPresetFilter({
       objectNameSingular,
-    );
+    });
 
   const { refetchFindManyRecords } = useRefetchFindManyRecords({
     objectMetadataNamePlural: objectMetadataItem.namePlural,

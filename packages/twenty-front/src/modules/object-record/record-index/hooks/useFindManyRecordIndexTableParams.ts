@@ -7,10 +7,10 @@ export const useFindManyRecordIndexTableParams = (
   instanceId?: string,
 ) => {
   const findManyRecordIndexTableParamsWithoutViewPresetFilter =
-    useFindManyRecordIndexTableParamsWithoutViewPresetFilter(
+    useFindManyRecordIndexTableParamsWithoutViewPresetFilter({
       objectNameSingular,
       instanceId,
-    );
+    });
 
   const currentViewPresetFilterAsRecordGqlOperationFilter =
     useCurrentViewPresetFilterAsRecordGqlOperationFilter();

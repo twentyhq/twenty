@@ -21,10 +21,13 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
-export const useFindManyRecordIndexTableParamsWithoutViewPresetFilter = (
-  objectNameSingular: string,
-  instanceId?: string,
-) => {
+export const useFindManyRecordIndexTableParamsWithoutViewPresetFilter = ({
+  objectNameSingular,
+  instanceId,
+}: {
+  objectNameSingular: string;
+  instanceId?: string;
+}) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
