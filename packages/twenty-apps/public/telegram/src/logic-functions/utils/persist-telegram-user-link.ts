@@ -6,7 +6,6 @@ import { findTelegramUserLinks } from 'src/logic-functions/data/find-telegram-us
 import { updateTelegramUserLink } from 'src/logic-functions/data/update-telegram-user-link';
 import { type TelegramUser } from 'src/logic-functions/types/telegram-user.type';
 import { formatTelegramUserName } from 'src/logic-functions/utils/format-telegram-user-name';
-import { isDuplicateRecordError } from 'src/logic-functions/utils/is-duplicate-record-error';
 
 export const persistTelegramUserLink = async ({
   client,
@@ -24,10 +23,10 @@ export const persistTelegramUserLink = async ({
     workspaceMemberId,
   };
 
-  const findExistingLink = async () =>
-    (await findTelegramUserLinks({ client, filter: { telegramUserId } }))[0];
-
-  const existingLink = await findExistingLink();
+  const [existingLink] = await findTelegramUserLinks({
+    client,
+    filter: { telegramUserId },
+  });
 
   if (isDefined(existingLink)) {
     await updateTelegramUserLink({ client, id: existingLink.id, ...fields });
@@ -35,17 +34,5 @@ export const persistTelegramUserLink = async ({
     return;
   }
 
-  try {
-    await createTelegramUserLink({ client, telegramUserId, ...fields });
-  } catch (error) {
-    const concurrentLink = isDuplicateRecordError(error)
-      ? await findExistingLink()
-      : undefined;
-
-    if (!isDefined(concurrentLink)) {
-      throw error;
-    }
-
-    await updateTelegramUserLink({ client, id: concurrentLink.id, ...fields });
-  }
+  await createTelegramUserLink({ client, telegramUserId, ...fields });
 };

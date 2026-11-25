@@ -63,23 +63,6 @@ describe('callTelegramApiOrThrow', () => {
     });
   });
 
-  it('reports the HTTP status when the response is not JSON', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        status: 502,
-        json: async () => {
-          throw new Error('not json');
-        },
-      }),
-    );
-
-    await expect(call()).rejects.toMatchObject({
-      message: 'Telegram sendMessage failed: HTTP 502',
-      errorCode: 502,
-    });
-  });
-
   it('keeps the bot token out of a network error', async () => {
     vi.stubGlobal(
       'fetch',

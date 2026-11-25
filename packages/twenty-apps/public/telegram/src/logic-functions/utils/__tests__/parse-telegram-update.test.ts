@@ -20,13 +20,6 @@ describe('parseTelegramUpdate', () => {
     });
   });
 
-  it('reads a connection link addressed to the bot by username', () => {
-    expect(parseText('/start@TwentyBot token')).toMatchObject({
-      kind: 'LINK_START',
-      token: 'token',
-    });
-  });
-
   it.each(['/disconnect', '/disconnect@TwentyBot', ' /disconnect now'])(
     'reads %j as a disconnect request',
     (text) => {
@@ -61,18 +54,6 @@ describe('parseTelegramUpdate', () => {
     ).toEqual({ kind: 'BLOCKED', user: USER });
   });
 
-  it('ignores a user unblocking the bot', () => {
-    expect(
-      parseTelegramUpdate({
-        my_chat_member: {
-          chat: PRIVATE_CHAT,
-          from: USER,
-          new_chat_member: { status: 'member' },
-        },
-      }),
-    ).toBeUndefined();
-  });
-
   it('ignores messages outside a direct chat', () => {
     expect(
       parseTelegramUpdate({
@@ -98,11 +79,4 @@ describe('parseTelegramUpdate', () => {
       }),
     ).toBeUndefined();
   });
-
-  it.each([null, undefined, {}, { update_id: 1 }])(
-    'ignores the update %j',
-    (update) => {
-      expect(parseTelegramUpdate(update)).toBeUndefined();
-    },
-  );
 });

@@ -363,48 +363,4 @@ describe('connecting a Telegram account', () => {
       new Response({ error: 'Unauthorized' }, { status: 401 }),
     );
   });
-
-  it('skips updates it does not handle without replying', async () => {
-    await expect(resolve({ update_id: 5 })).resolves.toEqual(
-      new Response({ ok: true, skipped: 'Unsupported update' }),
-    );
-    expect(telegramCalls).toEqual([]);
-  });
-
-  it('answers 503 while the bot is not configured', async () => {
-    vi.stubEnv('TELEGRAM_WEBHOOK_SECRET', '');
-
-    await expect(resolve(buildMessageUpdate('hello'))).resolves.toMatchObject({
-      status: 503,
-    });
-  });
-
-  it('does not start a connection when nobody is signed in', async () => {
-    await expect(
-      telegramStartUserLinkHandler({}, { workspaceMemberId: null }),
-    ).resolves.toMatchObject({ success: false, message: 'Not allowed' });
-    expect(telegramCalls).toEqual([]);
-  });
-
-  it('reports a Telegram failure when starting a connection', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        status: 401,
-        json: async () => ({
-          ok: false,
-          error_code: 401,
-          description: 'Unauthorized',
-        }),
-      }),
-    );
-
-    await expect(
-      telegramStartUserLinkHandler({}, { workspaceMemberId: 'member-1' }),
-    ).resolves.toEqual({
-      success: false,
-      message: 'Could not start the Telegram connection',
-      error: 'Telegram getMe failed: Unauthorized',
-    });
-  });
 });

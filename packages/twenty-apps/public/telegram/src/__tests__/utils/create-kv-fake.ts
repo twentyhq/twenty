@@ -1,4 +1,3 @@
-// Mirrors the server: a SERVER key belongs to the workspace that claimed it.
 export const createKvFake = () => {
   const serverClaims = new Map<string, string>();
   const workspaceValues = new Map<string, unknown>();

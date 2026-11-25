@@ -1,6 +1,5 @@
 import { Response } from 'twenty-sdk/logic-function';
 
-// Telegram runs a Bot API method returned as the webhook response, saving an outbound call.
 export const buildTelegramWebhookReply = ({
   chatId,
   text,

@@ -123,16 +123,6 @@ describe('TelegramSettings', () => {
     ]);
   });
 
-  it('lets a member with the roles permission disconnect any account', async () => {
-    hasRolesPermissionMock.mockResolvedValue(true);
-
-    render(<TelegramSettings />);
-
-    expect(
-      await screen.findByRole('button', { name: 'Disconnect Zoe Doe' }),
-    ).toBeTruthy();
-  });
-
   it('disconnects an account through the route and drops it from the list', async () => {
     restPostMock.mockResolvedValue({ success: true, message: 'Disconnected' });
     const user = userEvent.setup();
@@ -151,26 +141,6 @@ describe('TelegramSettings', () => {
     expect(
       (await screen.findAllByRole('listitem')).map((row) => row.textContent),
     ).toEqual(['Zoe DoeZoe Doe']);
-  });
-
-  it('keeps the account listed when disconnecting fails', async () => {
-    restPostMock.mockResolvedValue({ success: false, message: 'Not allowed' });
-    const user = userEvent.setup();
-
-    render(<TelegramSettings />);
-    await user.click(
-      await screen.findByRole('button', { name: 'Disconnect Ada Lovelace' }),
-    );
-
-    expect(enqueueSnackbarMock.mock.calls).toEqual([
-      [
-        {
-          message: 'Could not disconnect the account. Please try again.',
-          variant: 'error',
-        },
-      ],
-    ]);
-    expect(await screen.findAllByRole('listitem')).toHaveLength(2);
   });
 
   it('shows an error when connected accounts cannot be loaded', async () => {

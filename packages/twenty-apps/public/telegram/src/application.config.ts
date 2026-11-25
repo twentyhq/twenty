@@ -20,7 +20,6 @@ export default defineApplication({
       description:
         'Token of the Telegram bot, from @BotFather. One bot serves every workspace of this server.',
       isSecret: true,
-      // Optional so the app can be listed before the bot is created.
       isRequired: false,
     },
     TELEGRAM_WEBHOOK_SECRET: {

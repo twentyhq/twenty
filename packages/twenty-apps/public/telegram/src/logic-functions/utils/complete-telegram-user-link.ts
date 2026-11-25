@@ -40,7 +40,6 @@ export const completeTelegramUserLink = async ({
     return 'LINK_EXPIRED';
   }
 
-  // Kept on a conflict so the same link works once the user has sent /disconnect.
   if (
     !(await claimTelegramUser({ telegramUserId: `${user.id}`, workspaceId }))
   ) {
@@ -49,7 +48,6 @@ export const completeTelegramUserLink = async ({
 
   await persistTelegramUserLink({ client, user, workspaceMemberId });
 
-  // Deleted last so a retried run links again instead of reporting an expired link.
   await deleteTelegramLinkToken(tokenHash);
   await kv.delete(buildTelegramPendingLinkTokenKvKey(workspaceMemberId));
 

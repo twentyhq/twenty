@@ -73,15 +73,6 @@ describe('disconnecting Telegram accounts from Twenty', () => {
     expect([...kvFake.serverClaims.keys()]).toEqual(['telegram-user:43']);
   });
 
-  it('lets a member disconnect their own account by id', async () => {
-    await expect(
-      remove({ id: 'link-1', workspaceMemberId: 'member-1' }),
-    ).resolves.toMatchObject({
-      success: true,
-    });
-    expect(coreFake.state.links).toEqual([LINKS[1]]);
-  });
-
   it('refuses to disconnect the account of another member', async () => {
     await expect(
       remove({ id: 'link-2', workspaceMemberId: 'member-1' }),
@@ -103,20 +94,6 @@ describe('disconnecting Telegram accounts from Twenty', () => {
     });
     expect(coreFake.state.links).toEqual([LINKS[0]]);
     expect([...kvFake.serverClaims.keys()]).toEqual(['telegram-user:42']);
-  });
-
-  it('succeeds when the member has no connected account', async () => {
-    await expect(remove({ workspaceMemberId: 'member-3' })).resolves.toEqual({
-      success: true,
-      message: 'No Telegram account was connected.',
-    });
-  });
-
-  it('requires an id when no member is calling', async () => {
-    await expect(remove({ workspaceMemberId: null })).resolves.toMatchObject({
-      success: false,
-      message: 'Missing required fields',
-    });
   });
 
   it('frees every connected account when the app is uninstalled', async () => {

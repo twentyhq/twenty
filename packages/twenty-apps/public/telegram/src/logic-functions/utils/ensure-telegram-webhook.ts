@@ -5,7 +5,6 @@ import { TELEGRAM_WEBHOOK_ALLOWED_UPDATES } from 'src/logic-functions/constants/
 import { type TelegramBotCredentials } from 'src/logic-functions/types/telegram-bot-credentials.type';
 import { callTelegramApiOrThrow } from 'src/logic-functions/utils/call-telegram-api-or-throw';
 
-// Telegram never reveals the secret it holds, so only registering again makes a rotated one live.
 export const ensureTelegramWebhook = async ({
   botToken,
   webhookSecret,

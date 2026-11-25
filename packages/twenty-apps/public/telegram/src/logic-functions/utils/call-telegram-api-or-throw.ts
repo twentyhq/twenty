@@ -22,7 +22,6 @@ export const callTelegramApiOrThrow = async <TResult>({
   method: string;
   params?: Record<string, unknown>;
 }): Promise<TResult> => {
-  // The URL holds the bot token, so a network error is rethrown without its cause.
   const response = await fetch(
     `${TELEGRAM_API_BASE_URL}/bot${botToken}/${method}`,
     {
