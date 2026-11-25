@@ -133,7 +133,10 @@ export class BillingSubscriptionItemResolver {
     billingSubscriptionItem,
     workspaceId,
   }: {
-    billingSubscriptionItem: BillingSubscriptionItemEntity;
+    billingSubscriptionItem: Pick<
+      BillingSubscriptionItemEntity,
+      'billingProduct'
+    >;
     workspaceId: string;
   }): Promise<FlatApplication | null> {
     const applicationUniversalIdentifier =

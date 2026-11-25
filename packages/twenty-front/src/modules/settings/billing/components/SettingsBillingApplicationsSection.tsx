@@ -6,6 +6,7 @@ import {
   StyledSettingsBillingCardTitle,
   StyledSettingsBillingCardTitleLabel,
 } from '@/settings/billing/components/internal/SettingsBillingCard';
+import { getMonthlyAmountFromBillingPeriodCents } from '@/settings/billing/utils/getMonthlyAmountFromBillingPeriodCents';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -61,9 +62,10 @@ export const SettingsBillingApplicationsSection = ({
   }
 
   const formatMonthlyAmount = (cents: number) =>
-    `$${formatNumber((isYearlyPlan ? cents / 12 : cents) / 100, {
-      decimals: 2,
-    })}`;
+    `$${formatNumber(
+      getMonthlyAmountFromBillingPeriodCents({ cents, isYearlyPlan }),
+      { decimals: 2 },
+    )}`;
 
   const formatQuantity = ({
     quantity,

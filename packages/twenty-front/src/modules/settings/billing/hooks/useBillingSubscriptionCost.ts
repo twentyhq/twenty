@@ -2,6 +2,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { computeApplicationsSubscriptionCost } from '@/settings/billing/utils/computeApplicationsSubscriptionCost';
 import { findBaseProductSubscriptionItem } from '@/settings/billing/utils/findBaseProductSubscriptionItem';
 
 export const useBillingSubscriptionCost = () => {
@@ -28,28 +29,18 @@ export const useBillingSubscriptionCost = () => {
   const creditsSubtotalCents =
     currentResourceCreditSubscriptionItem?.unitAmount;
 
-  const applicationSubscriptionItems =
-    subscription?.billingSubscriptionItems?.filter((billingSubscriptionItem) =>
-      isDefined(billingSubscriptionItem.applicationName),
-    ) ?? [];
-
-  const applicationsCount = new Set(
-    applicationSubscriptionItems.map(
-      (applicationSubscriptionItem) =>
-        applicationSubscriptionItem.applicationName,
-    ),
-  ).size;
-
-  const applicationsSubtotalCents = applicationSubscriptionItems.reduce(
-    (subtotalCents, applicationSubscriptionItem) =>
-      subtotalCents +
-      (applicationSubscriptionItem.quantity ?? 0) *
-        (applicationSubscriptionItem.unitAmount ?? 0),
-    0,
+  const {
+    applicationSubscriptionItems,
+    applicationsCount,
+    applicationsSubtotalCents,
+  } = computeApplicationsSubscriptionCost(
+    subscription?.billingSubscriptionItems,
   );
 
   const totalCents =
-    isDefined(seatsSubtotalCents) && isDefined(creditsSubtotalCents)
+    isDefined(seatsSubtotalCents) &&
+    isDefined(creditsSubtotalCents) &&
+    isDefined(applicationsSubtotalCents)
       ? seatsSubtotalCents + creditsSubtotalCents + applicationsSubtotalCents
       : undefined;
 
