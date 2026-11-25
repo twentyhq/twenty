@@ -24,6 +24,7 @@ const mockGetRanges = jest.fn();
 const mockGetJob = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
+const mockRunCommand = jest.fn().mockResolvedValue('');
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
@@ -44,6 +45,8 @@ jest.mock('bullmq', () => ({
     setGlobalConcurrency: mockSetGlobalConcurrency,
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
     getJobCountByTypes: mockGetJobCountByTypes,
+    client: Promise.resolve({ runCommand: mockRunCommand }),
+    toKey: (jobId: string) => `bull:queue:${jobId}`,
   })),
   Worker: jest
     .fn()

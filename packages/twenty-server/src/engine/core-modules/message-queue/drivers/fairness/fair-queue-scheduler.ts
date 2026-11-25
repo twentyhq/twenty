@@ -90,12 +90,18 @@ export class FairQueueScheduler {
     ]);
 
     return fairJobOptions.map((jobOptions, jobIndex) => {
-      const pacedDelayMs = pacedDelays?.delays[jobIndex] ?? 0;
+      const pacedDelayMs = pacedDelays?.delays[jobIndex];
+
+      if (!isDefined(pacedDelays) || !isDefined(pacedDelayMs)) {
+        return jobOptions;
+      }
 
       // Anchored to the Redis clock that reserved the slot, not the producer's
-      return isDefined(pacedDelays) && pacedDelayMs > callerDelayMs
-        ? { ...jobOptions, delay: pacedDelayMs, timestamp: pacedDelays.nowMs }
-        : jobOptions;
+      return {
+        ...jobOptions,
+        ...(pacedDelayMs > 0 ? { delay: pacedDelayMs } : {}),
+        timestamp: pacedDelays.nowMs,
+      };
     });
   }
 
@@ -115,7 +121,7 @@ export class FairQueueScheduler {
     limiterGroupKeys: (string | undefined)[] | undefined;
     callerDelayMs: number;
     limiter: MessageQueueLimiter | undefined;
-  }): Promise<{ nowMs: number; delays: number[] } | undefined> {
+  }): Promise<{ nowMs: number; delays: (number | undefined)[] } | undefined> {
     const groupLimiter = limiter ?? this.options.getGroupLimiter(queueName);
 
     if (!isDefined(limiterGroupKeys) || !isDefined(groupLimiter)) {
@@ -162,7 +168,7 @@ export class FairQueueScheduler {
       return undefined;
     }
 
-    const pacedDelays = new Array<number>(scopes.length).fill(0);
+    const pacedDelays = new Array<number | undefined>(scopes.length);
 
     requests.forEach(({ jobIndexes }, requestIndex) => {
       jobIndexes.forEach((jobIndex, position) => {
@@ -170,7 +176,7 @@ export class FairQueueScheduler {
       });
     });
 
-    if (pacedDelays.some((delayMs) => delayMs > 0)) {
+    if (pacedDelays.some((delayMs) => (delayMs ?? 0) > 0)) {
       void this.options.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobGroupRatePaced,
         attributes: { queue: queueName },

@@ -821,69 +821,51 @@ export class BullMQDriver
     };
   }
 
-  // Re-adding an existing id is a no-op in BullMQ, so its stored schedule is the one to report
+  // Re-adding an id that exists is a no-op in BullMQ, even one another producer just added,
+  // so only the stored schedule can be reported and a failed read must fail the enqueue
   private async findPersistedScheduledAts({
     queueName,
     jobIds,
-    existingJobIds,
   }: {
     queueName: MessageQueue;
     jobIds: string[];
-    existingJobIds: Set<string>;
   }): Promise<Map<string, number>> {
     if (jobIds.length === 0) {
       return new Map();
     }
 
     const queue = this.queueMap[queueName];
+    const values = String(
+      await runRedisScript({
+        client: await queue.client,
+        script: JOBS_PERSISTED_OPTIONS_SCRIPT,
+        keys: jobIds.map((jobId) => queue.toKey(jobId)),
+        args: [],
+      }),
+    ).split('\n');
 
-    try {
-      const values = String(
-        await runRedisScript({
-          client: await queue.client,
-          script: JOBS_PERSISTED_OPTIONS_SCRIPT,
-          keys: jobIds.map((jobId) => queue.toKey(jobId)),
-          args: [],
-        }),
-      ).split('\n');
+    return new Map(
+      jobIds.flatMap((jobId, index) => {
+        const [rawOptions, rawTimestamp] = values.slice(
+          index * 2,
+          index * 2 + 2,
+        );
 
-      return new Map(
-        jobIds.flatMap((jobId, index) => {
-          const [rawOptions, rawTimestamp] = values.slice(
-            index * 2,
-            index * 2 + 2,
-          );
+        if (!isNonEmptyString(rawOptions) || !isNonEmptyString(rawTimestamp)) {
+          return [];
+        }
 
-          if (
-            !isNonEmptyString(rawOptions) ||
-            !isNonEmptyString(rawTimestamp)
-          ) {
-            return [];
-          }
-
-          return [
-            [
-              jobId,
-              getQueueJobScheduledAt({
-                timestamp: Number(rawTimestamp),
-                options: JSON.parse(rawOptions),
-              }),
-            ],
-          ];
-        }),
-      );
-    } catch (error) {
-      // The new date was never given to an existing job, so it must not be reported
-      if (jobIds.some((jobId) => existingJobIds.has(jobId))) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Failed to read the schedule of added jobs on queue ${queueName}: ${error instanceof Error ? error.message : String(error)}`,
-      );
-
-      return new Map();
-    }
+        return [
+          [
+            jobId,
+            getQueueJobScheduledAt({
+              timestamp: Number(rawTimestamp),
+              options: JSON.parse(rawOptions),
+            }),
+          ],
+        ];
+      }),
+    );
   }
 
   private async findExistingJobIds({
@@ -1202,7 +1184,6 @@ export class BullMQDriver
       jobIds: jobsToAdd.flatMap((job) =>
         isDefined(job.jobId) ? [job.jobId] : [],
       ),
-      existingJobIds,
     });
 
     return {

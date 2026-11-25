@@ -102,6 +102,26 @@ describe('BullMQDriver per-call limiter and scheduledAt', () => {
     ).toEqual([0, 250, 500, 750]);
   });
 
+  it('dates the first slot of an idle schedule on the Redis clock too', async () => {
+    const harness = await createFairnessHarness();
+
+    // The mocked Redis TIME keeps whole seconds of the faked clock, so this skews only the producer
+    jest.setSystemTime(NOW_MS + 400);
+
+    const result = await harness.enqueueBulk({
+      labels: buildLabels({ prefix: 'L', count: 2 }),
+      ...SCOPE,
+      groupKey: GROUP_KEY,
+      limiter: LIMITER,
+    });
+    const [firstScheduledAt, secondScheduledAt] = result.jobs.map(
+      ({ scheduledAt }) => scheduledAt,
+    );
+
+    expect(secondScheduledAt - firstScheduledAt).toBe(250);
+    expect(harness.readDelay({ label: 'L1' })).toBeUndefined();
+  });
+
   it('accepts reservations more than 7 days ahead', async () => {
     const harness = await createFairnessHarness();
     const labels = buildLabels({ prefix: 'L', count: 200 });
@@ -230,19 +250,30 @@ describe('BullMQDriver per-call limiter and scheduledAt', () => {
     ).rejects.toThrow('Redis read failed');
   });
 
-  it('reports the computed date of new jobs when their schedule cannot be read back', async () => {
+  it('fails instead of reporting a new date when another producer added the id and its schedule cannot be read', async () => {
     const harness = await createFairnessHarness();
 
+    harness.beforeNextAddBulk(async () => {
+      await harness.storeJob({
+        name: 'scenario-job',
+        data: { label: 'C0' },
+        options: {
+          jobId: 'job-1',
+          timestamp: NOW_MS,
+          scheduledAt: NOW_MS + 42,
+        },
+      });
+    });
     harness.failScript({ script: JOBS_PERSISTED_OPTIONS_SCRIPT });
 
-    const result = await harness.enqueueBulk({
-      labels: ['N1'],
-      jobIds: ['job-1'],
-      ...SCOPE,
-      delay: 5_000,
-    });
-
-    expect(scheduledAtsOf(result)).toEqual([5_000]);
+    await expect(
+      harness.enqueueBulk({
+        labels: ['C1'],
+        jobIds: ['job-1'],
+        ...SCOPE,
+        delay: 5_000,
+      }),
+    ).rejects.toThrow('Redis read failed');
   });
 
   it('schedules a delayed job at its insertion time plus the delay', async () => {
