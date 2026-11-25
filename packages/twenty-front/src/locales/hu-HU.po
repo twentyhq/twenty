@@ -1994,11 +1994,6 @@ msgstr "Az ehhez a munkaterülethez elfogadott és aláírt DPA-k, a sablon verz
 msgid "Access"
 msgstr "Hozzáférés"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Hozzáférési csoportok"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "Komponens-előnézet mintaadatokkal"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-mail írása"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Számítsa ki azokat a hozzáférési csoportokat, amelyeket a rekordlisták sorszintű jogosultságokhoz fognak használni. A munkaterület frissítésének befejezése után engedélyezze."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx

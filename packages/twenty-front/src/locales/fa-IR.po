@@ -1994,11 +1994,6 @@ msgstr "توافق‌نامه‌های DPA پذیرفته و امضاشده بر
 msgid "Access"
 msgstr "دسترسی"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "گروه‌های دسترسی"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "پیش‌نمایش مؤلفه با داده‌های نمونه"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "نوشتن ایمیل"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "گروه‌های دسترسی را که فهرست‌های رکورد برای مجوزهای سطح ردیف استفاده خواهند کرد، محاسبه کنید. پس از تکمیل ارتقای فضای کاری، آن را فعال کنید."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx

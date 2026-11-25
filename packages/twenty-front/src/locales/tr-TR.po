@@ -1994,11 +1994,6 @@ msgstr "Bu çalışma alanı için kabul edilmiş ve imzalanmış DPA'lar, şabl
 msgid "Access"
 msgstr "Erişim"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Erişim grupları"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "Örnek verilerle bileşen önizlemesi"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "E-posta oluştur"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Kayıt listelerinin satır düzeyi izinler için kullanacağı erişim gruplarını hesaplayın. Çalışma alanı yükseltmesi tamamlandıktan sonra etkinleştirin."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx

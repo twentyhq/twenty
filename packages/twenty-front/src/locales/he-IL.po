@@ -1994,11 +1994,6 @@ msgstr "DPAs שאושרו ונחתמו עבור סביבת עבודה זו, עם
 msgid "Access"
 msgstr "גישה"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "קבוצות גישה"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "תצוגה מקדימה של רכיב עם נתונים לדוגמה"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "כתוב דוא\"ל"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "חשב את קבוצות הגישה שבהן ישתמשו רשימות הרשומות להרשאות ברמת שורה. הפעל לאחר השלמת שדרוג סביבת העבודה."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
