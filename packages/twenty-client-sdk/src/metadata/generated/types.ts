@@ -1914,9 +1914,6 @@ export default {
             ]
         },
         "ApplicationRegistration": {
-            "billingPrices": [
-                61
-            ],
             "createdAt": [
                 233
             ],
@@ -2599,12 +2596,6 @@ export default {
         },
         "BillingProductKey": {},
         "BillingProductMetadata": {
-            "applicationPriceUniversalIdentifier": [
-                4
-            ],
-            "applicationUniversalIdentifier": [
-                4
-            ],
             "isLegacy": [
                 4
             ],
@@ -2701,6 +2692,15 @@ export default {
         },
         "BillingSubscriptionCollectionMethod": {},
         "BillingSubscriptionItem": {
+            "applicationLogoUrl": [
+                4
+            ],
+            "applicationName": [
+                4
+            ],
+            "applicationPricePer": [
+                65
+            ],
             "billingProduct": [
                 132
             ],

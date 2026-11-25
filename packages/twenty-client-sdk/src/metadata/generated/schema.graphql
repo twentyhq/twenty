@@ -868,7 +868,6 @@ type ApplicationPreferences {
 }
 
 type ApplicationRegistration {
-  billingPrices: [ApplicationBillingPrice!]
   createdAt: DateTime!
   galleryImagesUrls: [String!]!
   id: UUID!
@@ -1211,8 +1210,6 @@ enum BillingProductKey {
 }
 
 type BillingProductMetadata {
-  applicationPriceUniversalIdentifier: String
-  applicationUniversalIdentifier: String
   isLegacy: String
   planKey: BillingPlanKey
   productKey: BillingProductKey!
@@ -1255,6 +1252,9 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
+  applicationLogoUrl: String
+  applicationName: String
+  applicationPricePer: ApplicationBillingPriceUnit
   billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!

@@ -310,34 +310,6 @@ export enum AiModelTier {
   smart = 'smart'
 }
 
-export type ApplicationBillingPrice = {
-  __typename?: 'ApplicationBillingPrice';
-  amountCents: Scalars['Int']['output'];
-  billingPeriod: ApplicationBillingPricePeriod;
-  currency: ApplicationBillingPriceCurrency;
-  label: Scalars['String']['output'];
-  per?: Maybe<ApplicationBillingPriceUnit>;
-  type: ApplicationBillingPriceType;
-  universalIdentifier: Scalars['String']['output'];
-};
-
-export enum ApplicationBillingPriceCurrency {
-  USD = 'USD'
-}
-
-export enum ApplicationBillingPricePeriod {
-  MONTHLY = 'MONTHLY'
-}
-
-export enum ApplicationBillingPriceType {
-  RECURRING = 'RECURRING'
-}
-
-export enum ApplicationBillingPriceUnit {
-  CONNECTED_ACCOUNT = 'CONNECTED_ACCOUNT',
-  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
-}
-
 export type ApplicationMonitoringActivityBucket = {
   __typename?: 'ApplicationMonitoringActivityBucket';
   bucketStart: Scalars['DateTime']['output'];
@@ -406,7 +378,6 @@ export type ApplicationMonitoringWorkspace = {
 export type ApplicationRegistration = {
   __typename?: 'ApplicationRegistration';
   author?: Maybe<Scalars['String']['output']>;
-  billingPrices?: Maybe<Array<ApplicationBillingPrice>>;
   configurationIssues: Array<ApplicationRegistrationConfigurationIssue>;
   createdAt: Scalars['DateTime']['output'];
   galleryImagesUrls: Array<Scalars['String']['output']>;

@@ -739,7 +739,6 @@ export interface ApplicationPreferences {
 }
 
 export interface ApplicationRegistration {
-    billingPrices?: ApplicationBillingPrice[]
     createdAt: Scalars['DateTime']
     galleryImagesUrls: Scalars['String'][]
     id: Scalars['UUID']
@@ -1059,8 +1058,6 @@ export interface BillingProduct {
 export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
 
 export interface BillingProductMetadata {
-    applicationPriceUniversalIdentifier?: Scalars['String']
-    applicationUniversalIdentifier?: Scalars['String']
     isLegacy?: Scalars['String']
     planKey?: BillingPlanKey
     productKey: BillingProductKey
@@ -1104,6 +1101,9 @@ export interface BillingSubscription {
 export type BillingSubscriptionCollectionMethod = 'CHARGE_AUTOMATICALLY' | 'SEND_INVOICE'
 
 export interface BillingSubscriptionItem {
+    applicationLogoUrl?: Scalars['String']
+    applicationName?: Scalars['String']
+    applicationPricePer?: ApplicationBillingPriceUnit
     billingProduct: BillingProduct
     creditAmount?: Scalars['Float']
     hasReachedCurrentPeriodCap: Scalars['Boolean']
@@ -5433,7 +5433,6 @@ export interface ApplicationPreferencesGenqlSelection{
 }
 
 export interface ApplicationRegistrationGenqlSelection{
-    billingPrices?: ApplicationBillingPriceGenqlSelection
     createdAt?: boolean | number
     galleryImagesUrls?: boolean | number
     id?: boolean | number
@@ -5761,8 +5760,6 @@ export interface BillingProductGenqlSelection{
 }
 
 export interface BillingProductMetadataGenqlSelection{
-    applicationPriceUniversalIdentifier?: boolean | number
-    applicationUniversalIdentifier?: boolean | number
     isLegacy?: boolean | number
     planKey?: boolean | number
     productKey?: boolean | number
@@ -5808,6 +5805,9 @@ export interface BillingSubscriptionGenqlSelection{
 }
 
 export interface BillingSubscriptionItemGenqlSelection{
+    applicationLogoUrl?: boolean | number
+    applicationName?: boolean | number
+    applicationPricePer?: boolean | number
     billingProduct?: BillingProductGenqlSelection
     creditAmount?: boolean | number
     hasReachedCurrentPeriodCap?: boolean | number

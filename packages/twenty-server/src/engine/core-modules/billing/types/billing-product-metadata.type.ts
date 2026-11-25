@@ -17,12 +17,6 @@ export class BillingProductMetadata {
   @Field(() => String, { nullable: true })
   isLegacy?: string;
 
-  @Field(() => String, { nullable: true })
-  applicationUniversalIdentifier?: string;
-
-  @Field(() => String, { nullable: true })
-  applicationPriceUniversalIdentifier?: string;
-
   workspaceCreditsPerSeat?: string;
 
   [key: string]: string | undefined;

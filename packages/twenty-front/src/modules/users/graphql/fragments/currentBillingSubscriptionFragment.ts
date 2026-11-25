@@ -22,6 +22,9 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
       stripePriceId
       unitAmount
       creditAmount
+      applicationName
+      applicationLogoUrl
+      applicationPricePer
       billingProduct {
         name
         description
@@ -30,8 +33,6 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
           productKey
           planKey
           isLegacy
-          applicationUniversalIdentifier
-          applicationPriceUniversalIdentifier
         }
       }
     }
