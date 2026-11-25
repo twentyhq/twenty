@@ -96,8 +96,8 @@ const Typed = styled.span`
   }
 `;
 
-// The send row: blue, then green once sent, Submit giving way to a check;
-// both share one cell.
+// The send row: blue, then green once sent; the send arrow gives way to a
+// check in the same place and the label fades out.
 const SubmitRow = styled(Row)`
   background: ${color('blue')};
   color: ${color('white')};
@@ -229,13 +229,16 @@ export function ApplyStepVisual({
           </FieldRow>
         ))}
         <SubmitRow>
-          <IconSend size={20} stroke={1.5} />
+          {/* one icon slot: the send arrow gives way to the check */}
           <SubmitLabels>
-            <SubmitLabel>{i18n._(msg`Submit application`)}</SubmitLabel>
+            <SubmitLabel>
+              <IconSend size={20} stroke={1.5} />
+            </SubmitLabel>
             <SentCheck>
               <IconCheck size={20} stroke={2} />
             </SentCheck>
           </SubmitLabels>
+          <SubmitLabel>{i18n._(msg`Submit application`)}</SubmitLabel>
         </SubmitRow>
       </Panel>
     </Stage>
