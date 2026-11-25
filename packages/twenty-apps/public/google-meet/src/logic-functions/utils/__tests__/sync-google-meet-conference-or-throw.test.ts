@@ -98,7 +98,7 @@ const GOOGLE_RESPONSES: Record<string, object> = {
 
 const fetchMock = vi.fn<(url: string) => Promise<Response>>();
 
-const buildCoreApiClient = () => ({
+const buildCoreApiClient = (calendarEventTitle = ' Customer call ') => ({
   query: vi.fn(async (query: object) =>
     'calendarEvents' in query
       ? {
@@ -107,7 +107,7 @@ const buildCoreApiClient = () => ({
               {
                 node: {
                   id: 'calendar-event-id',
-                  title: ' Customer call ',
+                  title: calendarEventTitle,
                   startsAt: '2026-11-17T09:00:00.000Z',
                   conferenceLink: {
                     primaryLinkUrl: 'https://meet.google.com/abc-mnop-xyz',
@@ -267,6 +267,24 @@ describe('syncGoogleMeetConferenceOrThrow', () => {
 
     expect(recordingData.title).toBe('Meeting started 2026/11/17 18:10 IST');
     expect(recordingData).not.toHaveProperty('calendarEventId');
+  });
+
+  it('should name a conference whose calendar event title is restricted after its transcript document', async () => {
+    const coreApiClient = buildCoreApiClient(
+      'FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED',
+    );
+
+    await syncGoogleMeetConferenceOrThrow({
+      accessToken: 'token',
+      coreApiClient,
+      conferenceRecord: CONFERENCE_RECORD,
+    });
+
+    const recordingData =
+      coreApiClient.mutation.mock.calls[0][0].createCallRecording.__args.data;
+
+    expect(recordingData.title).toBe('Meeting started 2026/11/17 18:10 IST');
+    expect(recordingData.calendarEventId).toBe('calendar-event-id');
   });
 
   it('should ask for an AI summary of a conference that has no Gemini notes', async () => {

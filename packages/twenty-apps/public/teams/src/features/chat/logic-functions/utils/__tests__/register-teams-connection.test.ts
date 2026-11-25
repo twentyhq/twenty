@@ -7,7 +7,6 @@ import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/b
 import { registerTeamsConnection } from 'src/features/chat/logic-functions/utils/register-teams-connection';
 
 const {
-  releaseFlags,
   kvGetMock,
   kvSetMock,
   kvDeleteMock,
@@ -16,7 +15,6 @@ const {
   releaseMock,
   matchTeamsDirectoryByEmailMock,
 } = vi.hoisted(() => ({
-  releaseFlags: { IS_CHAT_ASSISTANT_RELEASED: true },
   kvGetMock: vi.fn(),
   kvSetMock: vi.fn(),
   kvDeleteMock: vi.fn(),
@@ -24,10 +22,6 @@ const {
   fetchGraphJsonMock: vi.fn(),
   releaseMock: vi.fn(),
   matchTeamsDirectoryByEmailMock: vi.fn(),
-}));
-
-vi.mock('src/constants/release-flags', () => ({
-  RELEASE_FLAGS: releaseFlags,
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -72,7 +66,6 @@ const rejectServerClaim = () => {
 describe('registerTeamsConnection', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     getConnectionMock.mockResolvedValue({
       scope: 'WORKSPACE',
@@ -216,23 +209,6 @@ describe('registerTeamsConnection', () => {
     ).toEqual({ claimedTenantId: TENANT_ID });
     expect(releaseMock).not.toHaveBeenCalled();
     expect(matchTeamsDirectoryByEmailMock).not.toHaveBeenCalled();
-  });
-
-  it('should release the claim instead of claiming while chat is unreleased', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
-
-    expect(
-      await registerTeamsConnection({
-        connectedAccountId: CONNECTED_ACCOUNT_ID,
-        workspaceId: WORKSPACE_ID,
-      }),
-    ).toEqual({ claimedTenantId: null });
-    expect(releaseMock).toHaveBeenCalledWith({
-      connectedAccountId: CONNECTED_ACCOUNT_ID,
-    });
-    expect(getConnectionMock).not.toHaveBeenCalled();
-    expect(kvSetMock).not.toHaveBeenCalled();
-    expect(kvDeleteMock).toHaveBeenCalledExactlyOnceWith(CLAIM_CONFLICT_KV_KEY);
   });
 
   it('should claim without the directory match when asked to skip it', async () => {

@@ -337,6 +337,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       calendarChannels: [
         {
           id: 'calendar-channel-1',
+          handle: 'ada@acme.com',
           connectedAccount: { userWorkspaceId: 'user-workspace-1' },
         },
       ],
@@ -579,6 +580,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       calendarChannels: [
         {
           id: 'calendar-channel-1',
+          handle: 'ada@acme.com',
           connectedAccount: { userWorkspaceId: 'user-workspace-1' },
         },
       ],

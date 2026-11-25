@@ -1677,7 +1677,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_FORMULA_FIELD_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -4244,7 +4244,6 @@ export interface View {
     calendarLayout?: ViewCalendarLayout
     createdAt: Scalars['DateTime']
     createdByUserWorkspaceId?: Scalars['UUID']
-    deletedAt?: Scalars['DateTime']
     groupLoadLimit?: Scalars['Int']
     icon: Scalars['String']
     id: Scalars['UUID']
@@ -4293,7 +4292,6 @@ export interface ViewField {
     aggregateOperation?: AggregateOperations
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
@@ -4317,7 +4315,6 @@ export interface ViewField {
 
 export interface ViewFieldGroup {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
     /** @deprecated isOverridden is deprecated */
@@ -4369,7 +4366,6 @@ export interface ViewFieldRelationScopeSort {
 
 export interface ViewFilter {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     operand: ViewFilterOperand
@@ -4386,7 +4382,6 @@ export interface ViewFilter {
 
 export interface ViewFilterGroup {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     id: Scalars['UUID']
     logicalOperator: ViewFilterGroupLogicalOperator
     parentViewFilterGroupId?: Scalars['UUID']
@@ -4403,7 +4398,6 @@ export type ViewFilterOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_
 
 export interface ViewGroup {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     fieldValue: Scalars['String']
     id: Scalars['UUID']
     isVisible: Scalars['Boolean']
@@ -4422,7 +4416,6 @@ export type ViewPresetFilter = 'INBOX_CHANNEL_DONE' | 'INBOX_CHANNEL_OPEN' | 'IN
 
 export interface ViewSort {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     direction: ViewSortDirection
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
@@ -9234,7 +9227,7 @@ id: Scalars['UUID'],
 /** The view field group to update */
 update: UpdateViewFieldGroupInputUpdates}
 
-export interface UpdateViewFieldGroupInputUpdates {deletedAt?: (Scalars['String'] | null),isVisible?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateViewFieldGroupInputUpdates {isVisible?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateViewFieldInput {
 /** The id of the view field to update */
@@ -9621,7 +9614,6 @@ export interface ViewGenqlSelection{
     calendarLayout?: boolean | number
     createdAt?: boolean | number
     createdByUserWorkspaceId?: boolean | number
-    deletedAt?: boolean | number
     groupLoadLimit?: boolean | number
     icon?: boolean | number
     id?: boolean | number
@@ -9670,7 +9662,6 @@ export interface ViewFieldGenqlSelection{
     aggregateOperation?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
@@ -9695,7 +9686,6 @@ export interface ViewFieldGenqlSelection{
 
 export interface ViewFieldGroupGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
     /** @deprecated isOverridden is deprecated */
@@ -9760,7 +9750,6 @@ export interface ViewFieldRelationScopeSortInput {direction: ViewSortDirection,f
 
 export interface ViewFilterGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
     operand?: boolean | number
@@ -9778,7 +9767,6 @@ export interface ViewFilterGenqlSelection{
 
 export interface ViewFilterGroupGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     id?: boolean | number
     logicalOperator?: boolean | number
     parentViewFilterGroupId?: boolean | number
@@ -9792,7 +9780,6 @@ export interface ViewFilterGroupGenqlSelection{
 
 export interface ViewGroupGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     fieldValue?: boolean | number
     id?: boolean | number
     isVisible?: boolean | number
@@ -9806,7 +9793,6 @@ export interface ViewGroupGenqlSelection{
 
 export interface ViewSortGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     direction?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
@@ -13539,6 +13525,7 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
+   IS_FORMULA_FIELD_ENABLED: 'IS_FORMULA_FIELD_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
    IS_INBOX_OBJECT_NAMING_ENABLED: 'IS_INBOX_OBJECT_NAMING_ENABLED' as const,
    IS_INTERNAL_IMPORT_COLUMN_ENABLED: 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' as const,
