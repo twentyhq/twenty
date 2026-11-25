@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -546,7 +547,8 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceWorkflowId: null,
       isSystem: false,
       isPrivate: isPrivate ?? false,
-      createdByUserWorkspaceId: null,
+      createdByUserWorkspaceId:
+        getUserWorkspaceIdFromAuthContext(authContext) ?? null,
       lastPublishedCoreWorkflowVersionId: null,
       versionDefinitionHash: null,
       createdAt,

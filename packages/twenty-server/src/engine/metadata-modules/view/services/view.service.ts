@@ -4,6 +4,7 @@ import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -89,6 +90,8 @@ export class ViewService {
     const { flatViewToCreate, flatViewGroupsToCreate } =
       fromCreateViewInputToFlatViewToCreate({
         createViewInput,
+        createdByUserWorkspaceId:
+          getUserWorkspaceIdFromAuthContext(authContext),
         flatApplication: workspaceCustomFlatApplication,
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
         flatFieldMetadataOptionMaps: existingFlatFieldMetadataOptionMaps,

@@ -9,6 +9,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -161,6 +162,8 @@ export class CompleteViewUpsertService {
           calendarLayout,
           calendarFieldMetadataId,
           calendarEndFieldMetadataId,
+          createdByUserWorkspaceId:
+            getUserWorkspaceIdFromAuthContext(authContext),
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
           flatFieldMetadataOptionMaps,
@@ -259,6 +262,7 @@ export class CompleteViewUpsertService {
     calendarLayout,
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
+    createdByUserWorkspaceId,
     flatApplication,
     flatFieldMetadataMaps,
     flatFieldMetadataOptionMaps,
@@ -275,6 +279,7 @@ export class CompleteViewUpsertService {
     calendarLayout?: ViewCalendarLayout;
     calendarFieldMetadataId?: string;
     calendarEndFieldMetadataId?: string;
+    createdByUserWorkspaceId?: string;
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
@@ -302,6 +307,7 @@ export class CompleteViewUpsertService {
           calendarFieldMetadataId,
           calendarEndFieldMetadataId,
         },
+        createdByUserWorkspaceId,
         flatApplication,
         flatFieldMetadataMaps,
         flatFieldMetadataOptionMaps,

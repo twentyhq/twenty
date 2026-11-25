@@ -17,12 +17,14 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 
 export const fromCreateViewInputToFlatViewToCreate = ({
   createViewInput: rawCreateViewInput,
+  createdByUserWorkspaceId,
   flatApplication,
   flatFieldMetadataMaps,
   flatFieldMetadataOptionMaps,
   flatObjectMetadataMaps,
 }: {
   createViewInput: CreateViewInput;
+  createdByUserWorkspaceId?: string;
   flatApplication: FlatApplication;
   flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   flatFieldMetadataOptionMaps: AllFlatEntityMaps['flatFieldMetadataOptionMaps'];
@@ -93,7 +95,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
     isPrivate: createViewInput.isPrivate ?? false,
-    createdByUserWorkspaceId: null,
+    createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     isActive: true,
     isSystemSideEffect: false,
     universalOverrides: null,
