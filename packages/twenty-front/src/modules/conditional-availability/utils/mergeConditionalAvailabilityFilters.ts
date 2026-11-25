@@ -3,7 +3,7 @@ import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availabil
 import { canConditionalAvailabilityFilterOperatorHoldSeveralValues } from '@/conditional-availability/utils/canConditionalAvailabilityFilterOperatorHoldSeveralValues';
 import { getConditionalAvailabilityFilterComparisonOperator } from '@/conditional-availability/utils/getConditionalAvailabilityFilterComparisonOperator';
 import { getConditionalAvailabilityFilterVariableOperators } from '@/conditional-availability/utils/getConditionalAvailabilityFilterVariableOperators';
-import { type ConditionalAvailabilityLogicalOperator } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationLogicalOperator } from 'twenty-shared/conditional-evaluation';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,7 +19,7 @@ export const mergeConditionalAvailabilityFilters = ({
   filterOrGroup:
     | ConditionalAvailabilityFilter
     | ConditionalAvailabilityFilterGroup;
-  logicalOperator: ConditionalAvailabilityLogicalOperator;
+  logicalOperator: ConditionalEvaluationLogicalOperator;
 }): ConditionalAvailabilityFilter | null => {
   if (
     previousFilterOrGroup?.type !== 'filter' ||

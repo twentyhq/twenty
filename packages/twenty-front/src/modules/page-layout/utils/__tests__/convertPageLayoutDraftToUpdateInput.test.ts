@@ -1,4 +1,4 @@
-import { type ConditionalAvailabilityNode } from 'twenty-shared/conditional-availability';
+import { type ConditionalEvaluationNode } from 'twenty-shared/conditional-evaluation';
 import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
@@ -75,7 +75,7 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
 
   it('should send the visibility rules the draft holds', () => {
     const conditionalDisplay = { '===': [{ var: 'device' }, 'MOBILE'] };
-    const conditionalAvailability: ConditionalAvailabilityNode = {
+    const conditionalAvailability: ConditionalEvaluationNode = {
       type: 'VARIABLE',
       path: 'featureFlags.A',
     };
