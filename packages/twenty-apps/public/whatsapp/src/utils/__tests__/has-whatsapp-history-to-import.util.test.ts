@@ -8,35 +8,25 @@ describe('hasWhatsappHistoryToImport', () => {
       hasWhatsappHistoryToImport({
         importPolicy: 'SELECTED',
         selectedChats: [],
-        historyConversationLimit: 50,
       }),
     ).toBe(false);
   });
 
-  it('has the picked conversations, even with past conversations turned off', () => {
+  it('has the picked conversations', () => {
     expect(
       hasWhatsappHistoryToImport({
         importPolicy: 'SELECTED',
         selectedChats: [{ id: 'chat-1', name: 'Ada Lovelace' }],
-        historyConversationLimit: 0,
       }),
     ).toBe(true);
   });
 
-  it('follows the past conversations setting for the other policies', () => {
-    expect(
-      hasWhatsappHistoryToImport({
-        importPolicy: 'ALL',
-        selectedChats: [{ id: 'chat-1', name: 'Ada Lovelace' }],
-        historyConversationLimit: 0,
-      }),
-    ).toBe(false);
-    expect(
-      hasWhatsappHistoryToImport({
-        importPolicy: 'CONTACTS_ONLY',
-        selectedChats: [],
-        historyConversationLimit: 50,
-      }),
-    ).toBe(true);
-  });
+  it.each(['ALL', 'CONTACTS_ONLY'] as const)(
+    'has the most recent conversations for the %s policy',
+    (importPolicy) => {
+      expect(
+        hasWhatsappHistoryToImport({ importPolicy, selectedChats: [] }),
+      ).toBe(true);
+    },
+  );
 });

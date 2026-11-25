@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { IconRefresh } from 'twenty-ui/icon';
+import { IconDownload, IconRefresh } from 'twenty-ui/icon';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -25,29 +25,35 @@ const StyledRow = styled.div`
   justify-content: flex-end;
 `;
 
+const StyledLastImport = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
 const StyledCaption = styled.div`
   text-align: right;
 `;
 
-type WhatsappSyncButtonProps = {
+type WhatsappHistoryImportButtonProps = {
   historyImport: WhatsappHistoryImportState | null;
   progress: number | undefined;
   isStarting: boolean;
   isCancelling: boolean;
-  onSync: () => void;
+  onImport: () => void;
   onCancel: () => void;
 };
 
-export const WhatsappSyncButton = ({
+export const WhatsappHistoryImportButton = ({
   historyImport,
   progress,
   isStarting,
   isCancelling,
-  onSync,
+  onImport,
   onCancel,
-}: WhatsappSyncButtonProps) => {
+}: WhatsappHistoryImportButtonProps) => {
   const isRunning = historyImport?.status === 'IMPORTING';
   const hasFailed = historyImport?.status === 'FAILED';
+  const hasCompleted = historyImport?.status === 'COMPLETED';
 
   const isListing =
     isRunning &&
@@ -56,16 +62,50 @@ export const WhatsappSyncButton = ({
 
   const getLabel = (): string => {
     if (isRunning && isDefined(progress)) {
-      return t('Syncing {progress}', {
+      return t('Importing {progress}', {
         progress: formatWhatsappSyncProgressLabel(progress),
       });
     }
 
     if (isRunning) {
-      return t('Syncing…');
+      return t('Importing…');
     }
 
-    return hasFailed ? t('Retry') : t('Sync now');
+    if (hasFailed) {
+      return t('Retry');
+    }
+
+    return hasCompleted ? t('Import again') : t('Import conversations');
+  };
+
+  const getRunningCaption = () => {
+    if (!isRunning) {
+      return null;
+    }
+
+    if (isDefined(historyImport.resumeAt)) {
+      return t(
+        'WhatsApp limits how fast conversations can be imported. The import resumes {resumeAt}.',
+        {
+          resumeAt: new Date(historyImport.resumeAt).toLocaleString(undefined, {
+            weekday: 'short',
+            hour: 'numeric',
+            minute: '2-digit',
+          }),
+        },
+      );
+    }
+
+    if (isListing) {
+      return (
+        <>
+          {t('Listing conversations')} (
+          <AnimatedCount count={historyImport.plannedConversationCount ?? 0} />)
+        </>
+      );
+    }
+
+    return t('You can leave this page, the import keeps running.');
   };
 
   return (
@@ -77,6 +117,17 @@ export const WhatsappSyncButton = ({
         </InlineBanner>
       )}
       <StyledRow>
+        {hasCompleted && (
+          <Text size="sm" color="tertiary" render={<StyledLastImport />}>
+            {t('Last import on {date}: {count} conversations imported', {
+              date: new Date(historyImport.startedAt).toLocaleString(
+                undefined,
+                { dateStyle: 'medium', timeStyle: 'short' },
+              ),
+              count: historyImport.importedConversationCount,
+            })}
+          </Text>
+        )}
         {isRunning && (
           <Button
             variant="outline"
@@ -89,49 +140,26 @@ export const WhatsappSyncButton = ({
           </Button>
         )}
         <Button
-          startIcon={<IconRefresh />}
+          startIcon={hasFailed ? <IconRefresh /> : <IconDownload />}
           variant="solid"
           color="accent"
           size="md"
-          onClick={onSync}
+          onClick={onImport}
           loading={isRunning || isStarting}
           loadingPosition="end"
         >
           {getLabel()}
         </Button>
       </StyledRow>
-      {isRunning && isDefined(historyImport.resumeAt) ? (
+      {isRunning && (
         <Text
           size="sm"
           color="tertiary"
           aria-live="polite"
           render={<StyledCaption />}
         >
-          {t(
-            'WhatsApp limits how fast conversations can be imported. The sync resumes {resumeAt}.',
-            {
-              resumeAt: new Date(historyImport.resumeAt).toLocaleString(
-                undefined,
-                { weekday: 'short', hour: 'numeric', minute: '2-digit' },
-              ),
-            },
-          )}
+          {getRunningCaption()}
         </Text>
-      ) : (
-        isListing && (
-          <Text
-            size="sm"
-            color="tertiary"
-            aria-live="polite"
-            render={<StyledCaption />}
-          >
-            {t('Listing conversations')} (
-            <AnimatedCount
-              count={historyImport.plannedConversationCount ?? 0}
-            />
-            )
-          </Text>
-        )
       )}
     </StyledContainer>
   );

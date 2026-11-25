@@ -1,1 +1,1 @@
-export const WHATSAPP_HISTORY_CONVERSATION_LIMITS = [0, 20, 50, 100] as const;
+export const WHATSAPP_HISTORY_CONVERSATION_LIMITS = [20, 50, 100] as const;

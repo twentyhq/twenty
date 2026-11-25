@@ -75,7 +75,7 @@ describe('whatsappUpdateSettingsHandler', () => {
       contactAutoCreationPolicy: 'NONE',
       areGroupChatsImported: 'yes',
       importPolicy: 'SOME',
-      historyConversationLimit: 30,
+      historyConversationLimit: 0,
     });
 
     expect(view).toEqual(
@@ -99,7 +99,7 @@ describe('whatsappUpdateSettingsHandler', () => {
     expect(mocks.enqueueJobs).not.toHaveBeenCalled();
   });
 
-  it.each([0, 20, 50, 100])(
+  it.each([20, 50, 100])(
     'saves %i past conversations to import',
     async (historyConversationLimit) => {
       const view = await updateSettings({ historyConversationLimit });
@@ -145,7 +145,7 @@ describe('whatsappUpdateSettingsHandler', () => {
     [{ importPolicy: 'CONTACTS_ONLY' }],
     [{ areGroupChatsImported: true }],
     [{ historyConversationLimit: 50 }],
-  ])('leaves importing to the Sync button when saving %o', async (update) => {
+  ])('leaves importing to the History tab when saving %o', async (update) => {
     setHistoryImport('CONTACTS_ONLY');
 
     await updateSettings(update);
