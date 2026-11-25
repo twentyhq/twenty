@@ -30,6 +30,7 @@ type UseEmailComposerStateArgs = {
   connectedAccountId: string;
   draftPrefill?: EmailDraftPrefill | null;
   defaultTo?: string;
+  defaultCc?: string;
   defaultSubject?: string;
   defaultInReplyTo?: string;
   contextRecord?: EmailComposerContextRecord | null;
@@ -47,6 +48,7 @@ export const useEmailComposerState = ({
   connectedAccountId: initialConnectedAccountId,
   draftPrefill,
   defaultTo = '',
+  defaultCc = '',
   defaultSubject = '',
   defaultInReplyTo,
   contextRecord,
@@ -57,7 +59,7 @@ export const useEmailComposerState = ({
   const [initialDraft] = useState<EmailComposerDraft>(() => ({
     recipientsByFieldId: {
       to: parseEmailRecipients(draftPrefill?.to ?? defaultTo),
-      cc: parseEmailRecipients(draftPrefill?.cc ?? ''),
+      cc: parseEmailRecipients(draftPrefill?.cc ?? defaultCc),
       bcc: parseEmailRecipients(draftPrefill?.bcc ?? ''),
     },
     subject: draftPrefill?.subject ?? defaultSubject,

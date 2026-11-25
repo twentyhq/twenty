@@ -6,6 +6,7 @@ import { BackfillUserWorkspaceDefaultAvatarFileIdCommand } from 'src/database/co
 import { AddStandardInboxViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538284087-add-standard-inbox-views.command';
 import { RenameWorkflowsNavigationFolderToAutomationsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538639852-rename-workflows-navigation-folder-to-automations.command';
 import { AddWorkflowsAndAgentsGoToCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538640852-add-workflows-and-agents-go-to-command-menu-items.command';
+import { AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795595757554-add-default-layout-navigation-menu-items.command';
 import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795601305717-backfill-billing-customer-stripe-customer-email.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -28,6 +29,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AddStandardInboxViewsCommand,
     RenameWorkflowsNavigationFolderToAutomationsCommand,
     AddWorkflowsAndAgentsGoToCommandMenuItemsCommand,
+    AddDefaultLayoutNavigationMenuItemsCommand,
     BackfillBillingCustomerStripeCustomerEmailCommand,
   ],
 })

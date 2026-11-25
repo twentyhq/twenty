@@ -53,7 +53,9 @@ const compile = ({
     expression,
     currencyCodeExpression,
     selectEnumSqlType: '"workspace"."gadget_stage_enum"',
-    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors(FIELDS),
+    resolveReference: buildFormulaSqlReferenceResolverFromDescriptors({
+      fields: FIELDS,
+    }),
   });
 
 describe('compileFormulaFieldToSql', () => {

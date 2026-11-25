@@ -77,6 +77,10 @@ export const SidePanelEditColumnShowSelect = ({
   const selectedOption =
     options.find((option) => option.value === value) ?? relationEntry;
 
+  const isRelationEntryTheOnlyChoice =
+    !isNonEmptyArray(fieldEntries) &&
+    isNonEmptyArray(relationEntry.summaryShowOptions);
+
   const renderOptionItem = ({
     key,
     label,
@@ -125,6 +129,7 @@ export const SidePanelEditColumnShowSelect = ({
     <DropdownRoot
       dropdownId={dropdownId}
       type="picker"
+      defaultPage={isRelationEntryTheOnlyChoice ? relationEntry.id : 'root'}
       onOpenChange={(open) => {
         if (open) {
           setSearchInputValue('');
@@ -183,9 +188,11 @@ export const SidePanelEditColumnShowSelect = ({
           .filter((entry) => isNonEmptyArray(entry.summaryShowOptions))
           .map((entry) => (
             <Dropdown.Page key={entry.id} id={entry.id}>
-              <Dropdown.Back aria-label={t`${entry.label}, back`}>
-                {entry.label}
-              </Dropdown.Back>
+              {!isRelationEntryTheOnlyChoice && (
+                <Dropdown.Back aria-label={t`${entry.label}, back`}>
+                  {entry.label}
+                </Dropdown.Back>
+              )}
               <Dropdown.Section scrollable={false}>
                 {renderOptionItem({
                   ...entry,

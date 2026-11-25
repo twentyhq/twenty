@@ -108,9 +108,11 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
 const renderTabSwitcher = ({
   isLayoutCustomizationModeEnabled = false,
   hasUnreadOpenThread = false,
+  isPinnedToBottom = false,
 }: {
   isLayoutCustomizationModeEnabled?: boolean;
   hasUnreadOpenThread?: boolean;
+  isPinnedToBottom?: boolean;
 } = {}) => {
   const store = createStore();
 
@@ -129,7 +131,9 @@ const renderTabSwitcher = ({
         <MockedProvider
           mocks={[buildOpenThreadsSummaryMock(hasUnreadOpenThread)]}
         >
-          <MainNavigationDrawerTabSwitcher />
+          <MainNavigationDrawerTabSwitcher
+            isPinnedToBottom={isPinnedToBottom}
+          />
         </MockedProvider>
       </JotaiProvider>
     </I18nProvider>,
@@ -332,6 +336,23 @@ describe('MainNavigationDrawerTabSwitcher', () => {
       screen.getByRole('button', { name: 'Sales, needs your input' }),
     ).toHaveAttribute('aria-current', 'true');
   });
+
+  it.each([
+    [false, 'auto'],
+    [true, '0px'],
+  ] as const)(
+    'labels the active Home tab unless the row is pinned to the bottom (pinned=%s)',
+    (isPinnedToBottom, expectedLabelWidth) => {
+      renderTabSwitcher({ isPinnedToBottom });
+
+      const homeButton = screen.getByRole('button', { name: 'Home' });
+
+      expect(homeButton).toHaveAttribute('aria-current', 'true');
+      expect(screen.getByText('Home')).toHaveStyle({
+        width: expectedLabelWidth,
+      });
+    },
+  );
 
   it('marks Home when a chat section sits at its top level', () => {
     mockChatAttention = {
