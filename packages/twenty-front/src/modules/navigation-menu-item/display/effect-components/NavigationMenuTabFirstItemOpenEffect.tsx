@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationMenuTabIdContext } from '@/navigation-menu-item/common/contexts/NavigationMenuTabIdContext';
-import { navigationMenuTabIdHoldingCurrentPageState } from '@/navigation-menu-item/common/states/navigationMenuTabIdHoldingCurrentPageState';
 import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
 
 type NavigationMenuTabFirstItemOpenEffectProps =
@@ -28,10 +27,6 @@ export const NavigationMenuTabFirstItemOpenEffect = (
     }
 
     store.set(navigationMenuTabIdToOpenFirstItemState.atom, null);
-    store.set(
-      navigationMenuTabIdHoldingCurrentPageState.atom,
-      navigationMenuTabId,
-    );
 
     if ('to' in props) {
       navigate(props.to);

@@ -9,11 +9,7 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { lastVisitedUrlByNavigationMenuTabKeyState } from '@/navigation-menu-item/common/states/lastVisitedUrlByNavigationMenuTabKeyState';
 import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
-import { navigationMenuTabIdHoldingCurrentPageState } from '@/navigation-menu-item/common/states/navigationMenuTabIdHoldingCurrentPageState';
-import { getLastVisitedUrlsAfterLeavingNavigationMenuTab } from '@/navigation-menu-item/common/utils/getLastVisitedUrlsAfterLeavingNavigationMenuTab';
-import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -116,23 +112,6 @@ export const useSwitchNavigationDrawerTab = () => {
     navigate(path, { replace: isSettingsDrawer });
   };
 
-  const rememberCurrentPageForTab = (tabId: string | null) => {
-    const currentUrl = isSettingsDrawer
-      ? navigationMemorizedUrl
-      : `${location.pathname}${location.search}`;
-
-    store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, (urls) =>
-      getLastVisitedUrlsAfterLeavingNavigationMenuTab({
-        lastVisitedUrls: urls,
-        leftTabId: tabId,
-        tabIdHoldingCurrentPage: store.get(
-          navigationMenuTabIdHoldingCurrentPageState.atom,
-        ),
-        currentUrl,
-      }),
-    );
-  };
-
   const switchToNavigationMenuTab = (tabId: string | null) => {
     const previousTabId = store.get(currentNavigationMenuTabIdState.atom);
     const shouldOpenTabPage =
@@ -144,15 +123,8 @@ export const useSwitchNavigationDrawerTab = () => {
     store.set(navigationMenuTabIdToOpenFirstItemState.atom, null);
 
     if (shouldOpenTabPage) {
-      rememberCurrentPageForTab(previousTabId);
-
-      const lastVisitedUrl = store.get(
-        lastVisitedUrlByNavigationMenuTabKeyState.atom,
-      )[getNavigationMenuTabFolderKey(tabId)];
-
-      if (isDefined(lastVisitedUrl) || !isDefined(tabId)) {
-        store.set(navigationMenuTabIdHoldingCurrentPageState.atom, tabId);
-        openNavigationMenuPage(lastVisitedUrl ?? defaultHomePagePath);
+      if (!isDefined(tabId)) {
+        openNavigationMenuPage(defaultHomePagePath);
         return;
       }
 
