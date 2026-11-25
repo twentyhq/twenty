@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isMarketplaceApplication } from 'src/engine/core-modules/application/application-manifest/utils/is-marketplace-application.util';
 import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
+import { type UniversalFlatRole } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-role.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
@@ -33,38 +34,27 @@ const isMarketplaceApplicationBuild = (
   );
 };
 
-// Only a manifest sync knows the app's requested and agent roles, so other builds skip this check
-export const getMarketplaceApplicationStandaloneRoleErrors = ({
-  roleUniversalIdentifier,
+// Members and API keys must not hold a role an app upgrade can widen
+export const getMarketplaceApplicationRoleAssignabilityErrors = ({
+  flatRole,
   buildOptions,
 }: {
-  roleUniversalIdentifier: string;
+  flatRole: Pick<
+    UniversalFlatRole,
+    'canBeAssignedToUsers' | 'canBeAssignedToApiKeys'
+  >;
   buildOptions: WorkspaceMigrationValidationBuildOptions;
-}): FlatEntityValidationError[] => {
-  const {
-    applicationDefaultRoleUniversalIdentifier,
-    applicationAgentRoleUniversalIdentifiers = [],
-  } = buildOptions;
-
-  if (
-    !isDefined(applicationDefaultRoleUniversalIdentifier) ||
-    roleUniversalIdentifier === applicationDefaultRoleUniversalIdentifier ||
-    applicationAgentRoleUniversalIdentifiers.includes(
-      roleUniversalIdentifier,
-    ) ||
-    !isMarketplaceApplicationBuild(buildOptions)
-  ) {
-    return [];
-  }
-
-  return [
-    {
-      code: PermissionsExceptionCode.MARKETPLACE_APPLICATION_STANDALONE_ROLE,
-      message: t`A marketplace application can only declare its application role and its agents' roles`,
-      userFriendlyMessage: msg`A marketplace application can only declare its application role and its agents' roles.`,
-    },
-  ];
-};
+}): FlatEntityValidationError[] =>
+  (flatRole.canBeAssignedToUsers || flatRole.canBeAssignedToApiKeys) &&
+  isMarketplaceApplicationBuild(buildOptions)
+    ? [
+        {
+          code: PermissionsExceptionCode.MARKETPLACE_APPLICATION_ROLE_ASSIGNABILITY,
+          message: t`A marketplace application role can only be assigned to agents`,
+          userFriendlyMessage: msg`A marketplace application role can only be assigned to agents.`,
+        },
+      ]
+    : [];
 
 export const getMarketplaceApplicationRoleRestrictionErrors = ({
   buildOptions,

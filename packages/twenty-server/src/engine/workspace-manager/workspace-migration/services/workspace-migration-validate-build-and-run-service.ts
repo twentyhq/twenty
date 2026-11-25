@@ -54,7 +54,6 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
-  applicationAgentRoleUniversalIdentifiers?: string[];
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
@@ -73,7 +72,6 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   isSystemBuild: boolean;
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
-  applicationAgentRoleUniversalIdentifiers?: string[];
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
@@ -328,7 +326,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild = false,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
-    applicationAgentRoleUniversalIdentifiers,
     idByUniversalIdentifierByMetadataName,
     dryRun,
     shouldDeferActions,
@@ -388,7 +385,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         isSystemBuild,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
-        applicationAgentRoleUniversalIdentifiers,
         providedIdByUniversalIdentifierByMetadataName:
           idByUniversalIdentifierByMetadataName,
         dryRun,
@@ -411,7 +407,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     isSystemBuild,
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
-    applicationAgentRoleUniversalIdentifiers,
     providedIdByUniversalIdentifierByMetadataName,
     dryRun,
     shouldDeferActions,
@@ -462,7 +457,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
-        applicationAgentRoleUniversalIdentifiers,
       },
       fromToAllFlatEntityMaps,
       workspaceId,
