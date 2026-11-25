@@ -171,29 +171,22 @@ export const NavigationMenuItemActions = ({
       hasSubMenu: true,
       onClick: () => goToPage('folders'),
     },
-    ...(isAtContainerTopLevel
-      ? []
-      : [
-          {
-            id: 'before',
-            label: t`Add item before`,
-            Icon: IconRowInsertTop,
-            hasSubMenu: true,
-            onClick: () =>
-              onAdd({ parentId: item.parentId ?? undefined, position: index }),
-          },
-          {
-            id: 'after',
-            label: t`Add item after`,
-            Icon: IconRowInsertBottom,
-            hasSubMenu: true,
-            onClick: () =>
-              onAdd({
-                parentId: item.parentId ?? undefined,
-                position: index + 1,
-              }),
-          },
-        ]),
+    {
+      id: 'before',
+      label: t`Add item before`,
+      Icon: IconRowInsertTop,
+      hasSubMenu: true,
+      onClick: () =>
+        onAdd({ parentId: item.parentId ?? undefined, position: index }),
+    },
+    {
+      id: 'after',
+      label: t`Add item after`,
+      Icon: IconRowInsertBottom,
+      hasSubMenu: true,
+      onClick: () =>
+        onAdd({ parentId: item.parentId ?? undefined, position: index + 1 }),
+    },
     {
       id: 'remove',
       label: t`Remove from sidebar`,
@@ -202,11 +195,16 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => remove(item.id)),
     },
   ];
+  const addItemActionIds = ['before', 'after'];
+  const visibleActions = isAtContainerTopLevel
+    ? actions.filter((option) => !addItemActionIds.includes(option.id))
+    : actions;
+
   return (
     <>
       <Dropdown.Page id="root">
         <Dropdown.Section>
-          {actions.map((option) => (
+          {visibleActions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
           ))}
         </Dropdown.Section>
