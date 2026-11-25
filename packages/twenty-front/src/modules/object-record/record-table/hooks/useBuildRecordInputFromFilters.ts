@@ -1,5 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordFilterValueDependenciesContext } from '@/object-record/record-filter/contexts/RecordFilterValueDependenciesContext';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { buildRecordInputFromFilter } from '@/object-record/record-table/utils/buildRecordInputFromFilter';
@@ -22,6 +23,10 @@ export const useBuildRecordInputFromFilters = ({
     instanceId,
   );
 
+  const objectPermissions = useObjectPermissionsForObject(
+    objectMetadataItem.id,
+  );
+
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const { currentRecord } = useContext(RecordFilterValueDependenciesContext);
@@ -32,6 +37,7 @@ export const useBuildRecordInputFromFilters = ({
     return buildRecordInputFromFilter({
       currentRecordFilters,
       objectMetadataItem,
+      uneditableFields: objectPermissions.uneditableFields,
       currentWorkspaceMember: currentWorkspaceMember ?? undefined,
       currentRecordId: currentRecord?.id,
       timeZone: userTimezone,

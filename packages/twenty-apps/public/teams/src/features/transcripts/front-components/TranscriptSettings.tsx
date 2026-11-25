@@ -11,7 +11,6 @@ export const TranscriptSettings = () => {
   const { settingValue, isSaving, hasSaveError, updateSetting } =
     useFeatureSetting({
       variableKey: TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY,
-      isAvailable: true,
     });
 
   const handleChange = (isEnabled: boolean) => {
@@ -26,7 +25,6 @@ export const TranscriptSettings = () => {
         description={t(
           'Write an AI summary on each Call Recording imported from Microsoft Teams. Each summary uses AI credits.',
         )}
-        isAvailable
         isEnabled={settingValue === 'true'}
         isSaving={isSaving}
         hasSaveError={hasSaveError}

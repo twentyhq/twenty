@@ -3,8 +3,7 @@ import { Dropdown } from 'twenty-ui/components/navigation';
 import { isFieldMetadataItemFilterableAndSortableSelector } from '@/object-metadata/states/isFieldMetadataItemFilterableAndSortableSelector';
 import { isFieldMetadataItemLabelIdentifierSelector } from '@/object-metadata/states/isFieldMetadataItemLabelIdentifierSelector';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
-import { useRecordFieldLookupTarget } from '@/object-record/record-column-lookup/hooks/useRecordFieldLookupTarget';
-import { useScopedRelationAlias } from '@/object-record/record-column-scope/hooks/useScopedRelationAlias';
+import { useRecordFieldColumnKind } from '@/object-record/record-column-scope/hooks/useRecordFieldColumnKind';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
 import { isCanonicalRecordField } from '@/object-record/record-field/utils/isCanonicalRecordField';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -17,7 +16,6 @@ import { useOpenEditColumnInSidePanel } from '@/side-panel/hooks/useOpenEditColu
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -89,8 +87,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
+  const columnKind = useRecordFieldColumnKind(recordField.id);
+
   const lookupTargetFieldMetadataItem =
-    useRecordFieldLookupTarget(recordField)?.lookupTargetFieldMetadataItem;
+    columnKind.kind === 'lookup'
+      ? columnKind.lookupTarget.lookupTargetFieldMetadataItem
+      : undefined;
 
   const handleToggleColumnSort = useHandleToggleColumnSort({
     objectMetadataItemId: objectMetadataId,
@@ -113,9 +115,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
     });
   };
 
-  const isSummaryColumn = isDefined(
-    recordField.relationScope?.aggregateOperation,
-  );
+  const isSummaryColumn = columnKind.kind === 'summary';
 
   const { isFilterable: isFieldFilterable, isSortable: isFieldSortable } =
     useAtomFamilySelectorValue(
@@ -137,9 +137,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
 
   const { deleteRecordTableColumn } = useDeleteRecordTableColumn(recordTableId);
 
-  const isScopedRelationColumn = isDefined(
-    useScopedRelationAlias(recordField.id),
-  );
+  const isScopedRelationColumn = 'scopedRelationAlias' in columnKind;
   const canAddLookupColumns = useCanAddRecordTableLookupColumns();
 
   const canEditColumn = canAddLookupColumns && isScopedRelationColumn;
@@ -147,25 +145,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
   const { openEditColumnInSidePanel } =
     useOpenEditColumnInSidePanel(recordTableId);
 
-  const hasColumnActions =
-    canMoveLeft || canMoveRight || canHide || canEditColumn || canDeleteColumn;
-  const showSeparator = (isFilterable || isSortable) && hasColumnActions;
+  const hasMoveOrHideActions = canMoveLeft || canMoveRight || canHide;
+  const showSeparator =
+    (isFilterable || isSortable) && (hasMoveOrHideActions || canDeleteColumn);
 
-  return (
-    <Dropdown.Section>
-      {isFilterable && (
-        <Dropdown.ActionItem
-          startIcon={<IconFilter />}
-          onClick={handleFilterClick}
-        >{t`Filter`}</Dropdown.ActionItem>
-      )}
-      {isSortable && (
-        <Dropdown.ActionItem
-          startIcon={<IconArrowsSort />}
-          onClick={handleSortClick}
-        >{t`Sort`}</Dropdown.ActionItem>
-      )}
-      {showSeparator && <Dropdown.Separator />}
+  const moveAndHideItems = (
+    <>
       {canMoveLeft && (
         <Dropdown.ActionItem
           startIcon={<IconArrowLeft />}
@@ -186,23 +171,58 @@ export const RecordTableColumnHeadDropdownMenu = ({
           onClick={handleColumnVisibility}
         >{t`Hide`}</Dropdown.ActionItem>
       )}
-      {canEditColumn && (
+    </>
+  );
+
+  const deleteColumnItem = canDeleteColumn && (
+    <Dropdown.ActionItem
+      startIcon={<IconTrash />}
+      onClick={() => deleteRecordTableColumn(recordField.id)}
+    >
+      {isScopedRelationColumn ? t`Delete summary column` : t`Delete column`}
+    </Dropdown.ActionItem>
+  );
+
+  if (isScopedRelationColumn) {
+    return (
+      <Dropdown.Section>
+        {canEditColumn && (
+          <Dropdown.ActionItem
+            startIcon={<IconEdit />}
+            onClick={() =>
+              openEditColumnInSidePanel({
+                fieldMetadataItemId: recordField.fieldMetadataItemId,
+                recordFieldId: recordField.id,
+              })
+            }
+          >{t`Edit summary column…`}</Dropdown.ActionItem>
+        )}
+        {deleteColumnItem}
+        {(canEditColumn || canDeleteColumn) && hasMoveOrHideActions && (
+          <Dropdown.Separator />
+        )}
+        {moveAndHideItems}
+      </Dropdown.Section>
+    );
+  }
+
+  return (
+    <Dropdown.Section>
+      {isFilterable && (
         <Dropdown.ActionItem
-          startIcon={<IconEdit />}
-          onClick={() =>
-            openEditColumnInSidePanel({
-              fieldMetadataItemId: recordField.fieldMetadataItemId,
-              recordFieldId: recordField.id,
-            })
-          }
-        >{t`Edit column`}</Dropdown.ActionItem>
+          startIcon={<IconFilter />}
+          onClick={handleFilterClick}
+        >{t`Filter`}</Dropdown.ActionItem>
       )}
-      {canDeleteColumn && (
+      {isSortable && (
         <Dropdown.ActionItem
-          startIcon={<IconTrash />}
-          onClick={() => deleteRecordTableColumn(recordField.id)}
-        >{t`Delete column`}</Dropdown.ActionItem>
+          startIcon={<IconArrowsSort />}
+          onClick={handleSortClick}
+        >{t`Sort`}</Dropdown.ActionItem>
       )}
+      {showSeparator && <Dropdown.Separator />}
+      {moveAndHideItems}
+      {deleteColumnItem}
     </Dropdown.Section>
   );
 };

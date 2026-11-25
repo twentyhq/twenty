@@ -105,6 +105,7 @@ describe('useUninstallApplication', () => {
         state: JobState.COMPLETED,
         attemptsMade: 1,
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 
@@ -143,6 +144,7 @@ describe('useUninstallApplication', () => {
         attemptsMade: 1,
         failedReason: 'This application cannot be uninstalled.',
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 
@@ -184,6 +186,7 @@ describe('useUninstallApplication', () => {
         attemptsMade: 1,
         progress: 80,
         enqueuedAt: 1,
+        scheduledAt: 1,
       });
     });
 

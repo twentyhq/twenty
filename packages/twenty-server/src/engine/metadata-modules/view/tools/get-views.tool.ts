@@ -46,7 +46,7 @@ export class GetViewsTool extends BaseTool<typeof getViewsInputSchema> {
 
   async execute({
     input,
-    context: { workspaceId, userWorkspaceId },
+    context: { workspaceId },
   }: ToolExecuteArgs<typeof getViewsInputSchema>): Promise<ToolOutput> {
     const views = isNonEmptyString(input.objectNameSingular)
       ? await this.viewService.findByObjectMetadataId(
@@ -55,9 +55,8 @@ export class GetViewsTool extends BaseTool<typeof getViewsInputSchema> {
             workspaceId,
             objectNameSingular: input.objectNameSingular,
           }),
-          userWorkspaceId,
         )
-      : await this.viewService.findByWorkspaceId(workspaceId, userWorkspaceId);
+      : await this.viewService.findByWorkspaceId(workspaceId);
 
     const limitedViews = views.slice(0, input.limit);
 
@@ -71,7 +70,7 @@ export class GetViewsTool extends BaseTool<typeof getViewsInputSchema> {
           objectMetadataId: view.objectMetadataId,
           type: view.type,
           icon: view.icon,
-          visibility: view.visibility,
+          isPrivate: view.isPrivate,
           position: view.position,
         })),
       },

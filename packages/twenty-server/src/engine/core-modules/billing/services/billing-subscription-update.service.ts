@@ -296,14 +296,14 @@ export class BillingSubscriptionUpdateService {
     persist: () => Promise<TPersisted>;
   }): Promise<
     | { isPaymentDeclined: true }
-    | { isPaymentDeclined: false; persisted: TPersisted }
+    | { isPaymentDeclined: false; isCharged: boolean; persisted: TPersisted }
   > {
-    if (
-      !(await this.billingApplicationSyncService.isApplicationBillingActive(
-        workspaceId,
-      ))
-    ) {
-      return { isPaymentDeclined: false, persisted: await persist() };
+    if (!this.billingApplicationSyncService.isApplicationBillingActive()) {
+      return {
+        isPaymentDeclined: false,
+        isCharged: false,
+        persisted: await persist(),
+      };
     }
 
     await this.billingApplicationProductService.createMissingProducts(
@@ -316,7 +316,11 @@ export class BillingSubscriptionUpdateService {
       });
 
     if (!isDefined(billingSubscription)) {
-      return { isPaymentDeclined: false, persisted: await persist() };
+      return {
+        isPaymentDeclined: false,
+        isCharged: false,
+        persisted: await persist(),
+      };
     }
 
     const applyApplicationsUpdate = (
@@ -353,6 +357,7 @@ export class BillingSubscriptionUpdateService {
         try {
           return {
             isPaymentDeclined: false as const,
+            isCharged: true,
             persisted: await persist(),
           };
         } catch (error) {

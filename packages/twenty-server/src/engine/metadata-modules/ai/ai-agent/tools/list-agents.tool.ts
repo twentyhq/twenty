@@ -31,11 +31,10 @@ export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
   }
 
   async execute({
-    context: { workspaceId, userWorkspaceId, application, authContext },
+    context: { workspaceId, application, authContext },
   }: ToolExecuteArgs<typeof listAgentsInputSchema>): Promise<ToolOutput> {
     const agents = await this.agentService.findManyAgents({
       workspaceId,
-      userWorkspaceId,
     });
 
     const listedAgents = agents

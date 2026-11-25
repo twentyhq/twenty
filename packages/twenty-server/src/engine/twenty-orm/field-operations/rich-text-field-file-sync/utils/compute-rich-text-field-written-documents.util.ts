@@ -2,7 +2,6 @@ import { extractFilesFieldFileIdsFromRichTextValue } from 'src/engine/core-modul
 import { type RichTextFieldWrittenDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/types/rich-text-field-written-document.type';
 import { isRewritingRichTextDocument } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/utils/is-rewriting-rich-text-document.util';
 
-// A document that references no file and drops none has nothing to sync.
 export const computeRichTextFieldWrittenDocuments = ({
   payload,
   recordBeforeWrite,

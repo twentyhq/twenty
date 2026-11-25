@@ -4,11 +4,7 @@ import {
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewOpenRecordIn, ViewType } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -78,6 +74,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     updatedAt: createdAt,
     deletedAt: null,
     anyFieldFilterValue: createViewInput.anyFieldFilterValue ?? null,
+    presetFilter: createViewInput.presetFilter ?? null,
     calendarFieldMetadataUniversalIdentifier,
     calendarEndFieldMetadataUniversalIdentifier,
     calendarLayout: createViewInput.calendarLayout ?? null,
@@ -97,7 +94,7 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     position: createViewInput.position ?? 0,
     type: createViewInput.type ?? ViewType.TABLE,
     universalIdentifier: createViewInput.universalIdentifier ?? v4(),
-    visibility: createViewInput.visibility ?? ViewVisibility.WORKSPACE,
+    isPrivate: createViewInput.isPrivate ?? false,
     createdByUserWorkspaceId: createdByUserWorkspaceId ?? null,
     isActive: true,
     isSystemSideEffect: false,

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { NO_ROLE_RECORDS_PERMISSIONS } from 'src/engine/permissions/constants/no-role-records-permissions.constant';
-import { followUpdateWhenCreatePermissionIsDisabled } from 'src/engine/permissions/internal/role/utils/follow-update-when-create-permission-is-disabled.util';
 import { computePrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/compute-principals-records-permissions.util';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -36,7 +35,6 @@ export class SettingPermissionsService {
     workspaceId: string;
   }): Promise<UserWorkspacePermissions> {
     const {
-      featureFlagsMap,
       userWorkspaceRoleMap,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
@@ -44,7 +42,6 @@ export class SettingPermissionsService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'featureFlagsMap',
       'userWorkspaceRoleMap',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
@@ -74,17 +71,14 @@ export class SettingPermissionsService {
 
     return {
       permissionFlags,
-      recordsPermissions: followUpdateWhenCreatePermissionIsDisabled({
-        recordsPermissions: computePrincipalsRecordsPermissions({
-          principals: buildRolePermissionsPrincipals({
-            workspaceId,
-            roleIds,
-          }),
-          rolesPermissions,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
+      recordsPermissions: computePrincipalsRecordsPermissions({
+        principals: buildRolePermissionsPrincipals({
+          workspaceId,
+          roleIds,
         }),
-        featureFlagsMap,
+        rolesPermissions,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
       }),
     };
   }

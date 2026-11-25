@@ -226,12 +226,8 @@ export default defineMessagingProvider({
   universalIdentifier: '8a9b0c1d-2e3f-4a5b-8c6d-7e8f9a0b1c2d',
   name: 'linkedin-messaging',
   displayName: 'LinkedIn Messages',
-  connectionProvider: {
-    universalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
-  },
-  sendMessageLogicFunction: {
-    universalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
-  },
+  connectionProviderUniversalIdentifier: '5b0e6f3a-2c4d-4e8f-9a1b-7c6d5e4f3a2b',
+  sendMessageLogicFunctionUniversalIdentifier: 'f7d4b5e6-9a8c-4d0e-1f2a-3b4c5d6e7f80',
   conversationStyle: 'chat',
 });
 ```
@@ -297,18 +293,16 @@ Twenty registra quindi la risposta nella conversazione come messaggio in uscita 
 
 La funzione viene eseguita all'interno della richiesta `sendAppChannelMessage`. Se genera un'eccezione o non restituisce alcun `externalId`, la mutazione non riesce e non viene registrato nulla.
 
-Una volta che la funzione restituisce un valore, Twenty conserva la consegna per 24 ore per il membro, il canale, il thread e l'`idempotencyKey`. Se la registrazione della risposta non riesce, la mutazione non riesce e ritentandola con la stessa chiave viene registrata la risposta recapitata senza richiamare la funzione; un nuovo tentativo di una risposta già registrata la restituisce. Un nuovo tentativo mentre la prima chiamata sta ancora inviando attende che termini. Una nuova chiave corrisponde a una nuova risposta. La tua funzione può comunque essere chiamata due volte per una risposta se il client ritenta con una nuova chiave o dopo queste 24 ore, oppure se la funzione stessa non riesce dopo che il provider ha accettato il messaggio; inoltra quindi `idempotencyKey` al provider quando la sua API supporta invii idempotenti. Un canale con `isSyncEnabled: false` rifiuta le risposte senza chiamare la tua funzione. Un canale senza provider di messaggistica, o il cui provider non dispone di `sendMessageLogicFunction` o non esiste più, non può inviare; le sue conversazioni rimangono invariate. Richiede `"engines": { "twenty": ">=2.52.0" }`.
+Una volta che la funzione restituisce un valore, Twenty conserva la consegna per 24 ore per il membro, il canale, il thread e l'`idempotencyKey`. Se la registrazione della risposta non riesce, la mutazione non riesce e ritentandola con la stessa chiave viene registrata la risposta recapitata senza richiamare la funzione; un nuovo tentativo di una risposta già registrata la restituisce. Un nuovo tentativo mentre la prima chiamata sta ancora inviando attende che termini. Una nuova chiave corrisponde a una nuova risposta. La tua funzione può comunque essere chiamata due volte per una risposta se il client ritenta con una nuova chiave o dopo queste 24 ore, oppure se la funzione stessa non riesce dopo che il provider ha accettato il messaggio; inoltra quindi `idempotencyKey` al provider quando la sua API supporta invii idempotenti. Un canale con `isSyncEnabled: false` rifiuta le risposte senza chiamare la tua funzione. Un canale senza provider di messaggistica, oppure il cui provider non dispone di `sendMessageLogicFunctionUniversalIdentifier` o non esiste più, non può inviare messaggi; le relative conversazioni rimangono invariate. Richiede `"engines": { "twenty": ">=2.52.0" }`.
 
 ## Contrassegnare le conversazioni come lette
 
-Twenty non mantiene alcuno stato di lettura per i messaggi dell'app, ma può informare il provider quando un membro legge una conversazione in Twenty, affinché il provider la contrassegni come letta a monte. Dichiara una `markThreadAsReadLogicFunction` sul provider di messaggistica:
+Twenty non mantiene alcuno stato di lettura per i messaggi dell'app, ma può informare il provider quando un membro legge una conversazione in Twenty, affinché il provider la contrassegni come letta a monte. Dichiara un `markThreadAsReadLogicFunctionUniversalIdentifier` sul provider di messaggistica:
 
 ```ts src/messaging-providers/linkedin-messaging.ts
 export default defineMessagingProvider({
   // ...
-  markThreadAsReadLogicFunction: {
-    universalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
-  },
+  markThreadAsReadLogicFunctionUniversalIdentifier: '2c3d4e5f-6a7b-4c8d-9e0f-1a2b3c4d5e6f',
 });
 ```
 
@@ -326,7 +320,7 @@ export const linkedinMarkThreadAsReadHandler = async ({
 };
 ```
 
-Quando il proprietario dell'account del canale apre una delle sue conversazioni, Twenty chiama la mutation `markAppChannelThreadAsRead`, che esegue la tua funzione con `messagingProviderName`, `connectedAccountId`, `messageChannelId` e `threadExternalId` della conversazione. Il relativo valore restituito viene ignorato. I membri con cui l'account è condiviso non lo attivano mai e le chiamate per lo stesso membro e thread vengono ignorate per 30 secondi, quindi riaprire una conversazione non richiama il provider. La chiamata viene eseguita al meglio: il thread si apre indipendentemente da ciò che fa la funzione. Un provider senza `markThreadAsReadLogicFunction` non viene mai chiamato. Richiede `"engines": { "twenty": ">=2.59.0" }`.
+Quando il proprietario dell'account del canale apre una delle sue conversazioni, Twenty chiama la mutation `markAppChannelThreadAsRead`, che esegue la tua funzione con `messagingProviderName`, `connectedAccountId`, `messageChannelId` e `threadExternalId` della conversazione. Il relativo valore restituito viene ignorato. I membri con cui l'account è condiviso non lo attivano mai e le chiamate per lo stesso membro e thread vengono ignorate per 30 secondi, quindi riaprire una conversazione non richiama il provider. La chiamata viene eseguita al meglio: il thread si apre indipendentemente da ciò che fa la funzione. Un provider senza `markThreadAsReadLogicFunctionUniversalIdentifier` non viene mai chiamato. Richiede `"engines": { "twenty": ">=2.59.0" }`.
 
 ## Elenco e aggiornamento dei canali
 
@@ -387,9 +381,7 @@ export default defineConnectionProvider({
   oauth: {
     /* ... */
   },
-  onConnectLogicFunction: {
-    universalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
-  },
+  onConnectLogicFunctionUniversalIdentifier: HELPDESK_ON_CONNECT_UNIVERSAL_IDENTIFIER,
 });
 ```
 

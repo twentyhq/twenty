@@ -9,8 +9,7 @@ import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { RichTextFieldFileSync } from 'src/engine/twenty-orm/field-operations/rich-text-field-file-sync/rich-text-field-file-sync';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -412,7 +411,9 @@ describe('Rich text field <> files sync', () => {
     // An older save dropping the file finishes after the newer one stored it again.
     await new RichTextFieldFileSync({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-    } as WorkspaceInternalContext).syncOwnedFiles({
+      flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
+    }).syncOwnedFiles({
       recordWrites: [
         {
           recordId,

@@ -43,6 +43,7 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
+import { type ExecutableFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-drivers/types/executable-flat-logic-function.type';
 import { LogicFunctionExecutionThrottleService } from 'src/engine/core-modules/logic-function/logic-function-execution-throttle/logic-function-execution-throttle.service';
 import { buildLogicFunctionErrorLogLine } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-error-log-line.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
@@ -106,7 +107,7 @@ export enum LogicFunctionExecutionExceptionCode {
 type ExecutionArgs = {
   workspaceId: string;
   flatApplication: FlatApplication;
-  flatLogicFunction: FlatLogicFunction;
+  flatLogicFunction: ExecutableFlatLogicFunction;
   flatApplicationVariableMaps: FlatApplicationVariableMaps;
   spenders: UsageSpenders;
   payload: object;
@@ -178,6 +179,7 @@ export class LogicFunctionExecutorService {
   async execute({
     logicFunctionId,
     workspaceId,
+    handlerName,
     ...executionArgs
   }: {
     logicFunctionId: string;
@@ -188,6 +190,7 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
+    handlerName?: string;
   } & ExecutionAdmissionOptions): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -199,7 +202,9 @@ export class LogicFunctionExecutorService {
       ...executionArgs,
       workspaceId,
       flatApplication,
-      flatLogicFunction,
+      flatLogicFunction: isDefined(handlerName)
+        ? { ...flatLogicFunction, handlerName }
+        : flatLogicFunction,
       flatApplicationVariableMaps,
       spenders: {
         logicFunctionId: flatLogicFunction.id,

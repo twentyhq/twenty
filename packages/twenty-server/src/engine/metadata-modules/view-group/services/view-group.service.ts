@@ -9,8 +9,8 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/types/flat-view-group.type';
-import { findFlatViewAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-available-to-user.util';
-import { findManyFlatViewChildrenAvailableToUser } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-available-to-user.util';
+import { findFlatViewVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-flat-view-visible-to-caller.util';
+import { findManyFlatViewChildrenVisibleToCaller } from 'src/engine/metadata-modules/flat-view/utils/find-many-flat-view-children-visible-to-caller.util';
 import { sortViewGroupsByPosition } from 'src/engine/metadata-modules/flat-view/utils/sort-view-groups-by-position.util';
 import { fromCreateViewGroupInputToFlatViewGroupToCreate } from 'src/engine/metadata-modules/flat-view-group/utils/from-create-view-group-input-to-flat-view-group-to-create.util';
 import { fromDestroyViewGroupInputToFlatViewGroupOrThrow } from 'src/engine/metadata-modules/flat-view-group/utils/from-destroy-view-group-input-to-flat-view-group-or-throw.util';
@@ -315,22 +315,16 @@ export class ViewGroupService {
       );
     }
 
-    return fromFlatViewGroupToViewGroupDto({
-      ...existingFlatViewGroup,
-      deletedAt: new Date().toISOString(),
-    });
+    return fromFlatViewGroupToViewGroupDto(existingFlatViewGroup);
   }
 
   async findByWorkspaceId({
     workspaceId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewGroupDTO[]> {
-    const flatViewGroups = await this.findManyFlatViewGroupsVisibleToUser({
+    const flatViewGroups = await this.findManyFlatViewGroupsVisibleToCaller({
       workspaceId,
-      userWorkspaceId,
     });
 
     return flatViewGroups.map(fromFlatViewGroupToViewGroupDto);
@@ -339,29 +333,24 @@ export class ViewGroupService {
   async findByViewId({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewGroupDTO[]> {
-    const flatViewGroups = await this.findManyFlatViewGroupsVisibleToUser({
+    const flatViewGroups = await this.findManyFlatViewGroupsVisibleToCaller({
       workspaceId,
       viewId,
-      userWorkspaceId,
     });
 
     return flatViewGroups.map(fromFlatViewGroupToViewGroupDto);
   }
 
-  private async findManyFlatViewGroupsVisibleToUser({
+  private async findManyFlatViewGroupsVisibleToCaller({
     workspaceId,
     viewId,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     viewId?: string;
-    userWorkspaceId: string | undefined;
   }): Promise<FlatViewGroup[]> {
     const { flatViewGroupMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -372,12 +361,11 @@ export class ViewGroupService {
       );
 
     return sortViewGroupsByPosition(
-      findManyFlatViewChildrenAvailableToUser({
+      findManyFlatViewChildrenVisibleToCaller({
         flatViewMaps,
         flatViewChildMaps: flatViewGroupMaps,
         flatViewChildIdsKey: 'viewGroupIds',
         viewId,
-        userWorkspaceId,
       }),
     );
   }
@@ -385,11 +373,9 @@ export class ViewGroupService {
   async findByIdOrThrow({
     id,
     workspaceId,
-    userWorkspaceId,
   }: {
     id: string;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<ViewGroupDTO> {
     const { flatViewGroupMaps, flatViewMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -405,12 +391,10 @@ export class ViewGroupService {
 
     if (
       !isDefined(flatViewGroup) ||
-      flatViewGroup.deletedAt !== null ||
       !isDefined(
-        findFlatViewAvailableToUser({
+        findFlatViewVisibleToCaller({
           viewId: flatViewGroup.viewId,
           flatViewMaps,
-          userWorkspaceId,
         }),
       )
     ) {

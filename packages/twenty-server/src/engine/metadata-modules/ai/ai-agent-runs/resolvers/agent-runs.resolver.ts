@@ -18,7 +18,6 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
@@ -74,15 +73,12 @@ export class AgentRunsResolver {
     @Args('limit', { type: () => Int, defaultValue: 100 }) limit: number,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentRunDTO[]> {
     // The application target guard lets unknown ids through, and turns outlive
     // their agent, so a deleted agent's runs would otherwise reach any app
     await this.agentService.findOneAgentById({
       id: agentId,
       workspaceId,
-      userWorkspaceId,
     });
 
     return this.agentRunsService.findAgentRuns({
@@ -99,12 +95,9 @@ export class AgentRunsResolver {
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentRunSummaryDTO[]> {
     const flatAgents = await this.agentService.findManyAgents({
       workspaceId,
-      userWorkspaceId,
     });
 
     return this.agentRunStatisticsService.findRunSummaries({
@@ -138,14 +131,11 @@ export class AgentRunsResolver {
     agentId: string,
     @Args() { timeZone }: AgentRunInsightsArgs,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentRunInsightsDTO> {
     // Same reason as agentRuns: turns outlive their agent
     await this.agentService.findOneAgentById({
       id: agentId,
       workspaceId,
-      userWorkspaceId,
     });
 
     return this.agentRunStatisticsService.findRunInsights({

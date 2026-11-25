@@ -38,7 +38,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   },
   [FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED]: {
     label: msg`Customizable sidebar`,
-    description: msg`Show sidebar tabs and sections.`,
+    description: msg`Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place.`,
   },
   [FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED]: {
     label: msg`AI chat component builder`,
@@ -55,10 +55,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_MCP_SERVERS_ENABLED]: {
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
-  },
-  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: {
-    label: msg`Create records permission`,
-    description: msg`Check the create permission on its own when creating records, rather than the update permission.`,
   },
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
     label: msg`Related record paths`,
@@ -81,10 +77,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
-  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: {
-    label: msg`Message attachments`,
-    description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
-  },
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,
@@ -101,12 +93,20 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Group tabs`,
     description: msg`Let grouped table and list views show their groups as tabs, one group at a time. Enable after the instance upgrade completes.`,
   },
-  [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED]: {
-    label: msg`Application price billing`,
-    description: msg`Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet.`,
+  [FeatureFlagKey.IS_FORMULA_FIELD_ENABLED]: {
+    label: msg`Formula fields`,
+    description: msg`Let text, number, boolean and date fields compute their value from an expression over the record and its related records.`,
   },
   [FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED]: {
     label: msg`Lookup columns`,
     description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,
+  },
+  [FeatureFlagKey.IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED]: {
+    label: msg`Widget visibility rule tree`,
+    description: msg`Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules.`,
+  },
+  [FeatureFlagKey.IS_INBOX_OBJECT_NAMING_ENABLED]: {
+    label: msg`Inbox object names`,
+    description: msg`Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand.`,
   },
 };

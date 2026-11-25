@@ -1,6 +1,5 @@
 import { type RawQueryExecutor } from 'src/engine/twenty-orm/field-operations/file-lifecycle/types/raw-query-executor.type';
 
-// A file matches once: the first write to claim a temporary upload keeps it.
 export const claimTemporaryFiles = async ({
   executeRawQuery,
   workspaceId,

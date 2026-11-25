@@ -28,7 +28,7 @@ export const filterGettingStartedStepActionKeys = ({
       (hasCalendarBookingPage ||
         stepActionKey !== GettingStartedStepActionKey.BOOK_CALL) &&
       GETTING_STARTED_STEP_PERMISSION_FLAGS[stepActionKey].every(
-        (permissionFlag) => permissionFlags[permissionFlag] === true,
+        (permissionFlag) => permissionFlags[permissionFlag],
       ) &&
       (hasSendingMailbox ||
         !isDefined(gettingStartedWorkflow) ||
