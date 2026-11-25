@@ -34,6 +34,7 @@ export const VIEW_FRAGMENT = gql`
     presetFilter
     calendarFieldMetadataId
     calendarEndFieldMetadataId
+    listDateFieldMetadataId
     calendarLayout
     isPrivate
     createdByUserWorkspaceId

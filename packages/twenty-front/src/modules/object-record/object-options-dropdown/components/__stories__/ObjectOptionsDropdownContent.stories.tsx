@@ -155,19 +155,28 @@ const SAVABLE_VIEW: ViewWithRelations = {
   isPrivate: true,
 };
 
-const SavableCurrentViewDecorator: Decorator = (Story) => {
-  const setContextStoreCurrentViewId = useSetAtomComponentState(
-    contextStoreCurrentViewIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
-  );
-
-  useEffect(() => {
-    setTestViewsInMetadataStore(jotaiStore, [SAVABLE_VIEW]);
-    setContextStoreCurrentViewId(SAVABLE_VIEW.id);
-  }, [setContextStoreCurrentViewId]);
-
-  return <Story />;
+const SAVABLE_LIST_VIEW: ViewWithRelations = {
+  ...SAVABLE_VIEW,
+  type: ViewType.LIST,
 };
+
+const createCurrentViewDecorator =
+  (currentView: ViewWithRelations): Decorator =>
+  (Story) => {
+    const setContextStoreCurrentViewId = useSetAtomComponentState(
+      contextStoreCurrentViewIdComponentState,
+      MAIN_CONTEXT_STORE_INSTANCE_ID,
+    );
+
+    useEffect(() => {
+      setTestViewsInMetadataStore(jotaiStore, [currentView]);
+      setContextStoreCurrentViewId(currentView.id);
+    }, [setContextStoreCurrentViewId]);
+
+    return <Story />;
+  };
+
+const SavableCurrentViewDecorator = createCurrentViewDecorator(SAVABLE_VIEW);
 
 // The Load limit row only renders on a grouped view, and seeding 25 rather than
 // the default 8 keeps the checked-option assertion from passing by accident.
@@ -285,6 +294,52 @@ export const RecordGroupLoadLimitSelectionAction: Story = {
 
     expect(await canvas.findByText('Load limit')).toBeInTheDocument();
     expect(canvas.getByText('50')).toBeInTheDocument();
+  },
+};
+
+export const ListDateFieldSelectionAction: Story = {
+  decorators: [
+    createCurrentViewDecorator(SAVABLE_LIST_VIEW),
+    createContentDecorator('layout'),
+  ],
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.mutation('UpdateView', ({ variables }) =>
+          HttpResponse.json({
+            data: { updateView: { ...SAVABLE_LIST_VIEW, ...variables.input } },
+          }),
+        ),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Date'));
+
+    expect(await canvas.findByRole('option', { name: 'None' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+
+    await userEvent.click(
+      canvas.getByRole('option', { name: 'Creation date' }),
+    );
+
+    expect(await canvas.findByText('Date')).toBeInTheDocument();
+    expect(canvas.getByText('Creation date')).toBeInTheDocument();
+
+    await userEvent.click(canvas.getByText('Date'));
+
+    expect(
+      await canvas.findByRole('option', { name: 'Creation date' }),
+    ).toHaveAttribute('aria-selected', 'true');
+
+    await userEvent.click(canvas.getByRole('option', { name: 'None' }));
+
+    expect(await canvas.findByText('Date')).toBeInTheDocument();
+    expect(canvas.getByText('None')).toBeInTheDocument();
   },
 };
 

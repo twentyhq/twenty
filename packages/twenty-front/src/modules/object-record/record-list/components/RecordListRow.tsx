@@ -5,12 +5,15 @@ import { CoreRecordReferenceFieldsContext } from '@/object-record/record-field/u
 import { getFieldValueSourceDefinition } from '@/object-record/record-field/ui/utils/getFieldValueSourceDefinition';
 import { isFieldValueEmpty } from '@/object-record/record-field/ui/utils/isFieldValueEmpty';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { recordIndexListDateFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexListDateFieldMetadataIdComponentState';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { RecordListRowField } from '@/object-record/record-list/components/RecordListRowField';
+import { RECORD_LIST_ROW_DATE_MAX_WIDTH } from '@/object-record/record-list/constants/RecordListRowDateMaxWidth';
 import { RECORD_LIST_ROW_LABEL_IDENTIFIER_WIDTH } from '@/object-record/record-list/constants/RecordListRowLabelIdentifierWidth';
 import { RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH } from '@/object-record/record-list/constants/RecordListRowOverflowChipSlotWidth';
 import { recordListRowWidthComponentState } from '@/object-record/record-list/states/recordListRowWidthComponentState';
 import { computeRecordListDisplayedFields } from '@/object-record/record-list/utils/computeRecordListDisplayedFields';
+import { getRecordListRowDateFieldDefinition } from '@/object-record/record-list/utils/getRecordListRowDateFieldDefinition';
 import { useOpenRecordContextMenu } from '@/object-record/record-selection/hooks/useOpenRecordContextMenu';
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useToggleRecordSelection } from '@/object-record/record-selection/hooks/useToggleRecordSelection';
@@ -77,6 +80,11 @@ const StyledOverflowChipContainer = styled.div`
   width: ${RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH}px;
 `;
 
+const StyledDateContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+`;
+
 type RecordListRowProps = {
   recordId: string;
   rowRef?: Ref<HTMLDivElement>;
@@ -104,6 +112,10 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     recordListRowWidthComponentState,
   );
 
+  const recordIndexListDateFieldMetadataId = useAtomComponentStateValue(
+    recordIndexListDateFieldMetadataIdComponentState,
+  );
+
   const { openRecordFromIndexView } = useOpenRecordFromIndexView();
 
   const isRecordSelected = useAtomComponentFamilyStateValue(
@@ -118,13 +130,32 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
     return null;
   }
 
-  const visibleRecordFieldsExceptLabelIdentifier = visibleRecordFields.filter(
-    (recordField) =>
-      recordField.fieldMetadataItemId !== labelIdentifierFieldMetadataItem?.id,
+  const dateFieldDefinition = getRecordListRowDateFieldDefinition(
+    isDefined(recordIndexListDateFieldMetadataId)
+      ? fieldDefinitionByFieldMetadataItemId[recordIndexListDateFieldMetadataId]
+      : undefined,
   );
 
-  const nonEmptyRecordFields = visibleRecordFieldsExceptLabelIdentifier.flatMap(
-    (recordField) => {
+  const displayedDateFieldDefinition =
+    isDefined(dateFieldDefinition) &&
+    !isFieldValueEmpty({
+      fieldDefinition: dateFieldDefinition,
+      fieldValue: recordStore[dateFieldDefinition.metadata.fieldName],
+    })
+      ? dateFieldDefinition
+      : undefined;
+
+  const visibleRecordFieldsExceptLabelIdentifierAndDate =
+    visibleRecordFields.filter(
+      (recordField) =>
+        recordField.fieldMetadataItemId !==
+          labelIdentifierFieldMetadataItem?.id &&
+        recordField.fieldMetadataItemId !==
+          dateFieldDefinition?.fieldMetadataId,
+    );
+
+  const nonEmptyRecordFields =
+    visibleRecordFieldsExceptLabelIdentifierAndDate.flatMap((recordField) => {
       const fieldDefinition =
         fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
 
@@ -148,12 +179,12 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
       }
 
       return [{ recordField, fieldDefinition }];
-    },
-  );
+    });
 
   const displayedFieldsLayout = computeRecordListDisplayedFields({
     rowWidth: recordListRowWidth,
     populatedFieldCount: nonEmptyRecordFields.length,
+    hasDate: isDefined(displayedDateFieldDefinition),
   });
 
   const displayedRecordFields = nonEmptyRecordFields.slice(
@@ -231,7 +262,7 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
             <RecordListRowField
               key={recordField.id}
               recordId={recordId}
-              recordField={recordField}
+              fieldMetadataItemId={recordField.fieldMetadataItemId}
               fieldDefinition={fieldDefinition}
               maxWidth={displayedFieldsLayout.displayedFieldMaxWidth}
             />
@@ -261,6 +292,18 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
                 </Chip>
               )}
             </StyledOverflowChipContainer>
+          )}
+          {isDefined(displayedDateFieldDefinition) && (
+            <StyledDateContainer>
+              <RecordListRowField
+                recordId={recordId}
+                fieldMetadataItemId={
+                  displayedDateFieldDefinition.fieldMetadataId
+                }
+                fieldDefinition={displayedDateFieldDefinition}
+                maxWidth={RECORD_LIST_ROW_DATE_MAX_WIDTH}
+              />
+            </StyledDateContainer>
           )}
         </StyledFieldsContainer>
       </StyledRow>

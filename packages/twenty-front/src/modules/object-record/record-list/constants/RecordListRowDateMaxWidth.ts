@@ -1,0 +1,1 @@
+export const RECORD_LIST_ROW_DATE_MAX_WIDTH = 120;
