@@ -7,6 +7,8 @@ import { SettingsBillingSubscriptionInfo } from '@/settings/billing/components/S
 import { SettingsBillingTrialNoPaymentMethodBanner } from '@/settings/billing/components/SettingsBillingTrialNoPaymentMethodBanner';
 import { SettingsBillingUserCreditsSection } from '@/settings/billing/components/SettingsBillingUserCreditsSection';
 import { UpdatePaymentMethodModal } from '@/settings/billing/components/UpdatePaymentMethodModal';
+import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
+import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { usePaymentMethodFlow } from '@/settings/billing/hooks/usePaymentMethodFlow';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
@@ -45,6 +47,10 @@ export const SettingsBillingContent = () => {
 
   const { isGetResourceCreditUsageQueryLoaded: isUsageQueryLoaded } =
     useGetResourceCreditUsage();
+
+  const { applicationSubscriptionItems, applicationsCount } =
+    useBillingSubscriptionCost();
+  const { isYearlyPlan } = useCurrentBillingFlags();
 
   const displayTrialNoPaymentMethodCard =
     subscriptionStatus === SubscriptionStatus.Trialing &&
@@ -91,7 +97,11 @@ export const SettingsBillingContent = () => {
           />
         )}
       {hasNotCanceledCurrentSubscription && (
-        <SettingsBillingApplicationsSection />
+        <SettingsBillingApplicationsSection
+          applicationSubscriptionItems={applicationSubscriptionItems}
+          applicationsCount={applicationsCount}
+          isYearlyPlan={isYearlyPlan}
+        />
       )}
       {hasNotCanceledCurrentSubscription && (
         <SettingsBillingUserCreditsSection />

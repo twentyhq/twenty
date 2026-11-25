@@ -5,20 +5,14 @@ import {
   StyledSettingsBillingCardTitle,
   StyledSettingsBillingCardTitleLabel,
 } from '@/settings/billing/components/internal/SettingsBillingCard';
-import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
-import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isApplicationBillingPriceUnit } from 'twenty-shared/application';
+import { assertUnreachable } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconApps } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-
-const StyledSecondaryText = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  white-space: nowrap;
-`;
 
 const StyledApplicationList = styled.div`
   display: flex;
@@ -29,12 +23,10 @@ const StyledApplicationList = styled.div`
 
 const StyledApplicationRow = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
-  min-height: 24px;
+  min-height: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledApplicationName = styled.div`
@@ -48,13 +40,31 @@ const StyledApplicationAmount = styled.div`
   white-space: nowrap;
 `;
 
-export const SettingsBillingApplicationsSection = () => {
+type SettingsBillingApplicationsSectionProps = {
+  applicationSubscriptionItems: {
+    id: string;
+    quantity?: number | null;
+    unitAmount?: number | null;
+    billingProduct: {
+      name: string;
+      metadata: {
+        applicationName?: string | null;
+        applicationPricePer?: string | null;
+      };
+    };
+  }[];
+  applicationsCount: number;
+  isYearlyPlan: boolean;
+};
+
+export const SettingsBillingApplicationsSection = ({
+  applicationSubscriptionItems,
+  applicationsCount,
+  isYearlyPlan,
+}: SettingsBillingApplicationsSectionProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { formatNumber } = useNumberFormat();
-  const { isYearlyPlan } = useCurrentBillingFlags();
-  const { applicationSubscriptionItems, applicationsCount } =
-    useBillingSubscriptionCost();
 
   if (applicationSubscriptionItems.length === 0) {
     return null;
@@ -65,10 +75,17 @@ export const SettingsBillingApplicationsSection = () => {
       decimals: 2,
     })}`;
 
-  const formatQuantity = (
-    quantity: number,
-    applicationPricePer: string | null | undefined,
-  ) => {
+  const formatQuantity = ({
+    quantity,
+    applicationPricePer,
+  }: {
+    quantity: number;
+    applicationPricePer?: string | null;
+  }) => {
+    if (!isApplicationBillingPriceUnit(applicationPricePer)) {
+      return `${quantity}`;
+    }
+
     switch (applicationPricePer) {
       case 'WORKSPACE_MEMBER':
         return quantity === 1 ? t`${quantity} member` : t`${quantity} members`;
@@ -77,7 +94,7 @@ export const SettingsBillingApplicationsSection = () => {
           ? t`${quantity} account`
           : t`${quantity} accounts`;
       default:
-        return `${quantity}`;
+        return assertUnreachable(applicationPricePer);
     }
   };
 
@@ -103,7 +120,7 @@ export const SettingsBillingApplicationsSection = () => {
               {applicationsCountLabel}
             </StyledSettingsBillingCardTitleLabel>
           </StyledSettingsBillingCardTitle>
-          <StyledSecondaryText>{t`Per month`}</StyledSecondaryText>
+          <Text size="md" color="tertiary">{t`Per month`}</Text>
         </StyledSettingsBillingCardHeader>
         <StyledApplicationList>
           {applicationSubscriptionItems.map((applicationSubscriptionItem) => {
@@ -119,15 +136,17 @@ export const SettingsBillingApplicationsSection = () => {
                     size={theme.icon.size.md}
                     color={themeCssVariables.font.color.tertiary}
                   />
-                  <OverflowingTextWithTooltip
-                    text={metadata.applicationName ?? name}
-                  />
+                  <Text size="md" truncate>
+                    {metadata.applicationName ?? name}
+                  </Text>
                 </StyledApplicationName>
                 <StyledApplicationAmount>
-                  <StyledSecondaryText>
-                    {`${formatQuantity(quantity, metadata.applicationPricePer)} × ${formatMonthlyAmount(unitAmountCents)} · `}
-                  </StyledSecondaryText>
-                  {formatMonthlyAmount(quantity * unitAmountCents)}
+                  <Text render={<span />} size="md" color="tertiary">
+                    {`${formatQuantity({ quantity, applicationPricePer: metadata.applicationPricePer })} × ${formatMonthlyAmount(unitAmountCents)} · `}
+                  </Text>
+                  <Text render={<span />} size="md">
+                    {formatMonthlyAmount(quantity * unitAmountCents)}
+                  </Text>
                 </StyledApplicationAmount>
               </StyledApplicationRow>
             );
