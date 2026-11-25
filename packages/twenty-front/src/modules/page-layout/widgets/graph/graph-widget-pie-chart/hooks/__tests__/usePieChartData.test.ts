@@ -49,7 +49,7 @@ describe('usePieChartData', () => {
         'blue6',
         'blue7',
         'blue8',
-        'blue11',
+        'blue9',
         'blue10',
         'blue11',
         'blue12',
@@ -308,9 +308,9 @@ describe('usePieChartData', () => {
     );
 
     const expectedShadesByKey = {
-      lost: 'blue7',
-      open: 'blue11',
-      won: 'blue11',
+      lost: 'blue6',
+      open: 'blue8',
+      won: 'blue10',
     };
 
     expect(shadesByKey(firstOrderResult.current.enrichedData)).toEqual(
