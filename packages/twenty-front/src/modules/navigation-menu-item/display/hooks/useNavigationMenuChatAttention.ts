@@ -1,3 +1,4 @@
+import { type BuiltInSectionKey } from 'twenty-shared/types';
 import { isBuiltInSectionKey } from 'twenty-shared/utils';
 
 import { useInboxChatAttention } from '@/inbox/hooks/useInboxChatAttention';
