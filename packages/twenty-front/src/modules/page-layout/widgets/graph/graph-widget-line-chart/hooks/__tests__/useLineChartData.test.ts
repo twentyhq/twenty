@@ -334,9 +334,9 @@ describe('useLineChartData', () => {
       );
 
     const expectedShadesByKey = {
-      lost: 'red6',
-      open: 'red8',
-      won: 'red10',
+      lost: 'red7',
+      open: 'red9',
+      won: 'red11',
     };
 
     expect(shadesByKey(firstOrderResult.current.enrichedSeries)).toEqual(
