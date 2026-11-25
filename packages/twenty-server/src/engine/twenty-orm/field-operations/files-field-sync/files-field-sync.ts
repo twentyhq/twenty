@@ -590,7 +590,6 @@ export class FilesFieldSync {
   }: {
     fileIds: {
       toAdd: Set<string>;
-      toUpdate: Set<string>;
       toRemove: Set<string>;
     };
     executeRawQuery: RawQueryExecutor;
