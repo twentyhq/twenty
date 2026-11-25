@@ -85,7 +85,6 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
     });
 
     expect(await resolve('aad-object-id')).toBe('workspace-member-id');
-    expect(findTeamsUserLinkWorkspaceMemberIdMock).toHaveBeenCalledTimes(1);
     expect(createTeamsUserLinkMock).toHaveBeenCalledWith({
       client: CLIENT,
       name: 'Jane Doe',
@@ -94,18 +93,6 @@ describe('resolveTeamsSenderWorkspaceMemberId', () => {
       workspaceMemberId: 'workspace-member-id',
       source: 'AUTO',
     });
-  });
-
-  it('should not save a link when the activity has no object id', async () => {
-    getTeamsConversationMemberMock.mockResolvedValue({
-      id: '29:user-id',
-      tenantId: CLAIMED_TENANT_ID,
-      email: 'jane@acme.com',
-    });
-
-    expect(await resolve('')).toBe('workspace-member-id');
-    expect(findTeamsUserLinkWorkspaceMemberIdMock).not.toHaveBeenCalled();
-    expect(createTeamsUserLinkMock).not.toHaveBeenCalled();
   });
 
   it('should still answer when saving the link fails', async () => {

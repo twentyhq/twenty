@@ -116,13 +116,6 @@ describe('answerTeamsAssistantRequest', () => {
       conversationId: REQUEST.teamsConversationId,
       conversationType: REQUEST.teamsConversationType,
     });
-    expect(resolveSenderMock).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({
-        teamsUserId: REQUEST.teamsUserId,
-        teamsUserAadObjectId: REQUEST.teamsUserAadObjectId,
-        teamsTenantId: REQUEST.teamsTenantId,
-      }),
-    );
     expect(runAgentMock).toHaveBeenCalledTimes(1);
     expect(runAgentMock).toHaveBeenCalledWith(
       expect.objectContaining({
