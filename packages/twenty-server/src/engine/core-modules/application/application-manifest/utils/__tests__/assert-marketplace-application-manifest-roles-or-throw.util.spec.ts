@@ -17,25 +17,25 @@ const buildManifest = (
   }) as unknown as Pick<Manifest, 'application' | 'roles' | 'agents'>;
 
 describe('assertMarketplaceApplicationManifestRolesOrThrow', () => {
-  it('should not throw on a standalone role', () => {
+  it('should not throw on the requested role alone', () => {
     expect(() =>
       assertMarketplaceApplicationManifestRolesOrThrow({
         manifest: buildManifest([
           { universalIdentifier: 'requested-role', label: 'Requested' },
-          {
-            universalIdentifier: 'member-role',
-            label: 'Member',
-            fieldPermissions: [
-              {
-                objectUniversalIdentifier: 'company',
-                fieldUniversalIdentifier: 'secret',
-                canReadFieldValue: false,
-              },
-            ],
-          },
         ]),
       }),
     ).not.toThrow();
+  });
+
+  it('should throw on a standalone role', () => {
+    expect(() =>
+      assertMarketplaceApplicationManifestRolesOrThrow({
+        manifest: buildManifest([
+          { universalIdentifier: 'requested-role', label: 'Requested' },
+          { universalIdentifier: 'member-role', label: 'Member' },
+        ]),
+      }),
+    ).toThrow(/Role "Member" \(member-role\) is neither the application role/);
   });
 
   it('should throw naming the app, the role and what it declares', () => {
@@ -58,7 +58,7 @@ describe('assertMarketplaceApplicationManifestRolesOrThrow', () => {
       }),
     ).toThrow(
       new ApplicationException(
-        'Application "Application" (application) declares role permissions marketplace applications cannot declare: Role "Requested" (requested-role), the application role, declares field permissions on objects company. Marketplace applications cannot declare field permissions: the workspace configures them.',
+        'Application "Application" (application) declares roles marketplace applications cannot declare: Role "Requested" (requested-role), the application role, declares field permissions on objects company. Marketplace applications cannot declare field permissions: the workspace configures them.',
         'INVALID_INPUT' as never,
       ),
     );

@@ -214,6 +214,30 @@ describe('Marketplace application roles cannot declare row-level rules or field 
       },
     );
 
+    it('refuses a standalone role and writes nothing', async () => {
+      const requestedRoleId = uuidv4();
+      const standaloneRoleId = uuidv4();
+
+      const { errors } = await syncApplication({
+        manifest: buildBaseManifest({
+          appId,
+          roleId: requestedRoleId,
+          overrides: {
+            roles: [
+              { universalIdentifier: requestedRoleId, label: 'Requested' },
+              { universalIdentifier: standaloneRoleId, label: 'Member role' },
+            ],
+          },
+        }),
+        expectToFail: true,
+      });
+
+      expect(errors?.[0]?.message).toMatch(
+        /is neither the application role nor an agent role/,
+      );
+      expect(await countRows('role', standaloneRoleId)).toBe(0);
+    });
+
     it('refuses them on a dry run too', async () => {
       const { errors } = await syncApplication({
         manifest: buildRestrictedManifest({
