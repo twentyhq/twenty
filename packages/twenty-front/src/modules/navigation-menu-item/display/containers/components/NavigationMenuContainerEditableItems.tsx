@@ -18,6 +18,7 @@ type NavigationMenuContainerEditableItemsProps = {
   topLevelItems: NavigationMenuItem[];
   folderChildrenById: Map<string, NavigationMenuItem[]>;
   renderSection?: (section: NavigationMenuItem) => ReactNode;
+  isAddMenuItemButtonShown?: boolean;
 };
 
 export const NavigationMenuContainerEditableItems = ({
@@ -25,6 +26,7 @@ export const NavigationMenuContainerEditableItems = ({
   topLevelItems,
   folderChildrenById,
   renderSection,
+  isAddMenuItemButtonShown,
 }: NavigationMenuContainerEditableItemsProps) => {
   const selectedNavigationMenuItemIdInEditMode = useAtomStateValue(
     selectedNavigationMenuItemIdInEditModeState,
@@ -53,6 +55,7 @@ export const NavigationMenuContainerEditableItems = ({
         })}
         onNavigationMenuItemClick={handleNavigationMenuItemClick}
         renderSection={renderSection}
+        isAddMenuItemButtonShown={isAddMenuItemButtonShown}
       />
     </Suspense>
   );
