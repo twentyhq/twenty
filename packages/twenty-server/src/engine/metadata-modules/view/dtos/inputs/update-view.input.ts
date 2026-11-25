@@ -19,7 +19,6 @@ import {
   ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -104,14 +103,6 @@ export class UpdateViewInput {
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   isPrivate?: boolean;
-
-  @IsOptional()
-  @IsEnum(ViewVisibility)
-  @Field(() => ViewVisibility, {
-    nullable: true,
-    deprecationReason: 'Use isPrivate instead',
-  })
-  visibility?: ViewVisibility;
 
   @IsOptional()
   @IsUUID()

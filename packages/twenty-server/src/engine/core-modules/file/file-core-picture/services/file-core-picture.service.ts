@@ -199,7 +199,7 @@ export class FileCorePictureService {
       );
     }
 
-    if (file.settings?.isTemporaryFile !== true) {
+    if (!file.settings?.isTemporaryFile) {
       throw new FileUploadException(
         `File ${fileId} was already finalized`,
         FileUploadExceptionCode.BAD_REQUEST,

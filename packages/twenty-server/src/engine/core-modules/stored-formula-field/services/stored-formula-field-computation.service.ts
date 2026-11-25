@@ -16,6 +16,7 @@ import { quoteColumn } from 'src/engine/twenty-orm/sql/utils/build-select-statem
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { COMPUTED_COLUMN_RECORD_ALIAS } from 'src/engine/twenty-orm/table-shape/constants/computed-column-record-alias.constant';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceComputedLookupShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
@@ -24,6 +25,7 @@ const RECORD_ID_COLUMN = quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, 'id');
 type RecomputeRecordsBatchParameters = {
   flatObjectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
   columnExpressions: StoredFormulaColumnExpression[];
+  lookupJoins: WorkspaceComputedLookupShape[];
   recordIds: string[];
   shouldSkipEventEmission: boolean;
 };
@@ -130,6 +132,77 @@ export class StoredFormulaFieldComputationService {
     }, buildSystemAuthContext(workspaceId));
   }
 
+  // Pages through the records pointing to the given ones, so a widely looked-up record never loads them all
+  async markRecordsDirtyByJoinColumnValues({
+    workspaceId,
+    objectMetadataId,
+    joinColumnName,
+    joinColumnValues,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    joinColumnName: string;
+    joinColumnValues: string[];
+  }): Promise<void> {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: objectMetadataId,
+        flatEntityMaps: getWorkspaceContext().flatObjectMetadataMaps,
+      });
+
+      if (
+        !isDefined(flatObjectMetadata) ||
+        !isNonEmptyArray(joinColumnValues)
+      ) {
+        return;
+      }
+
+      const recordRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          flatObjectMetadata.nameSingular,
+        );
+      let afterRecordId: string | undefined;
+
+      while (true) {
+        const recordIdsQueryBuilder = recordRepository
+          .createQueryBuilder(COMPUTED_COLUMN_RECORD_ALIAS)
+          .withStoredColumnsOnly()
+          .select(RECORD_ID_COLUMN, 'id')
+          .where(
+            `${quoteColumn(COMPUTED_COLUMN_RECORD_ALIAS, joinColumnName)} IN (:...joinColumnValues)`,
+            { joinColumnValues },
+          )
+          .orderBy(RECORD_ID_COLUMN, 'ASC')
+          .limit(STORED_FORMULA_FIELD_RECORDS_PER_RUN);
+
+        if (isDefined(afterRecordId)) {
+          recordIdsQueryBuilder.andWhere(
+            `${RECORD_ID_COLUMN} > :afterRecordId`,
+            {
+              afterRecordId,
+            },
+          );
+        }
+
+        const recordIds = (
+          await recordIdsQueryBuilder.getRawMany<{ id: string }>()
+        ).map(({ id }) => id);
+
+        await this.storedFormulaFieldDirtyRecordService.markRecordsDirty({
+          workspaceId,
+          objectMetadataId,
+          recordIds,
+        });
+
+        if (recordIds.length < STORED_FORMULA_FIELD_RECORDS_PER_RUN) {
+          return;
+        }
+
+        afterRecordId = recordIds[recordIds.length - 1];
+      }
+    }, buildSystemAuthContext(workspaceId));
+  }
+
   private resolveColumnExpressions({
     workspaceId,
     objectMetadataId,
@@ -142,6 +215,7 @@ export class StoredFormulaFieldComputationService {
     | {
         flatObjectMetadata: FlatObjectMetadata;
         columnExpressions: StoredFormulaColumnExpression[];
+        lookupJoins: WorkspaceComputedLookupShape[];
       }
     | undefined {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -155,16 +229,17 @@ export class StoredFormulaFieldComputationService {
       return undefined;
     }
 
-    const columnExpressions = buildStoredFormulaColumnExpressions({
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      schemaName: getWorkspaceSchemaName(workspaceId),
-      formulaFieldMetadataIds,
-    });
+    const { columnExpressions, lookupJoins } =
+      buildStoredFormulaColumnExpressions({
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        schemaName: getWorkspaceSchemaName(workspaceId),
+        formulaFieldMetadataIds,
+      });
 
     return isNonEmptyArray(columnExpressions)
-      ? { flatObjectMetadata, columnExpressions }
+      ? { flatObjectMetadata, columnExpressions, lookupJoins }
       : undefined;
   }
 
@@ -192,6 +267,7 @@ export class StoredFormulaFieldComputationService {
   private async recomputeRecordsBatch({
     flatObjectMetadata,
     columnExpressions,
+    lookupJoins,
     recordIds,
     shouldSkipEventEmission,
   }: RecomputeRecordsBatchParameters): Promise<string[]> {
@@ -205,6 +281,13 @@ export class StoredFormulaFieldComputationService {
       .withStoredColumnsOnly()
       .select(RECORD_ID_COLUMN, 'id')
       .where(`${RECORD_ID_COLUMN} IN (:...recordIds)`, { recordIds });
+
+    lookupJoins.forEach(({ relationFieldName, alias }) =>
+      valuesQueryBuilder.leftJoin(
+        `${COMPUTED_COLUMN_RECORD_ALIAS}.${relationFieldName}`,
+        alias,
+      ),
+    );
 
     columnExpressions.forEach(({ columnName, expression }, columnIndex) =>
       valuesQueryBuilder

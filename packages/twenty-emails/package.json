@@ -28,7 +28,8 @@
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "@vitejs/plugin-react-swc": "^4.3.1",
     "react-email": "^6.11.16",
-    "tsc-alias": "^1.8.16"
+    "tsc-alias": "^1.8.16",
+    "vite": "^8.0.0"
   },
   "exports": {
     ".": {

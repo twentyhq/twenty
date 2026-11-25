@@ -32,7 +32,6 @@ export const createDeleteWorkflowVersionStepTool = (
       try {
         return await deps.coreWorkflowVersionMutationService.deleteStep({
           workspaceId: context.workspaceId,
-          userWorkspaceId: context.userWorkspaceId,
           coreWorkflowVersionId: parameters.coreWorkflowVersionId,
           stepIdToDelete: parameters.stepId,
         });

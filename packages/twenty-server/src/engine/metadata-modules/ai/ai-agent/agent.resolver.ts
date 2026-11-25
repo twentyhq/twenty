@@ -10,7 +10,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -108,8 +109,7 @@ export class AgentResolver {
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailabilityOrThrow({
@@ -124,7 +124,7 @@ export class AgentResolver {
     const createdAgent = await this.agentService.createOneAgent({
       input,
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(createdAgent);
@@ -144,8 +144,7 @@ export class AgentResolver {
     })
     input: UpdateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
       this.aiModelRegistryService.validateModelAvailabilityOrThrow({
@@ -160,7 +159,7 @@ export class AgentResolver {
     const updatedAgent = await this.agentService.updateOneAgent({
       input,
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(updatedAgent);

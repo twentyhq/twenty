@@ -3175,6 +3175,12 @@ msgctxt "fieldMetadata.label"
 msgid "Chats"
 msgstr ""
 
+#. js-lingui-id: bK/UPN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Chats"
+msgstr ""
+
 #. js-lingui-id: 68T2AN
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -4233,6 +4239,16 @@ msgstr ""
 #. js-lingui-id: bK9ya1
 #: src/modules/workflow/workflow-trigger/utils/compute-cron-pattern-from-schedule.ts
 msgid "Cron pattern \"{pattern}\" is invalid"
+msgstr ""
+
+#. js-lingui-id: sJbCNC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
+msgid "Cron trigger spread must be between 2 minutes and 24 hours."
+msgstr ""
+
+#. js-lingui-id: GbygrC
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
+msgid "Cron trigger spreadMs must be an integer between {CRON_TRIGGER_MIN_SPREAD_MS} and {CRON_TRIGGER_MAX_SPREAD_MS}"
 msgstr ""
 
 #. js-lingui-id: ViG9dm
@@ -10370,16 +10386,6 @@ msgstr ""
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr ""
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
-
-#. js-lingui-id: yT1QOm
-#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
-msgid "Only a workspace member can create a private agent."
-msgstr ""
-
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
@@ -10446,10 +10452,9 @@ msgstr ""
 msgid "Only the application that owns this agent can change its triggers"
 msgstr ""
 
-#. js-lingui-id: 2ztmK7
-#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Only the member who owns an agent can change who sees it."
+#. js-lingui-id: xCGjjr
+#: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
+msgid "Only the person who created this can change who sees it"
 msgstr ""
 
 #. js-lingui-id: MPDvEo

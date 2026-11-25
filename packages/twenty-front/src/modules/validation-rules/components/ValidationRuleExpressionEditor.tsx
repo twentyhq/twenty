@@ -134,7 +134,6 @@ export const ValidationRuleExpressionEditor = ({
     useState<ValidationRuleHelperContext>(() =>
       computeValidationRuleHelperContext({
         textBeforeCursor: '',
-        isCursorAfterField: false,
         fields: editorFields,
         functionDefinitions,
       }),

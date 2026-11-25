@@ -48,14 +48,32 @@ const computeRootItems = ({
   return [...fieldItems, ...functionItems, ...keywordItems];
 };
 
+const computeMemberItems = ({
+  parentPath,
+  fields,
+}: {
+  parentPath: string;
+  fields: ValidationRuleEditorField[];
+}): ValidationRuleHelperItem[] => {
+  const memberDepth = parentPath.split('.').length + 1;
+
+  return fields
+    .filter(
+      (field) =>
+        field.path.startsWith(`${parentPath}.`) &&
+        field.path.split('.').length === memberDepth,
+    )
+    .map((field) => ({ kind: 'field', field }));
+};
+
 export const computeValidationRuleHelperContext = ({
   textBeforeCursor,
-  isCursorAfterField,
+  fieldPathBeforeCursor,
   fields,
   functionDefinitions = getValidationRuleFunctionDefinitions(),
 }: {
   textBeforeCursor: string;
-  isCursorAfterField: boolean;
+  fieldPathBeforeCursor?: string;
   fields: ValidationRuleEditorField[];
   functionDefinitions?: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperContext => {
@@ -66,10 +84,28 @@ export const computeValidationRuleHelperContext = ({
     return { replaceFromOffset: cursorOffset, items: [] };
   }
 
-  if (isCursorAfterField) {
+  if (isDefined(fieldPathBeforeCursor)) {
+    const fieldBeforeCursor = fields.find(
+      (field) => field.path === fieldPathBeforeCursor,
+    );
+
+    // A second chip would merge into one unknown name, so a member replaces the chip it extends
+    if (fieldBeforeCursor?.hasMembers) {
+      return {
+        replaceFromOffset: cursorOffset - fieldPathBeforeCursor.length,
+        items: computeMemberItems({
+          parentPath: fieldPathBeforeCursor,
+          fields,
+        }),
+      };
+    }
+
     return {
       replaceFromOffset: cursorOffset,
-      items: computeRootItems({ query: '', fields, functionDefinitions }),
+      items: VALIDATION_RULE_KEYWORDS.map((definition) => ({
+        kind: 'keyword',
+        definition,
+      })),
     };
   }
 
@@ -98,29 +134,19 @@ export const computeValidationRuleHelperContext = ({
     return { replaceFromOffset: cursorOffset, items: [] };
   }
 
-  const memberDepth = parentPath.split('.').length + 1;
-
   return {
     replaceFromOffset:
       cursorOffset - parentPath.length - 1 - partialWord.length,
-    items: fields
-      .filter(
-        (field) =>
-          field.path.startsWith(`${parentPath}.`) &&
-          field.path.split('.').length === memberDepth,
-      )
-      .filter(
-        (field) =>
-          !isPreviousValueContainer ||
-          !field.isSystem ||
-          partialWord.length > 0,
-      )
-      .filter((field) =>
-        matchesQuery(
-          [getLastPathSegment(field.path), field.label],
-          partialWord,
-        ),
-      )
-      .map((field) => ({ kind: 'field', field })),
+    items: computeMemberItems({ parentPath, fields }).filter(
+      (item) =>
+        item.kind !== 'field' ||
+        ((!isPreviousValueContainer ||
+          !item.field.isSystem ||
+          partialWord.length > 0) &&
+          matchesQuery(
+            [getLastPathSegment(item.field.path), item.field.label],
+            partialWord,
+          )),
+    ),
   };
 };
