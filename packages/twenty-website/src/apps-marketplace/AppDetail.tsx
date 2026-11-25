@@ -33,7 +33,6 @@ import {
 import { AppCards } from './AppCards';
 import { AppIcon } from './AppIcon';
 import { AppStory } from './AppStory';
-import { BETA_APP_NAMES } from './beta-app-names';
 import { leadSentence } from './lead-sentence';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { stripLeadingMarkdownTitle } from './strip-leading-markdown-title';
@@ -306,7 +305,6 @@ type AppDetailProps = {
 export function AppDetail({ app, apps, locale }: AppDetailProps) {
   const i18n = getServerI18n();
   const { content } = app;
-  const isBeta = BETA_APP_NAMES.includes(app.name.trim().toLowerCase());
   const others = apps.filter((candidate) => candidate.slug !== app.slug);
   const related = [
     ...others.filter((candidate) => candidate.category === app.category),
@@ -416,11 +414,6 @@ export function AppDetail({ app, apps, locale }: AppDetailProps) {
             <Body muted size="sm">
               {leadSentence(app.tagline)}
             </Body>
-            {isBeta && (
-              <Body muted size="xs">
-                {i18n._(msg`Beta`)}
-              </Body>
-            )}
             <HeaderAction>{install}</HeaderAction>
           </Header>
 
