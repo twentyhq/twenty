@@ -54,7 +54,7 @@ describe('applyLayoutToRecordTableWidgetViewSnapshot', () => {
     });
   });
 
-  it('should only switch the view type for a list', () => {
+  it('should switch a list to compact and leave the rest untouched', () => {
     expect(
       applyLayoutToRecordTableWidgetViewSnapshot({
         widgetViewSnapshot,
@@ -63,7 +63,11 @@ describe('applyLayoutToRecordTableWidgetViewSnapshot', () => {
       }),
     ).toEqual({
       ...widgetViewSnapshot,
-      view: { ...widgetViewSnapshot.view, type: ViewType.LIST_WIDGET },
+      view: {
+        ...widgetViewSnapshot.view,
+        type: ViewType.LIST_WIDGET,
+        isCompact: true,
+      },
     });
   });
 });

@@ -4,6 +4,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isNonEmptyArray,
+  resolveViewIsCompactOnViewTypeChange,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -103,9 +104,25 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   const { groupLoadLimit, ...updateViewInputWithoutGroupLoadLimit } =
     updateViewInputWithoutTranslations;
 
+  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
+    metadataName: 'view',
+    flatEntity: existingFlatViewToUpdate,
+  });
+
+  const { type: updatedViewType, isCompact: updatedIsCompact } =
+    updateViewInputWithoutGroupLoadLimit;
+
   const editableProperties = extractAndSanitizeObjectStringFields(
     {
       ...updateViewInputWithoutGroupLoadLimit,
+      ...(isDefined(updatedViewType) &&
+        !isDefined(updatedIsCompact) && {
+          isCompact: resolveViewIsCompactOnViewTypeChange({
+            fromViewType: effectiveExistingFlatView.type,
+            toViewType: updatedViewType,
+            isCompact: effectiveExistingFlatView.isCompact,
+          }),
+        }),
       ...(groupLoadLimit !== undefined && {
         groupLoadLimit: groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
       }),
@@ -225,11 +242,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   } else {
     flatViewToUpdate.universalOverrides = null;
   }
-
-  const effectiveExistingFlatView = resolveEffectiveFlatEntity({
-    metadataName: 'view',
-    flatEntity: existingFlatViewToUpdate,
-  });
 
   const isPrivacyChanging =
     isDefined(isPrivate) && isPrivate !== effectiveExistingFlatView.isPrivate;
