@@ -18,7 +18,13 @@ const buildItem = (
   ...overrides,
 });
 
-const unreadableObjectItem = (id: string, parentId = TAB_ID) =>
+const unreadableObjectItem = ({
+  id,
+  parentId = TAB_ID,
+}: {
+  id: string;
+  parentId?: string;
+}) =>
   buildItem({
     id,
     parentId,
@@ -26,7 +32,13 @@ const unreadableObjectItem = (id: string, parentId = TAB_ID) =>
     targetObjectMetadataId: 'unreadable-object',
   });
 
-const readableObjectItem = (id: string, parentId = TAB_ID) =>
+const readableObjectItem = ({
+  id,
+  parentId = TAB_ID,
+}: {
+  id: string;
+  parentId?: string;
+}) =>
   buildItem({
     id,
     parentId,
@@ -52,8 +64,8 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
   it('returns false when every item is an unreadable object', () => {
     expect(
       hasVisibleContent([
-        unreadableObjectItem('object-1'),
-        unreadableObjectItem('object-2'),
+        unreadableObjectItem({ id: 'object-1' }),
+        unreadableObjectItem({ id: 'object-2' }),
       ]),
     ).toBe(false);
   });
@@ -62,7 +74,7 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
     expect(
       hasVisibleContent([
         buildItem({ id: 'section', type: NavigationMenuItemType.SECTION }),
-        readableObjectItem('object', 'section'),
+        readableObjectItem({ id: 'object', parentId: 'section' }),
       ]),
     ).toBe(true);
   });
@@ -71,7 +83,7 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
     expect(
       hasVisibleContent([
         buildItem({ id: 'folder', type: NavigationMenuItemType.FOLDER }),
-        unreadableObjectItem('object', 'folder'),
+        unreadableObjectItem({ id: 'object', parentId: 'folder' }),
       ]),
     ).toBe(false);
   });
@@ -96,7 +108,7 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
   it('returns true when one readable item sits among unreadable content', () => {
     expect(
       hasVisibleContent([
-        unreadableObjectItem('object-1'),
+        unreadableObjectItem({ id: 'object-1' }),
         buildItem({
           id: 'ai-recents',
           type: NavigationMenuItemType.SECTION,
@@ -108,8 +120,8 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
           type: NavigationMenuItemType.FOLDER,
           parentId: 'section',
         }),
-        unreadableObjectItem('object-2', 'folder'),
-        readableObjectItem('object-3', 'folder'),
+        unreadableObjectItem({ id: 'object-2', parentId: 'folder' }),
+        readableObjectItem({ id: 'object-3', parentId: 'folder' }),
       ]),
     ).toBe(true);
   });
@@ -117,7 +129,7 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
   it('returns true when an available built-in section is present', () => {
     expect(
       hasVisibleContent([
-        unreadableObjectItem('object'),
+        unreadableObjectItem({ id: 'object' }),
         buildItem({
           id: 'favorites',
           type: NavigationMenuItemType.SECTION,
@@ -128,8 +140,10 @@ describe('hasNavigationMenuContainerVisibleContent', () => {
   });
 
   it('ignores items outside the container', () => {
-    expect(hasVisibleContent([readableObjectItem('object', 'other-tab')])).toBe(
-      false,
-    );
+    expect(
+      hasVisibleContent([
+        readableObjectItem({ id: 'object', parentId: 'other-tab' }),
+      ]),
+    ).toBe(false);
   });
 });
