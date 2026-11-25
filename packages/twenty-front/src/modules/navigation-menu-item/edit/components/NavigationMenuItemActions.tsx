@@ -2,6 +2,7 @@ import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronUp,
@@ -65,6 +66,13 @@ export const NavigationMenuItemActions = ({
     containerId: null,
   });
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
+  const parentType = workspaceNavigationMenuItems.find(
+    (candidate) => candidate.id === item.parentId,
+  )?.type;
+  const isAtContainerTopLevel =
+    section === 'workspace' &&
+    isCustomizableSidebarEnabled &&
+    (!isDefined(item.parentId) || parentType === NavigationMenuItemType.TAB);
   const isMovingAcrossTabs =
     section === 'workspace' && isCustomizableSidebarEnabled;
   const getTabName = (tabId: string | null) =>
@@ -187,11 +195,16 @@ export const NavigationMenuItemActions = ({
       onClick: () => run(() => remove(item.id)),
     },
   ];
+  const addItemActionIds = ['before', 'after'];
+  const visibleActions = isAtContainerTopLevel
+    ? actions.filter((option) => !addItemActionIds.includes(option.id))
+    : actions;
+
   return (
     <>
       <Dropdown.Page id="root">
         <Dropdown.Section>
-          {actions.map((option) => (
+          {visibleActions.map((option) => (
             <NavigationMenuItemSelectableItem key={option.id} item={option} />
           ))}
         </Dropdown.Section>
