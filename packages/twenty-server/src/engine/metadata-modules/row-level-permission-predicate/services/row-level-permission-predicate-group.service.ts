@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { type FindOptionsWhere, In, Not } from 'typeorm';
 
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -10,12 +11,20 @@ import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/servic
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
+import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class RowLevelPermissionPredicateGroupService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly billingService: BillingService,
+    @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity)
+    private readonly rowLevelPermissionPredicateGroupRepository: WorkspaceScopedRepository<RowLevelPermissionPredicateGroupEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
   ) {}
 
@@ -48,6 +57,49 @@ export class RowLevelPermissionPredicateGroupService {
           (b.positionInRowLevelPermissionPredicateGroup ?? 0),
       )
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
+  }
+
+  public async deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles(
+    workspaceId: string,
+  ) {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatRoleMaps'] },
+      );
+
+    // Individual roles carry channel visibility, which does not depend on the RLS entitlement
+    const individualRoleIds = Object.values(flatRoleMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(isWorkspaceMemberIndividualRole)
+      .map(({ id }) => id);
+
+    const criteria: FindOptionsWhere<RowLevelPermissionPredicateGroupEntity> =
+      individualRoleIds.length > 0
+        ? { roleId: Not(In(individualRoleIds)) }
+        : {};
+
+    // Checking first keeps the common no-op a read and lets cleanup retry on every pass after a failed attempt
+    const hasPredicateGroups =
+      (await this.rowLevelPermissionPredicateGroupRepository.count(
+        workspaceId,
+        { where: criteria },
+      )) > 0;
+
+    if (!hasPredicateGroups) {
+      return;
+    }
+
+    await this.rowLevelPermissionPredicateGroupRepository.delete(
+      workspaceId,
+      criteria,
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+      'flatFieldPermissionMaps',
+    ]);
   }
 
   private async hasRowLevelPermissionFeature(
