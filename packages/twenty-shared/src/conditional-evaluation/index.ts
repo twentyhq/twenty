@@ -17,6 +17,7 @@ export type { ConditionalEvaluationDevice } from './common/types/ConditionalEval
 export type { ConditionalEvaluationLogicalOperator } from './common/types/ConditionalEvaluationLogicalOperator';
 export type { ConditionalEvaluationMetadataName } from './common/types/ConditionalEvaluationMetadataName';
 export type { ConditionalEvaluationNode } from './common/types/ConditionalEvaluationNode';
+export type { ConditionalEvaluationVariableName } from './common/types/ConditionalEvaluationVariableName';
 export { buildDeviceConditionalEvaluationNode } from './common/utils/buildDeviceConditionalEvaluationNode';
 export { conditionalEvaluationComparisonOperatorSchema } from './common/utils/conditionalEvaluationComparisonOperatorSchema';
 export { conditionalEvaluationLogicalOperatorSchema } from './common/utils/conditionalEvaluationLogicalOperatorSchema';
