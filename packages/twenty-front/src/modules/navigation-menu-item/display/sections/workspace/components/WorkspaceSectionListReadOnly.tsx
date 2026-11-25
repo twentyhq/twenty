@@ -1,8 +1,10 @@
 import { styled } from '@linaria/react';
+import { Fragment, type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import type { NavigationMenuItemSectionListDndKitProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionListDndKitProps';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 
@@ -16,7 +18,9 @@ const StyledList = styled.div`
 type WorkspaceSectionListReadOnlyProps = Pick<
   NavigationMenuItemSectionListDndKitProps,
   'filteredItems' | 'folderChildrenById' | 'onActiveObjectMetadataItemClick'
->;
+> & {
+  renderSection?: (section: NavigationMenuItem) => ReactNode;
+};
 
 const READ_ONLY_EDIT_MODE_PROPS = {
   isSelectedInEditMode: false,
@@ -27,6 +31,7 @@ export const WorkspaceSectionListReadOnly = ({
   filteredItems,
   folderChildrenById,
   onActiveObjectMetadataItemClick,
+  renderSection,
 }: WorkspaceSectionListReadOnlyProps) => {
   const folderCount = filteredItems.filter(
     (item) => item.type === NavigationMenuItemType.FOLDER,
@@ -34,18 +39,23 @@ export const WorkspaceSectionListReadOnly = ({
 
   return (
     <StyledList>
-      {filteredItems.map((item: NavigationMenuItem) => (
-        <NavigationMenuItemDisplay
-          key={item.id}
-          item={item}
-          editModeProps={READ_ONLY_EDIT_MODE_PROPS}
-          isDragging={false}
-          folderChildrenById={folderChildrenById}
-          folderCount={folderCount}
-          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-          readOnly
-        />
-      ))}
+      {filteredItems.map((item: NavigationMenuItem) =>
+        item.type === NavigationMenuItemType.SECTION &&
+        isDefined(renderSection) ? (
+          <Fragment key={item.id}>{renderSection(item)}</Fragment>
+        ) : (
+          <NavigationMenuItemDisplay
+            key={item.id}
+            item={item}
+            editModeProps={READ_ONLY_EDIT_MODE_PROPS}
+            isDragging={false}
+            folderChildrenById={folderChildrenById}
+            folderCount={folderCount}
+            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+            readOnly
+          />
+        ),
+      )}
     </StyledList>
   );
 };
