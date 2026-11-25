@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { jsonSchema } from 'ai';
 import { type JSONSchema7 } from 'json-schema';
+import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -67,7 +68,9 @@ export const createExecuteToolTool = (
 
     const { toolName, arguments: args = {} } = parameters;
 
-    if (options?.isToolAllowed?.(toolName) === false) {
+    const isToolAllowed = options?.isToolAllowed?.(toolName);
+
+    if (isDefined(isToolAllowed) && !isToolAllowed) {
       return {
         success: false,
         message: `Tool "${toolName}" is not available`,
