@@ -36,6 +36,7 @@ const getMockStepDefinition = (actionKey: GettingStartedStepActionKey) => {
 const meta: Meta<typeof GettingStartedStepAction> = {
   title: 'Modules/GettingStarted/GettingStartedStepAction',
   component: GettingStartedStepAction,
+  args: { isCompleted: false },
   decorators: [
     (Story) => (
       <StyledFrame>

@@ -2,6 +2,7 @@ import { type EmailThreadMessageWithSender } from '@/activities/emails/types/Ema
 
 export type ChatMessageGroup = {
   id: string;
+  isFirstOfDay: boolean;
   isOutgoing: boolean;
   messages: EmailThreadMessageWithSender[];
 };

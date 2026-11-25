@@ -7,14 +7,16 @@ import { useAiChatInstanceOrThrow } from '@/ai-chat/hooks/useAiChatInstanceOrThr
 import { AiChatMessageReactionPicker } from '@/ai-chat/messages/components/AiChatMessageReactionPicker';
 import { aiChatComposerQuotedMessageIdFamilyState } from '@/ai-chat/states/composer/aiChatComposerQuotedMessageIdFamilyState';
 import { aiChatComposerShouldFocusFamilyState } from '@/ai-chat/states/composer/aiChatComposerShouldFocusFamilyState';
+import { ChatMessageCopyAction } from '@/chat/components/ChatMessageCopyAction';
+import { ChatMessageFloatingActions } from '@/chat/components/ChatMessageFloatingActions';
 import { StyledChatMessageActions } from '@/chat/components/StyledChatMessageActions';
-import { LightCopyIconButton } from '@/ui/input/components/LightCopyIconButton';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatMessageActionsProps = {
   messageId: string;
   messageText: string;
   isRightAligned: boolean;
+  isFloating?: boolean;
   canReact: boolean;
   canReply: boolean;
   onEdit?: (messageId: string) => void;
@@ -25,6 +27,7 @@ export const AiChatMessageActions = ({
   messageId,
   messageText,
   isRightAligned,
+  isFloating = false,
   canReact,
   canReply,
   onEdit,
@@ -41,11 +44,8 @@ export const AiChatMessageActions = ({
     { threadId },
   );
 
-  return (
-    <StyledChatMessageActions
-      className="message-actions"
-      isRightAligned={isRightAligned}
-    >
+  const actions = (
+    <>
       {canReact && <AiChatMessageReactionPicker messageId={messageId} />}
       {canReply && (
         <LightIconButton
@@ -58,7 +58,7 @@ export const AiChatMessageActions = ({
           <IconArrowBackUp />
         </LightIconButton>
       )}
-      <LightCopyIconButton copyText={messageText} />
+      <ChatMessageCopyAction text={messageText} />
       {isDefined(onEdit) && (
         <LightIconButton
           aria-label={t`Edit message`}
@@ -77,6 +77,23 @@ export const AiChatMessageActions = ({
           <IconTrash />
         </LightIconButton>
       )}
+    </>
+  );
+
+  if (isFloating) {
+    return (
+      <ChatMessageFloatingActions isRightAligned={isRightAligned}>
+        {actions}
+      </ChatMessageFloatingActions>
+    );
+  }
+
+  return (
+    <StyledChatMessageActions
+      className="message-actions"
+      isRightAligned={isRightAligned}
+    >
+      {actions}
     </StyledChatMessageActions>
   );
 };

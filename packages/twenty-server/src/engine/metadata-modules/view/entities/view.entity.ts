@@ -2,7 +2,6 @@ import {
   Check,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -46,6 +45,7 @@ import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entiti
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
+import { type PrivatableEntity } from 'src/engine/permissions/metadata-permissions/types/privatable-entity.type';
 
 export type ViewOverrides = {
   isActive?: boolean;
@@ -93,7 +93,7 @@ export type ViewOverrides = {
 )
 export class ViewEntity
   extends OverridableEntity<ViewOverrides>
-  implements Required<ViewEntity>
+  implements Required<ViewEntity>, PrivatableEntity
 {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -259,7 +259,7 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })

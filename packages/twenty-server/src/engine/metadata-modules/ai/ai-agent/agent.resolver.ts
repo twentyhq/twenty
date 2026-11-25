@@ -30,6 +30,7 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { AGENT_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-read-access-policy.constant';
 import { AGENT_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-write-access-policy.constant';
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -47,6 +48,7 @@ export class AgentResolver {
   @ResolveField(() => Boolean, {
     deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
   })
+  @UseGuards(NoPermissionGuard)
   isCustom(
     @Parent() agent: AgentDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -61,12 +63,9 @@ export class AgentResolver {
     { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO[]> {
     const flatAgentsWithRoleId = await this.agentService.findManyAgents({
       workspaceId,
-      userWorkspaceId,
     });
 
     return flatAgentsWithRoleId
@@ -95,13 +94,10 @@ export class AgentResolver {
     })
     { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO> {
     const fatAgentWithRoleId = await this.agentService.findOneAgentById({
       workspaceId,
       id,
-      userWorkspaceId,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(fatAgentWithRoleId);
@@ -184,13 +180,10 @@ export class AgentResolver {
     })
     { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
   ): Promise<AgentDTO> {
     const deletedFlatAgent = await this.agentService.deleteOneAgent({
       id,
       workspaceId,
-      userWorkspaceId,
     });
 
     return fromFlatAgentWithRoleIdToAgentDto(deletedFlatAgent);

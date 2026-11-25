@@ -1,3 +1,5 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
+
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type CommonQueryParser } from 'src/engine/api/common/common-query-parsers/common-query.parser';
@@ -32,8 +34,12 @@ export const buildMutationQueryBuilder = async ({
   });
 
   const hasRelationTraversal = filteredQueryBuilder.getJoinAliases().length > 0;
+  // A write statement reads the stored table, where computed columns hold no value for its filter
+  const hasComputedColumns = isNonEmptyArray(
+    filteredQueryBuilder.tableShape.computedColumnShapes,
+  );
 
-  if (!hasRelationTraversal) {
+  if (!hasRelationTraversal && !hasComputedColumns) {
     return {
       selectQueryBuilder: filteredQueryBuilder,
       rowLevelPermissionsApplied: false,

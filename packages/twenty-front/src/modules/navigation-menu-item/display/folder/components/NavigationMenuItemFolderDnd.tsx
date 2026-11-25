@@ -351,6 +351,7 @@ export const NavigationMenuItemFolderDnd = ({
               <Fragment key={navigationMenuItem.id}>
                 <NavigationItemDropTarget
                   parentId={folderId}
+                  isInFolder
                   index={index}
                   sectionId={sectionId}
                   compact={isCompact}
@@ -407,6 +408,7 @@ export const NavigationMenuItemFolderDnd = ({
             >
               <NavigationItemDropTarget
                 parentId={folderId}
+                isInFolder
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
                 compact={isCompact}

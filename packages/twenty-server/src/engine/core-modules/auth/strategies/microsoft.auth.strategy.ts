@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { type Request } from 'express';
+import { type AuthenticateOptions } from 'passport';
 import { type VerifyCallback } from 'passport-google-oauth20';
 import { Strategy } from 'passport-microsoft';
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -47,8 +48,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     });
   }
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  authenticate(req: Request, options: any) {
+  authenticate(req: Request, options: AuthenticateOptions) {
     options = {
       ...options,
       state: JSON.stringify({

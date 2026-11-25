@@ -55,6 +55,7 @@ type NavigationItemDropTargetProps = {
   dropTargetIdOverride?: string;
   highlightPosition?: 'top' | 'bottom';
   previewSubItemState?: NavigationDrawerSubItemState;
+  isInFolder?: boolean;
 };
 
 export const NavigationItemDropTarget = ({
@@ -66,6 +67,7 @@ export const NavigationItemDropTarget = ({
   dropTargetIdOverride,
   highlightPosition = 'bottom',
   previewSubItemState,
+  isInFolder = false,
 }: NavigationItemDropTargetProps) => {
   const { activeDropTargetId, forbiddenDropTargetId } = useContext(
     NavigationDropTargetContext,
@@ -86,6 +88,7 @@ export const NavigationItemDropTarget = ({
         parentId={parentId}
         index={index}
         sectionId={sectionId}
+        isInFolder={isInFolder}
         subItemState={previewSubItemState}
       />
       {children}

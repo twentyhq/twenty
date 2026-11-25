@@ -42,6 +42,7 @@ export interface Agent {
     responseFormat?: Scalars['JSON']
     roleId?: Scalars['UUID']
     triggers: Scalars['JSON'][]
+    universalIdentifier: Scalars['UUID']
     updatedAt: Scalars['DateTime']
     __typename: 'Agent'
 }
@@ -467,6 +468,25 @@ export interface ApplicationAuthorization {
     __typename: 'ApplicationAuthorization'
 }
 
+export interface ApplicationBillingPrice {
+    amountCents: Scalars['Int']
+    billingPeriod: ApplicationBillingPricePeriod
+    currency: ApplicationBillingPriceCurrency
+    label: Scalars['String']
+    per?: ApplicationBillingPriceUnit
+    type: ApplicationBillingPriceType
+    universalIdentifier: Scalars['String']
+    __typename: 'ApplicationBillingPrice'
+}
+
+export type ApplicationBillingPriceCurrency = 'USD'
+
+export type ApplicationBillingPricePeriod = 'MONTHLY'
+
+export type ApplicationBillingPriceType = 'RECURRING'
+
+export type ApplicationBillingPriceUnit = 'CONNECTED_ACCOUNT' | 'WORKSPACE_MEMBER'
+
 export interface ApplicationCapabilityGrant {
     grantedCapabilities: Scalars['String'][]
     id: Scalars['UUID']
@@ -854,6 +874,7 @@ export interface AutocompleteResult {
 export interface AvailableWorkspace {
     displayName?: Scalars['String']
     id: Scalars['UUID']
+    /** @deprecated Always null. Will be removed. */
     inviteHash?: Scalars['String']
     loginToken?: Scalars['String']
     logo?: Scalars['String']
@@ -1149,6 +1170,10 @@ export interface CalendarConfiguration {
     configurationType: WidgetConfigurationType
     __typename: 'CalendarConfiguration'
 }
+
+export type CalendarEventRecurrenceFrequency = 'DAILY' | 'MONTHLY' | 'WEEKLY' | 'YEARLY'
+
+export type CalendarEventRecurrenceWeekday = 'FRIDAY' | 'MONDAY' | 'SATURDAY' | 'SUNDAY' | 'THURSDAY' | 'TUESDAY' | 'WEDNESDAY'
 
 export interface CallRecordingSummaryConfiguration {
     configurationType: WidgetConfigurationType
@@ -1652,7 +1677,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
+export type FeatureFlagKey = 'IS_ACCESS_GROUPS_ENABLED' | 'IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED' | 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_AI_DATA_POLICY_ENABLED' | 'IS_APPLICATION_PRICE_BILLING_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED' | 'IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED' | 'IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS' | 'IS_CHANNEL_VISIBILITY_RLS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_CREATE_RECORDS_PERMISSION_ENABLED' | 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' | 'IS_FORMULA_FIELD_ENABLED' | 'IS_GETTING_STARTED_ENABLED' | 'IS_INBOX_OBJECT_NAMING_ENABLED' | 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' | 'IS_LOOKUP_COLUMNS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_MESSAGE_ATTACHMENT_ENABLED' | 'IS_PRIVATE_RECORDS_ENABLED' | 'IS_RECORD_GROUP_TABS_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' | 'IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -2183,6 +2208,7 @@ export interface MarketplaceApp {
 export interface MarketplaceAppDetail {
     aboutDescription?: Scalars['String']
     author?: Scalars['String']
+    billingPrices: ApplicationBillingPrice[]
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
     connectUrl?: Scalars['String']
@@ -4218,7 +4244,6 @@ export interface View {
     calendarLayout?: ViewCalendarLayout
     createdAt: Scalars['DateTime']
     createdByUserWorkspaceId?: Scalars['UUID']
-    deletedAt?: Scalars['DateTime']
     groupLoadLimit?: Scalars['Int']
     icon: Scalars['String']
     id: Scalars['UUID']
@@ -4267,7 +4292,6 @@ export interface ViewField {
     aggregateOperation?: AggregateOperations
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
@@ -4291,7 +4315,6 @@ export interface ViewField {
 
 export interface ViewFieldGroup {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     id: Scalars['UUID']
     isActive: Scalars['Boolean']
     /** @deprecated isOverridden is deprecated */
@@ -4343,7 +4366,6 @@ export interface ViewFieldRelationScopeSort {
 
 export interface ViewFilter {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
     operand: ViewFilterOperand
@@ -4360,7 +4382,6 @@ export interface ViewFilter {
 
 export interface ViewFilterGroup {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     id: Scalars['UUID']
     logicalOperator: ViewFilterGroupLogicalOperator
     parentViewFilterGroupId?: Scalars['UUID']
@@ -4377,7 +4398,6 @@ export type ViewFilterOperand = 'CONTAINS' | 'DOES_NOT_CONTAIN' | 'GREATER_THAN_
 
 export interface ViewGroup {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     fieldValue: Scalars['String']
     id: Scalars['UUID']
     isVisible: Scalars['Boolean']
@@ -4396,7 +4416,6 @@ export type ViewPresetFilter = 'INBOX_CHANNEL_DONE' | 'INBOX_CHANNEL_OPEN' | 'IN
 
 export interface ViewSort {
     createdAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
     direction: ViewSortDirection
     fieldMetadataId: Scalars['UUID']
     id: Scalars['UUID']
@@ -4410,7 +4429,7 @@ export interface ViewSort {
 
 export type ViewSortDirection = 'ASC' | 'DESC'
 
-export type ViewType = 'CALENDAR' | 'CALENDAR_WIDGET' | 'FIELDS_WIDGET' | 'KANBAN' | 'KANBAN_WIDGET' | 'LIST' | 'LIST_WIDGET' | 'TABLE' | 'TABLE_WIDGET'
+export type ViewType = 'CALENDAR' | 'CALENDAR_WIDGET' | 'FIELDS_WIDGET' | 'INBOX' | 'KANBAN' | 'KANBAN_WIDGET' | 'LIST' | 'LIST_WIDGET' | 'TABLE' | 'TABLE_WIDGET'
 
 export type ViewVisibility = 'UNLISTED' | 'WORKSPACE'
 
@@ -4673,6 +4692,7 @@ export interface AgentGenqlSelection{
     responseFormat?: boolean | number
     roleId?: boolean | number
     triggers?: boolean | number
+    universalIdentifier?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5124,6 +5144,18 @@ export interface ApplicationAuthorizationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationBillingPriceGenqlSelection{
+    amountCents?: boolean | number
+    billingPeriod?: boolean | number
+    currency?: boolean | number
+    label?: boolean | number
+    per?: boolean | number
+    type?: boolean | number
+    universalIdentifier?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationCapabilityGrantGenqlSelection{
     grantedCapabilities?: boolean | number
     id?: boolean | number
@@ -5545,6 +5577,7 @@ export interface AutocompleteResultGenqlSelection{
 export interface AvailableWorkspaceGenqlSelection{
     displayName?: boolean | number
     id?: boolean | number
+    /** @deprecated Always null. Will be removed. */
     inviteHash?: boolean | number
     loginToken?: boolean | number
     logo?: boolean | number
@@ -5839,6 +5872,8 @@ export interface CalendarConfigurationGenqlSelection{
     __typename?: boolean | number
     __scalar?: boolean | number
 }
+
+export interface CalendarEventRecurrenceInput {daysOfWeek?: (CalendarEventRecurrenceWeekday[] | null),endDate?: (Scalars['String'] | null),endOccurrenceCount?: (Scalars['Int'] | null),frequency: CalendarEventRecurrenceFrequency,interval?: (Scalars['Int'] | null)}
 
 export interface CallRecordingSummaryConfigurationGenqlSelection{
     configurationType?: boolean | number
@@ -6155,7 +6190,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],oAu
 
 export interface CreateApprovedAccessDomainInput {domain: Scalars['String'],email: Scalars['String']}
 
-export interface CreateCalendarEventInput {addConferencing?: (Scalars['Boolean'] | null),attendees?: (Scalars['String'] | null),connectedAccountId: Scalars['String'],description?: (Scalars['String'] | null),endsAt: Scalars['String'],isFullDay?: (Scalars['Boolean'] | null),location?: (Scalars['String'] | null),sendInvitations?: (Scalars['Boolean'] | null),startsAt: Scalars['String'],timeZone?: (Scalars['String'] | null),title: Scalars['String']}
+export interface CreateCalendarEventInput {addConferencing?: (Scalars['Boolean'] | null),attendees?: (Scalars['String'] | null),connectedAccountId: Scalars['String'],description?: (Scalars['String'] | null),endsAt: Scalars['String'],isFullDay?: (Scalars['Boolean'] | null),location?: (Scalars['String'] | null),recurrence?: (CalendarEventRecurrenceInput | null),sendInvitations?: (Scalars['Boolean'] | null),startsAt: Scalars['String'],timeZone?: (Scalars['String'] | null),title: Scalars['String']}
 
 export interface CreateCalendarEventOutputGenqlSelection{
     calendarEventId?: boolean | number
@@ -7138,6 +7173,7 @@ export interface MarketplaceAppGenqlSelection{
 export interface MarketplaceAppDetailGenqlSelection{
     aboutDescription?: boolean | number
     author?: boolean | number
+    billingPrices?: ApplicationBillingPriceGenqlSelection
     billsCredits?: boolean | number
     category?: boolean | number
     connectUrl?: boolean | number
@@ -9191,7 +9227,7 @@ id: Scalars['UUID'],
 /** The view field group to update */
 update: UpdateViewFieldGroupInputUpdates}
 
-export interface UpdateViewFieldGroupInputUpdates {deletedAt?: (Scalars['String'] | null),isVisible?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
+export interface UpdateViewFieldGroupInputUpdates {isVisible?: (Scalars['Boolean'] | null),name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null)}
 
 export interface UpdateViewFieldInput {
 /** The id of the view field to update */
@@ -9578,7 +9614,6 @@ export interface ViewGenqlSelection{
     calendarLayout?: boolean | number
     createdAt?: boolean | number
     createdByUserWorkspaceId?: boolean | number
-    deletedAt?: boolean | number
     groupLoadLimit?: boolean | number
     icon?: boolean | number
     id?: boolean | number
@@ -9627,7 +9662,6 @@ export interface ViewFieldGenqlSelection{
     aggregateOperation?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
@@ -9652,7 +9686,6 @@ export interface ViewFieldGenqlSelection{
 
 export interface ViewFieldGroupGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     id?: boolean | number
     isActive?: boolean | number
     /** @deprecated isOverridden is deprecated */
@@ -9717,7 +9750,6 @@ export interface ViewFieldRelationScopeSortInput {direction: ViewSortDirection,f
 
 export interface ViewFilterGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
     operand?: boolean | number
@@ -9735,7 +9767,6 @@ export interface ViewFilterGenqlSelection{
 
 export interface ViewFilterGroupGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     id?: boolean | number
     logicalOperator?: boolean | number
     parentViewFilterGroupId?: boolean | number
@@ -9749,7 +9780,6 @@ export interface ViewFilterGroupGenqlSelection{
 
 export interface ViewGroupGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     fieldValue?: boolean | number
     id?: boolean | number
     isVisible?: boolean | number
@@ -9763,7 +9793,6 @@ export interface ViewGroupGenqlSelection{
 
 export interface ViewSortGenqlSelection{
     createdAt?: boolean | number
-    deletedAt?: boolean | number
     direction?: boolean | number
     fieldMetadataId?: boolean | number
     id?: boolean | number
@@ -10295,6 +10324,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isApplicationAuthorization = (obj?: { __typename?: any } | null): obj is ApplicationAuthorization => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationAuthorization"')
       return ApplicationAuthorization_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationBillingPrice_possibleTypes: string[] = ['ApplicationBillingPrice']
+    export const isApplicationBillingPrice = (obj?: { __typename?: any } | null): obj is ApplicationBillingPrice => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationBillingPrice"')
+      return ApplicationBillingPrice_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -13172,6 +13209,23 @@ export const enumAppKeyValueScope = {
    WORKSPACE: 'WORKSPACE' as const
 }
 
+export const enumApplicationBillingPriceCurrency = {
+   USD: 'USD' as const
+}
+
+export const enumApplicationBillingPricePeriod = {
+   MONTHLY: 'MONTHLY' as const
+}
+
+export const enumApplicationBillingPriceType = {
+   RECURRING: 'RECURRING' as const
+}
+
+export const enumApplicationBillingPriceUnit = {
+   CONNECTED_ACCOUNT: 'CONNECTED_ACCOUNT' as const,
+   WORKSPACE_MEMBER: 'WORKSPACE_MEMBER' as const
+}
+
 export const enumApplicationExportCoverageStatus = {
    ENGINE_DERIVED: 'ENGINE_DERIVED' as const,
    EXCLUDED: 'EXCLUDED' as const,
@@ -13278,6 +13332,23 @@ export const enumCalendarChannelSyncStatus = {
 export const enumCalendarChannelVisibility = {
    METADATA: 'METADATA' as const,
    SHARE_EVERYTHING: 'SHARE_EVERYTHING' as const
+}
+
+export const enumCalendarEventRecurrenceFrequency = {
+   DAILY: 'DAILY' as const,
+   MONTHLY: 'MONTHLY' as const,
+   WEEKLY: 'WEEKLY' as const,
+   YEARLY: 'YEARLY' as const
+}
+
+export const enumCalendarEventRecurrenceWeekday = {
+   FRIDAY: 'FRIDAY' as const,
+   MONDAY: 'MONDAY' as const,
+   SATURDAY: 'SATURDAY' as const,
+   SUNDAY: 'SUNDAY' as const,
+   THURSDAY: 'THURSDAY' as const,
+   TUESDAY: 'TUESDAY' as const,
+   WEDNESDAY: 'WEDNESDAY' as const
 }
 
 export const enumCaptchaDriverType = {
@@ -13454,7 +13525,9 @@ export const enumFeatureFlagKey = {
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_CREATE_RECORDS_PERMISSION_ENABLED: 'IS_CREATE_RECORDS_PERMISSION_ENABLED' as const,
    IS_CUSTOMIZABLE_SIDEBAR_ENABLED: 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED' as const,
+   IS_FORMULA_FIELD_ENABLED: 'IS_FORMULA_FIELD_ENABLED' as const,
    IS_GETTING_STARTED_ENABLED: 'IS_GETTING_STARTED_ENABLED' as const,
+   IS_INBOX_OBJECT_NAMING_ENABLED: 'IS_INBOX_OBJECT_NAMING_ENABLED' as const,
    IS_INTERNAL_IMPORT_COLUMN_ENABLED: 'IS_INTERNAL_IMPORT_COLUMN_ENABLED' as const,
    IS_LOOKUP_COLUMNS_ENABLED: 'IS_LOOKUP_COLUMNS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
@@ -13986,6 +14059,7 @@ export const enumViewType = {
    CALENDAR: 'CALENDAR' as const,
    CALENDAR_WIDGET: 'CALENDAR_WIDGET' as const,
    FIELDS_WIDGET: 'FIELDS_WIDGET' as const,
+   INBOX: 'INBOX' as const,
    KANBAN: 'KANBAN' as const,
    KANBAN_WIDGET: 'KANBAN_WIDGET' as const,
    LIST: 'LIST' as const,

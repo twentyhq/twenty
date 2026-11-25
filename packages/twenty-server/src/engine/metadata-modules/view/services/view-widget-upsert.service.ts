@@ -8,7 +8,6 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -219,12 +218,7 @@ export class ViewWidgetUpsertService {
     ) {
       const view = await this.viewRepository.findOne(
         upsertContext.workspaceId,
-        {
-          where: {
-            id: upsertContext.viewId,
-            deletedAt: IsNull(),
-          },
-        },
+        { where: { id: upsertContext.viewId } },
       );
 
       if (!isDefined(view)) {
@@ -430,10 +424,7 @@ export class ViewWidgetUpsertService {
     }
 
     const view = await this.viewRepository.findOne(upsertContext.workspaceId, {
-      where: {
-        id: upsertContext.viewId,
-        deletedAt: IsNull(),
-      },
+      where: { id: upsertContext.viewId },
     });
 
     if (!isDefined(view)) {

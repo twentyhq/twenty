@@ -42,6 +42,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   triggers: [JSON!]!
+  universalIdentifier: UUID!
   updatedAt: DateTime!
 }
 
@@ -592,6 +593,33 @@ type ApplicationAuthorization {
   workspaceId: UUID!
 }
 
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: ApplicationBillingPricePeriod!
+  currency: ApplicationBillingPriceCurrency!
+  label: String!
+  per: ApplicationBillingPriceUnit
+  type: ApplicationBillingPriceType!
+  universalIdentifier: String!
+}
+
+enum ApplicationBillingPriceCurrency {
+  USD
+}
+
+enum ApplicationBillingPricePeriod {
+  MONTHLY
+}
+
+enum ApplicationBillingPriceType {
+  RECURRING
+}
+
+enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT
+  WORKSPACE_MEMBER
+}
+
 type ApplicationCapabilityGrant {
   grantedCapabilities: [String!]!
   id: UUID!
@@ -975,7 +1003,7 @@ type AutocompleteResult {
 type AvailableWorkspace {
   displayName: String
   id: UUID!
-  inviteHash: String
+  inviteHash: String @deprecated(reason: "Always null. Will be removed.")
   loginToken: String
   logo: String
   personalInviteToken: String
@@ -1314,6 +1342,31 @@ enum CalendarChannelVisibility {
 
 type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarEventRecurrenceInput {
+  daysOfWeek: [CalendarEventRecurrenceWeekday!]
+  endDate: String
+  endOccurrenceCount: Int
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int
+}
+
+enum CalendarEventRecurrenceWeekday {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
 }
 
 type CallRecordingSummaryConfiguration {
@@ -1669,6 +1722,7 @@ input CreateCalendarEventInput {
   endsAt: String!
   isFullDay: Boolean
   location: String
+  recurrence: CalendarEventRecurrenceInput
   sendInvitations: Boolean
   startsAt: String!
   timeZone: String
@@ -2513,7 +2567,9 @@ enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
+  IS_FORMULA_FIELD_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
@@ -3222,6 +3278,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String
@@ -5816,7 +5873,6 @@ input UpdateViewFieldGroupInput {
 }
 
 input UpdateViewFieldGroupInputUpdates {
-  deletedAt: String @deprecated(reason: "Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.")
   isVisible: Boolean
   name: String
   position: Float
@@ -6436,7 +6492,6 @@ type View {
   calendarLayout: ViewCalendarLayout
   createdAt: DateTime!
   createdByUserWorkspaceId: UUID
-  deletedAt: DateTime
   groupLoadLimit: Int
   icon: String!
   id: UUID!
@@ -6484,7 +6539,6 @@ type ViewField {
   aggregateOperation: AggregateOperations
   applicationId: UUID!
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
@@ -6506,7 +6560,6 @@ type ViewField {
 
 type ViewFieldGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   isActive: Boolean!
   isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
@@ -6583,7 +6636,6 @@ input ViewFieldRelationScopeSortInput {
 
 type ViewFilter {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   operand: ViewFilterOperand!
@@ -6599,7 +6651,6 @@ type ViewFilter {
 
 type ViewFilterGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   logicalOperator: ViewFilterGroupLogicalOperator!
   parentViewFilterGroupId: UUID
@@ -6636,7 +6687,6 @@ enum ViewFilterOperand {
 
 type ViewGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldValue: String!
   id: UUID!
   isVisible: Boolean!
@@ -6667,7 +6717,6 @@ enum ViewPresetFilter {
 
 type ViewSort {
   createdAt: DateTime!
-  deletedAt: DateTime
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
@@ -6687,6 +6736,7 @@ enum ViewType {
   CALENDAR
   CALENDAR_WIDGET
   FIELDS_WIDGET
+  INBOX
   KANBAN
   KANBAN_WIDGET
   LIST

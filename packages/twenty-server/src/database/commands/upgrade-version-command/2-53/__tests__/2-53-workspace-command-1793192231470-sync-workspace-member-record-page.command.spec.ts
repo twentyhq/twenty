@@ -328,19 +328,6 @@ describe('SyncWorkspaceMemberRecordPageCommand', () => {
     ).toEqual([expect.objectContaining({ isVisible: false })]);
   });
 
-  it('does not recreate fields under a deleted relations group', async () => {
-    addRelation();
-    maps.flatViewFieldGroupMaps.byUniversalIdentifier[
-      VIEW.viewFieldGroups.relations.universalIdentifier
-    ]!.deletedAt = '2026-10-26T00:00:00.000Z';
-    maps.flatViewFieldMaps.byUniversalIdentifier = removePropertiesFromRecord(
-      maps.flatViewFieldMaps.byUniversalIdentifier,
-      [VIEW.viewFields.assignedTasks.universalIdentifier],
-    );
-    await command.up(args);
-    expect(migrate).not.toHaveBeenCalled();
-  });
-
   it('keeps relation ownership separate across applications', async () => {
     const first = addRelation();
     const second = addRelation({

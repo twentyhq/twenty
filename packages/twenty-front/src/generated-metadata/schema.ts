@@ -61,6 +61,7 @@ export type Agent = {
   responseFormat?: Maybe<Scalars['JSON']['output']>;
   roleId?: Maybe<Scalars['UUID']['output']>;
   triggers: Array<Scalars['JSON']['output']>;
+  universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -633,6 +634,34 @@ export type ApplicationAuthorization = {
   workspaceId: Scalars['UUID']['output'];
 };
 
+export type ApplicationBillingPrice = {
+  __typename?: 'ApplicationBillingPrice';
+  amountCents: Scalars['Int']['output'];
+  billingPeriod: ApplicationBillingPricePeriod;
+  currency: ApplicationBillingPriceCurrency;
+  label: Scalars['String']['output'];
+  per?: Maybe<ApplicationBillingPriceUnit>;
+  type: ApplicationBillingPriceType;
+  universalIdentifier: Scalars['String']['output'];
+};
+
+export enum ApplicationBillingPriceCurrency {
+  USD = 'USD'
+}
+
+export enum ApplicationBillingPricePeriod {
+  MONTHLY = 'MONTHLY'
+}
+
+export enum ApplicationBillingPriceType {
+  RECURRING = 'RECURRING'
+}
+
+export enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT = 'CONNECTED_ACCOUNT',
+  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER'
+}
+
 export type ApplicationCapabilityGrant = {
   __typename?: 'ApplicationCapabilityGrant';
   grantedCapabilities: Array<Scalars['String']['output']>;
@@ -1055,6 +1084,7 @@ export type AvailableWorkspace = {
   __typename?: 'AvailableWorkspace';
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
+  /** @deprecated Always null. Will be removed. */
   inviteHash?: Maybe<Scalars['String']['output']>;
   loginToken?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
@@ -1409,6 +1439,31 @@ export type CalendarConfiguration = {
   __typename?: 'CalendarConfiguration';
   configurationType: WidgetConfigurationType;
 };
+
+export enum CalendarEventRecurrenceFrequency {
+  DAILY = 'DAILY',
+  MONTHLY = 'MONTHLY',
+  WEEKLY = 'WEEKLY',
+  YEARLY = 'YEARLY'
+}
+
+export type CalendarEventRecurrenceInput = {
+  daysOfWeek?: InputMaybe<Array<CalendarEventRecurrenceWeekday>>;
+  endDate?: InputMaybe<Scalars['String']['input']>;
+  endOccurrenceCount?: InputMaybe<Scalars['Int']['input']>;
+  frequency: CalendarEventRecurrenceFrequency;
+  interval?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export enum CalendarEventRecurrenceWeekday {
+  FRIDAY = 'FRIDAY',
+  MONDAY = 'MONDAY',
+  SATURDAY = 'SATURDAY',
+  SUNDAY = 'SUNDAY',
+  THURSDAY = 'THURSDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY'
+}
 
 export type CallRecordingSummaryConfiguration = {
   __typename?: 'CallRecordingSummaryConfiguration';
@@ -1785,6 +1840,7 @@ export type CreateCalendarEventInput = {
   endsAt: Scalars['String']['input'];
   isFullDay?: InputMaybe<Scalars['Boolean']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
+  recurrence?: InputMaybe<CalendarEventRecurrenceInput>;
   sendInvitations?: InputMaybe<Scalars['Boolean']['input']>;
   startsAt: Scalars['String']['input'];
   timeZone?: InputMaybe<Scalars['String']['input']>;
@@ -2640,7 +2696,9 @@ export enum FeatureFlagKey {
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CREATE_RECORDS_PERMISSION_ENABLED = 'IS_CREATE_RECORDS_PERMISSION_ENABLED',
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED = 'IS_CUSTOMIZABLE_SIDEBAR_ENABLED',
+  IS_FORMULA_FIELD_ENABLED = 'IS_FORMULA_FIELD_ENABLED',
   IS_GETTING_STARTED_ENABLED = 'IS_GETTING_STARTED_ENABLED',
+  IS_INBOX_OBJECT_NAMING_ENABLED = 'IS_INBOX_OBJECT_NAMING_ENABLED',
   IS_INTERNAL_IMPORT_COLUMN_ENABLED = 'IS_INTERNAL_IMPORT_COLUMN_ENABLED',
   IS_LOOKUP_COLUMNS_ENABLED = 'IS_LOOKUP_COLUMNS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
@@ -3385,6 +3443,7 @@ export type MarketplaceAppDetail = {
   __typename?: 'MarketplaceAppDetail';
   aboutDescription?: Maybe<Scalars['String']['output']>;
   author?: Maybe<Scalars['String']['output']>;
+  billingPrices: Array<ApplicationBillingPrice>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
   connectUrl?: Maybe<Scalars['String']['output']>;
@@ -8861,7 +8920,6 @@ export type View = {
   calendarLayout?: Maybe<ViewCalendarLayout>;
   createdAt: Scalars['DateTime']['output'];
   createdByUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   groupLoadLimit?: Maybe<Scalars['Int']['output']>;
   icon: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
@@ -8914,7 +8972,6 @@ export type ViewField = {
   aggregateOperation?: Maybe<AggregateOperations>;
   applicationId: Scalars['UUID']['output'];
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
@@ -8938,7 +8995,6 @@ export type ViewField = {
 export type ViewFieldGroup = {
   __typename?: 'ViewFieldGroup';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   isActive: Scalars['Boolean']['output'];
   /** @deprecated isOverridden is deprecated */
@@ -9021,7 +9077,6 @@ export type ViewFieldRelationScopeSortInput = {
 export type ViewFilter = {
   __typename?: 'ViewFilter';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   operand: ViewFilterOperand;
@@ -9038,7 +9093,6 @@ export type ViewFilter = {
 export type ViewFilterGroup = {
   __typename?: 'ViewFilterGroup';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['UUID']['output'];
   logicalOperator: ViewFilterGroupLogicalOperator;
   parentViewFilterGroupId?: Maybe<Scalars['UUID']['output']>;
@@ -9076,7 +9130,6 @@ export enum ViewFilterOperand {
 export type ViewGroup = {
   __typename?: 'ViewGroup';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   fieldValue: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   isVisible: Scalars['Boolean']['output'];
@@ -9108,7 +9161,6 @@ export enum ViewPresetFilter {
 export type ViewSort = {
   __typename?: 'ViewSort';
   createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   direction: ViewSortDirection;
   fieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
@@ -9128,6 +9180,7 @@ export enum ViewType {
   CALENDAR = 'CALENDAR',
   CALENDAR_WIDGET = 'CALENDAR_WIDGET',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
+  INBOX = 'INBOX',
   KANBAN = 'KANBAN',
   KANBAN_WIDGET = 'KANBAN_WIDGET',
   LIST = 'LIST',
