@@ -11,12 +11,14 @@ import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/
 import { AddInboxChannelViewsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795619804236-add-inbox-channel-views.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
+    AgentChatChannelModule,
     ApplicationModule,
     StripeModule,
     WorkspaceCacheModule,
