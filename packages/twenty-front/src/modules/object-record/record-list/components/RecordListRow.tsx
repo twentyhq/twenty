@@ -80,11 +80,6 @@ const StyledOverflowChipContainer = styled.div`
   width: ${RECORD_LIST_ROW_OVERFLOW_CHIP_SLOT_WIDTH}px;
 `;
 
-const StyledDateContainer = styled.div`
-  display: flex;
-  flex-shrink: 0;
-`;
-
 type RecordListRowProps = {
   recordId: string;
   rowRef?: Ref<HTMLDivElement>;
@@ -294,16 +289,12 @@ export const RecordListRow = ({ recordId, rowRef }: RecordListRowProps) => {
             </StyledOverflowChipContainer>
           )}
           {isDefined(displayedDateFieldDefinition) && (
-            <StyledDateContainer>
-              <RecordListRowField
-                recordId={recordId}
-                fieldMetadataItemId={
-                  displayedDateFieldDefinition.fieldMetadataId
-                }
-                fieldDefinition={displayedDateFieldDefinition}
-                maxWidth={RECORD_LIST_ROW_DATE_MAX_WIDTH}
-              />
-            </StyledDateContainer>
+            <RecordListRowField
+              recordId={recordId}
+              fieldMetadataItemId={displayedDateFieldDefinition.fieldMetadataId}
+              fieldDefinition={displayedDateFieldDefinition}
+              maxWidth={RECORD_LIST_ROW_DATE_MAX_WIDTH}
+            />
           )}
         </StyledFieldsContainer>
       </StyledRow>
