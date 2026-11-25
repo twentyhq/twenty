@@ -73,9 +73,12 @@ export class PrivateMetadataSuccessorTransferService {
       return;
     }
 
-    await Promise.all(
-      privateEntityIdsByMetadataName.map(({ metadataName, privateEntityIds }) =>
-        this.coreDataSource.manager.update(
+    await this.coreDataSource.transaction(async (transactionManager) => {
+      for (const {
+        metadataName,
+        privateEntityIds,
+      } of privateEntityIdsByMetadataName) {
+        await transactionManager.update(
           ALL_METADATA_ENTITY_BY_METADATA_NAME[metadataName],
           {
             workspaceId,
@@ -83,9 +86,9 @@ export class PrivateMetadataSuccessorTransferService {
             createdByUserWorkspaceId: removedUserWorkspace.id,
           },
           { createdByUserWorkspaceId: successorUserWorkspace.id },
-        ),
-      ),
-    );
+        );
+      }
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(
       workspaceId,
