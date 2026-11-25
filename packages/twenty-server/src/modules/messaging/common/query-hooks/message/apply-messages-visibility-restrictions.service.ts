@@ -18,7 +18,6 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { isChannelVisibilityEnforcedByIndividualRole } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-enforced-by-individual-role.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 
 const RESTRICTED_MESSAGE_FIELD_NAMES = ['subject', 'text', 'attachments'];
@@ -32,7 +31,6 @@ export class ApplyMessagesVisibilityRestrictionsService
     private readonly commonRecordVisibilityService: CommonRecordVisibilityService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   onModuleInit() {
@@ -49,17 +47,7 @@ export class ApplyMessagesVisibilityRestrictionsService
     records: ObjectRecord[];
     authContext: WorkspaceAuthContext;
   }): Promise<void> {
-    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      ['featureFlagsMap'],
-    );
-
-    if (
-      isChannelVisibilityEnforcedByIndividualRole({
-        featureFlagsMap,
-        authContext,
-      })
-    ) {
+    if (isChannelVisibilityEnforcedByIndividualRole(authContext)) {
       return;
     }
 

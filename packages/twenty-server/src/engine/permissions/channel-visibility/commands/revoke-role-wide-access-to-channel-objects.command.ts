@@ -15,7 +15,6 @@ import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/en
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
 import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
-import { isChannelVisibilityRlsEnabled } from 'src/engine/permissions/channel-visibility/utils/is-channel-visibility-rls-enabled.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -79,22 +78,16 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const {
-      featureFlagsMap,
       flatRoleMaps,
       flatObjectPermissionMaps,
       flatObjectMetadataMaps,
       rolesPermissions,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'featureFlagsMap',
       'rolesPermissions',
       'flatRoleMaps',
       'flatObjectPermissionMaps',
       'flatObjectMetadataMaps',
     ]);
-
-    if (!isChannelVisibilityRlsEnabled(featureFlagsMap)) {
-      return;
-    }
 
     const userRoles = Object.values(flatRoleMaps.byUniversalIdentifier)
       .filter(isDefined)
@@ -370,7 +363,7 @@ export class RevokeRoleWideAccessToChannelObjectsCommand extends ProvisionedWork
     }
 
     if (!options.dryRun) {
-      await this.channelVisibilityRuleSyncSchedulerService.scheduleSyncIfEnabled(
+      await this.channelVisibilityRuleSyncSchedulerService.scheduleSync(
         workspaceId,
       );
     }

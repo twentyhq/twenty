@@ -23,8 +23,6 @@ import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
-const FLAGS = [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED];
-
 const revokeRoleWideAccessToChannelObjects = () =>
   getAppProviderByClassName<RevokeRoleWideAccessToChannelObjectsCommand>(
     'RevokeRoleWideAccessToChannelObjectsCommand',
@@ -238,13 +236,6 @@ describe('channel visibility through row level rules (integration)', () => {
       },
     });
 
-    for (const featureFlag of FLAGS) {
-      await updateFeatureFlag({
-        featureFlag,
-        value: true,
-        expectToFail: false,
-      });
-    }
     await syncChannelVisibilityRules();
     await revokeRoleWideAccessToChannelObjects();
     await waitForAllJobsToFinish();
@@ -275,14 +266,6 @@ describe('channel visibility through row level rules (integration)', () => {
     });
     await setJonyChannelVisibility('SHARE_EVERYTHING');
 
-    for (const featureFlag of [...FLAGS].reverse()) {
-      await updateFeatureFlag({
-        featureFlag,
-        value: false,
-        expectToFail: false,
-      });
-    }
-    await syncChannelVisibilityRules();
     await waitForAllJobsToFinish();
   });
 

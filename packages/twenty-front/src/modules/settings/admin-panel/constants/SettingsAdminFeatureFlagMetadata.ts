@@ -52,10 +52,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
-  [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: {
-    label: msg`Channel visibility through rules`,
-    description: msg`In progress: enforce message and calendar channel visibility with record-level permission rules. Needs relation hops and related record paths.`,
-  },
   // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS]: {
     label: msg`Channel visibility on API keys`,
