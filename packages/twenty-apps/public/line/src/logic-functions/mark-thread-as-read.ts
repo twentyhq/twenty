@@ -1,3 +1,4 @@
+import { isObject, isUndefined } from '@sniptt/guards';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import { type MarkAppThreadAsReadPayload } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
@@ -14,6 +15,9 @@ import {
 import { withConnectionAuthFailureReport } from 'src/logic-functions/data/with-connection-auth-failure-report.util';
 
 const INVALID_TOKEN_STATUS = 400;
+
+const isMarkAsReadResponse = (body: unknown): body is object | undefined =>
+  isUndefined(body) || isObject(body);
 
 // https://developers.line.biz/en/docs/messaging-api/mark-as-read/
 const handler = async ({
@@ -40,6 +44,7 @@ const handler = async ({
         method: 'POST',
         path: '/v2/bot/chat/markAsRead',
         data: { markAsReadToken: storedToken.token },
+        isExpectedResponse: isMarkAsReadResponse,
       }),
     );
   } catch (error) {

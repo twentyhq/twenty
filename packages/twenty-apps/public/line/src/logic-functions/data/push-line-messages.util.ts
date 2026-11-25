@@ -1,4 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 
 import { LineApiError } from 'src/logic-functions/data/line-api.error';
 import { lineApiRequest } from 'src/logic-functions/data/line-api-request.util';
@@ -12,7 +12,11 @@ const MESSAGE_LIMIT_REACHED_STATUS = 429;
 const isPushResponse = (body: unknown): body is PushResponse =>
   isObject(body) &&
   'sentMessages' in body &&
-  Array.isArray(body.sentMessages);
+  Array.isArray(body.sentMessages) &&
+  body.sentMessages.every(
+    (sentMessage: unknown) =>
+      isObject(sentMessage) && 'id' in sentMessage && isString(sentMessage.id),
+  );
 
 // https://developers.line.biz/en/reference/messaging-api/#send-push-message
 export const pushLineMessages = async ({
@@ -27,15 +31,16 @@ export const pushLineMessages = async ({
   retryKey: string;
 }): Promise<string[]> => {
   try {
-    const { sentMessages } = await lineApiRequest<PushResponse>({
+    const { sentMessages } = await lineApiRequest({
       accessToken,
       method: 'POST',
       path: '/v2/bot/message/push',
       headers: { 'X-Line-Retry-Key': retryKey },
       data: { to, messages },
+      isExpectedResponse: isPushResponse,
     });
 
-    return sentMessages.map(({ id }) => String(id));
+    return sentMessages.map(({ id }) => id);
   } catch (error) {
     if (!(error instanceof LineApiError)) {
       throw error;
@@ -46,7 +51,7 @@ export const pushLineMessages = async ({
       error.status === RETRY_KEY_ALREADY_ACCEPTED_STATUS &&
       isPushResponse(error.responseBody)
     ) {
-      return error.responseBody.sentMessages.map(({ id }) => String(id));
+      return error.responseBody.sentMessages.map(({ id }) => id);
     }
 
     if (error.status === MESSAGE_LIMIT_REACHED_STATUS) {

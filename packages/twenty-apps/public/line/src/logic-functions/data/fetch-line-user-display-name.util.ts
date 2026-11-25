@@ -1,8 +1,13 @@
+import { isObject, isString } from '@sniptt/guards';
+
 import { LineApiError } from 'src/logic-functions/data/line-api.error';
 import { lineApiRequest } from 'src/logic-functions/data/line-api-request.util';
 import { type LineSource } from 'src/logic-functions/types/line-webhook.type';
 
 const PROFILE_UNAVAILABLE_STATUS = 404;
+
+const isProfile = (body: unknown): body is { displayName: string } =>
+  isObject(body) && 'displayName' in body && isString(body.displayName);
 
 // a group member's profile is readable even when they are not a friend of the account
 const buildProfilePath = (source: LineSource, userId: string) => {
@@ -29,10 +34,11 @@ export const fetchLineUserDisplayName = async ({
   userId: string;
 }): Promise<string | undefined> => {
   try {
-    const { displayName } = await lineApiRequest<{ displayName: string }>({
+    const { displayName } = await lineApiRequest({
       accessToken,
       method: 'GET',
       path: buildProfilePath(source, userId),
+      isExpectedResponse: isProfile,
     });
 
     return displayName;

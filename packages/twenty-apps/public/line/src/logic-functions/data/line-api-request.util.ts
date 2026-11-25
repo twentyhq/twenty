@@ -28,12 +28,14 @@ export const lineApiRequest = async <TResponse>({
   path,
   data,
   headers,
+  isExpectedResponse,
 }: {
   accessToken: string;
   method: 'GET' | 'POST';
   path: string;
   data?: unknown;
   headers?: Record<string, string>;
+  isExpectedResponse: (body: unknown) => body is TResponse;
 }): Promise<TResponse> => {
   const response = await fetch(`${LINE_API_BASE_URL}${path}`, {
     method,
@@ -54,5 +56,13 @@ export const lineApiRequest = async <TResponse>({
     );
   }
 
-  return body as TResponse;
+  if (!isExpectedResponse(body)) {
+    throw new LineApiError(
+      `LINE API returned an unexpected response on ${method} ${path}`,
+      response.status,
+      body,
+    );
+  }
+
+  return body;
 };
