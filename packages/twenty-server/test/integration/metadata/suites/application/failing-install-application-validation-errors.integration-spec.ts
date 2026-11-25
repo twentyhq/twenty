@@ -8,7 +8,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 const buildManifestWithCrossEntityIdentifierConflict = (
   universalIdentifier: string,
-  roleUniversalIdentifier: string,
   duplicatedUniversalIdentifier: string,
 ) =>
   JSON.stringify({
@@ -24,11 +23,6 @@ const buildManifestWithCrossEntityIdentifierConflict = (
       yarnLockChecksum: null,
     },
     roles: [
-      {
-        universalIdentifier: roleUniversalIdentifier,
-        label: 'First Role',
-        description: 'First role',
-      },
       {
         universalIdentifier: duplicatedUniversalIdentifier,
         label: 'Second Role',
@@ -79,11 +73,9 @@ describe('Install application should return structured validation errors', () =>
 
   it('should return METADATA_VALIDATION_FAILED with structured errors when installing an app whose manifest has validation errors', async () => {
     const universalIdentifier = crypto.randomUUID();
-    const roleUniversalIdentifier = crypto.randomUUID();
     const duplicatedUniversalIdentifier = crypto.randomUUID();
     const manifest = buildManifestWithCrossEntityIdentifierConflict(
       universalIdentifier,
-      roleUniversalIdentifier,
       duplicatedUniversalIdentifier,
     );
 

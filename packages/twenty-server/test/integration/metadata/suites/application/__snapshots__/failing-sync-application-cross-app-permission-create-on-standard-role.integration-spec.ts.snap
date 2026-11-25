@@ -7,7 +7,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
     "subCode": "INVALID_INPUT",
     "userFriendlyMessage": "Invalid input provided.",
   },
-  "message": "Application "Test Application" (a1b2c3d4-0010-4000-a000-000000000010) declares role permissions marketplace applications cannot declare: Role "Stolen Admin Role" (20202020-02c2-43f2-b94d-cab1f2b532eb), the application role, declares field permissions on objects a1b2c3d4-0010-4000-a000-000000000020. Marketplace applications cannot declare field permissions: the workspace configures them.",
+  "message": "Application "Test Application" (a1b2c3d4-0010-4000-a000-000000000010) declares roles marketplace applications cannot declare: Role "Stolen Admin Role" (20202020-02c2-43f2-b94d-cab1f2b532eb), the application role, declares field permissions on objects a1b2c3d4-0010-4000-a000-000000000020. Marketplace applications cannot declare field permissions: the workspace configures them.",
   "name": "UserInputError",
 }
 `;

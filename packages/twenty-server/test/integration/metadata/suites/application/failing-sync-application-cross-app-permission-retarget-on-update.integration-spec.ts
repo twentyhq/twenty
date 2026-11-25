@@ -60,11 +60,6 @@ describe('Sync application should fail when retargeting existing permissions to 
       overrides: {
         roles: [
           {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
-          {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Admin',
             description: 'Attempts to retarget permission flag to admin role',
@@ -115,11 +110,6 @@ describe('Sync application should fail when retargeting existing permissions to 
       roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
           {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Admin',

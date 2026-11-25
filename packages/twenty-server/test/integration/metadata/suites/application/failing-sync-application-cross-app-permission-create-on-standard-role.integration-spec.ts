@@ -9,7 +9,6 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0010-4000-a000-000000000010';
-const TEST_ROLE_ID = 'a1b2c3d4-0010-4000-a000-000000000011';
 const TEST_OBJECT_PERMISSION_ID = 'a1b2c3d4-0010-4000-a000-000000000013';
 const TEST_FIELD_PERMISSION_ID = 'a1b2c3d4-0010-4000-a000-000000000014';
 const FAKE_OBJECT_ID = 'a1b2c3d4-0010-4000-a000-000000000020';
@@ -38,11 +37,6 @@ describe('Sync application should fail when creating permissions on a standard r
       overrides: {
         roles: [
           {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
-          {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Stolen Admin Role',
             description:
@@ -69,11 +63,6 @@ describe('Sync application should fail when creating permissions on a standard r
       roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
           {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Stolen Admin Role',
@@ -104,11 +93,6 @@ describe('Sync application should fail when creating permissions on a standard r
       roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
           {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Stolen Admin Role',

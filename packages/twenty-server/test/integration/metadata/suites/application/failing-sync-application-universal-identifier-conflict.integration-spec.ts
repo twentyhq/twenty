@@ -8,7 +8,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 const TEST_APP_ID = 'a1b2c3d4-0001-4000-a000-000000000001';
-const TEST_ROLE_ID = 'a1b2c3d4-0002-4000-a000-000000000002';
 const DUPLICATED_UNIVERSAL_IDENTIFIER = 'a1b2c3d4-0003-4000-a000-000000000003';
 
 describe('Sync application should fail on universalIdentifier conflicts', () => {
@@ -33,11 +32,6 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
       roleId: DUPLICATED_UNIVERSAL_IDENTIFIER,
       overrides: {
         roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'First Role',
-            description: 'First role',
-          },
           {
             universalIdentifier: DUPLICATED_UNIVERSAL_IDENTIFIER,
             label: 'Second Role',
@@ -72,11 +66,6 @@ describe('Sync application should fail on universalIdentifier conflicts', () => 
       roleId: STANDARD_ROLE.admin.universalIdentifier,
       overrides: {
         roles: [
-          {
-            universalIdentifier: TEST_ROLE_ID,
-            label: 'App Default Role',
-            description: 'Default role for the test app',
-          },
           {
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Stolen Admin Role',
