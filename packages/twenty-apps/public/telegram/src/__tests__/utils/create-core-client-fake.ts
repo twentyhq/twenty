@@ -10,6 +10,12 @@ type LinkRecord = {
 
 type EqualityFilter = Record<string, { eq: string }>;
 
+const LINK_FILTER_FIELDS: (keyof LinkRecord)[] = [
+  'id',
+  'telegramUserId',
+  'workspaceMemberId',
+];
+
 type FakeQuery = {
   telegramUserLinks?: { __args: { filter: EqualityFilter } };
   workspaceMembers?: { __args: { filter?: EqualityFilter } };
@@ -53,14 +59,15 @@ export const createCoreClientFake = ({
           };
         }
 
-        const filter = Object.entries(
-          query.telegramUserLinks?.__args.filter ?? {},
-        );
+        const filter = query.telegramUserLinks?.__args.filter ?? {};
 
         return {
           telegramUserLinks: toConnection(
-            state.links.filter((link: Record<string, unknown>) =>
-              filter.every(([field, { eq }]) => link[field] === eq),
+            state.links.filter((link) =>
+              LINK_FILTER_FIELDS.every(
+                (field) =>
+                  !isDefined(filter[field]) || link[field] === filter[field].eq,
+              ),
             ),
           ),
         };

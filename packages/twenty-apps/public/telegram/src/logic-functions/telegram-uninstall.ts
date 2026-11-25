@@ -33,8 +33,9 @@ export const telegramUninstallHandler = async (): Promise<{
 
   return {
     releasedClaimCount: claimedTelegramUserIds.length,
-    deletedPendingLinkTokenCount:
-      pendingLinkTokenDeletions.filter(Boolean).length,
+    deletedPendingLinkTokenCount: pendingLinkTokenDeletions.filter(
+      (isDeleted) => isDeleted,
+    ).length,
   };
 };
 
