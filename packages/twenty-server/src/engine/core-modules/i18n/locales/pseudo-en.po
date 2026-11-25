@@ -3175,6 +3175,12 @@ msgctxt "fieldMetadata.label"
 msgid "Chats"
 msgstr ""
 
+#. js-lingui-id: bK/UPN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
+msgid "Chats"
+msgstr ""
+
 #. js-lingui-id: 68T2AN
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -10370,11 +10376,6 @@ msgstr ""
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr ""
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr ""
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10452,8 +10453,14 @@ msgstr ""
 msgid "Only the member who owns an agent can change who sees it."
 msgstr ""
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr ""
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr ""
 

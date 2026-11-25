@@ -4255,11 +4255,6 @@ msgstr "برنامه با موفقیت نصب شد."
 msgid "Application Logs"
 msgstr "گزارش‌های برنامه"
 
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "صورتحساب‌گیری قیمت برنامه"
-
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -5324,11 +5319,6 @@ msgstr "بین {startOrdinal} و {endOrdinal} ماه"
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill credits to your workspace"
 msgstr "اعتبارها را به فضای کاری شما صورتحساب می‌کند"
-
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "قیمت‌های اعلام‌شده توسط برنامه‌های نصب‌شده را در اشتراک فضای کاری صورتحساب کنید. قیمت هنوز پیش از نصب نمایش داده نمی‌شود."
 
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
@@ -25697,7 +25687,7 @@ msgstr "پاسخ"
 #. js-lingui-id: 5ykMJ1
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
 msgid "Reply all"
-msgstr ""
+msgstr "پاسخ به همه"
 
 #. js-lingui-id: VKsaTi
 #: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
@@ -26674,7 +26664,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -27003,6 +26993,11 @@ msgstr "جستجوی عملیات‌ها"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "گزینه‌های جستجو"
+
+#. js-lingui-id: WDcoYK
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
+msgid "Search or ask..."
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -29665,6 +29660,11 @@ msgstr "تغییرات این هفته در Acme را خلاصه کنید"
 #: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
 msgid "Summary"
 msgstr "خلاصه"
+
+#. js-lingui-id: 4W6uNO
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Summary columns can't be sorted or filtered."
+msgstr "ستون‌های خلاصه را نمی‌توان مرتب یا فیلتر کرد."
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
