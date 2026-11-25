@@ -4,6 +4,8 @@ import {
 } from 'twenty-shared/utils';
 
 import { type StoredFormulaColumnExpression } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-column-expression.type';
+import { createFormulaLookupAliasAllocator } from 'src/engine/metadata-modules/formula-field/utils/create-formula-lookup-alias-allocator.util';
+import { type WorkspaceComputedLookupShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -26,7 +28,10 @@ export const buildStoredFormulaColumnExpressions = ({
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   schemaName: string;
   formulaFieldMetadataIds?: string[];
-}): StoredFormulaColumnExpression[] => {
+}): {
+  columnExpressions: StoredFormulaColumnExpression[];
+  lookupJoins: WorkspaceComputedLookupShape[];
+} => {
   const storedFormulaFlatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
     flatObjectMetadata,
     flatFieldMetadataMaps,
@@ -38,16 +43,19 @@ export const buildStoredFormulaColumnExpressions = ({
   );
 
   if (storedFormulaFlatFieldMetadatas.length === 0) {
-    return [];
+    return { columnExpressions: [], lookupJoins: [] };
   }
 
   const tableName = computeObjectTargetTable(flatObjectMetadata);
+  const { getLookupAlias, getLookupShapes } =
+    createFormulaLookupAliasAllocator();
   const resolveReference = buildFormulaSqlReferenceResolverFromDescriptors({
     fields: buildFormulaFieldDescriptorsFromFlatEntityMaps({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     }),
+    getLookupAlias,
   });
   const resolveAggregationSource = buildFormulaSqlAggregationSourceResolver({
     flatObjectMetadata,
@@ -56,7 +64,7 @@ export const buildStoredFormulaColumnExpressions = ({
     schemaName,
   });
 
-  return storedFormulaFlatFieldMetadatas.flatMap(
+  const columnExpressions = storedFormulaFlatFieldMetadatas.flatMap(
     (storedFormulaFlatFieldMetadata): StoredFormulaColumnExpression[] =>
       (
         compileFormulaFieldColumns({
@@ -74,4 +82,9 @@ export const buildStoredFormulaColumnExpressions = ({
         expression: `(${expression ?? 'NULL'})::${sqlType}`,
       })),
   );
+
+  return {
+    columnExpressions,
+    lookupJoins: getLookupShapes(),
+  };
 };

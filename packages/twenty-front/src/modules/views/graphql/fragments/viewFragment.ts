@@ -31,6 +31,7 @@ export const VIEW_FRAGMENT = gql`
     kanbanColumnWidth
     groupLoadLimit
     anyFieldFilterValue
+    presetFilter
     calendarFieldMetadataId
     calendarEndFieldMetadataId
     calendarLayout

@@ -17,11 +17,14 @@ export const computeValidationRuleHelperContextAtCursor = ({
   functionDefinitions?: ValidationRuleSyntaxDefinition[];
 }): ValidationRuleHelperContext => {
   const { doc, selection } = editor.state;
+  const nodeBeforeCursor = selection.$from.nodeBefore;
 
   return computeValidationRuleHelperContext({
     textBeforeCursor: getValidationRuleEditorText(doc, selection.from),
-    isCursorAfterField:
-      selection.$from.nodeBefore?.type.name === VALIDATION_RULE_FIELD_NODE_NAME,
+    fieldPathBeforeCursor:
+      nodeBeforeCursor?.type.name === VALIDATION_RULE_FIELD_NODE_NAME
+        ? String(nodeBeforeCursor.attrs.path)
+        : undefined,
     fields,
     functionDefinitions,
   });

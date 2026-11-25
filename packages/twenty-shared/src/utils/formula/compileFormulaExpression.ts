@@ -1,6 +1,5 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
-import { RelationType } from '@/types/RelationType';
 import { type FieldMetadataFormulaEvaluation } from '@/types/FieldMetadataFormulaEvaluation';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
@@ -47,31 +46,6 @@ const UPDATED_AT_FIELD_NAME = 'updatedAt';
 // Every recompute write bumps updatedAt, so a stored formula reading it could recompute forever
 const findUpdatedAtPath = (paths: string[]): string | undefined =>
   paths.find((path) => path.split('.').pop() === UPDATED_AT_FIELD_NAME);
-
-const findPathUnsupportedInStoredFormula = ({
-  paths,
-  fields,
-}: {
-  paths: string[];
-  fields: Pick<ValidationRuleFieldDescriptor, 'name' | 'relationType'>[];
-}): string | undefined => {
-  const toOneRelationNames = new Set(
-    fields
-      .filter(({ relationType }) => relationType === RelationType.MANY_TO_ONE)
-      .map(({ name }) => name),
-  );
-
-  return paths.find((path) => {
-    const [rootSegment, ...memberSegments] = path.split('.');
-
-    return (
-      rootSegment === VALIDATION_RULE_NOW_VARIABLE_NAME ||
-      (isDefined(rootSegment) &&
-        toOneRelationNames.has(rootSegment) &&
-        memberSegments.length > 0)
-    );
-  });
-};
 
 export const compileFormulaExpression = ({
   expression,
@@ -131,8 +105,9 @@ export const compileFormulaExpression = ({
       bindings: compilation.bindings,
       fields,
     }) === 'STORED';
+  // `now` moves without any record changing, so a stored value reading it would go stale
   const unsupportedPath = isStored
-    ? findPathUnsupportedInStoredFormula({ paths, fields })
+    ? paths.find((path) => path === VALIDATION_RULE_NOW_VARIABLE_NAME)
     : undefined;
 
   const updatedAtPath = isStored ? findUpdatedAtPath(paths) : undefined;

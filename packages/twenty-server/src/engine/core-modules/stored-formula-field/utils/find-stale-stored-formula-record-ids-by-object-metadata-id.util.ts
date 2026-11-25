@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type StoredFormulaRelatedRecordWatchPlan } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
+import { type StoredFormulaRecordWatchPlan } from 'src/engine/core-modules/stored-formula-field/types/stored-formula-watch-plans.type';
 
 type RecordSnapshot = Record<string, unknown>;
 
@@ -18,7 +18,7 @@ export const findStaleStoredFormulaRecordIdsByObjectMetadataId = ({
   isRecordUpdate,
 }: {
   events: StoredFormulaSourceRecordEvent[];
-  watchPlans: StoredFormulaRelatedRecordWatchPlan[];
+  watchPlans: StoredFormulaRecordWatchPlan[];
   isRecordUpdate: boolean;
 }): Record<string, string[]> => {
   const staleRecordIdsByObjectMetadataId: Record<string, Set<string>> = {};

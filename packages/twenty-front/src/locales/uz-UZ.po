@@ -96,6 +96,11 @@ msgstr ": Bugun{timeZoneAbbreviationSuffix}"
 msgid "· FREE"
 msgstr "· BEPUL"
 
+#. js-lingui-id: eNVoMO
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
+msgstr ""
+
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" is not a to-one relation"
@@ -114,7 +119,7 @@ msgstr "\"{path}\" bir nechta munosabat chuqurligiga kiradi"
 #. js-lingui-id: WsA0r3
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
-msgstr ""
+msgstr "\"{path}\" bir nechta qismdan iborat: ulardan birini, masalan, {path}.{subfieldName} ni o‘qing"
 
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -124,7 +129,7 @@ msgstr "\"{path}\" qiymat emas"
 #. js-lingui-id: LWKWNY
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" reads a previous value, which a formula cannot use"
-msgstr ""
+msgstr "\"{path}\" formula foydalana olmaydigan oldingi qiymatni o‘qiydi"
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -135,6 +140,11 @@ msgstr "\"{path}\" munosabatni o‘qiydi, ammo oldingi qiymatlar faqat ushbu yoz
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
 msgstr "\"{subfieldName}\" \"{fieldName}\"ning quyi maydoni emas."
+
+#. js-lingui-id: caVje7
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "({applicationsCount} {applicationCountLabel})"
+msgstr ""
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -667,6 +677,16 @@ msgstr "{applicationName} endi hisobingizga kira olmaydi"
 msgid "{applicationName}: {settingsMenuItemTitle}"
 msgstr "{applicationName}: {settingsMenuItemTitle}"
 
+#. js-lingui-id: 041Z1f
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{applicationsCount} paid app"
+msgstr ""
+
+#. js-lingui-id: tkQrFL
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{applicationsCount} paid apps"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
@@ -896,11 +916,26 @@ msgstr "{formattedPercentage}% ishlatildi, {formattedContextWindow} tokendan {fo
 #. js-lingui-id: d3NhPx
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
-msgstr ""
+msgstr "{functionName} {minimumArgumentCount} ta argument(lar) qabul qiladi, ammo {argumentCount} ta berildi"
 
 #. js-lingui-id: KeR/79
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr "{functionName} kamida {minimumArgumentCount} ta argument(lar) qabul qiladi, ammo {argumentCount} ta berildi"
+
+#. js-lingui-id: aGSMaz
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() cannot contain another aggregate"
+msgstr ""
+
+#. js-lingui-id: gT6Kkm
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
+msgstr ""
+
+#. js-lingui-id: vN+0eR
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() reads related records, which only a formula can do"
 msgstr ""
 
 #. js-lingui-id: NHstiz
@@ -1140,6 +1175,26 @@ msgstr "{fieldCount} ta maydondan {prefilledCount} tasi oldindan to‘ldirilgan"
 #: src/modules/settings/applications/components/SettingsApplicationConnectionProviderSection.tsx
 msgid "{providerDisplayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
 msgstr "{providerDisplayName} OAuth server administratoringiz tomonidan hali sozlanmagan. Ular ulanish qo‘shishdan oldin ilovani ro‘yxatdan o‘tkazish sahifasida OAuth mijoz ID si va maxfiy kalitini to‘ldirishlari kerak."
+
+#. js-lingui-id: VLLE21
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} account"
+msgstr ""
+
+#. js-lingui-id: XYE5Zk
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} accounts"
+msgstr ""
+
+#. js-lingui-id: 6sLwwC
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} member"
+msgstr ""
+
+#. js-lingui-id: k/jGvO
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "{quantity} members"
+msgstr ""
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1784,6 +1839,11 @@ msgstr "Ish jarayonini ishga tushirgan shaxs uchun forma ochiladi va u joyida to
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "Workflow’ni ishga tushirgan shaxs uchun forma ochiladi va u joyida to‘ldiriladi. Ushbu trigger bilan u faqat Workflow ishga tushirilishida ko‘rinadi. Kimdandir uning kiruvchi xabarlar qutisida javob yoki tasdiq so‘rash uchun uning o‘rniga Send to Inbox qadamidan foydalaning."
 
+#. js-lingui-id: QbGaDs
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
+msgstr ""
+
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
@@ -1823,6 +1883,11 @@ msgstr "Rol majburiy"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "API kaliti uchun rol tanlanishi kerak"
+
+#. js-lingui-id: /852Zy
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A stored formula cannot read \"{path}\""
+msgstr ""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -4153,6 +4218,11 @@ msgstr "API qiymatlari"
 msgid "Apostrophe and dot"
 msgstr "Apostrof va nuqta"
 
+#. js-lingui-id: sRXyRZ
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "app"
+msgstr ""
+
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
 #: src/modules/log-console/constants/LogConsoleApplicationLogFilterFields.tsx
@@ -4254,11 +4324,6 @@ msgstr "Ilova muvaffaqiyatli o‘rnatildi."
 #: src/modules/settings/event-logs/components/EventLogTableSelector.tsx
 msgid "Application Logs"
 msgstr "Ilova jurnallari"
-
-#. js-lingui-id: UiH6l9
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Application price billing"
-msgstr "Ilova narxlarini hisob-kitob qilish"
 
 #. js-lingui-id: Ko+Gd2
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -4373,10 +4438,17 @@ msgstr "Tasdiqlandi, ammo amalga oshmadi"
 msgid "Approved Domains"
 msgstr "Tasdiqlangan domenlar"
 
+#. js-lingui-id: at3eOk
+#: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+msgid "apps"
+msgstr ""
+
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 #: src/modules/settings/applications/components/SettingsApplicationContentPageLayout.tsx
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -5325,11 +5397,6 @@ msgstr "oyning {startOrdinal} dan {endOrdinal} gacha bo‘lgan kunlari orasida"
 msgid "Bill credits to your workspace"
 msgstr "Kreditlarni ish maydoningizga hisoblang"
 
-#. js-lingui-id: jKtUV8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet."
-msgstr "O‘rnatilgan ilovalar tomonidan e’lon qilingan narxlarni ish maydoni obunasi uchun hisob-kitob qiling. Narx hali o‘rnatishdan oldin ko‘rsatilmaydi."
-
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
@@ -5369,6 +5436,11 @@ msgstr "Hisob‑kitob"
 #: src/utils/title-utils.ts
 msgid "Billing - Settings"
 msgstr "Hisob-kitob - Sozlamalar"
+
+#. js-lingui-id: arWQGP
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Billing email"
+msgstr ""
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6257,6 +6329,11 @@ msgstr "Ijrochini o‘zgartirish"
 #: src/modules/object-core/agents/components/CoreAgentAvatarPicker.tsx
 msgid "Change avatar"
 msgstr "Avatarni o‘zgartirish"
+
+#. js-lingui-id: Y1obaF
+#: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
+msgid "Change billing email"
+msgstr ""
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7467,22 +7544,22 @@ msgstr "Yozuvlar ro‘yxatlari qator darajasidagi ruxsatlar uchun foydalanadigan
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand."
-msgstr ""
+msgstr "Boshqa maydonlardan miqdorni mikrolarda hisoblang: 1 birlik 1,000,000 ga teng. Qiymatlarni qoʻlda kiritish uchun bo‘sh qoldiring."
 
 #. js-lingui-id: Y+aLgd
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. Leave empty to enter values by hand."
-msgstr ""
+msgstr "Bu maydonni boshqa maydonlardan hisoblang. Qiymatlarni qoʻlda kiritish uchun bo‘sh qoldiring."
 
 #. js-lingui-id: 5uQ2yY
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand."
-msgstr ""
+msgstr "Bu maydonni boshqa maydonlardan hisoblang. Formula 1 dan 5 gacha bo‘lgan sonni qaytarishi kerak. Qoʻlda baholash uchun bo‘sh qoldiring."
 
 #. js-lingui-id: egFQhc
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand."
-msgstr ""
+msgstr "Bu maydonni boshqa maydonlardan hisoblang. Formula qoʻshtirnoq ichidagi variant qiymatlaridan birini qaytarishi kerak. Qiymatlarni qoʻlda tanlash uchun bo‘sh qoldiring."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -14753,18 +14830,18 @@ msgstr "Shakllar qo‘lda ishga tushirishlar uchun mo‘ljallangan"
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 msgid "Formula"
-msgstr ""
+msgstr "Formula"
 
 #. js-lingui-id: 2eN5Wv
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "Formula currency"
-msgstr ""
+msgstr "Formula valyutasi"
 
 #. js-lingui-id: k7mCp1
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Formula fields"
-msgstr ""
+msgstr "Formula maydonlari"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -16444,6 +16521,7 @@ msgstr "Nofaol skill parametrlari"
 
 #. js-lingui-id: Gp4Yi6
 #: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -18002,7 +18080,7 @@ msgstr "Yozuv darajasidagi ruxsat qoidalariga bog‘liq yozuv maydonini solishti
 #. js-lingui-id: oKfDGp
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
-msgstr ""
+msgstr "Matn, son, mantiqiy va sana maydonlariga yozuv hamda unga bogʻliq yozuvlar ustidagi ifodadan o‘z qiymatini hisoblashga ruxsat bering."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -20259,7 +20337,6 @@ msgid "New Agent"
 msgstr "Yangi agent"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
 #: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Yangi AI chat"
@@ -23288,6 +23365,11 @@ msgstr "Sahifalar"
 msgid "Paid app"
 msgstr "Pullik ilova"
 
+#. js-lingui-id: CQnFBr
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "Paid apps installed in this workspace. Prices are added to your invoice"
+msgstr ""
+
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "paragraph"
@@ -23509,6 +23591,11 @@ msgstr "Har"
 #: src/modules/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow.ts
 msgid "per member"
 msgstr "har bir a’zo uchun"
+
+#. js-lingui-id: JxgXH1
+#: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
+msgid "Per month"
+msgstr ""
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24685,6 +24772,11 @@ msgstr "{target} ni o‘qish, yozish va o‘chirish"
 msgid "Read/Edit/Delete permissions"
 msgstr "O‘qish/Tahrirlash/O‘chirish ruxsatlari"
 
+#. js-lingui-id: +a9H8X
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
+msgstr ""
+
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
@@ -25694,6 +25786,11 @@ msgstr "Replit o‘rnatish havolalari HTTPS MCP URL manzilini talab qiladi."
 msgid "Reply"
 msgstr "Javob berish"
 
+#. js-lingui-id: 5ykMJ1
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply all"
+msgstr "Barchasiga javob berish"
+
 #. js-lingui-id: VKsaTi
 #: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
@@ -26669,7 +26766,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26998,6 +27095,11 @@ msgstr "Operatsiyalarni qidiring"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "Qidirish parametrlari"
+
+#. js-lingui-id: WDcoYK
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
+msgid "Search or ask..."
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -29661,6 +29763,11 @@ msgstr "Bu hafta Acme’da nimalar o‘zgarganini umumlashtiring"
 msgid "Summary"
 msgstr "Xulosa"
 
+#. js-lingui-id: 4W6uNO
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "Summary columns can't be sorted or filtered."
+msgstr "Yig'ma ustunlarni saralash yoki filtrlash mumkin emas."
+
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
 msgid "Summary copied to clipboard"
@@ -30244,6 +30351,11 @@ msgstr "Ushbu qadam ishga tushiradigan agentni yuklab bo‘lmadi. U o‘chirilga
 msgid "The API endpoint for your OpenAI-compatible provider"
 msgstr "OpenAI bilan mos keluvchi provayderingiz uchun API endpoint manzili"
 
+#. js-lingui-id: UIpkEz
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The average of a number field over the related records, or over those matching the condition."
+msgstr ""
+
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The AWS region for Bedrock"
@@ -30284,6 +30396,11 @@ msgstr "Kod {memberName} ga autentifikator ilovasisiz ushbu ish maydoniga bir ma
 msgid "The code of the Twenty partner who referred you"
 msgstr "Sizni tavsiya qilgan Twenty hamkorining kodi"
 
+#. js-lingui-id: h7Af0y
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
+msgstr ""
+
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
 msgid "The conversation has been compacted"
@@ -30292,7 +30409,7 @@ msgstr "Suhbat ixchamlashtirildi"
 #. js-lingui-id: Ah78wz
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
 msgid "The currency of the computed amount: a code in quotes such as \"USD\", or the currency code of another field."
-msgstr ""
+msgstr "Hisoblangan miqdorning valyutasi: \"USD\" kabi qoʻshtirnoq ichidagi kod yoki boshqa maydonning valyuta kodi."
 
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -30389,6 +30506,11 @@ msgstr "Joylashtirishingiz uchun barcha maydonlari to‘ldirilgan to‘liq kelis
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Ish jarayoni tetiklagichi buyruqlar menyusida ko‘rsatadigan belgi"
 
+#. js-lingui-id: hP+z/5
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
+msgstr ""
+
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
@@ -30471,6 +30593,11 @@ msgstr "Qabul qiluvchilar manzilingiz yonida ko‘radigan nom. U kanal yaratilga
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "Ro‘yxatdagi elementlar soni yoki u ro‘yxat bo‘lmasa 0."
 
+#. js-lingui-id: vXwRDS
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
+msgstr ""
+
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
@@ -30541,6 +30668,11 @@ msgstr "Tanlangan yozuvlar (eng ko‘pi {maxRecordsFormatted} ta) ish jarayoning
 msgid "The shared email you want to use."
 msgstr "Siz foydalanmoqchi bo‘lgan umumiy elektron pochta manzili."
 
+#. js-lingui-id: q2NONu
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
+msgstr ""
+
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
@@ -30582,6 +30714,11 @@ msgstr "Vosita ishga tushdi, ammo hech qanday maydon qaytarmadi, shuning uchun k
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
 msgstr "Vosita argumentsiz ishlaydi."
+
+#. js-lingui-id: 6XWxWG
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The total of a number field over the related records, or over those matching the condition."
+msgstr ""
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

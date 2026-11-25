@@ -81,6 +81,8 @@ describe('isCalendarEventInternal', () => {
   it.each([
     ['ada@gmail.com', 'buyer@gmail.com'],
     ['ada@hotmail.fr', 'buyer@hotmail.fr'],
+    ['ada@seznam.cz', 'buyer@seznam.cz'],
+    ['Ada@GMAIL.com', 'buyer@gmail.com'],
   ])(
     'does not treat the free-mail domain of %s as the workspace',
     (ownerHandle, participantHandle) => {

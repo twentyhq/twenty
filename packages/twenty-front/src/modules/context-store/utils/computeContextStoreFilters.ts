@@ -10,6 +10,7 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   computeRecordGqlOperationFilter,
+  isEmptyObject,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -21,6 +22,7 @@ type ComputeContextStoreFiltersProps = {
   fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
+  currentViewPresetFilterAsRecordGqlOperationFilter: RecordGqlOperationFilter;
 };
 
 export const computeContextStoreFilters = ({
@@ -31,6 +33,7 @@ export const computeContextStoreFilters = ({
   fieldMetadataItems,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
+  currentViewPresetFilterAsRecordGqlOperationFilter,
 }: ComputeContextStoreFiltersProps) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
@@ -49,6 +52,9 @@ export const computeContextStoreFilters = ({
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),
+      isEmptyObject(currentViewPresetFilterAsRecordGqlOperationFilter)
+        ? undefined
+        : currentViewPresetFilterAsRecordGqlOperationFilter,
       contextStoreTargetedRecordsRule.excludedRecordIds.length > 0
         ? {
             not: {
