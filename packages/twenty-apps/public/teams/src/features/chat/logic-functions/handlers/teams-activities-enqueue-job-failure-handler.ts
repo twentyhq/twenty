@@ -7,9 +7,10 @@ import { TEAMS_ASSISTANT_REQUEST_STATUS } from 'src/features/chat/logic-function
 import { findTeamsAssistantRequestByTeamsActivity } from 'src/features/chat/logic-functions/data/find-teams-assistant-request-by-teams-activity';
 import { updateTeamsAssistantRequest } from 'src/features/chat/logic-functions/data/update-teams-assistant-request';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
-import { getTeamsConnectorAccessTokenOrThrow } from 'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw';
 import { parseTeamsAssistantRequest } from 'src/features/chat/logic-functions/utils/parse-teams-assistant-request';
-import { sendTeamsActivity } from 'src/features/chat/logic-functions/utils/send-teams-activity';
+import { sendTeamsReplyOnce } from 'src/features/chat/logic-functions/utils/send-teams-reply-once';
+
+const TEAMS_JOB_FAILURE_REPLY_TTL_MS = 60 * 60 * 1000;
 
 const UNFINISHED_STATUSES: string[] = [
   TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
@@ -44,11 +45,12 @@ export const teamsActivitiesEnqueueJobFailureHandler = async ({
     return { skipped: true, reason: 'Request is already finished' };
   }
 
-  await sendTeamsActivity({
+  await sendTeamsReplyOnce({
+    kvKey: `teams-job-failure-reply:${request.id}`,
+    ttlMs: TEAMS_JOB_FAILURE_REPLY_TTL_MS,
     serviceUrl: teamsServiceUrl,
     conversationId: teamsConversationId,
-    accessToken: await getTeamsConnectorAccessTokenOrThrow(),
-    activity: { type: 'message', text: TEAMS_ASSISTANT_FAILURE_TEXT },
+    text: TEAMS_ASSISTANT_FAILURE_TEXT,
   });
 
   await updateTeamsAssistantRequest({

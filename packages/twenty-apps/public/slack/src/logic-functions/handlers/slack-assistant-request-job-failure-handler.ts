@@ -4,8 +4,11 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { findSlackAssistantRequestBySlackMessage } from 'src/logic-functions/data/find-slack-assistant-request-by-slack-message';
+import { updateSlackAssistantRequest } from 'src/logic-functions/data/update-slack-assistant-request';
+import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
+import { claimSlackJobFailureReply } from 'src/logic-functions/utils/claim-slack-job-failure-reply';
+import { getSlackAssistantFailureText } from 'src/logic-functions/utils/get-slack-assistant-failure-text';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 
@@ -24,11 +27,13 @@ export const slackAssistantRequestJobFailureHandler = async ({
     return { skipped: true, reason: parsed.skipReason };
   }
 
+  const { slackChannelId, slackMessageTimestamp } = parsed.request;
+
   const client = new CoreApiClient();
 
   const request = await findSlackAssistantRequestBySlackMessage(client, {
-    slackChannelId: parsed.request.slackChannelId,
-    slackMessageTimestamp: parsed.request.slackMessageTimestamp,
+    slackChannelId,
+    slackMessageTimestamp,
   });
 
   if (
@@ -38,14 +43,24 @@ export const slackAssistantRequestJobFailureHandler = async ({
     return { skipped: true, reason: 'Request is already finished' };
   }
 
-  return await finishSlackAssistantRequestWithFailure({
-    client,
-    requestId: request.id,
-    slackChannelId: parsed.request.slackChannelId,
-    parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
-      slackThreadTimestamp: request.slackThreadTimestamp,
-      slackMessageTimestamp: parsed.request.slackMessageTimestamp,
-    }),
-    errorMessage: `${error.type}: ${error.message}`,
+  const errorMessage = `${error.type}: ${error.message}`;
+
+  if (await claimSlackJobFailureReply(request.id)) {
+    await slackPostMessageHandler({
+      slackChannelId,
+      messageText: getSlackAssistantFailureText(errorMessage),
+      parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
+        slackThreadTimestamp: request.slackThreadTimestamp,
+        slackMessageTimestamp,
+      }),
+    });
+  }
+
+  await updateSlackAssistantRequest(client, {
+    id: request.id,
+    status: SLACK_ASSISTANT_REQUEST_STATUS.FAILED,
+    errorMessage,
   });
+
+  return { failed: true, reason: errorMessage };
 };

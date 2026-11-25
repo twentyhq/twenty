@@ -4,11 +4,11 @@ import { TEAMS_ASSISTANT_FAILURE_TEXT } from 'src/features/chat/logic-functions/
 import { teamsActivitiesEnqueueJobFailureHandler } from 'src/features/chat/logic-functions/handlers/teams-activities-enqueue-job-failure-handler';
 import { type TeamsActivitiesDispatchPayload } from 'src/features/chat/logic-functions/types/teams-activities-dispatch-payload.type';
 
-const { findRequestMock, updateRequestMock, sendActivityMock } = vi.hoisted(
+const { findRequestMock, updateRequestMock, sendReplyOnceMock } = vi.hoisted(
   () => ({
     findRequestMock: vi.fn(),
     updateRequestMock: vi.fn(),
-    sendActivityMock: vi.fn(),
+    sendReplyOnceMock: vi.fn(),
   }),
 );
 
@@ -22,13 +22,9 @@ vi.mock(
   () => ({ updateTeamsAssistantRequest: updateRequestMock }),
 );
 
-vi.mock('src/features/chat/logic-functions/utils/send-teams-activity', () => ({
-  sendTeamsActivity: sendActivityMock,
-}));
-
 vi.mock(
-  'src/features/chat/logic-functions/utils/get-teams-connector-access-token-or-throw',
-  () => ({ getTeamsConnectorAccessTokenOrThrow: async () => 'access-token' }),
+  'src/features/chat/logic-functions/utils/send-teams-reply-once',
+  () => ({ sendTeamsReplyOnce: sendReplyOnceMock }),
 );
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -62,7 +58,7 @@ const TIMEOUT_FAILURE = {
 describe('teamsActivitiesEnqueueJobFailureHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    sendActivityMock.mockResolvedValue({ id: 'reply-id' });
+    sendReplyOnceMock.mockResolvedValue(true);
   });
 
   it('should reply with the failure text and fail an unfinished request', async () => {
@@ -76,18 +72,31 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
         teamsActivityId: ACTIVITY_ID,
       }),
     );
-    expect(sendActivityMock).toHaveBeenCalledWith({
-      serviceUrl: SERVICE_URL,
-      conversationId: CONVERSATION_ID,
-      accessToken: 'access-token',
-      activity: { type: 'message', text: TEAMS_ASSISTANT_FAILURE_TEXT },
-    });
+    expect(sendReplyOnceMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kvKey: `teams-job-failure-reply:${REQUEST_ID}`,
+        serviceUrl: SERVICE_URL,
+        conversationId: CONVERSATION_ID,
+        text: TEAMS_ASSISTANT_FAILURE_TEXT,
+      }),
+    );
     expect(updateRequestMock).toHaveBeenCalledWith(
       expect.objectContaining({
         id: REQUEST_ID,
         status: 'FAILED',
         errorMessage: 'TimeoutError: Task timed out after 240 seconds',
       }),
+    );
+  });
+
+  it('should still fail the request when a previous try already replied', async () => {
+    findRequestMock.mockResolvedValue({ id: REQUEST_ID, status: 'PROCESSING' });
+    sendReplyOnceMock.mockResolvedValue(false);
+
+    await teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE);
+
+    expect(updateRequestMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: REQUEST_ID, status: 'FAILED' }),
     );
   });
 
@@ -103,7 +112,7 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
         skipped: true,
         reason: 'Request is already finished',
       });
-      expect(sendActivityMock).not.toHaveBeenCalled();
+      expect(sendReplyOnceMock).not.toHaveBeenCalled();
       expect(updateRequestMock).not.toHaveBeenCalled();
     },
   );
@@ -113,7 +122,7 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
 
     await teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE);
 
-    expect(sendActivityMock).not.toHaveBeenCalled();
+    expect(sendReplyOnceMock).not.toHaveBeenCalled();
   });
 
   it('should skip an activity that is not an assistant request', async () => {
