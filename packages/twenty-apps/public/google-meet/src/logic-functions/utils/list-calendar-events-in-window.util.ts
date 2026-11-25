@@ -6,6 +6,7 @@ import {
   CALENDAR_EVENT_PAGE_SIZE,
   MAX_CALENDAR_EVENT_PAGES,
 } from 'src/logic-functions/constants/calendar-event-matching.constant';
+import { RESTRICTED_FIELD_PLACEHOLDER } from 'src/logic-functions/constants/restricted-field-placeholder.constant';
 import { type CalendarEventCandidate } from 'src/logic-functions/types/calendar-event-candidate.type';
 import { escapeSqlLikePattern } from 'src/logic-functions/utils/escape-sql-like-pattern.util';
 
@@ -83,7 +84,8 @@ const listCalendarEventPages = async ({
         ? [
             {
               id,
-              title: title ?? null,
+              title:
+                title === RESTRICTED_FIELD_PLACEHOLDER ? null : (title ?? null),
               startsAt,
               conferenceLink: conferenceLink ?? null,
             },

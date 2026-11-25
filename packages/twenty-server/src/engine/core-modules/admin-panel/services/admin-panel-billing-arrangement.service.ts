@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { type AdminPanelWorkspaceBillingArrangementDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing-arrangement.dto';
@@ -29,8 +29,10 @@ import {
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
+import { BillingTrialExtensionService } from 'src/engine/core-modules/billing/services/billing-trial-extension.service';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
+import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -50,6 +52,7 @@ export class AdminPanelBillingArrangementService {
     private readonly usageLimitService: UsageLimitService,
     private readonly billingSeatService: BillingSeatService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly billingTrialExtensionService: BillingTrialExtensionService,
     private readonly cacheLockService: CacheLockService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserEntity)
@@ -115,6 +118,10 @@ export class AdminPanelBillingArrangementService {
       usageLimitId: null,
     };
 
+    if (type === BillingArrangementType.TRIAL_EXTENSION) {
+      return this.extendTrial({ workspaceId, draft, grantedByUserId });
+    }
+
     const arrangement = await this.cacheLockService.withLock(
       async () => {
         if (type === BillingArrangementType.COMMITTED_SEATS) {
@@ -150,15 +157,7 @@ export class AdminPanelBillingArrangementService {
 
     await this.applyBillingArrangementChange(arrangement);
 
-    return fromBillingArrangementEntityToDto({
-      arrangement,
-      now: new Date(),
-      operatorsById: await this.findOperatorsById([arrangement]),
-      usageLimitsById: await this.findUsageLimitsById({
-        workspaceId,
-        arrangements: [arrangement],
-      }),
-    });
+    return this.toArrangementDto(arrangement);
   }
 
   async endWorkspaceBillingArrangement({
@@ -171,6 +170,22 @@ export class AdminPanelBillingArrangementService {
     revokedByUserId: string;
   }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
     this.assertBillingIsEnabled();
+
+    const { type } =
+      await this.billingArrangementService.findArrangementOrThrow({
+        workspaceId,
+        arrangementId: billingArrangementId,
+      });
+
+    if (type === BillingArrangementType.TRIAL_EXTENSION) {
+      return this.toArrangementDto(
+        await this.billingTrialExtensionService.revokeTrialExtension({
+          workspaceId,
+          arrangementId: billingArrangementId,
+          revokedByUserId,
+        }),
+      );
+    }
 
     const endedArrangement = await this.cacheLockService.withLock(
       async () => {
@@ -209,13 +224,48 @@ export class AdminPanelBillingArrangementService {
 
     await this.applyBillingArrangementChange(endedArrangement);
 
-    return fromBillingArrangementEntityToDto({
-      arrangement: endedArrangement,
-      now: new Date(),
-      operatorsById: await this.findOperatorsById([endedArrangement]),
-      usageLimitsById: await this.findUsageLimitsById({
+    return this.toArrangementDto(endedArrangement);
+  }
+
+  private async extendTrial({
+    workspaceId,
+    draft,
+    grantedByUserId,
+  }: {
+    workspaceId: string;
+    draft: BillingArrangementDraft;
+    grantedByUserId: string;
+  }): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    const validationErrors = getBillingArrangementValidationErrors(draft);
+
+    if (isNonEmptyArray(validationErrors) || !isDefined(draft.endsAt)) {
+      throw new BillingException(
+        `Invalid ${draft.type} arrangement for workspace ${workspaceId}: ${validationErrors.map(({ code }) => code).join(', ')}`,
+        BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
+      );
+    }
+
+    return this.toArrangementDto(
+      await this.billingTrialExtensionService.extendTrial({
         workspaceId,
-        arrangements: [endedArrangement],
+        trialEndsAt: draft.endsAt,
+        label: draft.label,
+        comment: draft.comment,
+        grantedByUserId,
+      }),
+    );
+  }
+
+  private async toArrangementDto(
+    arrangement: BillingArrangementEntity,
+  ): Promise<AdminPanelWorkspaceBillingArrangementDTO> {
+    return fromBillingArrangementEntityToDto({
+      arrangement,
+      now: new Date(),
+      operatorsById: await this.findOperatorsById([arrangement]),
+      usageLimitsById: await this.findUsageLimitsById({
+        workspaceId: arrangement.workspaceId,
+        arrangements: [arrangement],
       }),
     });
   }

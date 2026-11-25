@@ -105,6 +105,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Application price billing`,
     description: msg`Bill the prices declared by installed apps on the workspace subscription. The price is not shown before install yet.`,
   },
+  [FeatureFlagKey.IS_FORMULA_FIELD_ENABLED]: {
+    label: msg`Formula fields`,
+    description: msg`Let text, number, boolean and date fields compute their value from an expression over the record and its related records.`,
+  },
   [FeatureFlagKey.IS_LOOKUP_COLUMNS_ENABLED]: {
     label: msg`Lookup columns`,
     description: msg`Add table columns that show a field of a related record, such as a person's company industry. Enable after the instance upgrade completes.`,

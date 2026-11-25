@@ -111,10 +111,20 @@ msgstr "\"{path}\" gaat dieper dan het veld \"{fieldName}\" toestaat"
 msgid "\"{path}\" goes more than one relation deep"
 msgstr "\"{path}\" gaat meer dan één relatieniveau diep"
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr "\"{path}\" heeft meerdere onderdelen: lees er één, zoals {path}.{subfieldName}"
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\" is geen waarde"
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
+msgstr "\"{path}\" leest een vorige waarde, die een formule niet kan gebruiken"
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -340,7 +350,7 @@ msgstr "{0, plural, one {Verdien {formattedInviteTeamCreditsRewardPerUser} grati
 #. placeholder {0}: end.occurrenceCount
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "{0, plural, one {occurrence} other {occurrences}}"
-msgstr ""
+msgstr "{0, plural, one {voorkomen} other {voorkomens}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -569,6 +579,12 @@ msgstr "{0} zonder e-mailadres"
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "{0} workspace members"
 msgstr "{0} werkruimteleden"
+
+#. js-lingui-id: vZ4SMq
+#. placeholder {0}: entry.label
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+msgid "{0}, back"
+msgstr "{0}, terug"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
@@ -877,6 +893,16 @@ msgstr "{formattedFailedRunCount} van {formattedRunCount} uitvoeringen mislukt"
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "{formattedPercentage}% gebruikt, {formattedConversationSize} van {formattedContextWindow} tokens"
 
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr "{functionName} accepteert {minimumArgumentCount} argument(en), maar ontving er {argumentCount}"
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr "{functionName} accepteert ten minste {minimumArgumentCount} argument(en), maar ontving er {argumentCount}"
+
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
@@ -932,22 +958,22 @@ msgstr "{installCount, plural, one {{0} installatie} other {{1} installaties}}"
 #. js-lingui-id: UON5Ro
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {day} other {days}}"
-msgstr ""
+msgstr "{interval, plural, one {dag} other {dagen}}"
 
 #. js-lingui-id: UGYVsx
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {month} other {months}}"
-msgstr ""
+msgstr "{interval, plural, one {maand} other {maanden}}"
 
 #. js-lingui-id: RxZ6VS
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {week} other {weeks}}"
-msgstr ""
+msgstr "{interval, plural, one {week} other {weken}}"
 
 #. js-lingui-id: qB4ocR
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {year} other {years}}"
-msgstr ""
+msgstr "{interval, plural, one {jaar} other {jaren}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1321,12 +1347,12 @@ msgstr "{storedToolName} (niet beschikbaar voor jou)"
 #. js-lingui-id: VfeUjs
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, needs your input"
-msgstr ""
+msgstr "{tabName}, heeft je input nodig"
 
 #. js-lingui-id: REc4fO
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, unread"
-msgstr ""
+msgstr "{tabName}, ongelezen"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2157,7 +2183,7 @@ msgstr "Voeg hieronder een kaart toe om je factureringsgegevens bij te werken en
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "Een beschrijving toevoegen"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2397,7 +2423,7 @@ msgstr "Aangepaste aanbieder toevoegen"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "Beschrijving toevoegen"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2502,12 +2528,12 @@ msgstr "Voeg item toe"
 #. js-lingui-id: 1e37Dl
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item after"
-msgstr ""
+msgstr "Item erna toevoegen"
 
 #. js-lingui-id: w7mkyz
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
-msgstr ""
+msgstr "Item ervoor toevoegen"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2667,6 +2693,7 @@ msgstr "Regelgroep toevoegen"
 
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
 msgstr "Sectie toevoegen"
 
@@ -2683,6 +2710,11 @@ msgstr "Voeg sortering toe"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSO-identiteitsprovider toevoegen"
+
+#. js-lingui-id: iC/d3X
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Add summary column"
+msgstr "Samenvattingskolom toevoegen"
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -3029,7 +3061,7 @@ msgstr "Afrikaans"
 #. js-lingui-id: NawEr2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "After"
-msgstr ""
+msgstr "Na"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3791,7 +3823,7 @@ msgstr "Al in de zijbalk"
 #. js-lingui-id: CaKZeT
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in this section"
-msgstr ""
+msgstr "Al in deze sectie"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5253,6 +5285,11 @@ msgstr "Gedrag"
 msgid "Behind"
 msgstr "Achterlopend"
 
+#. js-lingui-id: +68Gui
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Belongs to"
+msgstr "Behoort tot"
+
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Belongs to one"
@@ -5296,17 +5333,17 @@ msgstr "Breng de prijzen die door geïnstalleerde apps zijn opgegeven in rekenin
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
-msgstr ""
+msgstr "Breng uw werkruimte {amount} / maand in rekening"
 
 #. js-lingui-id: 9nZzfz
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per account"
-msgstr ""
+msgstr "Breng uw werkruimte {amount} / maand per account in rekening"
 
 #. js-lingui-id: iOQoBV
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per member"
-msgstr ""
+msgstr "Breng uw werkruimte {amount} / maand per lid in rekening"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5576,6 +5613,11 @@ msgstr "Build-checksum"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Maak veel-op-veel-relaties"
+
+#. js-lingui-id: Hz2eHF
+#: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
+msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
+msgstr "In deze weergave opgebouwd vanuit {relationLabel}. Kan niet worden gesorteerd of gefilterd."
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -6449,7 +6491,7 @@ msgstr "Controleer verificatie"
 #. js-lingui-id: fbu0qc
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check when the event stops repeating"
-msgstr ""
+msgstr "Bepaal wanneer de gebeurtenis niet meer wordt herhaald"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7421,6 +7463,26 @@ msgstr "E-mail opstellen"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
 msgstr "Bereken de toegangsgroepen die recordlijsten zullen gebruiken voor machtigingen op rijniveau. Schakel in nadat de werkruimte-upgrade is voltooid."
+
+#. js-lingui-id: LzmTuU
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand."
+msgstr "Bereken het bedrag op basis van andere velden, in micros: 1 eenheid is 1.000.000. Laat leeg om waarden handmatig in te voeren."
+
+#. js-lingui-id: Y+aLgd
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. Leave empty to enter values by hand."
+msgstr "Bereken dit veld op basis van andere velden. Laat leeg om waarden handmatig in te voeren."
+
+#. js-lingui-id: 5uQ2yY
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand."
+msgstr "Bereken dit veld op basis van andere velden. De formule moet een getal van 1 tot 5 retourneren. Laat leeg om handmatig te beoordelen."
+
+#. js-lingui-id: egFQhc
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand."
+msgstr "Bereken dit veld op basis van andere velden. De formule moet een van de optiewaarden tussen aanhalingstekens retourneren. Laat leeg om waarden handmatig te kiezen."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -8544,6 +8606,11 @@ msgstr "Aantal waar"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "Unieke waarden tellen"
+
+#. js-lingui-id: wGiHe7
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Count, total, list"
+msgstr "Aantal, totaal, lijst"
 
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
@@ -10323,6 +10390,11 @@ msgstr "Vaardigheid verwijderen"
 msgid "Delete some {objectLabelPlural} · {throughRules}"
 msgstr "Enkele {objectLabelPlural} verwijderen · {throughRules}"
 
+#. js-lingui-id: x6UH+z
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Delete summary column"
+msgstr "Samenvattingskolom verwijderen"
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
@@ -10509,6 +10581,11 @@ msgstr "aflopend"
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Descending"
 msgstr "Aflopend"
+
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr "Beschrijf een {objectLabel} en wat eraan is veranderd"
 
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
@@ -10924,6 +11001,11 @@ msgstr "Niet importeren"
 msgid "Do you want to unsubscribe?"
 msgstr "Wilt u zich uitschrijven?"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr "Voer je geplande taak nu uit"
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10952,7 +11034,7 @@ msgstr "Documentatie"
 #. js-lingui-id: 7xJ6D1
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Does not repeat"
-msgstr ""
+msgstr "Wordt niet herhaald"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11403,7 +11485,6 @@ msgid "Edit all records"
 msgstr "Alle records bewerken"
 
 #. js-lingui-id: QM4RhQ
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
 msgstr "Kolom bewerken"
@@ -11416,7 +11497,7 @@ msgstr "Bewerk gegevensstructuur en velden"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "Beschrijving bewerken"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -11559,6 +11640,11 @@ msgstr "Gedeelde labels bewerken"
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
 msgstr "Enkele {objectLabelPlural} bewerken · {throughRules}"
+
+#. js-lingui-id: 0Ou9Le
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit summary column…"
+msgstr "Samenvattingskolom bewerken…"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12307,6 +12393,7 @@ msgid "Enter JSON array"
 msgstr "Voer een JSON-array in"
 
 #. js-lingui-id: uV9utd
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
 msgstr ""
@@ -12756,7 +12843,7 @@ msgstr "Evenementen"
 #. js-lingui-id: CRsuq4
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Every"
-msgstr ""
+msgstr "Elke"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13774,7 +13861,7 @@ msgstr "Synchroniseren van de marketplacecatalogus mislukt."
 #. js-lingui-id: UUsjVV
 #: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
 msgid "Failed to test agent"
-msgstr ""
+msgstr "Testen van agent mislukt"
 
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14092,6 +14179,7 @@ msgstr "Machtigingen op veldniveau"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/page-layout/hooks/useCreatePendingFieldsWidgetViews.ts
 #: src/modules/page-layout/utils/createDefaultFieldsWidget.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14363,11 +14451,6 @@ msgstr "Tijdlijn filteren"
 msgid "Filter workflows"
 msgstr "Workflows filteren"
 
-#. js-lingui-id: 03Qqf9
-#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
-msgid "Filtered"
-msgstr "Gefilterd"
-
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
 msgid "filtering"
@@ -14474,7 +14557,7 @@ msgstr "Eerste 5 regels"
 #. js-lingui-id: idQLQP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "First event"
-msgstr ""
+msgstr "Eerste gebeurtenis"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -14664,6 +14747,24 @@ msgstr "Voormalig lid"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "Formulieren zijn bedoeld voor handmatige triggers"
+
+#. js-lingui-id: lpxWKi
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Formula"
+msgstr "Formule"
+
+#. js-lingui-id: 2eN5Wv
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Formula currency"
+msgstr "Valuta van formule"
+
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr "Formulevelden"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -15434,6 +15535,7 @@ msgid "Has attachments"
 msgstr "Heeft bijlagen"
 
 #. js-lingui-id: MvwlmR
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
 msgstr "Heeft veel"
@@ -16341,6 +16443,7 @@ msgid "Inactive Skill Options"
 msgstr "Opties voor inactieve vaardigheid"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -16349,7 +16452,7 @@ msgstr "Inbox"
 #. js-lingui-id: UXZcgx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Inbox object names"
-msgstr ""
+msgstr "Namen van inboxobjecten"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17199,6 +17302,7 @@ msgstr "john.doe@example.com"
 
 #. js-lingui-id: fSPjtl
 #: src/pages/auth/SignInUp.tsx
+#: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
 msgstr "Word lid van het {workspaceName} team"
 
@@ -17883,7 +17987,7 @@ msgstr "Laat gegroepeerde tabel- en lijstweergaven hun groepen als tabbladen wee
 #. js-lingui-id: livXRh
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Let members connect their own accounts"
-msgstr ""
+msgstr "Laat leden hun eigen accounts verbinden"
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17894,6 +17998,11 @@ msgstr "Sta mensen toe om individuele records te beperken en te delen."
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
 msgstr "Sta machtigingsregels op recordniveau toe om een veld van een gerelateerd record te vergelijken."
+
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
+msgstr "Laat tekst-, getal-, booleaanse en datumvelden hun waarde berekenen op basis van een expressie over de record en de gerelateerde records."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -19242,7 +19351,7 @@ msgstr "Bericht {recipientName}"
 #. js-lingui-id: +nYs0G
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
-msgstr ""
+msgstr "Berichtacties"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19598,7 +19707,7 @@ msgstr "Maandelijks"
 #. js-lingui-id: WHc/gS
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Monthly on day {startDayOfMonth}"
-msgstr ""
+msgstr "Maandelijks op dag {startDayOfMonth}"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -19790,6 +19899,11 @@ msgstr "Breng het werk vooruit over teams en agenten heen"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Moved to trash"
 msgstr "Naar prullenbak verplaatst"
+
+#. js-lingui-id: B9k2wp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Moves the end of a running trial to this date. Adding one again replaces the current extension."
+msgstr "Verplaatst het einde van een lopende proefperiode naar deze datum. Door er opnieuw een toe te voegen, wordt de huidige verlenging vervangen."
 
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -21314,6 +21428,7 @@ msgstr "Geen reactie van server"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
@@ -21952,7 +22067,7 @@ msgstr "Aantal decimalen"
 #. js-lingui-id: Dh3U6L
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Number of occurrences"
-msgstr ""
+msgstr "Aantal herhalingen"
 
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22160,7 +22275,7 @@ msgstr "Nulwaarden weglaten"
 #. js-lingui-id: Z5HWHd
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On"
-msgstr ""
+msgstr "Op"
 
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -22180,7 +22295,7 @@ msgstr "Volgens een schema"
 #. js-lingui-id: RuEWFx
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On date"
-msgstr ""
+msgstr "Op datum"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22426,7 +22541,7 @@ msgstr "Open"
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgctxt "Inbox thread status"
 msgid "Open"
-msgstr ""
+msgstr "Open"
 
 #. js-lingui-id: awIyH2
 #. placeholder {0}: account.handle
@@ -22846,7 +22961,7 @@ msgstr "Organisatie-licentie succesvol geactiveerd"
 #. js-lingui-id: 50DOI7
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
-msgstr ""
+msgstr "Organiseer de zijbalk in tabbladen en secties, inclusief ingebouwde secties voor favorieten, chats en agents, en pas deze ter plaatse aan."
 
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -23171,7 +23286,7 @@ msgstr "Pagina's"
 #. js-lingui-id: wl6crM
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Paid app"
-msgstr ""
+msgstr "Betaalde app"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24537,7 +24652,7 @@ msgstr "Lees de systeemprompts om te begrijpen hoe de AI werkt (~{0} tokens)"
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "Lees de zichtbaarheidsregel van widgets voor pagina-indelingen alleen uit de boomstructuur. Ingeschakeld nadat de werkruimte-upgrade de opgeslagen regels heeft gekopieerd."
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25537,18 +25652,18 @@ msgstr "Opties opnieuw ordenen"
 #. js-lingui-id: BwWIp2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat"
-msgstr ""
+msgstr "Herhalen"
 
 #. js-lingui-id: X9KmrM
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat interval"
-msgstr ""
+msgstr "Herhalingsinterval"
 
 #. js-lingui-id: KR6sNP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "Repeat on"
-msgstr ""
+msgstr "Herhalen op"
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -26233,7 +26348,7 @@ msgstr "Functie uitvoeren"
 #. js-lingui-id: gdJPPW
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Run test"
-msgstr ""
+msgstr "Test uitvoeren"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -26575,6 +26690,8 @@ msgstr "SDK"
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -28358,7 +28475,7 @@ msgstr "Zijpaneel"
 #. js-lingui-id: QWUT9V
 #: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 msgid "Sidebar actions"
-msgstr ""
+msgstr "Zijbalkacties"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29537,7 +29654,12 @@ msgstr "Deze weergave samenvatten"
 #. js-lingui-id: mLm1b0
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Summarize what changed on Acme this week"
-msgstr ""
+msgstr "Vat samen wat er deze week op Acme is veranderd"
+
+#. js-lingui-id: dXoieq
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Summary"
+msgstr "Samenvatting"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
@@ -29993,14 +30115,14 @@ msgstr "Test"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
 msgid "Test agent"
-msgstr ""
+msgstr "Agent testen"
 
 #. js-lingui-id: AriIhI
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Test Agent"
-msgstr ""
+msgstr "Agent testen"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -30167,6 +30289,11 @@ msgstr "De code van de Twenty-partner die u heeft doorverwezen"
 msgid "The conversation has been compacted"
 msgstr "Het gesprek is gecomprimeerd"
 
+#. js-lingui-id: Ah78wz
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "The currency of the computed amount: a code in quotes such as \"USD\", or the currency code of another field."
+msgstr "De valuta van het berekende bedrag: een code tussen aanhalingstekens, zoals \"USD\", of de valutacode van een ander veld."
+
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "The Data Processing Agreement could not be loaded. Please try again."
@@ -30220,7 +30347,7 @@ msgstr "Het e-mailadres geassocieerd met uw account"
 #. js-lingui-id: pJahAY
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date can't be before the first event."
-msgstr ""
+msgstr "De einddatum kan niet vóór de eerste gebeurtenis liggen."
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30471,6 +30598,11 @@ msgstr "Het transcript is verlopen voordat het kon worden geïmporteerd."
 msgid "The transcript is being prepared…"
 msgstr "De transcriptie wordt voorbereid…"
 
+#. js-lingui-id: nQjBTv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one."
+msgstr "De proefperiode eindigt nu: werkruimten met een kaart worden meteen in rekening gebracht, de andere worden opgeschort totdat ze er een toevoegen."
+
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
@@ -30691,6 +30823,16 @@ msgstr "Deze agent komt uit een app, dus de toegang kan hier niet worden gewijzi
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "Deze agent komt uit een app, dus de tools kunnen hier niet worden gewijzigd."
 
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr "Deze agent wordt normaal gesproken uitgevoerd {details}, zonder bericht. Vraag hem nu zijn geplande taak uit te voeren."
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr "Deze agent start normaal gesproken op “{label}” voor {details}, met dat record. Beschrijf er een om te zien hoe hij ermee omgaat."
+
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "This agent only runs when a workflow, an app or the API calls it."
@@ -30814,6 +30956,11 @@ msgstr "Deze chat kon niet worden geopend. Probeer deze opnieuw te selecteren."
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
 msgstr "Deze chat is niet langer beschikbaar."
+
+#. js-lingui-id: GsXQeq
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
+msgstr "Deze kolom kan maximaal {QUERY_MAX_RECORDS_FROM_RELATION} records weergeven."
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -31679,7 +31826,6 @@ msgstr "Vertalingen"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Triage"
 
@@ -31932,7 +32078,7 @@ msgstr "Beurten"
 #. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
-msgstr ""
+msgstr "Beurten verschijnen hier zodra je deze agent test, of wanneer een workflow of een app deze gebruikt"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33239,7 +33385,7 @@ msgstr "Gebruik onze API of voeg uw eerste {objectLabel} handmatig toe"
 #. js-lingui-id: TTyUsT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
-msgstr ""
+msgstr "Gebruik de inboxnamen voor de chatthread- en berichtobjecten. Ingeschakeld door de werkruimte-upgrade die ze hernoemt, dus schakel dit niet handmatig in of uit."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -34437,7 +34583,7 @@ msgstr "Widgetinstellingen"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "Boomstructuur van zichtbaarheidsregels voor widgets"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34993,7 +35139,7 @@ msgstr "Jaarlijks"
 #. js-lingui-id: 1+9d+F
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Yearly on {startMonthAndDay}"
-msgstr ""
+msgstr "Jaarlijks op {startMonthAndDay}"
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

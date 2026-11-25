@@ -1,7 +1,7 @@
 import {
   type IconComponent,
   IconAt,
-  IconCircleCheck,
+  IconCheck,
   IconCircleDashed,
   IconHandClick,
   IconUserCircle,
@@ -22,5 +22,5 @@ export const INBOX_THREAD_PRESET_FILTER_ICONS: Record<
   assignedToAnyone: IconUsers,
   unassigned: IconUserOff,
   snoozed: IconZzz,
-  done: IconCircleCheck,
+  done: IconCheck,
 };

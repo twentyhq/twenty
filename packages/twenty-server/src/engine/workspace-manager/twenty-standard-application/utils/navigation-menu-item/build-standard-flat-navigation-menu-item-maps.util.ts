@@ -40,10 +40,11 @@ const CHATS_TAB_SECTION_NAMES = [
 
 const FOLDERS = [
   {
-    folderName: 'workflowsFolder',
+    folderName: 'automationsFolder',
     itemNames: [
-      'workflowsFolderAllWorkflows',
-      'workflowsFolderAllWorkflowRuns',
+      'automationsFolderAllWorkflows',
+      'automationsFolderAllWorkflowRuns',
+      'automationsFolderAllAgents',
     ],
   },
   {

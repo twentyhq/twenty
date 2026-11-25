@@ -111,10 +111,20 @@ msgstr "\"{path}\" mélyebbre hatol, mint amit a \"{fieldName}\" mező engedély
 msgid "\"{path}\" goes more than one relation deep"
 msgstr "\"{path}\" egynél több kapcsolat mélységéig hatol"
 
+#. js-lingui-id: WsA0r3
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" has several parts: read one of them, such as {path}.{subfieldName}"
+msgstr "A(z) \"{path}\" több részből áll: olvassa be az egyiket, például {path}.{subfieldName}"
+
 #. js-lingui-id: Qs5qiW
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{path}\" is not a value"
 msgstr "\"{path}\" nem érték"
+
+#. js-lingui-id: LWKWNY
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{path}\" reads a previous value, which a formula cannot use"
+msgstr "A(z) \"{path}\" egy korábbi értéket olvas be, amelyet egy képlet nem használhat"
 
 #. js-lingui-id: ZIIOJj
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -340,7 +350,7 @@ msgstr "{0, plural, one {Szerezzen {formattedInviteTeamCreditsRewardPerUser} ing
 #. placeholder {0}: end.occurrenceCount
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "{0, plural, one {occurrence} other {occurrences}}"
-msgstr ""
+msgstr "{0, plural, one {előfordulás} other {előfordulás}}"
 
 #. js-lingui-id: AkeiJW
 #. placeholder {0}: item.quantity
@@ -569,6 +579,12 @@ msgstr "{0} e-mail-cím nélkül"
 #: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "{0} workspace members"
 msgstr "{0} munkaterületi tag"
+
+#. js-lingui-id: vZ4SMq
+#. placeholder {0}: entry.label
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+msgid "{0}, back"
+msgstr "{0}, vissza"
 
 #. js-lingui-id: stF+5U
 #. placeholder {0}: fieldMetadataItem.label
@@ -877,6 +893,16 @@ msgstr "{formattedRunCount} futtatásból {formattedFailedRunCount} sikertelen"
 msgid "{formattedPercentage}% used, {formattedConversationSize} of {formattedContextWindow} tokens"
 msgstr "{formattedPercentage}% felhasználva, {formattedConversationSize} / {formattedContextWindow} token"
 
+#. js-lingui-id: d3NhPx
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr "A(z) {functionName} {minimumArgumentCount} argumentumot fogad, de {argumentCount} argumentumot kapott"
+
+#. js-lingui-id: KeR/79
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
+msgstr "A(z) {functionName} legalább {minimumArgumentCount} argumentumot fogad, de {argumentCount} argumentumot kapott"
+
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
 msgid "{goalCredits, plural, one {free credit} other {free credits}}"
@@ -932,12 +958,12 @@ msgstr "{installCount, plural, one {{0} telepítés} other {{1} telepítés}}"
 #. js-lingui-id: UON5Ro
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {day} other {days}}"
-msgstr ""
+msgstr "{interval, plural, one {nap} other {nap}}"
 
 #. js-lingui-id: UGYVsx
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {month} other {months}}"
-msgstr ""
+msgstr "{interval, plural, one {hónap} other {hónap}}"
 
 #. js-lingui-id: RxZ6VS
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
@@ -947,7 +973,7 @@ msgstr ""
 #. js-lingui-id: qB4ocR
 #: src/modules/activities/calendar/utils/getCalendarEventRecurrenceIntervalUnitLabel.ts
 msgid "{interval, plural, one {year} other {years}}"
-msgstr ""
+msgstr "{interval, plural, one {év} other {év}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -1321,12 +1347,12 @@ msgstr "{storedToolName} (nem érhető el az Ön számára)"
 #. js-lingui-id: VfeUjs
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, needs your input"
-msgstr ""
+msgstr "{tabName}, Önre vár a válasza"
 
 #. js-lingui-id: REc4fO
 #: src/modules/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel.ts
 msgid "{tabName}, unread"
-msgstr ""
+msgstr "{tabName}, olvasatlan"
 
 #. js-lingui-id: RIjnws
 #: src/modules/settings/mcp-servers/utils/getMcpServerStatus.ts
@@ -2157,7 +2183,7 @@ msgstr "Adjon hozzá alább egy kártyát számlázási adatainak frissítéséh
 #. js-lingui-id: vzJ7AQ
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionDescriptionInput.tsx
 msgid "Add a description"
-msgstr ""
+msgstr "Leírás hozzáadása"
 
 #. js-lingui-id: uXkGAw
 #: src/modules/advanced-text-editor/extensions/variable-tag/TemplateVariableWithFallbackChip.tsx
@@ -2397,7 +2423,7 @@ msgstr "Egyéni szolgáltató hozzáadása"
 #. js-lingui-id: PGPGsL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Add description"
-msgstr ""
+msgstr "Leírás hozzáadása"
 
 #. js-lingui-id: 094J9M
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -2502,12 +2528,12 @@ msgstr "Tétel hozzáadása"
 #. js-lingui-id: 1e37Dl
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item after"
-msgstr ""
+msgstr "Elem hozzáadása utána"
 
 #. js-lingui-id: w7mkyz
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemActions.tsx
 msgid "Add item before"
-msgstr ""
+msgstr "Elem hozzáadása előtte"
 
 #. js-lingui-id: VzGJRl
 #: src/modules/advanced-text-editor/components/EditLinkDropdown.tsx
@@ -2667,6 +2693,7 @@ msgstr "Szabálycsoport hozzáadása"
 
 #. js-lingui-id: RxFV0G
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
+#: src/modules/navigation-menu-item/edit/components/NavigationMenuAddSectionButton.tsx
 msgid "Add section"
 msgstr "Szakasz hozzáadása"
 
@@ -2683,6 +2710,11 @@ msgstr "Rendezés hozzáadása"
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper.tsx
 msgid "Add SSO Identity Provider"
 msgstr "SSO Identitásszolgáltató hozzáadása"
+
+#. js-lingui-id: iC/d3X
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Add summary column"
+msgstr "Összesítő oszlop hozzáadása"
 
 #. js-lingui-id: hjO0Mq
 #: src/modules/navigation/components/MainNavigationDrawerAddTabButton.tsx
@@ -3029,7 +3061,7 @@ msgstr "Afrikaans"
 #. js-lingui-id: NawEr2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "After"
-msgstr ""
+msgstr "Után"
 
 #. js-lingui-id: WlItll
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
@@ -3791,7 +3823,7 @@ msgstr "Már az oldalsávban van"
 #. js-lingui-id: CaKZeT
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemSelectableItem.tsx
 msgid "Already in this section"
-msgstr ""
+msgstr "Már ebben a szakaszban van"
 
 #. js-lingui-id: u/DP73
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -5253,6 +5285,11 @@ msgstr "Viselkedés"
 msgid "Behind"
 msgstr "Lemaradt"
 
+#. js-lingui-id: +68Gui
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
+msgid "Belongs to"
+msgstr "Ehhez tartozik"
+
 #. js-lingui-id: Fg77nJ
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Belongs to one"
@@ -5296,17 +5333,17 @@ msgstr "Az alkalmazások által megadott árak számlázása a munkaterület-el�
 #. js-lingui-id: WVxikw
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month"
-msgstr ""
+msgstr "Munkaterület számlázása: {amount} / hónap"
 
 #. js-lingui-id: 9nZzfz
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per account"
-msgstr ""
+msgstr "Munkaterület számlázása: {amount} / hónap fiókonként"
 
 #. js-lingui-id: iOQoBV
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {amount} / month per member"
-msgstr ""
+msgstr "Munkaterület számlázása: {amount} / hónap tagonként"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5576,6 +5613,11 @@ msgstr "Build ellenőrzőösszeg"
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
 msgstr "Hozz létre több-a-többhöz kapcsolatokat"
+
+#. js-lingui-id: Hz2eHF
+#: src/modules/object-record/record-column-scope/utils/getScopedRelationColumnDescription.ts
+msgid "Built in this view from {relationLabel}. Can't be sorted or filtered."
+msgstr "Ebben a nézetben {relationLabel} alapján készült. Nem rendezhető és nem szűrhető."
 
 #. js-lingui-id: yDcuP6
 #: src/modules/settings/privacy/components/SettingsPrivacyCompliance.tsx
@@ -6449,7 +6491,7 @@ msgstr "Ellenőrzés ellenőrzése"
 #. js-lingui-id: fbu0qc
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check when the event stops repeating"
-msgstr ""
+msgstr "Válassza ki, mikor fejeződjön be az esemény ismétlődése"
 
 #. js-lingui-id: AwAGI4
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7421,6 +7463,26 @@ msgstr "E-mail írása"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
 msgstr "Számítsa ki azokat a hozzáférési csoportokat, amelyeket a rekordlisták sorszintű jogosultságokhoz fognak használni. A munkaterület frissítésének befejezése után engedélyezze."
+
+#. js-lingui-id: LzmTuU
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute the amount from other fields, in micros: 1 unit is 1,000,000. Leave empty to enter values by hand."
+msgstr "Számítsa ki az összeget más mezők alapján, mikroegységekben: 1 egység 1 000 000. Hagyja üresen az értékek kézi megadásához."
+
+#. js-lingui-id: Y+aLgd
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. Leave empty to enter values by hand."
+msgstr "Számítsa ki ezt a mezőt más mezők alapján. Hagyja üresen az értékek kézi megadásához."
+
+#. js-lingui-id: 5uQ2yY
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. The formula must return a number from 1 to 5. Leave empty to rate by hand."
+msgstr "Számítsa ki ezt a mezőt más mezők alapján. A képletnek 1 és 5 közötti számot kell visszaadnia. Hagyja üresen a kézi értékeléshez."
+
+#. js-lingui-id: egFQhc
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Compute this field from other fields. The formula must return one of the option values, in quotes. Leave empty to pick values by hand."
+msgstr "Számítsa ki ezt a mezőt más mezők alapján. A képletnek az egyik lehetőség értékét kell idézőjelek között visszaadnia. Hagyja üresen az értékek kézi kiválasztásához."
 
 #. js-lingui-id: BglnOD
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -8544,6 +8606,11 @@ msgstr "Valós számlálása"
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationLabel.ts
 msgid "Count unique values"
 msgstr "Egyedi értékek számlálása"
+
+#. js-lingui-id: wGiHe7
+#: src/modules/object-record/record-column-scope/components/RecordTableScopedRelationColumnSelectMenu.tsx
+msgid "Count, total, list"
+msgstr "Darabszám, összeg, lista"
 
 #. js-lingui-id: tKTq/b
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignForm.tsx
@@ -10323,6 +10390,11 @@ msgstr "Készség törlése"
 msgid "Delete some {objectLabelPlural} · {throughRules}"
 msgstr "Néhány {objectLabelPlural} törlése · {throughRules}"
 
+#. js-lingui-id: x6UH+z
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Delete summary column"
+msgstr "Összesítő oszlop törlése"
+
 #. js-lingui-id: drg4t8
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuTabMenuContent.tsx
 msgid "Delete tab"
@@ -10509,6 +10581,11 @@ msgstr "csökkenő sorrend"
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts.tsx
 msgid "Descending"
 msgstr "Csökkenő sorrend"
+
+#. js-lingui-id: 8Y0+ya
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Describe a {objectLabel} and what changed on it"
+msgstr "Írja le a(z) {objectLabel} elemet és a rajta történt változásokat"
 
 #. js-lingui-id: 3QTkmB
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentGenerateStepPromptTab.tsx
@@ -10924,6 +11001,11 @@ msgstr "Ne importálja"
 msgid "Do you want to unsubscribe?"
 msgstr "Szeretne leiratkozni?"
 
+#. js-lingui-id: oc+pOk
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "Do your scheduled task now"
+msgstr "Végezze el most az ütemezett feladatát"
+
 #. js-lingui-id: TbjyhA
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -10952,7 +11034,7 @@ msgstr "Dokumentáció"
 #. js-lingui-id: 7xJ6D1
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Does not repeat"
-msgstr ""
+msgstr "Nem ismétlődik"
 
 #. js-lingui-id: U9q4zF
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -11403,7 +11485,6 @@ msgid "Edit all records"
 msgstr "Összes rekord szerkesztése"
 
 #. js-lingui-id: QM4RhQ
-#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
 #: src/modules/side-panel/hooks/useOpenEditColumnInSidePanel.ts
 msgid "Edit column"
 msgstr "Oszlop szerkesztése"
@@ -11416,7 +11497,7 @@ msgstr "Adatstruktúra és mezők szerkesztése"
 #. js-lingui-id: O32mmL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Edit description"
-msgstr ""
+msgstr "Leírás szerkesztése"
 
 #. js-lingui-id: ZwR0Vd
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -11559,6 +11640,11 @@ msgstr "Megosztott címkék szerkesztése"
 #: src/modules/settings/roles/role-permissions/object-overrides/components/SettingsRolePermissionsObjectOverridePanel.tsx
 msgid "Edit some {objectLabelPlural} · {throughRules}"
 msgstr "Egyes {objectLabelPlural} szerkesztése · {throughRules}"
+
+#. js-lingui-id: 0Ou9Le
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableColumnHeadDropdownMenu.tsx
+msgid "Edit summary column…"
+msgstr "Összesítő oszlop szerkesztése…"
 
 #. js-lingui-id: xE9ptR
 #: src/modules/page-layout/components/PageLayoutTabMenuItemSelectAvatar.tsx
@@ -12307,6 +12393,7 @@ msgid "Enter JSON array"
 msgstr "Adjon meg egy JSON tömböt"
 
 #. js-lingui-id: uV9utd
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 msgid "Enter limit"
 msgstr ""
@@ -12756,7 +12843,7 @@ msgstr "Események"
 #. js-lingui-id: CRsuq4
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Every"
-msgstr ""
+msgstr "Minden"
 
 #. js-lingui-id: lbS/kF
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13774,7 +13861,7 @@ msgstr "Nem sikerült szinkronizálni a piactér katalógusát."
 #. js-lingui-id: UUsjVV
 #: src/modules/object-core/agents/hooks/useTestCoreAgent.ts
 msgid "Failed to test agent"
-msgstr ""
+msgstr "Nem sikerült tesztelni az ügynököt"
 
 #. js-lingui-id: LVcnN8
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -14092,6 +14179,7 @@ msgstr "Mezőszintű engedélyek"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent.tsx
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/page-layout/hooks/useCreatePendingFieldsWidgetViews.ts
 #: src/modules/page-layout/utils/createDefaultFieldsWidget.ts
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -14363,11 +14451,6 @@ msgstr "Idővonal szűrése"
 msgid "Filter workflows"
 msgstr "Munkafolyamatok szűrése"
 
-#. js-lingui-id: 03Qqf9
-#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
-msgid "Filtered"
-msgstr "Szűrt"
-
 #. js-lingui-id: YrBWVK
 #: src/modules/object-record/record-index/utils/getNonReadableViewFieldSubTitle.ts
 msgid "filtering"
@@ -14474,7 +14557,7 @@ msgstr "Első 5 sor"
 #. js-lingui-id: idQLQP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "First event"
-msgstr ""
+msgstr "Első esemény"
 
 #. js-lingui-id: V1EGGU
 #: src/modules/activities/emails/hooks/useCampaignEmailEditorVariables.ts
@@ -14664,6 +14747,24 @@ msgstr "Korábbi tag"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Forms are meant for manual triggers"
 msgstr "Az űrlapok manuális indítókhoz valók"
+
+#. js-lingui-id: lpxWKi
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
+msgid "Formula"
+msgstr "Képlet"
+
+#. js-lingui-id: 2eN5Wv
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "Formula currency"
+msgstr "Képlet pénzneme"
+
+#. js-lingui-id: k7mCp1
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Formula fields"
+msgstr "Képletmezők"
 
 #. js-lingui-id: nm91BR
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
@@ -15434,6 +15535,7 @@ msgid "Has attachments"
 msgstr "Vannak mellékletei"
 
 #. js-lingui-id: MvwlmR
+#: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/settings/data-model/constants/RelationTypes.ts
 msgid "Has many"
 msgstr "Több kapcsolata van"
@@ -16341,6 +16443,7 @@ msgid "Inactive Skill Options"
 msgstr "Inaktív készség beállításai"
 
 #. js-lingui-id: Gp4Yi6
+#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 #: src/modules/navigation/hooks/useNavigationDrawerTabs.ts
 #: src/modules/views/types/ViewType.ts
 msgid "Inbox"
@@ -16349,7 +16452,7 @@ msgstr "Postafiók"
 #. js-lingui-id: UXZcgx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Inbox object names"
-msgstr ""
+msgstr "Beérkezett üzenetek objektumnevei"
 
 #. js-lingui-id: j8Bj7e
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
@@ -17199,6 +17302,7 @@ msgstr "john.doe@example.com"
 
 #. js-lingui-id: fSPjtl
 #: src/pages/auth/SignInUp.tsx
+#: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
 msgstr "Csatlakozzon a(z) {workspaceName} csapathoz"
 
@@ -17883,7 +17987,7 @@ msgstr "Lehetővé teszi, hogy a csoportosított táblázat- és listanézetek e
 #. js-lingui-id: livXRh
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Let members connect their own accounts"
-msgstr ""
+msgstr "Engedélyezze a tagoknak saját fiókjaik csatlakoztatását"
 
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -17894,6 +17998,11 @@ msgstr "Engedélyezze az embereknek az egyes rekordok korlátozását és megosz
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let record-level permission rules compare a field of a related record."
 msgstr "Rekordszintű jogosultsági szabályokkal kapcsolódó rekord mezőjének összehasonlításának engedélyezése."
+
+#. js-lingui-id: oKfDGp
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let text, number, boolean and date fields compute their value from an expression over the record and its related records."
+msgstr "Lehetővé teszi, hogy a szöveg-, szám-, logikai és dátummezők a rekord és a hozzá kapcsolódó rekordok feletti kifejezés alapján számítsák ki az értéküket."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -19242,7 +19351,7 @@ msgstr "Üzenet: {recipientName}"
 #. js-lingui-id: +nYs0G
 #: src/modules/chat/components/ChatMessageFloatingActions.tsx
 msgid "Message actions"
-msgstr ""
+msgstr "Üzenetműveletek"
 
 #. js-lingui-id: 6H0up8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -19598,7 +19707,7 @@ msgstr "Havi"
 #. js-lingui-id: WHc/gS
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Monthly on day {startDayOfMonth}"
-msgstr ""
+msgstr "Havonta, {startDayOfMonth}. napon"
 
 #. js-lingui-id: 6jefe3
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts
@@ -19790,6 +19899,11 @@ msgstr "Vigye előre a munkát csapatok és ügynökök között"
 #: src/modules/log-console/constants/LogConsoleRecordActions.ts
 msgid "Moved to trash"
 msgstr "Lomtárba helyezve"
+
+#. js-lingui-id: B9k2wp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
+msgid "Moves the end of a running trial to this date. Adding one again replaces the current extension."
+msgstr "A folyamatban lévő próbaidőszak végét erre a dátumra helyezi át. Újabb hozzáadása felülírja a jelenlegi hosszabbítást."
 
 #. js-lingui-id: TpHstq
 #: src/modules/settings/billing/constants/UsageLimitUnitLabels.ts
@@ -21314,6 +21428,7 @@ msgstr "Nincs válasz a szervertől"
 #: src/modules/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent.tsx
 #: src/modules/object-record/select/components/MultipleSelectDropdown.tsx
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineFilter.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/ui/input/components/internal/country/components/CountrySelect.tsx
 #: src/modules/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton.tsx
 #: src/modules/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton.tsx
@@ -21952,7 +22067,7 @@ msgstr "Tizedesek száma"
 #. js-lingui-id: Dh3U6L
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Number of occurrences"
-msgstr ""
+msgstr "Előfordulások száma"
 
 #. js-lingui-id: n49P/Y
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -22160,7 +22275,7 @@ msgstr "Nulla értékek kihagyása"
 #. js-lingui-id: Z5HWHd
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On"
-msgstr ""
+msgstr "Ekkor"
 
 #. js-lingui-id: 7kr775
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -22180,7 +22295,7 @@ msgstr "Ütemezetten"
 #. js-lingui-id: RuEWFx
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "On date"
-msgstr ""
+msgstr "Dátum szerint"
 
 #. js-lingui-id: gzokj+
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats.tsx
@@ -22426,7 +22541,7 @@ msgstr "Megnyitás"
 #: src/modules/inbox/constants/InboxThreadPresetFilterLabels.ts
 msgctxt "Inbox thread status"
 msgid "Open"
-msgstr ""
+msgstr "Megnyitás"
 
 #. js-lingui-id: awIyH2
 #. placeholder {0}: account.handle
@@ -22846,7 +22961,7 @@ msgstr "A szervezeti licenc aktiválása sikeres volt"
 #. js-lingui-id: 50DOI7
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Organize the sidebar in tabs and sections, including built-in sections for favorites, chats and agents, and customize it in place."
-msgstr ""
+msgstr "Rendezze oldalsávját fülekbe és szakaszokba, beleértve a kedvencekhez, csevegésekhez és ügynökökhöz tartozó beépített szakaszokat, és szabja testre közvetlenül ott."
 
 #. js-lingui-id: G5RhpL
 #: src/modules/ai-chat/tool-calls/components/AiChatSchedulingPreferences.tsx
@@ -23171,7 +23286,7 @@ msgstr "Oldalak"
 #. js-lingui-id: wl6crM
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Paid app"
-msgstr ""
+msgstr "Fizetős alkalmazás"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -24537,7 +24652,7 @@ msgstr "Olvassa el a rendszerutasításokat, hogy megértse, hogyan működik az
 #. js-lingui-id: SIPs3V
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Read the visibility rule of page layout widgets from its tree form only. Enabled after the workspace upgrade copies the stored rules."
-msgstr ""
+msgstr "Az oldalelrendezési widgetek láthatósági szabályát csak a faformájából olvassa be. Akkor engedélyeződik, miután a munkaterület frissítése átmásolja a tárolt szabályokat."
 
 #. js-lingui-id: afMuDE
 #: src/modules/applications/constants/OAuthScopeLabels.ts
@@ -25537,18 +25652,18 @@ msgstr "Opciók átrendezése"
 #. js-lingui-id: BwWIp2
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat"
-msgstr ""
+msgstr "Ismétlés"
 
 #. js-lingui-id: X9KmrM
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Repeat interval"
-msgstr ""
+msgstr "Ismétlődési időköz"
 
 #. js-lingui-id: KR6sNP
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 #: src/modules/activities/calendar/components/CalendarEventRecurrenceDaysOfWeekInput.tsx
 msgid "Repeat on"
-msgstr ""
+msgstr "Ismétlés napjai"
 
 #. js-lingui-id: q8Id6J
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -26233,7 +26348,7 @@ msgstr "Funkció futtatása"
 #. js-lingui-id: gdJPPW
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Run test"
-msgstr ""
+msgstr "Teszt futtatása"
 
 #. js-lingui-id: scFhaW
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
@@ -26575,6 +26690,8 @@ msgstr "SDK"
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/side-panel/hooks/useOpenRecordsSearchPageInSidePanel.ts
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnShowSelect.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/components/SubMatchingSelectInput.tsx
 #: src/modules/ui/field/input/components/MultiSelectInput.tsx
@@ -28358,7 +28475,7 @@ msgstr "Oldal Panel"
 #. js-lingui-id: QWUT9V
 #: src/modules/navigation/components/MainNavigationDrawerContextMenu.tsx
 msgid "Sidebar actions"
-msgstr ""
+msgstr "Oldalsáv műveletei"
 
 #. js-lingui-id: 9k9PMD
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -29537,7 +29654,12 @@ msgstr "Nézet összegzése"
 #. js-lingui-id: mLm1b0
 #: src/modules/object-core/agents/components/CoreAgentTestForm.tsx
 msgid "Summarize what changed on Acme this week"
-msgstr ""
+msgstr "Foglalja össze, mi változott az Acme-nél ezen a héten"
+
+#. js-lingui-id: dXoieq
+#: src/modules/object-record/record-column-lookup/utils/getRecordFieldColumnHeader.ts
+msgid "Summary"
+msgstr "Összegzés"
 
 #. js-lingui-id: gKAccC
 #: src/modules/page-layout/widgets/call-recording-summary/components/WidgetActionCallRecordingSummary.tsx
@@ -29993,14 +30115,14 @@ msgstr "Teszt"
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 #: src/modules/object-core/agents/hooks/useOpenCoreAgentTestSidePanel.ts
 msgid "Test agent"
-msgstr ""
+msgstr "Ügynök tesztelése"
 
 #. js-lingui-id: AriIhI
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/commands/hooks/useCoreAgentPageCommands.ts
 #: src/modules/object-core/commands/hooks/useCoreAgentsSelectionCommands.ts
 msgid "Test Agent"
-msgstr ""
+msgstr "Ügynök tesztelése"
 
 #. js-lingui-id: 1QHjf8
 #. placeholder {0}: params.toAddress
@@ -30167,6 +30289,11 @@ msgstr "Az Önt ajánló Twenty-partner kódja"
 msgid "The conversation has been compacted"
 msgstr "A beszélgetés tömörítve lett"
 
+#. js-lingui-id: Ah78wz
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
+msgid "The currency of the computed amount: a code in quotes such as \"USD\", or the currency code of another field."
+msgstr "A kiszámított összeg pénzneme: egy idézőjelek közé tett kód, például \"USD\", vagy egy másik mező pénznemkódja."
+
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "The Data Processing Agreement could not be loaded. Please try again."
@@ -30220,7 +30347,7 @@ msgstr "E-mail cím, amely a fiókjához tartozik"
 #. js-lingui-id: pJahAY
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "The end date can't be before the first event."
-msgstr ""
+msgstr "A befejezés dátuma nem lehet az első esemény előtt."
 
 #. js-lingui-id: WGfnFh
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -30471,6 +30598,11 @@ msgstr "Az átirat lejárt, mielőtt importálni lehetett volna."
 msgid "The transcript is being prepared…"
 msgstr "Az átirat előkészítése folyamatban van…"
 
+#. js-lingui-id: nQjBTv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementsSection.tsx
+msgid "The trial ends now: workspaces with a card are charged right away, the others are suspended until they add one."
+msgstr "A próbaidőszak most véget ér: a kártyával rendelkező munkaterületeket azonnal megterheljük, a többit pedig felfüggesztjük, amíg nem adnak hozzá kártyát."
+
 #. js-lingui-id: qMTT4Z
 #: src/modules/settings/billing/components/SettingsBillingLimitForm.tsx
 msgid "The usage this limit applies to."
@@ -30689,6 +30821,16 @@ msgstr "Ez az ügynök egy alkalmazásból származik, ezért a hozzáférése i
 msgid "This agent comes from an app, so its tools can't be changed here."
 msgstr "Ez az ügynök egy alkalmazásból származik, ezért az eszközei itt nem módosíthatók."
 
+#. js-lingui-id: h1DyDq
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally runs {details}, without a message. Ask it to do its scheduled task now."
+msgstr "Ez az ügynök általában üzenet nélkül fut le {details} szerint. Kérje meg, hogy most végezze el az ütemezett feladatát."
+
+#. js-lingui-id: qC+xo7
+#: src/modules/object-core/agents/utils/getCoreAgentTestHint.ts
+msgid "This agent normally starts on “{label}” for {details}, with that record. Describe one to see how it handles it."
+msgstr "Ez az ügynök általában a(z) „{label}” elemnél indul {details} esetén, azzal a rekorddal. Írjon le egyet, hogy lássa, hogyan kezeli."
+
 #. js-lingui-id: PGt3yj
 #: src/modules/object-core/agents/components/CoreAgentTriggersSection.tsx
 msgid "This agent only runs when a workflow, an app or the API calls it."
@@ -30812,6 +30954,11 @@ msgstr "Ez a csevegés nem nyitható meg. Próbálja meg újra kiválasztani."
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerList.tsx
 msgid "This chat is no longer available."
 msgstr "Ez a csevegés már nem érhető el."
+
+#. js-lingui-id: GsXQeq
+#: src/modules/side-panel/pages/edit-column/components/SidePanelEditColumnForm.tsx
+msgid "This column can show up to {QUERY_MAX_RECORDS_FROM_RELATION} records."
+msgstr "Ez az oszlop legfeljebb {QUERY_MAX_RECORDS_FROM_RELATION} rekordot jeleníthet meg."
 
 #. js-lingui-id: WCa/7U
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
@@ -31677,7 +31824,6 @@ msgstr "Fordítások"
 
 #. js-lingui-id: R3UKip
 #: src/modules/inbox/components/NavigationDrawerInboxTriageSection.tsx
-#: src/modules/navigation-menu-item/common/constants/NavigationMenuBuiltInSections.ts
 msgid "Triage"
 msgstr "Osztályozás"
 
@@ -31930,7 +32076,7 @@ msgstr "Fordulók"
 #. js-lingui-id: m4IiWF
 #: src/modules/object-core/agents/components/CoreAgentRunsContent.tsx
 msgid "Turns appear here once you test this agent, or a workflow or an app uses it"
-msgstr ""
+msgstr "A fordulók itt jelennek meg, miután teszteli ezt az ügynököt, vagy egy munkafolyamat vagy egy alkalmazás használja"
 
 #. js-lingui-id: 2JBBhG
 #: src/modules/validation-rules/constants/ValidationRuleKeywords.ts
@@ -33237,7 +33383,7 @@ msgstr "Használja API-nkat vagy adja hozzá első {objectLabel} manuálisan"
 #. js-lingui-id: TTyUsT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the inbox names for the chat thread and message objects. Turned on by the workspace upgrade that renames them, so don't toggle it by hand."
-msgstr ""
+msgstr "A csevegési beszélgetés és az üzenetobjektumokhoz használja a beérkezett üzenetek neveit. Ezt az őket átnevező munkaterület-frissítés kapcsolja be, ezért ne kapcsolja át kézzel."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -34435,7 +34581,7 @@ msgstr "Widget beállításai"
 #. js-lingui-id: 0LuHF2
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Widget visibility rule tree"
-msgstr ""
+msgstr "Widget láthatósági szabályainak fája"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
@@ -34991,7 +35137,7 @@ msgstr "Éves"
 #. js-lingui-id: 1+9d+F
 #: src/modules/activities/calendar/components/CalendarEventComposerRecurrenceFields.tsx
 msgid "Yearly on {startMonthAndDay}"
-msgstr ""
+msgstr "Évente {startMonthAndDay}"
 
 #. js-lingui-id: +BGee5
 #: src/modules/side-panel/pages/page-layout/utils/getDateGranularityPluralLabel.ts

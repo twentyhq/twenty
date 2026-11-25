@@ -35,6 +35,8 @@ import { isAsymmetricJwtHeader } from 'src/engine/core-modules/jwt/utils/is-asym
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { truncateFullName } from 'src/engine/core-modules/user/utils/truncate-full-name.util';
+import { truncateWorkspaceDisplayName } from 'src/engine/core-modules/workspace/utils/truncate-workspace-display-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -112,17 +114,19 @@ export class ApprovedAccessDomainService {
         })
       : undefined;
 
+    const senderName = truncateFullName(sender.name);
+
     const emailTemplate = SendApprovedAccessDomainValidation({
       link: link.toString(),
       workspace: {
-        name: workspace.displayName,
+        name: truncateWorkspaceDisplayName(workspace.displayName),
         logo,
       },
       domain: approvedAccessDomain.domain,
       sender: {
         email: sender.userEmail,
-        firstName: sender.name.firstName,
-        lastName: sender.name.lastName,
+        firstName: senderName.firstName,
+        lastName: senderName.lastName,
       },
       serverUrl: this.twentyConfigService.get('SERVER_URL'),
       locale: sender.locale,
@@ -135,7 +139,10 @@ export class ApprovedAccessDomainService {
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 
     await this.emailService.send({
-      from: `${sender.name.firstName} ${sender.name.lastName} (via Twenty) <${this.twentyConfigService.get('EMAIL_FROM_ADDRESS')}>`,
+      from: {
+        name: `${senderName.firstName} ${senderName.lastName} (via Twenty)`,
+        address: this.twentyConfigService.get('EMAIL_FROM_ADDRESS'),
+      },
       to,
       subject: i18n._(msg`Approve your access domain`),
       text,

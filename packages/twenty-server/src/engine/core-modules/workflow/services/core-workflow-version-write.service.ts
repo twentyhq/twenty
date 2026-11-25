@@ -324,7 +324,6 @@ export class CoreWorkflowVersionWriteService {
               steps: steps ?? null,
               status: CoreWorkflowVersionStatus.DRAFT,
               isSystemSideEffect: false,
-              workspaceWorkflowVersionId: null,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,
               createdAt,
