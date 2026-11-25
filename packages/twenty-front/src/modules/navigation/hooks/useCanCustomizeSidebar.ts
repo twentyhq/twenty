@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useIsMobile } from 'twenty-ui/utilities';
 
+import { useIsLayoutCustomizationAllowedOnCurrentPage } from '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
@@ -9,7 +10,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { isCoreAgentPath } from '~/utils/isCoreAgentPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 
 export const useCanCustomizeSidebar = () => {
   const isMobile = useIsMobile();
@@ -18,6 +19,8 @@ export const useCanCustomizeSidebar = () => {
     FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
+  const isLayoutCustomizationAllowedOnCurrentPage =
+    useIsLayoutCustomizationAllowedOnCurrentPage();
   const isNavigationMenuShown =
     useActiveNavigationDrawerTab() === NAVIGATION_DRAWER_TABS.NAVIGATION_MENU;
 
@@ -26,6 +29,6 @@ export const useCanCustomizeSidebar = () => {
     !isMobile &&
     hasLayoutsPermission &&
     isNavigationMenuShown &&
-    !isCoreAgentPath(pathname)
+    (isLayoutCustomizationAllowedOnCurrentPage || isAiModePath(pathname))
   );
 };
