@@ -297,7 +297,7 @@ msgstr "Υπάρχει ήδη πεδίο με αυτό το όνομα."
 #. js-lingui-id: lDO6A7
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula cannot read its own value, directly or through other formulas"
-msgstr ""
+msgstr "Ένας τύπος δεν μπορεί να διαβάσει τη δική του τιμή, άμεσα ή μέσω άλλων τύπων"
 
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
@@ -4249,12 +4249,12 @@ msgstr "Το μοτίβο Cron \"{pattern}\" δεν είναι έγκυρο"
 #. js-lingui-id: sJbCNC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spread must be between 2 minutes and 24 hours."
-msgstr ""
+msgstr "Η διασπορά του ενεργοποιητή Cron πρέπει να είναι μεταξύ 2 λεπτών και 24 ωρών."
 
 #. js-lingui-id: GbygrC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-cron-trigger-spread.util.ts
 msgid "Cron trigger spreadMs must be an integer between {CRON_TRIGGER_MIN_SPREAD_MS} and {CRON_TRIGGER_MAX_SPREAD_MS}"
-msgstr ""
+msgstr "Το spreadMs του ενεργοποιητή Cron πρέπει να είναι ακέραιος αριθμός μεταξύ των {CRON_TRIGGER_MIN_SPREAD_MS} και {CRON_TRIGGER_MAX_SPREAD_MS}"
 
 #. js-lingui-id: ViG9dm
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -10460,7 +10460,7 @@ msgstr "Μόνο η εφαρμογή που κατέχει αυτόν τον π�
 #. js-lingui-id: xCGjjr
 #: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
 msgid "Only the person who created this can change who sees it"
-msgstr ""
+msgstr "Μόνο το άτομο που το δημιούργησε μπορεί να αλλάξει ποιος το βλέπει"
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
