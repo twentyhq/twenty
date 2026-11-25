@@ -109,25 +109,22 @@ describe('linkedinSyncHistoryHandler', () => {
     );
   });
 
-  it('imports no past conversation when the member chose none', async () => {
+  it('falls back to the default number of past conversations when the member had saved none', async () => {
     mocks.kvStore.set('linkedin-settings:connection-id', {
       historyConversationLimit: 0,
     });
-    setHistoryImport('COMPLETED');
 
     await syncHistory();
 
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
     expect(mocks.kvStore.get(HISTORY_KEY)).toEqual(
-      expect.objectContaining({ runId: 'run-1', status: 'COMPLETED' }),
+      expect.objectContaining({ status: 'IMPORTING', conversationLimit: 20 }),
     );
   });
 
-  it('imports the selected conversations, whatever the number of past conversations', async () => {
+  it('imports the selected conversations', async () => {
     mocks.kvStore.set('linkedin-settings:connection-id', {
       importPolicy: 'SELECTED',
       selectedChats: [{ id: 'chat-1', name: 'chat-1' }],
-      historyConversationLimit: 0,
     });
 
     await syncHistory();
