@@ -38,6 +38,7 @@ import { type UniversalFlatRowLevelPermissionPredicate } from 'src/engine/worksp
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getMarketplaceApplicationRoleRestrictionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-marketplace-application-role-errors.util';
 import { getRoleNotEditableErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util';
 
 @Injectable()
@@ -65,6 +66,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       metadataName: 'rowLevelPermissionPredicate',
       type: 'create',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     const existingPredicate = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatPredicateToValidate.universalIdentifier,
@@ -304,6 +309,10 @@ export class FlatRowLevelPermissionPredicateValidatorService {
       metadataName: 'rowLevelPermissionPredicate',
       type: 'update',
     });
+
+    validationResult.errors.push(
+      ...getMarketplaceApplicationRoleRestrictionErrors({ buildOptions }),
+    );
 
     if (!isDefined(existingPredicate)) {
       validationResult.errors.push({

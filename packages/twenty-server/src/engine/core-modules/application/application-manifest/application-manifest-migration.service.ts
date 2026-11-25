@@ -334,6 +334,9 @@ export class ApplicationManifestMigrationService {
           ownerFlatApplication.universalIdentifier,
         applicationDefaultRoleUniversalIdentifier:
           manifest.application.defaultRoleUniversalIdentifier,
+        applicationAgentRoleUniversalIdentifiers: manifest.agents
+          .map((agent) => agent.roleUniversalIdentifier)
+          .filter(isDefined),
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
         shouldDeferActions,

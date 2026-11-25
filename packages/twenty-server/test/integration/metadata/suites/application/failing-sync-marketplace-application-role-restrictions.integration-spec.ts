@@ -178,8 +178,8 @@ const expectRoleRestrictionErrorSnapshot = ({
     normalizeMessage: (message) =>
       roleIds.reduce(
         (normalizedMessage, roleId) =>
-          normalizedMessage.replaceAll(roleId, '<ROLE_ID>'),
-        message.replaceAll(appId, '<APP_ID>'),
+          normalizedMessage.split(roleId).join('<ROLE_ID>'),
+        message.split(appId).join('<APP_ID>'),
       ),
   });
 };
