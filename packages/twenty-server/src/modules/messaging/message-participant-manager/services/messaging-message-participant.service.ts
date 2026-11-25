@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -27,7 +28,10 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
-    { shouldMatchOnDisplayName }: { shouldMatchOnDisplayName: boolean } = {
+    {
+      shouldMatchOnDisplayName,
+      createdBy,
+    }: { shouldMatchOnDisplayName: boolean; createdBy?: ActorMetadata } = {
       shouldMatchOnDisplayName: true,
     },
   ): Promise<MessageParticipantWorkspaceEntity[]> {
@@ -141,8 +145,14 @@ export class MessagingMessageParticipantService {
           await messageParticipantRepository.updateMany(identityUpdatesChunk);
         }
 
-        const { identifiers } =
-          await messageParticipantRepository.insert(participantsToCreate);
+        const { identifiers } = await messageParticipantRepository.insert(
+          isDefined(createdBy)
+            ? participantsToCreate.map((participant) => ({
+                ...participant,
+                createdBy,
+              }))
+            : participantsToCreate,
+        );
 
         const touchedIds = [
           ...identifiers.map(({ id }) => id),

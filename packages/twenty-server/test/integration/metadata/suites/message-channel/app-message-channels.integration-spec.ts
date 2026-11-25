@@ -411,6 +411,33 @@ describe('app message channels API (e2e)', () => {
     return folder;
   };
 
+  const findCreators = ({
+    table,
+    where,
+    id,
+  }: {
+    table: string;
+    where: string;
+    id: string;
+  }): Promise<{ createdBySource: string; createdByContext: unknown }[]> =>
+    globalThis.testDataSource.query(
+      `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."${table}" WHERE ${where}`,
+      [id],
+    );
+
+  const expectCreatedByApplication = (
+    creators: { createdBySource: string; createdByContext: unknown }[],
+  ) => {
+    expect(creators.length).toBeGreaterThan(0);
+
+    for (const creator of creators) {
+      expect(creator).toEqual({
+        createdBySource: FieldActorSource.APPLICATION,
+        createdByContext: { applicationId: owningApplicationDbId },
+      });
+    }
+  };
+
   const findLinkedFolderIds = async (messageId: string): Promise<string[]> => {
     const rows: { messageFolderId: string }[] =
       await globalThis.testDataSource.query(
@@ -836,7 +863,7 @@ describe('app message channels API (e2e)', () => {
       });
     });
 
-    it('records the application as the creator of the messages and thread it ingests', async () => {
+    it('records the application as the creator of the records it ingests', async () => {
       const channel = await createChannelOrThrow();
 
       const response = await ingest({
@@ -853,23 +880,22 @@ describe('app message channels API (e2e)', () => {
       const [{ messageId, messageThreadId }] =
         response.body.data.ingestAppMessages.messages;
 
-      const createdByApplication = {
-        createdBySource: FieldActorSource.APPLICATION,
-        createdByContext: { applicationId: owningApplicationDbId },
-      };
-
-      expect(
-        await globalThis.testDataSource.query(
-          `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."message" WHERE id = $1`,
-          [messageId],
-        ),
-      ).toEqual([createdByApplication]);
-      expect(
-        await globalThis.testDataSource.query(
-          `SELECT "createdBySource", "createdByContext" FROM "${WORKSPACE_SCHEMA}"."messageThread" WHERE id = $1`,
-          [messageThreadId],
-        ),
-      ).toEqual([createdByApplication]);
+      for (const target of [
+        { table: 'message', where: 'id = $1', id: messageId },
+        { table: 'messageThread', where: 'id = $1', id: messageThreadId },
+        {
+          table: 'messageParticipant',
+          where: '"messageId" = $1',
+          id: messageId,
+        },
+        {
+          table: 'messageChannelMessageAssociation',
+          where: '"messageId" = $1',
+          id: messageId,
+        },
+      ]) {
+        expectCreatedByApplication(await findCreators(target));
+      }
     });
 
     it('exposes the app channel on the timeline threads of the matched person', async () => {
@@ -1311,6 +1337,13 @@ describe('app message channels API (e2e)', () => {
       expect(await findStoredAttachmentFileIds(ingested.messageId)).toEqual([
         firstFileId,
       ]);
+      expectCreatedByApplication(
+        await findCreators({
+          table: 'attachment',
+          where: '"targetMessageId" = $1',
+          id: ingested.messageId,
+        }),
+      );
 
       const redelivered = await ingest({
         messageChannelId: channel.id,
@@ -1683,6 +1716,13 @@ describe('app message channels API (e2e)', () => {
       const [{ messageId }] = first.body.data.ingestAppMessages.messages;
 
       expect(await findLinkedFolderIds(messageId)).toEqual([supportFolder.id]);
+      expectCreatedByApplication(
+        await findCreators({
+          table: 'messageChannelMessageAssociationMessageFolder',
+          where: `"messageChannelMessageAssociationId" IN (SELECT id FROM "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation" WHERE "messageId" = $1)`,
+          id: messageId,
+        }),
+      );
 
       const second = await ingest({
         messageChannelId: channel.id,
