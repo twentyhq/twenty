@@ -21,9 +21,11 @@ const toScalarFieldDescriptor = (
 export const buildValidationRuleFieldDescriptors = ({
   objectMetadataItem,
   objectMetadataItems,
+  readableRelationTypes = [RelationType.MANY_TO_ONE],
 }: {
   objectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>;
   objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'fields'>[];
+  readableRelationTypes?: RelationType[];
 }): ValidationRuleFieldDescriptor[] =>
   objectMetadataItem.fields
     .filter((fieldMetadataItem) => fieldMetadataItem.isActive)
@@ -49,7 +51,8 @@ export const buildValidationRuleFieldDescriptors = ({
           ? SharedRelationType.MANY_TO_ONE
           : SharedRelationType.ONE_TO_MANY,
         relationTargetFields:
-          isManyToOne && isDefined(targetObjectMetadataItem)
+          readableRelationTypes.includes(relation.type) &&
+          isDefined(targetObjectMetadataItem)
             ? targetObjectMetadataItem.fields
                 .filter((targetField) => targetField.isActive)
                 .map(toScalarFieldDescriptor)

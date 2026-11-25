@@ -1,6 +1,7 @@
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { MobileHomeInboxSection } from '@/inbox/components/MobileHomeInboxSection';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -36,6 +37,7 @@ export const MobileHomePage = () => {
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const activeNavigationMenuTab = useActiveNavigationMenuTab();
+  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
 
   // Desktop keeps the drawer, so the page has nothing to show there.
   if (!isMobile) {
@@ -52,9 +54,9 @@ export const MobileHomePage = () => {
         <StyledSections>
           <MainNavigationDrawerNavigationContent />
           <GettingStartedSidebarCard />
-          {hasAiPermission && !isDefined(activeNavigationMenuTab) && (
-            <MobileHomeInboxSection />
-          )}
+          {hasAiPermission &&
+            !hasAiChatSectionInSidebar &&
+            !isDefined(activeNavigationMenuTab) && <MobileHomeInboxSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>
     </StyledContainer>

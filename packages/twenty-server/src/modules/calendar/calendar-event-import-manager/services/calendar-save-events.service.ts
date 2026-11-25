@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { Any, In, Not } from 'typeorm';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -31,7 +30,6 @@ export class CalendarSaveEventsService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
-    private readonly featureFlagService: FeatureFlagService,
     @InjectWorkspaceScopedRepository(CalendarChannelEntity)
     private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -44,12 +42,6 @@ export class CalendarSaveEventsService {
     workspaceId: string,
   ): Promise<{ calendarEventIds: string[] }> {
     const authContext = buildSystemAuthContext(workspaceId);
-
-    const isCalendarEventSharingEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED,
-        workspaceId,
-      );
 
     const { flatFieldMetadataMaps, flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -104,7 +96,6 @@ export class CalendarSaveEventsService {
             .filter(isNonEmptyString),
         );
 
-        // Not gated by the flag: events shared before it was turned off keep their roles
         const otherAssociationsOfExistingEvents =
           existingAssociations.length > 0
             ? await calendarChannelEventAssociationRepository.find({
@@ -119,16 +110,15 @@ export class CalendarSaveEventsService {
               })
             : [];
 
-        const linkCandidateAssociations = isCalendarEventSharingEnabled
-          ? await this.findLinkCandidateAssociations({
-              calendarChannelEventAssociationRepository,
-              provider: connectedAccount.provider,
-              calendarChannelId: calendarChannel.id,
-              fetchedCalendarEvents: fetchedCalendarEvents.filter(
-                ({ id }) => !existingEventExternalIds.has(id),
-              ),
-            })
-          : [];
+        const linkCandidateAssociations =
+          await this.findLinkCandidateAssociations({
+            calendarChannelEventAssociationRepository,
+            provider: connectedAccount.provider,
+            calendarChannelId: calendarChannel.id,
+            fetchedCalendarEvents: fetchedCalendarEvents.filter(
+              ({ id }) => !existingEventExternalIds.has(id),
+            ),
+          });
 
         const otherAssociations = [
           ...otherAssociationsOfExistingEvents,
@@ -194,7 +184,6 @@ export class CalendarSaveEventsService {
           iCalUidByCalendarEventId: new Map(
             candidateCalendarEvents.map(({ id, iCalUid }) => [id, iCalUid]),
           ),
-          isCalendarEventSharingEnabled,
         });
 
         const storedCalendarEventIds = [

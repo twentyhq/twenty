@@ -25,7 +25,7 @@ export const ValidationRuleExpressionText = ({
   expression,
   className,
 }: ValidationRuleExpressionTextProps) => {
-  const highlights = computeValidationRuleExpressionHighlights(expression);
+  const highlights = computeValidationRuleExpressionHighlights({ expression });
 
   const parts = highlights.reduce<{
     nodes: ReactNode[];

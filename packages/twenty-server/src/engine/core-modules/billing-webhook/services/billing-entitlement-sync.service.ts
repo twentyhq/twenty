@@ -104,7 +104,7 @@ export class BillingEntitlementSyncService {
 
     // After the commit so a failure fails closed (rows stay filtered); checked every pass so a failed cleanup retries
     if (!isGranted(BillingEntitlementKey.RLS)) {
-      await this.rowLevelPermissionPredicateGroupService.deleteAllRowLevelPermissionPredicateGroups(
+      await this.rowLevelPermissionPredicateGroupService.deleteRowLevelPermissionPredicateGroupsOutsideIndividualRoles(
         workspaceId,
       );
     }

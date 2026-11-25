@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { isBoolean } from '@sniptt/guards';
+
 import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
-import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 
 @Injectable()
 export class CreateViewPermissionGuard implements CanActivate {
@@ -20,11 +21,7 @@ export class CreateViewPermissionGuard implements CanActivate {
     const args = gqlContext.getArgs();
     const input = args?.input ?? request.body;
 
-    const isPrivate =
-      resolveViewIsPrivateFromInput({
-        isPrivate: input?.isPrivate,
-        visibility: input?.visibility,
-      }) ?? false;
+    const isPrivate = isBoolean(input?.isPrivate) ? input.isPrivate : false;
 
     return this.viewAccessService.canUserCreateView({
       isPrivate,

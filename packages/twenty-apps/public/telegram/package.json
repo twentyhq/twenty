@@ -1,0 +1,56 @@
+{
+  "name": "@twentyhq/telegram",
+  "version": "0.1.0",
+  "description": "Connect Telegram accounts to Twenty workspace members so they can use Twenty from Telegram.",
+  "author": "Twenty",
+  "license": "MIT",
+  "engines": {
+    "twenty": ">=2.62.0",
+    "node": "^26.5.1",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "keywords": [
+    "twenty-app"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twentyhq/twenty.git",
+    "directory": "packages/twenty-apps/public/telegram"
+  },
+  "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/telegram",
+  "packageManager": "yarn@4.18.1",
+  "scripts": {
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "typecheck": "tsgo --noEmit -p tsconfig.spec.json",
+    "test": "vitest run",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
+    "test:watch": "vitest --config vitest.unit.config.ts"
+  },
+  "dependencies": {
+    "@sniptt/guards": "^0.2.0",
+    "react-qr-code": "^2.0.18"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.0.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "jsdom": "^26.1.0",
+    "oxlint": "^0.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "twenty-client-sdk": "^2.62.0",
+    "twenty-sdk": "^2.62.0",
+    "twenty-ui": "^2.62.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^4.1.12"
+  }
+}

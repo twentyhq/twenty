@@ -77,7 +77,7 @@ describe('View Field Group Resolver - Successful Create Many Operations', () => 
           },
         });
 
-        expect(deleteViewFieldGroup.deletedAt).not.toBeNull();
+        expect(deleteViewFieldGroup.id).toBe(viewFieldGroupId);
       }
     }
     createdViewFieldGroupIds = [];

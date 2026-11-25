@@ -14,7 +14,7 @@ import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-m
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
-import { ViewSortDirection, ViewVisibility } from 'twenty-shared/types';
+import { ViewSortDirection } from 'twenty-shared/types';
 
 const VIEW_SORT_DTO_GQL_FIELDS = `
   id
@@ -26,7 +26,6 @@ const VIEW_SORT_DTO_GQL_FIELDS = `
   workspaceId
   createdAt
   updatedAt
-  deletedAt
 `;
 
 const VIEW_SORT_REST_READ_TEST_CASES =
@@ -39,7 +38,7 @@ describe('View Sort read should succeed', () => {
   beforeEach(async () => {
     const view = await createViewWithChildren({
       name: `View Sort read ${randomUUID().slice(0, 8)}`,
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
     });
 
     viewId = view.viewId;
@@ -190,7 +189,7 @@ describe('View Sort read should succeed', () => {
     const token = APPLE_PHIL_GUEST_ACCESS_TOKEN;
     const unlistedView = await createViewWithChildren({
       name: `Unlisted view sort read ${randomUUID().slice(0, 8)}`,
-      visibility: ViewVisibility.UNLISTED,
+      isPrivate: true,
       token,
     });
     const unlistedViewSortId = unlistedView.childIdByChildName['view sort'];

@@ -1,6 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
+import { FORMULA_AGGREGATE_FUNCTION_NAMES } from '@/constants/FormulaAggregateFunctionNames';
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
@@ -151,9 +152,26 @@ validationRuleParser.binaryOps['||'] = (left: unknown, right: unknown) =>
     ? [...left, ...right]
     : `${toConcatenableValue(left)}${toConcatenableValue(right)}`;
 
-validationRuleParser.functions = Object.fromEntries(
-  Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
-    name,
-    evaluate,
-  ]),
-);
+// Counts code points and treats null as empty, as the SQL formula compiler does
+validationRuleParser.unaryOps.length = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value.length;
+  }
+
+  return isValidationRuleValueDefined(value) ? [...String(value)].length : 0;
+};
+
+// An aggregate has no value on a single record: the server computes it from the related records
+const evaluateAggregate = () => null;
+
+validationRuleParser.functions = {
+  ...Object.fromEntries(
+    FORMULA_AGGREGATE_FUNCTION_NAMES.map((name) => [name, evaluateAggregate]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
+      name,
+      evaluate,
+    ]),
+  ),
+};

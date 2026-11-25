@@ -8,7 +8,6 @@ import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/inte
 import { findRelatedRecordPathsExtendingAccess } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-paths-extending-access.util';
 import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access-to-object.util';
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
-import { isRlsRelationHopEnabled } from 'src/engine/permissions/internal/rls/utils/is-rls-relation-hop-enabled.util';
 import { type RlsWorkspaceMember } from 'src/engine/permissions/internal/rls/types/rls-workspace-member.type';
 
 export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
@@ -52,9 +51,6 @@ export const buildPrincipalsRelatedRecordPathAccessGroupsOrThrow = ({
                 operationTypes: [request.operationType],
                 workspaceMembers,
                 flatFieldMetadataMaps,
-                isRelationHopEnabled: isRlsRelationHopEnabled(
-                  metadataMaps.featureFlagsMap,
-                ),
               }),
             )
           : []),

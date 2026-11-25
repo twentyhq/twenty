@@ -10,6 +10,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type FindOptionsWhere,
+  LessThan,
   Like,
   type QueryRunner,
   type UpdateResult,
@@ -36,6 +37,7 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
+import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
@@ -204,26 +206,17 @@ export class FileStorageService {
     filePath: string;
     applicationId: string;
   }): Promise<Pick<FileEntity, 'mimeType' | 'size' | 'settings'>> {
-    const metadata = await this.getFileMetadata(resourceIdentifier);
+    const storedFileInfo = await this.readStoredFileInfo(resourceIdentifier);
 
-    if (!isDefined(metadata)) {
+    if (!isDefined(storedFileInfo)) {
       throw new FileStorageException(
         `File not found at path "${filePath}"`,
         FileStorageExceptionCode.FILE_NOT_FOUND,
       );
     }
 
-    const { mimeType } = await extractFileInfoOrThrow({
-      file: await this.readFilePrefix({
-        ...resourceIdentifier,
-        byteCount: FILE_CONTENT_SNIFF_BYTE_COUNT,
-      }),
-      filename: resourceIdentifier.resourcePath,
-    });
-
     const fileRow = {
-      mimeType,
-      size: metadata.size,
+      ...storedFileInfo,
       settings: { isTemporaryFile: false, toDelete: false },
     };
 
@@ -245,11 +238,31 @@ export class FileStorageService {
       await this.applyStorageStockDelta({
         workspaceId: resourceIdentifier.workspaceId,
         applicationId,
-        delta: { [UsageUnit.BYTE]: metadata.size, [UsageUnit.FILE]: 1 },
+        delta: { [UsageUnit.BYTE]: fileRow.size, [UsageUnit.FILE]: 1 },
       });
     }
 
     return fileRow;
+  }
+
+  private async readStoredFileInfo(
+    resourceIdentifier: ResourceIdentifier,
+  ): Promise<Pick<FileEntity, 'mimeType' | 'size'> | null> {
+    const metadata = await this.getFileMetadata(resourceIdentifier);
+
+    if (!isDefined(metadata)) {
+      return null;
+    }
+
+    const { mimeType } = await extractFileInfoOrThrow({
+      file: await this.readFilePrefix({
+        ...resourceIdentifier,
+        byteCount: FILE_CONTENT_SNIFF_BYTE_COUNT,
+      }),
+      filename: resourceIdentifier.resourcePath,
+    });
+
+    return { mimeType, size: metadata.size };
   }
 
   private async applyStorageStockDelta({
@@ -648,6 +661,7 @@ export class FileStorageService {
         settings,
         status: FILE_STATUS.PENDING,
         contentSha256: null,
+        updatedAt: () => 'now()',
       },
       ['path', 'workspaceId', 'applicationId'],
     );
@@ -745,6 +759,66 @@ export class FileStorageService {
       },
       buildFileWriteLockKey({
         workspaceId,
+        applicationId: file.applicationId,
+        filePath: file.path,
+      }),
+    );
+  }
+
+  async restoreRestagedFile({
+    file,
+    resourceIdentifier,
+    staleThreshold,
+  }: {
+    file: Pick<FileEntity, 'id' | 'path' | 'applicationId' | 'size'>;
+    resourceIdentifier: ResourceIdentifier;
+    staleThreshold: Date;
+  }): Promise<boolean> {
+    return this.cacheLockService.withLock(
+      async () => {
+        const storedFileInfo =
+          await this.readStoredFileInfo(resourceIdentifier);
+
+        if (!isDefined(storedFileInfo)) {
+          return false;
+        }
+
+        const { affected } = await this.fileRepository.update(
+          resourceIdentifier.workspaceId,
+          {
+            id: file.id,
+            status: FILE_STATUS.PENDING,
+            updatedAt: LessThan(staleThreshold),
+          },
+          { status: FILE_STATUS.UPLOADED, ...storedFileInfo },
+        );
+
+        if (affected === 0) {
+          return true;
+        }
+
+        const sizeDelta = storedFileInfo.size - Number(file.size);
+
+        if (sizeDelta !== 0) {
+          await this.applyStorageStockDelta({
+            workspaceId: resourceIdentifier.workspaceId,
+            applicationId: file.applicationId,
+            delta: { [UsageUnit.BYTE]: sizeDelta },
+          });
+        }
+
+        await this.deleteFileObject({
+          ...resourceIdentifier,
+          resourcePath: buildPendingUploadResourcePath({
+            fileId: file.id,
+            resourcePath: resourceIdentifier.resourcePath,
+          }),
+        });
+
+        return true;
+      },
+      buildFileWriteLockKey({
+        workspaceId: resourceIdentifier.workspaceId,
         applicationId: file.applicationId,
         filePath: file.path,
       }),

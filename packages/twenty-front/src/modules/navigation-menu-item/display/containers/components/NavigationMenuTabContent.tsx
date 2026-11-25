@@ -2,6 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconPaint } from 'twenty-ui/icon';
 
+import { NavigationMenuTabIdContext } from '@/navigation-menu-item/common/contexts/NavigationMenuTabIdContext';
+import { NavigationMenuTabFirstItemRequestResetEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemRequestResetEffect';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuContainerContent } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent';
@@ -11,14 +13,13 @@ import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSideba
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type NavigationMenuTabContentProps = {
-  tab: Pick<NavigationMenuItem, 'id'>;
+  containerId: string | null;
 };
 
 export const NavigationMenuTabContent = ({
-  tab,
+  containerId,
 }: NavigationMenuTabContentProps) => {
   const { t } = useLingui();
   const canCustomizeSidebar = useCanCustomizeSidebar();
@@ -26,17 +27,17 @@ export const NavigationMenuTabContent = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { topLevelItems } = useNavigationMenuContainerItems(tab.id);
+  const { topLevelItems } = useNavigationMenuContainerItems(containerId);
   const sections = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.SECTION,
-    containerId: tab.id,
+    containerId,
   });
 
   const isEmptyTab = topLevelItems.length === 0 && sections.length === 0;
 
   return (
-    <>
-      <NavigationMenuContainerContent containerId={tab.id} />
+    <NavigationMenuTabIdContext.Provider value={containerId}>
+      <NavigationMenuContainerContent containerId={containerId} />
       {!isLayoutCustomizationModeEnabled &&
         isEmptyTab &&
         canCustomizeSidebar && (
@@ -50,6 +51,9 @@ export const NavigationMenuTabContent = ({
             />
           </NavigationDrawerSection>
         )}
-    </>
+      <NavigationMenuTabFirstItemRequestResetEffect
+        navigationMenuTabId={containerId}
+      />
+    </NavigationMenuTabIdContext.Provider>
   );
 };

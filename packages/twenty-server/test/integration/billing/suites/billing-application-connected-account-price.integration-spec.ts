@@ -20,7 +20,7 @@ import {
 } from 'test/integration/utils/query-messaging.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
-import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
@@ -33,11 +33,9 @@ import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/
 import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { buildApplicationStripeProductId } from 'src/engine/core-modules/billing/utils/build-application-stripe-product-id.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type StripeItem = { id: string; price: { id: string }; quantity: number };
 
@@ -290,13 +288,6 @@ describe('Application price per connected account (integration)', () => {
       ],
     );
 
-    await getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    ).enableFeatureFlags(
-      [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-      workspaceId,
-    );
-
     const billedSeats =
       (await getAppProviderByClassName<BillingSeatService>(
         'BillingSeatService',
@@ -413,13 +404,6 @@ describe('Application price per connected account (integration)', () => {
       `DELETE FROM core."billingProduct" WHERE "stripeProductId" = ANY($1)`,
       [[BASE_PRODUCT_ID, applicationStripeProductId]],
     );
-    await query(
-      `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [workspaceId, FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-    );
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(workspaceId, ['featureFlagsMap']);
     await query(
       `UPDATE core."application" SET "sourceType" = 'local'
        WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,

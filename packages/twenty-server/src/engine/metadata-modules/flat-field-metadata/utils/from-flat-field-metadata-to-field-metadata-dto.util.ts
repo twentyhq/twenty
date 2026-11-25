@@ -1,5 +1,6 @@
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isFieldMetadataUIEditable } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-field-metadata-ui-editable.util';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
 export const fromFlatFieldMetadataToFieldMetadataDto = (
@@ -26,13 +27,13 @@ export const fromFlatFieldMetadataToFieldMetadataDto = (
     defaultValue,
     isLabelSyncedWithName,
     isSystem,
-    isUIEditable,
     isSystemSideEffect,
     disabledFieldPermissionActions,
     options,
     morphId,
     applicationId,
   } = flatFieldMetadata;
+  const isUIEditable = isFieldMetadataUIEditable(flatFieldMetadata);
 
   return {
     id,

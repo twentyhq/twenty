@@ -2,7 +2,6 @@ import {
   Check,
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -80,7 +79,6 @@ export type ViewOverrides = {
   'objectMetadataId',
   'workspaceId',
 ])
-@Index('IDX_VIEW_VISIBILITY', ['visibility'])
 @Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])
 @Index('IDX_VIEW_CALENDAR_END_FIELD_METADATA', ['calendarEndFieldMetadataId'])
 @Index('IDX_VIEW_KANBAN_FIELD_METADATA', [
@@ -260,7 +258,7 @@ export class ViewEntity
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamptz' })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date | null;
 
   @Column({ nullable: true, type: 'text', default: null })
@@ -286,13 +284,12 @@ export class ViewEntity
   @Column({
     type: 'enum',
     enum: Object.values(ViewVisibility),
-    nullable: false,
-    default: ViewVisibility.WORKSPACE,
+    nullable: true,
     select: false,
     insert: false,
     update: false,
   })
-  visibility: WasRemovedInUpgrade<ViewVisibility>;
+  visibility: WasRemovedInUpgrade<ViewVisibility | null>;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,

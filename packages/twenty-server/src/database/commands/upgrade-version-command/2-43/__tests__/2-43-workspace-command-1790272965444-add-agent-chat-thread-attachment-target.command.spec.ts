@@ -141,6 +141,18 @@ describe('AddAgentChatThreadAttachmentTargetCommand', () => {
           universalIdentifier,
       ),
     ).toEqual([INDEX_IDENTIFIER]);
+    expect(
+      allFlatEntityOperationByMetadataName.fieldMetadata.flatEntityToCreate.find(
+        ({ universalIdentifier }: { universalIdentifier: string }) =>
+          universalIdentifier === TARGET_FIELD_IDENTIFIER,
+      ),
+    ).toMatchObject({
+      name: 'targetAgentChatThread',
+      settings: { joinColumnName: 'targetAgentChatThreadId' },
+    });
+    expect(
+      allFlatEntityOperationByMetadataName.index.flatEntityToCreate[0].name,
+    ).toBe('IDX_64d57b165b3cd64f71fe8a0ea4c');
   });
 
   it('does nothing when the target already exists', async () => {

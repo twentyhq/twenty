@@ -31,6 +31,7 @@ export { conditionalAvailabilityStrictParser } from './utils/conditionalAvailabi
 export { createArrayPropertyCheck } from './utils/createArrayPropertyCheck';
 export { evaluateConditionalAvailabilityExpression } from './utils/evaluateConditionalAvailabilityExpression';
 export { evaluateConditionalAvailabilityNode } from './utils/evaluateConditionalAvailabilityNode';
+export { joinConditionalAvailabilityNodes } from './utils/joinConditionalAvailabilityNodes';
 export { listConditionalAvailabilityNodes } from './utils/listConditionalAvailabilityNodes';
 export { parseConditionalAvailabilityExpression } from './utils/parseConditionalAvailabilityExpression';
 export { printConditionalAvailabilityNode } from './utils/printConditionalAvailabilityNode';
