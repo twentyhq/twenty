@@ -1253,6 +1253,9 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
+  applicationLogoUrl: String
+  applicationName: String
+  applicationPricePer: ApplicationBillingPriceUnit
   billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
