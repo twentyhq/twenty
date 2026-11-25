@@ -6541,11 +6541,6 @@ msgstr "检查清单"
 msgid "Check recent runs"
 msgstr "检查最近运行"
 
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "创建记录时，仅检查创建权限，而非更新权限。"
-
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8923,11 +8918,6 @@ msgstr "创建记录"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "创建记录"
-
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "创建记录权限"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -19441,11 +19431,6 @@ msgstr "向 {recipientName} 发送消息"
 msgid "Message actions"
 msgstr "消息操作"
 
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "消息附件"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -29447,11 +29432,6 @@ msgstr "存储"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "对于由同一提供商的多个日历同步的会议，仅存储一次，而非每个日历各存储一次。"
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "存储并显示附加到消息的文件。工作区升级完成后启用。"
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx

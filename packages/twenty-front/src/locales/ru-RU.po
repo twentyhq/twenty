@@ -6541,11 +6541,6 @@ msgstr "Контрольный список"
 msgid "Check recent runs"
 msgstr "Проверить последние запуски"
 
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "При создании записей проверять разрешение на создание отдельно, а не разрешение на обновление."
-
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8923,11 +8918,6 @@ msgstr "Создать запись"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Создать запись"
-
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Разрешение на создание записей"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -19441,11 +19431,6 @@ msgstr "Сообщение {recipientName}"
 msgid "Message actions"
 msgstr "Действия с сообщением"
 
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Вложения сообщений"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -29447,11 +29432,6 @@ msgstr "Хранилище"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Сохранять встречу, синхронизированную несколькими календарями одного поставщика, один раз, а не по одному разу для каждого календаря."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Храните и показывайте файлы, прикрепленные к сообщениям. Функция будет включена после завершения обновления рабочего пространства."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx

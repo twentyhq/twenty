@@ -6541,11 +6541,6 @@ msgstr "Ստուգաթերթ"
 msgid "Check recent runs"
 msgstr "Ստուգել վերջին գործարկումները"
 
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Գրառումներ ստեղծելիս առանձին ստուգել ստեղծման թույլտվությունը, այլ ոչ թե թարմացման թույլտվությունը."
-
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8923,11 +8918,6 @@ msgstr "Ստեղծել գրառում"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Ստեղծել գրառում"
-
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Գրառումներ ստեղծելու թույլտվություն"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -19441,11 +19431,6 @@ msgstr "Հաղորդագրություն {recipientName}"
 msgid "Message actions"
 msgstr "Հաղորդագրության գործողություններ"
 
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Հաղորդագրության կցորդներ"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -29447,11 +29432,6 @@ msgstr "Պահեստավորում"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Միևնույն մատակարարի մի քանի օրացույցների կողմից համաժամացված հանդիպումը պահել մեկ անգամ՝ յուրաքանչյուր օրացույցի համար մեկ անգամ պահելու փոխարեն։"
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Պահպանեք և ցուցադրեք հաղորդագրություններին կցված ֆայլերը։ Միացվում է աշխատանքային տարածքի թարմացման ավարտից հետո։"
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx

@@ -6541,11 +6541,6 @@ msgstr "Elenco di controllo"
 msgid "Check recent runs"
 msgstr "Controlla le esecuzioni recenti"
 
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Controlla separatamente l'autorizzazione di creazione durante la creazione dei record, anziché l'autorizzazione di aggiornamento."
-
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8923,11 +8918,6 @@ msgstr "Crea Record"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Crea Record"
-
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Autorizzazione di creazione dei record"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -19441,11 +19431,6 @@ msgstr "Messaggio {recipientName}"
 msgid "Message actions"
 msgstr "Azioni del messaggio"
 
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Allegati dei messaggi"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -29447,11 +29432,6 @@ msgstr "Archiviazione"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Memorizza una sola volta una riunione sincronizzata da più calendari dello stesso provider, anziché una volta per calendario."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Archivia e mostra i file allegati ai messaggi. Abilitato al completamento dell'aggiornamento dello spazio di lavoro."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx

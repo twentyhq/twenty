@@ -6541,11 +6541,6 @@ msgstr "Tekshiruv ro‘yxati"
 msgid "Check recent runs"
 msgstr "So‘nggi ishga tushirishlarni tekshirish"
 
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Yozuvlarni yaratishda yangilash ruxsati o‘rniga yaratish ruxsatini alohida tekshiring."
-
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -8923,11 +8918,6 @@ msgstr "Yozuv yarating"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Yozuv yaratish"
-
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Yozuvlarni yaratish ruxsati"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -19441,11 +19431,6 @@ msgstr "{recipientName}ga xabar"
 msgid "Message actions"
 msgstr "Xabar amallari"
 
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Xabar qo‘shimchalari"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -29447,11 +29432,6 @@ msgstr "Saqlash joyi"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Bir xil provayderning bir nechta taqvimi tomonidan sinxronlashtirilgan uchrashuvni har bir taqvim uchun alohida emas, bir marta saqlang."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Xabarlarga biriktirilgan fayllarni saqlang va ko‘rsating. Ish maydoni yangilanishi tugallangandan keyin yoqiladi."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
