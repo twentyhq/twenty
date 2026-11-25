@@ -2,6 +2,7 @@ import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronUp,
@@ -23,7 +24,6 @@ import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hoo
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemMoveDestination } from '@/navigation-menu-item/common/types/NavigationMenuItemMoveDestination';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/types/NavigationMenuItemAddTarget';
-import { isNavigationMenuItemAtContainerTopLevel } from '@/navigation-menu-item/common/utils/isNavigationMenuItemAtContainerTopLevel';
 import { getNavigationMenuItemContainerId } from '@/navigation-menu-item/common/utils/getNavigationMenuItemContainerId';
 import { getNavigationMenuItemMoveDestinations } from '@/navigation-menu-item/common/utils/getNavigationMenuItemMoveDestinations';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
@@ -66,13 +66,13 @@ export const NavigationMenuItemActions = ({
     containerId: null,
   });
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
+  const parentType = workspaceNavigationMenuItems.find(
+    (candidate) => candidate.id === item.parentId,
+  )?.type;
   const isAtContainerTopLevel =
     section === 'workspace' &&
     isCustomizableSidebarEnabled &&
-    isNavigationMenuItemAtContainerTopLevel({
-      item,
-      items: workspaceNavigationMenuItems,
-    });
+    (!isDefined(item.parentId) || parentType === NavigationMenuItemType.TAB);
   const isMovingAcrossTabs =
     section === 'workspace' && isCustomizableSidebarEnabled;
   const getTabName = (tabId: string | null) =>
