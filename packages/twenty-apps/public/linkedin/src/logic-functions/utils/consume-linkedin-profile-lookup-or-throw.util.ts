@@ -5,15 +5,17 @@ import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
 
 const DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
 
-// Counts over a rolling day; concurrent jobs can undercount, which the margin under LinkedIn's limit absorbs
-export const consumeLinkedinProfileLookupOrThrow = async ({
+const pendingConsumptionByKey = new Map<string, Promise<void>>();
+
+const countLookupOrThrow = async ({
+  key,
   unipileAccountId,
   dailyLimit,
 }: {
+  key: string;
   unipileAccountId: string;
   dailyLimit: number;
 }): Promise<void> => {
-  const key = getLinkedinProfileLookupsKey(unipileAccountId);
   const now = Date.now();
   const lookupTimestamps = ((await kv.get<number[]>(key)) ?? []).filter(
     (lookupTimestamp) => lookupTimestamp > now - DAY_MILLISECONDS,
@@ -30,4 +32,23 @@ export const consumeLinkedinProfileLookupOrThrow = async ({
   }
 
   await kv.set(key, [...lookupTimestamps, now]);
+};
+
+// One at a time per account: the members of a group are looked up together and would all read the same count.
+// Jobs running at once can still undercount by a few, which the margin under LinkedIn's limit absorbs
+export const consumeLinkedinProfileLookupOrThrow = ({
+  unipileAccountId,
+  dailyLimit,
+}: {
+  unipileAccountId: string;
+  dailyLimit: number;
+}): Promise<void> => {
+  const key = getLinkedinProfileLookupsKey(unipileAccountId);
+  const consumption = (pendingConsumptionByKey.get(key) ?? Promise.resolve())
+    .catch(() => undefined)
+    .then(() => countLookupOrThrow({ key, unipileAccountId, dailyLimit }));
+
+  pendingConsumptionByKey.set(key, consumption);
+
+  return consumption;
 };

@@ -83,6 +83,32 @@ describe('consumeLinkedinProfileLookupOrThrow', () => {
     ]);
   });
 
+  it('counts every lookup of a group whose members are looked up together', async () => {
+    const lookups = await Promise.allSettled(
+      Array.from({ length: 5 }, () => consumeLookup(3)),
+    );
+
+    expect(lookups.map(({ status }) => status)).toEqual([
+      'fulfilled',
+      'fulfilled',
+      'fulfilled',
+      'rejected',
+      'rejected',
+    ]);
+    expect(mocks.kvStore.get(LOOKUPS_KEY)).toHaveLength(3);
+  });
+
+  it('keeps counting after a refused lookup', async () => {
+    mocks.kvStore.set(LOOKUPS_KEY, [NOW - 23 * HOUR_MILLISECONDS]);
+
+    await expect(consumeLookup(1)).rejects.toBeInstanceOf(
+      UnipileRateLimitError,
+    );
+    vi.setSystemTime(NOW + 2 * HOUR_MILLISECONDS);
+
+    await expect(consumeLookup(1)).resolves.toBeUndefined();
+  });
+
   it('keeps a separate count per account', async () => {
     mocks.kvStore.set('linkedin-profile-lookups:acc_2', [NOW]);
 
