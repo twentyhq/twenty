@@ -1,7 +1,7 @@
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { type MouseEvent, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -99,7 +99,6 @@ type MainNavigationDrawerTabProps = {
   tooltip: string;
   shouldShowTooltip: boolean;
   onClick: () => void;
-  onContextMenu?: (event: MouseEvent<HTMLButtonElement>) => void;
   ariaLabel?: string;
   iconAccessory?: ReactNode;
   isLabelHidden?: boolean;
@@ -114,7 +113,6 @@ export const MainNavigationDrawerTab = ({
   tooltip,
   shouldShowTooltip,
   onClick,
-  onContextMenu,
   ariaLabel,
   iconAccessory,
   isLabelHidden = false,
@@ -146,7 +144,6 @@ export const MainNavigationDrawerTab = ({
 
           onClick();
         }}
-        onContextMenu={onContextMenu}
       >
         <StyledModeIcon>
           <Icon size={theme.icon.size.md} />

@@ -64,7 +64,7 @@ export const MainNavigationDrawerSidebarTab = ({
     switchToNavigationMenuTab(tab.id);
   };
 
-  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>) => {
+  const handleContextMenu = (event: MouseEvent<HTMLSpanElement>) => {
     event.preventDefault();
     handleClick();
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
@@ -80,9 +80,6 @@ export const MainNavigationDrawerSidebarTab = ({
       tooltip={tab.name}
       shouldShowTooltip={shouldShowTooltip}
       onClick={handleClick}
-      onContextMenu={
-        isLayoutCustomizationModeEnabled ? handleContextMenu : undefined
-      }
       ariaLabel={getNavigationMenuTabAttentionLabel({
         tabName: tab.name,
         attention,
@@ -111,7 +108,7 @@ export const MainNavigationDrawerSidebarTab = ({
         />
       )}
       <Dropdown.Trigger
-        render={<StyledAnchor />}
+        render={<StyledAnchor onContextMenu={handleContextMenu} />}
         nativeButton={false}
         disabled={!isActive}
         tabIndex={-1}
