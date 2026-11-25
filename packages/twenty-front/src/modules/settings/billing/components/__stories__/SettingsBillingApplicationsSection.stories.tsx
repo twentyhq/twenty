@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse } from 'msw';
 import { expect, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingApplicationsSection } from '@/settings/billing/components/SettingsBillingApplicationsSection';
@@ -86,25 +87,30 @@ const meta: Meta<typeof SettingsBillingApplicationsSection> = {
                 universalIdentifier === variables.universalIdentifier,
             );
 
+            if (!isDefined(applicationRegistration)) {
+              return HttpResponse.json({
+                data: {
+                  findApplicationRegistrationByUniversalIdentifier: null,
+                },
+              });
+            }
+
             return HttpResponse.json({
               data: {
-                findApplicationRegistrationByUniversalIdentifier:
-                  applicationRegistration
-                    ? {
-                        __typename: 'ApplicationRegistration',
-                        id: applicationRegistration.universalIdentifier,
-                        name: applicationRegistration.name,
-                        logoUrl: null,
-                        billingPrices: [
-                          {
-                            __typename: 'ApplicationBillingPrice',
-                            universalIdentifier:
-                              applicationRegistration.priceUniversalIdentifier,
-                            per: applicationRegistration.per,
-                          },
-                        ],
-                      }
-                    : null,
+                findApplicationRegistrationByUniversalIdentifier: {
+                  __typename: 'ApplicationRegistration',
+                  id: applicationRegistration.universalIdentifier,
+                  name: applicationRegistration.name,
+                  logoUrl: null,
+                  billingPrices: [
+                    {
+                      __typename: 'ApplicationBillingPrice',
+                      universalIdentifier:
+                        applicationRegistration.priceUniversalIdentifier,
+                      per: applicationRegistration.per,
+                    },
+                  ],
+                },
               },
             });
           },
