@@ -1,28 +1,27 @@
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { validateFlatViewListDateField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-list-date-field.util';
 
 const buildFlatView = (
   listDateFieldMetadataUniversalIdentifier: string | null,
-) =>
-  ({
-    type: ViewType.LIST,
-    objectMetadataUniversalIdentifier: 'object',
-    listDateFieldMetadataUniversalIdentifier,
-  }) as UniversalFlatView;
+) => ({
+  objectMetadataUniversalIdentifier: 'object',
+  listDateFieldMetadataUniversalIdentifier,
+});
 
 const buildFlatFieldMetadataMaps = (
-  flatFieldMetadata: Partial<UniversalFlatFieldMetadata>,
+  flatFieldMetadata: Partial<FlatFieldMetadata>,
 ) => ({
   byUniversalIdentifier: {
-    'list-date-field': {
+    'list-date-field': getFlatFieldMetadataMock({
       universalIdentifier: 'list-date-field',
+      objectMetadataId: 'object-id',
       objectMetadataUniversalIdentifier: 'object',
       type: FieldMetadataType.DATE_TIME,
       ...flatFieldMetadata,
-    } as UniversalFlatFieldMetadata,
+    }),
   },
 });
 

@@ -1,6 +1,5 @@
 import { msg, t } from '@lingui/core/macro';
-import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { ViewExceptionCode } from 'src/engine/metadata-modules/view/exceptions/view.exception';
@@ -12,7 +11,11 @@ export const validateFlatViewListDateField = ({
   flatView,
   flatFieldMetadataMaps,
 }: {
-  flatView: UniversalFlatView;
+  flatView: Pick<
+    UniversalFlatView,
+    | 'listDateFieldMetadataUniversalIdentifier'
+    | 'objectMetadataUniversalIdentifier'
+  >;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
 }): FlatEntityValidationError[] => {
   if (!isDefined(flatView.listDateFieldMetadataUniversalIdentifier)) {
@@ -47,11 +50,7 @@ export const validateFlatViewListDateField = ({
     });
   }
 
-  const listDateFieldIsDateKind =
-    listDateFieldMetadata.type === FieldMetadataType.DATE ||
-    listDateFieldMetadata.type === FieldMetadataType.DATE_TIME;
-
-  if (!listDateFieldIsDateKind) {
+  if (!isFieldMetadataDateKind(listDateFieldMetadata.type)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`List date field must be a date or date time field`,
