@@ -14,7 +14,6 @@ import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropItemData } from '@/ui/utilities/drag-and-drop/types/DragDropItemData';
-import { type DragDropProviderBeforeDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderBeforeDragStartEvent';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
 import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
@@ -62,14 +61,6 @@ export const RecordDragDropContextProvider = ({
     endRecordDrag();
     setActiveDropTargetIndex(null);
     setActiveDroppableId(null);
-  };
-
-  const handleBeforeDragStart = (
-    event: DragDropProviderBeforeDragStartEvent<DragDropItemData>,
-  ) => {
-    if (isDefined(shouldPreventRecordDrag) && shouldPreventRecordDrag()) {
-      event.preventDefault();
-    }
   };
 
   const handleDragStart = (
@@ -167,7 +158,11 @@ export const RecordDragDropContextProvider = ({
       <DragDropProvider<DragDropItemData>
         sensors={DND_KIT_SENSORS}
         plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-        onBeforeDragStart={handleBeforeDragStart}
+        onBeforeDragStart={(event) => {
+          if (isDefined(shouldPreventRecordDrag) && shouldPreventRecordDrag()) {
+            event.preventDefault();
+          }
+        }}
         onDragStart={handleDragStart}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
