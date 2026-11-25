@@ -116,7 +116,6 @@ export class PendingFileCleanupService {
 
         const location = await this.findStorageLocation(file);
 
-        // Deploys re-stage live rows in place; those must keep the object at their final path.
         const isRestaged = file.createdAt.getTime() < file.updatedAt.getTime();
 
         if (isDefined(location) && isRestaged) {
@@ -171,7 +170,6 @@ export class PendingFileCleanupService {
   ): Promise<void> {
     const { resourcePath } = location;
 
-    // A new row never owned a live object, so anything at its final path goes too.
     // Quarantine goes first: a racing completion could otherwise move it into an already-cleaned final path.
     const failures: unknown[] = [];
 

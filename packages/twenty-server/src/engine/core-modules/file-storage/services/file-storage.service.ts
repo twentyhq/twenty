@@ -660,7 +660,6 @@ export class FileStorageService {
         settings,
         status: FILE_STATUS.PENDING,
         contentSha256: null,
-        // Same clock as createdAt's default, so only a re-staged row ends up with createdAt < updatedAt.
         updatedAt: () => 'now()',
       },
       ['path', 'workspaceId', 'applicationId'],
@@ -765,7 +764,6 @@ export class FileStorageService {
     );
   }
 
-  // Drops the quarantine copy and reverts the row to the object at its final path; false when there is none.
   async restoreRestagedFile({
     file,
     resourceIdentifier,
