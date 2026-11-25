@@ -31,7 +31,6 @@ import {
   type RecordSharingRoleDTO,
 } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { isRecordSharingEnabled } from 'src/engine/permissions/record-share/utils/is-record-sharing-enabled.util';
-import { canSetPrivateRecordState } from 'src/engine/permissions/private-record/utils/can-set-private-record-state.util';
 import { type RecordSharingArgs } from 'src/engine/permissions/record-share/types/record-sharing-args.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { resolveRecordSharePrincipalUserWorkspaceId } from 'src/engine/permissions/internal/record-share/utils/resolve-record-share-principal-user-workspace-id.util';
@@ -122,7 +121,6 @@ export class RecordSharingReadService {
     const { viewerAccessLevel } = await this.findRecordShareState({
       ...args,
       flatObjectMetadata,
-      featureFlagsMap,
     });
 
     return this.resolveCanManageSharing({
@@ -163,7 +161,6 @@ export class RecordSharingReadService {
       await this.findRecordShareState({
         ...args,
         flatObjectMetadata,
-        featureFlagsMap,
       });
     const canManageSharing = await this.resolveCanManageSharing({
       args,
@@ -338,11 +335,9 @@ export class RecordSharingReadService {
     objectMetadataId,
     recordId,
     flatObjectMetadata,
-    featureFlagsMap,
     transactionScope,
   }: RecordSharingArgs & {
     flatObjectMetadata: FlatObjectMetadata;
-    featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
     transactionScope?: RecordPermissionTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
@@ -386,17 +381,13 @@ export class RecordSharingReadService {
           ? getPermissionsPrincipalsShareKeys(principals)
           : []),
       ],
-      implicitAccessLevels:
-        isRecordSharingEnabled({ featureFlagsMap }) ||
-        canSetPrivateRecordState({ featureFlagsMap })
-          ? [
-              isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
-              creatorWorkspaceMemberId === authContext.workspaceMemberId ||
-              (canAccessAllRecords && !isPrivate)
-                ? RecordShareAccessLevel.FULL
-                : null,
-            ]
-          : [],
+      implicitAccessLevels: [
+        isPrivate ? null : RecordShareAccessLevel.READ_WRITE,
+        creatorWorkspaceMemberId === authContext.workspaceMemberId ||
+        (canAccessAllRecords && !isPrivate)
+          ? RecordShareAccessLevel.FULL
+          : null,
+      ],
     });
 
     return {

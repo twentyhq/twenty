@@ -109,7 +109,7 @@ const metadataMaps: PermissionsMetadataMaps = {
       ),
     },
   },
-  featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: true },
+  featureFlagsMap: {},
 };
 const buildSQLCondition = (
   request: Omit<
@@ -263,20 +263,6 @@ describe('buildAccessSQLCondition', () => {
     expect(
       policy.kind === 'gated' ? policy.sqlCondition.sql : '',
     ).not.toContain('recordShare');
-  });
-
-  it('adds nothing for private records and shares with both flags off', () => {
-    const company = buildObject({ id: 'company' });
-
-    expect(
-      buildSQLCondition({
-        principals: readEverything,
-        metadataMaps: { ...metadataMaps, featureFlagsMap: {} },
-        tableAlias: 'company',
-        flatObjectMetadata: company,
-        operationType: 'read',
-      }),
-    ).toBe(true);
   });
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {

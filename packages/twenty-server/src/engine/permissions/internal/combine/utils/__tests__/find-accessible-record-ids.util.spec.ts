@@ -167,13 +167,12 @@ const buildContext = (): RowAccessEvaluationContext => ({
 });
 
 const SHARING_WORKSPACE_FEATURE_FLAG_KEYS = [
-  FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
   FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
 ];
 
 const findGranted = ({
   principals,
-  featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
+  featureFlagKeys = [],
   context = buildContext(),
 }: {
   principals: PermissionsPrincipalsWithRolesContext;

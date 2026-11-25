@@ -62,14 +62,12 @@ describe('Access to all records and ownership transfer', () => {
 
   const target = (recordId: string) => ({ objectMetadataId, recordId });
 
-  const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
-    for (const featureFlag of [
-      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-    ]) {
-      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
-    }
-  };
+  const setRecordSharingEnabled = (value: boolean) =>
+    updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value,
+      expectToFail: false,
+    });
 
   const setShare = ({
     recordId,
@@ -160,7 +158,7 @@ describe('Access to all records and ownership transfer', () => {
         isLabelSyncedWithName: false,
       },
     });
-    await setRecordSharingAndPrivateRecordsEnabled(true);
+    await setRecordSharingEnabled(true);
   });
 
   const makeRecordsPublic = () =>
@@ -213,7 +211,7 @@ describe('Access to all records and ownership transfer', () => {
 
   afterAll(async () => {
     await makeRecordsPublic();
-    await setRecordSharingAndPrivateRecordsEnabled(false);
+    await setRecordSharingEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,

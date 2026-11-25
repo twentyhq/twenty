@@ -1,5 +1,3 @@
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { buildRecomputeRecordAccessGroupIdsQuery } from 'src/engine/permissions/internal/record-permission-repository/utils/build-recompute-record-access-group-ids-query.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -35,12 +33,10 @@ const COMPANY_TO_NOTE_HOPS = [
 
 const buildNoteQuery = ({
   isInherent,
-  isPrivateRecordsEnabled = false,
   companyUnreadableFields = [],
   companyRuleUnreadableFields = [],
 }: {
   isInherent: boolean;
-  isPrivateRecordsEnabled?: boolean;
   companyUnreadableFields?: string[];
   companyRuleUnreadableFields?: string[];
 }) =>
@@ -58,9 +54,6 @@ const buildNoteQuery = ({
       },
     ],
     metadataMaps: {
-      featureFlagsMap: {
-        [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: isPrivateRecordsEnabled,
-      },
       rolesPermissions: {
         'role-id': {
           canReadAllRecords: true,
@@ -107,7 +100,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
         recordAccessGroupSQLConditions: [{ compactId: 7, sqlCondition: null }],
         accessGroupValueLookupIdsSQLConditions: [],
         resolvedRelatedRecordPaths: [],
-        metadataMaps: { featureFlagsMap: {}, rolesPermissions: {} },
+        metadataMaps: { rolesPermissions: {} },
         recordIds: ['note-id'],
       }).sql,
     ).toContain(
@@ -116,10 +109,7 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
   });
 
   it('should pass on only the groups of the source object through a regular path', () => {
-    const { sql, parameters } = buildNoteQuery({
-      isInherent: false,
-      isPrivateRecordsEnabled: true,
-    });
+    const { sql, parameters } = buildNoteQuery({ isInherent: false });
 
     expect(sql).toContain(
       `ARRAY(SELECT DISTINCT "accessGroupId" FROM unnest(ARRAY_REMOVE(CAST(ARRAY[7] AS integer[]), NULL) || ARRAY(SELECT "inherited"."accessGroupId" FROM "${SCHEMA}"."_company" AS "related_record_path_0_0", "${SCHEMA}"."_noteTarget" AS "related_record_path_0_1", unnest("related_record_path_0_0"."_accessGroupIds") AS "inherited"("accessGroupId") WHERE "related_record_path_0_1"."companyId" = "related_record_path_0_0"."id" AND "related_record_path_0_0"."deletedAt" IS NULL AND "record"."id" = "related_record_path_0_1"."noteId" AND "related_record_path_0_1"."deletedAt" IS NULL AND "related_record_path_0_0"."_isPrivate" = FALSE AND "inherited"."accessGroupId" = ANY(ARRAY(SELECT "compactId" FROM "${SCHEMA}"."accessGroup" WHERE "objectMetadataId" = :relatedRecordPathSourceObjectMetadataId_0)))) AS "accessGroupId" ORDER BY "accessGroupId")`,
@@ -134,7 +124,6 @@ describe('buildRecomputeRecordAccessGroupIdsQuery', () => {
     const { sql, parameters } = buildNoteQuery({ isInherent: true });
 
     expect(sql).not.toContain('relatedRecordPathSourceObjectMetadataId');
-    expect(sql).not.toContain('_isPrivate');
     expect(sql).not.toContain('inheritedAccessGroup');
     expect(parameters).toEqual({ recordIds: ['note-id'] });
   });

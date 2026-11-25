@@ -124,11 +124,6 @@ describe('A restricted record on an object open by default', () => {
       value: true,
       expectToFail: false,
     });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
 
     await createRecord('company', {
       id: RESTRICTED_COMPANY_ID,
@@ -153,11 +148,6 @@ describe('A restricted record on an object open by default', () => {
   afterAll(async () => {
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
       value: false,
       expectToFail: false,
     });

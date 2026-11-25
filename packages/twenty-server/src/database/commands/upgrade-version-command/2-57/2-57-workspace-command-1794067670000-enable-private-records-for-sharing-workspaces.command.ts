@@ -40,7 +40,7 @@ export class EnablePrivateRecordsForSharingWorkspacesCommand extends Provisioned
     }
 
     await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED],
+      ['IS_PRIVATE_RECORDS_ENABLED' as FeatureFlagKey],
       workspaceId,
     );
   }

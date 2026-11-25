@@ -29,7 +29,7 @@ export const buildRecomputeRecordAccessGroupIdsQuery = ({
   resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
   metadataMaps: Pick<
     RecordAccessGroupComputationMetadataMaps,
-    'rolesPermissions' | 'featureFlagsMap'
+    'rolesPermissions'
   >;
   recordIds: string[];
 }): SQLCondition => {

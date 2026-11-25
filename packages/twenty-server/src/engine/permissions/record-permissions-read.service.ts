@@ -936,7 +936,6 @@ export class RecordPermissionsReadService {
         }),
       arePrivateRecordsApplicable: (reachedFlatObjectMetadata) =>
         arePrivateRecordsApplicable({
-          metadataMaps,
           flatObjectMetadata: reachedFlatObjectMetadata,
           operationType,
         }),

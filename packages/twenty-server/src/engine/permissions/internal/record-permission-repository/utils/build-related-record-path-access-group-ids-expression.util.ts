@@ -5,7 +5,6 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type RecordAccessGroupComputationMetadataMaps } from 'src/engine/permissions/internal/access-group/types/record-access-group-computation-metadata-maps.type';
 import { findRolesAndRulesUnableToReadField } from 'src/engine/permissions/internal/access-group/utils/find-roles-and-rules-unable-to-read-field.util';
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
-import { isPrivateRecordsEnabled } from 'src/engine/permissions/internal/private-record/utils/is-private-records-enabled.util';
 import { ACCESS_GROUP_IDS_COLUMN_NAME } from 'src/engine/permissions/internal/record-permission-repository/constants/access-group-column-names.constant';
 import { buildAccessGroupTableExpression } from 'src/engine/permissions/internal/record-permission-repository/utils/build-access-group-table-expression.util';
 import { buildRelatedRecordPathHopsJoin } from 'src/engine/permissions/internal/record-permission-repository/utils/build-related-record-path-hops-join.util';
@@ -31,7 +30,7 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
   >;
   metadataMaps: Pick<
     RecordAccessGroupComputationMetadataMaps,
-    'rolesPermissions' | 'featureFlagsMap'
+    'rolesPermissions'
   >;
 }): SQLCondition => {
   const hopTableAliases = hops.map(
@@ -63,17 +62,10 @@ export const buildRelatedRecordPathAccessGroupIdsExpression = ({
       hopsJoin.joinConditions[hopIndex],
       `${escapeIdentifier(hopTableAlias)}."deletedAt" IS NULL`,
     ]),
-    ...(isPrivateRecordsEnabled({
-      flatObjectMetadata: sourceFlatObjectMetadata,
-      featureFlagsMap: metadataMaps.featureFlagsMap,
-    })
-      ? [
-          buildPrivateRecordStateSQLCondition({
-            tableAlias: sourceTableAlias,
-            isPrivate: false,
-          }).sql,
-        ]
-      : []),
+    buildPrivateRecordStateSQLCondition({
+      tableAlias: sourceTableAlias,
+      isPrivate: false,
+    }).sql,
     ...(isInherent
       ? []
       : [

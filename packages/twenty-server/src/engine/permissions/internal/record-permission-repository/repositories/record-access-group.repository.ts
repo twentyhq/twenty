@@ -170,7 +170,7 @@ export class RecordAccessGroupRepository {
     resolvedRelatedRecordPaths: ResolvedRelatedRecordPath[];
     metadataMaps: Pick<
       RecordAccessGroupComputationMetadataMaps,
-      'rolesPermissions' | 'featureFlagsMap'
+      'rolesPermissions'
     >;
     recordIds: string[];
     transactionScope?: RecordPermissionTransactionScope;

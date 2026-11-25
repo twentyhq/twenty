@@ -65,14 +65,12 @@ describe('Records shared beyond the role that can access their object', () => {
     recordId,
   });
 
-  const setRecordSharingAndPrivateRecordsEnabled = async (value: boolean) => {
-    for (const featureFlag of [
-      FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-      FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-    ]) {
-      await updateFeatureFlag({ featureFlag, value, expectToFail: false });
-    }
-  };
+  const setRecordSharingEnabled = (value: boolean) =>
+    updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+      value,
+      expectToFail: false,
+    });
 
   const setShare = ({
     principal,
@@ -190,7 +188,7 @@ describe('Records shared beyond the role that can access their object', () => {
       expect(created.body.errors).toBeUndefined();
     }
 
-    await setRecordSharingAndPrivateRecordsEnabled(true);
+    await setRecordSharingEnabled(true);
   });
 
   beforeEach(async () => {
@@ -203,7 +201,7 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingAndPrivateRecordsEnabled(false);
+    await setRecordSharingEnabled(false);
     await setMemberObjectAccess(true);
     await shares.deleteByRecordIds({
       workspaceId,
@@ -611,12 +609,12 @@ describe('Records shared beyond the role that can access their object', () => {
 
   it('should keep grants within the role while the flag is off', async () => {
     await setShare({ principal: JONY });
-    await setRecordSharingAndPrivateRecordsEnabled(false);
+    await setRecordSharingEnabled(false);
 
     try {
       expect((await findIdsAsJony()).errors).toBeDefined();
     } finally {
-      await setRecordSharingAndPrivateRecordsEnabled(true);
+      await setRecordSharingEnabled(true);
     }
   });
 });

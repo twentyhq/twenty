@@ -578,36 +578,16 @@ describe('Record access through related record paths', () => {
       await waitForAllJobsToFinish();
     };
 
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
+    await setProjectPrivate(true);
 
-    try {
-      await setProjectPrivate(true);
+    expect(await findTaskIdsListedByJony()).toEqual([]);
 
-      expect(await findTaskIdsListedByJony()).toEqual([]);
+    await setProjectPrivate(false);
 
-      await setProjectPrivate(false);
-
-      expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-    }
+    expect(await findTaskIdsListedByJony()).toEqual([taskOfProjectId]);
   });
 
   it('should list the records related to a private source record its creator reads', async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const createdProject = await makeGraphqlApiRequestWithMemberRole(
       createOneOperationFactory({
         objectMetadataSingularName: PROJECT_NAME,
@@ -651,11 +631,6 @@ describe('Record access through related record paths', () => {
           recordId: taskOfProjectOfJonyId,
         }),
       );
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
     }
   });
 
