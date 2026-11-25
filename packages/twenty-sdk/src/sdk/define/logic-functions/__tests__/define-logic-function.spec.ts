@@ -330,6 +330,34 @@ describe('defineLogicFunction', () => {
     expect(result.errors).toContain('Cron trigger must have a pattern');
   });
 
+  it('should accept a cron trigger spreadMs', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Daily Report',
+      handler: mockHandler,
+      cronTriggerSettings: { pattern: '0 9 * * *', spreadMs: 60 * 60_000 },
+    } as any);
+
+    expect(result.success).toBe(true);
+  });
+
+  it.each([60_000, 24 * 60 * 60_000 + 1, 150_000.5])(
+    'should return error when cron trigger spreadMs is %s',
+    (spreadMs) => {
+      const result = defineLogicFunction({
+        universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+        name: 'Daily Report',
+        handler: mockHandler,
+        cronTriggerSettings: { pattern: '0 9 * * *', spreadMs },
+      } as any);
+
+      expect(result.success).toBe(false);
+      expect(result.errors).toContain(
+        'Cron trigger spreadMs must be an integer between 120000 and 86400000',
+      );
+    },
+  );
+
   it('should return error when databaseEvent trigger has no eventName', () => {
     const config = {
       universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',

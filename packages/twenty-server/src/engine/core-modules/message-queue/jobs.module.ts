@@ -46,7 +46,6 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { UpdateWorkspaceMemberEmailJob } from 'src/engine/core-modules/user/jobs/update-workspace-member-email.job';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { WorkspaceDeletionApplicationUninstallJob } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
@@ -135,7 +134,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     ReconcileWorkspaceCampaignStatsJob,
     UpdateSubscriptionQuantityJob,
     SyncSubscriptionApplicationsJob,
-    HandleWorkspaceMemberDeletedJob,
     WorkspaceDeletionApplicationUninstallJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
     UpdateWorkspaceMemberEmailJob,

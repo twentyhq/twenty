@@ -22,6 +22,7 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   serviceUrl,
   conversationId,
   teamsUserId,
+  teamsUserAadObjectId,
   teamsTenantId,
   accessToken,
 }: {
@@ -29,22 +30,10 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   serviceUrl: string;
   conversationId: string;
   teamsUserId: string;
+  teamsUserAadObjectId: string | undefined;
   teamsTenantId: string;
   accessToken: string;
 }): Promise<string | undefined> => {
-  const member = await getTeamsConversationMember({
-    serviceUrl,
-    conversationId,
-    memberId: teamsUserId,
-    accessToken,
-  });
-
-  if (!isMemberOfClaimedTenant({ member, teamsTenantId })) {
-    return undefined;
-  }
-
-  const teamsUserAadObjectId = member.objectId;
-
   if (isNonEmptyString(teamsUserAadObjectId)) {
     const linkedWorkspaceMemberId = await findTeamsUserLinkWorkspaceMemberId({
       client,
@@ -55,6 +44,17 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
     if (isDefined(linkedWorkspaceMemberId)) {
       return linkedWorkspaceMemberId;
     }
+  }
+
+  const member = await getTeamsConversationMember({
+    serviceUrl,
+    conversationId,
+    memberId: teamsUserId,
+    accessToken,
+  });
+
+  if (!isMemberOfClaimedTenant({ member, teamsTenantId })) {
+    return undefined;
   }
 
   const email = [member.email, member.userPrincipalName].find(isNonEmptyString);

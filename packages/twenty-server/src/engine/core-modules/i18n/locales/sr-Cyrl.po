@@ -259,7 +259,7 @@ msgstr "Бројање повезаних записа не може корис�
 #. js-lingui-id: gN4DZ+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A currency formula needs a currency code"
-msgstr ""
+msgstr "Формула за валуту захтева шифру валуте"
 
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -302,27 +302,27 @@ msgstr "Поље са овим именом већ постоји."
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
 msgid "A formula field cannot be edited."
-msgstr ""
+msgstr "Поље формуле не може да се уређује."
 
 #. js-lingui-id: Mx5uL9
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula field cannot be searched"
-msgstr ""
+msgstr "Поље формуле не може да се претражује"
 
 #. js-lingui-id: qD6oq6
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula field cannot be unique"
-msgstr ""
+msgstr "Поље формуле не може бити јединствено"
 
 #. js-lingui-id: Ie62ou
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "A formula needs an expression"
-msgstr ""
+msgstr "Формула захтева израз"
 
 #. js-lingui-id: yCrWFs
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-read-by-formulas.util.ts
 msgid "A formula reads this field, so it cannot be named \"{name}\""
-msgstr ""
+msgstr "Формула чита ово поље, па не може да се зове \"{name}\""
 
 #. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
@@ -3177,6 +3177,12 @@ msgstr "Нити ћаскања"
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
 msgctxt "fieldMetadata.label"
+msgid "Chats"
+msgstr "Ћаскања"
+
+#. js-lingui-id: bK/UPN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
+msgctxt "navigationMenuItem.name"
 msgid "Chats"
 msgstr "Ћаскања"
 
@@ -6342,7 +6348,7 @@ msgstr "Бивши члан"
 #. js-lingui-id: Ngac6o
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Formula fields are not enabled for this workspace"
-msgstr ""
+msgstr "Поља формуле нису омогућена у овом радном простору"
 
 #. js-lingui-id: JRr+QW
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util.ts
@@ -7463,7 +7469,7 @@ msgstr "Неисправан филтер: користите \"{joinColumnName}
 #. js-lingui-id: QgIcr0
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "Invalid formula: {errorMessage}"
-msgstr ""
+msgstr "Неважећа формула: {errorMessage}"
 
 #. js-lingui-id: rFH0az
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -10375,11 +10381,6 @@ msgstr "Само заказана кампања или кампања у ток
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Само администратор сервера може управљати кодовима за опоравак овог члана."
 
-#. js-lingui-id: NcQgJA
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
-msgid "Only a workspace member can change who sees a workflow"
-msgstr "Само члан радног простора може да промени ко види ток рада"
-
 #. js-lingui-id: yT1QOm
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
 msgid "Only a workspace member can create a private agent."
@@ -10457,8 +10458,14 @@ msgstr "Само апликација која поседује овог аге�
 msgid "Only the member who owns an agent can change who sees it."
 msgstr "Само члан који је власник агента може да промени ко може да га види."
 
+#. js-lingui-id: K7GKdZ
+#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
+msgid "Only the person who created this view can change who sees it"
+msgstr "Само особа која је креирала овај приказ може да промени ко га види"
+
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
+#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Само особа која је креирала овај ток рада може да промени ко га види"
 
@@ -14594,7 +14601,7 @@ msgstr "Поље мора да припада повезаном објекту"
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util.ts
 msgid "The field used as record label cannot be a formula"
-msgstr ""
+msgstr "Поље које се користи као ознака записа не може бити формула"
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -15580,7 +15587,7 @@ msgstr "Овај тип поља се не може претраживати"
 #. js-lingui-id: bVmvpb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
 msgid "This field type does not support formulas"
-msgstr ""
+msgstr "Овај тип поља не подржава формуле"
 
 #. js-lingui-id: 5F02zD
 #: src/engine/core-modules/file/file-upload/services/file-upload-completion.service.ts

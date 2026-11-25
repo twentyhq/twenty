@@ -5,7 +5,10 @@ import { type ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { type ViewGroup } from '@/views/types/ViewGroup';
 import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewType } from '@/views/types/ViewType';
-import { type ViewCalendarLayout } from '~/generated-metadata/graphql';
+import {
+  type ViewCalendarLayout,
+  type ViewPresetFilter,
+} from '~/generated-metadata/graphql';
 import { type ViewSort } from '@/views/types/ViewSort';
 
 export type GraphQLView = {
@@ -30,6 +33,7 @@ export type GraphQLView = {
   position: number;
   icon: string;
   anyFieldFilterValue?: string | null;
+  presetFilter?: ViewPresetFilter | null;
   calendarLayout?: ViewCalendarLayout | null;
   calendarFieldMetadataId?: string | null;
   calendarEndFieldMetadataId?: string | null;

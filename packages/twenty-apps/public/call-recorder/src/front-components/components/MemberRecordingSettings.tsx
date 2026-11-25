@@ -6,6 +6,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconVideo } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
+import { MEMBER_RECORDING_PREFERENCE_DESCRIPTIONS } from 'src/constants/member-recording-preference-descriptions';
 import { MEMBER_RECORDING_PREFERENCE_OPTIONS } from 'src/constants/member-recording-preference-options';
 import { FrontComponentThemeProvider } from 'src/front-components/components/FrontComponentThemeProvider';
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
@@ -70,7 +71,9 @@ export const MemberRecordingSettings = () => {
             title={t('Meetings to record')}
             titleId={titleId}
             description={t(
-              'Which of your meetings the recorder joins on its own.',
+              MEMBER_RECORDING_PREFERENCE_DESCRIPTIONS[
+                memberRecordingPreference
+              ],
             )}
           >
             <SettingsSelectControl

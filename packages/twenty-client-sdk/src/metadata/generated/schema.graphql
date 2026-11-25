@@ -1113,6 +1113,7 @@ type Billing {
 type BillingCustomer {
   hasPaymentMethod: Boolean
   id: UUID!
+  stripeCustomerEmail: String
   userCreditsFallback: UserCreditsFallback!
 }
 
@@ -1252,6 +1253,9 @@ enum BillingSubscriptionCollectionMethod {
 }
 
 type BillingSubscriptionItem {
+  applicationLogoUrl: String
+  applicationName: String
+  applicationPricePer: ApplicationBillingPriceUnit
   billingProduct: BillingProduct!
   creditAmount: Float
   hasReachedCurrentPeriodCap: Boolean!
@@ -2436,9 +2440,15 @@ type EnqueueJobResult {
 input EnqueueJobsInput {
   delayMs: Int
   jobs: [EnqueueJobItemInput!]
+  limiter: EnqueueJobsLimiterInput
   logicFunctionUniversalIdentifier: String!
   payloads: [JSON!] @deprecated(reason: "Use jobs instead.")
   retryLimit: Int
+}
+
+input EnqueueJobsLimiterInput {
+  durationMs: Int!
+  max: Int!
 }
 
 type EnqueueJobsResult {
@@ -2452,6 +2462,7 @@ type EnqueueJobsResult {
 
 type EnqueuedJob {
   jobId: String!
+  scheduledAt: Float!
   sizeBytes: Int!
 }
 
@@ -2558,7 +2569,6 @@ enum FeatureFlagKey {
   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_AI_DATA_POLICY_ENABLED
-  IS_APPLICATION_PRICE_BILLING_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
@@ -3102,6 +3112,7 @@ type JobStatus {
   finishedAt: Float
   jobId: String!
   progress: Int
+  scheduledAt: Float!
   startedAt: Float
   state: JobState!
 }

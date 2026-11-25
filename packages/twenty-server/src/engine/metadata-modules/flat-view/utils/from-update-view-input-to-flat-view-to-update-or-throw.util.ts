@@ -232,18 +232,17 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     flatViewToUpdate.universalOverrides = null;
   }
 
-  if (
-    isPrivate &&
-    !existingFlatViewToUpdate.isPrivate &&
-    isDefined(userWorkspaceId)
-  ) {
-    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
-  }
-
   const effectiveExistingFlatView = resolveEffectiveFlatEntity({
     metadataName: 'view',
     flatEntity: existingFlatViewToUpdate,
   });
+
+  const isPrivacyChanging =
+    isDefined(isPrivate) && isPrivate !== effectiveExistingFlatView.isPrivate;
+
+  if (isPrivacyChanging && isDefined(userWorkspaceId)) {
+    flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
+  }
 
   const effectiveFlatViewToUpdate = resolveEffectiveFlatEntity({
     metadataName: 'view',
