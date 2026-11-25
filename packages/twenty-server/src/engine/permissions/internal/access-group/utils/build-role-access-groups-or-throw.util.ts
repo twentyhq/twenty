@@ -33,14 +33,12 @@ export const buildRoleAccessGroupsOrThrow = ({
   operationTypes = ALL_OPERATION_TYPES,
   workspaceMembers,
   flatFieldMetadataMaps,
-  isRelationHopEnabled,
 }: {
   objectMetadataId: string;
   objectRecordsPermissions: ObjectRecordsPermissions | undefined;
   operationTypes?: ObjectRecordsOperationType[];
   workspaceMembers: RlsWorkspaceMember[];
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  isRelationHopEnabled: boolean;
 }): AccessGroupWithoutCompactId[] => {
   if (!isDefined(objectRecordsPermissions)) {
     return [];
@@ -70,7 +68,6 @@ export const buildRoleAccessGroupsOrThrow = ({
       objectMetadataId,
       objectUnreadableFieldIds: unreadableFieldIdsOfObject,
       rowLevelPermissionRule: null,
-      isRelationHopEnabled,
     });
 
     return {
@@ -93,7 +90,6 @@ export const buildRoleAccessGroupsOrThrow = ({
         objectMetadataId,
         objectUnreadableFieldIds: unreadableFieldIdsOfObject,
         rowLevelPermissionRule,
-        isRelationHopEnabled,
       });
     const groupShape = { objectMetadataId, ruleShapeHash, unreadableFieldIds };
 
