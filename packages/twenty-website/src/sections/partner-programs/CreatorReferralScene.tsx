@@ -101,8 +101,7 @@ const CYCLE_MS = TEAMS.length * TEAM_SLOT_MS + HOLD_MS;
 
 // Under its block, unlike the tags placed above their point.
 const BelowTag = styled(SceneTag)`
-  transform: translate(var(--x), var(--y)) translate(-50%, 0)
-    scale(var(--s, 1));
+  transform: translate(var(--x), var(--y)) translate(-50%, 0) scale(var(--s, 1));
   transform-origin: 50% 0;
 `;
 
@@ -115,9 +114,7 @@ type Packet = {
 export function CreatorReferralScene() {
   const { i18n } = useLingui();
   const frameRef = useRef<HTMLDivElement>(null);
-  const labelRefs = useRef<Partial<Record<NodeKey, HTMLDivElement | null>>>(
-    {},
-  );
+  const labelRefs = useRef<Partial<Record<NodeKey, HTMLDivElement | null>>>({});
   const seatRefs = useRef<(HTMLDivElement | null)[]>([]);
   const linkRef = useRef<HTMLDivElement>(null);
   const totalRef = useRef<HTMLDivElement>(null);
@@ -136,8 +133,21 @@ export function CreatorReferralScene() {
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
-    stage.camera.position.set(0, 6.1, 9.4);
-    stage.camera.lookAt(0, -0.6, 0.6);
+    // The desktop view; on a narrow banner the camera backs off along the
+    // same line until the scene, tags included, fits 90% of the width, as the apps hero does.
+    const VIEW_FROM = new THREE.Vector3(0, 6.1, 9.4);
+    const LOOK_AT = new THREE.Vector3(0, -1.1, 0.6);
+    const SCENE_WIDTH = 15;
+    const viewLine = VIEW_FROM.clone().sub(LOOK_AT);
+    const halfHeight = Math.tan((stage.camera.fov / 2) * (Math.PI / 180));
+    const distance = Math.max(
+      viewLine.length(),
+      SCENE_WIDTH / (0.9 * 2 * halfHeight * stage.camera.aspect),
+    );
+    stage.camera.position
+      .copy(LOOK_AT)
+      .add(viewLine.normalize().multiplyScalar(distance));
+    stage.camera.lookAt(LOOK_AT);
 
     const solids = NODES.map((node) => {
       const isLink = node.key === 'link';
@@ -256,8 +266,7 @@ export function CreatorReferralScene() {
         }
 
         if (now - lastClick > CLICK_EVERY_MS) {
-          const channel =
-            CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
+          const channel = CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
           launch(routeFrom(channel.key), now, 'click');
           lastClick = now;
         }
@@ -302,7 +311,11 @@ export function CreatorReferralScene() {
             .setY(0)
             .add(new THREE.Vector3(0, 0, solid.node.size[2] / 2 + 0.22));
           // a team that signed up swaps its name for its pill
-          stage.place(label, anchor, teamIndex >= 0 ? 1 - joined[teamIndex] : 1);
+          stage.place(
+            label,
+            anchor,
+            teamIndex >= 0 ? 1 - joined[teamIndex] : 1,
+          );
         }
       });
 
@@ -363,6 +376,7 @@ export function CreatorReferralScene() {
       <SceneOverlay>
         {CHANNELS.map((channel) => (
           <SceneLabel
+            data-secondary=""
             key={channel.key}
             ref={(element) => {
               labelRefs.current[channel.key] = element;
@@ -375,6 +389,7 @@ export function CreatorReferralScene() {
         ))}
         {TEAMS.map((team) => (
           <SceneLabel
+            data-secondary=""
             key={team.key}
             ref={(element) => {
               labelRefs.current[team.key] = element;
@@ -385,6 +400,7 @@ export function CreatorReferralScene() {
         ))}
         {TEAMS.map((team, index) => (
           <BelowTag
+            data-secondary=""
             key={`seats-${team.key}`}
             ref={(element) => {
               seatRefs.current[index] = element;
