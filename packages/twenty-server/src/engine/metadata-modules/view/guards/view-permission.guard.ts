@@ -5,11 +5,10 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 
 import { ViewAccessService } from 'src/engine/permissions/metadata-permissions/services/view-access.service';
 import { resolveViewAccessContext } from 'src/engine/metadata-modules/view/utils/resolve-view-access-context.util';
-import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 
 @Injectable()
 export class ViewPermissionGuard implements CanActivate {
@@ -25,10 +24,9 @@ export class ViewPermissionGuard implements CanActivate {
 
     const input = args?.input ?? request.body;
 
-    const nextIsPrivate = resolveViewIsPrivateFromInput({
-      isPrivate: input?.isPrivate,
-      visibility: input?.visibility,
-    });
+    const nextIsPrivate = isBoolean(input?.isPrivate)
+      ? input.isPrivate
+      : undefined;
 
     return this.viewAccessService.canUserModifyView({
       viewId,

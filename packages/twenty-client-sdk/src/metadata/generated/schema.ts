@@ -4281,8 +4281,6 @@ export interface View {
     viewFilters: ViewFilter[]
     viewGroups: ViewGroup[]
     viewSorts: ViewSort[]
-    /** @deprecated Use isPrivate instead */
-    visibility: ViewVisibility
     workspaceId: Scalars['UUID']
     __typename: 'View'
 }
@@ -4436,8 +4434,6 @@ export interface ViewSort {
 export type ViewSortDirection = 'ASC' | 'DESC'
 
 export type ViewType = 'CALENDAR' | 'CALENDAR_WIDGET' | 'FIELDS_WIDGET' | 'INBOX' | 'KANBAN' | 'KANBAN_WIDGET' | 'LIST' | 'LIST_WIDGET' | 'TABLE' | 'TABLE_WIDGET'
-
-export type ViewVisibility = 'UNLISTED' | 'WORKSPACE'
 
 export interface Webhook {
     applicationId: Scalars['UUID']
@@ -6287,7 +6283,7 @@ export interface CreateViewGroupInput {fieldValue: Scalars['String'],id?: (Scala
 
 export interface CreateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon: Scalars['String'],id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),key?: (ViewKey | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),presetFilter?: (ViewPresetFilter | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),presetFilter?: (ViewPresetFilter | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),type?: (ViewType | null)}
 
 export interface CreateViewSortInput {direction?: (ViewSortDirection | null),fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),relationTargetFieldMetadataId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),viewId: Scalars['UUID']}
 
@@ -9271,7 +9267,7 @@ export interface UpdateViewGroupInputUpdates {fieldMetadataId?: (Scalars['UUID']
 
 export interface UpdateViewInput {anyFieldFilterValue?: (Scalars['String'] | null),calendarEndFieldMetadataId?: (Scalars['UUID'] | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),calendarLayout?: (ViewCalendarLayout | null),groupLoadLimit?: (Scalars['Int'] | null),icon?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),isCompact?: (Scalars['Boolean'] | null),isPrivate?: (Scalars['Boolean'] | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),kanbanColumnWidth?: (Scalars['Int'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),
 /** Deprecated: Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend. */
-openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null),visibility?: (ViewVisibility | null)}
+openRecordIn?: (ViewOpenRecordIn | null),position?: (Scalars['Float'] | null),shouldDisplayGroupsAsTabs?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null),type?: (ViewType | null)}
 
 export interface UpdateViewSortInput {
 /** The id of the view sort to update */
@@ -9659,8 +9655,6 @@ export interface ViewGenqlSelection{
     viewFilters?: ViewFilterGenqlSelection
     viewGroups?: ViewGroupGenqlSelection
     viewSorts?: ViewSortGenqlSelection
-    /** @deprecated Use isPrivate instead */
-    visibility?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -14079,11 +14073,6 @@ export const enumViewType = {
    LIST_WIDGET: 'LIST_WIDGET' as const,
    TABLE: 'TABLE' as const,
    TABLE_WIDGET: 'TABLE_WIDGET' as const
-}
-
-export const enumViewVisibility = {
-   UNLISTED: 'UNLISTED' as const,
-   WORKSPACE: 'WORKSPACE' as const
 }
 
 export const enumWidgetConfigurationType = {

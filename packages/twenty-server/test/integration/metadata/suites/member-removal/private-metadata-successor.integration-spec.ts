@@ -17,7 +17,6 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { findOneView } from 'test/integration/metadata/suites/view/utils/find-one-view.util';
 import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/find-view-ownership.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { ViewVisibility } from 'twenty-shared/types';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -128,7 +127,7 @@ describe('removing a member from the workspace', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Leaving member private view',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token: leavingMemberAccessToken,
     });
@@ -136,7 +135,7 @@ describe('removing a member from the workspace', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Leaving member shared view',
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
       },
       token: leavingMemberAccessToken,
     });

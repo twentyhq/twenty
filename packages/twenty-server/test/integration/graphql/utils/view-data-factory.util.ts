@@ -3,7 +3,6 @@ import {
   ViewOpenRecordIn,
   ViewSortDirection,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 
 import { type ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-group/entities/view-filter-group.entity';
@@ -18,7 +17,7 @@ export const createViewData = (overrides: Partial<ViewEntity> = {}) => ({
   position: 0,
   isCompact: false,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-  visibility: ViewVisibility.WORKSPACE,
+  isPrivate: false,
   ...overrides,
 });
 

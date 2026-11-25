@@ -2076,7 +2076,6 @@ input CreateViewInput {
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -5974,7 +5973,6 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6532,7 +6530,6 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6754,11 +6751,6 @@ enum ViewType {
   LIST_WIDGET
   TABLE
   TABLE_WIDGET
-}
-
-enum ViewVisibility {
-  UNLISTED
-  WORKSPACE
 }
 
 type Webhook {
