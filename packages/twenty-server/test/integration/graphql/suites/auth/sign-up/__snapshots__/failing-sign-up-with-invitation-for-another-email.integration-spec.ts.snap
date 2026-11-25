@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`signUpInWorkspace with a personal invitation for another email (integration) denies access when the email differs from the invited one 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "FORBIDDEN_EXCEPTION",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "Email does not match the invitation",
+  "name": "ForbiddenError",
+}
+`;
