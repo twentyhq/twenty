@@ -96,6 +96,11 @@ msgstr ": 今日{timeZoneAbbreviationSuffix}"
 msgid "· FREE"
 msgstr "· 無料"
 
+#. js-lingui-id: eNVoMO
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
+msgstr ""
+
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" is not a to-one relation"
@@ -917,6 +922,21 @@ msgstr "{functionName} は {minimumArgumentCount} 個の引数 (複数可) を�
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName} takes at least {minimumArgumentCount} argument(s), but got {argumentCount}"
 msgstr "{functionName} は少なくとも {minimumArgumentCount} 個の引数 (複数可) を受け取りますが、{argumentCount} 個が渡されました"
+
+#. js-lingui-id: aGSMaz
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() cannot contain another aggregate"
+msgstr ""
+
+#. js-lingui-id: gT6Kkm
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
+msgstr ""
+
+#. js-lingui-id: vN+0eR
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "{functionName}() reads related records, which only a formula can do"
+msgstr ""
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1819,6 +1839,11 @@ msgstr "ワークフローを開始した人のためのフォームが開き、
 msgid "A form opens for the person who launches the workflow and is filled in on the spot. With this trigger, it only shows in the workflow run. To ask someone for an answer or an approval in their inbox, use a Send to Inbox step instead."
 msgstr "ワークフローを開始した人のためにフォームが開き、その場で入力されます。このトリガーでは、ワークフローの実行時にのみ表示されます。受信トレイで誰かに回答や承認を求める場合は、代わりに「受信トレイに送信」ステップを使用してください。"
 
+#. js-lingui-id: QbGaDs
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
+msgstr ""
+
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
 msgid "A message can have up to {maxAttachmentCount} files"
@@ -1858,6 +1883,11 @@ msgstr "ロールは必須です"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "A role must be selected for the API key"
 msgstr "APIキーのロールを選択する必要があります"
+
+#. js-lingui-id: /852Zy
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "A stored formula cannot read \"{path}\""
+msgstr ""
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -24742,6 +24772,11 @@ msgstr "{target}を読み取り、書き込み、削除する"
 msgid "Read/Edit/Delete permissions"
 msgstr "閲覧/編集/削除の権限"
 
+#. js-lingui-id: +a9H8X
+#: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
+msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
+msgstr ""
+
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementModal.tsx
@@ -30316,6 +30351,11 @@ msgstr "このステップで実行するエージェントを読み込めませ
 msgid "The API endpoint for your OpenAI-compatible provider"
 msgstr "OpenAI 互換プロバイダー用の API エンドポイント"
 
+#. js-lingui-id: UIpkEz
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The average of a number field over the related records, or over those matching the condition."
+msgstr ""
+
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The AWS region for Bedrock"
@@ -30355,6 +30395,11 @@ msgstr "このコードを使用すると、{memberName} は認証アプリを�
 #: src/modules/settings/billing/components/SettingsBillingPartnerCodeForm.tsx
 msgid "The code of the Twenty partner who referred you"
 msgstr "紹介者である Twenty パートナーのコード"
+
+#. js-lingui-id: h7Af0y
+#: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
+msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
+msgstr ""
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30461,6 +30506,11 @@ msgstr "お客様のデプロイメント向けに項目が反映された完全
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "ワークフロートリガーでコマンドメニューに表示するアイコン"
 
+#. js-lingui-id: hP+z/5
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
+msgstr ""
+
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The largest of the numbers. Values that are not numbers are ignored."
@@ -30543,6 +30593,11 @@ msgstr "受信者があなたのアドレスの横に表示される名前です
 msgid "The number of items in the list, or 0 when it is not a list."
 msgstr "リスト内の項目数。リストでない場合は 0。"
 
+#. js-lingui-id: vXwRDS
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
+msgstr ""
+
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The number of whole units from the first date to the second, negative when the second is earlier. Minutes and hours are elapsed time; longer units count calendar days and months, in UTC."
@@ -30613,6 +30668,11 @@ msgstr "選択したレコード(最大 {maxRecordsFormatted} 件)がワーク�
 msgid "The shared email you want to use."
 msgstr "使用したい共有メールアドレスです。"
 
+#. js-lingui-id: q2NONu
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
+msgstr ""
+
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
 msgid "The smallest of the numbers. Values that are not numbers are ignored."
@@ -30654,6 +30714,11 @@ msgstr "ツールは実行されましたがフィールドを返さなかった
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/WorkflowEditActionMcpTool.tsx
 msgid "The tool runs without arguments."
 msgstr "このツールは引数なしで実行されます。"
+
+#. js-lingui-id: 6XWxWG
+#: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
+msgid "The total of a number field over the related records, or over those matching the condition."
+msgstr ""
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts

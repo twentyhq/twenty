@@ -256,11 +256,6 @@ msgstr "İlgili kayıtların sayısında ilgili kayıt alanı olamaz"
 msgid "A count of related records cannot use a field"
 msgstr "İlgili kayıtların sayısı bir alan kullanamaz"
 
-#. js-lingui-id: gN4DZ+
-#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
-msgid "A currency formula needs a currency code"
-msgstr "Para birimi formülü bir para birimi kodu gerektirir"
-
 #. js-lingui-id: TjN8GI
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -298,6 +293,11 @@ msgstr "Bir DNS yöneticisi hatası oluştu."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "A field with this name already exists."
 msgstr "Bu isimde bir alan zaten mevcut."
+
+#. js-lingui-id: lDO6A7
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-formula.util.ts
+msgid "A formula cannot read its own value, directly or through other formulas"
+msgstr ""
 
 #. js-lingui-id: 01ujS8
 #: src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service.ts
