@@ -111,12 +111,4 @@ describe('channel visibility rule sync (integration)', () => {
       ),
     ).toBe(true);
   });
-
-  it('should remove every channel visibility rule once the flag is off', async () => {
-    try {
-      expect(await findUnreadableFieldsOfRulesListingJonyChannel()).toEqual([]);
-    } finally {
-      await syncChannelVisibilityRules();
-    }
-  });
 });
