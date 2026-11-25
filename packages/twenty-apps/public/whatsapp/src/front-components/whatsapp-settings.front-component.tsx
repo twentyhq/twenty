@@ -7,6 +7,6 @@ export default defineFrontComponent({
   universalIdentifier: WHATSAPP_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-settings',
   description:
-    'WhatsApp import, visibility, contact auto-creation and read status of the member connection.',
+    'Sync and History tabs of the member connection: WhatsApp import, visibility, contact auto-creation, read status and the import of past conversations.',
   component: WhatsappSettings,
 });
