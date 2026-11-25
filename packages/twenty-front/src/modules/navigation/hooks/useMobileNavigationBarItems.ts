@@ -41,6 +41,7 @@ import {
   FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
+import { isNavigationDrawerTabShown } from '@/navigation/utils/isNavigationDrawerTabShown';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 type MobileNavigationBarItemName =
@@ -76,6 +77,9 @@ export const useMobileNavigationBarItems = (): {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const isCustomizableSidebarEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
   );
   const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const { getIcon } = useIcons();
@@ -183,7 +187,13 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => openHomePageOnTab(null),
         attention: homeChatAttention,
       },
-      ...(hasAiPermission && isAiChatInboxEnabled && !hasAiChatSectionInSidebar
+      ...(isAiChatInboxEnabled &&
+      isNavigationDrawerTabShown({
+        tab: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        hasAiPermission,
+        hasAiChatSectionInSidebar,
+        isCustomizableSidebarEnabled,
+      })
         ? [
             {
               name: 'inbox' as const,
