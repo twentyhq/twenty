@@ -72,7 +72,7 @@ export const WhileWorking: Story = {
   },
 };
 
-export const ToolDisclosure: Story = {
+export const ToolDetails: Story = {
   args: {
     parts: [
       {
@@ -88,22 +88,35 @@ export const ToolDisclosure: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
-    const toggle = await canvas.findByRole('button', { name: /inspect_tool/ });
-    expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    await userEvent.click(toggle);
-    const panelId = toggle.getAttribute('aria-controls');
-    assertIsDefinedOrThrow(panelId);
+    expect(
+      await canvas.findByRole('button', { name: 'Show details' }),
+    ).toBeInTheDocument();
+    expect(canvas.queryByRole('button', { name: /inspect_tool/ })).toBeNull();
+    expect(canvas.queryByText('Saved output')).toBeNull();
+  },
+};
+
+export const FailedTool: Story = {
+  args: {
+    parts: [
+      {
+        type: 'dynamic-tool',
+        toolName: 'inspect_tool',
+        toolCallId: 'failed-tool-call',
+        state: 'output-error',
+        input: 'Saved input',
+        errorText: 'Timed out after 10s',
+      },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
     await waitFor(() => {
-      expect(toggle).toHaveAttribute('aria-expanded', 'true');
-      expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
+      expect(canvas.getByText('Timed out after 10s')).toBeVisible();
       expect(
-        canvas.getByRole('button', { name: 'Saved output' }),
+        canvas.getByRole('button', { name: 'Show details' }),
       ).toBeVisible();
-    });
-    await userEvent.keyboard(' ');
-    await waitFor(() => {
-      expect(toggle).toHaveAttribute('aria-expanded', 'false');
-      expect(canvas.queryByRole('button', { name: 'Saved output' })).toBeNull();
     });
   },
 };

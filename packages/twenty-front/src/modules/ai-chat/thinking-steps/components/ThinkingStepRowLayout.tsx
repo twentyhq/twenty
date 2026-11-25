@@ -94,18 +94,50 @@ const StyledShimmeringLabel = styled(ShimmeringText)`
   white-space: nowrap;
 `;
 
+const StyledRowDetail = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  flex-shrink: 1;
+  font-size: ${themeCssVariables.font.size.sm};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledRowAction = styled.div<{ isAlwaysVisible: boolean }>`
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+  opacity: ${({ isAlwaysVisible }) => (isAlwaysVisible ? 1 : 0)};
+  transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
+    ease-in-out;
+
+  [data-thinking-step-row]:hover &,
+  [data-thinking-step-row]:focus-within & {
+    opacity: 1;
+  }
+`;
+
 type ThinkingStepRowLayoutProps = {
   icon: ReactNode;
   label: string;
   isActive: boolean;
+  detail?: string;
   details?: ReactNode;
+  action?: ReactNode;
+  isActionAlwaysVisible?: boolean;
+  footer?: ReactNode;
 };
 
 export const ThinkingStepRowLayout = ({
   icon,
   label,
   isActive,
+  detail,
   details,
+  action,
+  isActionAlwaysVisible = false,
+  footer,
 }: ThinkingStepRowLayoutProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isExpandable = isDefined(details);
@@ -124,6 +156,7 @@ export const ThinkingStepRowLayout = ({
             />
           )}
         </StyledRowLabel>
+        {isDefined(detail) && <StyledRowDetail>{detail}</StyledRowDetail>}
         {isExpandable && (
           <StyledChevronContainer>
             <IconChevronRight size={14} />
@@ -137,17 +170,25 @@ export const ThinkingStepRowLayout = ({
     <Collapsible.Root
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      render={<StyledRowContainer />}
+      render={<StyledRowContainer data-thinking-step-row />}
     >
       {isExpandable ? (
         <Collapsible.Trigger render={<StyledRow as="button" isExpandable />}>
           {rowContent}
         </Collapsible.Trigger>
       ) : (
-        <StyledRow isExpandable={false}>{rowContent}</StyledRow>
+        <StyledRow isExpandable={false}>
+          {rowContent}
+          {isDefined(action) && (
+            <StyledRowAction isAlwaysVisible={isActionAlwaysVisible}>
+              {action}
+            </StyledRowAction>
+          )}
+        </StyledRow>
       )}
 
       {isExpandable && <Collapsible.Panel>{details}</Collapsible.Panel>}
+      {footer}
     </Collapsible.Root>
   );
 };
