@@ -83,8 +83,7 @@ const ease = (t: number) => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
 
 // Under its workspace, unlike the tags placed above their point.
 const BelowTag = styled(SceneTag)`
-  transform: translate(var(--x), var(--y)) translate(-50%, 0)
-    scale(var(--s, 1));
+  transform: translate(var(--x), var(--y)) translate(-50%, 0) scale(var(--s, 1));
   transform-origin: 50% 0;
 `;
 
@@ -109,8 +108,21 @@ export function IntegratorClientsScene() {
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
-    stage.camera.position.set(0, 5.6, 10.5);
-    stage.camera.lookAt(0, 0.3, 0);
+    // The desktop view; on a narrow banner the camera backs off along the
+    // same line until the three clients, tags included, fits 90% of the width, as the apps hero does.
+    const VIEW_FROM = new THREE.Vector3(0, 6.3, 11.8);
+    const LOOK_AT = new THREE.Vector3(0, 0.5, 0);
+    const SCENE_WIDTH = 14.5;
+    const viewLine = VIEW_FROM.clone().sub(LOOK_AT);
+    const halfHeight = Math.tan((stage.camera.fov / 2) * (Math.PI / 180));
+    const distance = Math.max(
+      viewLine.length(),
+      SCENE_WIDTH / (0.9 * 2 * halfHeight * stage.camera.aspect),
+    );
+    stage.camera.position
+      .copy(LOOK_AT)
+      .add(viewLine.normalize().multiplyScalar(distance));
+    stage.camera.lookAt(LOOK_AT);
 
     const geometry = new RoundedBoxGeometry(
       LAYER_SIZE,
@@ -157,8 +169,7 @@ export function IntegratorClientsScene() {
       )[0];
 
       let total = 0;
-      let landing: { client: number; layer: number; age: number } | null =
-        null;
+      let landing: { client: number; layer: number; age: number } | null = null;
       CLIENTS.forEach((client, clientIndex) => {
         const clientStart = clientIndex * CLIENT_MS;
         const hovered = stacks[clientIndex].some(
@@ -175,8 +186,7 @@ export function IntegratorClientsScene() {
             clearing * (layerY(layerIndex) + LAYER_HEIGHT);
           layer.mesh.scale.setScalar(1 - clearing * 0.4);
           const flash = landed ? Math.max(0, 1 - (time - dropStart) / 700) : 0;
-          const base =
-            layer.rest + 0.12 * Math.max(flash, hovered ? 1 : 0);
+          const base = layer.rest + 0.12 * Math.max(flash, hovered ? 1 : 0);
           layer.material.uniforms.uBase.value +=
             (base - layer.material.uniforms.uBase.value) * 0.2;
           if (
@@ -201,7 +211,12 @@ export function IntegratorClientsScene() {
         const pill = clientRefs.current[clientIndex];
         if (isDefined(pill)) {
           anchor.set(client.x, 0, LAYER_SIZE / 2 + 0.3);
-          stage.place(pill, anchor, live[clientIndex], 0.85 + 0.15 * live[clientIndex]);
+          stage.place(
+            pill,
+            anchor,
+            live[clientIndex],
+            0.85 + 0.15 * live[clientIndex],
+          );
         }
       });
 
@@ -249,6 +264,7 @@ export function IntegratorClientsScene() {
       <SceneOverlay>
         {LAYERS.map((layer, index) => (
           <SceneTag
+            data-secondary=""
             key={layer.name.id}
             ref={(element) => {
               layerRefs.current[index] = element;
@@ -263,6 +279,7 @@ export function IntegratorClientsScene() {
         ))}
         {CLIENTS.map((client, index) => (
           <BelowTag
+            data-secondary=""
             key={client.initials}
             ref={(element) => {
               clientRefs.current[index] = element;
