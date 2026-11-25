@@ -6,7 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, LessThan, Like, Not, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import {
+  FileStorageService,
+  type ResourceIdentifier,
+} from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   FileException,
   FileExceptionCode,
@@ -46,7 +49,7 @@ export class PendingFileCleanupService {
       where: [
         {
           status: FILE_STATUS.PENDING,
-          createdAt: LessThan(staleThreshold),
+          updatedAt: LessThan(staleThreshold),
           workspaceId: Not(IsNull()),
           path: Not(Like(`${FileFolder.WorkspaceDataExport}/%`)),
         },
@@ -111,6 +114,20 @@ export class PendingFileCleanupService {
           continue;
         }
 
+        const location = await this.findStorageLocation(file);
+
+        // Deploys re-stage live rows in place; those must keep the object at their final path.
+        if (
+          isDefined(location) &&
+          file.createdAt.getTime() < file.updatedAt.getTime() &&
+          (await this.fileStorageService.restoreRestagedFile({
+            file,
+            resourceIdentifier: location,
+          }))
+        ) {
+          continue;
+        }
+
         // Delete only while still PENDING, so a file completeFileUpload just promoted is left untouched.
         const { affected } = await this.fileRepository.delete({
           id: file.id,
@@ -130,7 +147,9 @@ export class PendingFileCleanupService {
           });
         }
 
-        await this.deleteStorageObject(file);
+        if (isDefined(location)) {
+          await this.deleteStorageObject(file.id, location);
+        }
 
         deletedCount++;
       } catch (error) {
@@ -144,38 +163,18 @@ export class PendingFileCleanupService {
   }
 
   // The row is already gone, so a failure here only leaks bytes and is logged rather than retried.
-  private async deleteStorageObject(file: FileEntity): Promise<void> {
-    if (!isDefined(file.workspaceId)) {
-      return;
-    }
+  private async deleteStorageObject(
+    fileId: string,
+    location: ResourceIdentifier,
+  ): Promise<void> {
+    const { resourcePath } = location;
 
-    const [fileFolder] = file.path.split('/');
-
-    const application = await this.applicationRepository.findOne(
-      file.workspaceId,
-      {
-        where: { id: file.applicationId },
-      },
-    );
-
-    if (!isDefined(application)) {
-      return;
-    }
-
-    const resourcePath = removeFileFolderFromFileEntityPath(file.path);
-
-    const location = {
-      workspaceId: file.workspaceId,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      fileFolder: fileFolder as FileFolder,
-    };
-
-    // A crash between move and row update leaves the object at its final path, so both are deleted.
+    // A new row never owned a live object, so anything at its final path goes too.
     // Quarantine goes first: a racing completion could otherwise move it into an already-cleaned final path.
     const failures: unknown[] = [];
 
     for (const pathToDelete of [
-      buildPendingUploadResourcePath({ fileId: file.id, resourcePath }),
+      buildPendingUploadResourcePath({ fileId, resourcePath }),
       resourcePath,
     ]) {
       try {
@@ -191,5 +190,33 @@ export class PendingFileCleanupService {
     if (failures.length > 0) {
       throw failures[0];
     }
+  }
+
+  private async findStorageLocation(
+    file: FileEntity,
+  ): Promise<ResourceIdentifier | null> {
+    if (!isDefined(file.workspaceId)) {
+      return null;
+    }
+
+    const [fileFolder] = file.path.split('/');
+
+    const application = await this.applicationRepository.findOne(
+      file.workspaceId,
+      {
+        where: { id: file.applicationId },
+      },
+    );
+
+    if (!isDefined(application)) {
+      return null;
+    }
+
+    return {
+      workspaceId: file.workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder: fileFolder as FileFolder,
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
+    };
   }
 }
