@@ -5,6 +5,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   eachTestingContextFilter,
@@ -123,6 +127,7 @@ describe('Object permission upsert should fail', () => {
   let editableRoleWithNoReadId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const { data: roleData } = await createOneRole({
       expectToFail: false,
       input: {
@@ -223,6 +228,7 @@ describe('Object permission upsert should fail', () => {
         input: { idToDelete: editableRoleWithNoReadId },
       });
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it.each(eachTestingContextFilter(failingObjectPermissionUpsertTestCases))(

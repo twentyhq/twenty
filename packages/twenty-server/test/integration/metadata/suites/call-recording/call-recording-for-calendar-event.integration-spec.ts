@@ -18,6 +18,10 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 import { type RecordShareSystemWriteService } from 'src/engine/permissions/record-share/services/record-share-system-write.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -75,6 +79,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     await global.testDataSource.query(
       `INSERT INTO "${TEST_SCHEMA_NAME}"."calendarEvent" (id, title)
        VALUES ($1, $2)`,
@@ -221,6 +226,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
         input: { idToDelete: restrictedRoleId },
       });
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('selects a completed recording beyond the first page', async () => {

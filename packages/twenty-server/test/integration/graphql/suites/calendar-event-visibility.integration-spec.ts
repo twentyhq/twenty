@@ -6,6 +6,10 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
@@ -101,6 +105,7 @@ describe('calendarEvent visibility restrictions for an API key (e2e)', () => {
   const participantIds: string[] = [];
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const response = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'calendarEvent',
@@ -187,6 +192,7 @@ describe('calendarEvent visibility restrictions for an API key (e2e)', () => {
         recordId: UNASSOCIATED_EVENT_ID,
       }),
     );
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should mask events by channel visibility in findMany', async () => {

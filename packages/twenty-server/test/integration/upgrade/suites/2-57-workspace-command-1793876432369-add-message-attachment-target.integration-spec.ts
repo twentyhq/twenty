@@ -2,6 +2,10 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 
 import { type AddMessageAttachmentTargetCommand } from 'src/database/commands/upgrade-version-command/2-57/2-57-workspace-command-1793876432369-add-message-attachment-target.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -118,6 +122,7 @@ describe('2-57 workspace command - add message attachment target (integration)',
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     command = getAppProviderByClassName<AddMessageAttachmentTargetCommand>(
       'AddMessageAttachmentTargetCommand',
     );
@@ -130,6 +135,7 @@ describe('2-57 workspace command - add message attachment target (integration)',
 
   afterAll(async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('leaves the workspace unchanged on a dry run', async () => {

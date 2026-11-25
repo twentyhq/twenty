@@ -5,6 +5,10 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -30,6 +34,7 @@ describe('message visibility restrictions for an API key (e2e)', () => {
   let attachmentFileId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const [attachmentFileField] = await globalThis.testDataSource.query(
       `SELECT id FROM core."fieldMetadata"
          WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
@@ -131,6 +136,7 @@ describe('message visibility restrictions for an API key (e2e)', () => {
       `DELETE FROM core."file" WHERE id = $1`,
       [attachmentFileId],
     );
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('should return a message without channel associations masked in findMany', async () => {

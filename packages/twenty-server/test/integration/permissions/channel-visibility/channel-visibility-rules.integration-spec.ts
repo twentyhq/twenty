@@ -10,6 +10,10 @@ import { updateMessageChannelVisibility } from 'test/integration/permissions/cha
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -125,6 +129,7 @@ describe('channel visibility through row level rules (integration)', () => {
   let callRecordingOfSharedEventId: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const [jonyMessage] = await findMessagesOfChannel({
       messageChannelId: MESSAGE_CHANNEL_DATA_SEED_IDS.JONY,
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -175,6 +180,7 @@ describe('channel visibility through row level rules (integration)', () => {
       },
     });
 
+    await revokeRoleWideAccessToChannelObjects();
     await syncChannelVisibilityRules();
     await waitForAllJobsToFinish();
   });

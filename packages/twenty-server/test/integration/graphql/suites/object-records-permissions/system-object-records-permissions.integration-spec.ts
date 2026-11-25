@@ -16,6 +16,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -93,6 +97,7 @@ describe('systemObjectRecordsPermissions', () => {
   let noOverrideApiKeyToken: string;
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
@@ -229,6 +234,7 @@ describe('systemObjectRecordsPermissions', () => {
         });
       }
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   describe('API key whose role overrides message to read-only', () => {

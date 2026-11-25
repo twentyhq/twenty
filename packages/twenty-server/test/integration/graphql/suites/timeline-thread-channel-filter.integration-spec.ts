@@ -8,6 +8,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -219,6 +223,7 @@ const requestThreads = ({
 
 describe('timeline thread channel filter (integration)', () => {
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     await createRecord({
       objectMetadataSingularName: 'company',
       data: {
@@ -322,6 +327,7 @@ describe('timeline thread channel filter (integration)', () => {
         }),
       );
     }
+    await revokeRoleWideAccessToChannelObjects();
   });
 
   it('lists only the channels the record conversations use', async () => {

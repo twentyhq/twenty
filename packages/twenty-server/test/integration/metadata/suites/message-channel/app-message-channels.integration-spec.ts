@@ -18,6 +18,10 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import {
+  grantRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/utils/role-wide-access-to-channel-objects.util';
 import { type Manifest } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -439,6 +443,7 @@ describe('app message channels API (e2e)', () => {
   };
 
   beforeAll(async () => {
+    await grantRoleWideAccessToChannelObjects();
     for (const { appId, roleId, providerId, sourcePath } of [
       {
         appId: OWNING_APP_ID,
@@ -621,6 +626,7 @@ describe('app message channels API (e2e)', () => {
         applicationUniversalIdentifier: appId,
       });
     }
+    await revokeRoleWideAccessToChannelObjects();
   }, 120000);
 
   describe('createAppMessageChannel', () => {
