@@ -77,9 +77,7 @@ const findTool = async (toolName: string) =>
         alternativeToolNames: ['app_tool_decline_cal_booking'],
         labels: {
           approve: 'Accept meeting',
-          alternatives: {
-            app_tool_decline_cal_booking: { label: 'Decline' },
-          },
+          alternatives: { app_tool_decline_cal_booking: 'Decline' },
         },
       },
     } satisfies ToolIndexEntry,
@@ -289,9 +287,7 @@ describe('resolveProposedToolCall', () => {
         alternativeToolNames: ['app_tool_decline_cal_booking'],
         labels: {
           approve: 'Accept meeting',
-          alternatives: {
-            app_tool_decline_cal_booking: { label: 'Decline' },
-          },
+          alternatives: { app_tool_decline_cal_booking: 'Decline' },
         },
       },
     });

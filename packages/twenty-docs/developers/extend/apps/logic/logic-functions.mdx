@@ -841,7 +841,6 @@ export default defineLogicFunction({
         {
           logicFunctionUniversalIdentifier: DECLINE_BOOKING_UNIVERSAL_IDENTIFIER,
           label: 'Decline',
-          confirmLabel: 'Send decline',
         },
       ],
     },
@@ -849,7 +848,7 @@ export default defineLogicFunction({
 });
 ```
 
-Each alternative becomes a button that runs that tool with the same arguments. An alternative must be another tool of the same app, or the build fails, and one the person cannot run is left out. With a `confirmLabel`, the button asks again before running: the card switches to that tool, `useToolCall().toolName` becomes the alternative, so its front component can ask for what it needs (a decline reason, for example) and set it with `setToolCallArguments`. **Back** returns to the proposed tool and drops what was set there. **Reject**, renamed or not, never runs anything.
+Each alternative becomes a button that runs that tool with the same arguments. An alternative must be another tool of the same app, or the build fails, and one the person cannot run is left out. Anything the tool's front component sets with `setToolCallArguments`, such as a decline reason, goes to whichever button the person clicks. **Reject**, renamed or not, never runs anything.
 
 <Note>
   If the identifier matches no front component in the app, the chat falls back

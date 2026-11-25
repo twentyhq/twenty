@@ -25,12 +25,7 @@ export const buildLogicFunctionToolApproval = ({
     );
 
     if (isDefined(toolName) && isNonEmptyString(alternative.label)) {
-      alternativeLabels[toolName] = {
-        label: alternative.label,
-        ...(isNonEmptyString(alternative.confirmLabel) && {
-          confirmLabel: alternative.confirmLabel,
-        }),
-      };
+      alternativeLabels[toolName] = alternative.label;
     }
   }
 

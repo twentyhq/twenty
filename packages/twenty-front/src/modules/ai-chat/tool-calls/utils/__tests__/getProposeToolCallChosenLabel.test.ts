@@ -12,7 +12,7 @@ const BOOKING_PROPOSAL: ProposedToolCall = {
   labels: {
     approve: 'Accept meeting',
     reject: 'Not now',
-    alternatives: { app_tool_decline_cal_booking: { label: 'Decline' } },
+    alternatives: { app_tool_decline_cal_booking: 'Decline' },
   },
 };
 

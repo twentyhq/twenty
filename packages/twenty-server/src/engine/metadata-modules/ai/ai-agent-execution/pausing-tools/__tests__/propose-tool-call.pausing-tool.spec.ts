@@ -301,12 +301,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
             labels: {
               approve: 'Accept meeting',
               reject: 'Not now',
-              alternatives: {
-                app_tool_decline_cal_booking: {
-                  label: 'Decline',
-                  confirmLabel: 'Send decline',
-                },
-              },
+              alternatives: { app_tool_decline_cal_booking: 'Decline' },
             },
           },
         },

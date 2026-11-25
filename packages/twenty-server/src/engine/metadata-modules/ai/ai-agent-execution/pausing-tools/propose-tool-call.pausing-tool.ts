@@ -62,15 +62,7 @@ const proposedToolCallSchema: z.ZodType<ProposedToolCall> = z.object({
     .object({
       approve: z.string().optional(),
       reject: z.string().optional(),
-      alternatives: z
-        .record(
-          z.string(),
-          z.object({
-            label: z.string(),
-            confirmLabel: z.string().optional(),
-          }),
-        )
-        .optional(),
+      alternatives: z.record(z.string(), z.string()).optional(),
     })
     .optional(),
   objectNameSingular: z.string().optional(),

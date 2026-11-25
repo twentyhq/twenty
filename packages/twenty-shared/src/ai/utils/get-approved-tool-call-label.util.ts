@@ -6,5 +6,4 @@ export const getApprovedToolCallLabel = ({
 }: {
   labels: ToolApprovalLabels | undefined;
   toolName: string;
-}): string | undefined =>
-  labels?.alternatives?.[toolName]?.label ?? labels?.approve;
+}): string | undefined => labels?.alternatives?.[toolName] ?? labels?.approve;

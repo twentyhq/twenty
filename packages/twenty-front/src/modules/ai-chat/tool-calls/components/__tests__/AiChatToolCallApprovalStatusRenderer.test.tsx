@@ -96,7 +96,7 @@ describe('AiChatToolCallApprovalStatusRenderer', () => {
             labels: {
               approve: 'Accept meeting',
               alternatives: {
-                app_tool_decline_cal_booking: { label: 'Decline' },
+                app_tool_decline_cal_booking: 'Decline',
               },
             },
           },

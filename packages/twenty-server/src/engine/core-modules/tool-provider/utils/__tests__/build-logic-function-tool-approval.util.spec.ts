@@ -22,7 +22,6 @@ describe('buildLogicFunctionToolApproval', () => {
             {
               logicFunctionUniversalIdentifier: DECLINE_UNIVERSAL_IDENTIFIER,
               label: 'Decline',
-              confirmLabel: 'Send decline',
             },
           ],
         },
@@ -37,12 +36,7 @@ describe('buildLogicFunctionToolApproval', () => {
       labels: {
         approve: 'Accept meeting',
         reject: 'Not now',
-        alternatives: {
-          app_tool_decline_cal_booking: {
-            label: 'Decline',
-            confirmLabel: 'Send decline',
-          },
-        },
+        alternatives: { app_tool_decline_cal_booking: 'Decline' },
       },
     });
   });
