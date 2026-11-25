@@ -61,8 +61,10 @@ export const useNavigationMenuItemDndKit = (
 
   const { navigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
-  const { handleNavigationMenuItemDragAndDrop } =
-    useHandleNavigationMenuItemDragAndDrop(sectionType);
+  const {
+    handleNavigationMenuItemDragAndDrop,
+    isNavigationMenuItemDropAllowed,
+  } = useHandleNavigationMenuItemDragAndDrop(sectionType);
 
   const items = isWorkspaceSection
     ? workspaceNavigationMenuItems
@@ -145,24 +147,41 @@ export const useNavigationMenuItemDndKit = (
       const sourceIsSortable = source !== null && isSortable(source);
       const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
-      if (
-        resolved !== null &&
-        source !== null &&
-        target !== null &&
-        isSortable(source) &&
-        isSortable(target)
-      ) {
-        setActiveDropTargetId(resolved.dropTargetId);
-        setForbiddenDropTargetId(computeForbiddenTargetId(source, resolved));
+      if (resolved === null || !sourceIsSortable) {
         return;
       }
 
-      if (resolved !== null && sourceIsSortable) {
-        setActiveDropTargetId(resolved.effectiveDropTargetId);
-        setForbiddenDropTargetId(computeForbiddenTargetId(source, resolved));
-      }
+      const isOverSortable = target !== null && isSortable(target);
+      const dropTargetId = isOverSortable
+        ? resolved.dropTargetId
+        : resolved.effectiveDropTargetId;
+      const insertBeforeItemId =
+        isOverSortable && isDefined(target.id)
+          ? String(target.id)
+          : resolved.insertBeforeItemId;
+
+      const isDropAllowed = isNavigationMenuItemDropAllowed({
+        draggableId: String(source.id),
+        source: {
+          droppableId: source.data?.sourceDroppableId ?? '',
+          index: source.data?.sourceIndex ?? 0,
+        },
+        destination: resolved.destination,
+        ...(isDefined(insertBeforeItemId) && { insertBeforeItemId }),
+      });
+
+      setActiveDropTargetId(dropTargetId);
+      setForbiddenDropTargetId(
+        computeForbiddenTargetId(source, resolved) ??
+          (isDropAllowed ? null : dropTargetId),
+      );
     },
-    [getNavItemById, sectionType, computeForbiddenTargetId],
+    [
+      getNavItemById,
+      sectionType,
+      computeForbiddenTargetId,
+      isNavigationMenuItemDropAllowed,
+    ],
   );
 
   const handleDragEnd = (event: DragEndPayload) => {
