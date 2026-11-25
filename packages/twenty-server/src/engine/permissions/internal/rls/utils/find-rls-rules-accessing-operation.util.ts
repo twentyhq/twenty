@@ -11,7 +11,6 @@ import {
 } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
-import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 import { getPermissionsPrincipalsRecordsPermissions } from 'src/engine/permissions/internal/role/utils/get-permissions-principals-records-permissions.util';
 import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
@@ -25,10 +24,7 @@ export const findRlsRulesAccessingOperation = ({
   principals: PermissionsPrincipalsWithRolesContext;
   metadataMaps: Pick<
     PermissionsMetadataMaps,
-    | 'rolesPermissions'
-    | 'flatObjectMetadataMaps'
-    | 'flatFieldMetadataMaps'
-    | 'featureFlagsMap'
+    'rolesPermissions' | 'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
   >;
   objectMetadataId: string;
   operationType: ObjectRecordsOperationType;
@@ -37,22 +33,18 @@ export const findRlsRulesAccessingOperation = ({
     principals,
     metadataMaps,
   }).objects[objectMetadataId];
-  const enforcedOperationType = getEnforcedOperationType({
-    operationType,
-    featureFlagsMap: metadataMaps.featureFlagsMap,
-  });
 
   if (
     !isDefined(objectRecordsPermissions?.rowLevelRecordsPermissions) ||
     canAccessThroughAllRecordsPermission({
       objectRecordsPermissions,
-      operationType: enforcedOperationType,
+      operationType,
     })
   ) {
     return undefined;
   }
 
   return objectRecordsPermissions.rowLevelRecordsPermissions.filter((rule) =>
-    canRlsRuleAccessOperation({ rule, operationType: enforcedOperationType }),
+    canRlsRuleAccessOperation({ rule, operationType }),
   );
 };

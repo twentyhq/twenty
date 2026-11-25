@@ -283,7 +283,6 @@ describe('RLS rules through a relation (integration)', () => {
   const setFeatureFlags = async (value: boolean) => {
     for (const featureFlag of [
       FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
     ]) {
       await updateFeatureFlag({ featureFlag, value, expectToFail: false });
     }

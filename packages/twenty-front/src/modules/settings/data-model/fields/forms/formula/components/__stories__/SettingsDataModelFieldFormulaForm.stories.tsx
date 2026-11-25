@@ -79,13 +79,25 @@ export const WithLookup: Story = {
   },
 };
 
-export const RejectsRollup: Story = {
+export const RejectsRelatedRecordsOutsideAnAggregate: Story = {
   decorators: [buildFormDecorator('arrayLength(noteTargets)')],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(await canvas.findByRole('alert')).toHaveTextContent(
-      '"noteTargets" is not a to-one relation',
+      '"noteTargets" has many records: read it inside count(), sum(), avg(), min() or max()',
     );
+  },
+};
+
+export const AcceptsAnAggregateOfRelatedRecords: Story = {
+  decorators: [buildFormDecorator('count(noteTargets)')],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('textbox', { name: 'Formula' }),
+    ).toBeVisible();
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
   },
 };
