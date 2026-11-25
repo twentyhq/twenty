@@ -77,7 +77,7 @@ export class LogicFunctionPrebuiltWarmUpService {
     workspaceId: string;
     applicationId: string;
     logicFunctionUniversalIdentifier: string;
-  }): Promise<void> {
+  }): Promise<FlatLogicFunction | undefined> {
     const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
@@ -91,7 +91,7 @@ export class LogicFunctionPrebuiltWarmUpService {
         `Skipping prebuilt warm-up: application ${applicationId} not found in workspace ${workspaceId}`,
       );
 
-      return;
+      return undefined;
     }
 
     const flatLogicFunction =
@@ -104,12 +104,14 @@ export class LogicFunctionPrebuiltWarmUpService {
       flatLogicFunction.applicationId !== applicationId ||
       !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
     ) {
-      return;
+      return undefined;
     }
 
     await this.ensurePrebuiltBundleInstalled({
       flatLogicFunction,
       flatApplication,
     });
+
+    return flatLogicFunction;
   }
 }

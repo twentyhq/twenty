@@ -56,6 +56,10 @@ export class DisabledDriver implements LogicFunctionDriver {
     return null;
   }
 
+  async warmUp(): Promise<void> {
+    // No-op when disabled
+  }
+
   // Disabling logic functions must not disable workflow HTTP steps.
   async executeHttpRequest(
     request: HttpEgressRequest,

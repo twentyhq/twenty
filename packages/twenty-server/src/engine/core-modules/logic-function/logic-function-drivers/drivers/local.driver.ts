@@ -222,6 +222,9 @@ export class LocalDriver implements LogicFunctionDriver {
     return this.prebuiltBundle.getInstalledBundleChecksum(flatLogicFunction);
   }
 
+  // Each execution spawns a fresh process, so there is nothing to keep warm.
+  async warmUp(): Promise<void> {}
+
   async execute({
     flatLogicFunction,
     flatApplication,

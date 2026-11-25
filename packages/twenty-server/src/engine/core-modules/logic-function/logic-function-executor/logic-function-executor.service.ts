@@ -213,6 +213,38 @@ export class LogicFunctionExecutorService {
     });
   }
 
+  // Best-effort: a failed warm-up only costs the first real execution a cold start.
+  async warmUp({
+    workspaceId,
+    logicFunctionId,
+  }: {
+    workspaceId: string;
+    logicFunctionId: string;
+  }): Promise<void> {
+    try {
+      const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
+        await this.getFlatEntitiesOrThrow({ workspaceId, logicFunctionId });
+
+      await this.assertApplicationNotStopped(flatApplication);
+
+      // The bundle's module scope may read process.env, and real executions reuse the warmed module.
+      const envVariables = await this.getExecutionEnvVariables({
+        workspaceId,
+        flatApplication,
+        flatApplicationVariableMaps,
+      });
+
+      await this.logicFunctionDriverFactory
+        .getCurrentDriver()
+        .warmUp({ flatLogicFunction, env: envVariables });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to warm up logic function ${logicFunctionId} in workspace ${workspaceId}: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
   // The build runs after admission so a rejected run never spends a compilation
   async executeBuiltCode({
     workspaceId,

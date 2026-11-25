@@ -1,3 +1,6 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import {
   WARM_UP_LOGIC_FUNCTION_JOB_NAME,
@@ -11,10 +14,21 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export class WarmUpLogicFunctionJob {
   constructor(
     private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
 
   @Process(WARM_UP_LOGIC_FUNCTION_JOB_NAME)
   async handle(data: WarmUpLogicFunctionJobData): Promise<void> {
-    await this.logicFunctionPrebuiltWarmUpService.warmUpLogicFunction(data);
+    const installedFlatLogicFunction =
+      await this.logicFunctionPrebuiltWarmUpService.warmUpLogicFunction(data);
+
+    if (!isDefined(installedFlatLogicFunction)) {
+      return;
+    }
+
+    await this.logicFunctionExecutorService.warmUp({
+      workspaceId: data.workspaceId,
+      logicFunctionId: installedFlatLogicFunction.id,
+    });
   }
 }

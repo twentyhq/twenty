@@ -17,6 +17,7 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 jest.mock(
   'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util',
@@ -259,6 +260,20 @@ describe('LambdaDriver', () => {
     });
 
     expect(functionNames).toEqual([`workflow-code-step-${codeStepExecutorId}`]);
+  });
+
+  it('warms up an executor without naming a handler to run', async () => {
+    state = 'Active';
+
+    await driver.warmUp({
+      flatLogicFunction: { id: 'logic-function-id' } as FlatLogicFunction,
+      env: { MY_VARIABLE: 'value' },
+    });
+
+    expect(functionNames).toEqual(['logic-function-id']);
+    expect(payloads).toEqual([
+      { isWarmUp: true, env: { MY_VARIABLE: 'value' } },
+    ]);
   });
 
   it('rejects oversized browser requests before provisioning or invoking Lambda', async () => {
