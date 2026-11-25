@@ -348,15 +348,12 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
           },
         },
       };
-      const result =
-        applicationUniversalIdentifier ===
-        twentyStandardFlatApplication.universalIdentifier
-          ? await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-              migrationArgs,
-            )
-          : await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-              migrationArgs,
-            );
+      const result = await this.validateBuildAndRunMigration({
+        migrationArgs,
+        isTwentyStandardApplication:
+          applicationUniversalIdentifier ===
+          twentyStandardFlatApplication.universalIdentifier,
+      });
 
       if (result.status === 'fail') {
         throw new WorkspaceMigrationBuilderException(
@@ -371,5 +368,25 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
         workspaceId,
       );
     }
+  }
+
+  private async validateBuildAndRunMigration({
+    migrationArgs,
+    isTwentyStandardApplication,
+  }: {
+    migrationArgs: Parameters<
+      WorkspaceMigrationValidateBuildAndRunService['validateBuildAndRunWorkspaceMigration']
+    >[0];
+    isTwentyStandardApplication: boolean;
+  }) {
+    if (isTwentyStandardApplication) {
+      return this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        migrationArgs,
+      );
+    }
+
+    return this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      migrationArgs,
+    );
   }
 }
