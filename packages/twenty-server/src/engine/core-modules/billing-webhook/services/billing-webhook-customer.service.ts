@@ -55,7 +55,7 @@ export class BillingWebhookCustomerService {
   }
 
   private async processCustomerCreated(data: Stripe.CustomerCreatedEvent.Data) {
-    const { id: stripeCustomerId, metadata } = data.object;
+    const { id: stripeCustomerId, email, metadata } = data.object;
 
     const workspaceId = metadata?.workspaceId;
 
@@ -66,12 +66,9 @@ export class BillingWebhookCustomerService {
       );
     }
 
-    const stripeCustomerEmail =
-      await this.getLiveStripeCustomerEmail(stripeCustomerId);
-
     await this.billingCustomerRepository.upsert(
       workspaceId,
-      { stripeCustomerId, stripeCustomerEmail },
+      { stripeCustomerId, stripeCustomerEmail: email },
       {
         conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,
@@ -80,7 +77,14 @@ export class BillingWebhookCustomerService {
   }
 
   private async processCustomerUpdated(data: Stripe.CustomerUpdatedEvent.Data) {
-    const stripeCustomerId = data.object.id;
+    if (
+      !isDefined(data.previous_attributes) ||
+      !('email' in data.previous_attributes)
+    ) {
+      return;
+    }
+
+    const { id: stripeCustomerId, email } = data.object;
 
     const workspaceId =
       await this.getWorkspaceIdFromStripeCustomerId(stripeCustomerId);
@@ -89,26 +93,11 @@ export class BillingWebhookCustomerService {
       return;
     }
 
-    const stripeCustomerEmail =
-      await this.getLiveStripeCustomerEmail(stripeCustomerId);
-
     await this.billingCustomerRepository.update(
       workspaceId,
       { stripeCustomerId },
-      { stripeCustomerEmail },
+      { stripeCustomerEmail: email },
     );
-  }
-
-  // Stripe does not order webhook deliveries, so a late event payload can carry an outdated email
-  private async getLiveStripeCustomerEmail(
-    stripeCustomerId: string,
-  ): Promise<string | null> {
-    const { email } =
-      await this.stripeCustomerService.getCustomerPartnerAndEmail(
-        stripeCustomerId,
-      );
-
-    return email;
   }
 
   private async processPaymentMethodAttachedEvent(

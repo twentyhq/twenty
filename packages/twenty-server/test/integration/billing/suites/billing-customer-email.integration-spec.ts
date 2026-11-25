@@ -2,8 +2,6 @@ import gql from 'graphql-tag';
 import request from 'supertest';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-import { STRIPE_SDK_MOCK_CUSTOMER_EMAIL } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock-customer-email.constant';
-
 const SEEDED_STRIPE_CUSTOMER_ID = 'cus_default0';
 const SEEDED_STRIPE_CUSTOMER_EMAIL = 'tim@apple.dev';
 
@@ -34,6 +32,33 @@ const getStripeCustomerEmail = async (token?: string) => {
     .stripeCustomerEmail;
 };
 
+const sendCustomerUpdatedEvent = ({
+  email,
+  previousAttributes,
+}: {
+  email: string;
+  previousAttributes: Record<string, unknown>;
+}) =>
+  client
+    .post('/webhooks/stripe')
+    .set('stripe-signature', 'correct-signature')
+    .set('Content-Type', 'application/json')
+    .send(
+      JSON.stringify({
+        type: 'customer.updated',
+        data: {
+          object: {
+            id: SEEDED_STRIPE_CUSTOMER_ID,
+            object: 'customer',
+            email,
+            metadata: {},
+          },
+          previous_attributes: previousAttributes,
+        },
+      }),
+    )
+    .expect(200);
+
 describe('billing customer email', () => {
   afterAll(async () => {
     await globalThis.testDataSource.query(
@@ -52,26 +77,21 @@ describe('billing customer email', () => {
     ).toBeNull();
   });
 
-  it('should store the live Stripe email on customer.updated, not the event payload email', async () => {
-    await client
-      .post('/webhooks/stripe')
-      .set('stripe-signature', 'correct-signature')
-      .set('Content-Type', 'application/json')
-      .send(
-        JSON.stringify({
-          type: 'customer.updated',
-          data: {
-            object: {
-              id: SEEDED_STRIPE_CUSTOMER_ID,
-              object: 'customer',
-              email: 'outdated@apple.dev',
-              metadata: {},
-            },
-          },
-        }),
-      )
-      .expect(200);
+  it('should ignore a customer.updated event that does not change the email', async () => {
+    await sendCustomerUpdatedEvent({
+      email: 'unrelated@apple.dev',
+      previousAttributes: { metadata: {} },
+    });
 
-    expect(await getStripeCustomerEmail()).toBe(STRIPE_SDK_MOCK_CUSTOMER_EMAIL);
+    expect(await getStripeCustomerEmail()).toBe(SEEDED_STRIPE_CUSTOMER_EMAIL);
+  });
+
+  it('should store the new email from a customer.updated event that changes it', async () => {
+    await sendCustomerUpdatedEvent({
+      email: 'finance@apple.dev',
+      previousAttributes: { email: SEEDED_STRIPE_CUSTOMER_EMAIL },
+    });
+
+    expect(await getStripeCustomerEmail()).toBe('finance@apple.dev');
   });
 });
