@@ -25,7 +25,6 @@ import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
-import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { type CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -633,7 +632,7 @@ describe('core workflow visibility (e2e)', () => {
         userWorkspaceId: string;
         coreWorkflowVersionId: string;
       }) =>
-        withWorkspaceAuthContext(
+        global.workflowTestServices.withWorkspaceAuthContext(
           buildUserAuthContext({
             workspace: { id: SEED_APPLE_WORKSPACE_ID } as NonNullable<
               RawAuthContext['workspace']
