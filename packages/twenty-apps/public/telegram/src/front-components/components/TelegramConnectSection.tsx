@@ -43,7 +43,6 @@ const StyledCommand = styled.code`
 `;
 
 const QR_CODE_SIZE_PX = 144;
-// Not a theme token: scanners need a light quiet zone, in the dark theme too
 const QR_CODE_BACKGROUND_COLOR = '#FFFFFF';
 
 const StyledQrCode = styled.div`
@@ -106,7 +105,6 @@ export const TelegramConnectSection = () => {
               <QRCode
                 value={startState.url}
                 size={QR_CODE_SIZE_PX}
-                bgColor={QR_CODE_BACKGROUND_COLOR}
                 title={t('QR code that opens the Telegram bot')}
               />
             </StyledQrCode>

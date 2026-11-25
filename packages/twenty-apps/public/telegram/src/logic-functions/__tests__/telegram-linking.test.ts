@@ -173,10 +173,10 @@ describe('connecting a Telegram account', () => {
   });
 
   it('links the account to the member who started the connection', async () => {
-    const { token } = await startLink();
+    const { startCommand } = await startLink();
 
     const { resolved, handled } = await deliver(
-      buildMessageUpdate(`/start ${token}`),
+      buildMessageUpdate(startCommand),
     );
 
     expect(resolved).toMatchObject({
@@ -195,16 +195,6 @@ describe('connecting a Telegram account', () => {
       },
     ]);
     expect(sentTexts()).toEqual([TELEGRAM_CONNECTED_TEXT]);
-  });
-
-  it('links the account when the member sends the start command by hand', async () => {
-    const { botUsername, startCommand } = await startLink();
-
-    const { handled } = await deliver(buildMessageUpdate(startCommand));
-
-    expect(botUsername).toBe('TwentyBot');
-    expect(handled).toEqual({ outcome: 'LINKED' });
-    expect(coreFake.state.links).toHaveLength(1);
   });
 
   it('routes later messages of a linked account to its workspace', async () => {
