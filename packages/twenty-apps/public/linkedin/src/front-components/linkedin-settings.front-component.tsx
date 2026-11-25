@@ -7,6 +7,6 @@ export default defineFrontComponent({
   universalIdentifier: LINKEDIN_SETTINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'linkedin-settings',
   description:
-    'LinkedIn import, visibility, contact auto-creation and people matching of the member connection.',
+    'Sync and History tabs of the member connection: LinkedIn import, visibility, contact auto-creation, people matching and the import of past conversations.',
   component: LinkedinSettings,
 });
