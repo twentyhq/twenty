@@ -14,8 +14,10 @@ import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modu
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
-export class LogicFunctionPrebuiltWarmUpService {
-  private readonly logger = new Logger(LogicFunctionPrebuiltWarmUpService.name);
+export class LogicFunctionPrebuiltInstallService {
+  private readonly logger = new Logger(
+    LogicFunctionPrebuiltInstallService.name,
+  );
 
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -69,7 +71,7 @@ export class LogicFunctionPrebuiltWarmUpService {
     }
   }
 
-  async warmUpLogicFunction({
+  async installPrebuiltBundleIfReady({
     workspaceId,
     applicationId,
     logicFunctionUniversalIdentifier,
@@ -88,7 +90,7 @@ export class LogicFunctionPrebuiltWarmUpService {
 
     if (!isDefined(flatApplication)) {
       this.logger.warn(
-        `Skipping prebuilt warm-up: application ${applicationId} not found in workspace ${workspaceId}`,
+        `Skipping prebuilt install: application ${applicationId} not found in workspace ${workspaceId}`,
       );
 
       return undefined;

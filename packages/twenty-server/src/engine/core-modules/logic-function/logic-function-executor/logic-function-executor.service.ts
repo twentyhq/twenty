@@ -50,7 +50,7 @@ import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { buildWorkflowCodeStepFlatLogicFunction } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-workflow-code-step-flat-logic-function.util';
 import { isLogicFunctionRetryScheduled } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-logic-function-retry-scheduled.util';
-import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
+import { LogicFunctionPrebuiltInstallService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-install/logic-function-prebuilt-install.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
 import {
   ThrottlerExceptionCode,
@@ -130,7 +130,7 @@ export class LogicFunctionExecutorService {
 
   constructor(
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
-    private readonly logicFunctionPrebuiltWarmUpService: LogicFunctionPrebuiltWarmUpService,
+    private readonly logicFunctionPrebuiltInstallService: LogicFunctionPrebuiltInstallService,
     private readonly logicFunctionExecutionThrottleService: LogicFunctionExecutionThrottleService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -374,7 +374,7 @@ export class LogicFunctionExecutorService {
       executionMode ?? flatLogicFunction.executionMode;
 
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      await this.logicFunctionPrebuiltWarmUpService.ensurePrebuiltBundleInstalled(
+      await this.logicFunctionPrebuiltInstallService.ensurePrebuiltBundleInstalled(
         {
           flatLogicFunction,
           flatApplication,
