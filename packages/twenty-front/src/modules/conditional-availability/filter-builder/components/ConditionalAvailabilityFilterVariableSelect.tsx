@@ -68,7 +68,7 @@ export const ConditionalAvailabilityFilterVariableSelect = ({
       (variable) => variable === nextVariable,
     );
 
-    if (!isDefined(selectedVariable) || selectedVariable === filter.variable) {
+    if (!isDefined(selectedVariable)) {
       return;
     }
 
@@ -97,7 +97,6 @@ export const ConditionalAvailabilityFilterVariableSelect = ({
       <Dropdown.OptionItem
         key={variable}
         value={variable}
-        indicator="check"
         startIcon={<VariableIcon size={theme.icon.size.md} />}
       >
         {getConditionalAvailabilityFilterVariableLabel({ variable })}
@@ -109,6 +108,11 @@ export const ConditionalAvailabilityFilterVariableSelect = ({
     <DropdownRoot
       dropdownId={`conditional-availability-filter-variable-${filter.id}`}
       type="picker"
+      onOpenChange={(isOpen) => {
+        if (isOpen) {
+          setSearchInput('');
+        }
+      }}
     >
       <Dropdown.Trigger nativeButton={false} render={<div />}>
         {control}

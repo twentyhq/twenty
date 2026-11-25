@@ -7,8 +7,10 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ConditionalEvaluationLogicalOperator } from 'twenty-shared/conditional-evaluation';
-import { doNotTranslate } from 'twenty-shared/i18n';
+import {
+  type ConditionalEvaluationLogicalOperator,
+  conditionalEvaluationLogicalOperatorSchema,
+} from 'twenty-shared/conditional-evaluation';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledText = styled.div`
@@ -58,14 +60,15 @@ export const ConditionalAvailabilityFilterLogicalOperatorCell = ({
     );
   }
 
-  const logicalOperators: ConditionalEvaluationLogicalOperator[] = [
-    doNotTranslate('AND'),
-    doNotTranslate('OR'),
-  ];
-  const logicalOperatorOptions = logicalOperators.map((logicalOperator) => ({
-    value: logicalOperator,
-    label: getConditionalAvailabilityLogicalOperatorLabel({ logicalOperator }),
-  }));
+  const logicalOperatorOptions =
+    conditionalEvaluationLogicalOperatorSchema.options.map(
+      (logicalOperator) => ({
+        value: logicalOperator,
+        label: getConditionalAvailabilityLogicalOperatorLabel({
+          logicalOperator,
+        }),
+      }),
+    );
 
   const handleLogicalOperatorChange = (
     logicalOperator: ConditionalEvaluationLogicalOperator,

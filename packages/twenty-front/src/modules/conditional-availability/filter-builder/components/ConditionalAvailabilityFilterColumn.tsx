@@ -8,9 +8,6 @@ import { type ConditionalAvailabilityFilter } from '@/conditional-availability/f
 import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/filter-builder/types/ConditionalAvailabilityFilterGroup';
 import { AdvancedFilterSidePanelColumn } from '@/object-record/advanced-filter/side-panel/components/AdvancedFilterSidePanelColumn';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -31,7 +28,6 @@ export const ConditionalAvailabilityFilterColumn = ({
   filter,
   filterIndex,
 }: ConditionalAvailabilityFilterColumnProps) => {
-  const { t } = useLingui();
   const { isReadOnly } =
     useConditionalAvailabilityFilterBuilderContextOrThrow();
 
@@ -48,17 +44,11 @@ export const ConditionalAvailabilityFilterColumn = ({
           />
         )}
       </StyledContainer>
-      <Field.Root render={<AdvancedFilterSidePanelColumn />}>
+      <AdvancedFilterSidePanelColumn>
         <ConditionalAvailabilityFilterVariableSelect filter={filter} />
         <ConditionalAvailabilityFilterOperatorSelect filter={filter} />
-        <ConditionalAvailabilityFilterValueInput
-          key={`${filter.variable}-${filter.operator}`}
-          filter={filter}
-        />
-        {!isNonEmptyArray(filter.values) && (
-          <Field.Description>{t`Select a value`}</Field.Description>
-        )}
-      </Field.Root>
+        <ConditionalAvailabilityFilterValueInput filter={filter} />
+      </AdvancedFilterSidePanelColumn>
     </AdvancedFilterSidePanelColumn>
   );
 };

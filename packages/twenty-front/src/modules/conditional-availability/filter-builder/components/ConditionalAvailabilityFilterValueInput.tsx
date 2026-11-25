@@ -159,17 +159,6 @@ export const ConditionalAvailabilityFilterValueInput = ({
     );
   };
 
-  const handleSeveralValuesChange = (nextValues: string[]) => {
-    const keptValues = filter.values.filter((value) =>
-      nextValues.includes(value),
-    );
-    const addedValues = nextValues.filter(
-      (value) => !filter.values.includes(value),
-    );
-
-    handleValuesChange([...keptValues, ...addedValues]);
-  };
-
   const handleSingleValueChange = (nextValue: string | null) => {
     handleValuesChange(isDefined(nextValue) ? [nextValue] : []);
   };
@@ -185,7 +174,6 @@ export const ConditionalAvailabilityFilterValueInput = ({
           <Dropdown.OptionItem
             key={option.value}
             value={option.value}
-            indicator={canHoldSeveralValues ? 'checkbox' : 'check'}
             startIcon={option.LeftComponent}
           >
             {option.label}
@@ -200,7 +188,7 @@ export const ConditionalAvailabilityFilterValueInput = ({
           aria-label={placeholder}
           multiple
           value={filter.values}
-          onValueChange={handleSeveralValuesChange}
+          onValueChange={handleValuesChange}
         >
           {optionItems}
         </Dropdown.SelectionGroup>

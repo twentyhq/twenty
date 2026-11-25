@@ -29,10 +29,6 @@ export const ConditionalAvailabilityFilterOperatorSelect = ({
   const handleOperatorChange = (
     operator: ConditionalAvailabilityFilterOperator,
   ) => {
-    if (operator === filter.operator) {
-      return;
-    }
-
     onRootFilterGroupChange(
       updateConditionalAvailabilityFilter({
         filterGroup: rootFilterGroup,
