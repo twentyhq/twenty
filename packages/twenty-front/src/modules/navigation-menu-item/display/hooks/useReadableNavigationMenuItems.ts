@@ -3,12 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { isNavigationMenuItemReadable } from '@/navigation-menu-item/common/utils/isNavigationMenuItemReadable';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
-import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
+import { useIsNavigationMenuItemReadable } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemReadable';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 type UseReadableNavigationMenuItemsArgs = {
   topLevelItems: NavigationMenuItem[];
@@ -22,19 +18,7 @@ export const useReadableNavigationMenuItems = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-  const views = useAtomStateValue(viewsSelector);
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
-
-  const isItemReadable = (item: NavigationMenuItem) =>
-    isNavigationMenuItemReadable({
-      item,
-      permissionFlagMap,
-      objectMetadataItems,
-      views,
-      objectPermissionsByObjectMetadataId,
-    });
+  const isItemReadable = useIsNavigationMenuItemReadable();
 
   const filteredFolderChildrenById = new Map<string, NavigationMenuItem[]>();
   for (const [folderId, children] of folderChildrenById) {

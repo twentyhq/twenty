@@ -1,13 +1,18 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { getNavigationMenuContainersInDisplayOrder } from '@/navigation-menu-item/common/utils/getNavigationMenuContainersInDisplayOrder';
+import { useIsNavigationMenuItemReadable } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemReadable';
 import { useNavigationMenuBuiltInSectionAvailability } from '@/navigation-menu-item/display/hooks/useNavigationMenuBuiltInSectionAvailability';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
+import { hasNavigationMenuContainerVisibleContent } from '@/navigation-menu-item/display/utils/hasNavigationMenuContainerVisibleContent';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 export const useWorkspaceNavigationMenuContainers = ({
   type,
@@ -22,6 +27,8 @@ export const useWorkspaceNavigationMenuContainers = ({
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
   const { isBuiltInSectionAvailable } =
     useNavigationMenuBuiltInSectionAvailability();
+  const isItemReadable = useIsNavigationMenuItemReadable();
+  const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -41,17 +48,22 @@ export const useWorkspaceNavigationMenuContainers = ({
   }
 
   return containers.filter((tab) => {
-    const tabChildren = workspaceNavigationMenuItems.filter(
-      (item) => item.parentId === tab.id,
-    );
+    const isEmptyTab = !hasNavigationMenuContainerVisibleContent({
+      containerId: tab.id,
+      navigationMenuItems: workspaceNavigationMenuItems,
+      isItemReadable: () => true,
+      isBuiltInSectionAvailable: () => true,
+    });
 
-    return (
-      tabChildren.length === 0 ||
-      tabChildren.some(
-        (child) =>
-          !isDefined(child.builtInSectionKey) ||
-          isBuiltInSectionAvailable(child.builtInSectionKey),
-      )
-    );
+    if (isEmptyTab) {
+      return hasLayoutsPermission;
+    }
+
+    return hasNavigationMenuContainerVisibleContent({
+      containerId: tab.id,
+      navigationMenuItems: workspaceNavigationMenuItems,
+      isItemReadable,
+      isBuiltInSectionAvailable,
+    });
   });
 };
