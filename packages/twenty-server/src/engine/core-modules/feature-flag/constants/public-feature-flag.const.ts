@@ -23,6 +23,15 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
     },
   },
   {
+    key: FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
+    metadata: {
+      label: 'MCP servers',
+      description:
+        'Connect external tools like Linear, Notion or Stripe through MCP servers, from the marketplace or by URL, and use them in AI chat and workflows',
+      icon: 'IconSparkles',
+    },
+  },
+  {
     key: FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT,
     metadata: {
       label: 'New REST Metadata API Format',
