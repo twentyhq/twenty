@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { type ComponentType } from 'react';
 
 import { HomeStepper } from '@/sections/home-stepper';
-import { EASING, REDUCED_MOTION } from '@/tokens';
+import { color, EASING, REDUCED_MOTION } from '@/tokens';
 
 export type ProgramStepperStep = {
   body: MessageDescriptor;
@@ -38,6 +38,20 @@ const Slide = styled.div`
   }
 `;
 
+// The home stepper's halftone backdrop, taken down to a light grey so the
+// program's panels come forward: the stage turns a pale grey and the dashes,
+// inverted and faint, sit just darker than it.
+const LightBackdrop = styled.div`
+  & [data-illustration='stepper-backdrop'] {
+    background-color: ${color('white-hover')};
+  }
+
+  & [data-illustration='stepper-backdrop'] canvas {
+    filter: invert(1);
+    opacity: 0.08;
+  }
+`;
+
 const stepProgress = (
   stepIndex: number,
   activeStepIndex: number,
@@ -56,27 +70,29 @@ type ProgramStepperProps = {
 // The home's stepper, steps and frame, with a partner program's own visuals.
 export function ProgramStepper({ anchorId, steps }: ProgramStepperProps) {
   return (
-    <HomeStepper
-      anchorId={anchorId}
-      renderVisual={({ activeStepIndex, localProgress }) =>
-        steps.map(({ heading, Visual }, stepIndex) => {
-          const isActive = stepIndex === activeStepIndex;
+    <LightBackdrop>
+      <HomeStepper
+        anchorId={anchorId}
+        renderVisual={({ activeStepIndex, localProgress }) =>
+          steps.map(({ heading, Visual }, stepIndex) => {
+            const isActive = stepIndex === activeStepIndex;
 
-          return (
-            <Slide data-active={isActive ? '' : undefined} key={heading.id}>
-              <Visual
-                active={isActive}
-                progress={
-                  localProgress === undefined
-                    ? undefined
-                    : stepProgress(stepIndex, activeStepIndex, localProgress)
-                }
-              />
-            </Slide>
-          );
-        })
-      }
-      steps={steps}
-    />
+            return (
+              <Slide data-active={isActive ? '' : undefined} key={heading.id}>
+                <Visual
+                  active={isActive}
+                  progress={
+                    localProgress === undefined
+                      ? undefined
+                      : stepProgress(stepIndex, activeStepIndex, localProgress)
+                  }
+                />
+              </Slide>
+            );
+          })
+        }
+        steps={steps}
+      />
+    </LightBackdrop>
   );
 }
