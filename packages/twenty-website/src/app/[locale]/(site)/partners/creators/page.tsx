@@ -57,6 +57,7 @@ export default async function CreatorProgramPage({
       <Menu communityStats={communityStats} scheme="muted" />
       <main>
         <ProgramHero
+          backdrop={<CreatorReferralScene />}
           actions={
             <>
               <CreatorApplyButton />
@@ -69,7 +70,8 @@ export default async function CreatorProgramPage({
           }
           body={msg`Create content or run a community. Earn 20% on every team you bring to Twenty, every month for a year.`}
           heading={msg`Become a\n*Twenty creator*`}
-          visual={<CreatorReferralScene />}
+          scheme="muted"
+          underMenu
         />
         <CreatorAudiences />
         <ProgramStepper
