@@ -908,6 +908,7 @@ describe('record export lifecycle (integration)', () => {
           state: 'failed',
           attemptsMade: 1,
           timestamp: Date.now(),
+          scheduledAt: Date.now(),
           progress,
         },
       });

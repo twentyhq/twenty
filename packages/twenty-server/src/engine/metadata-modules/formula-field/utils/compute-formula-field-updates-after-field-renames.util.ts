@@ -1,6 +1,7 @@
 import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   getFieldMetadataFormulaBindings,
+  getFieldMetadataFormulaEvaluation,
   getFieldMetadataFormulaCurrencyCodeExpression,
   getFieldMetadataFormulaExpression,
   isDefined,
@@ -9,6 +10,7 @@ import {
   renameValidationRulePath,
 } from 'twenty-shared/utils';
 
+import { keepStoredFormulaEvaluation } from 'src/engine/metadata-modules/formula-field/utils/keep-stored-formula-evaluation.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
 type UniversalFlatFieldMetadataByUniversalIdentifier = Partial<
@@ -116,6 +118,9 @@ export const computeFormulaFieldUpdatesAfterFieldRenames = ({
               }
             : {}),
           bindings: renamedBindings,
+          ...keepStoredFormulaEvaluation(
+            getFieldMetadataFormulaEvaluation({ settings }),
+          ),
         },
       },
     };

@@ -63,7 +63,7 @@ Available trigger types:
 <Note>
 To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
-- **cron**: Runs your function on a schedule using a CRON expression.
+- **cron**: Runs your function on a schedule using a CRON expression. Set `spreadMs` to keep every workspace from running it at the same minute. See [Spread a cron across workspaces](#spread-a-cron-across-workspaces).
 - **databaseEvent**: Runs when records of an object are created, updated, deleted, destroyed, restored or upserted. You can limit it to updates of some fields and to records that meet a condition. See [Database event payloads](#database-event-trigger-payload).
 - **serverRoute**: Exposes a single registration-scoped HTTP route. A **resolver** function (declared with `serverRouteTriggerSettings`) runs in the owner workspace and either returns a sync `Response` or the target workspace AND logic function to enqueue; on the enqueue path the platform acks with `202` and runs that **target** on the worker queue. See [Server route trigger](#server-route-trigger).
 
@@ -1267,5 +1267,26 @@ Key points:
 You do **not** need to pass these to the clients — they read from `process.env` automatically, and [Whose access a call uses](#whose-access-a-call-uses) covers picking between them. Your application's own permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`); a run acting as a person can never exceed that role, nor theirs.
 
 </Note>
+
+## Spread a cron across workspaces
+
+A cron pattern matches at the same minute in every workspace that installed your app. Add `spreadMs` to shift each workspace's runs by its own offset:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'nightly-sweep',
+  cronTriggerSettings: { pattern: '0 3 * * *', spreadMs: 60 * 60 * 1000 },
+  handler,
+});
+```
+
+Each workspace gets an offset in `[0, spreadMs)`, rounded down to the minute and derived from the workspace and the function's `universalIdentifier`, so it stays the same from one run to the next. The pattern is evaluated that much later in the workspace: with the example above, a workspace with a 37 minute offset runs at 03:37 every day.
+
+- `spreadMs` is an integer between `120000` (2 minutes) and `86400000` (24 hours).
+- The offset shifts when the cron runs, not how often. A cron that runs every minute still runs every minute, and an hourly cron with a 24 hour `spreadMs` still runs once an hour in each workspace.
+- There is no minimum gap between workspaces and no cap on how many run in the same minute: offsets are spread, not coordinated.
+- Changing `spreadMs` changes the offset, so the run around the change can be skipped or happen twice.
+- Without `spreadMs`, the cron runs at the minute its pattern matches.
 
 <PageBanner illustration="card-page-logic-functions" />

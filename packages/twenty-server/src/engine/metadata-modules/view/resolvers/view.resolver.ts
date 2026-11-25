@@ -9,7 +9,7 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import { ViewType } from 'twenty-shared/types';
 import {
   hasObjectMetadataLabelPlaceholder,
   type MetadataLabelPlaceholderValues,
@@ -28,7 +28,6 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
-import { getViewVisibilityFromIsPrivate } from 'src/engine/metadata-modules/view/utils/get-view-visibility-from-is-private.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -100,14 +99,6 @@ export class ViewResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): boolean {
     return view.applicationId === workspace.workspaceCustomApplicationId;
-  }
-
-  @ResolveField(() => ViewVisibility, {
-    deprecationReason: 'Use isPrivate instead',
-  })
-  @UseGuards(NoPermissionGuard)
-  visibility(@Parent() view: Pick<ViewDTO, 'isPrivate'>): ViewVisibility {
-    return getViewVisibilityFromIsPrivate(view.isPrivate);
   }
 
   // A workspace-custom view can point at a standard object, so the label resolves against the object's application

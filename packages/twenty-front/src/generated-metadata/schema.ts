@@ -2562,8 +2562,14 @@ export type EnqueueJobResult = {
 export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
+  limiter?: InputMaybe<EnqueueJobsLimiterInput>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type EnqueueJobsLimiterInput = {
+  durationMs: Scalars['Int']['input'];
+  max: Scalars['Int']['input'];
 };
 
 export type EnqueueJobsResult = {
@@ -2579,6 +2585,7 @@ export type EnqueueJobsResult = {
 export type EnqueuedJob = {
   __typename?: 'EnqueuedJob';
   jobId: Scalars['String']['output'];
+  scheduledAt: Scalars['Float']['output'];
   sizeBytes: Scalars['Int']['output'];
 };
 
@@ -3263,6 +3270,7 @@ export type JobStatus = {
   finishedAt?: Maybe<Scalars['Float']['output']>;
   jobId: Scalars['String']['output'];
   progress?: Maybe<Scalars['Int']['output']>;
+  scheduledAt: Scalars['Float']['output'];
   startedAt?: Maybe<Scalars['Float']['output']>;
   state: JobState;
 };
@@ -8953,8 +8961,6 @@ export type View = {
   viewFilters: Array<ViewFilter>;
   viewGroups: Array<ViewGroup>;
   viewSorts: Array<ViewSort>;
-  /** @deprecated Use isPrivate instead */
-  visibility: ViewVisibility;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -9189,11 +9195,6 @@ export enum ViewType {
   LIST_WIDGET = 'LIST_WIDGET',
   TABLE = 'TABLE',
   TABLE_WIDGET = 'TABLE_WIDGET'
-}
-
-export enum ViewVisibility {
-  UNLISTED = 'UNLISTED',
-  WORKSPACE = 'WORKSPACE'
 }
 
 export type Webhook = {

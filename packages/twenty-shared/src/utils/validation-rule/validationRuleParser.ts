@@ -1,6 +1,7 @@
 import { isString } from '@sniptt/guards';
 import { Parser } from 'expr-eval-fork';
 
+import { FORMULA_AGGREGATE_FUNCTION_NAMES } from '@/constants/FormulaAggregateFunctionNames';
 import { VALIDATION_RULE_FUNCTIONS } from '@/constants/ValidationRuleFunctions';
 import { isDateWithoutTime } from '@/utils/date/isDateWithoutTime';
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
@@ -160,9 +161,17 @@ validationRuleParser.unaryOps.length = (value: unknown) => {
   return isValidationRuleValueDefined(value) ? [...String(value)].length : 0;
 };
 
-validationRuleParser.functions = Object.fromEntries(
-  Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
-    name,
-    evaluate,
-  ]),
-);
+// An aggregate has no value on a single record: the server computes it from the related records
+const evaluateAggregate = () => null;
+
+validationRuleParser.functions = {
+  ...Object.fromEntries(
+    FORMULA_AGGREGATE_FUNCTION_NAMES.map((name) => [name, evaluateAggregate]),
+  ),
+  ...Object.fromEntries(
+    Object.entries(VALIDATION_RULE_FUNCTIONS).map(([name, { evaluate }]) => [
+      name,
+      evaluate,
+    ]),
+  ),
+};
