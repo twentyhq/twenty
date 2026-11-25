@@ -34,7 +34,6 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   teamsTenantId: string;
   accessToken: string;
 }): Promise<string | undefined> => {
-  // Honor a manual link from the activity's object id; the roster payload omits it.
   if (isNonEmptyString(teamsUserAadObjectId)) {
     const linkedWorkspaceMemberId = await findTeamsUserLinkWorkspaceMemberId({
       client,
@@ -69,21 +68,17 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
     email,
   });
 
-  const aadObjectId = [teamsUserAadObjectId, member.aadObjectId].find(
-    isNonEmptyString,
-  );
-
-  if (isDefined(workspaceMemberId) && isNonEmptyString(aadObjectId)) {
+  if (isDefined(workspaceMemberId) && isNonEmptyString(teamsUserAadObjectId)) {
     await createTeamsUserLink({
       client,
       name: member.name,
       teamsTenantId,
-      teamsUserAadObjectId: aadObjectId,
+      teamsUserAadObjectId,
       workspaceMemberId,
       source: TEAMS_USER_LINK_SOURCE.AUTO,
     }).catch((error: unknown) =>
       console.warn(
-        `[teams] could not save the user link for ${aadObjectId}`,
+        `[teams] could not save the user link for ${teamsUserAadObjectId}`,
         error,
       ),
     );
