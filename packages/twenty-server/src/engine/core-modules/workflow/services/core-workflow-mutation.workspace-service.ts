@@ -7,8 +7,8 @@ import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { fromUpdateCoreWorkflowInputToFlatWorkflowToUpdate } from 'src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
@@ -395,13 +395,18 @@ export class CoreWorkflowMutationWorkspaceService {
       return;
     }
 
-    const flatWorkflowToUpdate =
-      fromUpdateCoreWorkflowInputToFlatWorkflowToUpdate({
-        existingFlatWorkflow,
-        name,
-        isPrivate,
-        userWorkspaceId: getUserWorkspaceIdFromAuthContext(authContext),
-      });
+    const flatWorkflowToUpdate: FlatWorkflow = {
+      ...existingFlatWorkflow,
+      ...(isDefined(name) ? { name } : {}),
+      ...(isDefined(isPrivate)
+        ? {
+            isPrivate,
+            createdByUserWorkspaceId:
+              getUserWorkspaceIdFromAuthContext(authContext) ??
+              existingFlatWorkflow.createdByUserWorkspaceId,
+          }
+        : {}),
+    };
 
     try {
       await this.runCoreWorkflowMigration({
