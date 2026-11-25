@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isAccessGroupsEnabled } from 'src/engine/permissions/internal/access-group/utils/is-access-groups-enabled.util';
 import { findRelatedRecordPathsFeedingAccessGroups } from 'src/engine/permissions/internal/access-group/utils/find-related-record-paths-feeding-access-groups.util';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { buildPrivateRecordStateSQLCondition } from 'src/engine/permissions/internal/private-record/utils/build-private-record-state-sql-condition.util';
@@ -43,11 +42,7 @@ export const buildRelatedRecordPathJoinSQLCondition = ({
   ) => boolean;
   isUncorrelated?: boolean;
 }): SQLCondition | boolean => {
-  const resolvedRelatedRecordPaths = isAccessGroupsEnabled({
-    featureFlagsMap: metadataMaps.featureFlagsMap,
-  })
-    ? resolveRelatedRecordPaths(metadataMaps)
-    : [];
+  const resolvedRelatedRecordPaths = resolveRelatedRecordPaths(metadataMaps);
 
   let tableAliasCount = 0;
   const buildNextTableAlias = () => `related_record_path_${tableAliasCount++}`;

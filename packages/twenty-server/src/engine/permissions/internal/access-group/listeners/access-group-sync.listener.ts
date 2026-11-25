@@ -23,7 +23,6 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
 
 const FLAGS_AFFECTING_ACCESS_GROUPS = [
-  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
   FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
 ];
@@ -45,7 +44,7 @@ export class AccessGroupSyncListener {
   async handleMetadataEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+    await this.accessGroupSyncSchedulerService.scheduleSync({
       workspaceId,
     });
   }
@@ -54,7 +53,7 @@ export class AccessGroupSyncListener {
   async handleRelatedRecordPathEvent({
     workspaceId,
   }: Pick<MetadataEventBatch, 'workspaceId'>): Promise<void> {
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+    await this.accessGroupSyncSchedulerService.scheduleSync({
       workspaceId,
       isRelatedRecordPathChanged: true,
     });
@@ -91,7 +90,7 @@ export class AccessGroupSyncListener {
       isDefined(workspaceId) &&
       events.some(({ key }) => FLAGS_AFFECTING_ACCESS_GROUPS.includes(key))
     ) {
-      await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+      await this.accessGroupSyncSchedulerService.scheduleSync({
         workspaceId,
         isRelatedRecordPathChanged: true,
       });
@@ -108,10 +107,6 @@ export class AccessGroupSyncListener {
     >,
     'workspaceId' | 'events'
   >): Promise<void> {
-    if (!(await this.accessGroupSyncSchedulerService.isEnabled(workspaceId))) {
-      return;
-    }
-
     const { rolesPermissions, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
@@ -138,9 +133,7 @@ export class AccessGroupSyncListener {
   async handleWorkspaceMemberEvent({
     workspaceId,
   }: Pick<WorkspaceEventBatch<never>, 'workspaceId'>): Promise<void> {
-    if (await this.accessGroupSyncSchedulerService.isEnabled(workspaceId)) {
-      await this.refreshMembersAndScheduleSync(workspaceId);
-    }
+    await this.refreshMembersAndScheduleSync(workspaceId);
   }
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
@@ -213,14 +206,13 @@ export class AccessGroupSyncListener {
     });
   }
 
-  // RLS reads these values whether or not access groups are enabled
   private async refreshWorkspaceMemberRelationValuesAndScheduleSync(
     workspaceId: string,
   ): Promise<void> {
     await this.workspaceCacheService.flush(workspaceId, [
       'rlsWorkspaceMemberRelationValueMaps',
     ]);
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+    await this.accessGroupSyncSchedulerService.scheduleSync({
       workspaceId,
     });
   }
@@ -232,7 +224,7 @@ export class AccessGroupSyncListener {
       'flatWorkspaceMemberMaps',
     ]);
 
-    await this.accessGroupSyncSchedulerService.scheduleSyncIfEnabled({
+    await this.accessGroupSyncSchedulerService.scheduleSync({
       workspaceId,
     });
   }

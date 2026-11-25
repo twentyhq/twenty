@@ -56,10 +56,7 @@ const PROJECT_NAME = 'pathAccessProject';
 const TASK_NAME = 'pathAccessTask';
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const SCHEMA = `"${getWorkspaceSchemaName(workspaceId)}"`;
-const PATH_FEATURE_FLAGS = [
-  FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-  FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-];
+const PATH_FEATURE_FLAGS = [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED];
 
 describe('Record access through related record paths', () => {
   let projectObjectMetadataId: string;
