@@ -5,7 +5,7 @@ import { buildOutgoingImageMessageOrThrow } from 'src/logic-functions/data/build
 const IMAGE = {
   filename: 'photo.jpg',
   contentType: 'image/jpeg',
-  size: 2 * 1024 * 1024,
+  size: 512 * 1024,
   downloadUrl: 'https://acme.twenty.com/files/photo.jpg?token=abc',
 };
 
@@ -37,10 +37,10 @@ describe('buildOutgoingImageMessageOrThrow', () => {
     ).toThrow('JPEG or PNG images only');
   });
 
-  it('refuses an image larger than 10 MB', () => {
+  it('refuses an image larger than the 1 MB preview limit', () => {
     expect(() =>
-      buildOutgoingImageMessageOrThrow({ ...IMAGE, size: 11 * 1024 * 1024 }),
-    ).toThrow('up to 10 MB');
+      buildOutgoingImageMessageOrThrow({ ...IMAGE, size: 1024 * 1024 + 1 }),
+    ).toThrow('up to 1 MB');
   });
 
   it('refuses an image LINE cannot fetch over HTTPS', () => {
