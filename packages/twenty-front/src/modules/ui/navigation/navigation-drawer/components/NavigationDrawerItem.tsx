@@ -13,12 +13,11 @@ import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/ho
 import { useShortcutAccessibleKeyLabels } from '@/ui/navigation/hooks/useShortcutAccessibleKeyLabels';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useMouseDownNavigation } from '@/ui/navigation/hooks/useMouseDownNavigation';
-import { NavigationDrawerItemTabSwitchOpenEffect } from '@/ui/navigation/navigation-drawer/effect-components/NavigationDrawerItemTabSwitchOpenEffect';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { Badge } from 'twenty-ui/primitives/data-display';
@@ -246,7 +245,6 @@ export const NavigationDrawerItem = ({
   isSelectedInEditMode = false,
   variant = 'default',
   isUnread = false,
-  isTabSwitchTarget = false,
 }: NavigationDrawerItemProps) => {
   const { t } = useLingui();
   const theme = useTheme();
@@ -283,15 +281,6 @@ export const NavigationDrawerItem = ({
 
   const isExternalLink = isDefined(to) && isAbsoluteUrl(to);
   const isInternalLink = isDefined(to) && !isExternalLink;
-  const navigate = useNavigate();
-
-  const openAsTabSwitchTarget = () => {
-    if (isDefined(onClick)) {
-      onClick();
-    } else if (isDefined(to)) {
-      navigate(to);
-    }
-  };
 
   const handleExternalLinkClick = () => {
     handleMobileNavigation();
@@ -322,11 +311,6 @@ export const NavigationDrawerItem = ({
 
   return (
     <StyledNavigationDrawerItemContainer>
-      {isTabSwitchTarget && !isExternalLink && (
-        <NavigationDrawerItemTabSwitchOpenEffect
-          onOpen={openAsTabSwitchTarget}
-        />
-      )}
       <Tooltip
         content={label}
         side="right"

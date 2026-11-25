@@ -3,6 +3,7 @@ import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpand
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
@@ -11,7 +12,6 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { shouldOpenFirstTabSwitchTargetState } from '@/ui/navigation/states/shouldOpenFirstTabSwitchTargetState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { act, renderHook } from '@testing-library/react';
@@ -120,7 +120,9 @@ describe('useSwitchNavigationDrawerTab', () => {
 
     act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
 
-    expect(store.get(shouldOpenFirstTabSwitchTargetState.atom)).toBe(true);
+    expect(store.get(navigationMenuTabIdToOpenFirstItemState.atom)).toBe(
+      'chats-tab-id',
+    );
     expect(store.get(currentNavigationMenuTabIdState.atom)).toBe(
       'chats-tab-id',
     );
@@ -178,7 +180,9 @@ describe('useSwitchNavigationDrawerTab', () => {
 
       act(() => result.current.switchToNavigationMenuTab(tabId));
 
-      expect(store.get(shouldOpenFirstTabSwitchTargetState.atom)).toBe(false);
+      expect(
+        store.get(navigationMenuTabIdToOpenFirstItemState.atom),
+      ).toBeNull();
       expect(result.current.location.pathname).toBe('/objects/people');
     },
   );

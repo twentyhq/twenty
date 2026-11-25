@@ -9,6 +9,7 @@ import { useSwitchToNewAiChatInInboxChannel } from '@/inbox/hooks/useSwitchToNew
 import { getExpandedAiChatReturnLocation } from '@/ai-chat/utils/getExpandedAiChatReturnLocation';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
+import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
@@ -23,7 +24,6 @@ import {
   NAVIGATION_DRAWER_TABS,
 } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { shouldOpenFirstTabSwitchTargetState } from '@/ui/navigation/states/shouldOpenFirstTabSwitchTargetState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -119,7 +119,10 @@ export const useSwitchNavigationDrawerTab = () => {
       return;
     }
 
-    store.set(shouldOpenFirstTabSwitchTargetState.atom, shouldOpenFirstItem);
+    store.set(
+      navigationMenuTabIdToOpenFirstItemState.atom,
+      shouldOpenFirstItem ? tabId : null,
+    );
 
     if (activeNavigationDrawerTab !== NAVIGATION_DRAWER_TABS.NAVIGATION_MENU) {
       switchToNavigationMenu();
