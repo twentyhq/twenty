@@ -26,9 +26,9 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { syncAccessGroupsAndRecomputeRecords } from 'test/integration/permissions/utils/sync-access-groups-and-recompute-records.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
 import { type PrincipalPermissionsReadService } from 'src/engine/permissions/principal-permissions-read.service';
@@ -476,7 +476,7 @@ describe('Records shared beyond the role that can access their object', () => {
         ],
       },
     });
-    await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+    await waitForAllJobsToFinish();
 
     try {
       expect((await findIdsAsJony()).ids).toEqual([OTHER_RECORD_ID]);
@@ -528,7 +528,7 @@ describe('Records shared beyond the role that can access their object', () => {
         ],
       },
     });
-    await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+    await waitForAllJobsToFinish();
 
     try {
       await setShare({

@@ -11,7 +11,7 @@ import {
   setupAccountOwnerRlsRole,
   upsertAccountOwnerRlsPredicate,
 } from 'test/integration/graphql/utils/setup-account-owner-rls-role.util';
-import { syncAccessGroupsAndRecomputeRecords } from 'test/integration/permissions/utils/sync-access-groups-and-recompute-records.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -90,9 +90,7 @@ describe('row-level permission predicates that compile to nothing', () => {
       predicateId: PREDICATE_ID,
       value: { selectedRecordIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY] },
     });
-    await syncAccessGroupsAndRecomputeRecords({
-      objectMetadataId: rlsRole.companyObjectMetadataId,
-    });
+    await waitForAllJobsToFinish();
 
     expect(await findCompanyIdsAsRestrictedRole()).toEqual([OWNED_COMPANY_ID]);
   });

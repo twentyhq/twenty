@@ -12,9 +12,9 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
-import { syncAccessGroupsAndRecomputeRecords } from 'test/integration/permissions/utils/sync-access-groups-and-recompute-records.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -344,9 +344,7 @@ describe('formula fields should not reveal values the reader cannot read (integr
       fieldName: 'avatarUrl',
       rowLevelPermissionPredicateGroupId,
     });
-    await syncAccessGroupsAndRecomputeRecords({
-      objectMetadataId: personObjectMetadataId,
-    });
+    await waitForAllJobsToFinish();
 
     const people = await listPeople(APPLE_JONY_MEMBER_ACCESS_TOKEN);
 

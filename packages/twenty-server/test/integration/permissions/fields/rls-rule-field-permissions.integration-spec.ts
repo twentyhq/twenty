@@ -18,9 +18,9 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { removeRecordShareOperationFactory } from 'test/integration/permissions/utils/remove-record-share-operation-factory.util';
 import { setRecordShareOperationFactory } from 'test/integration/permissions/utils/set-record-share-operation-factory.util';
-import { syncAccessGroupsAndRecomputeRecords } from 'test/integration/permissions/utils/sync-access-groups-and-recompute-records.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
   FeatureFlagKey,
   RecordShareAccessLevel,
@@ -231,7 +231,7 @@ describe('field permissions on an RLS rule (integration)', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
     });
-    await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+    await waitForAllJobsToFinish();
   });
 
   afterAll(async () => {
@@ -429,7 +429,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       });
 
     await setNameReadability(false);
-    await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+    await waitForAllJobsToFinish();
 
     try {
       const response = await makeGraphqlApiRequest(
@@ -452,7 +452,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       ]);
     } finally {
       await setNameReadability(null);
-      await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+      await waitForAllJobsToFinish();
     }
   });
 
@@ -554,7 +554,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       ]);
 
       await setRelationsReadability(false);
-      await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+      await waitForAllJobsToFinish();
 
       expect(await listParisRelationsAsMember()).toEqual([
         { companyId: null, companyRecordId: null, taskTargetIds: [] },
@@ -569,7 +569,7 @@ describe('field permissions on an RLS rule (integration)', () => {
       ).toEqual([]);
     } finally {
       await setRelationsReadability(null);
-      await syncAccessGroupsAndRecomputeRecords({ objectMetadataId });
+      await waitForAllJobsToFinish();
       await updatePerson({
         recordId: parisPersonId,
         input: { companyId: originalCompanyId },

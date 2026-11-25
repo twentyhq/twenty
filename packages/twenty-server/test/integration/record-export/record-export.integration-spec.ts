@@ -42,8 +42,8 @@ import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delet
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
-import { syncAccessGroupsAndRecomputeRecords } from 'test/integration/permissions/utils/sync-access-groups-and-recompute-records.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FileFolder, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -439,9 +439,7 @@ describe('record export lifecycle (integration)', () => {
       value: companies[0].name,
       ruleGrants: { canReadRecords: true },
     });
-    await syncAccessGroupsAndRecomputeRecords({
-      objectMetadataId: input.objectMetadataId,
-    });
+    await waitForAllJobsToFinish();
     const ready = await exportToCompletion(input, requester.token);
     expect(await authorization(ready)).toMatchObject({
       apiKeyId: requester.id,
