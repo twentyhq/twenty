@@ -302,6 +302,38 @@ describe('MainNavigationDrawerTabSwitcher', () => {
     expect(mockSwitchNavigationDrawerTab).not.toHaveBeenCalled();
   });
 
+  it('opens a sidebar tab and its menu on right-click in edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher({ isLayoutCustomizationModeEnabled: true });
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: screen.getByLabelText('Sales'),
+    });
+
+    expect(mockSwitchToNavigationMenuTab).toHaveBeenCalledWith('sales-tab-id');
+    expect(await screen.findByText('Delete tab')).toBeInTheDocument();
+  });
+
+  it('does not open the sidebar tab menu on right-click outside edit mode', async () => {
+    jest
+      .mocked(useWorkspaceNavigationMenuContainers)
+      .mockReturnValue([salesTab]);
+
+    renderTabSwitcher();
+
+    await userEvent.pointer({
+      keys: '[MouseRight]',
+      target: screen.getByRole('button', { name: 'Sales' }),
+    });
+
+    expect(mockSwitchToNavigationMenuTab).not.toHaveBeenCalled();
+    expect(screen.queryByText('Delete tab')).not.toBeInTheDocument();
+  });
+
   it('marks the open sidebar tab as current instead of Home', () => {
     jest
       .mocked(useWorkspaceNavigationMenuContainers)
