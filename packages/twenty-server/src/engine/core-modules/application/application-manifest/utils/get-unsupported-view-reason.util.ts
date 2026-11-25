@@ -10,6 +10,7 @@ const VIEW_FIELD_REFERENCE_PROPERTIES = [
   'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
   'calendarFieldMetadataUniversalIdentifier',
   'calendarEndFieldMetadataUniversalIdentifier',
+  'listDateFieldMetadataUniversalIdentifier',
 ] as const satisfies readonly (keyof FlatView)[];
 
 export const getUnsupportedViewReason = ({

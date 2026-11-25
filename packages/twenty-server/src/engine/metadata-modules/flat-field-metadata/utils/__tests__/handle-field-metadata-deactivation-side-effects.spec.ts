@@ -63,6 +63,44 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
     ]);
   });
 
+  it('clears the list date field without deleting the view', () => {
+    const view = {
+      ...getFlatView('list-view-id'),
+      listDateFieldMetadataId: 'list-date-field-id',
+      listDateFieldMetadataUniversalIdentifier:
+        'list-date-field-universal-identifier',
+    };
+    const fromFlatFieldMetadata = getFlatFieldMetadataMock({
+      id: 'list-date-field-id',
+      objectMetadataId: 'object-id',
+      universalIdentifier: 'list-date-field-universal-identifier',
+      type: FieldMetadataType.DATE_TIME,
+    });
+
+    const result = handleFieldMetadataDeactivationSideEffects({
+      fromFlatFieldMetadata,
+      toFlatFieldMetadata: {
+        ...fromFlatFieldMetadata,
+        isActive: false,
+      },
+      flatViewMaps: addFlatEntityToFlatEntityMapsOrThrow({
+        flatEntity: view,
+        flatEntityMaps: createEmptyFlatEntityMaps(),
+      }),
+      ...getEmptyRelatedMaps(),
+    });
+
+    expect(result.flatViewsToDelete).toEqual([]);
+    expect(result.flatViewsToUpdate).toEqual([
+      expect.objectContaining({
+        id: view.id,
+        listDateFieldMetadataId: null,
+        listDateFieldMetadataUniversalIdentifier: null,
+        calendarEndFieldMetadataId: 'calendar-end-field-id',
+      }),
+    ]);
+  });
+
   it('deletes the view when the deactivated field is both its start and end field', () => {
     const view = getFlatView('calendar-view-id');
     const fromFlatFieldMetadata = getFlatFieldMetadataMock({

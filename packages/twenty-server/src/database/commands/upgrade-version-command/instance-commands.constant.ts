@@ -343,6 +343,7 @@ import { AddUserWorkspaceDefaultAvatarFileIdSlowInstanceCommand } from 'src/data
 import { DropLegacyWorkflowVersionIdColumnsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795538016002-drop-legacy-workflow-version-id-columns';
 import { AddStripeCustomerEmailToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795601185766-add-stripe-customer-email-to-billing-customer';
 import { RelaxViewVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795618787744-relax-view-visibility';
+import { AddListDateFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-instance-command-fast-1795621548315-add-list-date-field-metadata-id-to-view';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -688,4 +689,5 @@ export const INSTANCE_COMMANDS = [
   DropLegacyWorkflowVersionIdColumnsFastInstanceCommand,
   AddStripeCustomerEmailToBillingCustomerFastInstanceCommand,
   RelaxViewVisibilityFastInstanceCommand,
+  AddListDateFieldMetadataIdToViewFastInstanceCommand,
 ];

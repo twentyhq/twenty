@@ -102,6 +102,9 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   calendarEndFieldMetadataId?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  listDateFieldMetadataId?: string | null;
+
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 

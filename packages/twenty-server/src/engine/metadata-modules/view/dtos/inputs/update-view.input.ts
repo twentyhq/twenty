@@ -100,6 +100,11 @@ export class UpdateViewInput {
   calendarEndFieldMetadataId?: string | null;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  listDateFieldMetadataId?: string | null;
+
+  @IsOptional()
   @IsBoolean()
   @Field(() => Boolean, { nullable: true })
   isPrivate?: boolean;

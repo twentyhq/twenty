@@ -38,6 +38,7 @@ const BASE_FLAT_VIEW: FlatView = {
   calendarLayout: null,
   calendarFieldMetadataId: null,
   calendarEndFieldMetadataId: null,
+  listDateFieldMetadataId: null,
   mainGroupByFieldMetadataId: null,
   shouldHideEmptyGroups: false,
   shouldDisplayGroupsAsTabs: false,
@@ -71,6 +72,7 @@ const BASE_FLAT_VIEW: FlatView = {
   kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
   calendarFieldMetadataUniversalIdentifier: null,
   calendarEndFieldMetadataUniversalIdentifier: null,
+  listDateFieldMetadataUniversalIdentifier: null,
   mainGroupByFieldMetadataUniversalIdentifier: null,
   universalOverrides: null,
 };
