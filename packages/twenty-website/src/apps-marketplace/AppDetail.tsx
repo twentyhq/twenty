@@ -262,17 +262,38 @@ const leadSentence = (text: string) =>
 
 const firstSentence = (text: string) => leadSentence(text).toLowerCase();
 
-// The tagline already sits under the name: a README opening on the same
-// sentence would say it twice.
+// The tagline already sits under the name. A README that opens on the same
+// sentence, or on its own one-line pitch in bold before its first heading
+// ("**Your Granola meeting summaries…, right inside your CRM.**"), would say
+// it twice: that opening goes.
+const isBoldPitch = (block: string) => /^\*\*[^*\n]+\*\*$/.test(block.trim());
+
+// Markdown reduced to its words: links to their text, no emphasis or code
+// marks, lower case.
+const plainText = (markdown: string) =>
+  markdown
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`]/g, '')
+    .trim()
+    .toLowerCase();
+
 const dropRepeatedLede = (markdown: string, tagline: string) => {
   const body = stripLeadingMarkdownTitle(markdown).trimStart();
   const [lede, ...rest] = body.split(/\n\s*\n/);
 
-  return isDefined(lede) &&
-    rest.length > 0 &&
-    firstSentence(lede.replace(/\*/g, '')) === firstSentence(tagline)
-    ? rest.join('\n\n')
-    : markdown;
+  if (!isDefined(lede) || rest.length === 0) {
+    return markdown;
+  }
+
+  // the opening starts with the tagline's first sentence, links and
+  // emphasis aside ("Structured web search powered by [Exa](…), …")
+  const repeatsTagline = plainText(lede).startsWith(
+    plainText(firstSentence(tagline)).replace(/[.!?]$/, ''),
+  );
+  const isPitchBeforeHeading =
+    isBoldPitch(lede) && rest[0]?.trimStart().startsWith('#') === true;
+
+  return repeatsTagline || isPitchBeforeHeading ? rest.join('\n\n') : markdown;
 };
 
 const counted = (count: number, one: string, many: string) =>
