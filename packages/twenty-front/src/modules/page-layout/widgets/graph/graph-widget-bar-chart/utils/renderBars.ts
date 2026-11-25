@@ -28,9 +28,16 @@ export const renderBars = ({
 
     const isNegative = bar.value < 0;
 
+    const segmentSize = isVertical ? bar.height : bar.width;
     const segmentGap = bar.shouldRoundFreeEnd
       ? 0
-      : BAR_CHART_CONSTANTS.STACKED_SEGMENT_GAP;
+      : Math.min(
+          BAR_CHART_CONSTANTS.STACKED_SEGMENT_GAP,
+          Math.max(
+            0,
+            segmentSize - BAR_CHART_CONSTANTS.MINIMUM_VISIBLE_SEGMENT_SIZE,
+          ),
+        );
 
     if (isVertical) {
       const roundTop = bar.shouldRoundFreeEnd && !isNegative;
