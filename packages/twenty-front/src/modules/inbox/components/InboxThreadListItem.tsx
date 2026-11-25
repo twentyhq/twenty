@@ -5,6 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { InboxThreadActionsDropdown } from '@/inbox/components/InboxThreadActionsDropdown';
 import { AiChatThreadActivityTime } from '@/ai-chat/threads/components/AiChatThreadActivityTime';
@@ -91,8 +92,12 @@ export const InboxThreadListItem = ({
   );
   const { hasContent: hasSubtitleContent } =
     useAiChatThreadSubtitleContent(thread);
+  const isMobile = useIsMobile();
   const isCompact = variant === 'compact';
+  // Triage buttons crowd out the title on phones; the More menu offers the same actions.
+  const shouldShowTriageActions = !isCompact && !isMobile;
   const shouldShowMore =
+    !shouldShowTriageActions ||
     isDefined(onDetach) ||
     isDefined(thread.deletedAt) ||
     !isDefined(triageStatus) ||
@@ -175,7 +180,7 @@ export const InboxThreadListItem = ({
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
-          shouldShowTriageActions={!isCompact}
+          shouldShowTriageActions={shouldShowTriageActions}
           shouldShowMore={shouldShowMore}
         />
       }
