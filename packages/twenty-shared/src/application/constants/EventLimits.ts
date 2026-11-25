@@ -1,0 +1,4 @@
+export const EVENT_LIMITS = {
+  MAX_PROPERTIES_PER_EVENT: 50,
+  MAX_PAYLOAD_BYTES: 32_768,
+} as const;

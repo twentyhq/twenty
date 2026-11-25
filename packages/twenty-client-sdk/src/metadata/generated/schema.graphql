@@ -404,6 +404,7 @@ enum AllMetadataName {
   applicationVariable
   commandMenuItem
   connectionProvider
+  eventMetadata
   fieldMetadata
   fieldMetadataOption
   fieldPermission
@@ -2327,6 +2328,16 @@ type EmailsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
+input EmitAppEventInput {
+  event: String!
+  properties: JSON
+}
+
+type EmitAppEventOutput {
+  id: UUID!
+  occurredAt: String!
+}
+
 enum EngineComponentKey {
   ACTIVATE_WORKFLOW
   ADD_NODE_WORKFLOW
@@ -3735,6 +3746,7 @@ type Mutation {
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
   editSSOIdentityProvider(input: EditSsoInput!): EditSso!
   emailPasswordResetLink(captchaToken: String, email: String!, workspaceId: UUID): EmailPasswordResetLink!
+  emitAppEvent(input: EmitAppEventInput!): EmitAppEventOutput!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
