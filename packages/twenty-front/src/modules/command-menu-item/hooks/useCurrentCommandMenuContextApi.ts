@@ -2,7 +2,7 @@ import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatTh
 import { inboxSelectedChannelViewSelector } from '@/inbox/states/selectors/inboxSelectedChannelViewSelector';
 import { inboxThreadStatusByThreadIdFamilySelector } from '@/inbox/states/selectors/inboxThreadStatusByThreadIdFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useConditionalAvailabilityGlobalContext } from '@/conditional-availability/hooks/useConditionalAvailabilityGlobalContext';
+import { useConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/hooks/useConditionalAvailabilityCurrentUserContext';
 import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
 import { getCommandMenuContextApiObjectPermissions } from '@/command-menu-item/utils/getCommandMenuContextApiObjectPermissions';
@@ -200,7 +200,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const isSelectAll = contextStoreTargetedRecordsRule.mode === 'exclusion';
 
   const { featureFlags, permissionFlags } =
-    useConditionalAvailabilityGlobalContext();
+    useConditionalAvailabilityCurrentUserContext();
 
   const currentUser = useAtomStateValue(currentUserState);
   const canImpersonate = currentUser?.canImpersonate === true;

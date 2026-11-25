@@ -1,6 +1,6 @@
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useConditionalAvailabilityGlobalContext } from '@/conditional-availability/hooks/useConditionalAvailabilityGlobalContext';
+import { useConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/hooks/useConditionalAvailabilityCurrentUserContext';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
@@ -31,7 +31,7 @@ export const StandalonePageCommandMenu = () => {
     useIsLayoutCustomizationAllowedOnCurrentPage();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const { featureFlags, permissionFlags } =
-    useConditionalAvailabilityGlobalContext();
+    useConditionalAvailabilityCurrentUserContext();
   const currentUser = useAtomStateValue(currentUserState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
   const isLayoutCustomizationModeEnabled = useAtomStateValue(

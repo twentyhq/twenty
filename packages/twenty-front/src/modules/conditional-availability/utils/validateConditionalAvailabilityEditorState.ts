@@ -1,8 +1,8 @@
 import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
 import { type ConditionalAvailabilityEditorStateValidation } from '@/conditional-availability/types/ConditionalAvailabilityEditorStateValidation';
-import { convertConditionalAvailabilityRowOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowOrGroupToNode';
-import { isConditionalAvailabilityRowOrGroupValid } from '@/conditional-availability/utils/isConditionalAvailabilityRowOrGroupValid';
-import { removeConditionalAvailabilityRowsOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityRowsOrGroups';
+import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
+import { isConditionalAvailabilityFilterOrGroupValid } from '@/conditional-availability/utils/isConditionalAvailabilityFilterOrGroupValid';
+import { removeConditionalAvailabilityFiltersOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityFiltersOrGroups';
 import {
   type ConditionalAvailabilityMetadataName,
   validateConditionalAvailabilityNode,
@@ -22,22 +22,27 @@ export const validateConditionalAvailabilityEditorState = ({
     case 'unsupportedRule':
       return { status: 'invalid', reason: 'unsupportedRule' };
     case 'customRule': {
-      const rowTree = removeConditionalAvailabilityRowsOrGroups({
-        rowGroup: editorState.rowTree,
-        shouldRemove: (rowOrGroup) =>
-          rowOrGroup.type === 'row' && !isNonEmptyArray(rowOrGroup.values),
+      const filterGroup = removeConditionalAvailabilityFiltersOrGroups({
+        filterGroup: editorState.filterGroup,
+        shouldRemove: (filterOrGroup) =>
+          filterOrGroup.type === 'filter' &&
+          !isNonEmptyArray(filterOrGroup.values),
       });
 
-      if (!isNonEmptyArray(rowTree.children)) {
+      if (!isNonEmptyArray(filterGroup.children)) {
         return { status: 'valid', node: null };
       }
 
-      if (!isConditionalAvailabilityRowOrGroupValid({ rowOrGroup: rowTree })) {
-        return { status: 'invalid', reason: 'invalidRows' };
+      if (
+        !isConditionalAvailabilityFilterOrGroupValid({
+          filterOrGroup: filterGroup,
+        })
+      ) {
+        return { status: 'invalid', reason: 'invalidFilters' };
       }
 
-      const node = convertConditionalAvailabilityRowOrGroupToNode({
-        rowOrGroup: rowTree,
+      const node = convertConditionalAvailabilityFilterOrGroupToNode({
+        filterOrGroup: filterGroup,
       });
 
       return validateConditionalAvailabilityNode({ node, metadataName }).isValid

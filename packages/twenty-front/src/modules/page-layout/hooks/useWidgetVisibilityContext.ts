@@ -1,4 +1,4 @@
-import { useConditionalAvailabilityGlobalContext } from '@/conditional-availability/hooks/useConditionalAvailabilityGlobalContext';
+import { useConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/hooks/useConditionalAvailabilityCurrentUserContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
@@ -13,7 +13,7 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
   const isMobile = useIsMobile();
   const { targetRecordIdentifier } = useLayoutRenderingContext();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
-  const globalContext = useConditionalAvailabilityGlobalContext();
+  const currentUserContext = useConditionalAvailabilityCurrentUserContext();
 
   const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
@@ -23,11 +23,11 @@ export const useWidgetVisibilityContext = (): WidgetVisibilityContext => {
   return useMemo(
     () =>
       buildWidgetVisibilityContext({
-        globalContext,
+        currentUserContext,
         isMobile,
         isInSidePanel,
         targetRecord: isDefined(recordStore) ? recordStore : undefined,
       }),
-    [globalContext, isMobile, isInSidePanel, recordStore],
+    [currentUserContext, isMobile, isInSidePanel, recordStore],
   );
 };

@@ -1,6 +1,6 @@
-import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
 
 export type ConditionalAvailabilityEditorState =
   | { mode: 'everyone' }
-  | { mode: 'customRule'; rowTree: ConditionalAvailabilityRowGroup }
+  | { mode: 'customRule'; filterGroup: ConditionalAvailabilityFilterGroup }
   | { mode: 'unsupportedRule' };

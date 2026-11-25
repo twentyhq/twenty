@@ -1,24 +1,24 @@
-import { type ConditionalAvailabilitySubject } from '@/conditional-availability/types/ConditionalAvailabilitySubject';
+import { type ConditionalAvailabilityFilterVariable } from '@/conditional-availability/types/ConditionalAvailabilityFilterVariable';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CONDITIONAL_AVAILABILITY_DEVICES } from 'twenty-shared/conditional-availability';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-export const isConditionalAvailabilityRowValueValid = ({
-  subject,
+export const isConditionalAvailabilityFilterValueValid = ({
+  variable,
   value,
 }: {
-  subject: ConditionalAvailabilitySubject;
+  variable: ConditionalAvailabilityFilterVariable;
   value: string;
 }): boolean => {
-  switch (subject) {
-    case 'role':
-    case 'workspaceMember':
+  switch (variable) {
+    case 'currentRole':
+    case 'currentWorkspaceMember':
       return isNonEmptyString(value);
     case 'device':
       return CONDITIONAL_AVAILABILITY_DEVICES.some(
         (device) => device === value,
       );
     default:
-      return assertUnreachable(subject);
+      return assertUnreachable(variable);
   }
 };

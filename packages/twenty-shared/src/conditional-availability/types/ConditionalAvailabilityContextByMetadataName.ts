@@ -1,8 +1,8 @@
+import { type ConditionalAvailabilityCurrentUserContext } from '@/conditional-availability/types/ConditionalAvailabilityCurrentUserContext';
 import { type ConditionalAvailabilityDevice } from '@/conditional-availability/types/ConditionalAvailabilityDevice';
-import { type ConditionalAvailabilityGlobalContext } from '@/conditional-availability/types/ConditionalAvailabilityGlobalContext';
 
 export type ConditionalAvailabilityContextByMetadataName = {
-  pageLayoutWidget: ConditionalAvailabilityGlobalContext & {
+  pageLayoutWidget: ConditionalAvailabilityCurrentUserContext & {
     device: ConditionalAvailabilityDevice;
     selectedRecords: Record<string, unknown>[];
   };

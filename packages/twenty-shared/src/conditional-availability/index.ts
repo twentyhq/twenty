@@ -17,8 +17,8 @@ export { CONDITIONAL_AVAILABILITY_VARIABLE_PATH_PATTERN } from './constants/Cond
 export { CONDITIONAL_AVAILABILITY_VARIABLES } from './constants/ConditionalAvailabilityVariables';
 export type { ConditionalAvailabilityComparisonOperator } from './types/ConditionalAvailabilityComparisonOperator';
 export type { ConditionalAvailabilityContextByMetadataName } from './types/ConditionalAvailabilityContextByMetadataName';
+export type { ConditionalAvailabilityCurrentUserContext } from './types/ConditionalAvailabilityCurrentUserContext';
 export type { ConditionalAvailabilityDevice } from './types/ConditionalAvailabilityDevice';
-export type { ConditionalAvailabilityGlobalContext } from './types/ConditionalAvailabilityGlobalContext';
 export type { ConditionalAvailabilityLogicalOperator } from './types/ConditionalAvailabilityLogicalOperator';
 export type { ConditionalAvailabilityMetadataName } from './types/ConditionalAvailabilityMetadataName';
 export type { ConditionalAvailabilityNode } from './types/ConditionalAvailabilityNode';

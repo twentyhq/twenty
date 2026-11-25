@@ -1,25 +1,25 @@
-import { type ConditionalAvailabilityRow } from '@/conditional-availability/types/ConditionalAvailabilityRow';
-import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
-import { removeConditionalAvailabilityRowsOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityRowsOrGroups';
-import { updateConditionalAvailabilityRow } from '@/conditional-availability/utils/updateConditionalAvailabilityRow';
-import { updateConditionalAvailabilityRowGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityRowGroup';
+import { type ConditionalAvailabilityFilter } from '@/conditional-availability/types/ConditionalAvailabilityFilter';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
+import { removeConditionalAvailabilityFiltersOrGroups } from '@/conditional-availability/utils/removeConditionalAvailabilityFiltersOrGroups';
+import { updateConditionalAvailabilityFilter } from '@/conditional-availability/utils/updateConditionalAvailabilityFilter';
+import { updateConditionalAvailabilityFilterGroup } from '@/conditional-availability/utils/updateConditionalAvailabilityFilterGroup';
 import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
 import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 
 const ADMIN_ROLE_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 
-const ROLE_ROW: ConditionalAvailabilityRow = {
-  type: 'row',
-  id: 'role-row',
-  subject: 'role',
+const ROLE_FILTER: ConditionalAvailabilityFilter = {
+  type: 'filter',
+  id: 'role-filter',
+  variable: 'currentRole',
   operator: 'isAnyOf',
   values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER],
 };
 
-const DEVICE_ROW_WITHOUT_VALUE: ConditionalAvailabilityRow = {
-  type: 'row',
-  id: 'device-row',
-  subject: 'device',
+const DEVICE_FILTER_WITHOUT_VALUE: ConditionalAvailabilityFilter = {
+  type: 'filter',
+  id: 'device-filter',
+  variable: 'device',
   operator: 'is',
   values: [],
 };
@@ -31,24 +31,24 @@ const ROLE_NODE = {
   right: { type: 'LITERAL', value: ADMIN_ROLE_UNIVERSAL_IDENTIFIER },
 };
 
-const ROW_TREE: ConditionalAvailabilityRowGroup = {
-  type: 'group',
+const FILTER_GROUP: ConditionalAvailabilityFilterGroup = {
+  type: 'filterGroup',
   id: 'root',
   logicalOperator: 'AND',
   children: [
-    ROLE_ROW,
+    ROLE_FILTER,
     {
-      type: 'group',
+      type: 'filterGroup',
       id: 'group-1',
       logicalOperator: 'OR',
-      children: [DEVICE_ROW_WITHOUT_VALUE],
+      children: [DEVICE_FILTER_WITHOUT_VALUE],
     },
   ],
 };
 
-const validateRowTree = (rowTree: ConditionalAvailabilityRowGroup) =>
+const validateFilterGroup = (filterGroup: ConditionalAvailabilityFilterGroup) =>
   validateConditionalAvailabilityEditorState({
-    editorState: { mode: 'customRule', rowTree },
+    editorState: { mode: 'customRule', filterGroup },
     metadataName: 'pageLayoutWidget',
   });
 
@@ -62,7 +62,7 @@ describe('validateConditionalAvailabilityEditorState', () => {
     ).toEqual({ status: 'valid', node: null });
   });
 
-  it('should refuse a rule the builder has no rows for', () => {
+  it('should refuse a rule the builder has no filters for', () => {
     expect(
       validateConditionalAvailabilityEditorState({
         editorState: { mode: 'unsupportedRule' },
@@ -71,24 +71,27 @@ describe('validateConditionalAvailabilityEditorState', () => {
     ).toEqual({ status: 'invalid', reason: 'unsupportedRule' });
   });
 
-  it('should return no node when no row has a value', () => {
-    expect(validateRowTree({ ...ROW_TREE, children: [] })).toEqual({
+  it('should return no node when no filter has a value', () => {
+    expect(validateFilterGroup({ ...FILTER_GROUP, children: [] })).toEqual({
       status: 'valid',
       node: null,
     });
 
     expect(
-      validateRowTree({ ...ROW_TREE, children: [DEVICE_ROW_WITHOUT_VALUE] }),
+      validateFilterGroup({
+        ...FILTER_GROUP,
+        children: [DEVICE_FILTER_WITHOUT_VALUE],
+      }),
     ).toEqual({ status: 'valid', node: null });
   });
 
-  it('should refuse a row holding the same value twice', () => {
+  it('should refuse a filter holding the same value twice', () => {
     expect(
-      validateRowTree({
-        ...ROW_TREE,
+      validateFilterGroup({
+        ...FILTER_GROUP,
         children: [
           {
-            ...ROLE_ROW,
+            ...ROLE_FILTER,
             values: [
               ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
               ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
@@ -96,22 +99,22 @@ describe('validateConditionalAvailabilityEditorState', () => {
           },
         ],
       }),
-    ).toEqual({ status: 'invalid', reason: 'invalidRows' });
+    ).toEqual({ status: 'invalid', reason: 'invalidFilters' });
   });
 
-  it('should skip a row without value, and write it once it has one', () => {
-    expect(validateRowTree(ROW_TREE)).toEqual({
+  it('should skip a filter without value, and write it once it has one', () => {
+    expect(validateFilterGroup(FILTER_GROUP)).toEqual({
       status: 'valid',
       node: ROLE_NODE,
     });
 
-    const rowTreeWithMobileDevice = updateConditionalAvailabilityRow({
-      rowGroup: ROW_TREE,
-      rowId: DEVICE_ROW_WITHOUT_VALUE.id,
-      update: (row) => ({ ...row, values: ['MOBILE'] }),
+    const filterGroupWithMobileDevice = updateConditionalAvailabilityFilter({
+      filterGroup: FILTER_GROUP,
+      filterId: DEVICE_FILTER_WITHOUT_VALUE.id,
+      update: (filter) => ({ ...filter, values: ['MOBILE'] }),
     });
 
-    expect(validateRowTree(rowTreeWithMobileDevice)).toEqual({
+    expect(validateFilterGroup(filterGroupWithMobileDevice)).toEqual({
       status: 'valid',
       node: {
         type: 'GROUP',
@@ -121,35 +124,36 @@ describe('validateConditionalAvailabilityEditorState', () => {
     });
   });
 
-  it('should drop a group with its last row', () => {
-    const rowTreeWithoutDeviceRow = removeConditionalAvailabilityRowsOrGroups({
-      rowGroup: ROW_TREE,
-      shouldRemove: (rowOrGroup) =>
-        rowOrGroup.id === DEVICE_ROW_WITHOUT_VALUE.id,
-    });
+  it('should drop a group with its last filter', () => {
+    const filterGroupWithoutDeviceFilter =
+      removeConditionalAvailabilityFiltersOrGroups({
+        filterGroup: FILTER_GROUP,
+        shouldRemove: (filterOrGroup) =>
+          filterOrGroup.id === DEVICE_FILTER_WITHOUT_VALUE.id,
+      });
 
-    expect(rowTreeWithoutDeviceRow.children).toEqual([ROLE_ROW]);
-    expect(validateRowTree(rowTreeWithoutDeviceRow)).toEqual({
+    expect(filterGroupWithoutDeviceFilter.children).toEqual([ROLE_FILTER]);
+    expect(validateFilterGroup(filterGroupWithoutDeviceFilter)).toEqual({
       status: 'valid',
       node: ROLE_NODE,
     });
   });
 
-  it('should join the rows of the root with "or" once its operator is changed', () => {
-    const rowTreeJoinedWithOr = updateConditionalAvailabilityRowGroup({
-      rowGroup: updateConditionalAvailabilityRowGroup({
-        rowGroup: ROW_TREE,
-        groupId: 'group-1',
-        update: (rowGroup) => ({
-          ...rowGroup,
-          children: [{ ...DEVICE_ROW_WITHOUT_VALUE, values: ['DESKTOP'] }],
+  it('should join the filters of the root with "or" once its operator is changed', () => {
+    const filterGroupJoinedWithOr = updateConditionalAvailabilityFilterGroup({
+      filterGroup: updateConditionalAvailabilityFilterGroup({
+        filterGroup: FILTER_GROUP,
+        filterGroupId: 'group-1',
+        update: (filterGroup) => ({
+          ...filterGroup,
+          children: [{ ...DEVICE_FILTER_WITHOUT_VALUE, values: ['DESKTOP'] }],
         }),
       }),
-      groupId: ROW_TREE.id,
-      update: (rowGroup) => ({ ...rowGroup, logicalOperator: 'OR' }),
+      filterGroupId: FILTER_GROUP.id,
+      update: (filterGroup) => ({ ...filterGroup, logicalOperator: 'OR' }),
     });
 
-    expect(validateRowTree(rowTreeJoinedWithOr)).toEqual({
+    expect(validateFilterGroup(filterGroupJoinedWithOr)).toEqual({
       status: 'valid',
       node: {
         type: 'GROUP',

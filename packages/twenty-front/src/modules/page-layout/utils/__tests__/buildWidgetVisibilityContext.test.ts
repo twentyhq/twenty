@@ -1,4 +1,4 @@
-import { EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityGlobalContext';
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityCurrentUserContext';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 
 describe('buildWidgetVisibilityContext', () => {
@@ -6,13 +6,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: true,
       isInSidePanel: false,
-      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
-      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
   });
 
@@ -20,13 +20,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: true,
-      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
-      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
   });
 
@@ -34,13 +34,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: true,
       isInSidePanel: true,
-      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'MOBILE',
       selectedRecords: [],
-      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
   });
 
@@ -48,13 +48,13 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
-      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [],
-      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
   });
 
@@ -63,13 +63,13 @@ describe('buildWidgetVisibilityContext', () => {
       isMobile: false,
       isInSidePanel: false,
       targetRecord: { id: 'a', status: 'DRAFT' },
-      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
 
     expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
-      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
   });
 
@@ -77,8 +77,8 @@ describe('buildWidgetVisibilityContext', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
-      globalContext: {
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: {
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         featureFlags: { IS_AI_CHAT_INBOX_ENABLED: true },
       },
     });
@@ -91,7 +91,7 @@ describe('buildWidgetVisibilityContext', () => {
       isMobile: false,
       isInSidePanel: false,
       targetRecord: undefined,
-      globalContext: EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      currentUserContext: EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
     });
 
     expect(result.selectedRecords).toEqual([]);

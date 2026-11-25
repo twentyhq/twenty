@@ -1,4 +1,4 @@
-import { EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityGlobalContext';
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityCurrentUserContext';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
 import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
@@ -53,7 +53,7 @@ describe('filterVisibleWidgets', () => {
     const result = filterVisibleWidgets({
       widgets,
       context: {
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         device: 'DESKTOP',
         selectedRecords: [],
       },
@@ -77,7 +77,7 @@ describe('filterVisibleWidgets', () => {
     const result = filterVisibleWidgets({
       widgets,
       context: {
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         device: 'MOBILE',
         selectedRecords: [],
       },
@@ -101,7 +101,7 @@ describe('filterVisibleWidgets', () => {
     const result = filterVisibleWidgets({
       widgets,
       context: {
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         device: 'DESKTOP',
         selectedRecords: [],
       },
@@ -115,7 +115,7 @@ describe('filterVisibleWidgets', () => {
     const result = filterVisibleWidgets({
       widgets: [],
       context: {
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         device: 'DESKTOP',
         selectedRecords: [],
       },
@@ -137,7 +137,7 @@ describe('filterVisibleWidgets', () => {
     filterVisibleWidgets({
       widgets,
       context: {
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         device: 'DESKTOP',
         selectedRecords: [],
       },
@@ -148,7 +148,7 @@ describe('filterVisibleWidgets', () => {
 
   describe('when the workspace reads the conditional availability tree only', () => {
     const context = {
-      ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+      ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       device: 'DESKTOP' as const,
       selectedRecords: [],
       featureFlags: {

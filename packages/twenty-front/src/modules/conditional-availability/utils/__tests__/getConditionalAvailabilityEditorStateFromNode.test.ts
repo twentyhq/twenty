@@ -1,4 +1,4 @@
-import { convertConditionalAvailabilityRowOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityRowOrGroupToNode';
+import { convertConditionalAvailabilityFilterOrGroupToNode } from '@/conditional-availability/utils/convertConditionalAvailabilityFilterOrGroupToNode';
 import { getConditionalAvailabilityEditorStateFromNode } from '@/conditional-availability/utils/getConditionalAvailabilityEditorStateFromNode';
 import {
   buildDeviceConditionalAvailability,
@@ -64,18 +64,20 @@ const getEditorState = (node: ConditionalAvailabilityNode | null) =>
     metadataName: 'pageLayoutWidget',
   });
 
-const getRowTreeOrThrow = (node: ConditionalAvailabilityNode) => {
+const getFilterGroupOrThrow = (node: ConditionalAvailabilityNode) => {
   const editorState = getEditorState(node);
-  const rowTree =
-    editorState.mode === 'customRule' ? editorState.rowTree : undefined;
+  const filterGroup =
+    editorState.mode === 'customRule' ? editorState.filterGroup : undefined;
 
-  assertIsDefinedOrThrow(rowTree);
+  assertIsDefinedOrThrow(filterGroup);
 
   expect(
-    convertConditionalAvailabilityRowOrGroupToNode({ rowOrGroup: rowTree }),
+    convertConditionalAvailabilityFilterOrGroupToNode({
+      filterOrGroup: filterGroup,
+    }),
   ).toEqual(node);
 
-  return rowTree;
+  return filterGroup;
 };
 
 describe('getConditionalAvailabilityEditorStateFromNode', () => {
@@ -83,8 +85,8 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
     expect(getEditorState(null)).toEqual({ mode: 'everyone' });
   });
 
-  it('should read a chain of roles as one row and a device as another', () => {
-    const rowTree = getRowTreeOrThrow(
+  it('should read a chain of roles as one filter and a device as another', () => {
+    const filterGroup = getFilterGroupOrThrow(
       and([
         or([
           roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER),
@@ -94,37 +96,42 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
       ]),
     );
 
-    expect(rowTree).toMatchObject({
+    expect(filterGroup).toMatchObject({
       logicalOperator: 'AND',
       children: [
         {
-          type: 'row',
-          subject: 'role',
+          type: 'filter',
+          variable: 'currentRole',
           operator: 'isAnyOf',
           values: [
             ADMIN_ROLE_UNIVERSAL_IDENTIFIER,
             SALES_ROLE_UNIVERSAL_IDENTIFIER,
           ],
         },
-        { type: 'row', subject: 'device', operator: 'is', values: ['MOBILE'] },
+        {
+          type: 'filter',
+          variable: 'device',
+          operator: 'is',
+          values: ['MOBILE'],
+        },
       ],
     });
   });
 
   it('should read one workspace member as "is not" and several as "is none of"', () => {
     expect(
-      getRowTreeOrThrow(workspaceMemberIsNot(WORKSPACE_MEMBER_ID)).children,
+      getFilterGroupOrThrow(workspaceMemberIsNot(WORKSPACE_MEMBER_ID)).children,
     ).toMatchObject([
       {
-        type: 'row',
-        subject: 'workspaceMember',
+        type: 'filter',
+        variable: 'currentWorkspaceMember',
         operator: 'isNot',
         values: [WORKSPACE_MEMBER_ID],
       },
     ]);
 
     expect(
-      getRowTreeOrThrow(
+      getFilterGroupOrThrow(
         and([
           workspaceMemberIsNot(WORKSPACE_MEMBER_ID),
           workspaceMemberIsNot(OTHER_WORKSPACE_MEMBER_ID),
@@ -132,49 +139,52 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
       ).children,
     ).toMatchObject([
       {
-        type: 'row',
-        subject: 'workspaceMember',
+        type: 'filter',
+        variable: 'currentWorkspaceMember',
         operator: 'isNoneOf',
         values: [WORKSPACE_MEMBER_ID, OTHER_WORKSPACE_MEMBER_ID],
       },
     ]);
   });
 
-  it('should read a nested group of rows', () => {
-    const rowTree = getRowTreeOrThrow(
+  it('should read a nested group of filters', () => {
+    const filterGroup = getFilterGroupOrThrow(
       and([
         roleIs(SALES_ROLE_UNIVERSAL_IDENTIFIER),
         or([roleIs(ADMIN_ROLE_UNIVERSAL_IDENTIFIER), DEVICE_IS_MOBILE]),
       ]),
     );
 
-    expect(rowTree.children).toMatchObject([
+    expect(filterGroup.children).toMatchObject([
       {
-        type: 'row',
-        subject: 'role',
+        type: 'filter',
+        variable: 'currentRole',
         values: [SALES_ROLE_UNIVERSAL_IDENTIFIER],
       },
       {
-        type: 'group',
+        type: 'filterGroup',
         logicalOperator: 'OR',
         children: [
-          { subject: 'role', values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER] },
-          { subject: 'device', values: ['MOBILE'] },
+          {
+            variable: 'currentRole',
+            values: [ADMIN_ROLE_UNIVERSAL_IDENTIFIER],
+          },
+          { variable: 'device', values: ['MOBILE'] },
         ],
       },
     ]);
   });
 
-  it('should keep two devices joined by "or" as two rows', () => {
-    const rowTree = getRowTreeOrThrow(
+  it('should keep two devices joined by "or" as two filters', () => {
+    const filterGroup = getFilterGroupOrThrow(
       or([DEVICE_IS_MOBILE, buildDeviceConditionalAvailability('DESKTOP')]),
     );
 
-    expect(rowTree).toMatchObject({
+    expect(filterGroup).toMatchObject({
       logicalOperator: 'OR',
       children: [
-        { type: 'row', subject: 'device', values: ['MOBILE'] },
-        { type: 'row', subject: 'device', values: ['DESKTOP'] },
+        { type: 'filter', variable: 'device', values: ['MOBILE'] },
+        { type: 'filter', variable: 'device', values: ['DESKTOP'] },
       ],
     });
   });
@@ -225,14 +235,14 @@ describe('getConditionalAvailabilityEditorStateFromNode', () => {
       },
     },
     {
-      title: 'a variable the builder has no row for',
+      title: 'a variable the builder has no filter for',
       node: comparison({
         operator: 'EQUAL',
         variablePath: 'featureFlags.IS_AI_ENABLED',
         value: 'true',
       }),
     },
-  ])('should not read $title as rows', ({ node }) => {
+  ])('should not read $title as filters', ({ node }) => {
     expect(getEditorState(node)).toEqual({ mode: 'unsupportedRule' });
   });
 });

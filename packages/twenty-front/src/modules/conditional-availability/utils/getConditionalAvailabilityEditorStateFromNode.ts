@@ -1,6 +1,6 @@
 import { type ConditionalAvailabilityEditorState } from '@/conditional-availability/types/ConditionalAvailabilityEditorState';
-import { type ConditionalAvailabilityRowGroup } from '@/conditional-availability/types/ConditionalAvailabilityRowGroup';
-import { convertConditionalAvailabilityNodeToRowOrGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToRowOrGroup';
+import { type ConditionalAvailabilityFilterGroup } from '@/conditional-availability/types/ConditionalAvailabilityFilterGroup';
+import { convertConditionalAvailabilityNodeToFilterOrGroup } from '@/conditional-availability/utils/convertConditionalAvailabilityNodeToFilterOrGroup';
 import { validateConditionalAvailabilityEditorState } from '@/conditional-availability/utils/validateConditionalAvailabilityEditorState';
 import {
   type ConditionalAvailabilityMetadataName,
@@ -22,30 +22,34 @@ export const getConditionalAvailabilityEditorStateFromNode = ({
     return { mode: 'everyone' };
   }
 
-  const rowOrGroup = convertConditionalAvailabilityNodeToRowOrGroup({ node });
+  const filterOrGroup = convertConditionalAvailabilityNodeToFilterOrGroup({
+    node,
+  });
 
-  if (!isDefined(rowOrGroup)) {
+  if (!isDefined(filterOrGroup)) {
     return { mode: 'unsupportedRule' };
   }
 
-  const rowGroupAroundSingleRow: ConditionalAvailabilityRowGroup = {
-    type: 'group',
+  const filterGroupAroundSingleFilter: ConditionalAvailabilityFilterGroup = {
+    type: 'filterGroup',
     id: v4(),
     logicalOperator: doNotTranslate('AND'),
-    children: [rowOrGroup],
+    children: [filterOrGroup],
   };
-  const rowTree =
-    rowOrGroup.type === 'group' ? rowOrGroup : rowGroupAroundSingleRow;
+  const filterGroup =
+    filterOrGroup.type === 'filterGroup'
+      ? filterOrGroup
+      : filterGroupAroundSingleFilter;
 
-  const hasGroupInsideGroup = rowTree.children.some(
+  const hasGroupInsideGroup = filterGroup.children.some(
     (child) =>
-      child.type === 'group' &&
-      child.children.some((groupChild) => groupChild.type === 'group'),
+      child.type === 'filterGroup' &&
+      child.children.some((groupChild) => groupChild.type === 'filterGroup'),
   );
 
   const editorState: ConditionalAvailabilityEditorState = {
     mode: 'customRule',
-    rowTree,
+    filterGroup,
   };
   const editorStateValidation = validateConditionalAvailabilityEditorState({
     editorState,

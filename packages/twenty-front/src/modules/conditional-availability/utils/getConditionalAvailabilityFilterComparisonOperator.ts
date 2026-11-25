@@ -1,11 +1,11 @@
-import { type ConditionalAvailabilityRowOperator } from '@/conditional-availability/types/ConditionalAvailabilityRowOperator';
+import { type ConditionalAvailabilityFilterOperator } from '@/conditional-availability/types/ConditionalAvailabilityFilterOperator';
 import { type ConditionalAvailabilityComparisonOperator } from 'twenty-shared/conditional-availability';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-export const getConditionalAvailabilityRowComparisonOperator = ({
+export const getConditionalAvailabilityFilterComparisonOperator = ({
   operator,
 }: {
-  operator: ConditionalAvailabilityRowOperator;
+  operator: ConditionalAvailabilityFilterOperator;
 }): Extract<
   ConditionalAvailabilityComparisonOperator,
   'EQUAL' | 'NOT_EQUAL'

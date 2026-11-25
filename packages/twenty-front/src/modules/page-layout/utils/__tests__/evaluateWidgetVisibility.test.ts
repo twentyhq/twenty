@@ -1,6 +1,6 @@
 import { type AdditionalOperation, type RulesLogic } from 'json-logic-js';
 
-import { EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityGlobalContext';
+import { EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT } from '@/page-layout/testing/EmptyConditionalAvailabilityCurrentUserContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
 
 describe('evaluateWidgetVisibility', () => {
@@ -11,7 +11,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -33,7 +33,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'MOBILE',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -55,7 +55,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -77,7 +77,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -99,7 +99,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'MOBILE',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -124,7 +124,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'MOBILE',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -134,7 +134,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
-        ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+        ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
       },
     });
 
@@ -154,7 +154,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
     }).toThrow();
@@ -168,7 +168,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'MOBILE',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
 
@@ -182,7 +182,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
 
@@ -196,7 +196,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
 
@@ -218,7 +218,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
 
@@ -240,7 +240,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
 
@@ -262,7 +262,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
-          ...EMPTY_CONDITIONAL_AVAILABILITY_GLOBAL_CONTEXT,
+          ...EMPTY_CONDITIONAL_AVAILABILITY_CURRENT_USER_CONTEXT,
         },
       });
 

@@ -1,8 +1,8 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ConditionalAvailabilityGlobalContext } from 'twenty-shared/conditional-availability';
+import { type ConditionalAvailabilityCurrentUserContext } from 'twenty-shared/conditional-availability';
 
-export const buildConditionalAvailabilityGlobalContext = ({
+export const buildConditionalAvailabilityCurrentUserContext = ({
   featureFlags,
   permissionFlags,
   currentWorkspaceMember,
@@ -10,7 +10,7 @@ export const buildConditionalAvailabilityGlobalContext = ({
   featureFlags: Record<string, boolean>;
   permissionFlags: Record<string, boolean>;
   currentWorkspaceMember: Pick<CurrentWorkspaceMember, 'id' | 'roles'> | null;
-}): ConditionalAvailabilityGlobalContext => {
+}): ConditionalAvailabilityCurrentUserContext => {
   const assignedRoleUniversalIdentifier =
     currentWorkspaceMember?.roles?.at(0)?.universalIdentifier;
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
