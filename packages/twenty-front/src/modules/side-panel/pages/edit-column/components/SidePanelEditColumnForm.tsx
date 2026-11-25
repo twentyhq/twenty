@@ -7,7 +7,6 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { getRecordFieldSummary } from '@/object-record/record-column-summary/utils/getRecordFieldSummary';
 import { getRecordFieldSummaryLabel } from '@/object-record/record-column-summary/utils/getRecordFieldSummaryLabel';
 import { getSummaryShowOptionValue } from '@/object-record/record-column-summary/utils/getSummaryShowOptionValue';
-import { getScopedRelationColumnDescription } from '@/object-record/record-column-scope/utils/getScopedRelationColumnDescription';
 import { useSaveScopedRelationColumn } from '@/object-record/record-column-scope/hooks/useSaveScopedRelationColumn';
 import { type ScopedRelationJunction } from '@/object-record/record-column-scope/types/ScopedRelationJunction';
 import { getRelationScopeFieldMetadataItems } from '@/object-record/record-column-scope/utils/getRelationScopeFieldMetadataItems';
@@ -18,7 +17,6 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { SidePanelInformationBanner } from '@/side-panel/components/SidePanelInformationBanner/SidePanelInformationBanner';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
@@ -36,6 +34,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
@@ -277,9 +276,9 @@ export const SidePanelEditColumnForm = ({
         onLabelChange={setLabel}
       />
       <StyledContent>
-        <SidePanelInformationBanner
-          message={getScopedRelationColumnDescription(fieldMetadataItem.label)}
-        />
+        <InlineBanner status="neutral" layout="compact">
+          {t`Summary columns can't be sorted or filtered.`}
+        </InlineBanner>
         <FormFieldInputContainer>
           <Field.Label>{t`Show`}</Field.Label>
           <SidePanelEditColumnShowSelect
