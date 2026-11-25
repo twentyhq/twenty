@@ -18,8 +18,9 @@ import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ComponentProps, type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { type ComponentProps, type MouseEvent, type ReactNode } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconCalendarDue,
   IconClockPlay,
@@ -150,7 +151,6 @@ type SettingsBillingSubscriptionInfoCardProps = {
   displayedSubscriptionDate?: string;
   headerActions: ReactNode;
   includedPerSeatItems: IncludedBillingFieldProps[];
-  isBillingEmailActionDisabled: boolean;
   isSubscriptionActionDisabled: boolean;
   onBillingEmailClick: () => void;
   onSwitchToMonthly: () => void;
@@ -184,7 +184,6 @@ export const SettingsBillingSubscriptionInfoCard = ({
   displayedSubscriptionDate,
   headerActions,
   includedPerSeatItems,
-  isBillingEmailActionDisabled,
   isSubscriptionActionDisabled,
   onBillingEmailClick,
   onSwitchToMonthly,
@@ -205,6 +204,11 @@ export const SettingsBillingSubscriptionInfoCard = ({
   const { t } = useLingui();
   const hasScheduledChange = scheduledChangeItems.length > 0;
   const hasIncludedPerSeatItems = includedPerSeatItems.length > 0;
+
+  const handleBillingEmailClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    onBillingEmailClick();
+  };
 
   return (
     <StyledSettingsBillingCard>
@@ -275,9 +279,9 @@ export const SettingsBillingSubscriptionInfoCard = ({
           {isDefined(billingEmail) && (
             <BillingFieldRow label={t`Billing email`} Icon={IconMail}>
               <SettingsTextLink
+                to={getSettingsPath(SettingsPath.Billing)}
                 title={t`Change billing email`}
-                onClick={onBillingEmailClick}
-                disabled={isBillingEmailActionDisabled}
+                onClick={handleBillingEmailClick}
               >
                 {billingEmail}
               </SettingsTextLink>

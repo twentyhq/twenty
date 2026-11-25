@@ -47,7 +47,7 @@ export const BillingEmail: Story = {
     const canvas = within(canvasElement);
 
     await expect(
-      await canvas.findByRole('button', { name: mockedUserData.email }),
+      await canvas.findByRole('link', { name: mockedUserData.email }),
     ).toBeVisible();
   },
 };

@@ -463,7 +463,6 @@ export const SettingsBillingSubscriptionInfo = ({
       />
       <SettingsBillingSubscriptionInfoCard
         billingEmail={billingEmail}
-        isBillingEmailActionDisabled={isManageBillingDisabled}
         onBillingEmailClick={onManageBilling}
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}
