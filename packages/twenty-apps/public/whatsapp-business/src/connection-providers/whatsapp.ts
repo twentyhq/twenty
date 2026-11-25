@@ -10,7 +10,7 @@ import { WHATSAPP_CONNECTION_PROVIDER_NAME } from 'src/constants/whatsapp-connec
 export default defineConnectionProvider({
   universalIdentifier: WHATSAPP_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: WHATSAPP_CONNECTION_PROVIDER_NAME,
-  displayName: 'WhatsApp',
+  displayName: 'WhatsApp Business',
   type: 'api-key',
   scope: 'WORKSPACE',
   identifyAccountLogicFunction: {

@@ -9,7 +9,7 @@ import {
 export default defineMessagingProvider({
   universalIdentifier: WHATSAPP_MESSAGING_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: 'whatsapp-messaging',
-  displayName: 'WhatsApp',
+  displayName: 'WhatsApp Business',
   conversationStyle: 'chat',
   connectionProvider: { universalIdentifier: WHATSAPP_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER },
   sendMessageLogicFunction: { universalIdentifier: WHATSAPP_LOGIC_FUNCTION_SEND_MESSAGE_UNIVERSAL_IDENTIFIER },

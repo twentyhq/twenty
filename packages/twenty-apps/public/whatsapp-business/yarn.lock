@@ -493,9 +493,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@twentyhq/whatsapp@workspace:.":
+"@twentyhq/whatsapp-business@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@twentyhq/whatsapp@workspace:."
+  resolution: "@twentyhq/whatsapp-business@workspace:."
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     "@types/node": "npm:^26.6.0"

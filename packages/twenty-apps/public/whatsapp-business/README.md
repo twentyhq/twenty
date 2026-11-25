@@ -1,4 +1,4 @@
-# WhatsApp for Twenty
+# WhatsApp Business for Twenty
 
 Brings WhatsApp Business conversations into Twenty and lets agents and workflows send WhatsApp template messages.
 

@@ -1,4 +1,4 @@
-export const APP_DISPLAY_NAME = 'WhatsApp';
+export const APP_DISPLAY_NAME = 'WhatsApp Business';
 export const APP_DESCRIPTION = 'Twenty integration with WhatsApp';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = '1636a41f-19bb-409b-9661-6d96087b988c';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = 'eb5d6729-8052-4cac-bb77-6e9820cccafa';

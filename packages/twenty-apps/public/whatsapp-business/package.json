@@ -1,5 +1,5 @@
 {
-  "name": "@twentyhq/whatsapp",
+  "name": "@twentyhq/whatsapp-business",
   "version": "0.1.0",
   "description": "WhatsApp Business messaging for Twenty: conversations, templates, campaigns and ad referrals.",
   "license": "MIT",
@@ -15,9 +15,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/twentyhq/twenty.git",
-    "directory": "packages/twenty-apps/public/whatsapp"
+    "directory": "packages/twenty-apps/public/whatsapp-business"
   },
-  "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/whatsapp",
+  "homepage": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/whatsapp-business",
   "packageManager": "yarn@4.13.0",
   "scripts": {
     "twenty": "twenty",
