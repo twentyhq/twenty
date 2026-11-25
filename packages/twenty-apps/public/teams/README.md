@@ -1,10 +1,9 @@
 # Teams
 
-**Chat with your CRM from Microsoft Teams, and save your meeting transcripts and AI summaries right inside Twenty.**
+**Your Microsoft Teams meeting transcripts and AI summaries, right inside your CRM.**
 
 ## ✨ What you get
 
-- **Chat with the Twenty assistant in Teams** — ask about your CRM and act on it
 - **Teams transcripts saved to Call Recordings**
 - **Microsoft transcripts synced in your workspace**
 - **AI summaries**

@@ -3,9 +3,6 @@ import { definePostInstallLogicFunction } from 'twenty-sdk/define';
 import { POST_INSTALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { claimTeamsTenantsOfExistingConnections } from 'src/features/chat/logic-functions/utils/claim-teams-tenants-of-existing-connections';
 
-export const teamsPostInstallHandler = async () =>
-  claimTeamsTenantsOfExistingConnections();
-
 export default definePostInstallLogicFunction({
   universalIdentifier: POST_INSTALL_UNIVERSAL_IDENTIFIER,
   name: 'teams-post-install',
@@ -14,5 +11,5 @@ export default definePostInstallLogicFunction({
   timeoutSeconds: 120,
   shouldRunOnVersionUpgrade: true,
   shouldRunSynchronously: false,
-  handler: teamsPostInstallHandler,
+  handler: claimTeamsTenantsOfExistingConnections,
 });
