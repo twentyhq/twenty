@@ -4,7 +4,7 @@ import {
   extractAndSanitizeObjectStringFields,
   isDefined,
   isNonEmptyArray,
-  resolveViewIsCompactOnViewTypeChange,
+  isViewCompactByDefault,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
 
@@ -112,16 +112,16 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
   const { type: updatedViewType, isCompact: updatedIsCompact } =
     updateViewInputWithoutGroupLoadLimit;
 
+  const isViewTypeChanging =
+    isDefined(updatedViewType) &&
+    updatedViewType !== effectiveExistingFlatView.type;
+
   const editableProperties = extractAndSanitizeObjectStringFields(
     {
       ...updateViewInputWithoutGroupLoadLimit,
-      ...(isDefined(updatedViewType) &&
+      ...(isViewTypeChanging &&
         !isDefined(updatedIsCompact) && {
-          isCompact: resolveViewIsCompactOnViewTypeChange({
-            fromViewType: effectiveExistingFlatView.type,
-            toViewType: updatedViewType,
-            isCompact: effectiveExistingFlatView.isCompact,
-          }),
+          isCompact: isViewCompactByDefault(updatedViewType),
         }),
       ...(groupLoadLimit !== undefined && {
         groupLoadLimit: groupLoadLimit ?? DEFAULT_VIEW_GROUP_LOAD_LIMIT,
