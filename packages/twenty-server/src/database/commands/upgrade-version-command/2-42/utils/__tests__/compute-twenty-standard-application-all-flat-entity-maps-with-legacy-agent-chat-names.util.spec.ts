@@ -126,15 +126,15 @@ const CHAT_INDEX_UNIVERSAL_IDENTIFIERS = Object.keys(
   LEGACY_AGENT_CHAT_INDEX_NAMES_BY_UNIVERSAL_IDENTIFIER,
 );
 
-const renameFlatEntities = <T extends SyncableFlatEntity>({
+const renameFlatEntities = <TFlatEntity extends SyncableFlatEntity>({
   flatEntityMaps,
   universalIdentifiers,
   renameFlatEntity,
 }: {
-  flatEntityMaps: FlatEntityMaps<T>;
+  flatEntityMaps: FlatEntityMaps<TFlatEntity>;
   universalIdentifiers: string[];
-  renameFlatEntity: (flatEntity: T) => T;
-}): FlatEntityMaps<T> => ({
+  renameFlatEntity: (flatEntity: TFlatEntity) => TFlatEntity;
+}): FlatEntityMaps<TFlatEntity> => ({
   ...flatEntityMaps,
   byUniversalIdentifier: {
     ...flatEntityMaps.byUniversalIdentifier,

@@ -1,7 +1,7 @@
-import { applyLegacyAgentChatIndexName } from 'src/database/commands/upgrade-version-command/2-42/utils/apply-legacy-agent-chat-index-name.util';
-import { applyLegacyAgentChatObjectNames } from 'src/database/commands/upgrade-version-command/2-42/utils/apply-legacy-agent-chat-object-names.util';
-import { applyLegacyAgentChatRelationFieldName } from 'src/database/commands/upgrade-version-command/2-42/utils/apply-legacy-agent-chat-relation-field-name.util';
-import { mapFlatEntities } from 'src/database/commands/upgrade-version-command/2-42/utils/map-flat-entities.util';
+import { applyLegacyAgentChatNameAndJoinColumnNameToFlatFieldMetadata } from 'src/database/commands/upgrade-version-command/2-42/utils/apply-legacy-agent-chat-name-and-join-column-name-to-flat-field-metadata.util';
+import { applyLegacyAgentChatNameToFlatIndexMetadata } from 'src/database/commands/upgrade-version-command/2-42/utils/apply-legacy-agent-chat-name-to-flat-index-metadata.util';
+import { applyLegacyAgentChatNamesToFlatObjectMetadata } from 'src/database/commands/upgrade-version-command/2-42/utils/apply-legacy-agent-chat-names-to-flat-object-metadata.util';
+import { transformEachFlatEntityInFlatEntityMaps } from 'src/database/commands/upgrade-version-command/2-42/utils/transform-each-flat-entity-in-flat-entity-maps.util';
 import {
   type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs,
   computeTwentyStandardApplicationAllFlatEntityMaps,
@@ -9,26 +9,33 @@ import {
 
 export const computeTwentyStandardApplicationAllFlatEntityMapsWithLegacyAgentChatNames =
   (
-    args: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs,
+    computeTwentyStandardApplicationAllFlatEntityMapsArgs: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs,
   ): ReturnType<typeof computeTwentyStandardApplicationAllFlatEntityMaps> => {
-    const { allFlatEntityMaps, idByUniversalIdentifierByMetadataName } =
-      computeTwentyStandardApplicationAllFlatEntityMaps(args);
+    const {
+      allFlatEntityMaps: allFlatEntityMapsWithCurrentNames,
+      idByUniversalIdentifierByMetadataName,
+    } = computeTwentyStandardApplicationAllFlatEntityMaps(
+      computeTwentyStandardApplicationAllFlatEntityMapsArgs,
+    );
 
     return {
       idByUniversalIdentifierByMetadataName,
       allFlatEntityMaps: {
-        ...allFlatEntityMaps,
-        flatObjectMetadataMaps: mapFlatEntities({
-          flatEntityMaps: allFlatEntityMaps.flatObjectMetadataMaps,
-          mapFlatEntity: applyLegacyAgentChatObjectNames,
+        ...allFlatEntityMapsWithCurrentNames,
+        flatObjectMetadataMaps: transformEachFlatEntityInFlatEntityMaps({
+          flatEntityMaps:
+            allFlatEntityMapsWithCurrentNames.flatObjectMetadataMaps,
+          transformFlatEntity: applyLegacyAgentChatNamesToFlatObjectMetadata,
         }),
-        flatFieldMetadataMaps: mapFlatEntities({
-          flatEntityMaps: allFlatEntityMaps.flatFieldMetadataMaps,
-          mapFlatEntity: applyLegacyAgentChatRelationFieldName,
+        flatFieldMetadataMaps: transformEachFlatEntityInFlatEntityMaps({
+          flatEntityMaps:
+            allFlatEntityMapsWithCurrentNames.flatFieldMetadataMaps,
+          transformFlatEntity:
+            applyLegacyAgentChatNameAndJoinColumnNameToFlatFieldMetadata,
         }),
-        flatIndexMaps: mapFlatEntities({
-          flatEntityMaps: allFlatEntityMaps.flatIndexMaps,
-          mapFlatEntity: applyLegacyAgentChatIndexName,
+        flatIndexMaps: transformEachFlatEntityInFlatEntityMaps({
+          flatEntityMaps: allFlatEntityMapsWithCurrentNames.flatIndexMaps,
+          transformFlatEntity: applyLegacyAgentChatNameToFlatIndexMetadata,
         }),
       },
     };

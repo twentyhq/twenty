@@ -4,34 +4,38 @@ import { LEGACY_AGENT_CHAT_RELATION_FIELD_NAMES_BY_UNIVERSAL_IDENTIFIER } from '
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
-export const applyLegacyAgentChatRelationFieldName = (
+export const applyLegacyAgentChatNameAndJoinColumnNameToFlatFieldMetadata = (
   flatFieldMetadata: FlatFieldMetadata,
 ): FlatFieldMetadata => {
-  const legacyNames =
+  const legacyAgentChatRelationFieldNames =
     LEGACY_AGENT_CHAT_RELATION_FIELD_NAMES_BY_UNIVERSAL_IDENTIFIER[
       flatFieldMetadata.universalIdentifier
     ];
 
-  if (!isDefined(legacyNames)) {
+  if (!isDefined(legacyAgentChatRelationFieldNames)) {
     return flatFieldMetadata;
   }
 
-  const { name, joinColumnName } = legacyNames;
+  const { name: legacyFieldName, joinColumnName: legacyJoinColumnName } =
+    legacyAgentChatRelationFieldNames;
 
   if (
-    !isDefined(joinColumnName) ||
+    !isDefined(legacyJoinColumnName) ||
     !isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)
   ) {
-    return { ...flatFieldMetadata, name };
+    return { ...flatFieldMetadata, name: legacyFieldName };
   }
 
   return {
     ...flatFieldMetadata,
-    name,
-    settings: { ...flatFieldMetadata.settings, joinColumnName },
+    name: legacyFieldName,
+    settings: {
+      ...flatFieldMetadata.settings,
+      joinColumnName: legacyJoinColumnName,
+    },
     universalSettings: {
       ...flatFieldMetadata.universalSettings,
-      joinColumnName,
+      joinColumnName: legacyJoinColumnName,
     },
   };
 };
