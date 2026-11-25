@@ -102,6 +102,16 @@ export const useSwitchNavigationDrawerTab = () => {
     }
   };
 
+  const openDefaultHomePage = () => {
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+
+    if (isSettingsDrawer) {
+      leaveSettingsDrawer();
+    }
+
+    navigate(defaultHomePagePath, { replace: isSettingsDrawer });
+  };
+
   const switchToNavigationMenuTab = (tabId: string | null) => {
     const shouldOpenFirstItem =
       isCustomizableSidebarEnabled &&
@@ -111,11 +121,7 @@ export const useSwitchNavigationDrawerTab = () => {
     setCurrentNavigationMenuTabId(tabId);
 
     if (shouldOpenFirstItem && !isDefined(tabId)) {
-      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-      if (isSettingsDrawer) {
-        leaveSettingsDrawer();
-      }
-      navigate(defaultHomePagePath, { replace: isSettingsDrawer });
+      openDefaultHomePage();
       return;
     }
 
