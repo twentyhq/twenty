@@ -11,6 +11,8 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
 import { lastVisitedUrlByNavigationMenuTabKeyState } from '@/navigation-menu-item/common/states/lastVisitedUrlByNavigationMenuTabKeyState';
 import { navigationMenuTabIdToOpenFirstItemState } from '@/navigation-menu-item/common/states/navigationMenuTabIdToOpenFirstItemState';
+import { navigationMenuTabIdHoldingCurrentPageState } from '@/navigation-menu-item/common/states/navigationMenuTabIdHoldingCurrentPageState';
+import { getLastVisitedUrlsAfterLeavingNavigationMenuTab } from '@/navigation-menu-item/common/utils/getLastVisitedUrlsAfterLeavingNavigationMenuTab';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -119,10 +121,16 @@ export const useSwitchNavigationDrawerTab = () => {
       ? navigationMemorizedUrl
       : `${location.pathname}${location.search}`;
 
-    store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, (urls) => ({
-      ...urls,
-      [getNavigationMenuTabFolderKey(tabId)]: currentUrl,
-    }));
+    store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, (urls) =>
+      getLastVisitedUrlsAfterLeavingNavigationMenuTab({
+        lastVisitedUrls: urls,
+        leftTabId: tabId,
+        tabIdHoldingCurrentPage: store.get(
+          navigationMenuTabIdHoldingCurrentPageState.atom,
+        ),
+        currentUrl,
+      }),
+    );
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
@@ -137,6 +145,7 @@ export const useSwitchNavigationDrawerTab = () => {
 
     if (shouldOpenTabPage) {
       rememberCurrentPageForTab(previousTabId);
+      store.set(navigationMenuTabIdHoldingCurrentPageState.atom, tabId);
 
       const lastVisitedUrl = store.get(
         lastVisitedUrlByNavigationMenuTabKeyState.atom,

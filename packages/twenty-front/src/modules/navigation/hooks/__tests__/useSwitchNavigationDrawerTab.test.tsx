@@ -149,6 +149,40 @@ describe('useSwitchNavigationDrawerTab', () => {
     });
   });
 
+  it('does not remember a page for a tab selected while customizing', () => {
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: '/objects/people',
+    });
+    act(() =>
+      store.set(lastVisitedUrlByNavigationMenuTabKeyState.atom, {
+        'chats-tab-id': AI_CHAT_PATH,
+      }),
+    );
+    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
+    act(() => result.current.switchToNavigationMenuTab(null));
+    act(() => store.set(isLayoutCustomizationModeEnabledState.atom, true));
+    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
+    act(() => store.set(isLayoutCustomizationModeEnabledState.atom, false));
+
+    act(() => result.current.switchToNavigationMenuTab(null));
+    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
+
+    expect(result.current.location.pathname).toBe(AI_CHAT_PATH);
+  });
+
+  it('does not remember a page for a tab restored after a reload', () => {
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: '/objects/companies',
+      currentNavigationMenuTabId: 'chats-tab-id',
+    });
+
+    act(() => result.current.switchToNavigationMenuTab(null));
+
+    expect(store.get(lastVisitedUrlByNavigationMenuTabKeyState.atom)).toEqual(
+      {},
+    );
+  });
+
   it('opens the default home page when switching back to Home', () => {
     const { result } = renderSwitchNavigationDrawerMode({
       pathname: '/chat',
