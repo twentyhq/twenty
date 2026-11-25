@@ -222,8 +222,11 @@ export class LogicFunctionExecutorService {
     logicFunctionId: string;
   }): Promise<void> {
     try {
-      const { flatApplication, flatLogicFunction, flatApplicationVariableMaps } =
-        await this.getFlatEntitiesOrThrow({ workspaceId, logicFunctionId });
+      const {
+        flatApplication,
+        flatLogicFunction,
+        flatApplicationVariableMaps,
+      } = await this.getFlatEntitiesOrThrow({ workspaceId, logicFunctionId });
 
       await this.assertApplicationNotStopped(flatApplication);
 

@@ -255,9 +255,9 @@ describe('LogicFunctionExecutorService.warmUp', () => {
   });
 
   it('does not fail when the warm-up itself fails', async () => {
-    const { logicFunctionExecutorService } = await createWarmUpExecutorService(
-      { driverWarmUp: jest.fn().mockRejectedValue(new Error('Lambda down')) },
-    );
+    const { logicFunctionExecutorService } = await createWarmUpExecutorService({
+      driverWarmUp: jest.fn().mockRejectedValue(new Error('Lambda down')),
+    });
 
     await expect(
       logicFunctionExecutorService.warmUp({
