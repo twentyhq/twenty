@@ -13,11 +13,13 @@ export const useRemoveTelegramUserLink = () => {
     setRemovingLinkId(id);
 
     try {
-      const result = await new RestApiClient().post<
-        TelegramUserLinkActionResult | undefined
-      >(`/s${TELEGRAM_USER_LINKS_REMOVE_ROUTE_PATH}`, { id });
+      const result =
+        await new RestApiClient().post<TelegramUserLinkActionResult>(
+          `/s${TELEGRAM_USER_LINKS_REMOVE_ROUTE_PATH}`,
+          { id },
+        );
 
-      return result?.success ?? false;
+      return result.success;
     } catch (error) {
       console.error('[telegram] could not disconnect the account', error);
 

@@ -18,6 +18,20 @@ type TelegramUserLinkNode = {
   workspaceMemberId?: string | null;
 };
 
+const toTelegramUserLink = (
+  node: TelegramUserLinkNode,
+): TelegramUserLink | undefined => {
+  if (!isNonEmptyString(node.id)) {
+    return undefined;
+  }
+
+  return {
+    id: node.id,
+    telegramUserId: node.telegramUserId || undefined,
+    workspaceMemberId: node.workspaceMemberId || undefined,
+  };
+};
+
 export const findTelegramUserLinks = async ({
   client,
   filter = {},
@@ -50,19 +64,5 @@ export const findTelegramUserLinks = async ({
       ).telegramUserLinks,
   });
 
-  return nodes.flatMap((node) =>
-    isNonEmptyString(node.id)
-      ? [
-          {
-            id: node.id,
-            telegramUserId: isNonEmptyString(node.telegramUserId)
-              ? node.telegramUserId
-              : undefined,
-            workspaceMemberId: isNonEmptyString(node.workspaceMemberId)
-              ? node.workspaceMemberId
-              : undefined,
-          },
-        ]
-      : [],
-  );
+  return nodes.map(toTelegramUserLink).filter(isDefined);
 };
