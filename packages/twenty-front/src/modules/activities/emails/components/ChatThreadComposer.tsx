@@ -16,6 +16,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { IconArrowUp, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 import { v4 } from 'uuid';
 
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
@@ -107,6 +108,7 @@ export const ChatThreadComposer = ({
 }: ChatThreadComposerProps) => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
+  const isTouchDevice = useIsTouchDevice();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaFocusId = `chat-thread-composer-${useId()}`;
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
@@ -209,7 +211,7 @@ export const ChatThreadComposer = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !isTouchDevice) {
       event.preventDefault();
       handleSubmit();
     }
