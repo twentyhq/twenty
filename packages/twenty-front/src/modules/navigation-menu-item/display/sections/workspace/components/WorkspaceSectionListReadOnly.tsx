@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Fragment, type ReactNode } from 'react';
+import { Fragment } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -17,10 +17,11 @@ const StyledList = styled.div`
 
 type WorkspaceSectionListReadOnlyProps = Pick<
   NavigationMenuItemSectionListDndKitProps,
-  'filteredItems' | 'folderChildrenById' | 'onActiveObjectMetadataItemClick'
-> & {
-  renderSection?: (section: NavigationMenuItem) => ReactNode;
-};
+  | 'filteredItems'
+  | 'folderChildrenById'
+  | 'onActiveObjectMetadataItemClick'
+  | 'renderSection'
+>;
 
 const READ_ONLY_EDIT_MODE_PROPS = {
   isSelectedInEditMode: false,
@@ -37,25 +38,27 @@ export const WorkspaceSectionListReadOnly = ({
     (item) => item.type === NavigationMenuItemType.FOLDER,
   ).length;
 
-  return (
-    <StyledList>
-      {filteredItems.map((item: NavigationMenuItem) =>
-        item.type === NavigationMenuItemType.SECTION &&
-        isDefined(renderSection) ? (
-          <Fragment key={item.id}>{renderSection(item)}</Fragment>
-        ) : (
-          <NavigationMenuItemDisplay
-            key={item.id}
-            item={item}
-            editModeProps={READ_ONLY_EDIT_MODE_PROPS}
-            isDragging={false}
-            folderChildrenById={folderChildrenById}
-            folderCount={folderCount}
-            onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
-            readOnly
-          />
-        ),
-      )}
-    </StyledList>
-  );
+  const renderListEntry = (item: NavigationMenuItem) => {
+    if (
+      item.type === NavigationMenuItemType.SECTION &&
+      isDefined(renderSection)
+    ) {
+      return <Fragment key={item.id}>{renderSection(item)}</Fragment>;
+    }
+
+    return (
+      <NavigationMenuItemDisplay
+        key={item.id}
+        item={item}
+        editModeProps={READ_ONLY_EDIT_MODE_PROPS}
+        isDragging={false}
+        folderChildrenById={folderChildrenById}
+        folderCount={folderCount}
+        onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+        readOnly
+      />
+    );
+  };
+
+  return <StyledList>{filteredItems.map(renderListEntry)}</StyledList>;
 };
