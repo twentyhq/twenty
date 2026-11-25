@@ -4,8 +4,8 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { resolveEffectiveUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity.util';
 import { type OverridableUniversalFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-universal-flat-entity-property.util';
 import { PRIVATABLE_ENTITY_PRIVACY_CHANGE_NOT_ALLOWED_CODE } from 'src/engine/permissions/metadata-permissions/constants/privatable-entity-privacy-change-not-allowed-code.constant';
@@ -48,10 +48,7 @@ const isAllowedPrivacy = ({
     return true;
   }
 
-  const callerUserWorkspaceId =
-    isDefined(authContext) && isUserAuthContext(authContext)
-      ? authContext.userWorkspaceId
-      : undefined;
+  const callerUserWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
 
   if (!isDefined(from)) {
     return (

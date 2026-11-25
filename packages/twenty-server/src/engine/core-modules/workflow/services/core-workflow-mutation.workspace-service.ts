@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -84,11 +85,13 @@ export class CoreWorkflowMutationWorkspaceService {
     failureMessage,
     operations,
     applicationUniversalIdentifier,
+    authContext,
   }: {
     workspaceId: string;
     failureMessage: string;
     operations: AllFlatEntityOperationByMetadataName;
     applicationUniversalIdentifier?: string;
+    authContext?: WorkspaceAuthContext;
   }): Promise<void> {
     const universalIdentifier =
       applicationUniversalIdentifier ??
@@ -104,7 +107,7 @@ export class CoreWorkflowMutationWorkspaceService {
           allFlatEntityOperationByMetadataName: operations,
           workspaceId,
           isSystemBuild: false,
-          authContext: workspaceAuthContextStorage.getStore(),
+          authContext,
           applicationUniversalIdentifier: universalIdentifier,
         },
       );
@@ -119,12 +122,12 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async duplicateWorkflow({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     coreWorkflowIdToDuplicate,
     coreWorkflowVersionIdToCopy,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
     coreWorkflowIdToDuplicate: string;
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowDTO> {
@@ -179,7 +182,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
     const duplicatedWorkflow = await this.createWorkflow({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
       isPrivate: sourceCoreWorkflow.isPrivate,
@@ -246,14 +249,14 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async createWorkflowWithContent({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     name,
     trigger,
     steps,
     edges,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
     name: string;
     trigger: WorkflowTrigger;
     steps: WorkflowAction[];
@@ -264,7 +267,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
     const coreWorkflow = await this.createWorkflow({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       name,
     });
 
@@ -362,13 +365,13 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async updateWorkflow({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     coreWorkflowId,
     name,
     isPrivate,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
     coreWorkflowId: string;
     name?: string;
     isPrivate?: boolean;
@@ -397,12 +400,13 @@ export class CoreWorkflowMutationWorkspaceService {
         existingFlatWorkflow,
         name,
         isPrivate,
-        userWorkspaceId,
+        userWorkspaceId: getUserWorkspaceIdFromAuthContext(authContext),
       });
 
     try {
       await this.runCoreWorkflowMigration({
         workspaceId,
+        authContext,
         failureMessage:
           'Multiple validation errors occurred while updating workflow',
         operations: {
@@ -520,12 +524,12 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async createWorkflow({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     name,
     isPrivate,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
     name?: string;
     isPrivate?: boolean;
   }): Promise<CoreWorkflowDTO> {
@@ -543,7 +547,8 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceWorkflowId: null,
       isSystem: false,
       isPrivate: isPrivate ?? false,
-      createdByUserWorkspaceId: userWorkspaceId ?? null,
+      createdByUserWorkspaceId:
+        getUserWorkspaceIdFromAuthContext(authContext) ?? null,
       lastPublishedCoreWorkflowVersionId: null,
       versionDefinitionHash: null,
       createdAt,
@@ -552,6 +557,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
     await this.runCoreWorkflowMigration({
       workspaceId,
+      authContext,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
       failureMessage:

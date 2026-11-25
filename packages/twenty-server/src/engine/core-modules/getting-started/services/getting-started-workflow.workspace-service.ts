@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { GETTING_STARTED_WORKFLOWS } from 'src/engine/core-modules/getting-started/constants/getting-started-workflows.constant';
 import { type GettingStartedWorkflowDTO } from 'src/engine/core-modules/getting-started/dtos/getting-started-workflow.dto';
@@ -33,11 +34,11 @@ export class GettingStartedWorkflowWorkspaceService {
 
   async prepareWorkflowOrThrow({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     stepActionKey,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    authContext: WorkspaceAuthContext;
     stepActionKey: GettingStartedStepActionKey;
   }): Promise<GettingStartedWorkflowDTO> {
     const gettingStartedWorkflow = GETTING_STARTED_WORKFLOWS[stepActionKey];
@@ -70,7 +71,7 @@ export class GettingStartedWorkflowWorkspaceService {
 
         return this.createWorkflowDraft({
           workspaceId,
-          userWorkspaceId,
+          authContext,
           stepActionKey,
           gettingStartedWorkflow,
         });
@@ -82,12 +83,12 @@ export class GettingStartedWorkflowWorkspaceService {
 
   private async createWorkflowDraft({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     stepActionKey,
     gettingStartedWorkflow,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    authContext: WorkspaceAuthContext;
     stepActionKey: GettingStartedStepActionKey;
     gettingStartedWorkflow: GettingStartedWorkflow;
   }): Promise<GettingStartedWorkflowDTO> {
@@ -103,7 +104,7 @@ export class GettingStartedWorkflowWorkspaceService {
       await this.coreWorkflowMutationWorkspaceService.createWorkflowWithContent(
         {
           workspaceId,
-          userWorkspaceId,
+          authContext,
           ...buildGettingStartedWorkflowContent({
             gettingStartedWorkflow,
             flatObjectMetadataMaps,

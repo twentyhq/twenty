@@ -21,7 +21,8 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
@@ -190,13 +191,12 @@ export class ViewResolver {
   async createView(
     @Args('input') input: CreateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     return await this.viewService.createOne({
       createViewInput: input,
       workspaceId: workspace.id,
-      createdByUserWorkspaceId: userWorkspaceId,
+      authContext,
     });
   }
 
@@ -210,13 +210,12 @@ export class ViewResolver {
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
   ): Promise<ViewDTO> {
     return await this.viewService.updateOne({
       updateViewInput: { ...input, id },
       workspaceId: workspace.id,
-      userWorkspaceId,
+      authContext,
     });
   }
 

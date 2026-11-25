@@ -9,7 +9,8 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -61,7 +62,7 @@ export class CompleteViewUpsertService {
 
   async upsertCompleteView({
     workspaceId,
-    userWorkspaceId,
+    authContext,
     existingViewId,
     objectMetadataId,
     name,
@@ -79,7 +80,7 @@ export class CompleteViewUpsertService {
     sorts,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
+    authContext: WorkspaceAuthContext | undefined;
     existingViewId?: string;
     objectMetadataId?: string;
     name?: string;
@@ -96,6 +97,8 @@ export class CompleteViewUpsertService {
     filters?: CompleteViewFilterSpec[];
     sorts?: CompleteViewSortSpec[];
   }): Promise<ViewDTO> {
+    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -223,7 +226,7 @@ export class CompleteViewUpsertService {
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: false,
-          authContext: workspaceAuthContextStorage.getStore(),
+          authContext,
           applicationUniversalIdentifier,
         },
       );
