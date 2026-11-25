@@ -105,14 +105,15 @@ export const useSwitchNavigationDrawerTab = () => {
     }
   };
 
-  const openNavigationMenuTabFirstItem = (tabId: string | null) => {
-    if (isDefined(tabId)) {
-      return openNavigationMenuTabFirstEntry(tabId);
+  const openHomeOrTabFirstItem = (tabId: string | null) => {
+    if (!isDefined(tabId)) {
+      navigate(defaultHomePagePath, { replace: isSettingsDrawer });
+      return true;
     }
 
-    navigate(defaultHomePagePath);
-
-    return true;
+    return openNavigationMenuTabFirstEntry(tabId, {
+      replace: isSettingsDrawer,
+    });
   };
 
   const switchToNavigationMenuTab = (tabId: string | null) => {
@@ -123,7 +124,7 @@ export const useSwitchNavigationDrawerTab = () => {
 
     setCurrentNavigationMenuTabId(tabId);
 
-    if (shouldOpenFirstItem && openNavigationMenuTabFirstItem(tabId)) {
+    if (shouldOpenFirstItem && openHomeOrTabFirstItem(tabId)) {
       setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
       if (isSettingsDrawer) {
         leaveSettingsDrawer();

@@ -131,10 +131,13 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
     }
   };
 
-  const openNavigationMenuTabEntry = (entry: NavigationMenuTabEntry) => {
+  const openNavigationMenuTabEntry = (
+    entry: NavigationMenuTabEntry,
+    { replace }: { replace: boolean },
+  ) => {
     switch (entry.type) {
       case 'link':
-        navigate(entry.link);
+        navigate(entry.link, { replace });
         return;
       case 'inboxPresetFilter':
         openInboxPresetFilter(entry.presetFilter);
@@ -148,7 +151,10 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
     }
   };
 
-  const openNavigationMenuTabFirstEntry = (tabId: string) => {
+  const openNavigationMenuTabFirstEntry = (
+    tabId: string,
+    { replace }: { replace: boolean },
+  ) => {
     const firstEntry = getNavigationMenuTabFirstEntry({
       tabId,
       workspaceNavigationMenuItems,
@@ -169,7 +175,7 @@ export const useOpenNavigationMenuTabFirstEntry = () => {
       return false;
     }
 
-    openNavigationMenuTabEntry(firstEntry);
+    openNavigationMenuTabEntry(firstEntry, { replace });
 
     return true;
   };
