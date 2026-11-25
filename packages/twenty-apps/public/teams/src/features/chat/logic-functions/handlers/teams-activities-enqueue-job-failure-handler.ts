@@ -12,11 +12,6 @@ import { sendTeamsReplyOnce } from 'src/features/chat/logic-functions/utils/send
 
 const TEAMS_JOB_FAILURE_REPLY_TTL_MS = 60 * 60 * 1000;
 
-const UNFINISHED_STATUSES: string[] = [
-  TEAMS_ASSISTANT_REQUEST_STATUS.PENDING,
-  TEAMS_ASSISTANT_REQUEST_STATUS.PROCESSING,
-];
-
 export const teamsActivitiesEnqueueJobFailureHandler = async ({
   payload,
   error,
@@ -42,24 +37,36 @@ export const teamsActivitiesEnqueueJobFailureHandler = async ({
     return { skipped: true, reason: 'Request was never recorded' };
   }
 
-  if (!UNFINISHED_STATUSES.includes(request.status ?? '')) {
+  const isUnfinished =
+    request.status === TEAMS_ASSISTANT_REQUEST_STATUS.PENDING ||
+    request.status === TEAMS_ASSISTANT_REQUEST_STATUS.PROCESSING;
+
+  if (!isUnfinished) {
     return { skipped: true, reason: 'Request is already finished' };
   }
 
+  const errorMessage = `${error.type}: ${error.message}`;
+
+  // A throw here is final (onJobFailure is not retried), so a failed reply must not leave the request PROCESSING.
   await sendTeamsReplyOnce({
     kvKey: `teams-job-failure-reply:${request.id}`,
     ttlMs: TEAMS_JOB_FAILURE_REPLY_TTL_MS,
     serviceUrl: teamsServiceUrl,
     conversationId: teamsConversationId,
     text: TEAMS_ASSISTANT_FAILURE_TEXT,
+  }).catch((replyError: unknown) => {
+    console.warn(
+      `[teams] could not post the job failure reply of request ${request.id}`,
+      replyError,
+    );
   });
 
   await updateTeamsAssistantRequest({
     client,
     id: request.id,
     status: TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,
-    errorMessage: `${error.type}: ${error.message}`,
+    errorMessage,
   });
 
-  return { failed: true };
+  return { failed: true, reason: errorMessage };
 };

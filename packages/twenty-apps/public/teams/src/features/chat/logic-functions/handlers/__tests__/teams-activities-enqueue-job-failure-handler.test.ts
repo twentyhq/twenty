@@ -100,6 +100,18 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
     );
   });
 
+  it('should still fail the request when the reply cannot be posted', async () => {
+    findRequestMock.mockResolvedValue({ id: REQUEST_ID, status: 'PROCESSING' });
+    sendReplyOnceMock.mockRejectedValue(new Error('Connector token failed'));
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    await teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE);
+
+    expect(updateRequestMock).toHaveBeenCalledWith(
+      expect.objectContaining({ id: REQUEST_ID, status: 'FAILED' }),
+    );
+  });
+
   it.each(['DONE', 'FAILED'])(
     'should leave a %s request untouched',
     async (status) => {
@@ -120,9 +132,15 @@ describe('teamsActivitiesEnqueueJobFailureHandler', () => {
   it('should skip when the run never recorded a request', async () => {
     findRequestMock.mockResolvedValue(undefined);
 
-    await teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE);
+    const result =
+      await teamsActivitiesEnqueueJobFailureHandler(TIMEOUT_FAILURE);
 
+    expect(result).toEqual({
+      skipped: true,
+      reason: 'Request was never recorded',
+    });
     expect(sendReplyOnceMock).not.toHaveBeenCalled();
+    expect(updateRequestMock).not.toHaveBeenCalled();
   });
 
   it('should skip an activity that is not an assistant request', async () => {

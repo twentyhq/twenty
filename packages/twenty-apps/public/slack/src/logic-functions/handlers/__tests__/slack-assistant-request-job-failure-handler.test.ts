@@ -121,8 +121,13 @@ describe('slackAssistantRequestJobFailureHandler', () => {
   it('should skip when the run never recorded a request', async () => {
     findRequestMock.mockResolvedValue(undefined);
 
-    await slackAssistantRequestJobFailureHandler(TIMEOUT_FAILURE);
+    const result =
+      await slackAssistantRequestJobFailureHandler(TIMEOUT_FAILURE);
 
+    expect(result).toEqual({
+      skipped: true,
+      reason: 'Request was never recorded',
+    });
     expect(postMessageMock).not.toHaveBeenCalled();
     expect(updateRequestMock).not.toHaveBeenCalled();
   });

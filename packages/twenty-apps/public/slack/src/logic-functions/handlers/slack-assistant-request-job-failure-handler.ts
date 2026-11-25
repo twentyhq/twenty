@@ -12,11 +12,6 @@ import { getSlackAssistantFailureText } from 'src/logic-functions/utils/get-slac
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 
-const UNFINISHED_STATUSES: string[] = [
-  SLACK_ASSISTANT_REQUEST_STATUS.PENDING,
-  SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
-];
-
 export const slackAssistantRequestJobFailureHandler = async ({
   payload,
   error,
@@ -40,7 +35,11 @@ export const slackAssistantRequestJobFailureHandler = async ({
     return { skipped: true, reason: 'Request was never recorded' };
   }
 
-  if (!UNFINISHED_STATUSES.includes(request.status ?? '')) {
+  const isUnfinished =
+    request.status === SLACK_ASSISTANT_REQUEST_STATUS.PENDING ||
+    request.status === SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING;
+
+  if (!isUnfinished) {
     return { skipped: true, reason: 'Request is already finished' };
   }
 
