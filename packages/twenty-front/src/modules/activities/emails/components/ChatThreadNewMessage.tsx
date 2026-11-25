@@ -30,7 +30,6 @@ type ChatThreadNewMessageProps = {
   channelName: string;
   onSendMessage: (pendingMessage: PendingChatMessage) => Promise<unknown>;
   onMessageSent: () => Promise<unknown>;
-  canAttachFiles?: boolean;
 };
 
 export const ChatThreadNewMessage = ({
@@ -39,7 +38,6 @@ export const ChatThreadNewMessage = ({
   channelName,
   onSendMessage,
   onMessageSent,
-  canAttachFiles = false,
 }: ChatThreadNewMessageProps) => {
   const { t } = useLingui();
   const recipientRowRef = useRef<HTMLDivElement>(null);
@@ -82,7 +80,6 @@ export const ChatThreadNewMessage = ({
         isSendDisabled={!isNonEmptyArray(recipients)}
         onSendMessage={onSendMessage}
         onMessageSent={onMessageSent}
-        canAttachFiles={canAttachFiles}
       />
     </StyledContainer>
   );

@@ -56,10 +56,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`MCP servers`,
     description: msg`Register external MCP servers in Developers settings and expose their tools to AI chat.`,
   },
-  [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: {
-    label: msg`Create records permission`,
-    description: msg`Check the create permission on its own when creating records, rather than the update permission.`,
-  },
   [FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED]: {
     label: msg`Related record paths`,
     description: msg`Define the relations along which a record's permissions extend to related records.`,
@@ -80,10 +76,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: {
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
-  },
-  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: {
-    label: msg`Message attachments`,
-    description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
   },
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,

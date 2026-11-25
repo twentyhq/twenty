@@ -3,6 +3,7 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { currentNavigationMenuItemFolderIdFamilyState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdFamilyState';
 import { type NamedNavigationMenuItem } from '@/navigation-menu-item/common/types/NamedNavigationMenuItem';
+import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
 import { useMobileNavigationBarItems } from '@/navigation/hooks/useMobileNavigationBarItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -21,6 +22,7 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled');
 jest.mock(
   '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers',
 );
+jest.mock('@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar');
 
 let mockUnreadOpenThreadCount = 0;
 
@@ -106,6 +108,7 @@ describe('useMobileNavigationBarItems', () => {
     jest.mocked(useHasPermissionFlag).mockReturnValue(true);
     jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
     jest.mocked(useWorkspaceNavigationMenuContainers).mockReturnValue([]);
+    jest.mocked(useHasAiChatSectionInSidebar).mockReturnValue(false);
     jest.mocked(useSwitchToNewAiChat).mockReturnValue({
       switchToNewAiChat: mockSwitchToNewChat,
     });
@@ -163,6 +166,18 @@ describe('useMobileNavigationBarItems', () => {
 
     expect(result.current.location.pathname).toBe('/inbox');
     expect(result.current.activeItemName).toBe('inbox');
+  });
+
+  it('drops the inbox when the sidebar has an AI chat section', () => {
+    jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
+    jest.mocked(useHasAiChatSectionInSidebar).mockReturnValue(true);
+
+    const { result } = renderMobileNavigationBarItems('/objects/people');
+
+    expect(result.current.items.map(({ name }) => name)).toEqual([
+      'home',
+      'search',
+    ]);
   });
 
   it('keeps the inbox active while a thread is open', () => {
