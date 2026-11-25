@@ -18,7 +18,7 @@ export const findFlatEntityByUuidPropertyInFlatEntityMaps = <
   propertyName,
   uuid,
 }: {
-  flatEntityMaps: FlatEntityMaps<TFlatEntity>;
+  flatEntityMaps: Pick<FlatEntityMaps<TFlatEntity>, 'byUniversalIdentifier'>;
   propertyName: UuidPropertyName<TFlatEntity>;
   uuid: string;
 }): TFlatEntity | undefined => {
