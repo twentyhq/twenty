@@ -26664,7 +26664,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MainNavigationDrawerFixedRows.tsx
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownWorkspacesListComponents.tsx
 #: src/modules/navigation/components/NavigationDrawerHeader.tsx
@@ -26993,6 +26993,11 @@ msgstr "Αναζήτηση ενεργειών"
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
 msgid "Search options"
 msgstr "Επιλογές αναζήτησης"
+
+#. js-lingui-id: WDcoYK
+#: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
+msgid "Search or ask..."
+msgstr ""
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
