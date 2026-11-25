@@ -27,7 +27,6 @@ export class ManageableAgentService {
     const agent = await this.agentService.findOneAgentById({
       id: agentId,
       workspaceId: context.workspaceId,
-      userWorkspaceId: context.userWorkspaceId,
     });
 
     if (

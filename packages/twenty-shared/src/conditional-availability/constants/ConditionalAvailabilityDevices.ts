@@ -1,0 +1,1 @@
+export const CONDITIONAL_AVAILABILITY_DEVICES = ['MOBILE', 'DESKTOP'] as const;

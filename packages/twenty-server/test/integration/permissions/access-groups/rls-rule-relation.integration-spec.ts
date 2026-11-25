@@ -76,16 +76,17 @@ describe('RLS rules through a relation (integration)', () => {
       values: [SEED_APPLE_WORKSPACE_ID, nameSingular],
     });
 
-  const assignRuleThroughRelation = async ({
+  const assignRule = async ({
     objectMetadataId,
-    relationFieldMetadataId,
-    fieldMetadataId,
-    value,
+    predicate,
   }: {
     objectMetadataId: string;
-    relationFieldMetadataId: string;
-    fieldMetadataId: string;
-    value: string;
+    predicate: {
+      fieldMetadataId: string;
+      relationFieldMetadataId?: string;
+      operand: RowLevelPermissionPredicateOperand;
+      value?: string;
+    };
   }) => {
     const { data } = await createOneRole({
       expectToFail: false,
@@ -126,15 +127,7 @@ describe('RLS rules through a relation (integration)', () => {
                 id: ruleId,
                 logicalOperator:
                   RowLevelPermissionPredicateGroupLogicalOperator.AND,
-                predicates: [
-                  {
-                    id: v4(),
-                    fieldMetadataId,
-                    relationFieldMetadataId,
-                    operand: RowLevelPermissionPredicateOperand.CONTAINS,
-                    value,
-                  },
-                ],
+                predicates: [{ id: v4(), ...predicate }],
               },
             ],
           },
@@ -150,7 +143,7 @@ describe('RLS rules through a relation (integration)', () => {
     });
     await getAppProviderByClassName<AccessGroupSyncService>(
       'AccessGroupSyncService',
-    ).syncAccessGroups(SEED_APPLE_WORKSPACE_ID);
+    ).syncAccessGroups({ workspaceId: SEED_APPLE_WORKSPACE_ID });
     await getAppProviderByClassName<RecordAccessGroupComputationService>(
       'RecordAccessGroupComputationService',
     ).recomputeRecordAccessGroupIdsOfAllObjectRecords({
@@ -165,17 +158,20 @@ describe('RLS rules through a relation (integration)', () => {
       `UPDATE ${COMPANY_TABLE} SET "name" = '${RULE_VALUE}' WHERE "id" = $1`,
       [company.id],
     );
-    await assignRuleThroughRelation({
+    await assignRule({
       objectMetadataId: personObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId(
-        personObjectMetadataId,
-        'company',
-      ),
-      fieldMetadataId: await findFieldMetadataId(
-        companyObjectMetadataId,
-        'name',
-      ),
-      value: RULE_VALUE,
+      predicate: {
+        relationFieldMetadataId: await findFieldMetadataId(
+          personObjectMetadataId,
+          'company',
+        ),
+        fieldMetadataId: await findFieldMetadataId(
+          companyObjectMetadataId,
+          'name',
+        ),
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value: RULE_VALUE,
+      },
     });
   };
 
@@ -184,19 +180,34 @@ describe('RLS rules through a relation (integration)', () => {
       `UPDATE ${PERSON_TABLE} SET "jobTitle" = '${RULE_VALUE}' WHERE "id" = $1`,
       [person.id],
     );
-    await assignRuleThroughRelation({
+    await assignRule({
       objectMetadataId: companyObjectMetadataId,
-      relationFieldMetadataId: await findFieldMetadataId(
-        companyObjectMetadataId,
-        'people',
-      ),
-      fieldMetadataId: await findFieldMetadataId(
-        personObjectMetadataId,
-        'jobTitle',
-      ),
-      value: RULE_VALUE,
+      predicate: {
+        relationFieldMetadataId: await findFieldMetadataId(
+          companyObjectMetadataId,
+          'people',
+        ),
+        fieldMetadataId: await findFieldMetadataId(
+          personObjectMetadataId,
+          'jobTitle',
+        ),
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value: RULE_VALUE,
+      },
     });
   };
+
+  const assignCompanyRuleOnEmptyPeople = async () =>
+    assignRule({
+      objectMetadataId: companyObjectMetadataId,
+      predicate: {
+        fieldMetadataId: await findFieldMetadataId(
+          companyObjectMetadataId,
+          'people',
+        ),
+        operand: RowLevelPermissionPredicateOperand.IS_EMPTY,
+      },
+    });
 
   const insertPeople = async ({
     personIds,
@@ -410,6 +421,43 @@ describe('RLS rules through a relation (integration)', () => {
     );
 
     expect(await findCompaniesAsMember()).toEqual([otherCompany.id]);
+  });
+
+  it('should follow a one to many relation becoming empty or not', async () => {
+    await assignCompanyRuleOnEmptyPeople();
+
+    expect(await findCompaniesAsMember()).toEqual([otherCompany.id]);
+
+    await runAsAdminAndWaitForJobs(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'person',
+        gqlFields: 'id',
+        recordId: person.id,
+        data: { companyId: otherCompany.id },
+      }),
+    );
+
+    expect(await findCompaniesAsMember()).toEqual([company.id]);
+  });
+
+  it('should let a record be created while its one to many relation is empty', async () => {
+    await assignCompanyRuleOnEmptyPeople();
+
+    // Without an id in the input, the database assigns it after the create check runs
+    const response = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        data: { name: 'Created without people' },
+      }),
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    await global.testDataSource.query(
+      `DELETE FROM ${COMPANY_TABLE} WHERE "name" = 'Created without people'`,
+    );
+
+    expect(response.body.errors).toBeUndefined();
   });
 
   it('should update the related record a system write moves away from', async () => {

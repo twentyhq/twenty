@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { turnViewPresetFilterIntoRecordGqlOperationFilter } from 'twenty-shared/ai';
 import {
   RecordFilterGroupLogicalOperator,
   type RecordGqlOperationFilter,
@@ -7,6 +8,7 @@ import {
   ViewType,
 } from 'twenty-shared/types';
 import {
+  combineFilters,
   convertViewFilterValueToString,
   isDefined,
   type RecordFilter,
@@ -45,18 +47,15 @@ export class ViewQueryParamsService {
     viewId,
     workspaceId,
     currentWorkspaceMemberId,
-    currentUserWorkspaceId,
   }: {
     viewId: string;
     workspaceId: string;
     currentWorkspaceMemberId?: string;
-    currentUserWorkspaceId?: string;
   }): Promise<ViewQueryParams> {
     const view =
-      await this.viewService.findByIdWithRelationsVisibleToUserOrThrow({
+      await this.viewService.findByIdWithRelationsVisibleToCallerOrThrow({
         id: viewId,
         workspaceId,
-        userWorkspaceId: currentUserWorkspaceId,
       });
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -111,13 +110,19 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const filter = computeRecordGqlOperationFilterFromFlatMaps({
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-      recordFilters,
-      recordFilterGroups,
-      filterValueDependencies: { currentWorkspaceMemberId, timeZone },
-    });
+    const filter = combineFilters([
+      computeRecordGqlOperationFilterFromFlatMaps({
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        recordFilters,
+        recordFilterGroups,
+        filterValueDependencies: { currentWorkspaceMemberId, timeZone },
+      }),
+      turnViewPresetFilterIntoRecordGqlOperationFilter({
+        presetFilter: view.presetFilter,
+        currentWorkspaceMemberId,
+      }),
+    ]);
 
     const orderBy = computeViewSortsOrderBy({
       viewSorts: view.viewSorts ?? [],

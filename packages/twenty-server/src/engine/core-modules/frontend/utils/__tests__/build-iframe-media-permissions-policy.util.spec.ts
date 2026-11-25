@@ -3,7 +3,7 @@ import { buildIframeMediaPermissionsPolicy } from '../build-iframe-media-permiss
 describe('buildIframeMediaPermissionsPolicy', () => {
   it('preserves native capture without delegating to external origins by default', () => {
     expect(buildIframeMediaPermissionsPolicy([])).toBe(
-      'microphone=(self), camera=(self)',
+      'microphone=(self), camera=(self), geolocation=()',
     );
   });
 
@@ -22,7 +22,7 @@ describe('buildIframeMediaPermissionsPolicy', () => {
         },
       ]),
     ).toBe(
-      'microphone=(self "https://phone.example.com"), camera=(self "https://video.example.com")',
+      'microphone=(self "https://phone.example.com"), camera=(self "https://video.example.com"), geolocation=()',
     );
   });
 
@@ -41,7 +41,7 @@ describe('buildIframeMediaPermissionsPolicy', () => {
         },
       ]),
     ).toBe(
-      'microphone=(self "https://phone.example.com"), camera=(self "https://phone.example.com")',
+      'microphone=(self "https://phone.example.com"), camera=(self "https://phone.example.com"), geolocation=()',
     );
   });
 
@@ -55,6 +55,6 @@ describe('buildIframeMediaPermissionsPolicy', () => {
       buildIframeMediaPermissionsPolicy([
         { origin, microphone: true, camera: true },
       ]),
-    ).toBe('microphone=(self), camera=(self)');
+    ).toBe('microphone=(self), camera=(self), geolocation=()');
   });
 });

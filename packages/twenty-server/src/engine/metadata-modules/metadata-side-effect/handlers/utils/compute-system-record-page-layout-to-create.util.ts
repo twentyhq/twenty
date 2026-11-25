@@ -137,6 +137,7 @@ export const computeSystemRecordPageLayoutToCreate = ({
       deletedAt: null,
       conditionalDisplay: null,
       conditionalAvailabilityExpression: null,
+      conditionalAvailability: null,
       universalOverrides: null,
     });
   }

@@ -8,7 +8,7 @@ import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewType } from '@/views/types/ViewType';
 import {
   type ViewCalendarLayout,
-  type ViewVisibility,
+  type ViewPresetFilter,
 } from '~/generated-metadata/graphql';
 import { type ViewSort } from '@/views/types/ViewSort';
 
@@ -38,7 +38,8 @@ export type View = {
   position: number;
   icon: string;
   anyFieldFilterValue?: string | null;
-  visibility: ViewVisibility;
+  presetFilter?: ViewPresetFilter | null;
+  isPrivate: boolean;
   createdByUserWorkspaceId?: string | null;
   applicationId?: string;
   universalIdentifier?: string;

@@ -50,6 +50,12 @@ describe('getMonthsDescription', () => {
     );
   });
 
+  it('should handle lists containing ranges', () => {
+    expect(getMonthsDescription('1-3,6', options)).toBe(
+      'only in January, February, March and June',
+    );
+  });
+
   it('should handle month start index options', () => {
     const optionsZeroIndex = { ...options, monthStartIndexZero: true };
 

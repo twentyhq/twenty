@@ -3,11 +3,9 @@ import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPart
 import { type WorkspaceApplicationAuthorizationsQuery } from '~/generated-metadata/graphql';
 
 export const getApplicationConnectedMembers = ({
-  applicationId,
   applicationAuthorizations,
   workspaceMembers,
 }: {
-  applicationId: string;
   applicationAuthorizations: WorkspaceApplicationAuthorizationsQuery['workspaceApplicationAuthorizations'];
   workspaceMembers: PartialWorkspaceMember[];
 }): SettingsApplicationConnectedMember[] => {
@@ -18,15 +16,10 @@ export const getApplicationConnectedMembers = ({
     ]),
   );
 
-  return applicationAuthorizations
-    .filter(
-      (applicationAuthorization) =>
-        applicationAuthorization.applicationId === applicationId,
-    )
-    .map((applicationAuthorization) => ({
-      ...applicationAuthorization,
-      workspaceMember: workspaceMemberByUserId.get(
-        applicationAuthorization.userId,
-      ),
-    }));
+  return applicationAuthorizations.map((applicationAuthorization) => ({
+    ...applicationAuthorization,
+    workspaceMember: workspaceMemberByUserId.get(
+      applicationAuthorization.userId,
+    ),
+  }));
 };

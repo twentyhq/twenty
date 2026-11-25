@@ -9,7 +9,7 @@ import {
   FieldActorSource,
   type FullNameMetadata,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWorkDomain, isWorkEmail } from 'twenty-shared/utils';
 import { type DeepPartial, type Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -32,7 +32,6 @@ import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participa
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
-import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class CreateCompanyAndPersonService {

@@ -13,6 +13,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type ShareWithInput } from 'src/engine/permissions/record-share/types/share-with-input.type';
+import { buildApplicationCreatorRecordShare } from 'src/engine/permissions/internal/record-share/utils/build-application-creator-record-share.util';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/permissions/internal/record-share/utils/resolve-share-with-principal-or-throw.util';
 
 type RecordShareInputForRecord = Omit<
@@ -102,6 +103,15 @@ const buildCreatorRows = ({
     )
   ) {
     return [];
+  }
+
+  if (isApplicationAuthContext(authContext)) {
+    return [
+      buildApplicationCreatorRecordShare({
+        applicationRoleId: creatorRoleId,
+        applicationId: authContext.application.id,
+      }),
+    ];
   }
 
   return [

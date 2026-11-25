@@ -121,6 +121,8 @@ const workspaceMember: FlatWorkspaceMember = {
   messageParticipants: [],
   blocklist: [],
   calendarEventParticipants: [],
+  accountOwnerForCalendarChannelEventAssociations: [],
+  accountOwnerForMessageChannelMessageAssociations: [],
   timelineActivities: [],
   agentMessages: [],
   agentChatThreads: [],
@@ -144,7 +146,7 @@ describe('buildWorkspaceAccessGroups', () => {
       },
     });
 
-    expect(accessGroups.map(({ roleId }) => roleId)).toEqual(['healthy']);
+    expect(accessGroups.map(({ type }) => type)).toEqual(['ALL_RECORDS']);
     expect(hasFailures).toBe(true);
   });
 });

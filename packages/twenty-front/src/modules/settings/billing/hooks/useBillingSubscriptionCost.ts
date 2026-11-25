@@ -28,9 +28,29 @@ export const useBillingSubscriptionCost = () => {
   const creditsSubtotalCents =
     currentResourceCreditSubscriptionItem?.unitAmount;
 
+  const applicationSubscriptionItems =
+    subscription?.billingSubscriptionItems?.filter((billingSubscriptionItem) =>
+      isDefined(billingSubscriptionItem.applicationName),
+    ) ?? [];
+
+  const applicationsCount = new Set(
+    applicationSubscriptionItems.map(
+      (applicationSubscriptionItem) =>
+        applicationSubscriptionItem.applicationName,
+    ),
+  ).size;
+
+  const applicationsSubtotalCents = applicationSubscriptionItems.reduce(
+    (subtotalCents, applicationSubscriptionItem) =>
+      subtotalCents +
+      (applicationSubscriptionItem.quantity ?? 0) *
+        (applicationSubscriptionItem.unitAmount ?? 0),
+    0,
+  );
+
   const totalCents =
     isDefined(seatsSubtotalCents) && isDefined(creditsSubtotalCents)
-      ? seatsSubtotalCents + creditsSubtotalCents
+      ? seatsSubtotalCents + creditsSubtotalCents + applicationsSubtotalCents
       : undefined;
 
   const getTotalCentsWithCreditsAmountCents = (creditsAmountCents: number) =>
@@ -43,6 +63,9 @@ export const useBillingSubscriptionCost = () => {
     perSeatAmountCents,
     seatsSubtotalCents,
     creditsSubtotalCents,
+    applicationSubscriptionItems,
+    applicationsCount,
+    applicationsSubtotalCents,
     totalCents,
     getTotalCentsWithCreditsAmountCents,
   };

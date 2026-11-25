@@ -16,7 +16,6 @@ import {
   type WorkflowManifest,
   workflowManifestSchema,
 } from 'twenty-shared/application';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -51,7 +50,6 @@ const buildPublishedFlatUniversalWorkflowVersion = ({
   trigger: WorkflowTrigger;
 }): UniversalFlatWorkflowVersion & { id: string } => ({
   ...version,
-  workspaceWorkflowVersionId: null,
   isSystemSideEffect: true,
   status: WorkflowVersionStatus.ACTIVE,
   triggers: [trigger],
@@ -137,12 +135,9 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     applicationUniversalIdentifier,
     name: definition.name,
     isSystem: definition.isSystem ?? false,
-    visibility: WorkflowVisibility.WORKSPACE,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     workspaceWorkflowId: null,
-    lastPublishedVersionId: isDefined(keptActiveVersion)
-      ? (existingWorkflow?.lastPublishedVersionId ?? null)
-      : null,
     lastPublishedCoreWorkflowVersionId: versionId,
     navigationMenuItemUniversalIdentifiers: [],
     createdAt: existingWorkflow?.createdAt ?? now,

@@ -1,5 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
+import Stripe from 'stripe';
+import { type ObjectLiteral, Repository } from 'typeorm';
+
 import {
   getSeededBillingWorkspaceId,
   setupResourceCreditSubscription,
@@ -17,11 +20,11 @@ import {
 } from 'test/integration/utils/query-messaging.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type ApplicationBillingPrice } from 'twenty-shared/application';
-import { ConnectedAccountProvider, FeatureFlagKey } from 'twenty-shared/types';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { type ConnectionProviderConnectedAccountService } from 'src/engine/core-modules/application/connection-provider/connection-provider-connected-account.service';
 import { type AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
-import { UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS } from 'src/engine/core-modules/billing/constants/update-subscription-quantity-job-delay-ms.constant';
 import { SyncSubscriptionApplicationsJob } from 'src/engine/core-modules/billing/jobs/sync-subscription-applications.job';
 import { type BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -30,11 +33,9 @@ import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/
 import { type StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
 import { buildApplicationStripeProductId } from 'src/engine/core-modules/billing/utils/build-application-stripe-product-id.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type StripeItem = { id: string; price: { id: string }; quantity: number };
 
@@ -95,13 +96,11 @@ describe('Application price per connected account (integration)', () => {
   const findApplicationItem = () =>
     stripeItems.find(({ price }) => price.id === applicationMonthPriceId);
 
-  const runDelayedApplicationsSync = async () => {
+  const runApplicationsSync = async () => {
     expect(billingQueueAddSpy).toHaveBeenCalledWith(
       SyncSubscriptionApplicationsJob.name,
       { workspaceId },
-      expect.objectContaining({
-        delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
-      }),
+      expect.not.objectContaining({ delay: expect.anything() }),
     );
     billingQueueAddSpy.mockClear();
 
@@ -289,13 +288,6 @@ describe('Application price per connected account (integration)', () => {
       ],
     );
 
-    await getAppProviderByClassName<FeatureFlagService>(
-      'FeatureFlagService',
-    ).enableFeatureFlags(
-      [FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-      workspaceId,
-    );
-
     const billedSeats =
       (await getAppProviderByClassName<BillingSeatService>(
         'BillingSeatService',
@@ -413,13 +405,6 @@ describe('Application price per connected account (integration)', () => {
       [[BASE_PRODUCT_ID, applicationStripeProductId]],
     );
     await query(
-      `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
-      [workspaceId, FeatureFlagKey.IS_APPLICATION_PRICE_BILLING_ENABLED],
-    );
-    await getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    ).invalidateAndRecompute(workspaceId, ['featureFlagsMap']);
-    await query(
       `UPDATE core."application" SET "sourceType" = 'local'
        WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
       [applicationUniversalIdentifier, workspaceId],
@@ -429,18 +414,108 @@ describe('Application price per connected account (integration)', () => {
     });
   }, 120000);
 
+  it('does not create a connected account whose charge is declined', async () => {
+    const handle = 'declined-linkedin@apple.dev';
+
+    updateSubscriptionSpy.mockRejectedValueOnce(
+      new Stripe.errors.StripeCardError({
+        type: 'card_error',
+        message: 'Your card was declined.',
+      }),
+    );
+
+    await expect(connectAccount({ handle })).rejects.toMatchObject({
+      code: ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED,
+    });
+
+    const connectedAccounts = await query(
+      `SELECT id FROM core."connectedAccount" WHERE handle = $1 AND "workspaceId" = $2`,
+      [handle, workspaceId],
+    );
+
+    expect(connectedAccounts).toHaveLength(0);
+    expect(findApplicationItem()).toBeUndefined();
+  }, 120000);
+
+  it('charges each of two accounts connected at the same time', async () => {
+    const originalSave = Repository.prototype.save;
+    let shouldDelayConnectedAccountSave = true;
+
+    spies.push(
+      jest
+        .spyOn(Repository.prototype, 'save')
+        .mockImplementation(async function (
+          this: Repository<ObjectLiteral>,
+          ...args: unknown[]
+        ) {
+          if (
+            shouldDelayConnectedAccountSave &&
+            this.metadata.tableName === 'connectedAccount'
+          ) {
+            shouldDelayConnectedAccountSave = false;
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+          }
+
+          return Reflect.apply(originalSave, this, args);
+        }),
+    );
+
+    await Promise.all([
+      connectAccount({ handle: 'first-concurrent-linkedin@apple.dev' }),
+      connectAccount({ handle: 'second-concurrent-linkedin@apple.dev' }),
+    ]);
+
+    expect(findApplicationItem()?.quantity).toBe(2);
+  }, 120000);
+
+  it('does not reconnect a disconnected account whose charge is declined', async () => {
+    const handle = 'returning-linkedin@apple.dev';
+    const connectedAccountId = await connectAccount({ handle });
+
+    await runApplicationsSync();
+    await disconnectConnectedAccount(connectedAccountId);
+    await waitForAllJobsToFinish();
+    await runApplicationsSync();
+
+    expect(findApplicationItem()).toBeUndefined();
+
+    updateSubscriptionSpy.mockRejectedValueOnce(
+      new Stripe.errors.StripeCardError({
+        type: 'card_error',
+        message: 'Your card was declined.',
+      }),
+    );
+
+    await expect(
+      connectAccount({
+        handle,
+        reconnectingConnectedAccountId: connectedAccountId,
+      }),
+    ).rejects.toMatchObject({
+      code: ConnectionProviderExceptionCode.APPLICATION_CHARGE_DECLINED,
+    });
+
+    const [connectedAccount] = await query<{ archivedAt: Date | null }>(
+      `SELECT "archivedAt" FROM core."connectedAccount" WHERE id = $1`,
+      [connectedAccountId],
+    );
+
+    expect(connectedAccount.archivedAt).not.toBeNull();
+    expect(findApplicationItem()).toBeUndefined();
+  }, 120000);
+
   it('bills each connected account of the application and stops with the last one', async () => {
     const firstConnectedAccountId = await connectAccount({
       handle: 'first-linkedin@apple.dev',
     });
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(1);
 
     const secondConnectedAccountId = await connectAccount({
       handle: 'second-linkedin@apple.dev',
     });
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(2);
 
@@ -450,7 +525,7 @@ describe('Application price per connected account (integration)', () => {
       handle: 'first-linkedin@apple.dev',
       reconnectingConnectedAccountId: firstConnectedAccountId,
     });
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(2);
     expect(updateSubscriptionSpy).toHaveBeenCalledTimes(updateCallCount);
@@ -478,7 +553,7 @@ describe('Application price per connected account (integration)', () => {
 
     await disconnectConnectedAccount(firstConnectedAccountId);
     await waitForAllJobsToFinish();
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()?.quantity).toBe(1);
 
@@ -494,7 +569,7 @@ describe('Application price per connected account (integration)', () => {
 
     await deleteConnectedAccount(secondConnectedAccountId);
     await waitForAllJobsToFinish();
-    await runDelayedApplicationsSync();
+    await runApplicationsSync();
 
     expect(findApplicationItem()).toBeUndefined();
     expect(updateSubscriptionSpy).toHaveBeenLastCalledWith(

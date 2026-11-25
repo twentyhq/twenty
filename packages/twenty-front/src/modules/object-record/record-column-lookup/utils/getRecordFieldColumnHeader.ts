@@ -1,5 +1,9 @@
+import { t } from '@lingui/core/macro';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/utils/getRecordFieldLookupTarget';
+import { type RecordFieldLookupTarget } from '@/object-record/record-column-lookup/types/RecordFieldLookupTarget';
+import { type RecordFieldSummary } from '@/object-record/record-column-summary/types/RecordFieldSummary';
+import { getRecordFieldSummaryLabel } from '@/object-record/record-column-summary/utils/getRecordFieldSummaryLabel';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 type ColumnHeaderFieldMetadataItem = Pick<
@@ -7,27 +11,79 @@ type ColumnHeaderFieldMetadataItem = Pick<
   'label' | 'icon' | 'description'
 >;
 
-export const getRecordFieldColumnHeader = ({
+// What the header needs of a RecordFieldColumnKind, so the column editor can name a column it has not saved yet
+type ColumnHeaderColumnKind =
+  | { kind: 'field' | 'scopedRecords' }
+  | {
+      kind: 'lookup' | 'scopedLookup';
+      lookupTarget: Pick<
+        RecordFieldLookupTarget,
+        'lookupTargetFieldMetadataItem'
+      >;
+    }
+  | {
+      kind: 'summary';
+      summary?: Pick<
+        RecordFieldSummary,
+        'aggregateOperation' | 'aggregatedFieldMetadataItem'
+      >;
+    };
+
+const getSummaryLabel = (fieldMetadataItem: ColumnHeaderFieldMetadataItem) =>
+  `${fieldMetadataItem.label} · ${t`Summary`}`;
+
+const getDefaultRecordFieldColumnHeader = ({
   fieldMetadataItem,
-  lookupTarget,
+  columnKind,
 }: {
   fieldMetadataItem: ColumnHeaderFieldMetadataItem;
-  lookupTarget:
-    | Pick<RecordFieldLookupTarget, 'lookupTargetFieldMetadataItem'>
-    | undefined;
+  columnKind: ColumnHeaderColumnKind;
 }): ColumnHeaderFieldMetadataItem => {
-  const lookupTargetFieldMetadataItem =
-    lookupTarget?.lookupTargetFieldMetadataItem;
+  switch (columnKind.kind) {
+    case 'field':
+      return { ...fieldMetadataItem };
+    case 'scopedRecords':
+      return {
+        ...fieldMetadataItem,
+        label: getSummaryLabel(fieldMetadataItem),
+      };
+    case 'summary':
+      return {
+        ...fieldMetadataItem,
+        label: isDefined(columnKind.summary)
+          ? `${fieldMetadataItem.label} · ${getRecordFieldSummaryLabel(columnKind.summary)}`
+          : getSummaryLabel(fieldMetadataItem),
+      };
+    case 'lookup':
+    case 'scopedLookup': {
+      const { lookupTargetFieldMetadataItem } = columnKind.lookupTarget;
+      const label =
+        columnKind.kind === 'scopedLookup'
+          ? getSummaryLabel(fieldMetadataItem)
+          : fieldMetadataItem.label;
 
-  if (!isDefined(lookupTargetFieldMetadataItem)) {
-    return fieldMetadataItem;
+      return {
+        label: `${label} › ${lookupTargetFieldMetadataItem.label}`,
+        icon: lookupTargetFieldMetadataItem.icon ?? fieldMetadataItem.icon,
+        description:
+          lookupTargetFieldMetadataItem.description ??
+          fieldMetadataItem.description,
+      };
+    }
   }
+};
 
-  return {
-    label: `${fieldMetadataItem.label} › ${lookupTargetFieldMetadataItem.label}`,
-    icon: lookupTargetFieldMetadataItem.icon ?? fieldMetadataItem.icon,
-    description:
-      lookupTargetFieldMetadataItem.description ??
-      fieldMetadataItem.description,
-  };
+export const getRecordFieldColumnHeader = ({
+  customLabel,
+  ...defaultColumnHeaderArgs
+}: Parameters<typeof getDefaultRecordFieldColumnHeader>[0] & {
+  customLabel?: string | null;
+}): ColumnHeaderFieldMetadataItem => {
+  const defaultColumnHeader = getDefaultRecordFieldColumnHeader(
+    defaultColumnHeaderArgs,
+  );
+
+  return isNonEmptyString(customLabel)
+    ? { ...defaultColumnHeader, label: customLabel }
+    : defaultColumnHeader;
 };

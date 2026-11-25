@@ -13,7 +13,6 @@ import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/compon
 import { SingleWidgetTabSettingsContent } from '@/side-panel/pages/page-layout/components/SingleWidgetTabSettingsContent';
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
-import { EXPRESSION_DEVICE_DESKTOP } from '@/side-panel/pages/page-layout/constants/ExpressionDeviceDesktop';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
@@ -21,6 +20,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { buildDeviceConditionalAvailability } from 'twenty-shared/conditional-availability';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -278,8 +278,8 @@ export const WidgetVisibility: Story = {
         pageLayoutDraftComponentState.atomFamily({
           instanceId: WIDGET_SETTINGS_STORY_LAYOUT_ID,
         }),
-      ).tabs[0].widgets[0].conditionalAvailabilityExpression,
-    ).toBe(EXPRESSION_DEVICE_DESKTOP);
+      ).tabs[0].widgets[0].conditionalAvailability,
+    ).toEqual(buildDeviceConditionalAvailability('DESKTOP'));
     await userEvent.click(trigger);
     expect(
       await body.findByRole('option', { name: 'Desktop' }),

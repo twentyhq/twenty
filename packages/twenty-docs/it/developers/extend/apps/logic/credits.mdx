@@ -19,14 +19,7 @@ import { defineApplication } from 'twenty-sdk/define';
 export default defineApplication({
   // ...identity, variables...
   billing: {
-    description: '$20/month + $0.02 per minute recorded',
-    recurring: {
-      platformFee: {
-        period: 'MONTH',
-        amountMicroCredits: 20_000_000,
-        label: 'Platform fee',
-      },
-    },
+    description: '$0.02 per minute recorded',
     operations: {
       recordMeeting: {
         operationType: 'CALL_RECORDING',
@@ -37,57 +30,22 @@ export default defineApplication({
 });
 ```
 
-* `recurring` — deprecato, consulta [prezzi](#prices). Tariffe fisse e per membro che la **piattaforma** addebita per te, una volta per periodo di fatturazione.
+* `recurring` — rimosso, non più addebitato. Dichiara invece i [prezzi](#prices).
 * `operations` — ciò per cui addebiti durante l'utilizzo, da una funzione di logica.
 * `description` — una riga descrittiva visualizzata agli acquirenti nella scheda della tua app sul marketplace.
 
-Tutti e tre confluiscono nello stesso contatore di crediti e nella stessa ripartizione in **Impostazioni > Utilizzo**, quindi un workspace vede un'unica fattura.
+Le operazioni vengono conteggiate nel contatore dei crediti dello spazio di lavoro e nella relativa ripartizione **Impostazioni > Utilizzo**.
 
 ## Addebiti ricorrenti
 
 <Warning>
-  Deprecato a favore di [prezzi](#prices). La build avvisa riguardo alle tariffe ricorrenti, ma continuano a essere addebitate: i prezzi non sono ancora fatturati, quindi mantieni le tue finché non lo saranno.
+  Rimosso a favore dei [prezzi](#prices). La piattaforma non effettua più addebiti `recurring` e la compilazione continua a segnalarli. Dichiara invece `billing.prices`.
 </Warning>
-
-Un addebito ricorrente è una tariffa di abbonamento: un importo mensile fisso, un importo per membro del workspace o entrambi. Dichiari l'importo e la piattaforma lo addebita. La tua app non chiama mai `chargeCredits` per questi.
-
-```ts src/application-config.ts
-billing: {
-  recurring: {
-    platformFee: {
-      period: 'MONTH',
-      amountMicroCredits: 20_000_000,
-      label: 'Platform fee',
-    },
-    seat: {
-      period: 'MONTH',
-      amountMicroCredits: 5_000_000,
-      per: 'WORKSPACE_MEMBER',
-      label: 'Per member',
-    },
-  },
-},
-```
-
-| Campo                | Descrizione                                                                                                                                                                              |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `periodo`            | `MONTH` — l'unico periodo disponibile oggi                                                                                                                                               |
-| `amountMicroCredits` | Importo in micro-crediti (1 USD = 1.000.000), un numero intero positivo fino a 100.000.000 ($100). Per un addebito `WORKSPACE_MEMBER`, questa è la tariffa **per membro**, non il totale |
-| `per`                | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` moltiplica l'importo per il numero di membri nel workspace quando viene addebitato il periodo                                           |
-| `label`              | Ciò che gli amministratori leggono per quella riga in Utilizzo                                                                                                                           |
-
-Modalità di applicazione:
-
-* Una volta per periodo di fatturazione del workspace, alla scadenza del periodo del workspace stesso, non il primo giorno del mese.
-* Non proporzionati. A un'app installata a metà periodo viene addebitato l'intero importo per quel periodo; la disinstallazione interrompe il periodo successivo, ma non rimborsa quello corrente.
-* Gli addebiti per membro conteggiano tutti i membri del workspace nel momento in cui viene applicato l'addebito, quindi un workspace che cresce a metà periodo paga il conteggio più alto a partire dal periodo successivo.
-* Solo per gli abbonamenti mensili. A un workspace con piano annuale non viene addebitata una tariffa `MONTH`, anziché essere addebitato una volta per l'intero anno.
-* Limitati. Una tariffa dichiarata superiore a $100, o un addebito per membro la cui tariffa moltiplicata per il numero di membri supererebbe $1.000 per il periodo, viene rifiutata e non viene aumentata. La piattaforma applica questi addebiti autonomamente, quindi non registrerà un addebito che non può giustificare.
 
 ## Prezzi
 
 <Warning>
-  Solo dichiarazione per ora. La build convalida `billing.prices`, ma la piattaforma non li fattura ancora.
+  La fatturazione per prezzo è in fase di distribuzione ed è disattivata per impostazione predefinita: finché non viene abilitata per un workspace, la build convalida `billing.prices` ma al workspace non viene addebitato alcun costo.
 </Warning>
 
 Un prezzo viene addebitato in valuta reale anziché in crediti. Viene fatturato come voce dell'abbonamento Twenty dello spazio di lavoro, in modo che lo spazio di lavoro mantenga un'unica fattura. Per ora i prezzi sono solo in dollari statunitensi.
@@ -116,20 +74,28 @@ billing: {
 },
 ```
 
-| Campo                 | Descrizione                                                                                                                                                     |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `universalIdentifier` | Un UUID che identifica il prezzo tra le versioni della tua app. Generalo una volta e non modificarlo mai: un nuovo identificatore corrisponde a un nuovo prezzo |
-| `label`               | Ciò che gli amministratori leggono per quella voce                                                                                                              |
-| `description`         | Facoltativo. Una spiegazione più dettagliata di ciò che copre il prezzo                                                                                         |
-| `type`                | `RECURRING`, l'unico tipo per ora                                                                                                                               |
-| `billingPeriod`       | `MONTHLY`, l'unico periodo per ora                                                                                                                              |
-| `amountCents`         | Prezzo mensile in centesimi USD, un numero intero positivo fino a 8.333.333                                                                                     |
-| `valuta`              | Facoltativo. `USD` è per ora l'unica valuta supportata, nonché quella predefinita                                                                               |
-| `per`                 | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` rende l'importo una tariffa per membro dello spazio di lavoro                                                  |
+| Campo                 | Descrizione                                                                                                                                                                                                                                                                                     |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Un UUID che identifica il prezzo tra le versioni della tua app. Generalo una volta e non modificarlo mai: un nuovo identificatore corrisponde a un nuovo prezzo                                                                                                                                 |
+| `label`               | Ciò che gli amministratori leggono per quella voce                                                                                                                                                                                                                                              |
+| `description`         | Facoltativo. Una spiegazione più dettagliata di ciò che copre il prezzo                                                                                                                                                                                                                         |
+| `type`                | `RECURRING`, l'unico tipo per ora                                                                                                                                                                                                                                                               |
+| `billingPeriod`       | `MONTHLY`, l'unico periodo per ora                                                                                                                                                                                                                                                              |
+| `amountCents`         | Prezzo mensile in centesimi USD, un numero intero positivo fino a 8.333.333                                                                                                                                                                                                                     |
+| `valuta`              | Facoltativo. `USD` è per ora l'unica valuta supportata, nonché quella predefinita                                                                                                                                                                                                               |
+| `per`                 | Ometti per una tariffa fissa. `WORKSPACE_MEMBER` rende l'importo una tariffa per membro del workspace. `CONNECTED_ACCOUNT` lo rende una tariffa per account connesso tramite uno dei provider di connessione della tua app [provider di connessione](/it/developers/extend/apps/logic/connections) |
 
 Un prezzo segue l'intervallo di fatturazione dello spazio di lavoro: uno spazio di lavoro con un piano Twenty mensile paga l'importo mensile, mentre uno spazio di lavoro con un piano annuale paga una volta all'anno 12 volte l'importo mensile.
 
-La build rifiuta un `universalIdentifier` mancante, duplicato o non valido, un `label` o una `description` vuoti, un `type`, `billingPeriod` o `per` sconosciuto, un `amountCents` che non sia un numero intero positivo o che superi 8.333.333 (12 volte tale valore è il massimo che Stripe accetta per un singolo prezzo) e una `currency` diversa da `USD`.
+La fatturazione inizia quando l'installazione viene completata e termina con la disinstallazione, ripartita proporzionalmente ai giorni rimanenti del periodo di fatturazione. Un prezzo `per: 'WORKSPACE_MEMBER'` segue il numero di membri del workspace. Un prezzo `per: 'CONNECTED_ACCOUNT'` segue il numero di account connessi alla tua app nello spazio di lavoro. Gli account di tutti i provider di connessione della tua app vengono conteggiati insieme: con un provider Google e uno Microsoft, uno spazio di lavoro con due account Google e un account Microsoft paga per tre. Il prezzo non viene fatturato quando non è connesso alcun account e un account disconnesso non viene più fatturato. A uno spazio di lavoro in prova non viene addebitato nulla prima della fine del periodo di prova.
+
+L'addebito viene effettuato prima che l'installazione o il nuovo account collegato vadano a buon fine. Se il metodo di pagamento dello spazio di lavoro viene rifiutato, l'installazione non riesce o l'account non viene collegato, all'amministratore viene chiesto di aggiornare il metodo di pagamento e il resto dello spazio di lavoro non subisce alcuna conseguenza.
+
+Uno spazio di lavoro mantiene i prezzi con cui ha installato la tua app, anche dopo l'aggiornamento. Quando una nuova versione modifica, aggiunge o rimuove un prezzo, solo le nuove installazioni ricevono i nuovi prezzi.
+
+I prezzi non vengono fatturati su un server senza fatturazione abilitata, né per un'app sincronizzata da un'origine locale con `twenty app dev`.
+
+La build rifiuta un `universalIdentifier` mancante, duplicato o non valido, un `label` o una `description` vuoti, un `type`, `billingPeriod` o `per` sconosciuto, un `amountCents` che non è un numero intero positivo o supera 8.333.333 (12 volte tale importo è il massimo che Stripe accetta per un prezzo), una `currency` diversa da `USD` e un prezzo `per: 'CONNECTED_ACCOUNT'` in un'app che non dichiara alcun provider di connessione.
 
 ## Operazioni fatturabili
 
@@ -156,7 +122,7 @@ billing: {
 
 `CODE_EXECUTION` è il punto in cui la piattaforma contabilizza le esecuzioni delle tue funzioni, quindi gli addebiti registrati lì vengono mescolati con esse; preferisci l'impostazione predefinita.
 
-La build rifiuta un `operationType` sconosciuto, un `label` vuoto e un nome utilizzato sia da un addebito ricorrente sia da un'operazione.
+La compilazione rifiuta un `operationType` sconosciuto, un `label` vuoto e un nome di operazione dichiarato anche in `billing.recurring`, che è stato rimosso.
 
 ## Addebito
 
@@ -219,7 +185,7 @@ billing: {
 
 È testo libero per scelta: i prezzi reali includono livelli, minimi e tariffe per unità che un singolo numero non può esprimere. Limitati a una riga.
 
-Un'app che dichiara `operations` o `recurring` chiede anche il consenso dell'amministratore che effettua l'installazione: la schermata di installazione elenca "Addebita crediti al tuo spazio di lavoro", mentre la pagina dell'app mostra "Addebita crediti", con la tua `description` al passaggio del mouse.
+Un'app che dichiara `operations` chiede anche il consenso all'amministratore che esegue l'installazione: la schermata di installazione elenca "Addebita crediti al tuo spazio di lavoro" e la pagina dell'app mostra "Addebita crediti", con la tua `description` al passaggio del mouse.
 
 ## Attribuzione
 
@@ -235,7 +201,5 @@ await chargeCredits({
 ```
 
 Dove ottenerne uno: `context.userWorkspaceId` in un'esecuzione attivata oppure [`listConnections()`](/it/developers/extend/apps/logic/connections), che restituisce il `userWorkspaceId` del proprietario di ogni connessione.
-
-Gli addebiti ricorrenti non hanno una persona attivante, quindi vengono riportati solo per l'app, mai per un membro.
 
 <PageBanner illustration="card-page-charging-credits" />

@@ -23,6 +23,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { doesApplicationBillCredits } from 'src/engine/core-modules/application/utils/does-application-bill-credits.util';
+import { toManifestBillingPriceDtos } from 'src/engine/core-modules/application/utils/to-manifest-billing-price-dtos.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { MarketplaceAppRoleDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-role.dto';
@@ -111,10 +112,12 @@ export class MarketplaceQueryService {
     universalIdentifier,
     shouldIncludeConnectListings = false,
     shouldIncludeMcpServerApplications = false,
+    shouldIncludeBillingPrices = false,
   }: {
     universalIdentifier: string;
     shouldIncludeConnectListings?: boolean;
     shouldIncludeMcpServerApplications?: boolean;
+    shouldIncludeBillingPrices?: boolean;
   }): Promise<MarketplaceAppDetailDTO> {
     const connectListing = shouldIncludeConnectListings
       ? findMarketplaceConnectListing(universalIdentifier)
@@ -140,7 +143,10 @@ export class MarketplaceQueryService {
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 
-    return this.toMarketplaceAppDetailDTO(registration);
+    return this.toMarketplaceAppDetailDTO({
+      registration,
+      shouldIncludeBillingPrices,
+    });
   }
 
   async findRegistrationByUniversalIdentifier(
@@ -162,9 +168,13 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private async toMarketplaceAppDetailDTO(
-    registration: ApplicationRegistrationEntity,
-  ): Promise<MarketplaceAppDetailDTO> {
+  private async toMarketplaceAppDetailDTO({
+    registration,
+    shouldIncludeBillingPrices,
+  }: {
+    registration: ApplicationRegistrationEntity;
+    shouldIncludeBillingPrices: boolean;
+  }): Promise<MarketplaceAppDetailDTO> {
     const galleryImageUrls =
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
@@ -253,6 +263,9 @@ export class MarketplaceQueryService {
         manifest?.application?.requestedIframeMediaPermissions,
       ),
       billsCredits: doesApplicationBillCredits(manifest?.application?.billing),
+      billingPrices: shouldIncludeBillingPrices
+        ? toManifestBillingPriceDtos(manifest?.application?.billing)
+        : [],
       content: isDefined(manifest)
         ? buildApplicationContentFromManifest(manifest)
         : undefined,

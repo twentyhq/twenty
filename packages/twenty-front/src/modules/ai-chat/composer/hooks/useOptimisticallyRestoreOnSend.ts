@@ -9,9 +9,6 @@ import { aiChatThreadParticipantsState } from '@/ai-chat/threads/states/aiChatTh
 import { aiChatThreadViewVisitFamilyState } from '@/ai-chat/states/view/aiChatThreadViewVisitFamilyState';
 import { aiChatThreadRecordFamilySelector } from '@/ai-chat/threads/states/selectors/aiChatThreadRecordFamilySelector';
 
-// Mirrors what the server records when the member sends a message: the
-// thread leaves the trash, moves to the top of their inbox and is caught up,
-// so its unread line goes
 export const useOptimisticallyRestoreOnSend = () => {
   const { applyAiChatThreadUpdate } = useApplyAiChatThreadUpdate();
   const store = useStore();

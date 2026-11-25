@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
-import { ViewVisibility, WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -13,7 +12,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { VIEW_CHILD_METADATA_NAMES } from 'src/engine/metadata-modules/view/constants/view-child-metadata-names.constant';
-import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
+import { getEffectiveViewIsPrivate } from 'src/engine/metadata-modules/view/utils/get-effective-view-is-private.util';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
 import { type CallMetadataWebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 import { WebhookRateLimitService } from 'src/engine/metadata-modules/webhook/jobs/webhook-rate-limit.service';
@@ -126,11 +125,11 @@ export class CallWebhookJobsForMetadataJob {
           resolveEffectiveFlatEntityProperty({
             metadataName: 'view',
             flatEntity: {
-              visibility: record.visibility,
+              isPrivate: record.isPrivate,
               overrides: record.overrides,
             },
-            property: 'visibility',
-          }) === ViewVisibility.WORKSPACE
+            property: 'isPrivate',
+          }) === false
         );
       });
     }
@@ -153,7 +152,7 @@ export class CallWebhookJobsForMetadataJob {
 
         return (
           isDefined(parentFlatView) &&
-          isViewVisibleToUser(parentFlatView, undefined)
+          getEffectiveViewIsPrivate(parentFlatView) === false
         );
       });
     }
@@ -166,9 +165,7 @@ export class CallWebhookJobsForMetadataJob {
 
     if (metadataName === 'workflow') {
       return events.filter(
-        (event) =>
-          getWebhookEventRecord(event)?.visibility ===
-          WorkflowVisibility.WORKSPACE,
+        (event) => getWebhookEventRecord(event)?.isPrivate === false,
       );
     }
 
@@ -189,7 +186,7 @@ export class CallWebhookJobsForMetadataJob {
           findFlatEntityByIdInFlatEntityMaps({
             flatEntityMaps: flatWorkflowMaps,
             flatEntityId: coreWorkflowId,
-          })?.visibility === WorkflowVisibility.WORKSPACE
+          })?.isPrivate === false
         );
       });
     }

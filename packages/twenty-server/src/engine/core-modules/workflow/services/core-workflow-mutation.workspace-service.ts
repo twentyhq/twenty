@@ -13,7 +13,6 @@ import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/
 
 import { In } from 'typeorm';
 import { msg } from '@lingui/core/macro';
-import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -130,7 +129,6 @@ export class CoreWorkflowMutationWorkspaceService {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
       {
         workspaceId,
-        userWorkspaceId,
         coreWorkflowIds: [coreWorkflowIdToDuplicate],
       },
     );
@@ -182,13 +180,12 @@ export class CoreWorkflowMutationWorkspaceService {
       userWorkspaceId,
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
-      visibility: sourceCoreWorkflow.visibility,
+      isPrivate: sourceCoreWorkflow.isPrivate,
     });
 
     try {
       return await this.writeDuplicatedContentAndReturn({
         workspaceId,
-        userWorkspaceId,
         duplicatedCoreWorkflowId: duplicatedWorkflow.id,
         trigger: remappedTrigger,
         steps: remappedSteps,
@@ -197,7 +194,6 @@ export class CoreWorkflowMutationWorkspaceService {
       try {
         await this.deleteWorkflows({
           workspaceId,
-          userWorkspaceId,
           coreWorkflowIds: [duplicatedWorkflow.id],
         });
       } catch (cleanupError) {
@@ -210,13 +206,11 @@ export class CoreWorkflowMutationWorkspaceService {
 
   private async writeDuplicatedContentAndReturn({
     workspaceId,
-    userWorkspaceId,
     duplicatedCoreWorkflowId,
     trigger,
     steps,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     duplicatedCoreWorkflowId: string;
     trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
     steps: WorkflowAction[];
@@ -231,7 +225,6 @@ export class CoreWorkflowMutationWorkspaceService {
     const duplicatedCoreWorkflow =
       await this.coreWorkflowListService.findOneById({
         workspaceId,
-        userWorkspaceId,
         callerApplication: undefined,
         coreWorkflowId: duplicatedCoreWorkflowId,
       });
@@ -370,17 +363,16 @@ export class CoreWorkflowMutationWorkspaceService {
     userWorkspaceId,
     coreWorkflowId,
     name,
-    visibility,
+    isPrivate,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     coreWorkflowId: string;
     name?: string;
-    visibility?: WorkflowVisibility;
+    isPrivate?: boolean;
   }): Promise<void> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
-      userWorkspaceId,
       coreWorkflowIds: [coreWorkflowId],
     });
 
@@ -402,7 +394,7 @@ export class CoreWorkflowMutationWorkspaceService {
       fromUpdateCoreWorkflowInputToFlatWorkflowToUpdateOrThrow({
         existingFlatWorkflow,
         name,
-        visibility,
+        isPrivate,
         userWorkspaceId,
       });
 
@@ -528,16 +520,16 @@ export class CoreWorkflowMutationWorkspaceService {
     workspaceId,
     userWorkspaceId,
     name,
-    visibility,
+    isPrivate,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
     name?: string;
-    visibility?: WorkflowVisibility;
+    isPrivate?: boolean;
   }): Promise<CoreWorkflowDTO> {
-    const applicationId =
-      await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
-        workspaceId,
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
       );
 
     const createdAt = new Date().toISOString();
@@ -548,19 +540,13 @@ export class CoreWorkflowMutationWorkspaceService {
       universalIdentifier: uuidv4(),
       workspaceWorkflowId: null,
       isSystem: false,
-      visibility: visibility ?? WorkflowVisibility.WORKSPACE,
+      isPrivate: isPrivate ?? false,
       createdByUserWorkspaceId: userWorkspaceId ?? null,
-      lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
       versionDefinitionHash: null,
       createdAt,
       updatedAt: createdAt,
     };
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     await this.runCoreWorkflowMigration({
       workspaceId,
@@ -610,11 +596,10 @@ export class CoreWorkflowMutationWorkspaceService {
       id: coreWorkflow.id,
       name: coreWorkflow.name,
       statuses: [WorkflowStatus.DRAFT],
-      lastPublishedVersionId: null,
-      applicationId,
+      applicationId: workspaceCustomFlatApplication.id,
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,
-      visibility: coreWorkflow.visibility,
+      isPrivate: coreWorkflow.isPrivate,
       canChangeVisibility: true,
       createdAt: coreWorkflow.createdAt,
       updatedAt: coreWorkflow.updatedAt,
@@ -623,16 +608,13 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async deleteWorkflows({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowIds,
   }: {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
     coreWorkflowIds: string[];
   }): Promise<DeletedCoreWorkflowDTO[]> {
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
-      userWorkspaceId,
       coreWorkflowIds,
     });
 
@@ -658,11 +640,9 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async discardDraftVersion({
     workspaceId,
-    userWorkspaceId,
     coreWorkflowVersionId,
   }: DiscardCoreWorkflowDraftInput & {
     workspaceId: string;
-    userWorkspaceId: string | undefined;
   }): Promise<string | null> {
     const coreVersion = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
@@ -695,7 +675,6 @@ export class CoreWorkflowMutationWorkspaceService {
 
     await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
       workspaceId,
-      userWorkspaceId,
       coreWorkflowIds: [coreVersion.coreWorkflowId],
     });
 

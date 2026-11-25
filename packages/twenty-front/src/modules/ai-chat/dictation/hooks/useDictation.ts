@@ -5,7 +5,6 @@ import { dictationEngineComponentState } from '@/ai-chat/dictation/states/dictat
 import { isDictationRecordingComponentState } from '@/ai-chat/dictation/states/isDictationRecordingComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-// AiChatDictationEffect owns the engine lifecycle.
 export const useDictation = () => {
   const dictationEngine = useAtomComponentStateValue(
     dictationEngineComponentState,

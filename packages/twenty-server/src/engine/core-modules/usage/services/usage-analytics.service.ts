@@ -23,7 +23,6 @@ import { type CreditsUsedTimeSeriesRow } from 'src/engine/core-modules/usage/typ
 import { findDeclaredBillingCharge } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge.util';
 import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/list-declared-billing-charge-names.util';
 import { buildInstallationFilterParams } from 'src/engine/core-modules/usage/utils/build-installation-filter-params.util';
-import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
 import { buildUsageResourceTypeFilter } from 'src/engine/core-modules/usage/utils/build-usage-resource-type-filter.util';
 import { buildUsageScopeFilter } from 'src/engine/core-modules/usage/utils/build-usage-scope-filter.util';
@@ -499,43 +498,6 @@ export class UsageAnalyticsService {
       operation: row.operation,
       ...toCreditsUsedAmounts(row),
     }));
-  }
-
-  // The usage row is the record of the charge; >= so a truncated timestamp cannot miss the current period.
-  async getChargedRecurringKeys({
-    workspaceId,
-    periodStart,
-  }: {
-    workspaceId: string;
-    periodStart: Date;
-  }): Promise<Set<string>> {
-    const query = `
-      SELECT resourceId, resourceContext
-      FROM usageEvent
-      WHERE workspaceId = {workspaceId:String}
-        AND resourceType = {appResourceType:String}
-        AND operationType = {subscriptionOperationType:String}
-        AND periodStart >= {periodStart:String}
-      GROUP BY resourceId, resourceContext
-    `;
-
-    const rows = await this.clickHouseService.selectOrThrow<
-      Record<'resourceId' | 'resourceContext', string>
-    >(query, {
-      workspaceId,
-      appResourceType: UsageResourceType.APP,
-      subscriptionOperationType: UsageOperationType.SUBSCRIPTION,
-      periodStart: formatDateTimeForClickHouse(periodStart),
-    });
-
-    return new Set(
-      rows.map((row) =>
-        buildRecurringChargeKey({
-          applicationId: row.resourceId,
-          chargeKey: row.resourceContext,
-        }),
-      ),
-    );
   }
 
   async getUsageByUserTimeSeries(

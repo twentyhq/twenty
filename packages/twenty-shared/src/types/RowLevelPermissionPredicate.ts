@@ -14,5 +14,8 @@ export type RowLevelPermissionPredicate = {
   rowLevelPermissionPredicateGroupId: string | null;
   workspaceMemberFieldMetadataId: string | null;
   workspaceMemberSubFieldName: string | null;
+  workspaceMemberRelationFieldMetadataId?: string | null;
+  workspaceMemberRelationFilterFieldMetadataId?: string | null;
+  workspaceMemberRelationFilterValues?: string[] | null;
   roleId: string;
 };

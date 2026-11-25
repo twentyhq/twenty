@@ -241,6 +241,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     rowLevelPermissionRule: {
       foreignKey: 'rowLevelPermissionRuleId',
     },
+    sourceFieldMetadata: {
+      foreignKey: 'sourceFieldMetadataId',
+    },
   },
   pageLayout: {
     workspace: null,
@@ -282,6 +285,12 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     workspaceMemberFieldMetadata: {
       foreignKey: 'workspaceMemberFieldMetadataId',
+    },
+    workspaceMemberRelationFieldMetadata: {
+      foreignKey: 'workspaceMemberRelationFieldMetadataId',
+    },
+    workspaceMemberRelationFilterFieldMetadata: {
+      foreignKey: 'workspaceMemberRelationFilterFieldMetadataId',
     },
     objectMetadata: {
       foreignKey: 'objectMetadataId',

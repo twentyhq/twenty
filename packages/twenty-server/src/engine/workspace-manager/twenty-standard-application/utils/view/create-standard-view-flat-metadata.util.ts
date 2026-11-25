@@ -6,7 +6,7 @@ import {
   ViewType,
   ViewKey,
   ViewOpenRecordIn,
-  ViewVisibility,
+  type ViewPresetFilter,
 } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -30,6 +30,7 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   mainGroupByFieldName?: AllStandardObjectFieldName<O>;
   calendarFieldName?: AllStandardObjectFieldName<O>;
   calendarEndFieldName?: AllStandardObjectFieldName<O>;
+  presetFilter?: ViewPresetFilter | null;
 };
 
 export type CreateStandardViewArgs<
@@ -58,6 +59,7 @@ export const createStandardViewFlatMetadata = <
     mainGroupByFieldName,
     calendarFieldName,
     calendarEndFieldName,
+    presetFilter = null,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -157,7 +159,8 @@ export const createStandardViewFlatMetadata = <
     calendarFieldMetadataId,
     calendarEndFieldMetadataId,
     anyFieldFilterValue: null,
-    visibility: ViewVisibility.WORKSPACE,
+    presetFilter,
+    isPrivate: false,
     createdByUserWorkspaceId: null,
     isActive: true,
     isSystemSideEffect:

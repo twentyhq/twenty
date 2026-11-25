@@ -11,6 +11,7 @@ import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type WorkflowAutomatedTriggerMaps } from 'src/engine/core-modules/workflow/types/workflow-automated-trigger-maps.type';
+import { type CoreWorkflowVersionsByCoreWorkflowId } from 'src/engine/metadata-modules/flat-workflow-version/types/core-workflow-versions-by-core-workflow-id.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type FlatRoleTargetByApplicationIdMaps } from 'src/engine/metadata-modules/role-target/types/flat-role-target-by-application-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -18,6 +19,7 @@ import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-targ
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usage-limits.type';
+import { type RlsWorkspaceMemberRelationValueMaps } from 'src/engine/permissions/internal/rls/types/rls-workspace-member-relation-value-maps.type';
 import { type RoleRecordsPermissions } from 'src/engine/permissions/types/role-records-permissions.type';
 
 export type AdditionalCacheDataMaps = {
@@ -29,6 +31,7 @@ export type AdditionalCacheDataMaps = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  rlsWorkspaceMemberRelationValueMaps: RlsWorkspaceMemberRelationValueMaps;
   userApplicationVariableValueMaps: UserApplicationVariableValueMaps;
   currentBillingSubscription: CurrentBillingSubscription;
   billingEntitlements: BillingEntitlements;
@@ -53,6 +56,7 @@ export type WorkspaceDerivedCacheDataMap = {
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
   flatRoleTargetByApplicationIdMaps: FlatRoleTargetByApplicationIdMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
+  coreWorkflowVersionsByCoreWorkflowId: CoreWorkflowVersionsByCoreWorkflowId;
 };
 
 export type WorkspaceDerivedCacheKeyName = keyof WorkspaceDerivedCacheDataMap;

@@ -16,7 +16,7 @@ type WorkflowEditActionEmptyProps = {
 export const WorkflowEditActionEmpty = ({
   actionOptions,
 }: WorkflowEditActionEmptyProps) => {
-  if (actionOptions.readonly === true) {
+  if (actionOptions.readonly) {
     return <SidePanelWorkflowSelectAction onActionSelected={() => {}} />;
   }
 

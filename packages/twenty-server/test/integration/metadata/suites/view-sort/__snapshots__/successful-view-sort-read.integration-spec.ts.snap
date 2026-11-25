@@ -3,7 +3,6 @@
 exports[`View Sort read should succeed should find a view sort among all view sorts 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "direction": "ASC",
   "fieldMetadataId": Any<String>,
   "id": Any<String>,
@@ -18,7 +17,6 @@ exports[`View Sort read should succeed should find a view sort among all view so
 exports[`View Sort read should succeed should find a view sort among the view sorts of its view 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "direction": "ASC",
   "fieldMetadataId": Any<String>,
   "id": Any<String>,
@@ -33,7 +31,6 @@ exports[`View Sort read should succeed should find a view sort among the view so
 exports[`View Sort read should succeed should find a view sort by id 1`] = `
 {
   "createdAt": Any<String>,
-  "deletedAt": null,
   "direction": "ASC",
   "fieldMetadataId": Any<String>,
   "id": Any<String>,
@@ -50,7 +47,6 @@ exports[`View Sort read should succeed should return a view sort on GET /metadat
   "applicationId": Any<String>,
   "applicationUniversalIdentifier": Any<String>,
   "createdAt": Any<String>,
-  "deletedAt": null,
   "direction": "ASC",
   "fieldMetadataId": Any<String>,
   "fieldMetadataUniversalIdentifier": Any<String>,
@@ -71,7 +67,6 @@ exports[`View Sort read should succeed should return a view sort on GET /metadat
   "applicationId": Any<String>,
   "applicationUniversalIdentifier": Any<String>,
   "createdAt": Any<String>,
-  "deletedAt": null,
   "direction": "ASC",
   "fieldMetadataId": Any<String>,
   "fieldMetadataUniversalIdentifier": Any<String>,
@@ -92,7 +87,6 @@ exports[`View Sort read should succeed should return a view sort on GET /metadat
   "applicationId": Any<String>,
   "applicationUniversalIdentifier": Any<String>,
   "createdAt": Any<String>,
-  "deletedAt": null,
   "direction": "ASC",
   "fieldMetadataId": Any<String>,
   "fieldMetadataUniversalIdentifier": Any<String>,

@@ -110,6 +110,7 @@ describe('View tools', () => {
     type: ViewType.TABLE,
     icon: 'IconBuilding',
     visibility: ViewVisibility.WORKSPACE,
+    isPrivate: false,
     position: 0,
     createdByUserWorkspaceId: mockUserWorkspaceId,
   };
@@ -315,7 +316,6 @@ describe('View tools', () => {
 
         expect(viewService.findByWorkspaceId).toHaveBeenCalledWith(
           mockWorkspaceId,
-          mockUserWorkspaceId,
         );
         expect(result).toEqual({
           views: [
@@ -350,7 +350,6 @@ describe('View tools', () => {
         expect(viewService.findByObjectMetadataId).toHaveBeenCalledWith(
           mockWorkspaceId,
           mockObjectMetadataId,
-          mockUserWorkspaceId,
         );
         expect(result).toHaveProperty('views.length', 1);
       });
@@ -404,7 +403,6 @@ describe('View tools', () => {
           viewId: mockViewId,
           workspaceId: mockWorkspaceId,
           currentWorkspaceMemberId: 'workspace-member-id',
-          currentUserWorkspaceId: mockUserWorkspaceId,
         });
         expect(result).toEqual(mockQueryParams);
       });
@@ -705,6 +703,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
         const updatedView = {
           ...existingView,
@@ -732,6 +731,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         };
         const updatedView = {
@@ -779,6 +779,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         };
 
@@ -805,6 +806,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -833,6 +835,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -999,6 +1002,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
@@ -1041,6 +1045,7 @@ describe('View tools', () => {
           ...mockView,
           type: ViewType.CALENDAR,
           visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
@@ -1074,6 +1079,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
 
         viewService.findById.mockResolvedValue(existingView as any);
@@ -1129,6 +1135,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -1153,6 +1160,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.WORKSPACE,
+          isPrivate: false,
         };
         const deletedView = {
           id: mockViewId,
@@ -1205,6 +1213,7 @@ describe('View tools', () => {
         const existingView = {
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         };
 
@@ -1228,6 +1237,7 @@ describe('View tools', () => {
         viewService.findById.mockResolvedValue({
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: mockUserWorkspaceId,
         } as any);
         viewSortService.updateOne.mockResolvedValue({
@@ -1268,6 +1278,7 @@ describe('View tools', () => {
         viewService.findById.mockResolvedValue({
           ...mockView,
           visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: 'other-user-workspace-id',
         } as any);
 
@@ -1313,6 +1324,7 @@ describe('View tools', () => {
                 ...mockView,
                 id: mockOtherUsersViewId,
                 visibility: ViewVisibility.UNLISTED,
+                isPrivate: true,
                 createdByUserWorkspaceId: 'other-user-workspace-id',
               } as any),
         );

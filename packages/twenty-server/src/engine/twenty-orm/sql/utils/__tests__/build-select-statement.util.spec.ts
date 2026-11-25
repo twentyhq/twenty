@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import {
   buildCountStatement,
   buildSelectStatement,
@@ -39,6 +41,7 @@ const buildState = (
   extraSelectClauses: [],
   columnSelections: [],
   unreadableColumnConditions: {},
+  unreadableRelationConditions: {},
   joinClauses: [],
   whereClauses: [],
   rowAccessConditions: [],
@@ -223,6 +226,66 @@ describe('buildSelectStatement', () => {
       `(CASE WHEN COALESCE(("task"."x" = :x), FALSE) THEN NULL ELSE (CASE WHEN ("task"."x" = :x) THEN NULL ELSE "task"."title" END) = 'Secret' END)`,
     );
     expect(sql.slice(0, sql.indexOf('EXISTS'))).not.toContain('CASE WHEN');
+  });
+
+  it('should make a relation filter unknown on the rows its relation is unreadable on, and stop its link there', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableRelationConditions: {
+          person: { tasks: ['"person"."x" = :x'] },
+        },
+        whereClauses: [{ operator: 'and', sql: '__exists_task__' }],
+        existsFilterClauses: [
+          {
+            token: '__exists_task__',
+            alias: 'task',
+            parentAlias: 'person',
+            relationFieldName: 'tasks',
+            targetTableShape: { ...personTableShape, tableName: 'task' },
+            correlationCondition: '"task"."personId" = "person"."id"',
+            conditionClauses: [
+              { operator: 'and', sql: `"task"."title" = 'Open'` },
+            ],
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'WHERE (CASE WHEN COALESCE(("person"."x" = :x), FALSE) THEN NULL ELSE EXISTS (',
+    );
+    expect(sql).toContain(
+      'WHERE "task"."personId" = "person"."id" AND NOT COALESCE(("person"."x" = :x), FALSE) AND',
+    );
+  });
+
+  it('should join nothing from the rows a relation is unreadable on', () => {
+    const sql = buildSelectStatement(
+      buildState({
+        unreadableRelationConditions: {
+          person: { company: ['"person"."x" = :x'] },
+        },
+        joinClauses: [
+          {
+            alias: 'company',
+            parentAlias: 'person',
+            relationFieldName: 'company',
+            targetTableShape: { ...personTableShape, tableName: 'company' },
+            relationType: RelationType.MANY_TO_ONE,
+            joinType: 'LEFT',
+            condition: '"person"."companyId" = "company"."id"',
+            additionalOnConditions: [],
+          },
+        ],
+        includeDeleted: true,
+      }),
+    );
+
+    expect(sql).toContain(
+      'LEFT JOIN "workspace_1wgvd1injqtife6y4rvfbu3h5"."company" AS "company" ON ("person"."companyId" = "company"."id") AND (NOT COALESCE(("person"."x" = :x), FALSE))',
+    );
   });
 
   it('should keep every row when only a sort reads an unreadable column', () => {

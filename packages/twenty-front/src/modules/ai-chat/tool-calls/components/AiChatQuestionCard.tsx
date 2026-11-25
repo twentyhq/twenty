@@ -27,6 +27,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { useIsTouchDevice } from 'twenty-ui/utilities';
 
 import { StyledAiChatAskCard } from '@/ai-chat/tool-calls/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai-chat/message-content/components/TextWithChatReferences';
@@ -175,6 +176,7 @@ export const AiChatQuestionCard = ({
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const isTouchDevice = useIsTouchDevice();
   const { toolCallId } = pendingQuestion;
   const questions =
     pendingQuestion.kind === 'question'
@@ -251,7 +253,6 @@ export const AiChatQuestionCard = ({
           },
     );
 
-    // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
       setIsSubmitting(false);
     }
@@ -358,7 +359,7 @@ export const AiChatQuestionCard = ({
   };
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === 'Enter' && !event.shiftKey && !isTouchDevice) {
       event.preventDefault();
 
       if (!isLastQuestion) {
