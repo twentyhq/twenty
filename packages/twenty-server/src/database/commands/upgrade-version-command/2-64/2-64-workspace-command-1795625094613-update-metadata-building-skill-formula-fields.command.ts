@@ -20,7 +20,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const METADATA_BUILDING_SKILL_UNIVERSAL_IDENTIFIER =
   STANDARD_SKILL['metadata-building'].universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.64.0', 1795618039870)
+@RegisteredWorkspaceCommand('2.64.0', 1795625094613)
 @Command({
   name: 'upgrade:2-64:update-metadata-building-skill-formula-fields',
   description:

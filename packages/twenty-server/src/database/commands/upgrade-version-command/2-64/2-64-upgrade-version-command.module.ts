@@ -8,7 +8,7 @@ import { RenameWorkflowsNavigationFolderToAutomationsCommand } from 'src/databas
 import { AddWorkflowsAndAgentsGoToCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795538640852-add-workflows-and-agents-go-to-command-menu-items.command';
 import { AddDefaultLayoutNavigationMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795595757554-add-default-layout-navigation-menu-items.command';
 import { BackfillBillingCustomerStripeCustomerEmailCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795601305717-backfill-billing-customer-stripe-customer-email.command';
-import { UpdateMetadataBuildingSkillFormulaFieldsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795618039870-update-metadata-building-skill-formula-fields.command';
+import { UpdateMetadataBuildingSkillFormulaFieldsCommand } from 'src/database/commands/upgrade-version-command/2-64/2-64-workspace-command-1795625094613-update-metadata-building-skill-formula-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
