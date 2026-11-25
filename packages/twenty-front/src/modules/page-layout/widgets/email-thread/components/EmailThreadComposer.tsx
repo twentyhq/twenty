@@ -80,7 +80,7 @@ export const EmailThreadComposer = ({
     onSent: handleReplySent,
   });
 
-  const { handleSend, canSend, canAttachFiles, discardDraft } = composerState;
+  const { handleSend, canSend, discardDraft } = composerState;
 
   const {
     openAttachmentPicker,
@@ -136,23 +136,18 @@ export const EmailThreadComposer = ({
 
     return [
       cancelReplyCommandMenuItem,
-      ...(canAttachFiles
-        ? [
-            {
-              id: 'attach-files',
-              label: t`Attach files`,
-              Icon: IconPaperclip,
-              isPinned: false,
-              onClick: openAttachmentPicker,
-            },
-          ]
-        : []),
+      {
+        id: 'attach-files',
+        label: t`Attach files`,
+        Icon: IconPaperclip,
+        isPinned: false,
+        onClick: openAttachmentPicker,
+      },
       sendCommandMenuItem,
     ];
   }, [
     isComposerOpen,
     isInSidePanel,
-    canAttachFiles,
     handleSend,
     canSendReply,
     setIsComposerOpen,
@@ -186,11 +181,7 @@ export const EmailThreadComposer = ({
           <EmailComposerFields
             composerState={composerState}
             appSender={appReplyTarget}
-            onAttachFiles={
-              isInSidePanel || !canAttachFiles
-                ? undefined
-                : openAttachmentPicker
-            }
+            onAttachFiles={isInSidePanel ? undefined : openAttachmentPicker}
           />
         </StyledComposerContainer>
       )}

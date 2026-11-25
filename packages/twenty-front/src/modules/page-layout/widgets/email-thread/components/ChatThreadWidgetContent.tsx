@@ -20,14 +20,12 @@ import {
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { useApolloClient } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
-  FeatureFlagKey,
   MyConnectedAccountsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -71,9 +69,6 @@ export const ChatThreadWidgetContent = ({
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const hasSendPermission = useHasPermissionFlag(
     PermissionFlagType.SEND_EMAIL_TOOL,
-  );
-  const isMessageAttachmentEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED,
   );
   const counterparts = useChatThreadCounterparts(messages);
   const firstCounterpart = counterparts?.[0];
@@ -143,7 +138,6 @@ export const ChatThreadWidgetContent = ({
                   : null
               }
               isDisconnected={isDisconnected}
-              canAttachFiles={isMessageAttachmentEnabled}
               draftKey={
                 isDefined(currentWorkspaceMember)
                   ? `${currentWorkspaceMember.id}:${messageThreadId}`

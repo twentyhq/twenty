@@ -13,7 +13,6 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED]: false,
   [FeatureFlagKey.IS_CHANNEL_VISIBILITY_RLS_ENABLED]: false,
   [FeatureFlagKey.IS_GETTING_STARTED_ENABLED]: true,
-  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: true,
   [FeatureFlagKey.IS_AI_DATA_POLICY_ENABLED]: true,
   [FeatureFlagKey.IS_CREATE_RECORDS_PERMISSION_ENABLED]: false,
   [FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED]: false,
