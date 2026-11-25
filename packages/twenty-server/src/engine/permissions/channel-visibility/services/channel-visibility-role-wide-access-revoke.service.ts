@@ -7,11 +7,12 @@ import {
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 import { fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-records-permissions.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
+import { getChannelRecordRuleUniversalIdentifier } from 'src/engine/permissions/channel-visibility/utils/get-channel-record-rule-universal-identifier.util';
 import { ChannelVisibilityRuleSyncSchedulerService } from 'src/engine/permissions/channel-visibility/services/channel-visibility-rule-sync-scheduler.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -34,14 +35,14 @@ const OBJECTS_FOLLOWING_A_CHANNEL_RECORD = [
     objectUniversalIdentifier: attachment.universalIdentifier,
     channelRecordFieldUniversalIdentifier:
       attachment.fields.targetMessage.universalIdentifier,
-    ruleUniversalIdentifierSeed: 'attachmentNotOfMessage',
+    ruleUniversalIdentifierSeed: 'attachmentNotOfMessage' as const,
     recordsFollowingAChannelRecord: 'message attachments',
   },
   {
     objectUniversalIdentifier: callRecording.universalIdentifier,
     channelRecordFieldUniversalIdentifier:
       callRecording.fields.calendarEvent.universalIdentifier,
-    ruleUniversalIdentifierSeed: 'callRecordingNotOfCalendarEvent',
+    ruleUniversalIdentifierSeed: 'callRecordingNotOfCalendarEvent' as const,
     recordsFollowingAChannelRecord: 'call recordings of calendar events',
   },
 ];
@@ -229,8 +230,14 @@ export class ChannelVisibilityRoleWideAccessRevokeService {
           continue;
         }
 
-        const buildUniversalIdentifier = (kind: string) =>
-          v5(`${ruleUniversalIdentifierSeed}:${kind}`, roleUniversalIdentifier);
+        const buildUniversalIdentifier = (
+          kind: 'rule' | 'group' | 'predicate',
+        ) =>
+          getChannelRecordRuleUniversalIdentifier({
+            ruleUniversalIdentifierSeed,
+            roleUniversalIdentifier,
+            kind,
+          });
         const { objectPermissions, rules, predicateGroups, predicates } =
           fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow({
             roleManifest: {
