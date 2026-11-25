@@ -12,9 +12,8 @@ import { createRelatedRecordPath } from 'test/integration/metadata/suites/relate
 import { deleteRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/delete-related-record-path.util';
 import { findRelatedRecordPaths } from 'test/integration/metadata/suites/related-record-path/utils/find-related-record-paths.util';
 import { updateRelatedRecordPath } from 'test/integration/metadata/suites/related-record-path/utils/update-related-record-path.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -107,12 +106,6 @@ describe('Related record path metadata', () => {
   };
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
@@ -185,36 +178,28 @@ describe('Related record path metadata', () => {
   });
 
   afterAll(async () => {
-    try {
-      const remainingPathIds = await findPathIds();
+    const remainingPathIds = await findPathIds();
 
-      for (const pathId of createdPathIds) {
-        if (remainingPathIds.includes(pathId)) {
-          await deleteRelatedRecordPath(pathId);
-        }
+    for (const pathId of createdPathIds) {
+      if (remainingPathIds.includes(pathId)) {
+        await deleteRelatedRecordPath(pathId);
       }
+    }
 
-      await deleteObject(projectObjectMetadataId);
+    await deleteObject(projectObjectMetadataId);
 
-      const { objects } = await findManyObjectMetadata({
-        expectToFail: false,
-        input: { filter: {}, paging: { first: 1000 } },
-        gqlFields: 'id',
-      });
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id',
+    });
 
-      if (
-        objects.some(
-          (object: { id: string }) => object.id === taskObjectMetadataId,
-        )
-      ) {
-        await deleteObject(taskObjectMetadataId);
-      }
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
+    if (
+      objects.some(
+        (object: { id: string }) => object.id === taskObjectMetadataId,
+      )
+    ) {
+      await deleteObject(taskObjectMetadataId);
     }
   });
 
