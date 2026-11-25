@@ -4,7 +4,6 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import Stripe from 'stripe';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
@@ -51,9 +50,10 @@ export class BackfillBillingCustomerStripeCustomerEmailCommand extends Provision
       return;
     }
 
-    const email = await this.getStripeCustomerEmail(
-      billingCustomer.stripeCustomerId,
-    );
+    const { email } =
+      await this.stripeCustomerService.getCustomerPartnerAndEmail(
+        billingCustomer.stripeCustomerId,
+      );
 
     if (!isNonEmptyString(email)) {
       this.logger.log(
@@ -78,29 +78,5 @@ export class BackfillBillingCustomerStripeCustomerEmailCommand extends Provision
          AND "stripeCustomerEmail" IS NULL`,
       [workspaceId, email],
     );
-  }
-
-  private async getStripeCustomerEmail(
-    stripeCustomerId: string,
-  ): Promise<string | null> {
-    try {
-      const { email } =
-        await this.stripeCustomerService.getCustomerPartnerAndEmail(
-          stripeCustomerId,
-        );
-
-      return email;
-    } catch (error) {
-      // A failed workspace aborts the whole upgrade, and the customer webhooks fill the email later anyway
-      if (error instanceof Stripe.errors.StripeError) {
-        this.logger.warn(
-          `Could not retrieve Stripe customer ${stripeCustomerId} (${error.type}: ${error.message})`,
-        );
-
-        return null;
-      }
-
-      throw error;
-    }
   }
 }
