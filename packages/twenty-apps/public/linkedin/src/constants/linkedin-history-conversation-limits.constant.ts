@@ -1,1 +1,0 @@
-export const LINKEDIN_HISTORY_CONVERSATION_LIMITS = [0, 10, 20, 50] as const;

@@ -7,7 +7,6 @@ import {
 } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { LINKEDIN_HISTORY_CONVERSATION_LIMITS } from 'src/constants/linkedin-history-conversation-limits.constant';
 import { LINKEDIN_SELECTED_CHAT_NAME_MAX_LENGTH } from 'src/constants/linkedin-selected-chat-name-max-length.constant';
 import { LINKEDIN_SELECTED_CHATS_MAX_COUNT } from 'src/constants/linkedin-selected-chats-max-count.constant';
 import { type LinkedinContactAutoCreationPolicy } from 'src/types/linkedin-contact-auto-creation-policy.type';
@@ -30,8 +29,8 @@ const CONTACT_AUTO_CREATION_POLICIES: LinkedinContactAutoCreationPolicy[] = [
 
 const VISIBILITIES: LinkedinVisibility[] = ['SHARE_EVERYTHING', 'METADATA'];
 
-const isOneOf = <TValue extends string | number>(
-  values: readonly TValue[],
+const isOneOf = <TValue extends string>(
+  values: TValue[],
   value: unknown,
 ): value is TValue => values.some((candidate) => candidate === value);
 
@@ -86,15 +85,6 @@ export const parseLinkedinSettingsUpdate = (
 
   if (isBoolean(body?.areGroupChatsImported)) {
     update.areGroupChatsImported = body.areGroupChatsImported;
-  }
-
-  if (
-    isOneOf(
-      LINKEDIN_HISTORY_CONVERSATION_LIMITS,
-      body?.historyConversationLimit,
-    )
-  ) {
-    update.historyConversationLimit = body.historyConversationLimit;
   }
 
   if (isBoolean(body?.isNameMatchingEnabled)) {

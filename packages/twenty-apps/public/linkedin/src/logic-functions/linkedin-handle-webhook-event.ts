@@ -7,6 +7,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_DAILY_PROFILE_LOOKUP_LIMIT } from 'src/constants/linkedin-daily-profile-lookup-limit.constant';
 import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
 import { LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS } from 'src/constants/linkedin-handle-webhook-event-timeout-seconds.constant';
 import { LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -71,6 +72,7 @@ const ingestUnipileMessage = async ({
     chat,
     counterparts,
     resolveCounterpart: createLinkedinCounterpartResolver(unipileAccountId, {
+      dailyLookupLimit: LINKEDIN_DAILY_PROFILE_LOOKUP_LIMIT,
       deadlineAtMs: attachmentDeadlineAtMs,
     }),
     messages: [message],

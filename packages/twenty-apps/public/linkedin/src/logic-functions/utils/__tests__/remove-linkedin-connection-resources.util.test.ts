@@ -69,6 +69,7 @@ describe('removeLinkedinConnectionResources', () => {
     expect(mocks.kvDelete.mock.calls).toEqual([
       ['linkedin-settings:connection-id'],
       ['linkedin-history-import:connection-id'],
+      ['linkedin-profile-lookups:acc_1'],
       ['unipile-account:acc_1', { scope: 'SERVER' }],
     ]);
   });

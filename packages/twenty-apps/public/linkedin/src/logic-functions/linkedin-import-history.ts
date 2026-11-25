@@ -8,6 +8,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_HISTORY_IMPORT_DAILY_PROFILE_LOOKUP_LIMIT } from 'src/constants/linkedin-history-import-daily-profile-lookup-limit.constant';
 import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -307,8 +308,10 @@ export const linkedinImportHistoryHandler = async (
     }
 
     const settings = await getLinkedinSettings(connectedAccountId);
-    const resolveCounterpart =
-      createLinkedinCounterpartResolver(unipileAccountId);
+    const resolveCounterpart = createLinkedinCounterpartResolver(
+      unipileAccountId,
+      { dailyLookupLimit: LINKEDIN_HISTORY_IMPORT_DAILY_PROFILE_LOOKUP_LIMIT },
+    );
 
     for (const listedChat of chats.slice(processedChatCount)) {
       await importChat({

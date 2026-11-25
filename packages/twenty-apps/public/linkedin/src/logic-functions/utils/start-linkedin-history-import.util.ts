@@ -1,5 +1,6 @@
 import { enqueueJobs } from 'twenty-sdk/logic-function';
 
+import { LINKEDIN_HISTORY_CONVERSATION_LIMIT } from 'src/constants/linkedin-history-conversation-limit.constant';
 import { LINKEDIN_PLAN_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { getLinkedinPlanHistoryImportJobId } from 'src/logic-functions/utils/get-linkedin-history-import-job-id.util';
 import { saveLinkedinHistoryImportState } from 'src/logic-functions/utils/save-linkedin-history-import-state.util';
@@ -11,14 +12,16 @@ const LINKEDIN_PLAN_HISTORY_IMPORT_RETRY_LIMIT = 3;
 export const startLinkedinHistoryImport = async ({
   connectedAccountId,
   settings,
+  delayMs,
 }: {
   connectedAccountId: string;
-  settings: Pick<LinkedinSettings, 'importPolicy' | 'historyConversationLimit'>;
+  settings: Pick<LinkedinSettings, 'importPolicy'>;
+  delayMs?: number;
 }): Promise<LinkedinHistoryImportState> => {
   const state: LinkedinHistoryImportState = {
     runId: crypto.randomUUID(),
     importPolicy: settings.importPolicy,
-    conversationLimit: settings.historyConversationLimit,
+    conversationLimit: LINKEDIN_HISTORY_CONVERSATION_LIMIT,
     status: 'IMPORTING',
     importedConversationCount: 0,
     processedConversationCount: 0,
@@ -36,6 +39,7 @@ export const startLinkedinHistoryImport = async ({
       },
     ],
     retryLimit: LINKEDIN_PLAN_HISTORY_IMPORT_RETRY_LIMIT,
+    delayMs,
   });
 
   return state;

@@ -58,7 +58,7 @@ describe('linkedinOnConnectHandler', () => {
     );
   });
 
-  it('creates a private channel on the member profile that replies go through, claims the account and leaves importing to the Sync button', async () => {
+  it('creates a private channel on the member profile that replies go through, claims the account and imports its most recent conversations', async () => {
     await expect(linkedinOnConnectHandler(PAYLOAD)).resolves.toEqual({
       messageChannelId: 'channel-id',
     });
@@ -79,10 +79,18 @@ describe('linkedinOnConnectHandler', () => {
       undefined,
       { scope: 'SERVER' },
     );
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.kvSet).toHaveBeenCalledWith(
+      'linkedin-history-import:connected-account-id',
+      expect.objectContaining({
+        status: 'IMPORTING',
+        importPolicy: 'ALL',
+        conversationLimit: 50,
+      }),
+    );
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
   });
 
-  it('reuses the channel of a reconnected account', async () => {
+  it('reuses the channel of a reconnected account and imports its conversations again', async () => {
     mocks.listMessageChannels.mockResolvedValue([
       {
         id: 'existing-channel-id',
@@ -96,7 +104,7 @@ describe('linkedinOnConnectHandler', () => {
     });
     expect(mocks.createMessageChannel).not.toHaveBeenCalled();
     expect(mocks.updateMessageChannel).not.toHaveBeenCalled();
-    expect(mocks.enqueueJobs).not.toHaveBeenCalled();
+    expect(mocks.enqueueJobs).toHaveBeenCalledOnce();
   });
 
   it('lets members reply through a reconnected channel created before replies existed', async () => {

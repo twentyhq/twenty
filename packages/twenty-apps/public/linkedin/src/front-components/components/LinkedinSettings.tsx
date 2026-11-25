@@ -62,9 +62,9 @@ export const LinkedinSettings = () => {
   });
   const [pollCount, setPollCount] = useState(0);
 
-  const [isSyncStarting, setIsSyncStarting] = useState(false);
-  const [isSyncCancelling, setIsSyncCancelling] = useState(false);
-  const [syncProgress, setSyncProgress] = useState<{
+  const [isImportRetrying, setIsImportRetrying] = useState(false);
+  const [isImportCancelling, setIsImportCancelling] = useState(false);
+  const [importProgress, setImportProgress] = useState<{
     runId: string;
     progress: number;
   } | null>(null);
@@ -81,7 +81,7 @@ export const LinkedinSettings = () => {
       next: historyImport,
     });
     lastHistoryImportRef.current = historyImport;
-    setSyncProgress((current) =>
+    setImportProgress((current) =>
       getNextLinkedinSyncProgress({ current, historyImport }),
     );
     setState({ step: 'ready', view });
@@ -140,8 +140,8 @@ export const LinkedinSettings = () => {
     });
   };
 
-  const handleSync = async () => {
-    setIsSyncStarting(true);
+  const handleRetryImport = async () => {
+    setIsImportRetrying(true);
 
     try {
       await settingsSaveQueue.whenIdle();
@@ -153,16 +153,16 @@ export const LinkedinSettings = () => {
       );
     } catch {
       enqueueSnackbar({
-        message: t('Could not start the LinkedIn sync. Try again.'),
+        message: t('Could not retry the LinkedIn import. Try again.'),
         variant: 'error',
       });
     } finally {
-      setIsSyncStarting(false);
+      setIsImportRetrying(false);
     }
   };
 
-  const handleCancelSync = async () => {
-    setIsSyncCancelling(true);
+  const handleCancelImport = async () => {
+    setIsImportCancelling(true);
 
     try {
       showView(
@@ -172,11 +172,11 @@ export const LinkedinSettings = () => {
       );
     } catch {
       enqueueSnackbar({
-        message: t('Could not cancel the LinkedIn sync. Try again.'),
+        message: t('Could not cancel the LinkedIn import. Try again.'),
         variant: 'error',
       });
     } finally {
-      setIsSyncCancelling(false);
+      setIsImportCancelling(false);
     }
   };
 
@@ -233,15 +233,14 @@ export const LinkedinSettings = () => {
               importPolicy={view.settings.importPolicy}
               selectedChats={view.settings.selectedChats}
               areGroupChatsImported={view.settings.areGroupChatsImported}
-              historyConversationLimit={view.settings.historyConversationLimit}
               historyImport={view.historyImport}
-              syncProgress={
-                syncProgress?.runId === view.historyImport?.runId
-                  ? syncProgress?.progress
+              importProgress={
+                importProgress?.runId === view.historyImport?.runId
+                  ? importProgress?.progress
                   : undefined
               }
-              isSyncStarting={isSyncStarting}
-              isSyncCancelling={isSyncCancelling}
+              isImportRetrying={isImportRetrying}
+              isImportCancelling={isImportCancelling}
               onChange={(importPolicy) =>
                 handleSettingsChange({ importPolicy })
               }
@@ -251,11 +250,8 @@ export const LinkedinSettings = () => {
               onGroupChatsImportChange={(areGroupChatsImported) =>
                 handleSettingsChange({ areGroupChatsImported })
               }
-              onHistoryConversationLimitChange={(historyConversationLimit) =>
-                handleSettingsChange({ historyConversationLimit })
-              }
-              onSync={handleSync}
-              onCancelSync={handleCancelSync}
+              onRetryImport={handleRetryImport}
+              onCancelImport={handleCancelImport}
             />
             <LinkedinVisibilitySection
               visibility={view.settings.visibility}

@@ -6,8 +6,7 @@ import { LINKEDIN_SETTINGS_ROUTE_PATHS } from 'src/constants/linkedin-settings-r
 import { LINKEDIN_CANCEL_HISTORY_IMPORT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { buildLinkedinSettingsView } from 'src/logic-functions/utils/build-linkedin-settings-view.util';
 import { findOwnLinkedinConnection } from 'src/logic-functions/utils/find-own-linkedin-connection.util';
-import { getLinkedinHistoryImportState } from 'src/logic-functions/utils/get-linkedin-history-import-state.util';
-import { finishLinkedinHistoryImport } from 'src/logic-functions/utils/refresh-linkedin-history-import-state.util';
+import { cancelLinkedinHistoryImport } from 'src/logic-functions/utils/cancel-linkedin-history-import.util';
 import { type LinkedinSettingsView } from 'src/types/linkedin-settings-view.type';
 
 export const linkedinCancelHistoryImportHandler = async (
@@ -20,18 +19,7 @@ export const linkedinCancelHistoryImportHandler = async (
     throw new Error('Connect your LinkedIn account first.');
   }
 
-  const state = await getLinkedinHistoryImportState(connection.id);
-
-  if (state?.status === 'IMPORTING') {
-    await finishLinkedinHistoryImport({
-      connectedAccountId: connection.id,
-      state: {
-        ...state,
-        status: 'CANCELLED',
-        finishedAt: new Date().toISOString(),
-      },
-    });
-  }
+  await cancelLinkedinHistoryImport(connection.id);
 
   return buildLinkedinSettingsView(connection);
 };

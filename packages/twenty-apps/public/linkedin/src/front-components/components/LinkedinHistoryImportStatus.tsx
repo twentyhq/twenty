@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { t } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { IconRefresh } from 'twenty-ui/icon';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -13,21 +14,29 @@ import { type LinkedinHistoryImportState } from 'src/types/linkedin-history-impo
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${() => themeCssVariables.spacing[2]};
-`;
-
-const StyledCaption = styled.p`
-  color: ${() => themeCssVariables.font.color.tertiary};
-  font-size: ${() => themeCssVariables.font.size.sm};
-  margin: 0;
-  text-align: right;
+  gap: ${() => themeCssVariables.spacing[1]};
 `;
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${() => themeCssVariables.spacing[4]};
-  justify-content: flex-end;
+`;
+
+const StyledProgress = styled.p`
+  align-items: center;
+  color: ${() => themeCssVariables.font.color.secondary};
+  display: flex;
+  flex: 1;
+  gap: ${() => themeCssVariables.spacing[2]};
+  margin: 0;
+  min-width: 0;
+`;
+
+const StyledCaption = styled.p`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  margin: 0;
 `;
 
 const StyledError = styled.p`
@@ -42,79 +51,75 @@ const StyledErrorTitle = styled.span`
   font-weight: ${() => themeCssVariables.font.weight.medium};
 `;
 
-type LinkedinSyncButtonProps = {
-  historyImport: LinkedinHistoryImportState | null;
+type LinkedinHistoryImportStatusProps = {
+  historyImport: LinkedinHistoryImportState;
   progress: number | undefined;
-  isStarting: boolean;
+  isRetrying: boolean;
   isCancelling: boolean;
-  onSync: () => void;
+  onRetry: () => void;
   onCancel: () => void;
 };
 
-export const LinkedinSyncButton = ({
+export const LinkedinHistoryImportStatus = ({
   historyImport,
   progress,
-  isStarting,
+  isRetrying,
   isCancelling,
-  onSync,
+  onRetry,
   onCancel,
-}: LinkedinSyncButtonProps) => {
-  const isRunning = historyImport?.status === 'IMPORTING';
-  const hasFailed = historyImport?.status === 'FAILED';
+}: LinkedinHistoryImportStatusProps) => {
+  if (historyImport.status === 'FAILED') {
+    return (
+      <StyledRow>
+        <StyledError role="alert">
+          <StyledErrorTitle>
+            {t('The import stopped before finishing.')}
+          </StyledErrorTitle>{' '}
+          {getLinkedinHistoryImportErrorReason(historyImport.error)}
+        </StyledError>
+        <Button
+          startIcon={<IconRefresh />}
+          variant="outline"
+          size="md"
+          onClick={onRetry}
+          loading={isRetrying}
+          disabled={isRetrying}
+        >
+          {t('Retry')}
+        </Button>
+      </StyledRow>
+    );
+  }
 
   const isListing =
-    isRunning &&
     !isDefined(historyImport.chunkCount) &&
     !isDefined(historyImport.totalConversationCount);
 
-  const label = isRunning
-    ? isDefined(progress)
-      ? t('Syncing {progress}', {
-          progress: formatLinkedinSyncProgressLabel(progress),
-        })
-      : t('Syncing…')
-    : hasFailed
-      ? t('Retry')
-      : t('Sync now');
-
   return (
-    <StyledContainer>
+    <StyledContainer aria-live="polite">
       <StyledRow>
-        {hasFailed && (
-          <StyledError role="alert">
-            <StyledErrorTitle>
-              {t('The import stopped before finishing.')}
-            </StyledErrorTitle>{' '}
-            {getLinkedinHistoryImportErrorReason(historyImport.error)}
-          </StyledError>
-        )}
-        {isRunning && (
-          <Button
-            variant="outline"
-            size="md"
-            onClick={onCancel}
-            loading={isCancelling}
-            disabled={isCancelling}
-          >
-            {t('Cancel')}
-          </Button>
-        )}
+        <StyledProgress>
+          <Loader />
+          {isDefined(progress)
+            ? t('Importing past conversations {progress}', {
+                progress: formatLinkedinSyncProgressLabel(progress),
+              })
+            : t('Importing past conversations…')}
+        </StyledProgress>
         <Button
-          startIcon={<IconRefresh />}
-          variant="solid"
-          color="accent"
+          variant="outline"
           size="md"
-          onClick={onSync}
-          loading={isRunning || isStarting}
-          loadingPosition="end"
+          onClick={onCancel}
+          loading={isCancelling}
+          disabled={isCancelling}
         >
-          {label}
+          {t('Cancel')}
         </Button>
       </StyledRow>
-      {isRunning && isDefined(historyImport.resumeAt) ? (
-        <StyledCaption aria-live="polite">
+      {isDefined(historyImport.resumeAt) ? (
+        <StyledCaption>
           {t(
-            'LinkedIn limits how much can be imported each day. The sync resumes {resumeAt}.',
+            'LinkedIn limits how much can be imported each day. The import resumes {resumeAt}.',
             {
               resumeAt: new Date(historyImport.resumeAt).toLocaleString(
                 undefined,
@@ -125,7 +130,7 @@ export const LinkedinSyncButton = ({
         </StyledCaption>
       ) : (
         isListing && (
-          <StyledCaption aria-live="polite">
+          <StyledCaption>
             {t('Listing conversations')} (
             <AnimatedCount
               count={historyImport.plannedConversationCount ?? 0}
