@@ -23,6 +23,8 @@ import { AppDefaultCover } from './AppDefaultCover';
 import { AppIcon } from './AppIcon';
 import { type MarketplaceApp } from './marketplace-app';
 
+import { leadSentence } from './lead-sentence';
+
 const Cards = styled.ul`
   display: grid;
   gap: ${spacing(3)};
@@ -153,7 +155,7 @@ export function AppCards({ apps }: AppCardsProps) {
                 </Top>
                 <Text>
                   <AppName>{app.name}</AppName>
-                  <Tagline>{app.tagline}</Tagline>
+                  <Tagline>{leadSentence(app.tagline)}</Tagline>
                 </Text>
               </Content>
             </Card>
