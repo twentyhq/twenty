@@ -372,7 +372,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
               onPointerLeave={() => {
                 hoveredRef.current = false;
               }}
-              key={`${index}-${app.slug}`}
+              key={`${slot.ring}-${app.slug}`}
               ref={(element) => {
                 labelRefs.current[index] = element;
               }}

@@ -63,7 +63,10 @@ type FindManyMarketplaceAppsData = {
   publicMarketplaceApps: ApiMarketplaceApp[];
 };
 
-const normalizeApp = (apiApp: ApiMarketplaceApp): MarketplaceApp => ({
+const normalizeApp = (
+  apiApp: ApiMarketplaceApp,
+  coverUrl: string | undefined,
+): MarketplaceApp => ({
   universalIdentifier: apiApp.id,
   slug: getAppSlug(apiApp.sourcePackage ?? undefined, apiApp.id),
   name: apiApp.name,
@@ -72,6 +75,7 @@ const normalizeApp = (apiApp: ApiMarketplaceApp): MarketplaceApp => ({
   category: apiApp.category,
   logoUrl: apiApp.logoUrl ?? undefined,
   sourcePackage: apiApp.sourcePackage ?? undefined,
+  coverUrl,
 });
 
 // Throws when the marketplace API is unreachable or shapeless: an outage must
@@ -87,10 +91,11 @@ export async function fetchMarketplaceApps(): Promise<
     throw new Error('marketplace API response missing apps array');
   }
 
-  const apps = data.publicMarketplaceApps.map(normalizeApp);
   const coverUrls = await Promise.all(
-    apps.map((app) => fetchCoverUrl(app.universalIdentifier)),
+    data.publicMarketplaceApps.map((apiApp) => fetchCoverUrl(apiApp.id)),
   );
 
-  return apps.map((app, index) => ({ ...app, coverUrl: coverUrls[index] }));
+  return data.publicMarketplaceApps.map((apiApp, index) =>
+    normalizeApp(apiApp, coverUrls[index]),
+  );
 }

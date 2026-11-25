@@ -55,10 +55,7 @@ export function AppsHero({ apps }: AppsHeroProps) {
   const { i18n } = useLingui();
 
   return (
-    <SectionShell
-      rhythm="hero"
-      scheme="muted"
-    >
+    <SectionShell rhythm="hero" scheme="muted">
       <IntroStack data-apps-stage-copy="">
         <HeadingPair>
           <HeadingMeasure>

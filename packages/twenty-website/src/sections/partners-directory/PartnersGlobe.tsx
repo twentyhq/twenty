@@ -493,20 +493,21 @@ export function PartnersGlobe({
 
       const placed = globePartners.map((partner) => {
         world.copy(partner.position).applyMatrix4(globe.matrixWorld);
-        const facing = world
+        const towardCamera = world
           .clone()
           .normalize()
           .dot(toCamera.copy(camera.position).sub(world).normalize());
         world.project(camera);
         const x = (world.x * 0.5 + 0.5) * width;
         const y = (-world.y * 0.5 + 0.5) * height;
-        const inView = facing > 0.15 && y < visibleBottom - 8;
+        const inView = towardCamera > 0.15 && y < visibleBottom - 8;
         return {
-          facing,
+          towardCamera,
           x,
           y,
           inView,
-          canFeature: inView && facing > 0.35 && x > 120 && x < width - 120,
+          canFeature:
+            inView && towardCamera > 0.35 && x > 120 && x < width - 120,
         };
       });
 
@@ -555,7 +556,7 @@ export function PartnersGlobe({
         element.style.setProperty('--y', `${entry.y.toFixed(1)}px`);
         element.style.setProperty(
           '--opacity',
-          THREE.MathUtils.smoothstep(entry.facing, 0.15, 0.4).toFixed(3),
+          THREE.MathUtils.smoothstep(entry.towardCamera, 0.15, 0.4).toFixed(3),
         );
         if (isDefined(tag)) {
           tag.style.opacity = shown[index].toFixed(3);
