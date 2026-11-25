@@ -5,7 +5,6 @@ import {
   AggregateOperations,
   ViewCalendarLayout,
   ViewType,
-  ViewVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -68,7 +67,7 @@ export class CompleteViewUpsertService {
     name,
     icon,
     type,
-    visibility,
+    isPrivate,
     mainGroupByFieldMetadataId,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
@@ -86,7 +85,7 @@ export class CompleteViewUpsertService {
     name?: string;
     icon?: string;
     type?: ViewType;
-    visibility?: ViewVisibility;
+    isPrivate?: boolean;
     mainGroupByFieldMetadataId?: string;
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
@@ -159,7 +158,7 @@ export class CompleteViewUpsertService {
           name,
           icon,
           type,
-          visibility,
+          isPrivate,
           mainGroupByFieldMetadataId,
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
@@ -258,7 +257,7 @@ export class CompleteViewUpsertService {
     name,
     icon,
     type,
-    visibility,
+    isPrivate,
     mainGroupByFieldMetadataId,
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
@@ -275,7 +274,7 @@ export class CompleteViewUpsertService {
     name?: string;
     icon?: string;
     type?: ViewType;
-    visibility?: ViewVisibility;
+    isPrivate?: boolean;
     mainGroupByFieldMetadataId?: string;
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
@@ -302,7 +301,7 @@ export class CompleteViewUpsertService {
           objectMetadataId,
           icon: icon ?? 'IconList',
           type: type ?? ViewType.TABLE,
-          visibility: visibility ?? ViewVisibility.WORKSPACE,
+          isPrivate: isPrivate ?? false,
           mainGroupByFieldMetadataId,
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,

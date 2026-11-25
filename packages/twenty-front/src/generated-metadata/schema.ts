@@ -8954,8 +8954,6 @@ export type View = {
   viewFilters: Array<ViewFilter>;
   viewGroups: Array<ViewGroup>;
   viewSorts: Array<ViewSort>;
-  /** @deprecated Use isPrivate instead */
-  visibility: ViewVisibility;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -9190,11 +9188,6 @@ export enum ViewType {
   LIST_WIDGET = 'LIST_WIDGET',
   TABLE = 'TABLE',
   TABLE_WIDGET = 'TABLE_WIDGET'
-}
-
-export enum ViewVisibility {
-  UNLISTED = 'UNLISTED',
-  WORKSPACE = 'WORKSPACE'
 }
 
 export type Webhook = {

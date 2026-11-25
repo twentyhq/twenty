@@ -24,7 +24,6 @@ import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/over
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { type UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewOverrides } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { resolveViewIsPrivateFromInput } from 'src/engine/metadata-modules/view/utils/resolve-view-is-private-from-input.util';
 import {
   ViewException,
   ViewExceptionCode,
@@ -79,15 +78,10 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
 
   const {
     translations: rawTranslations,
-    isPrivate: rawIsPrivate,
-    visibility,
+    isPrivate,
     ...updateViewInputWithoutTranslationsAndPrivacy
   } = rawUpdateViewInput;
   const translations = rawTranslations ?? [];
-  const isPrivate = resolveViewIsPrivateFromInput({
-    isPrivate: rawIsPrivate,
-    visibility,
-  });
   const updateViewInputWithoutTranslations = {
     ...updateViewInputWithoutTranslationsAndPrivacy,
     ...(isDefined(isPrivate) && { isPrivate }),
