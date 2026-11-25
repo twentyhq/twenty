@@ -11,27 +11,32 @@ import {
 
 import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-upgrade-command-name.constant';
 import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
+import { RENAME_AGENT_CHAT_CHANNEL_TABLES_TO_INBOX_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-64/rename-agent-chat-channel-tables-to-inbox-channel-upgrade-command-name.constant';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-@Entity({ name: 'agentChatChannel', schema: 'core' })
+@Entity({ name: 'inboxChannel', schema: 'core' })
 @WasIntroducedInUpgrade({
   upgradeCommandName: ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME,
 })
-@Index('IDX_AGENT_CHAT_CHANNEL_WORKSPACE_ID_APPLICATION_ID', [
+@WasRenamedInUpgrade([
+  {
+    previousName: 'agentChatChannel',
+    upgradeCommandName:
+      RENAME_AGENT_CHAT_CHANNEL_TABLES_TO_INBOX_CHANNEL_UPGRADE_COMMAND_NAME,
+  },
+])
+@Index('IDX_INBOX_CHANNEL_WORKSPACE_ID_APPLICATION_ID', [
   'workspaceId',
   'applicationId',
 ])
-@Index(
-  'IDX_AGENT_CHAT_CHANNEL_NAME_WORKSPACE_ID_UNIQUE',
-  ['name', 'workspaceId'],
-  {
-    unique: true,
-  },
-)
+@Index('IDX_INBOX_CHANNEL_NAME_WORKSPACE_ID_UNIQUE', ['name', 'workspaceId'], {
+  unique: true,
+})
 export class AgentChatChannelEntity
   extends SyncableEntity
   implements Required<AgentChatChannelEntity>
