@@ -70,7 +70,7 @@ const Banner = styled(SceneBanner)`
   }
 `;
 
-// An app on the ring: its logo on a white chip, placed each frame
+// An app on the ring: its logo, placed each frame
 // (--x / --y / --s / --o). Its name shows on hover.
 const AppLabel = styled.div`
   backface-visibility: hidden;
@@ -87,19 +87,17 @@ const AppLabel = styled.div`
   will-change: transform, opacity;
 `;
 
+// The logo as the app ships it, no chip around it.
 const AppLogo = styled.img`
-  background-color: ${color('white')};
   border-radius: ${radius(2)};
   display: block;
-  height: 40px;
+  height: 28px;
   object-fit: contain;
-  padding: 8px;
-  width: 40px;
+  width: 28px;
 
   ${mediaUp('md')} {
-    height: 48px;
-    padding: 10px;
-    width: 48px;
+    height: 34px;
+    width: 34px;
   }
 `;
 
@@ -167,15 +165,15 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       '(prefers-reduced-motion: reduce)',
     ).matches;
 
-    // the camera keeps the outer ring at about 60% of the banner's width,
+    // the camera keeps the outer ring at about 56% of the banner's width,
     // so on wide screens the scene grows instead of shrinking to the middle
     const viewDirection = new THREE.Vector3(0, 5.2, 20).normalize();
-    const LOOK_AT = new THREE.Vector3(0, -1.2, 0);
+    const LOOK_AT = new THREE.Vector3(0, -0.6, 0);
     const outerDiameter = 2 * Math.max(...RINGS.map((ring) => ring.radius));
     const frameCamera = () => {
       const halfHeight = Math.tan((stage.camera.fov / 2) * (Math.PI / 180));
       const distance = THREE.MathUtils.clamp(
-        outerDiameter / (0.6 * 2 * halfHeight * stage.camera.aspect),
+        outerDiameter / (0.56 * 2 * halfHeight * stage.camera.aspect),
         13,
         21,
       );
@@ -184,10 +182,17 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
     };
     frameCamera();
 
-    // the mark: the badge's white glyph, extruded with a bevel
+    // The mark: Twenty's logo whole, its rounded square and the 20 standing
+    // proud of it. In halftone a higher tone draws bigger dots: the square
+    // reads dense, like the logo's black, and the 20 stays light.
     const mark = new THREE.Group();
-    mark.position.y = 0.6;
+    mark.position.y = 0.3;
     stage.tone.add(mark);
+    // the 20 is drawn sharp, white on the square, in the crisp scene; this
+    // twin of the mark carries it and follows the mark's turn
+    const crispMark = new THREE.Group();
+    crispMark.position.copy(mark.position);
+    stage.crisp.add(crispMark);
     let disposed = false;
     fetch(MARK_URL)
       .then((response) => response.text())
@@ -197,25 +202,52 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
         const glyph =
           svg.paths.find((path) => path.color.getHex() === 0xffffff) ??
           svg.paths[svg.paths.length - 1];
-        const geometry = new THREE.ExtrudeGeometry(
-          SVGLoader.createShapes(glyph),
+        const square = svg.paths.find((path) => path !== glyph) ?? svg.paths[0];
+        const SIDE = 40;
+        const SQUARE_DEPTH = 5;
+        const GLYPH_DEPTH = 1.4;
+        const squareGeometry = new THREE.ExtrudeGeometry(
+          SVGLoader.createShapes(square),
           {
             bevelEnabled: true,
             bevelSegments: 4,
-            bevelSize: 0.35,
-            bevelThickness: 0.5,
+            bevelSize: 0.6,
+            bevelThickness: 0.8,
             curveSegments: 24,
-            depth: 3.2,
+            depth: SQUARE_DEPTH,
           },
-        );
-        geometry.center();
-        const mesh = new THREE.Mesh(
-          geometry,
-          createHalftoneToneMaterial(0.52, 0.44),
-        );
+        ).translate(-SIDE / 2, -SIDE / 2, -SQUARE_DEPTH / 2);
+        // the 20 sits on the square's face, its back sunk a little into it
+        const glyphGeometry = new THREE.ExtrudeGeometry(
+          SVGLoader.createShapes(glyph),
+          {
+            bevelEnabled: true,
+            bevelSegments: 3,
+            bevelSize: 0.15,
+            bevelThickness: 0.2,
+            curveSegments: 24,
+            depth: GLYPH_DEPTH,
+          },
+        ).translate(-SIDE / 2, -SIDE / 2, SQUARE_DEPTH / 2 + 0.4);
+        const badge = new THREE.Group();
         // svg y runs down
-        mesh.scale.set(0.17, -0.17, 0.17);
-        mark.add(mesh);
+        badge.scale.set(0.1, -0.1, 0.1);
+        badge.add(
+          new THREE.Mesh(
+            squareGeometry,
+            createHalftoneToneMaterial(0.66, 0.26),
+          ),
+        );
+        mark.add(badge);
+        const crispBadge = new THREE.Group();
+        crispBadge.scale.copy(badge.scale);
+        crispBadge.add(
+          new THREE.Mesh(
+            glyphGeometry,
+            new THREE.MeshBasicMaterial({ color: paletteColorNumber('white') }),
+          ),
+        );
+        crispMark.add(crispBadge);
       });
 
     // each ring's path: a fine line, hidden where it runs behind the mark
@@ -290,6 +322,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
       mark.rotation.y = reducedMotion
         ? -0.35
         : -0.35 + 0.12 * Math.sin(now / 2600);
+      crispMark.rotation.y = mark.rotation.y;
       // the rings sway slowly, out of step with each other
       rings.forEach(({ config, group }, index) => {
         if (reducedMotion) return;
@@ -372,7 +405,7 @@ export function AppsMarkOrbit({ apps }: AppsMarkOrbitProps) {
               onPointerLeave={() => {
                 hoveredRef.current = false;
               }}
-              key={`${index}-${app.slug}`}
+              key={`${slot.ring}-${app.slug}`}
               ref={(element) => {
                 labelRefs.current[index] = element;
               }}

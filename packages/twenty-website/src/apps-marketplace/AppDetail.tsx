@@ -34,6 +34,7 @@ import { AppCards } from './AppCards';
 import { AppIcon } from './AppIcon';
 import { AppStory } from './AppStory';
 import { BETA_APP_NAMES } from './beta-app-names';
+import { leadSentence } from './lead-sentence';
 import { buildAppInstallUrl } from './build-app-install-url';
 import { stripLeadingMarkdownTitle } from './strip-leading-markdown-title';
 import {
@@ -256,9 +257,6 @@ const Related = styled.div`
     margin-top: ${spacing(4)};
   }
 `;
-
-const leadSentence = (text: string) =>
-  text.trim().split(/(?<=[.!?])\s/)[0] ?? '';
 
 const firstSentence = (text: string) => leadSentence(text).toLowerCase();
 

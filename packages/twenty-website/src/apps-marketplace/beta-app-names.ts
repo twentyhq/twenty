@@ -2,7 +2,6 @@
 export const BETA_APP_NAMES: readonly string[] = [
   'apollo',
   'google',
-  'granola',
   'teams',
   'fathom',
 ];
