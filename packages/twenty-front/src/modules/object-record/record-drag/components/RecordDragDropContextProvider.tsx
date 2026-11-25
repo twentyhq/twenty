@@ -26,6 +26,7 @@ type RecordDragDropContextProviderProps = {
   getDroppableItemCount: (droppableId: string) => number;
   onRecordDrop: (result: RecordDragDropResult) => void;
   renderDragOverlay: (source: Draggable) => ReactNode;
+  shouldPreventRecordDrag?: () => boolean;
   children: ReactNode;
 };
 
@@ -33,6 +34,7 @@ export const RecordDragDropContextProvider = ({
   getDroppableItemCount,
   onRecordDrop,
   renderDragOverlay,
+  shouldPreventRecordDrag,
   children,
 }: RecordDragDropContextProviderProps) => {
   const selectedRecordIds = useAtomComponentSelectorCallbackState(
@@ -156,6 +158,11 @@ export const RecordDragDropContextProvider = ({
       <DragDropProvider<DragDropItemData>
         sensors={DND_KIT_SENSORS}
         plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onBeforeDragStart={(event) => {
+          if (isDefined(shouldPreventRecordDrag) && shouldPreventRecordDrag()) {
+            event.preventDefault();
+          }
+        }}
         onDragStart={handleDragStart}
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}

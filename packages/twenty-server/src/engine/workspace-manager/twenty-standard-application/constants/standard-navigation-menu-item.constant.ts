@@ -98,29 +98,36 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
     position: 1,
   },
-  workflowsFolder: {
+  automationsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     type: NavigationMenuItemType.FOLDER,
     name: i18nLabel(
-      msg({ message: `Workflows`, context: 'navigationMenuItem.name' }),
+      msg({ message: `Automations`, context: 'navigationMenuItem.name' }),
     ),
     icon: 'IconSettingsAutomation',
     position: 6,
   },
-  workflowsFolderAllWorkflows: {
+  automationsFolderAllWorkflows: {
     universalIdentifier: '20202020-b008-4b08-8b08-c0aba11c0008',
     type: NavigationMenuItemType.NATIVE_PAGE,
     nativePageKey: 'workflows',
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 0,
   },
-  workflowsFolderAllWorkflowRuns: {
+  automationsFolderAllWorkflowRuns: {
     universalIdentifier: '20202020-b009-4b09-8b09-c0aba11c0009',
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.views.allWorkflowRuns.universalIdentifier,
     folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
     position: 1,
+  },
+  automationsFolderAllAgents: {
+    universalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
+    type: NavigationMenuItemType.NATIVE_PAGE,
+    nativePageKey: 'agents',
+    folderUniversalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
+    position: 2,
   },
   chatsTab: {
     universalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
@@ -159,11 +166,11 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allTasks: 'turquoise',
   allNotes: 'turquoise',
   allOpportunities: 'red',
-  workflowsFolder: 'orange',
+  automationsFolder: 'orange',
   campaignsFolder: 'purple',
   allMessageCampaigns: 'gray',
   allMessageLists: 'gray',
   allDashboards: 'gray',
-  workflowsFolderAllWorkflows: 'gray',
-  workflowsFolderAllWorkflowRuns: 'gray',
+  automationsFolderAllWorkflows: 'gray',
+  automationsFolderAllWorkflowRuns: 'gray',
 };

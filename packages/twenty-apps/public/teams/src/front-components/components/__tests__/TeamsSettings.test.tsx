@@ -15,7 +15,6 @@ const { releaseFlags, variables, queryMock, mutationMock, restGetMock } =
 
     return {
       releaseFlags: {
-        IS_CHAT_ASSISTANT_RELEASED: false,
         IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED: false,
       },
       variables,
@@ -67,7 +66,6 @@ vi.mock(
 describe('TeamsSettings', () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = false;
     releaseFlags.IS_TRANSCRIPT_HISTORY_IMPORT_RELEASED = false;
     variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
     variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
@@ -79,25 +77,6 @@ describe('TeamsSettings', () => {
   });
 
   afterEach(cleanup);
-
-  it('hides chat before its release and keeps transcript summaries available', async () => {
-    variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-    variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
-
-    render(<TeamsSettings />);
-
-    expect(screen.queryByRole('switch', { name: 'Enable chat' })).toBeNull();
-
-    const summaries = screen.getByRole('switch', {
-      name: 'Enable transcript summaries',
-    });
-
-    expect(summaries.getAttribute('aria-checked')).toBe('true');
-    expect(summaries.hasAttribute('disabled')).toBe(false);
-    expect(screen.queryByText('Not available in this version yet.')).toBeNull();
-    expect(queryMock).not.toHaveBeenCalled();
-    expect(mutationMock).not.toHaveBeenCalled();
-  });
 
   it.each([false, true])(
     'shows Import history only when history import is released (%s)',
@@ -116,7 +95,6 @@ describe('TeamsSettings', () => {
   it.each([undefined, '', 'false', 'TRUE'])(
     'keeps available features off for workspace value %s',
     (value) => {
-      releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
       variables[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = value;
       variables[TRANSCRIPT_SUMMARY_ENABLED_APPLICATION_VARIABLE_KEY] = value;
 
@@ -132,7 +110,6 @@ describe('TeamsSettings', () => {
   );
 
   it('shows linked Teams accounts only while chat is enabled', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
@@ -148,7 +125,6 @@ describe('TeamsSettings', () => {
   });
 
   it('saves the selected feature without changing the other preference', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
@@ -219,7 +195,6 @@ describe('TeamsSettings', () => {
   });
 
   it('keeps the saved preference after a failed update and allows retry', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     mutationMock.mockRejectedValueOnce(new Error('Not allowed'));
     const user = userEvent.setup();
 
@@ -265,7 +240,6 @@ describe('TeamsSettings', () => {
   });
 
   it('does not write settings if the Teams application cannot be found', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     const user = userEvent.setup();
 
     render(<TeamsSettings />);
@@ -279,7 +253,6 @@ describe('TeamsSettings', () => {
   });
 
   it('disables the selected setting while saving and prevents duplicate writes', async () => {
-    releaseFlags.IS_CHAT_ASSISTANT_RELEASED = true;
     const user = userEvent.setup();
     let resolveSave: ((response: unknown) => void) | undefined;
     const pendingSave = new Promise((resolve) => {
