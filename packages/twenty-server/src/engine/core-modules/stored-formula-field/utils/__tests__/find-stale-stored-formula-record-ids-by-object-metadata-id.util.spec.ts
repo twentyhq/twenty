@@ -91,29 +91,6 @@ describe('findStaleStoredFormulaRecordIdsByObjectMetadataId', () => {
     ).toEqual({});
   });
 
-  it('should mark the parent on any update when its formula reads updatedAt', () => {
-    expect(
-      findStaleStoredFormulaRecordIdsByObjectMetadataId({
-        events: [
-          {
-            properties: {
-              before: { projectId: 'project-1' },
-              after: { projectId: 'project-1' },
-              updatedFields: ['name'],
-            },
-          },
-        ],
-        watchPlans: [
-          {
-            ...WATCH_PLANS[0],
-            watchedFieldNames: new Set(['projectId', 'updatedAt']),
-          },
-        ],
-        isRecordUpdate: true,
-      }),
-    ).toEqual({ 'project-object-id': ['project-1'] });
-  });
-
   it('should ignore a record without a parent and deduplicate parents', () => {
     expect(
       findStaleStoredFormulaRecordIdsByObjectMetadataId({

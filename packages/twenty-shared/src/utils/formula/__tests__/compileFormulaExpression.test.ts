@@ -30,6 +30,11 @@ const TASK_FIELDS: ValidationRuleFieldDescriptor[] = [
     type: FieldMetadataType.DATE_TIME,
     universalIdentifier: 'task-due-at',
   },
+  {
+    name: 'updatedAt',
+    type: FieldMetadataType.DATE_TIME,
+    universalIdentifier: 'task-updated-at',
+  },
 ];
 
 const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
@@ -133,6 +138,14 @@ describe('compileFormulaExpression', () => {
       isValid: false,
       errorCode: 'NOT_SUPPORTED_IN_STORED_FORMULA',
       errorParams: { path: 'now' },
+    });
+  });
+
+  it('should reject updatedAt in a stored formula', () => {
+    expect(compile('max(tasks.updatedAt)')).toMatchObject({
+      isValid: false,
+      errorCode: 'UPDATED_AT_IN_STORED_FORMULA',
+      errorParams: { path: 'tasks.updatedAt' },
     });
   });
 

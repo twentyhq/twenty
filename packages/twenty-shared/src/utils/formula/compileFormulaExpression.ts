@@ -42,6 +42,12 @@ const findCompositePathWithoutPart = ({
   return undefined;
 };
 
+const UPDATED_AT_FIELD_NAME = 'updatedAt';
+
+// Every recompute write bumps updatedAt, so a stored formula reading it could recompute forever
+const findUpdatedAtPath = (paths: string[]): string | undefined =>
+  paths.find((path) => path.split('.').pop() === UPDATED_AT_FIELD_NAME);
+
 const findPathUnsupportedInStoredFormula = ({
   paths,
   fields,
@@ -128,6 +134,17 @@ export const compileFormulaExpression = ({
   const unsupportedPath = isStored
     ? findPathUnsupportedInStoredFormula({ paths, fields })
     : undefined;
+
+  const updatedAtPath = isStored ? findUpdatedAtPath(paths) : undefined;
+
+  if (isDefined(updatedAtPath)) {
+    return {
+      isValid: false,
+      errorMessage: `A stored formula cannot read "${updatedAtPath}"`,
+      errorCode: 'UPDATED_AT_IN_STORED_FORMULA',
+      errorParams: { path: updatedAtPath },
+    };
+  }
 
   if (isDefined(unsupportedPath)) {
     return {

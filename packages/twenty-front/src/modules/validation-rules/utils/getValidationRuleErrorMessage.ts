@@ -70,6 +70,8 @@ export const getValidationRuleErrorMessage = ({
       return t`${functionName}() cannot contain another aggregate`;
     case 'NOT_SUPPORTED_IN_STORED_FORMULA':
       return t`A formula that aggregates related records is stored, so it cannot read "${path}". Aggregate in this field and read it from another formula.`;
+    case 'UPDATED_AT_IN_STORED_FORMULA':
+      return t`A stored formula cannot read "${path}"`;
     case 'TO_MANY_RELATION_OUTSIDE_AGGREGATE':
       return t`"${fieldName}" has many records: read it inside count(), sum(), avg(), min() or max()`;
     case 'COMPOSITE_FIELD_WITHOUT_PART':
