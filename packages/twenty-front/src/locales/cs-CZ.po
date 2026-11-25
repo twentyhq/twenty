@@ -1994,11 +1994,6 @@ msgstr "Přijaté a podepsané DPA pro tento pracovní prostor s uvedením verze
 msgid "Access"
 msgstr "Přístup"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Přístupové skupiny"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "Náhled komponenty s ukázkovými daty"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Napsat e-mail"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Vypočítat přístupové skupiny, které budou výpisy záznamů používat pro oprávnění na úrovni řádků. Povolte po dokončení upgradu pracovního prostoru."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx

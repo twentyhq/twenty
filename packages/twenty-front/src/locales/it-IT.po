@@ -1994,11 +1994,6 @@ msgstr "DPA accettati e firmati per questo spazio di lavoro, con la relativa ver
 msgid "Access"
 msgstr "Accesso"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Gruppi di accesso"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "Anteprima del componente con dati di esempio"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Componi email"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Calcola i gruppi di accesso che gli elenchi di record utilizzeranno per le autorizzazioni a livello di riga. Abilita dopo il completamento dell'aggiornamento dell'area di lavoro."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx

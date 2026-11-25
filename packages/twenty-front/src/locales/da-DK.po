@@ -1994,11 +1994,6 @@ msgstr "Accepterede og underskrevne DPA'er for dette arbejdsområde med deres sk
 msgid "Access"
 msgstr "Adgang"
 
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "Adgangsgrupper"
-
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "Access Key ID"
@@ -7541,11 +7536,6 @@ msgstr "Forhåndsvisning af komponent med eksempeldata"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "Opret e-mail"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "Beregn de adgangsgrupper, som postlister vil bruge til tilladelser på rækkeniveau. Aktivér, når opgraderingen af arbejdsområdet er fuldført."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
