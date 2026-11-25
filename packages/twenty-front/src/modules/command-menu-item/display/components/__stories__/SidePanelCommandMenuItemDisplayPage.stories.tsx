@@ -13,6 +13,7 @@ import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -39,6 +40,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
+  FeatureFlagKey,
   PermissionFlagType,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
@@ -49,7 +51,10 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
-import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+import {
+  mockCurrentWorkspace,
+  mockedWorkspaceMemberData,
+} from '~/testing/mock-data/users';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
 
@@ -209,6 +214,12 @@ const createDecorator = ({
     jotaiStore.set(sidePanelSearchState.atom, sidePanelSearch);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
     jotaiStore.set(currentUserWorkspaceState.atom, currentUserWorkspace);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED, value: true },
+      ],
+    });
     jotaiStore.set(currentWorkspaceMemberState.atom, {
       ...mockedWorkspaceMemberData,
       colorScheme,

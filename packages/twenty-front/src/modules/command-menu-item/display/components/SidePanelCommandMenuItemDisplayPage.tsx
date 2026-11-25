@@ -40,6 +40,7 @@ import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSi
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useContext, useMemo, useState } from 'react';
@@ -61,6 +62,7 @@ import {
 import {
   CommandMenuItemAvailabilityType,
   EngineComponentKey,
+  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
@@ -109,6 +111,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     coreObjectSectionContext ?? metadataObjectSectionContext;
   const workspaceSectionContext = useCommandMenuItemWorkspaceSectionContext();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isInlineRecordSearchEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_CUSTOMIZABLE_SIDEBAR_ENABLED,
+  );
 
   const [sectionsToggleState, setSectionsToggleState] = useState(
     INITIAL_SECTIONS_TOGGLE_STATE,
@@ -120,6 +125,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     isWaitingForDebouncedSearch,
     error: searchRecordsError,
   } = useSidePanelSearchRecords({
+    skip: !isInlineRecordSearchEnabled,
     shouldSkipEmptySearch: true,
     shouldIgnoreObjectFilter: true,
     limit: COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT + 1,
@@ -164,6 +170,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const shouldDisplayAskAiPrompt = isSearchActive && hasAiPermission;
 
+  const isInlineRecordSearchActive =
+    isSearchActive && isInlineRecordSearchEnabled;
+
   const matchingItems = filterCommandMenuItemsWithSidePanelSearch(
     nonFallbackCommandMenuItems,
   );
@@ -171,16 +180,18 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const commandMenuItemsBySection =
     groupCommandMenuItemsBySection(matchingItems);
 
-  const inlineSearchResultItems = isSearchActive
+  const inlineSearchResultItems = isInlineRecordSearchActive
     ? searchResultItems.slice(0, COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT)
     : [];
 
   const hasMoreSearchResultItems =
-    isSearchActive &&
+    isInlineRecordSearchActive &&
     searchResultItems.length > COMMAND_MENU_INLINE_SEARCH_RECORDS_LIMIT;
 
   const shouldDisplayNoRecordsFound =
-    isSearchActive && !isSearchingRecords && searchResultItems.length === 0;
+    isInlineRecordSearchActive &&
+    !isSearchingRecords &&
+    searchResultItems.length === 0;
 
   const isSectionOpen = (section: CommandMenuItemSection) =>
     isCommandMenuItemSectionOpen({
