@@ -443,7 +443,7 @@ describe('View tools', () => {
             visibility: ViewVisibility.WORKSPACE,
           },
           workspaceId: mockWorkspaceId,
-          createdByUserWorkspaceId: mockUserWorkspaceId,
+          authContext: expect.objectContaining({ type: 'user' }),
         });
         expect(result).toEqual({
           id: 'new-view-id',
@@ -612,7 +612,7 @@ describe('View tools', () => {
             calendarFieldMetadataId: mockCalendarFieldMetadataId,
           },
           workspaceId: mockWorkspaceId,
-          createdByUserWorkspaceId: mockUserWorkspaceId,
+          authContext: expect.objectContaining({ type: 'user' }),
         });
         expect(result).toEqual({
           id: 'new-calendar-view-id',
@@ -677,7 +677,7 @@ describe('View tools', () => {
         expect(viewService.createOne).toHaveBeenCalledTimes(1);
         expect(viewService.createOne).toHaveBeenCalledWith(
           expect.objectContaining({
-            createdByUserWorkspaceId: mockUserWorkspaceId,
+            authContext: expect.objectContaining({ type: 'user' }),
           }),
         );
       });
@@ -904,7 +904,7 @@ describe('View tools', () => {
         ).toHaveBeenCalledWith(
           expect.objectContaining({
             workspaceId: mockWorkspaceId,
-            userWorkspaceId: mockUserWorkspaceId,
+            authContext: expect.objectContaining({ type: 'user' }),
             existingViewId: undefined,
             objectMetadataId: mockObjectMetadataId,
             name: 'Pipeline',

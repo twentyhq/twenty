@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
@@ -96,12 +98,14 @@ export class AgentService {
   async createOneAgent({
     input: { isSystem = false, ...input },
     workspaceId,
-    userWorkspaceId,
+    authContext,
   }: {
     input: CreateAgentInput & { isSystem?: boolean };
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
   }): Promise<FlatAgentWithRoleId> {
+    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
+
     const {
       flatApplicationMaps,
       flatRoleMaps,
@@ -166,6 +170,7 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
@@ -197,12 +202,14 @@ export class AgentService {
   async updateOneAgent({
     input,
     workspaceId,
-    userWorkspaceId,
+    authContext,
   }: {
     input: UpdateAgentInput;
     workspaceId: string;
-    userWorkspaceId: string | undefined;
+    authContext: WorkspaceAuthContext | undefined;
   }): Promise<FlatAgentWithRoleId> {
+    const userWorkspaceId = getUserWorkspaceIdFromAuthContext(authContext);
+
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         {
@@ -274,6 +281,7 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext,
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },

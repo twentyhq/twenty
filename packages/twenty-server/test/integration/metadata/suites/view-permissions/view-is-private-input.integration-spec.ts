@@ -153,11 +153,10 @@ describe('view isPrivate input (integration)', () => {
       expectToFail: true,
     });
 
-    expect(errors?.[0]?.extensions).toMatchObject({
-      code: 'FORBIDDEN',
-      userFriendlyMessage:
-        'Only the person who created this view can change who sees it',
-    });
+    expect(errors?.[0]?.extensions?.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(errors?.[0]?.extensions?.errors?.view?.[0]?.errors?.[0]?.code).toBe(
+      'PRIVATABLE_ENTITY_PRIVACY_CHANGE_NOT_ALLOWED',
+    );
     expect(await readViewPrivacy(view.id)).toEqual({
       isPrivate: false,
       createdByUserWorkspaceId: otherMemberUserWorkspaceId,

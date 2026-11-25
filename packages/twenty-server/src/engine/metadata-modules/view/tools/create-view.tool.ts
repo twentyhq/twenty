@@ -234,7 +234,7 @@ export class CreateViewTool extends BaseTool<typeof createViewInputSchema> {
         calendarEndFieldMetadataId,
       },
       workspaceId,
-      createdByUserWorkspaceId: userWorkspaceId,
+      authContext,
     });
 
     if (isNonEmptyArray(fieldMetadataIds)) {
