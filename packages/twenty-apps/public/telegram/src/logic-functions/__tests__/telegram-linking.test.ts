@@ -173,10 +173,10 @@ describe('connecting a Telegram account', () => {
   });
 
   it('links the account to the member who started the connection', async () => {
-    const { token } = await startLink();
+    const { startCommand } = await startLink();
 
     const { resolved, handled } = await deliver(
-      buildMessageUpdate(`/start ${token}`),
+      buildMessageUpdate(startCommand),
     );
 
     expect(resolved).toMatchObject({

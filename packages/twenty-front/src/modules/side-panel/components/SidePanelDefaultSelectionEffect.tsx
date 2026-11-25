@@ -4,15 +4,18 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNull } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SidePanelDefaultSelectionEffect = ({
   selectableItemIds,
+  defaultSelectedItemId,
 }: {
   selectableItemIds: string[];
+  defaultSelectedItemId?: string | null;
 }) => {
-  const { setSelectedItemId } = useSelectableList(
+  const { resetSelectedItem, setSelectedItemId } = useSelectableList(
     SIDE_PANEL_SELECTABLE_LIST_ID,
   );
 
@@ -34,11 +37,24 @@ export const SidePanelDefaultSelectionEffect = ({
       return;
     }
 
-    if (selectableItemIds.length > 0) {
-      setSelectedItemId(selectableItemIds[0]);
+    if (isNull(defaultSelectedItemId)) {
+      resetSelectedItem();
+      return;
+    }
+
+    const itemIdToSelect =
+      isDefined(defaultSelectedItemId) &&
+      selectableItemIds.includes(defaultSelectedItemId)
+        ? defaultSelectedItemId
+        : selectableItemIds[0];
+
+    if (isDefined(itemIdToSelect)) {
+      setSelectedItemId(itemIdToSelect);
     }
   }, [
+    defaultSelectedItemId,
     hasUserSelectedSidePanelListItem,
+    resetSelectedItem,
     selectableItemIds,
     selectedItemId,
     setSelectedItemId,

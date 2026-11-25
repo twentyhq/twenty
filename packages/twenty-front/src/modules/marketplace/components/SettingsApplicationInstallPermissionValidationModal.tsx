@@ -19,6 +19,7 @@ import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { type LegacyCompliantRoleManifest } from 'twenty-shared/application';
 import { type IframeMediaPermission } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightButton } from 'twenty-ui/components/input';
@@ -127,6 +128,27 @@ const StyledPermissionLabel = styled.span`
   }
 `;
 
+const StyledEmphasis = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+`;
+
+const renderPermissionLabel = ({ label, emphasis }: PermissionSummaryItem) => {
+  if (!isNonEmptyString(emphasis) || !label.includes(emphasis)) {
+    return label;
+  }
+
+  const [before, ...after] = label.split(emphasis);
+
+  return (
+    <span>
+      {before}
+      <StyledEmphasis>{emphasis}</StyledEmphasis>
+      {after.join(emphasis)}
+    </span>
+  );
+};
+
 const StyledObjectListTitle = styled.div`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
@@ -187,11 +209,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       : [];
 
     return [
-      ...rolePermissionItems,
-      ...buildApplicationCapabilitySummary(requestedCapabilities),
-      ...buildApplicationIframeMediaPermissionSummary(
-        requestedIframeMediaPermissions,
-      ),
       ...buildApplicationBillingSummary({
         billsCredits,
         billingPrices: billingPrices ?? [],
@@ -201,6 +218,11 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
             minimumDecimals: 2,
           })}`,
       }),
+      ...rolePermissionItems,
+      ...buildApplicationCapabilitySummary(requestedCapabilities),
+      ...buildApplicationIframeMediaPermissionSummary(
+        requestedIframeMediaPermissions,
+      ),
     ];
     // The summary builders translate through the global i18n
   }, [
@@ -295,11 +317,11 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
                           positionMethod="fixed"
                         >
                           <StyledPermissionLabel tabIndex={0}>
-                            {item.label}
+                            {renderPermissionLabel(item)}
                           </StyledPermissionLabel>
                         </Tooltip>
                       ) : (
-                        item.label
+                        renderPermissionLabel(item)
                       )}
                     </StyledPermissionRow>
                   ))}
