@@ -96,7 +96,6 @@ export class FairQueueScheduler {
         return jobOptions;
       }
 
-      // Anchored to the Redis clock that reserved the slot, not the producer's
       return {
         ...jobOptions,
         ...(pacedDelayMs > 0 ? { delay: pacedDelayMs } : {}),

@@ -151,7 +151,6 @@ export class ApplicationJobService {
             ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
           priority: ENQUEUE_JOB_PRIORITY,
-          // Ids are exact keys: BullMQ keeps a job it still holds, and the result reports that job
           doNotCheckDuplicatesBasedOnPrefix: true,
           ...(isDefined(input.delayMs) ? { delay: input.delayMs } : {}),
           ...(isDefined(limiter)

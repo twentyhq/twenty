@@ -821,7 +821,6 @@ export class BullMQDriver
     };
   }
 
-  // BullMQ keeps an id that exists, so only the stored schedule can be reported; a failed read fails the call
   private async findPersistedScheduledAts({
     queueName,
     jobIds,

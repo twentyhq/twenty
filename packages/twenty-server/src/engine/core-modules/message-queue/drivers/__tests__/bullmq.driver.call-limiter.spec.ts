@@ -105,7 +105,6 @@ describe('BullMQDriver per-call limiter and scheduledAt', () => {
   it('dates the first slot of an idle schedule on the Redis clock too', async () => {
     const harness = await createFairnessHarness();
 
-    // The mocked Redis TIME keeps whole seconds of the faked clock, so this skews only the producer
     jest.setSystemTime(NOW_MS + 400);
 
     const result = await harness.enqueueBulk({

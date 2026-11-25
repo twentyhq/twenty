@@ -21,7 +21,6 @@ export type GroupRatePaceRequest = {
 };
 
 export type GroupRatePaceResult = {
-  // Redis clock the delays are measured from
   nowMs: number;
   delays: number[][];
 };

@@ -157,7 +157,6 @@ const mockBullMQ: BullMQDouble = {
 
     return { id: job.id };
   },
-  // Like BullMQ, adding an id that still exists keeps the existing job untouched
   addIfMissing: async (jobToStore) => {
     const jobId = jobToStore.options.jobId;
 

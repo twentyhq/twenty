@@ -722,7 +722,6 @@ describe('enqueueJob (e2e)', () => {
     );
 
     expect(statusResponse.body.errors).toBeUndefined();
-    // waitForAllJobsToFinish promotes delayed jobs early, so their delay changed
     expect(
       statusResponse.body.data.getJobs.map(
         (job: { scheduledAt: number }) => job.scheduledAt,

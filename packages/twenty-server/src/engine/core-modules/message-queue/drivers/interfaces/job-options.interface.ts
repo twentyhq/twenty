@@ -53,7 +53,6 @@ export type QueueJobSettings = {
   broadcastTo?: QueueJobRecipient;
   fairnessGroupKeys?: string[];
   groupKey?: string;
-  // Paces the groupKey slots in place of the queue groupLimiter
   limiter?: MessageQueueLimiter;
 };
 

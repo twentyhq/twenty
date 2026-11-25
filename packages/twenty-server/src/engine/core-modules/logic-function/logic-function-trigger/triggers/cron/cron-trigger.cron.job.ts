@@ -184,7 +184,6 @@ export class CronTriggerCronJob {
     }
   }
 
-  // Evaluating the cron at a shifted clock moves its phase, never its frequency
   private getCronDate({
     now,
     workspaceId,
