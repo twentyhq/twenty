@@ -19,12 +19,14 @@ import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/bi
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingArrangementService } from 'src/engine/core-modules/billing/services/billing-arrangement.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { buildBillingSubscriptionStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-subscription-state-lock-key.util';
 import { buildTrialEndSchedulePhases } from 'src/engine/core-modules/billing/utils/build-trial-end-schedule-phases.util';
 import { getTrialExtensionSyncAction } from 'src/engine/core-modules/billing/utils/get-trial-extension-sync-action.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 
@@ -35,6 +37,7 @@ export class BillingTrialExtensionService {
     private readonly dataSource: DataSource,
     private readonly billingArrangementService: BillingArrangementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly stripeCustomerService: StripeCustomerService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly cacheLockService: CacheLockService,
@@ -176,12 +179,24 @@ export class BillingTrialExtensionService {
         );
 
         if (stripeSubscription.status === 'trialing') {
+          const isPaymentMethodRequired =
+            !isSendInvoiceSubscription(subscription);
+          const hasPaymentMethod =
+            isPaymentMethodRequired &&
+            (await this.stripeCustomerService.ensureDefaultPaymentMethod(
+              subscription.stripeCustomerId,
+            ));
+
           await this.moveStripeTrialEnd({
             stripeSubscriptionId: subscription.stripeSubscriptionId,
             schedule,
             currentPhase,
             nextPhase,
             trialEnd: 'now',
+            paymentBehavior:
+              isPaymentMethodRequired && !hasPaymentMethod
+                ? 'default_incomplete'
+                : undefined,
           });
         }
 
@@ -264,12 +279,14 @@ export class BillingTrialExtensionService {
     currentPhase,
     nextPhase,
     trialEnd,
+    paymentBehavior,
   }: {
     stripeSubscriptionId: string;
     schedule: Stripe.SubscriptionSchedule | undefined;
     currentPhase: Stripe.SubscriptionSchedule.Phase | undefined;
     nextPhase: Stripe.SubscriptionSchedule.Phase | undefined;
     trialEnd: number | 'now';
+    paymentBehavior?: Stripe.SubscriptionUpdateParams.PaymentBehavior;
   }): Promise<void> {
     if (
       isDefined(schedule) &&
@@ -290,7 +307,7 @@ export class BillingTrialExtensionService {
     await this.stripeSubscriptionService.updateSubscription(
       stripeSubscriptionId,
       trialEnd === 'now'
-        ? { trial_end: 'now' }
+        ? { trial_end: 'now', payment_behavior: paymentBehavior }
         : { trial_end: trialEnd, proration_behavior: 'none' },
     );
   }
