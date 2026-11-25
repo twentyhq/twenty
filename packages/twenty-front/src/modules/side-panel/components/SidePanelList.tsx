@@ -9,7 +9,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { styled } from '@linaria/react';
-import { isNull } from '@sniptt/guards';
+import { isUndefined } from '@sniptt/guards';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { useLingui } from '@lingui/react/macro';
 
@@ -75,7 +75,7 @@ export const SidePanelList = ({
             selectableListInstanceId={SIDE_PANEL_SELECTABLE_LIST_ID}
             focusId={SIDE_PANEL_FOCUS_ID}
             selectableItemIdArray={selectableItemIds}
-            shouldPreselectFirstItem={!isNull(defaultSelectedItemId)}
+            shouldPreselectFirstItem={isUndefined(defaultSelectedItemId)}
             onSelect={() => {
               setHasUserSelectedSidePanelListItem(true);
             }}

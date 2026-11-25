@@ -29,9 +29,11 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import { SidePanelSearchRecordItem } from '@/side-panel/pages/search/components/SidePanelSearchRecordItem';
 import { useSidePanelSearchRecords } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
+import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -99,6 +101,9 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
+  const setSidePanelSearchObjectFilter = useSetAtomState(
+    sidePanelSearchObjectFilterState,
+  );
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
@@ -288,9 +293,8 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const hasMatchingCommand = COMMAND_MENU_ITEM_SECTIONS_IN_DISPLAY_ORDER.some(
     (section) =>
-      section !== 'SEARCH' &&
-      (commandMenuItemsBySection[section].length > 0 ||
-        getSectionExtraItemIds(section).length > 0),
+      commandMenuItemsBySection[section].length > 0 ||
+      getSectionExtraItemIds(section).length > 0,
   );
 
   const isRecordSearchFallbackRedundant =
@@ -323,6 +327,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
     if (section === 'SEARCH' && isSearchActive) {
       return [
+        ...getSectionCommandItemIds(section),
         ...inlineSearchResultItems.map((item) => item.id),
         ...(hasMoreSearchResultItems
           ? [COMMAND_MENU_SEE_MORE_RECORDS_ITEM_ID]
@@ -359,7 +364,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   );
 
   const firstCommandItemId = displayedSections
-    .filter((section) => section !== 'SEARCH' && isSectionOpen(section))
+    .filter((section) => isSectionOpen(section))
     .flatMap(getSectionCommandItemIds)[0];
 
   const firstRecordItemId = isSearchingRecords
@@ -381,6 +386,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
     if (isDefined(firstRecordItemId)) {
       return firstRecordItemId;
+    }
+
+    if (isInlineRecordSearchActive && isSearchingRecords) {
+      return null;
     }
 
     if (shouldDisplayAskAiPrompt && doesSearchReadAsQuestion) {
@@ -406,6 +415,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     });
 
   const handleSeeMoreRecords = () => {
+    setSidePanelSearchObjectFilter(null);
     navigateSidePanelMenu({
       page: SidePanelPages.SearchRecords,
       pageTitle: t`Search`,
@@ -415,6 +425,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const renderSearchRows = () => (
     <>
+      {renderSectionCommandRows('SEARCH')}
       {inlineSearchResultItems.map((item) => (
         <SidePanelSearchRecordItem key={item.id} item={item} />
       ))}

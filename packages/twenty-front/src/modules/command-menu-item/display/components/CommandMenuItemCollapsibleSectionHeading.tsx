@@ -66,6 +66,7 @@ export const CommandMenuItemCollapsibleSectionHeading = ({
             tooltip={toggleLabel}
             aria-label={toggleLabel}
             aria-expanded={isOpen}
+            tabIndex={-1}
             onClick={onToggle}
           >
             <ToggleIcon

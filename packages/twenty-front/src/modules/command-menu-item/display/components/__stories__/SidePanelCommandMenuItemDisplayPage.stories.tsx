@@ -118,6 +118,13 @@ const NAVIGATION_ITEM = createCommandMenuItem({
   label: 'Go to People',
 });
 
+const SEARCH_RECORDS_ITEM = createCommandMenuItem({
+  id: 'story-search-records',
+  label: 'Search records',
+  icon: 'IconSearch',
+  engineComponentKey: EngineComponentKey.SEARCH_RECORDS,
+});
+
 const NEW_AI_CHAT_ITEM = createCommandMenuItem({
   id: 'story-new-ai-chat',
   label: 'New chat',
@@ -428,6 +435,20 @@ export const SearchWithoutMatchingItemsOffersAskAi: Story = {
     expect(canvas.getAllByText('Ask AI')).toHaveLength(2);
     expect(await canvas.findByText('No records found')).toBeVisible();
     expect(canvas.queryByText('Search records')).not.toBeInTheDocument();
+  },
+};
+
+export const SearchKeepsMatchingSearchCommand: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [OTHER_ITEM, SEARCH_RECORDS_ITEM],
+      sidePanelSearch: 'search',
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Search records')).toBeVisible();
   },
 };
 
