@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { getUserWorkspaceIdFromAuthContext } from 'src/engine/core-modules/auth/utils/get-user-workspace-id-from-auth-context.util';
-import { canCallerChangePrivatableEntityPrivacy } from 'src/engine/permissions/metadata-permissions/utils/can-caller-change-privatable-entity-privacy.util';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -606,13 +606,9 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceWorkflowId: null,
       isSystem: coreWorkflow.isSystem,
       isPrivate: coreWorkflow.isPrivate,
-      canChangeVisibility: canCallerChangePrivatableEntityPrivacy({
-        privatableEntity: {
-          createdByUserWorkspaceId:
-            getUserWorkspaceIdFromAuthContext(authContext) ?? null,
-        },
-        authContext,
-      }),
+      canChangeVisibility:
+        isDefined(authContext) &&
+        (isUserAuthContext(authContext) || isSystemAuthContext(authContext)),
       createdAt: coreWorkflow.createdAt,
       updatedAt: coreWorkflow.updatedAt,
     };
