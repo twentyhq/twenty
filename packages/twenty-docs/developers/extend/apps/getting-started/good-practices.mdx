@@ -9,26 +9,18 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 The Twenty API accepts **500 requests per minute per application registration** for the requests an app makes in its own name: runs with no person behind them (cron, webhooks, install hooks) and clients created with `runAs: 'application'`. The budget is shared by every workspace that installed the app, and requests beyond it are refused with a `429`. Requests made as the person who triggered a run count against that person's limits instead. The practices below keep an app inside that budget as its number of installs grows, and inside the limits of the services it calls.
 
-- **Spread sweep crons with a random delay.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Keep the cron handler to an enqueue, with a random `delayMs` over a large window such as one hour. Job enqueues are also capped at 2,000 per minute per application registration, and a cron tick beyond that cap is skipped in the remaining workspaces, so keep a sweep idempotent and let the next tick catch up.
+- **Spread sweep crons with `spreadMs`.** A cron trigger starts in every workspace at the same minute, so every install draws on the shared budget at once. Set `spreadMs` to a large window such as one hour, and each workspace runs at its own stable offset in that window. Job enqueues are also capped at 2,000 per minute per application registration, and a cron tick beyond that cap is skipped in the remaining workspaces, so keep a sweep idempotent and let the next tick catch up. See [Spread a cron across workspaces](/developers/extend/apps/logic/logic-functions#spread-a-cron-across-workspaces).
 
-```ts src/logic-functions/enqueue-nightly-sweep.ts
+```ts src/logic-functions/nightly-sweep.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { enqueueJobs } from 'twenty-sdk/logic-function';
-
-const NIGHTLY_SWEEP = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
-const SPREAD_WINDOW_MS = 60 * 60 * 1000;
 
 export default defineLogicFunction({
   universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
-  name: 'enqueue-nightly-sweep',
+  name: 'nightly-sweep',
   timeoutSeconds: 30,
-  cronTriggerSettings: { pattern: '0 3 * * *' },
+  cronTriggerSettings: { pattern: '0 3 * * *', spreadMs: 60 * 60 * 1000 },
   handler: async () => {
-    await enqueueJobs({
-      logicFunctionUniversalIdentifier: NIGHTLY_SWEEP,
-      jobs: [{ payload: {} }],
-      delayMs: Math.floor(Math.random() * SPREAD_WINDOW_MS),
-    });
+    // ...
   },
 });
 ```
@@ -47,10 +39,10 @@ export default defineLogicFunction({
                                    N × calls  →  429
 ```
 
-With a random delay over a one-hour window, the same runs are spread out:
+With `spreadMs` set to one hour, the same runs are spread out:
 
 ```text
-   pattern "0 3 * * *"  +  random delayMs in [0, 60 min)
+   pattern "0 3 * * *"  +  spreadMs: 60 min
                                                   │
               ┌───────────────┬───────────────────┼───────────────┐
               ▼               ▼                   ▼               ▼
@@ -73,7 +65,7 @@ With a random delay over a one-hour window, the same runs are spread out:
 
 - **Collapse bursts into one delayed job.** When events reveal work larger than the event itself, enqueuing it once per event multiplies it by the size of the burst. Enqueue one job with `delayMs` and a deterministic `jobId` that includes a time window; the queue ignores an id it already holds. See [Choose your own job id](/developers/extend/apps/logic/background-jobs#choose-your-own-job-id).
 
-- **Pace fan-outs with `delayMs`.** Jobs enqueued without a delay all become eligible at once and spend the budget in the same minute. Group them into slots per minute and delay the next page by the slots used. See [Background jobs](/developers/extend/apps/logic/background-jobs).
+- **Pace fan-outs with a `limiter`.** Jobs enqueued without one all become eligible at once and spend the budget in the same minute. Pass `limiter: { max, durationMs }` to `enqueueJobs` and the runs are spaced evenly, across calls too. See [Pace runs with a limiter](/developers/extend/apps/logic/background-jobs#pace-runs-with-a-limiter).
 
 - **Retry a `429` with backoff, or re-enqueue with a delay.** The client SDK throws on any non-2xx response, and a run that waits inside spends its own timeout. Retry with exponential backoff and a cap on attempts, or hand the work back to the queue with a delay.
 
