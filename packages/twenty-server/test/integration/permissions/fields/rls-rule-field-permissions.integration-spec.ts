@@ -20,7 +20,7 @@ import { removeRecordShareOperationFactory } from 'test/integration/permissions/
 import { setRecordShareOperationFactory } from 'test/integration/permissions/utils/set-record-share-operation-factory.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { waitForAllJobsAfter } from 'test/integration/utils/wait-for-all-jobs-after.util';
 import {
   FeatureFlagKey,
   RecordShareAccessLevel,
@@ -31,27 +31,13 @@ import { v4 } from 'uuid';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
-const upsertFieldPermissions = async (
-  ...args: Parameters<typeof upsertFieldPermissionsWithoutWaitingForJobs>
-) => {
-  const result = await upsertFieldPermissionsWithoutWaitingForJobs(...args);
+const upsertFieldPermissions = waitForAllJobsAfter(
+  upsertFieldPermissionsWithoutWaitingForJobs,
+);
 
-  await waitForAllJobsToFinish();
-
-  return result;
-};
-
-const upsertRowLevelPermissionRules = async (
-  ...args: Parameters<typeof upsertRowLevelPermissionRulesWithoutWaitingForJobs>
-) => {
-  const result = await upsertRowLevelPermissionRulesWithoutWaitingForJobs(
-    ...args,
-  );
-
-  await waitForAllJobsToFinish();
-
-  return result;
-};
+const upsertRowLevelPermissionRules = waitForAllJobsAfter(
+  upsertRowLevelPermissionRulesWithoutWaitingForJobs,
+);
 
 describe('field permissions on an RLS rule (integration)', () => {
   let objectMetadataId: string;

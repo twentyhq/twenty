@@ -14,7 +14,7 @@ import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role
 import { upsertRowLevelPermissionRules as upsertRowLevelPermissionRulesWithoutWaitingForJobs } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
 import { findFieldMetadataIdByName } from 'test/integration/utils/find-field-metadata-id-by-name.util';
 import { findObjectMetadataIdByName } from 'test/integration/utils/find-object-metadata-id-by-name.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { waitForAllJobsAfter } from 'test/integration/utils/wait-for-all-jobs-after.util';
 import {
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
@@ -43,27 +43,13 @@ const FORMULAS = [
   { name: 'formulaAvatarMark', expression: 'concat(avatarUrl, "!")' },
 ];
 
-const upsertFieldPermissions = async (
-  ...args: Parameters<typeof upsertFieldPermissionsWithoutWaitingForJobs>
-) => {
-  const result = await upsertFieldPermissionsWithoutWaitingForJobs(...args);
+const upsertFieldPermissions = waitForAllJobsAfter(
+  upsertFieldPermissionsWithoutWaitingForJobs,
+);
 
-  await waitForAllJobsToFinish();
-
-  return result;
-};
-
-const upsertRowLevelPermissionRules = async (
-  ...args: Parameters<typeof upsertRowLevelPermissionRulesWithoutWaitingForJobs>
-) => {
-  const result = await upsertRowLevelPermissionRulesWithoutWaitingForJobs(
-    ...args,
-  );
-
-  await waitForAllJobsToFinish();
-
-  return result;
-};
+const upsertRowLevelPermissionRules = waitForAllJobsAfter(
+  upsertRowLevelPermissionRulesWithoutWaitingForJobs,
+);
 
 describe('formula fields should not reveal values the reader cannot read (integration)', () => {
   let personObjectMetadataId: string;
