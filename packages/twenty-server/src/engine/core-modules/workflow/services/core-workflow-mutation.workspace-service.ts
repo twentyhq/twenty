@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkflowStatus } from 'src/engine/core-modules/workflow/enums/workflow-status.enum';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -103,6 +104,7 @@ export class CoreWorkflowMutationWorkspaceService {
           allFlatEntityOperationByMetadataName: operations,
           workspaceId,
           isSystemBuild: false,
+          authContext: workspaceAuthContextStorage.getStore(),
           applicationUniversalIdentifier: universalIdentifier,
         },
       );

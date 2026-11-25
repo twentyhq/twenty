@@ -3,7 +3,6 @@ import { isBoolean, isNonEmptyString } from '@sniptt/guards';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -80,12 +79,12 @@ export const getPrivatableEntityPrivacyValidationErrors = ({
   metadataName,
   fromUniversalFlatEntity,
   toUniversalFlatEntity,
-  authContext = workspaceAuthContextStorage.getStore(),
+  authContext,
 }: {
   metadataName: AllMetadataName;
   fromUniversalFlatEntity?: PrivatableUniversalFlatEntity;
   toUniversalFlatEntity: PrivatableUniversalFlatEntity;
-  authContext?: WorkspaceAuthContext;
+  authContext: WorkspaceAuthContext | undefined;
 }): FlatEntityValidationError[] => {
   if (!isPrivatableMetadataName(metadataName)) {
     return [];

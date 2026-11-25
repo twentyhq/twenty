@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type CreateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/create-agent.input';
 import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/dtos/update-agent.input';
@@ -166,6 +167,7 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext: workspaceAuthContextStorage.getStore(),
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
@@ -274,6 +276,7 @@ export class AgentService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext: workspaceAuthContextStorage.getStore(),
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },

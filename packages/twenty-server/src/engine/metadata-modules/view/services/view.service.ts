@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -113,6 +114,7 @@ export class ViewService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext: workspaceAuthContextStorage.getStore(),
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },
@@ -205,6 +207,7 @@ export class ViewService {
           },
           workspaceId,
           isSystemBuild: false,
+          authContext: workspaceAuthContextStorage.getStore(),
           applicationUniversalIdentifier:
             workspaceCustomFlatApplication.universalIdentifier,
         },

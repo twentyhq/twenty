@@ -50,12 +50,13 @@ describe('getPrivatableEntityPrivacyValidationErrors', () => {
           isPrivate: true,
           createdByUserWorkspaceId: null,
         }),
+        authContext: undefined,
       }),
     ).toEqual([]);
   });
 
   describe('on creation', () => {
-    it('accepts a shared entity with no creator from any caller', () => {
+    it('accepts a shared entity with no creator, even with no caller', () => {
       expect(
         getPrivatableEntityPrivacyValidationErrors({
           metadataName: 'workflow',
@@ -63,6 +64,7 @@ describe('getPrivatableEntityPrivacyValidationErrors', () => {
             isPrivate: false,
             createdByUserWorkspaceId: null,
           }),
+          authContext: undefined,
         }),
       ).toEqual([]);
     });

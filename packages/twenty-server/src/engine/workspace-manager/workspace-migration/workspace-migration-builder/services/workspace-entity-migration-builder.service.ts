@@ -359,6 +359,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
                 ...fromFlatEntity,
                 ...flatEntityUpdate.update,
               },
+              authContext: buildOptions.authContext,
             })
           : []),
       ];
@@ -590,6 +591,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
     const privacyErrors = getPrivatableEntityPrivacyValidationErrors({
       metadataName: this.metadataName,
       toUniversalFlatEntity: args.flatEntityToValidate,
+      authContext: args.buildOptions.authContext,
     });
 
     const centralizedErrors = [

@@ -9,6 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -222,6 +223,7 @@ export class CompleteViewUpsertService {
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: false,
+          authContext: workspaceAuthContextStorage.getStore(),
           applicationUniversalIdentifier,
         },
       );
