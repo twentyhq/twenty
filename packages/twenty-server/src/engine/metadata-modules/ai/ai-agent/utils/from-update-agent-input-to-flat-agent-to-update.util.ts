@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { computeAgentPrivacyUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update.util';
 import { isPrivatableEntityVisibleToCaller } from 'src/engine/permissions/metadata-permissions/utils/is-privatable-entity-visible-to-caller.util';
 import {
   AiException,
@@ -209,6 +208,8 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       workspaceCustomApplicationUniversalIdentifier,
     });
 
+  const { isPrivate } = rawUpdateAgentInput;
+
   const flatAgentToUpdate: FlatAgent = {
     ...mergeUpdateInExistingRecord({
       existing: existingFlatAgent,
@@ -216,11 +217,13 @@ export const fromUpdateAgentInputToFlatAgentToUpdate = ({
       update: updatedEditableProperties,
     }),
     overrides,
-    ...computeAgentPrivacyUpdate({
-      existingFlatAgent,
-      isPrivate: rawUpdateAgentInput.isPrivate,
-      userWorkspaceId,
-    }),
+    ...(isDefined(isPrivate) && isPrivate !== existingFlatAgent.isPrivate
+      ? {
+          isPrivate,
+          createdByUserWorkspaceId:
+            userWorkspaceId ?? existingFlatAgent.createdByUserWorkspaceId,
+        }
+      : {}),
   };
 
   const {
