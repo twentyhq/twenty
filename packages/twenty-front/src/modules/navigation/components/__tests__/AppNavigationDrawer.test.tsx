@@ -38,10 +38,6 @@ jest.mock('@/navigation/components/MainNavigationDrawerSearchField', () => ({
   ),
 }));
 
-jest.mock('@/navigation/components/MainNavigationDrawerFixedRows', () => ({
-  MainNavigationDrawerFixedRows: () => null,
-}));
-
 jest.mock('@/navigation/components/SettingsNavigationDrawerContent', () => ({
   SettingsNavigationDrawerContent: () => <div>Settings content</div>,
 }));

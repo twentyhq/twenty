@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
-import { MainNavigationDrawerFixedRows } from '@/navigation/components/MainNavigationDrawerFixedRows';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { MainNavigationDrawerContextMenu } from '@/navigation/components/MainNavigationDrawerContextMenu';
 import { MainNavigationDrawerSearchField } from '@/navigation/components/MainNavigationDrawerSearchField';
@@ -61,7 +60,6 @@ export const AppNavigationDrawer = ({
             ) : (
               <MainNavigationDrawerTabSwitcher />
             )}
-            <MainNavigationDrawerFixedRows />
           </NavigationDrawerFixedContent>
         )}
 
