@@ -1,6 +1,6 @@
 # Logic
 
-Use this reference for Twenty app logic functions, skills, agents, and connection providers.
+Use this reference for Twenty app logic functions, skills, agents, events, and connection providers.
 
 ## Logic Functions
 
@@ -176,6 +176,16 @@ const { object } = await ai.generate({
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
 - `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
 - `await archiveInboxThread({ threadId, workspaceMemberIds })` archives a conversation the app wrote for those members, as if each archived it from their inbox, for work done elsewhere (an email sent from Gmail). App tokens only; every member must be able to read the conversation, or it fails with `THREAD_NOT_FOUND` and archives it for nobody. A new message brings it back. Without `workspaceMemberIds` it marks the conversation done in its channel instead, leaving members' inboxes alone (`CHAT_THREAD_NOT_IN_CHANNEL` if it is in none).
+
+## Events
+
+To record that something happened in the app's domain, declare the event with `defineEvent` from `twenty-sdk/define` and emit it with `emitEvent` from `twenty-sdk/logic-function`. See the [events guide](https://docs.twenty.com/developers/extend/apps/logic/events.md).
+
+- `name` and property names are camelCase; an event name is unique within the app. Dotted names are reserved for events Twenty emits. Property types are `TEXT`, `NUMBER`, `BOOLEAN`, `DATE_TIME`, `UUID`, `RAW_JSON` and `RECORD_REFERENCE` (with `objectUniversalIdentifier`). Up to 50 properties.
+- `emitEvent({ event, properties })` is refused when the event is not declared, a property is undeclared or mistyped, or the payload exceeds 32 KB. It returns the occurrence `id` and `occurredAt`.
+- Nothing receives an occurrence yet: do not use an event to notify a person, a front component or another function.
+
+Requires `"engines": { "twenty": ">=2.65.0" }`.
 
 ## Connection Providers
 

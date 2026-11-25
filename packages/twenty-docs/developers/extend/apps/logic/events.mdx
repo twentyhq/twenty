@@ -1,0 +1,68 @@
+---
+title: Events
+description: Declare your app's own events and emit them from logic functions.
+---
+
+## Overview
+
+An **event** is something your app declares once and emits from a logic function each time it happens.
+
+<Note>
+**Beta.** Events can be declared and emitted, and Twenty checks each occurrence against its definition. Nothing receives an occurrence yet: realtime delivery, storage, and triggering logic functions, agents or workflows from events are planned.
+</Note>
+
+## Declaring an event
+
+```ts src/events/message-added.event.ts
+import { defineEvent } from 'twenty-sdk/define';
+
+import { CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/objects/conversation.object';
+
+export default defineEvent({
+  universalIdentifier: '3c1d2a4b-5e6f-4a7b-8c9d-0e1f2a3b4c5d',
+  name: 'messageAdded',
+  label: 'Message added',
+  properties: [
+    {
+      name: 'conversationId',
+      type: 'RECORD_REFERENCE',
+      objectUniversalIdentifier: CONVERSATION_OBJECT_UNIVERSAL_IDENTIFIER,
+      isRequired: true,
+    },
+    { name: 'messageId', type: 'UUID', isRequired: true },
+    { name: 'text', type: 'TEXT' },
+  ],
+});
+```
+
+`name` and property names are camelCase. An event name is unique within your app. Dotted names are reserved for events Twenty itself emits.
+
+| Property type | Accepted value |
+|---|---|
+| `TEXT` | string |
+| `NUMBER` | finite number |
+| `BOOLEAN` | boolean |
+| `DATE_TIME` | ISO 8601 string |
+| `UUID` | UUID string |
+| `RAW_JSON` | any JSON value |
+| `RECORD_REFERENCE` | UUID of a record of `objectUniversalIdentifier` (any object, including standard ones) |
+
+## Emitting
+
+```ts src/logic-functions/handlers/post-message-handler.ts
+import { emitEvent } from 'twenty-sdk/logic-function';
+
+const { id, occurredAt } = await emitEvent({
+  event: 'messageAdded',
+  properties: { conversationId, messageId, text },
+});
+```
+
+The server checks the properties against the definition and refuses anything undeclared or mistyped. It returns the `id` of the occurrence and the time it was recorded.
+
+## Limits
+
+| Limit | Value |
+|---|---|
+| Properties per event | 50 |
+| Occurrence payload | 32 KB |
