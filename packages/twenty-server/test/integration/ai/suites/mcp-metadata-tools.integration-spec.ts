@@ -50,8 +50,16 @@ const PET_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Pets`;
 const VISIT_NAME_SINGULAR = `${OBJECT_NAME_PREFIX}Visit`;
 const VISIT_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Visits`;
 const PETS_ON_COMPANY_FIELD_NAME = 'mcpMetadataToolsPets';
+const PARCEL_NAME_SINGULAR = `${OBJECT_NAME_PREFIX}Parcel`;
+const PARCEL_NAME_PLURAL = `${OBJECT_NAME_PREFIX}Parcels`;
 
-type FieldSummary = { id: string; name: string; type: string; label?: string };
+type FieldSummary = {
+  id: string;
+  name: string;
+  type: string;
+  label?: string;
+  settings?: Record<string, unknown>;
+};
 type ObjectSummary = {
   id: string;
   nameSingular: string;
@@ -591,6 +599,60 @@ describe('MCP metadata tools (integration)', () => {
       success: false,
       message: 'Failed to execute validate_formula_expression',
       error: expect.stringContaining('Invalid formula'),
+    });
+  });
+
+  it('should keep a formula through an update of the other settings', async () => {
+    const parcel = await runMetadataTool<ObjectSummary>({
+      toolName: 'create_object_metadata',
+      toolArguments: {
+        nameSingular: PARCEL_NAME_SINGULAR,
+        namePlural: PARCEL_NAME_PLURAL,
+        labelSingular: 'MCP metadata tools parcel',
+        labelPlural: 'MCP metadata tools parcels',
+      },
+    });
+
+    jestExpectToBeDefined(parcel);
+
+    await runMetadataTool({
+      toolName: 'create_field_metadata',
+      toolArguments: {
+        objectMetadataId: parcel.id,
+        type: 'NUMBER',
+        name: 'weight',
+        label: 'Weight',
+      },
+    });
+
+    const doubleWeightField = await runMetadataTool<FieldSummary>({
+      toolName: 'create_field_metadata',
+      toolArguments: {
+        objectMetadataId: parcel.id,
+        type: 'NUMBER',
+        name: 'doubleWeight',
+        label: 'Double weight',
+        settings: { formula: { expression: 'weight * 2' } },
+      },
+    });
+
+    jestExpectToBeDefined(doubleWeightField);
+
+    await runMetadataTool({
+      toolName: 'update_field_metadata',
+      toolArguments: { id: doubleWeightField.id, settings: { decimals: 1 } },
+    });
+
+    expect(
+      await findFieldOrThrow({
+        objectName: PARCEL_NAME_SINGULAR,
+        fieldName: 'doubleWeight',
+      }),
+    ).toMatchObject({
+      settings: {
+        decimals: 1,
+        formula: { expression: 'weight * 2' },
+      },
     });
   });
 

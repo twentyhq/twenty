@@ -748,4 +748,45 @@ describe('Formula fields', () => {
     );
     expect(await findGadget('total')).toEqual({ total: 125 });
   });
+  it('should keep a formula when a settings update leaves it out, and remove it on null', async () => {
+    const {
+      data: {
+        createOneField: { id: doubleQuantityFieldMetadataId },
+      },
+    } = await createFormulaField({
+      objectMetadataId: gadgetObjectMetadataId,
+      name: 'doubleQuantity',
+      type: FieldMetadataType.NUMBER,
+      expression: 'quantity * 2',
+    });
+
+    const updateSettings = (settings: Record<string, unknown>) =>
+      updateOneFieldMetadata({
+        expectToFail: false,
+        input: {
+          idToUpdate: doubleQuantityFieldMetadataId,
+          updatePayload: { settings },
+        },
+        gqlFields: 'id settings',
+      });
+
+    const {
+      data: {
+        updateOneField: { settings: settingsWithoutFormulaSent },
+      },
+    } = await updateSettings({ decimals: 1 });
+
+    expect(settingsWithoutFormulaSent).toMatchObject({
+      decimals: 1,
+      formula: { expression: 'quantity * 2' },
+    });
+
+    const {
+      data: {
+        updateOneField: { settings: settingsWithFormulaRemoved },
+      },
+    } = await updateSettings({ decimals: 1, formula: null });
+
+    expect(settingsWithFormulaRemoved).toEqual({ decimals: 1, formula: null });
+  });
 });

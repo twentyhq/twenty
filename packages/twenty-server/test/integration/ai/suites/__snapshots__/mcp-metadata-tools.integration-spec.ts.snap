@@ -542,7 +542,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
               "type": "null",
             },
           ],
-          "description": "Field settings. On update they replace the existing settings: send formula again to keep it.",
+          "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
           "type": [
             "object",
             "null",
@@ -759,7 +759,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
               "type": "null",
             },
           ],
-          "description": "Field settings. On update they replace the existing settings: send formula again to keep it.",
+          "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
           "type": [
             "object",
             "null",
@@ -995,7 +995,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                     "type": "null",
                   },
                 ],
-                "description": "Field settings. On update they replace the existing settings: send formula again to keep it.",
+                "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
                 "type": [
                   "object",
                   "null",
@@ -1226,7 +1226,7 @@ exports[`MCP metadata tools (integration) should describe the metadata tools to 
                     "type": "null",
                   },
                 ],
-                "description": "Field settings. On update they replace the existing settings: send formula again to keep it.",
+                "description": "Field settings. On update they replace the existing settings, except formula: left out it is kept, null removes it.",
                 "type": [
                   "object",
                   "null",
