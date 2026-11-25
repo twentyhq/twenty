@@ -25689,6 +25689,11 @@ msgstr "Replit install links require an HTTPS MCP URL."
 msgid "Reply"
 msgstr "Reply"
 
+#. js-lingui-id: 5ykMJ1
+#: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
+msgid "Reply all"
+msgstr "Reply all"
+
 #. js-lingui-id: VKsaTi
 #: src/modules/ai-chat/composer/components/AiChatComposerQuotePreview.tsx
 msgid "Replying to"
