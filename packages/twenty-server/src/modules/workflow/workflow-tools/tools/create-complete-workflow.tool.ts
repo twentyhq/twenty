@@ -161,7 +161,6 @@ Call validate_workflow once when the workflow is complete, before activating.`,
         try {
           await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
             workspaceId: context.workspaceId,
-            userWorkspaceId: context.userWorkspaceId,
             coreWorkflowVersionId,
           });
         } catch (error) {
