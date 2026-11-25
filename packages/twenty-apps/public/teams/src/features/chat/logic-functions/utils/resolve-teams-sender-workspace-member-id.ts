@@ -34,9 +34,7 @@ export const resolveTeamsSenderWorkspaceMemberId = async ({
   teamsTenantId: string;
   accessToken: string;
 }): Promise<string | undefined> => {
-  // The sender's Entra object id and tenant arrive on the authenticated
-  // activity, so honor a manual link without a roster round-trip: the link key
-  // already scopes it to this tenant, and the roster payload omits the object id.
+  // Honor a manual link from the activity's object id; the roster payload omits it.
   if (isNonEmptyString(teamsUserAadObjectId)) {
     const linkedWorkspaceMemberId = await findTeamsUserLinkWorkspaceMemberId({
       client,
