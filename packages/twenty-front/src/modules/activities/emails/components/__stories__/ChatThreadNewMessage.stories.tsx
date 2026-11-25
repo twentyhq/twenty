@@ -30,7 +30,6 @@ const ChatThreadNewMessageStory = () => {
       channelName="WhatsApp"
       onSendMessage={onSendMessage}
       onMessageSent={onMessageSent}
-      canAttachFiles
     />
   );
 };

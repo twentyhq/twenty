@@ -77,10 +77,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
     label: msg`Getting started`,
     description: msg`Show the Getting started page and sidebar card, and open it on landing during the trial.`,
   },
-  [FeatureFlagKey.IS_MESSAGE_ATTACHMENT_ENABLED]: {
-    label: msg`Message attachments`,
-    description: msg`Store and show files attached to messages. Enabled after the workspace upgrade completes.`,
-  },
   [FeatureFlagKey.IS_PRIVATE_RECORDS_ENABLED]: {
     label: msg`Private records`,
     description: msg`Apply private records on objects that aren't private by default. Always on for workspaces that have set record sharing. Turning this off makes records set as private on those objects visible again.`,

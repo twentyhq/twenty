@@ -14,13 +14,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 const mockEnqueueToast = jest.fn();
-let mockIsMessageAttachmentEnabled = false;
 
 const EMPTY_BODY = serializePlainTextAsAdvancedTextEditorDocument('');
-
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsMessageAttachmentEnabled,
-}));
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
@@ -176,7 +171,6 @@ const renderAppComposerState = ({
 describe('useEmailComposerState', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsMessageAttachmentEnabled = false;
   });
 
   it('sends from the connected account when no alias was picked', async () => {
@@ -409,35 +403,7 @@ describe('useEmailComposerState', () => {
     expect(onSent).toHaveBeenCalledTimes(1);
   });
 
-  it('hides attachments while the app is the sender, including uploads that finish after switching', () => {
-    const { result } = renderAppComposerState({ mocks: [], onSent: jest.fn() });
-
-    act(() => {
-      result.current.setSender({ connectedAccountId: 'account-2' });
-    });
-
-    const setFilesFromPendingUpload = result.current.setFiles;
-
-    act(() => {
-      result.current.setSender({ connectedAccountId: 'account-1' });
-    });
-
-    act(() => {
-      setFilesFromPendingUpload([{ id: 'file-1', name: 'deck.pdf' }]);
-    });
-
-    expect(result.current.files).toEqual([]);
-
-    act(() => {
-      result.current.setSender({ connectedAccountId: 'account-2' });
-    });
-
-    expect(result.current.files).toEqual([{ id: 'file-1', name: 'deck.pdf' }]);
-  });
-
-  it('sends attachments through the app when message attachments are enabled', async () => {
-    mockIsMessageAttachmentEnabled = true;
-
+  it('sends attachments through the app', async () => {
     const onSent = jest.fn();
     const attachments = [{ id: 'file-1', name: 'deck.pdf' }];
 
@@ -456,8 +422,6 @@ describe('useEmailComposerState', () => {
       ],
       onSent,
     });
-
-    expect(result.current.canAttachFiles).toBe(true);
 
     act(() => {
       result.current.setFiles(attachments);
