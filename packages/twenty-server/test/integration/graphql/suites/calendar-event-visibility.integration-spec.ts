@@ -5,6 +5,7 @@ import { findManyOperationFactory } from 'test/integration/graphql/utils/find-ma
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { groupByOperationFactory } from 'test/integration/graphql/utils/group-by-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
 
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
@@ -81,7 +82,7 @@ const expectMaskedByVisibility = ({
 };
 
 const findCalendarEvent = async (id: string) => {
-  const response = await makeGraphqlApiRequest(
+  const response = await makeGraphqlApiRequestWithApiKey(
     findOneOperationFactory({
       objectMetadataSingularName: 'calendarEvent',
       filter: { id: { eq: id } },
@@ -94,7 +95,7 @@ const findCalendarEvent = async (id: string) => {
   return response.body.data.calendarEvent;
 };
 
-describe('calendarEvent visibility restrictions (e2e)', () => {
+describe('calendarEvent visibility restrictions for an API key (e2e)', () => {
   let metadataEventId: string;
   let sharedEventId: string;
   const participantIds: string[] = [];
@@ -189,7 +190,7 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
   });
 
   it('should mask events by channel visibility in findMany', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'calendarEvent',
         objectMetadataPluralName: 'calendarEvents',
@@ -226,7 +227,7 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
   });
 
   it('should mask events fetched through a many-to-one relation', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'calendarEventParticipant',
         objectMetadataPluralName: 'calendarEventParticipants',
@@ -248,7 +249,7 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
   });
 
   it('should mask events nested under a one-to-many relation', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       findOneOperationFactory({
         objectMetadataSingularName: 'person',
         filter: { id: { eq: PARTICIPANT_PERSON_ID } },
@@ -279,7 +280,7 @@ describe('calendarEvent visibility restrictions (e2e)', () => {
   });
 
   it('should mask events returned by groupBy', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       groupByOperationFactory({
         objectMetadataSingularName: 'calendarEvent',
         objectMetadataPluralName: 'calendarEvents',

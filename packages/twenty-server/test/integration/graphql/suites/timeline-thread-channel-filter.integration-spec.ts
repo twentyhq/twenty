@@ -383,16 +383,22 @@ describe('timeline thread channel filter (integration)', () => {
     });
   });
 
-  it.each(['company', 'messageThread'])(
-    'lists no channel to a member who cannot read %s records',
-    async (objectNameSingular) => {
-      const response =
-        await requestChannelsAsPhilWithoutReadAccessTo(objectNameSingular);
+  it('lists no channel to a member who cannot read company records', async () => {
+    const response = await requestChannelsAsPhilWithoutReadAccessTo('company');
 
-      expect(response.body.errors).toBeUndefined();
-      expect(
-        response.body.data.getTimelineThreadChannelsFromObjectRecord,
-      ).toEqual([]);
-    },
-  );
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.getTimelineThreadChannelsFromObjectRecord,
+    ).toEqual([]);
+  });
+
+  it('lists the channel to a member whose role cannot read messageThread records, through their individual role', async () => {
+    const response =
+      await requestChannelsAsPhilWithoutReadAccessTo('messageThread');
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.getTimelineThreadChannelsFromObjectRecord,
+    ).toEqual([GOOGLE_EMAIL_CHANNEL]);
+  });
 });

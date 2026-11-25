@@ -911,7 +911,7 @@ describe('app message channels API (e2e)', () => {
       }
     });
 
-    it('returns no channel for a message thread the user cannot read', async () => {
+    it('returns the channel of a message thread the role cannot read, through the individual role', async () => {
       const channel = await createChannelOrThrow();
 
       const ingestResponse = await ingest({
@@ -1000,7 +1000,9 @@ describe('app message channels API (e2e)', () => {
         const restrictedResponse = await queryThreadChannelAsJony();
 
         expect(restrictedResponse.body.errors).toBeUndefined();
-        expect(restrictedResponse.body.data.getMessageThreadChannel).toBeNull();
+        expect(restrictedResponse.body.data.getMessageThreadChannel).toEqual(
+          readableResponse.body.data.getMessageThreadChannel,
+        );
       } finally {
         await updateWorkspaceMemberRole({
           expectToFail: false,

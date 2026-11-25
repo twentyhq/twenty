@@ -2,6 +2,7 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
@@ -25,7 +26,7 @@ const MASKED_FIELDS = {
 const RESTRICTABLE_FIELDS =
   'id subject text attachments { edges { node { id } } }';
 
-describe('message visibility restrictions (e2e)', () => {
+describe('message visibility restrictions for an API key (e2e)', () => {
   let attachmentFileId: string;
 
   beforeAll(async () => {
@@ -133,7 +134,7 @@ describe('message visibility restrictions (e2e)', () => {
   });
 
   it('should return a message without channel associations masked in findMany', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'message',
         objectMetadataPluralName: 'messages',
@@ -150,7 +151,7 @@ describe('message visibility restrictions (e2e)', () => {
   });
 
   it('should mask the attachment of a message without channel associations when queried directly', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'attachment',
         objectMetadataPluralName: 'attachments',
@@ -168,7 +169,7 @@ describe('message visibility restrictions (e2e)', () => {
   });
 
   it('should mask a message without channel associations fetched through a relation', async () => {
-    const response = await makeGraphqlApiRequest(
+    const response = await makeGraphqlApiRequestWithApiKey(
       findManyOperationFactory({
         objectMetadataSingularName: 'messageParticipant',
         objectMetadataPluralName: 'messageParticipants',

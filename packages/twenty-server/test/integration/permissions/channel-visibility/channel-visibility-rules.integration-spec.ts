@@ -9,74 +9,17 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { updateMessageChannelVisibility } from 'test/integration/permissions/channel-visibility/utils/update-message-channel-visibility.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { syncChannelVisibilityRules } from 'test/integration/permissions/channel-visibility/utils/sync-channel-visibility-rules.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  restoreRoleWideAccessToChannelObjects,
+  revokeRoleWideAccessToChannelObjects,
+} from 'test/integration/permissions/channel-visibility/utils/role-wide-access-to-channel-objects.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { FIELD_RESTRICTED_ADDITIONAL_PERMISSIONS_REQUIRED } from 'twenty-shared/constants';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-import { type RevokeRoleWideAccessToChannelObjectsCommand } from 'src/engine/permissions/channel-visibility/commands/revoke-role-wide-access-to-channel-objects.command';
-import { CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'src/engine/permissions/channel-visibility/constants/channel-child-object-universal-identifiers.constant';
-import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
-const revokeRoleWideAccessToChannelObjects = () =>
-  getAppProviderByClassName<RevokeRoleWideAccessToChannelObjectsCommand>(
-    'RevokeRoleWideAccessToChannelObjectsCommand',
-  ).runOnWorkspace({
-    workspaceId: SEED_APPLE_WORKSPACE_ID,
-    options: {},
-    index: 0,
-    total: 1,
-  });
-
-const restoreRoleWideAccessToChannelObjects = async () => {
-  await global.testDataSource.query(
-    `DELETE FROM core."objectPermission" "objectPermission"
-      USING core."objectMetadata" "objectMetadata"
-      WHERE "objectMetadata".id = "objectPermission"."objectMetadataId"
-        AND "objectPermission"."workspaceId" = $1
-        AND "objectMetadata"."universalIdentifier" = ANY($2)`,
-    [
-      SEED_APPLE_WORKSPACE_ID,
-      [
-        STANDARD_OBJECTS.message.universalIdentifier,
-        STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-        ...CHANNEL_CHILD_OBJECT_UNIVERSAL_IDENTIFIERS,
-        STANDARD_OBJECTS.attachment.universalIdentifier,
-        STANDARD_OBJECTS.callRecording.universalIdentifier,
-      ],
-    ],
-  );
-  await global.testDataSource.query(
-    `DELETE FROM core."rowLevelPermissionRule" "rule"
-      USING core."objectMetadata" "objectMetadata", core."role" "role"
-      WHERE "objectMetadata".id = "rule"."objectMetadataId"
-        AND "role".id = "rule"."roleId"
-        AND "role"."canBeAssignedToUsers"
-        AND "rule"."workspaceId" = $1
-        AND "objectMetadata"."universalIdentifier" = ANY($2)`,
-    [
-      SEED_APPLE_WORKSPACE_ID,
-      [
-        STANDARD_OBJECTS.attachment.universalIdentifier,
-        STANDARD_OBJECTS.callRecording.universalIdentifier,
-      ],
-    ],
-  );
-  await getAppProviderByClassName<WorkspaceCacheService>(
-    'WorkspaceCacheService',
-  ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-    'flatObjectPermissionMaps',
-    'flatRowLevelPermissionRuleMaps',
-    'flatRowLevelPermissionPredicateGroupMaps',
-    'flatRowLevelPermissionPredicateMaps',
-    'rolesPermissions',
-  ]);
-};
 
 const createRecord = async ({
   objectMetadataSingularName,
