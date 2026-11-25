@@ -127,21 +127,10 @@ export const StyledMarkdownContainer = styled.div<{
   :not(pre) > code {
     background-color: ${themeCssVariables.background.tertiary};
     border-radius: ${themeCssVariables.border.radius.sm};
-    color: ${themeCssVariables.color.red10};
+    color: ${themeCssVariables.font.color.secondary};
     font-family: ${themeCssVariables.code.font.family}, monospace;
-    font-size: 1em;
+    font-size: 0.9em;
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
-    transition: all calc(${themeCssVariables.animation.duration.fast} * 1s) ease;
-  }
-
-  :not(pre) > code[style*='cursor: pointer'] {
-    background-color: ${themeCssVariables.background.secondary};
-    border: 1px solid ${themeCssVariables.accent.accent10};
-    color: ${themeCssVariables.accent.accent10};
-  }
-
-  :not(pre) > code[style*='cursor: pointer']:hover {
-    background-color: ${themeCssVariables.background.transparent.blue};
   }
 
   .markdown-code-outer-container {
