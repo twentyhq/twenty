@@ -149,7 +149,7 @@ export class PendingFileCleanupService {
         }
 
         if (isDefined(location)) {
-          await this.deleteStorageObject(file.id, location);
+          await this.deleteStorageObject({ fileId: file.id, location });
         }
 
         deletedCount++;
@@ -164,10 +164,13 @@ export class PendingFileCleanupService {
   }
 
   // The row is already gone, so a failure here only leaks bytes and is logged rather than retried.
-  private async deleteStorageObject(
-    fileId: string,
-    location: ResourceIdentifier,
-  ): Promise<void> {
+  private async deleteStorageObject({
+    fileId,
+    location,
+  }: {
+    fileId: string;
+    location: ResourceIdentifier;
+  }): Promise<void> {
     const { resourcePath } = location;
 
     // Quarantine goes first: a racing completion could otherwise move it into an already-cleaned final path.
@@ -199,7 +202,13 @@ export class PendingFileCleanupService {
       return null;
     }
 
-    const [fileFolder] = file.path.split('/');
+    const fileFolder = Object.values(FileFolder).find(
+      (folder) => folder === file.path.split('/')[0],
+    );
+
+    if (!isDefined(fileFolder)) {
+      return null;
+    }
 
     const application = await this.applicationRepository.findOne(
       file.workspaceId,
@@ -215,7 +224,7 @@ export class PendingFileCleanupService {
     return {
       workspaceId: file.workspaceId,
       applicationUniversalIdentifier: application.universalIdentifier,
-      fileFolder: fileFolder as FileFolder,
+      fileFolder,
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
     };
   }
