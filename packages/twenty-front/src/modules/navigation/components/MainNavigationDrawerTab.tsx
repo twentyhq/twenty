@@ -8,7 +8,11 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
-const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
+const StyledMode = styled.button<{
+  isActive: boolean;
+  isExpanded: boolean;
+  isLabelShown: boolean;
+}>`
   align-items: center;
   background: ${({ isActive }) =>
     isActive ? themeCssVariables.background.transparent.light : 'transparent'};
@@ -25,13 +29,12 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   cursor: pointer;
   display: flex;
   // Only the labelled mode may shrink: long translations otherwise push Settings off the drawer.
-  flex-shrink: ${({ isActive, isExpanded }) =>
-    isActive && isExpanded ? 1 : 0};
+  flex-shrink: ${({ isLabelShown }) => (isLabelShown ? 1 : 0)};
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${({ isActive, isExpanded }) =>
-    isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
+  gap: ${({ isLabelShown }) =>
+    isLabelShown ? themeCssVariables.spacing[1] : '0'};
   height: ${({ isExpanded }) =>
     isExpanded
       ? themeCssVariables.spacing[7]
@@ -98,6 +101,7 @@ type MainNavigationDrawerTabProps = {
   onClick: () => void;
   ariaLabel?: string;
   iconAccessory?: ReactNode;
+  isLabelHidden?: boolean;
 };
 
 export const MainNavigationDrawerTab = ({
@@ -111,9 +115,11 @@ export const MainNavigationDrawerTab = ({
   onClick,
   ariaLabel,
   iconAccessory,
+  isLabelHidden = false,
 }: MainNavigationDrawerTabProps) => {
   const theme = useTheme();
   const shouldReduceMotion = useReducedMotion();
+  const isLabelShown = isExpanded && isActive && !isLabelHidden;
 
   return (
     <Tooltip
@@ -127,6 +133,7 @@ export const MainNavigationDrawerTab = ({
         type="button"
         isActive={isActive}
         isExpanded={isExpanded}
+        isLabelShown={isLabelShown}
         aria-label={ariaLabel ?? label}
         aria-current={isActive || undefined}
         aria-disabled={isDisabled}
@@ -144,7 +151,7 @@ export const MainNavigationDrawerTab = ({
         </StyledModeIcon>
         <StyledModeLabel
           initial={false}
-          animate={{ width: isExpanded && isActive ? 'auto' : 0 }}
+          animate={{ width: isLabelShown ? 'auto' : 0 }}
           transition={{
             duration: shouldReduceMotion ? 0 : theme.animation.duration.normal,
             ease: 'easeInOut',
