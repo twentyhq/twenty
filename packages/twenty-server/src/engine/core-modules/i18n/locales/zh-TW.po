@@ -10381,11 +10381,6 @@ msgstr "只有已排程或正在發送的行銷活動可以取消。"
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "只有伺服器管理員可以管理此成員的復原代碼。"
 
-#. js-lingui-id: yT1QOm
-#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
-msgid "Only a workspace member can create a private agent."
-msgstr "只有工作區成員可以建立私人代理人。"
-
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
@@ -10452,20 +10447,13 @@ msgstr "每個分頁只允許一個全高度小工具"
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "只有擁有此代理的應用程式可以變更其觸發器"
 
-#. js-lingui-id: 2ztmK7
-#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Only the member who owns an agent can change who sees it."
-msgstr "只有擁有代理人的成員可以變更誰能查看它。"
-
-#. js-lingui-id: K7GKdZ
-#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
-msgid "Only the person who created this view can change who sees it"
-msgstr "只有建立此檢視的人可以變更誰能查看它"
+#. js-lingui-id: xCGjjr
+#: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
+msgid "Only the person who created this can change who sees it"
+msgstr ""
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "只有建立此工作流程的人可以變更誰能查看它"
 

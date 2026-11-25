@@ -10381,11 +10381,6 @@ msgstr "Отменить можно только запланированную 
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Только администратор сервера может управлять кодами восстановления для этого участника."
 
-#. js-lingui-id: yT1QOm
-#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
-msgid "Only a workspace member can create a private agent."
-msgstr "Только участник рабочего пространства может создать приватного агента."
-
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
@@ -10452,20 +10447,13 @@ msgstr "На вкладке допускается только один вид�
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Только приложение, которому принадлежит этот агент, может изменять его триггеры"
 
-#. js-lingui-id: 2ztmK7
-#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Only the member who owns an agent can change who sees it."
-msgstr "Только участник, владеющий агентом, может изменить, кто его видит."
-
-#. js-lingui-id: K7GKdZ
-#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
-msgid "Only the person who created this view can change who sees it"
-msgstr "Только человек, создавший это представление, может изменить, кто его видит"
+#. js-lingui-id: xCGjjr
+#: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
+msgid "Only the person who created this can change who sees it"
+msgstr ""
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Изменить, кто видит этот рабочий процесс, может только создавший его пользователь"
 

@@ -10381,11 +10381,6 @@ msgstr "Apenas uma campanha agendada ou em envio pode ser cancelada."
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "Apenas um administrador do servidor pode gerir os códigos de recuperação deste membro."
 
-#. js-lingui-id: yT1QOm
-#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
-msgid "Only a workspace member can create a private agent."
-msgstr "Apenas um membro do espaço de trabalho pode criar um agente privado."
-
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
@@ -10452,20 +10447,13 @@ msgstr "Apenas é permitido um widget de altura total por separador"
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "Apenas a aplicação proprietária deste agente pode alterar os seus acionadores"
 
-#. js-lingui-id: 2ztmK7
-#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Only the member who owns an agent can change who sees it."
-msgstr "Apenas o membro proprietário de um agente pode alterar quem pode vê-lo."
-
-#. js-lingui-id: K7GKdZ
-#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
-msgid "Only the person who created this view can change who sees it"
-msgstr "Somente a pessoa que criou esta visualização pode alterar quem a vê"
+#. js-lingui-id: xCGjjr
+#: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
+msgid "Only the person who created this can change who sees it"
+msgstr ""
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "Apenas a pessoa que criou este workflow pode alterar quem o vê"
 

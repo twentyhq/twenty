@@ -10381,11 +10381,6 @@ msgstr "فقط کمپین زمان‌بندی‌شده یا در حال ارسا
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "فقط یک مدیر سرور می تواند کدهای بازیابی این عضو را مدیریت کند."
 
-#. js-lingui-id: yT1QOm
-#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
-msgid "Only a workspace member can create a private agent."
-msgstr "فقط یک عضو فضای کاری می‌تواند یک عامل خصوصی ایجاد کند."
-
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
@@ -10452,20 +10447,13 @@ msgstr "در هر زبانه فقط یک ویجت تمام‌ارتفاع مجا
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "فقط برنامه ای که مالک این عامل است می تواند ماشه های آن را تغییر دهد"
 
-#. js-lingui-id: 2ztmK7
-#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Only the member who owns an agent can change who sees it."
-msgstr "فقط عضوی که مالک یک عامل است می‌تواند مشخص کند چه کسی آن را می‌بیند."
-
-#. js-lingui-id: K7GKdZ
-#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
-msgid "Only the person who created this view can change who sees it"
-msgstr "فقط شخصی که این نما را ایجاد کرده است می‌تواند تعیین کند چه کسانی آن را ببینند"
+#. js-lingui-id: xCGjjr
+#: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
+msgid "Only the person who created this can change who sees it"
+msgstr ""
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "فقط شخصی که این گردش کار را ایجاد کرده است می‌تواند تعیین کند چه کسانی آن را ببینند"
 

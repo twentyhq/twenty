@@ -10381,11 +10381,6 @@ msgstr "예약되었거나 전송 중인 캠페인만 취소할 수 있습니다
 msgid "Only a server administrator can manage recovery codes for this member."
 msgstr "서버 관리자만 이 구성원의 복구 코드를 관리할 수 있습니다."
 
-#. js-lingui-id: yT1QOm
-#: src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util.ts
-msgid "Only a workspace member can create a private agent."
-msgstr "워크스페이스 멤버만 비공개 에이전트를 만들 수 있습니다."
-
 #. js-lingui-id: VBcVkv
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-field-relation-scope.util.ts
 msgid "Only added columns can filter, sort or limit related records"
@@ -10452,20 +10447,13 @@ msgstr "탭당 전체 높이 위젯은 하나만 허용됩니다"
 msgid "Only the application that owns this agent can change its triggers"
 msgstr "이 에이전트를 소유한 애플리케이션만 트리거를 변경할 수 있습니다"
 
-#. js-lingui-id: 2ztmK7
-#: src/engine/metadata-modules/ai/ai-agent/utils/compute-agent-privacy-update-or-throw.util.ts
-#: src/engine/metadata-modules/ai/ai.exception.ts
-msgid "Only the member who owns an agent can change who sees it."
-msgstr "에이전트를 소유한 멤버만 해당 에이전트를 볼 수 있는 사용자를 변경할 수 있습니다."
-
-#. js-lingui-id: K7GKdZ
-#: src/engine/metadata-modules/flat-view/utils/from-update-view-input-to-flat-view-to-update-or-throw.util.ts
-msgid "Only the person who created this view can change who sees it"
-msgstr "이 보기를 만든 사람만 볼 수 있는 사람을 변경할 수 있습니다"
+#. js-lingui-id: xCGjjr
+#: src/engine/permissions/metadata-permissions/utils/get-privatable-entity-privacy-validation-errors.util.ts
+msgid "Only the person who created this can change who sees it"
+msgstr ""
 
 #. js-lingui-id: MPDvEo
 #: src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception.ts
-#: src/engine/metadata-modules/flat-workflow/utils/from-update-core-workflow-input-to-flat-workflow-to-update-or-throw.util.ts
 msgid "Only the person who created this workflow can change who sees it"
 msgstr "이 워크플로우를 만든 사용자만 표시 대상을 변경할 수 있습니다"
 
