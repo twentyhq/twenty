@@ -136,6 +136,11 @@ msgstr "\"{path}\" čita prethodnu vrednost, koju formula ne može da koristi"
 msgid "\"{path}\" reads a relation, but previous values only cover this record's own fields"
 msgstr "\"{path}\" čita relaciju, ali prethodne vrednosti obuhvataju samo sopstvena polja ovog zapisa"
 
+#. js-lingui-id: bkN3QG
+#: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+msgid "“{prompt}”"
+msgstr ""
+
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{subfieldName}\" is not a subfield of \"{fieldName}\""
@@ -4673,11 +4678,6 @@ msgstr "Rastuće"
 msgid "Asia Pacific"
 msgstr "Azija i Pacifik"
 
-#. js-lingui-id: 4mdmhg
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Ask & find"
-msgstr "Pitaj i pronađi"
-
 #. js-lingui-id: 2pXVeV
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Ask a workspace admin for the User Apps permission to connect a calendar account."
@@ -4692,6 +4692,7 @@ msgstr "Zatražite od administratora radnog prostora dozvolu Korisničke aplikac
 
 #. js-lingui-id: xWEvuo
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
@@ -6540,11 +6541,6 @@ msgstr "Kontrolna lista"
 msgid "Check recent runs"
 msgstr "Proveri nedavna izvršavanja"
 
-#. js-lingui-id: 1rduS8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Check the create permission on its own when creating records, rather than the update permission."
-msgstr "Pri kreiranju zapisa proveravajte dozvolu za kreiranje zasebno, umesto dozvole za ažuriranje."
-
 #. js-lingui-id: JslvtK
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Check the event dates"
@@ -7248,6 +7244,11 @@ msgstr "skupi"
 #: src/modules/workflow/workflow-steps/workflow-actions/mcp-tool-action/components/McpToolTestResult.tsx
 msgid "Collapse"
 msgstr "Skupi"
+
+#. js-lingui-id: 9prKyv
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Collapse {heading}"
+msgstr ""
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -8917,11 +8918,6 @@ msgstr "Kreiraj zapis"
 #: src/modules/workflow/workflow-steps/workflow-actions/constants/actions/CreateRecordAction.ts
 msgid "Create Record"
 msgstr "Kreiraj zapis"
-
-#. js-lingui-id: frmOeu
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Create records permission"
-msgstr "Dozvola za kreiranje zapisa"
 
 #. js-lingui-id: fRYkDa
 #: src/modules/page-layout/widgets/timeline/components/WidgetActionTimelineCreateRelated.tsx
@@ -13217,6 +13213,11 @@ msgstr "Izlaz iz procesa uvoza"
 msgid "Expand"
 msgstr "Proširi"
 
+#. js-lingui-id: AgpQjB
+#: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
+msgid "Expand {heading}"
+msgstr ""
+
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
 msgid "Expand card"
@@ -14081,7 +14082,6 @@ msgid "Failure Rate"
 msgstr "Stopa neuspeha"
 
 #. js-lingui-id: 8wngZM
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/settings/applications/constants/ApplicationContentTypeConfigs.ts
 msgid "Fallback"
 msgstr "Rezervna opcija"
@@ -19431,11 +19431,6 @@ msgstr "Poruka {recipientName}"
 msgid "Message actions"
 msgstr "Radnje poruke"
 
-#. js-lingui-id: 6H0up8
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Message attachments"
-msgstr "Prilozi poruka"
-
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -21436,6 +21431,7 @@ msgstr "Zapis nije izabran"
 
 #. js-lingui-id: EqGTpW
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/object-record/record-index/components/RecordIndexEmptyState.tsx
 #: src/modules/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem.tsx
 #: src/modules/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItems.tsx
@@ -26764,6 +26760,8 @@ msgid "SDK"
 msgstr "SDK"
 
 #. js-lingui-id: A1taO8
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
@@ -27390,6 +27388,11 @@ msgstr "Pogledaj podudarne {objectLabelPlural}"
 #: src/modules/settings/applications/components/SettingsApplicationContentSummarySection.tsx
 msgid "See more"
 msgstr "Prikaži više"
+
+#. js-lingui-id: ssRcpB
+#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
+msgid "See more results"
+msgstr ""
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -29429,11 +29432,6 @@ msgstr "Skladište"
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Store a meeting synced by several calendars of the same provider once, instead of once per calendar."
 msgstr "Sačuvajte sastanak koji sinhronizuje više kalendara istog dobavljača samo jednom, umesto jednom po kalendaru."
-
-#. js-lingui-id: YbaJNn
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Store and show files attached to messages. Enabled after the workspace upgrade completes."
-msgstr "Čuvajte i prikažite datoteke priložene porukama. Omogućeno nakon završetka nadogradnje radnog prostora."
 
 #. js-lingui-id: juzGVI
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldLinksVariantForm.tsx
@@ -33451,11 +33449,6 @@ msgstr "Događaji korišćenja"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Usage period"
 msgstr "Period korišćenja"
-
-#. js-lingui-id: js4Y6w
-#: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
-msgid "Use ‘{trimmedSidePanelSearch}’ with..."
-msgstr "Koristi ‘{trimmedSidePanelSearch}’ sa..."
 
 #. js-lingui-id: jFGgyP
 #: src/modules/settings/two-factor-authentication/components/TwoFactorAuthenticationBackupCodesSection.tsx
