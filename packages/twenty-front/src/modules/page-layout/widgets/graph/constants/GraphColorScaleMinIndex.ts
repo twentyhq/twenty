@@ -1,1 +1,1 @@
-export const GRAPH_COLOR_SCALE_MIN = 5;
+export const GRAPH_COLOR_SCALE_MIN = 2;

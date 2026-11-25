@@ -6,7 +6,7 @@ export const createGraphColorRegistry = (
 ): GraphColorRegistry => ({
   blue: {
     name: 'blue',
-    solid: colorSource.blue11,
+    solid: colorSource.blue8,
     variations: [
       colorSource.blue1,
       colorSource.blue2,
@@ -24,7 +24,7 @@ export const createGraphColorRegistry = (
   },
   purple: {
     name: 'purple',
-    solid: colorSource.purple11,
+    solid: colorSource.purple8,
     variations: [
       colorSource.purple1,
       colorSource.purple2,
@@ -42,7 +42,7 @@ export const createGraphColorRegistry = (
   },
   turquoise: {
     name: 'turquoise',
-    solid: colorSource.turquoise11,
+    solid: colorSource.turquoise8,
     variations: [
       colorSource.turquoise1,
       colorSource.turquoise2,
@@ -60,7 +60,7 @@ export const createGraphColorRegistry = (
   },
   orange: {
     name: 'orange',
-    solid: colorSource.orange11,
+    solid: colorSource.orange8,
     variations: [
       colorSource.orange1,
       colorSource.orange2,
@@ -78,7 +78,7 @@ export const createGraphColorRegistry = (
   },
   pink: {
     name: 'pink',
-    solid: colorSource.pink11,
+    solid: colorSource.pink8,
     variations: [
       colorSource.pink1,
       colorSource.pink2,
@@ -96,7 +96,7 @@ export const createGraphColorRegistry = (
   },
   yellow: {
     name: 'yellow',
-    solid: colorSource.yellow11,
+    solid: colorSource.yellow8,
     variations: [
       colorSource.yellow1,
       colorSource.yellow2,
@@ -114,7 +114,7 @@ export const createGraphColorRegistry = (
   },
   red: {
     name: 'red',
-    solid: colorSource.red11,
+    solid: colorSource.red8,
     variations: [
       colorSource.red1,
       colorSource.red2,
@@ -132,7 +132,7 @@ export const createGraphColorRegistry = (
   },
   green: {
     name: 'green',
-    solid: colorSource.green11,
+    solid: colorSource.green8,
     variations: [
       colorSource.green1,
       colorSource.green2,
@@ -150,7 +150,7 @@ export const createGraphColorRegistry = (
   },
   sky: {
     name: 'sky',
-    solid: colorSource.sky11,
+    solid: colorSource.sky8,
     variations: [
       colorSource.sky1,
       colorSource.sky2,
@@ -168,7 +168,7 @@ export const createGraphColorRegistry = (
   },
   gray: {
     name: 'gray',
-    solid: colorSource.gray11,
+    solid: colorSource.gray8,
     variations: [
       colorSource.gray1,
       colorSource.gray2,
@@ -186,7 +186,7 @@ export const createGraphColorRegistry = (
   },
   tomato: {
     name: 'tomato',
-    solid: colorSource.tomato11,
+    solid: colorSource.tomato8,
     variations: [
       colorSource.tomato1,
       colorSource.tomato2,
@@ -204,7 +204,7 @@ export const createGraphColorRegistry = (
   },
   ruby: {
     name: 'ruby',
-    solid: colorSource.ruby11,
+    solid: colorSource.ruby8,
     variations: [
       colorSource.ruby1,
       colorSource.ruby2,
@@ -222,7 +222,7 @@ export const createGraphColorRegistry = (
   },
   crimson: {
     name: 'crimson',
-    solid: colorSource.crimson11,
+    solid: colorSource.crimson8,
     variations: [
       colorSource.crimson1,
       colorSource.crimson2,
@@ -240,7 +240,7 @@ export const createGraphColorRegistry = (
   },
   plum: {
     name: 'plum',
-    solid: colorSource.plum11,
+    solid: colorSource.plum8,
     variations: [
       colorSource.plum1,
       colorSource.plum2,
@@ -258,7 +258,7 @@ export const createGraphColorRegistry = (
   },
   violet: {
     name: 'violet',
-    solid: colorSource.violet11,
+    solid: colorSource.violet8,
     variations: [
       colorSource.violet1,
       colorSource.violet2,
@@ -276,7 +276,7 @@ export const createGraphColorRegistry = (
   },
   iris: {
     name: 'iris',
-    solid: colorSource.iris11,
+    solid: colorSource.iris8,
     variations: [
       colorSource.iris1,
       colorSource.iris2,
@@ -294,7 +294,7 @@ export const createGraphColorRegistry = (
   },
   cyan: {
     name: 'cyan',
-    solid: colorSource.cyan11,
+    solid: colorSource.cyan8,
     variations: [
       colorSource.cyan1,
       colorSource.cyan2,
@@ -312,7 +312,7 @@ export const createGraphColorRegistry = (
   },
   jade: {
     name: 'jade',
-    solid: colorSource.jade11,
+    solid: colorSource.jade8,
     variations: [
       colorSource.jade1,
       colorSource.jade2,
@@ -330,7 +330,7 @@ export const createGraphColorRegistry = (
   },
   grass: {
     name: 'grass',
-    solid: colorSource.grass11,
+    solid: colorSource.grass8,
     variations: [
       colorSource.grass1,
       colorSource.grass2,
@@ -348,7 +348,7 @@ export const createGraphColorRegistry = (
   },
   mint: {
     name: 'mint',
-    solid: colorSource.mint11,
+    solid: colorSource.mint8,
     variations: [
       colorSource.mint1,
       colorSource.mint2,
@@ -366,7 +366,7 @@ export const createGraphColorRegistry = (
   },
   lime: {
     name: 'lime',
-    solid: colorSource.lime11,
+    solid: colorSource.lime8,
     variations: [
       colorSource.lime1,
       colorSource.lime2,
@@ -384,7 +384,7 @@ export const createGraphColorRegistry = (
   },
   bronze: {
     name: 'bronze',
-    solid: colorSource.bronze11,
+    solid: colorSource.bronze8,
     variations: [
       colorSource.bronze1,
       colorSource.bronze2,
@@ -402,7 +402,7 @@ export const createGraphColorRegistry = (
   },
   gold: {
     name: 'gold',
-    solid: colorSource.gold11,
+    solid: colorSource.gold8,
     variations: [
       colorSource.gold1,
       colorSource.gold2,
@@ -420,7 +420,7 @@ export const createGraphColorRegistry = (
   },
   brown: {
     name: 'brown',
-    solid: colorSource.brown11,
+    solid: colorSource.brown8,
     variations: [
       colorSource.brown1,
       colorSource.brown2,
@@ -438,7 +438,7 @@ export const createGraphColorRegistry = (
   },
   amber: {
     name: 'amber',
-    solid: colorSource.amber11,
+    solid: colorSource.amber8,
     variations: [
       colorSource.amber1,
       colorSource.amber2,
