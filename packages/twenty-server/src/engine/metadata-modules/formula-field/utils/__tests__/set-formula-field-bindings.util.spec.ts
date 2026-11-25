@@ -79,6 +79,37 @@ describe('setFormulaFieldBindings', () => {
     ).toEqual(existingUniversalSettings);
   });
 
+  it('should store a formula that aggregates related records', () => {
+    expect(
+      setFormulaFieldBindings({
+        universalFlatFieldMetadata: getFlatFieldMetadataMock({
+          universalIdentifier: 'supplier-average-price-uid',
+          name: 'averagePrice',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataId: 'supplier-object',
+          objectMetadataUniversalIdentifier: 'supplier-object-uid',
+          universalSettings: {
+            formula: {
+              expression: 'avg(gadgets.price)',
+              evaluation: 'QUERY_TIME',
+            },
+          },
+        }),
+        universalFlatObjectMetadataMaps: FORMULA_FLAT_OBJECT_METADATA_MAPS_MOCK,
+        universalFlatFieldMetadataMaps: FORMULA_FLAT_FIELD_METADATA_MAPS_MOCK,
+      }).universalSettings,
+    ).toEqual({
+      formula: {
+        expression: 'avg(gadgets.price)',
+        bindings: {
+          gadgets: 'supplier-gadgets-uid',
+          'gadgets.price': 'gadget-price-uid',
+        },
+        evaluation: 'STORED',
+      },
+    });
+  });
+
   it('should leave a field without formula untouched', () => {
     expect(setBindings({ universalSettings: { decimals: 2 } })).toEqual({
       decimals: 2,

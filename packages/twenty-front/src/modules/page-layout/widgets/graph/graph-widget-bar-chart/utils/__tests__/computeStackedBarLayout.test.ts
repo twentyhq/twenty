@@ -23,7 +23,9 @@ describe('computeStackedBarLayout', () => {
     const layout = computeStackedBarLayout(ctx, { min: -50, max: 150 });
 
     expect(layout.barThickness).toBe(BAR_CHART_CONSTANTS.MAXIMUM_WIDTH);
-    expect(layout.categoryBarCenteringOffset).toBe(24);
+    expect(layout.categoryBarCenteringOffset).toBe(
+      (80 - BAR_CHART_CONSTANTS.MAXIMUM_WIDTH) / 2,
+    );
     expect(layout.stackRange).toBe(200);
     expect(layout.stackValueToPixel(0)).toBe(0);
     expect(layout.stackValueToPixel(200)).toBe(200);

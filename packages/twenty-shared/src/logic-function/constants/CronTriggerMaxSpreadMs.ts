@@ -1,0 +1,1 @@
+export const CRON_TRIGGER_MAX_SPREAD_MS = 24 * 60 * 60 * 1000;

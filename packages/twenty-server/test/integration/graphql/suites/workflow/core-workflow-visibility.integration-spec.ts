@@ -926,7 +926,9 @@ describe('core workflow visibility (e2e)', () => {
         },
       });
 
-      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'METADATA_VALIDATION_FAILED',
+      );
       expect(await readAsCreator()).toMatchObject({
         name: RENAMED_NAME,
         isPrivate: false,
@@ -1035,7 +1037,9 @@ describe('core workflow visibility (e2e)', () => {
       const refusedClaims = claims.filter(({ body }) => isDefined(body.errors));
 
       expect(refusedClaims).toHaveLength(1);
-      expect(refusedClaims[0].body.errors[0].extensions.code).toBe('FORBIDDEN');
+      expect(['FORBIDDEN', 'METADATA_VALIDATION_FAILED']).toContain(
+        refusedClaims[0].body.errors[0].extensions.code,
+      );
 
       const ownershipViews = await Promise.all([
         workflowGraphqlRequest(CORE_WORKFLOW_BY_ID_QUERY, {

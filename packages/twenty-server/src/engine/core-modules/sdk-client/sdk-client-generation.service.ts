@@ -115,8 +115,10 @@ export class SdkClientGenerationService {
     const generationStart = performance.now();
 
     try {
-      const workspaceEntity = await this.workspaceRepository.findOneByOrFail({
-        id: workspaceId,
+      // Uninstall hooks of a soft-deleted workspace still need its SDK client
+      const workspaceEntity = await this.workspaceRepository.findOneOrFail({
+        where: { id: workspaceId },
+        withDeleted: true,
       });
 
       const schemaSDLResult =

@@ -24,6 +24,7 @@ const mockGetRanges = jest.fn();
 const mockGetJob = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
+const mockRunCommand = jest.fn().mockResolvedValue('');
 const mockSetGlobalConcurrency = jest.fn();
 const mockRemoveGlobalConcurrency = jest.fn();
 const mockGetJobCountByTypes = jest.fn();
@@ -44,6 +45,8 @@ jest.mock('bullmq', () => ({
     setGlobalConcurrency: mockSetGlobalConcurrency,
     removeGlobalConcurrency: mockRemoveGlobalConcurrency,
     getJobCountByTypes: mockGetJobCountByTypes,
+    client: Promise.resolve({ runCommand: mockRunCommand }),
+    toKey: (jobId: string) => `bull:queue:${jobId}`,
   })),
   Worker: jest
     .fn()
@@ -287,6 +290,91 @@ describe('BullMQDriver progress', () => {
       expect(jobs['job-id']).toMatchObject({ state: 'active', progress });
     },
   );
+});
+
+describe('BullMQDriver scheduledAt', () => {
+  const driver = new BullMQDriver(
+    {} as never,
+    { incrementCounterForEvent: jest.fn() } as never,
+    mockTwentyConfigService as never,
+    {} as never,
+  );
+  const timestamp = 1_788_000_000_000;
+
+  driver.register(MessageQueue.workspaceQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockAllocateTickets.mockResolvedValue(undefined);
+    mockAddBulk.mockImplementation(async (jobs) =>
+      jobs.map((job: { opts: { jobId?: string } }) => ({ id: job.opts.jobId })),
+    );
+  });
+
+  it('stores the initial eligibility date in the job options', async () => {
+    jest.setSystemTime(timestamp);
+
+    const { jobs } = await driver.bulkAdd(
+      MessageQueue.workspaceQueue,
+      'job',
+      [{ data: {}, ...SYSTEM_JOB }],
+      { delay: 3_000, doNotCheckDuplicatesBasedOnPrefix: true },
+    );
+
+    expect(mockAddBulk).toHaveBeenCalledWith([
+      expect.objectContaining({
+        opts: expect.objectContaining({
+          timestamp,
+          delay: 3_000,
+          scheduledAt: timestamp + 3_000,
+        }),
+      }),
+    ]);
+    expect(jobs.map(({ scheduledAt }) => scheduledAt)).toEqual([
+      timestamp + 3_000,
+    ]);
+  });
+
+  it.each([
+    ['active', 0, undefined],
+    ['delayed', 1, 30_000],
+    ['completed', 2, 0],
+  ])(
+    'keeps the stored date of a %s job after %s retries',
+    async (state, attemptsMade, currentDelay) => {
+      mockGetJob.mockResolvedValue({
+        id: 'job-id',
+        data: {},
+        opts: { delay: 500, scheduledAt: timestamp + 500 },
+        delay: currentDelay,
+        timestamp,
+        attemptsMade,
+        getState: jest.fn().mockResolvedValue(state),
+      });
+
+      const jobs = await driver.getJobs(MessageQueue.workspaceQueue, [
+        'job-id',
+      ]);
+
+      expect(jobs['job-id']?.scheduledAt).toBe(timestamp + 500);
+    },
+  );
+
+  it('derives the date of a job stored before scheduledAt from its insertion options', async () => {
+    mockGetJob.mockResolvedValue({
+      id: 'job-id',
+      data: {},
+      opts: { delay: 500 },
+      delay: 30_000,
+      timestamp,
+      attemptsMade: 1,
+      getState: jest.fn().mockResolvedValue('delayed'),
+    });
+
+    const jobs = await driver.getJobs(MessageQueue.workspaceQueue, ['job-id']);
+
+    expect(jobs['job-id']?.scheduledAt).toBe(timestamp + 500);
+  });
 });
 
 describe('BullMQDriver job change events', () => {

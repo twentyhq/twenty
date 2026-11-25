@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
@@ -6,6 +7,7 @@ import { getNativePageNavigationMenuItemConfig } from '@/navigation-menu-item/di
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { NavigationMenuTabFirstItemOpenEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemOpenEffect';
 
 type NavigationMenuItemNativePageDisplayProps = Pick<
   NavigationMenuItemSectionContentProps,
@@ -25,25 +27,32 @@ export const NavigationMenuItemNativePageDisplay = ({
   const { activeNavigationMenuItemIds } =
     useIdentifyActiveNavigationMenuItems();
 
+  const nativePagePath = getNativePageNavigationMenuItemConfig(item)?.path;
+
   return (
-    <NavigationDrawerItem
-      label={getNavigationMenuItemLabel(item, [], [])}
-      to={
-        isLayoutCustomizationModeEnabled || isDragging
-          ? undefined
-          : getNativePageNavigationMenuItemConfig(item)?.path
-      }
-      onClick={
-        isLayoutCustomizationModeEnabled
-          ? editModeProps?.onEditModeClick
-          : undefined
-      }
-      Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
-      active={activeNavigationMenuItemIds.includes(item.id)}
-      isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
-      isDragging={isDragging}
-      triggerEvent="CLICK"
-      rightOptions={rightOptions}
-    />
+    <>
+      {isDefined(nativePagePath) && (
+        <NavigationMenuTabFirstItemOpenEffect to={nativePagePath} />
+      )}
+      <NavigationDrawerItem
+        label={getNavigationMenuItemLabel(item, [], [])}
+        to={
+          isLayoutCustomizationModeEnabled || isDragging
+            ? undefined
+            : nativePagePath
+        }
+        onClick={
+          isLayoutCustomizationModeEnabled
+            ? editModeProps?.onEditModeClick
+            : undefined
+        }
+        Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
+        active={activeNavigationMenuItemIds.includes(item.id)}
+        isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
+        isDragging={isDragging}
+        triggerEvent="CLICK"
+        rightOptions={rightOptions}
+      />
+    </>
   );
 };

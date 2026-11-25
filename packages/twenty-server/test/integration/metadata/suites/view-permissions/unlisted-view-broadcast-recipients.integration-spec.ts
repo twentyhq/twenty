@@ -12,10 +12,7 @@ import { destroyOneView } from 'test/integration/metadata/suites/view/utils/dest
 import { findViewOwnership } from 'test/integration/metadata/suites/view/utils/find-view-ownership.util';
 import { updateOneView } from 'test/integration/metadata/suites/view/utils/update-one-view.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  ViewFilterGroupLogicalOperator,
-  ViewVisibility,
-} from 'twenty-shared/types';
+import { ViewFilterGroupLogicalOperator } from 'twenty-shared/types';
 
 import { type MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
 import { type MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/metadata-event-publisher';
@@ -98,7 +95,7 @@ describe('unlisted view broadcast recipients (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Guest private broadcast companies',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token: APPLE_PHIL_GUEST_ACCESS_TOKEN,
     });
@@ -106,7 +103,7 @@ describe('unlisted view broadcast recipients (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Workspace broadcast companies',
-        visibility: ViewVisibility.WORKSPACE,
+        isPrivate: false,
       },
     });
     ({ createdByUserWorkspaceId: creatorUserWorkspaceId } =
@@ -166,16 +163,16 @@ describe('unlisted view broadcast recipients (integration)', () => {
       objectNameSingular: 'company',
       input: {
         name: 'Unlisted again companies',
-        visibility: ViewVisibility.UNLISTED,
+        isPrivate: true,
       },
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
     const { createdByUserWorkspaceId } = await findViewOwnership(viewId);
 
-    const updateVisibility = async (visibility: ViewVisibility) => {
+    const updateIsPrivate = async (isPrivate: boolean) => {
       await updateOneView({
         viewId,
-        input: { id: viewId, visibility },
+        input: { id: viewId, isPrivate },
         gqlFields: 'id',
         expectToFail: false,
         token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -183,9 +180,9 @@ describe('unlisted view broadcast recipients (integration)', () => {
       await emitter.drain();
     };
 
-    await updateVisibility(ViewVisibility.WORKSPACE);
+    await updateIsPrivate(false);
     broadcastSpy.mockClear();
-    await updateVisibility(ViewVisibility.UNLISTED);
+    await updateIsPrivate(true);
 
     const deletedEvent = findWorkspaceBroadcastEventOrThrow({
       broadcastSpy,
@@ -217,7 +214,7 @@ describe('unlisted view broadcast recipients (integration)', () => {
         metadataName: 'view',
         record: {
           id: randomUUID(),
-          visibility: ViewVisibility.UNLISTED,
+          isPrivate: true,
           createdByUserWorkspaceId: null,
         },
       }),
