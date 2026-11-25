@@ -4,11 +4,11 @@ import { VALIDATION_RULE_EXPRESSION_MAX_LENGTH } from '@/constants/ValidationRul
 import { type ValidationRuleBindings } from '@/types/ValidationRuleBindings';
 import { type ValidationRuleCompilationResult } from '@/types/ValidationRuleCompilationResult';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
+import { buildExpressionTree } from '@/utils/expression/buildExpressionTree';
 import { findExpressionAggregationError } from '@/utils/expression/findExpressionAggregationError';
 import { getExpressionArgumentCountError } from '@/utils/expression/getExpressionArgumentCountError';
 import { getExpressionSyntaxError } from '@/utils/expression/getExpressionSyntaxError';
 import { isDefined } from '@/utils/validation/isDefined';
-import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValidationRuleBracketAccess';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
 import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
@@ -50,13 +50,13 @@ export const compileExpression = ({
     };
   }
 
-  if (hasValidationRuleBracketAccess(parsedExpression.tokens)) {
-    return {
-      isValid: false,
-      errorMessage: 'Bracket access is not supported, use dot access instead',
-      errorCode: 'BRACKET_ACCESS',
-    };
+  const treeResult = buildExpressionTree(parsedExpression.tokens);
+
+  if (!treeResult.isValid) {
+    return treeResult;
   }
+
+  const { tree } = treeResult;
 
   const meaningfulTokens = tokenizeValidationRuleExpression(expression).filter(
     (token) => token.type !== 'whitespace',
@@ -80,9 +80,7 @@ export const compileExpression = ({
     };
   }
 
-  const argumentCountError = getExpressionArgumentCountError(
-    parsedExpression.tokens,
-  );
+  const argumentCountError = getExpressionArgumentCountError(tree);
 
   if (isDefined(argumentCountError)) {
     return {
@@ -120,7 +118,7 @@ export const compileExpression = ({
   }
 
   const aggregationError = findExpressionAggregationError({
-    instructions: parsedExpression.tokens,
+    tree,
     toManyRelationNameByPath,
     shouldAllowAggregates,
   });

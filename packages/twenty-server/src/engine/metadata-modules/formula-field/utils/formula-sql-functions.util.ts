@@ -1,7 +1,6 @@
 import {
   EXPRESSION_DATE_PARTS,
   EXPRESSION_DATE_UNITS,
-  VALIDATION_RULE_FUNCTIONS,
 } from 'twenty-shared/constants';
 import { type ValidationRuleFunctionName } from 'twenty-shared/types';
 import {
@@ -430,18 +429,7 @@ export const compileFormulaSqlFunctionOrThrow = ({
     });
   }
 
-  const { minimumArgumentCount, maximumArgumentCount } =
-    VALIDATION_RULE_FUNCTIONS[name];
   const { compile } = FORMULA_SQL_FUNCTIONS[name];
-
-  if (
-    formulaSqlValues.length < minimumArgumentCount ||
-    formulaSqlValues.length > maximumArgumentCount
-  ) {
-    throw new FormulaSqlCompilationException({
-      message: `${name} takes ${minimumArgumentCount === maximumArgumentCount ? minimumArgumentCount : `at least ${minimumArgumentCount}`} argument(s), but got ${formulaSqlValues.length}`,
-    });
-  }
 
   return compile({ formulaSqlValues, usage: name });
 };
