@@ -1,13 +1,13 @@
 import { type MarketplacePartner } from '@/partners-marketplace/marketplace-partner';
 import { getMarketplacePartnerBySlug } from '@/partners-marketplace/marketplace-partners-source';
 
-import { LOCAL_SAMPLE_PARTNERS } from './local-sample-partners.data';
+import { isPartnersApiConfigured } from './is-partners-api-configured';
+import { PARTNERS_SNAPSHOT } from './partners-snapshot.data';
 
-// Same local stand-in as load-directory-partners.
+// Same source as load-directory-partners.
 export const loadDirectoryPartner = async (
   slug: string,
 ): Promise<MarketplacePartner | undefined> =>
-  (await getMarketplacePartnerBySlug(slug)) ??
-  (process.env.NODE_ENV !== 'production'
-    ? LOCAL_SAMPLE_PARTNERS.find((sample) => sample.slug === slug)
-    : undefined);
+  isPartnersApiConfigured()
+    ? await getMarketplacePartnerBySlug(slug)
+    : PARTNERS_SNAPSHOT.find((partner) => partner.slug === slug);
