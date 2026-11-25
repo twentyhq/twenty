@@ -125,9 +125,8 @@ export const StyledMarkdownContainer = styled.div<{
   }
 
   :not(pre) > code {
-    background-color: ${themeCssVariables.background.tertiary};
+    background-color: ${themeCssVariables.background.transparent.light};
     border-radius: ${themeCssVariables.border.radius.sm};
-    color: ${themeCssVariables.font.color.secondary};
     font-family: ${themeCssVariables.code.font.family}, monospace;
     font-size: 0.9em;
     padding: ${themeCssVariables.spacing[0]} ${themeCssVariables.spacing[1]};
