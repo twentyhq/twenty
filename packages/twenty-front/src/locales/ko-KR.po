@@ -99,7 +99,7 @@ msgstr "· 무료"
 #. js-lingui-id: eNVoMO
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "\"{fieldName}\" has many records: read it inside count(), sum(), avg(), min() or max()"
-msgstr ""
+msgstr "\"{fieldName}\"에 레코드가 많습니다. count(), sum(), avg(), min() 또는 max() 내부에서 읽으세요"
 
 #. js-lingui-id: Y/jWkl
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -139,7 +139,7 @@ msgstr "\"{path}\"은 관계를 읽지만 이전 값은 이 레코드 자체 필
 #. js-lingui-id: bkN3QG
 #: src/modules/command-menu-item/display/components/CommandMenuAskAiFallbackItem.tsx
 msgid "“{prompt}”"
-msgstr ""
+msgstr "‘{prompt}’"
 
 #. js-lingui-id: sh7E5k
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
@@ -149,7 +149,7 @@ msgstr "\"{subfieldName}\"은 \"{fieldName}\"의 하위 필드가 아님"
 #. js-lingui-id: caVje7
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "({applicationsCount} {applicationCountLabel})"
-msgstr ""
+msgstr "({applicationsCount} {applicationCountLabel})"
 
 #. js-lingui-id: J3dohc
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -655,7 +655,7 @@ msgstr "필드 {fieldCount}개 중 {allowedFieldCount}개"
 #. js-lingui-id: QbSIWf
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "{amount} / month"
-msgstr ""
+msgstr "{amount} /월"
 
 #. js-lingui-id: WhHyQh
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
@@ -690,12 +690,12 @@ msgstr "{applicationName}: {settingsMenuItemTitle}"
 #. js-lingui-id: 041Z1f
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid app"
-msgstr ""
+msgstr "유료 앱 {applicationsCount}개"
 
 #. js-lingui-id: tkQrFL
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{applicationsCount} paid apps"
-msgstr ""
+msgstr "{applicationsCount}개의 유료 앱"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -936,17 +936,17 @@ msgstr "{functionName}은(는) 최소 {minimumArgumentCount}개의 인수를 받
 #. js-lingui-id: aGSMaz
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() cannot contain another aggregate"
-msgstr ""
+msgstr "{functionName}()에는 다른 집계를 포함할 수 없습니다"
 
 #. js-lingui-id: gT6Kkm
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() needs a relation, for example count(tasks) or sum(deals.amount)"
-msgstr ""
+msgstr "{functionName}()에는 관계가 필요합니다. 예: count(tasks) 또는 sum(deals.amount)"
 
 #. js-lingui-id: vN+0eR
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "{functionName}() reads related records, which only a formula can do"
-msgstr ""
+msgstr "{functionName}()은 관련 레코드를 읽습니다. 이는 수식에서만 할 수 있습니다"
 
 #. js-lingui-id: NHstiz
 #: src/modules/onboarding/components/free-credits/OnboardingFreeCreditsProgress.tsx
@@ -1189,22 +1189,22 @@ msgstr "{providerDisplayName} OAuth는 아직 서버 관리자가 설정하지 �
 #. js-lingui-id: VLLE21
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} account"
-msgstr ""
+msgstr "{quantity}개 계정"
 
 #. js-lingui-id: XYE5Zk
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} accounts"
-msgstr ""
+msgstr "{quantity}개 계정"
 
 #. js-lingui-id: 6sLwwC
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} member"
-msgstr ""
+msgstr "{quantity}명 구성원"
 
 #. js-lingui-id: k/jGvO
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "{quantity} members"
-msgstr ""
+msgstr "{quantity}명 구성원"
 
 #. js-lingui-id: 2V2T+0
 #. placeholder {0}: formatNumber(queuedCount)
@@ -1852,7 +1852,7 @@ msgstr "워크플로우를 시작한 사람에게 양식이 열리며 그 자리
 #. js-lingui-id: QbGaDs
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A formula that aggregates related records is stored, so it cannot read \"{path}\". Aggregate in this field and read it from another formula."
-msgstr ""
+msgstr "관련 레코드를 집계하는 수식은 저장되므로 \"{path}\"을 읽을 수 없습니다. 이 필드에서 집계하고 다른 수식에서 읽으세요."
 
 #. js-lingui-id: 8fNMpo
 #: src/modules/activities/emails/components/ChatThreadComposer.tsx
@@ -1897,7 +1897,7 @@ msgstr "API 키에 대한 역할을 선택해야 합니다."
 #. js-lingui-id: /852Zy
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "A stored formula cannot read \"{path}\""
-msgstr ""
+msgstr "저장된 수식은 \"{path}\"을 읽을 수 없습니다"
 
 #. js-lingui-id: yfuxL8
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1993,11 +1993,6 @@ msgstr "이 워크스페이스에 대해 수락 및 서명된 DPA와 해당 템�
 #: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionsTable.tsx
 msgid "Access"
 msgstr "액세스"
-
-#. js-lingui-id: 7T2MJI
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Access groups"
-msgstr "액세스 그룹"
 
 #. js-lingui-id: pNW+Rt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -4231,7 +4226,7 @@ msgstr "아포스트로피와 마침표"
 #. js-lingui-id: sRXyRZ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "app"
-msgstr ""
+msgstr "앱"
 
 #. js-lingui-id: LMUw1U
 #: src/modules/log-console/constants/LogConsoleApplicationLogAppColumn.tsx
@@ -4451,7 +4446,7 @@ msgstr "승인된 도메인"
 #. js-lingui-id: at3eOk
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "apps"
-msgstr ""
+msgstr "앱"
 
 #. js-lingui-id: VDvaN2
 #: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
@@ -5406,17 +5401,17 @@ msgstr "크레딧을 워크스페이스에 청구"
 #. js-lingui-id: XJj77g
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price}"
-msgstr ""
+msgstr "워크스페이스에 {price} 청구"
 
 #. js-lingui-id: mZbez3
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price} per account"
-msgstr ""
+msgstr "계정당 워크스페이스에 {price} 청구"
 
 #. js-lingui-id: oy0GSN
 #: src/modules/marketplace/utils/buildApplicationBillingSummary.ts
 msgid "Bill your workspace {price} per member"
-msgstr ""
+msgstr "멤버당 {price}로 워크스페이스 청구"
 
 #. js-lingui-id: aIkeAd
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
@@ -5446,7 +5441,7 @@ msgstr "청구 - 설정"
 #. js-lingui-id: arWQGP
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Billing email"
-msgstr ""
+msgstr "청구 이메일"
 
 #. js-lingui-id: dSjFxR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -6339,7 +6334,7 @@ msgstr "아바타 변경"
 #. js-lingui-id: Y1obaF
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard.tsx
 msgid "Change billing email"
-msgstr ""
+msgstr "청구 이메일 변경"
 
 #. js-lingui-id: feCRNv
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -7253,7 +7248,7 @@ msgstr "접기"
 #. js-lingui-id: 9prKyv
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Collapse {heading}"
-msgstr ""
+msgstr "{heading} 접기"
 
 #. js-lingui-id: kBUgVh
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -7541,11 +7536,6 @@ msgstr "샘플 데이터가 포함된 컴포넌트 미리보기"
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
 msgid "Compose email"
 msgstr "이메일 작성"
-
-#. js-lingui-id: xwW7YT
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Compute the access groups that record listings will use for row-level permissions. Enable after the workspace upgrade completes."
-msgstr "레코드 목록이 행 수준 권한에 사용할 액세스 그룹을 계산합니다. 워크스페이스 업그레이드가 완료된 후 활성화하세요."
 
 #. js-lingui-id: LzmTuU
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaSection.tsx
@@ -13221,7 +13211,7 @@ msgstr "확장"
 #. js-lingui-id: AgpQjB
 #: src/modules/command-menu-item/display/components/CommandMenuItemCollapsibleSectionHeading.tsx
 msgid "Expand {heading}"
-msgstr ""
+msgstr "{heading} 펼치기"
 
 #. js-lingui-id: JjrOSL
 #: src/modules/object-record/record-board/record-board-card/components/RecordBoardCardHeader.tsx
@@ -23369,7 +23359,7 @@ msgstr "유료 앱"
 #. js-lingui-id: CQnFBr
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Paid apps installed in this workspace. Prices are added to your invoice"
-msgstr ""
+msgstr "이 워크스페이스에 설치된 유료 앱입니다. 가격이 청구서에 추가됩니다"
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -23596,7 +23586,7 @@ msgstr "구성원당"
 #. js-lingui-id: JxgXH1
 #: src/modules/settings/billing/components/SettingsBillingApplicationsSection.tsx
 msgid "Per month"
-msgstr ""
+msgstr "월별"
 
 #. js-lingui-id: qMTN0w
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -24776,7 +24766,7 @@ msgstr "읽기/편집/삭제 권한"
 #. js-lingui-id: +a9H8X
 #: src/modules/settings/data-model/fields/forms/formula/components/SettingsDataModelFieldFormulaForm.tsx
 msgid "Reads related records, so the value is stored and updated in the background a few seconds after they change."
-msgstr ""
+msgstr "관련 레코드를 읽으므로 값이 저장되며, 변경 후 몇 초 뒤에 백그라운드에서 업데이트됩니다."
 
 #. js-lingui-id: VJScHU
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingArrangementDetailsModal.tsx
@@ -27102,7 +27092,7 @@ msgstr "검색 옵션"
 #. js-lingui-id: WDcoYK
 #: src/modules/navigation/components/MainNavigationDrawerSearchField.tsx
 msgid "Search or ask..."
-msgstr ""
+msgstr "검색 또는 질문..."
 
 #. js-lingui-id: IMeaSJ
 #: src/modules/ai-chat/composer/components/AiChatAddMenuRecordsPage.tsx
@@ -27397,7 +27387,7 @@ msgstr "더 보기"
 #. js-lingui-id: ssRcpB
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "See more results"
-msgstr ""
+msgstr "더 많은 결과 보기"
 
 #. js-lingui-id: V7TecA
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
@@ -30347,7 +30337,7 @@ msgstr "OpenAI 호환 공급자용 API 엔드포인트"
 #. js-lingui-id: UIpkEz
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The average of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "관련 레코드 또는 조건에 일치하는 레코드의 숫자 필드 평균입니다."
 
 #. js-lingui-id: qjNojw
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -30392,7 +30382,7 @@ msgstr "귀하를 추천한 Twenty 파트너의 코드"
 #. js-lingui-id: h7Af0y
 #: src/modules/validation-rules/utils/getValidationRuleErrorMessage.ts
 msgid "The condition of {functionName}() cannot read \"{relationFieldName}\""
-msgstr ""
+msgstr "{functionName}()의 조건은 \"{relationFieldName}\"을 읽을 수 없습니다"
 
 #. js-lingui-id: aXzQ65
 #: src/modules/ai-chat/messages/components/AiChatCompactionIndicator.tsx
@@ -30502,7 +30492,7 @@ msgstr "커맨드 메뉴에서 워크플로우 트리거에 표시될 아이콘"
 #. js-lingui-id: hP+z/5
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The largest number or latest date among the related records. With plain values, such as max(a, b), the largest of them."
-msgstr ""
+msgstr "관련 레코드 중 가장 큰 수 또는 가장 최근 날짜입니다. max(a, b)와 같은 일반 값에서는 그중 가장 큰 값입니다."
 
 #. js-lingui-id: Qp6vM+
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30589,7 +30579,7 @@ msgstr "목록의 항목 수이며, 목록이 아닌 경우 0입니다."
 #. js-lingui-id: vXwRDS
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The number of related records, or of those matching the condition. For example count(tasks, tasks.status == \"TODO\")."
-msgstr ""
+msgstr "관련 레코드 또는 조건에 일치하는 레코드의 수입니다. 예: count(tasks, tasks.status == \"TODO\")."
 
 #. js-lingui-id: SpoTRx
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30664,7 +30654,7 @@ msgstr "사용할 공유 이메일입니다."
 #. js-lingui-id: q2NONu
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The smallest number or earliest date among the related records. With plain values, such as min(a, b), the smallest of them."
-msgstr ""
+msgstr "관련 레코드 중 가장 작은 수 또는 가장 이른 날짜입니다. min(a, b)와 같은 일반 값에서는 그중 가장 작은 값입니다."
 
 #. js-lingui-id: CZF2sj
 #: src/modules/validation-rules/constants/ValidationRuleFunctionDescriptions.ts
@@ -30711,7 +30701,7 @@ msgstr "이 도구는 인수 없이 실행됩니다."
 #. js-lingui-id: 6XWxWG
 #: src/modules/settings/data-model/fields/forms/formula/constants/FormulaAggregateFunctionDefinitions.ts
 msgid "The total of a number field over the related records, or over those matching the condition."
-msgstr ""
+msgstr "관련 레코드 또는 조건에 일치하는 레코드의 숫자 필드 합계입니다."
 
 #. js-lingui-id: 9q0gnf
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
