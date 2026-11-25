@@ -21,9 +21,11 @@ import { useLingui } from '@lingui/react/macro';
 import { type ComponentProps, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconApps,
   IconCalendarDue,
   IconClockPlay,
   IconCoins,
+  IconMail,
   IconSum,
   IconUserCircle,
   IconUsers,
@@ -140,6 +142,9 @@ const StyledScheduledChangeGrid = styled.div<{ columns: number }>`
 `;
 
 type SettingsBillingSubscriptionInfoCardProps = {
+  applicationsSubtotalDetails: string;
+  applicationsSubtotalValue?: string;
+  billingEmail?: string | null;
   canDisplaySwitchToMonthlyAction: boolean;
   canDisplaySwitchToYearlyAction: boolean;
   creditsSubtotalDetails?: string;
@@ -148,7 +153,9 @@ type SettingsBillingSubscriptionInfoCardProps = {
   displayedSubscriptionDate?: string;
   headerActions: ReactNode;
   includedPerSeatItems: IncludedBillingFieldProps[];
+  isBillingEmailActionDisabled: boolean;
   isSubscriptionActionDisabled: boolean;
+  onBillingEmailClick: () => void;
   onSwitchToMonthly: () => void;
   onSwitchToYearly: () => void;
   planLabel: string;
@@ -171,6 +178,9 @@ type SettingsBillingSubscriptionInfoCardProps = {
 };
 
 export const SettingsBillingSubscriptionInfoCard = ({
+  applicationsSubtotalDetails,
+  applicationsSubtotalValue,
+  billingEmail,
   canDisplaySwitchToMonthlyAction,
   canDisplaySwitchToYearlyAction,
   creditsSubtotalDetails,
@@ -179,7 +189,9 @@ export const SettingsBillingSubscriptionInfoCard = ({
   displayedSubscriptionDate,
   headerActions,
   includedPerSeatItems,
+  isBillingEmailActionDisabled,
   isSubscriptionActionDisabled,
+  onBillingEmailClick,
   onSwitchToMonthly,
   onSwitchToYearly,
   planLabel,
@@ -265,6 +277,17 @@ export const SettingsBillingSubscriptionInfoCard = ({
               {displayedSubscriptionDate}
             </BillingFieldRow>
           )}
+          {isDefined(billingEmail) && (
+            <BillingFieldRow label={t`Billing email`} Icon={IconMail}>
+              <SettingsTextLink
+                title={t`Change billing email`}
+                onClick={onBillingEmailClick}
+                disabled={isBillingEmailActionDisabled}
+              >
+                {billingEmail}
+              </SettingsTextLink>
+            </BillingFieldRow>
+          )}
         </StyledSettingsBillingCardFieldList>
         <StyledSettingsBillingCardFieldListWithDivider>
           <BillingFieldRow label={t`Seats`} Icon={IconUsers}>
@@ -281,6 +304,14 @@ export const SettingsBillingSubscriptionInfoCard = ({
               </StyledSecondaryText>
             )}
           </BillingFieldRow>
+          {isDefined(applicationsSubtotalValue) && (
+            <BillingFieldRow label={t`Apps`} Icon={IconApps}>
+              {applicationsSubtotalValue}
+              <StyledSecondaryText>
+                {applicationsSubtotalDetails}
+              </StyledSecondaryText>
+            </BillingFieldRow>
+          )}
           <BillingFieldRow label={t`Total`} Icon={IconSum}>
             {totalValue}
             {isDefined(totalIntervalSubtitle) && (

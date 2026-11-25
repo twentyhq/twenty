@@ -1197,6 +1197,7 @@ export type BillingCustomer = {
   __typename?: 'BillingCustomer';
   hasPaymentMethod?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['UUID']['output'];
+  stripeCustomerEmail?: Maybe<Scalars['String']['output']>;
   userCreditsFallback: UserCreditsFallback;
 };
 
@@ -1343,6 +1344,9 @@ export enum BillingSubscriptionCollectionMethod {
 
 export type BillingSubscriptionItem = {
   __typename?: 'BillingSubscriptionItem';
+  applicationLogoUrl?: Maybe<Scalars['String']['output']>;
+  applicationName?: Maybe<Scalars['String']['output']>;
+  applicationPricePer?: Maybe<ApplicationBillingPriceUnit>;
   billingProduct: BillingProduct;
   creditAmount?: Maybe<Scalars['Float']['output']>;
   hasReachedCurrentPeriodCap: Scalars['Boolean']['output'];

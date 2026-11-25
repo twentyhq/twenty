@@ -1,6 +1,6 @@
-import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 
 type SettingsAdminVersionDisplayProps = {
   version: string | undefined | null;
@@ -8,40 +8,27 @@ type SettingsAdminVersionDisplayProps = {
   noVersionMessage: string;
 };
 
-const StyledActionLink = styled.a`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  text-decoration: none;
-`;
-
-const StyledSpan = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-`;
-
 export const SettingsAdminVersionDisplay = ({
   version,
   loading,
   noVersionMessage,
 }: SettingsAdminVersionDisplayProps) => {
   const { t } = useLingui();
+
   if (loading) {
-    return <StyledSpan>{t`Loading...`}</StyledSpan>;
+    return <>{t`Loading...`}</>;
   }
 
-  if (!version) {
-    return <StyledSpan>{noVersionMessage}</StyledSpan>;
+  if (!isNonEmptyString(version)) {
+    return <>{noVersionMessage}</>;
   }
 
   return (
-    <StyledActionLink
+    <SettingsTextLink
       href={`https://hub.docker.com/r/twentycrm/twenty/tags?name=${version}`}
-      target="_blank"
-      rel="noreferrer"
+      title={version}
     >
       {version}
-    </StyledActionLink>
+    </SettingsTextLink>
   );
 };
