@@ -3,7 +3,7 @@ import { FORMULA_FIELD_METADATA_TYPES } from 'twenty-shared/constants';
 export const FORMULA_EXPRESSION_DESCRIPTION = [
   'Formula computing the field value from other fields of the same record, read-only for record writes.',
   'Reference fields by name, with dot access for a composite part (amount.amountMicros) or a field of a many-to-one related record (company.name).',
-  'Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == "WON").',
+  "Aggregate a one-to-many relation with count(relation, condition?), sum(relation.field, condition?), avg, min and max, e.g. count(tasks), sum(opportunities.amount.amountMicros, opportunities.stage == 'CUSTOMER').",
   'Same operators and functions as validation rules. Load the metadata-building skill for the full syntax and check the expression with validate_formula_expression first.',
 ].join(' ');
 
