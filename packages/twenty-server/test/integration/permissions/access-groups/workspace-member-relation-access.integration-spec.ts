@@ -195,7 +195,6 @@ describePermissionTestWorkspace({
       const token = workspace.adminAccessToken;
 
       for (const featureFlag of [
-        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
         FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
       ]) {
         await updateFeatureFlag({

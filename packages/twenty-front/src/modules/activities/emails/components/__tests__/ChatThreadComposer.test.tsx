@@ -115,7 +115,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={onMessageSent}
         />
@@ -151,7 +150,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={jest.fn()}
         />
@@ -182,7 +180,6 @@ describe('ChatThreadComposer', () => {
           channelName="LinkedIn"
           recipientName="Ada"
           isDisconnected={false}
-          canAttachFiles
           onSendMessage={mockSendAppChannelMessage}
           onMessageSent={jest.fn()}
         />

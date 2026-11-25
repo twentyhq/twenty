@@ -1,18 +1,48 @@
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { compileFormulaExpression } from 'twenty-shared/utils';
+import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import {
+  compileFormulaExpression,
+  getFormulaEvaluationFromBindings,
+} from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { z } from 'zod';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildFormulaFieldEditorInputs } from '@/settings/data-model/fields/forms/formula/utils/buildFormulaFieldEditorInputs';
+import { getFormulaFunctionDefinitions } from '@/settings/data-model/fields/forms/formula/utils/getFormulaFunctionDefinitions';
 import { ValidationRuleExpressionEditor } from '@/validation-rules/components/ValidationRuleExpressionEditor';
+
+const getFormulaEvaluationHint = ({
+  expression,
+  fields,
+}: {
+  expression: string;
+  fields: ValidationRuleFieldDescriptor[];
+}): string | undefined => {
+  const compilation = compileFormulaExpression({ expression, fields });
+
+  if (
+    !compilation.isValid ||
+    getFormulaEvaluationFromBindings({
+      bindings: compilation.bindings,
+      fields,
+    }) !== 'STORED'
+  ) {
+    return undefined;
+  }
+
+  return t`Reads related records, so the value is stored and updated in the background a few seconds after they change.`;
+};
 
 export const settingsDataModelFieldFormulaFormSchema = z.object({
   formula: z.string().optional(),
   formulaCurrencyCode: z.string().optional(),
 });
+
+const FORMULA_FUNCTION_DEFINITIONS = getFormulaFunctionDefinitions();
 
 type SettingsDataModelFieldFormulaFormValues = z.infer<
   typeof settingsDataModelFieldFormulaFormSchema
@@ -56,6 +86,11 @@ export const SettingsDataModelFieldFormulaForm = ({
             editorFields={editorFields}
             onChange={onChange}
             compileExpression={compileFormulaExpression}
+            functionDefinitions={FORMULA_FUNCTION_DEFINITIONS}
+            hint={getFormulaEvaluationHint({
+              expression: value ?? '',
+              fields,
+            })}
             ariaLabel={ariaLabel}
           />
         </Card.Root>

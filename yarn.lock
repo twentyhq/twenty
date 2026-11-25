@@ -45904,7 +45904,6 @@ __metadata:
     tsc-alias: "npm:^1.8.16"
     twenty-client-sdk: "workspace:*"
     twenty-shared: "workspace:*"
-    twenty-ui: "workspace:*"
     uuid: "npm:^13.0.2"
     vite: "npm:^8.0.0"
   languageName: unknown

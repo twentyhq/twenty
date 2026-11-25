@@ -63,7 +63,7 @@ Tipi di trigger disponibili:
 <Note>
 Per richiamare, da un componente front-end (headless), una funzione logica attivata da una rotta, vedi [Chiamare una funzione logica](/it/developers/extend/apps/layout/front-components#calling-a-logic-function).
 </Note>
-* **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
+* **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON. Imposta `spreadMs` per evitare che ogni workspace lo esegua nello stesso minuto. Vedi [Distribuire un cron tra i workspace](#spread-a-cron-across-workspaces).
 * **databaseEvent**: viene eseguito quando i record di un oggetto vengono creati, aggiornati, eliminati, distrutti, ripristinati o sottoposti a upsert. Puoi limitarlo agli aggiornamenti di alcuni campi e ai record che soddisfano una condizione. Vedi [Payload degli eventi del database](#database-event-trigger-payload).
 * **serverRoute**: espone una singola route HTTP con ambito di registrazione. Una funzione di **resolver** (dichiarata con `serverRouteTriggerSettings`) viene eseguita nel workspace proprietario e restituisce una `Response` sincrona, oppure il workspace di destinazione e la funzione logica di destinazione da mettere in coda; nel percorso di messa in coda la piattaforma conferma con `202` ed esegue tale **destinazione** nella coda dei worker. Vedi [Trigger route del server](#server-route-trigger).
 
@@ -1264,5 +1264,26 @@ Punti chiave:
 **Non** devi passare questi elementi ai client — vengono letti automaticamente da `process.env` e [Quale accesso utilizza una chiamata](#whose-access-a-call-uses) spiega come scegliere tra di essi. Le autorizzazioni della tua applicazione sono determinate dal ruolo dichiarato con `defineApplicationRole()` (o referenziato tramite `defaultRoleUniversalIdentifier` in `application-config.ts`); un'esecuzione che agisce come una persona non può mai superare né tale ruolo né il proprio.
 
 </Note>
+
+## Distribuire un cron tra i workspace
+
+Un pattern cron corrisponde allo stesso minuto in ogni workspace in cui è installata la tua app. Aggiungi `spreadMs` per spostare le esecuzioni di ogni workspace in base al proprio offset:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'b7c2e4d1-0f5a-4c3e-9d8b-6a1f2e3c4d5b',
+  name: 'nightly-sweep',
+  cronTriggerSettings: { pattern: '0 3 * * *', spreadMs: 60 * 60 * 1000 },
+  handler,
+});
+```
+
+Ogni workspace riceve un offset in `[0, spreadMs)`, arrotondato per difetto al minuto e derivato dal workspace e da `universalIdentifier` della funzione, così rimane uguale da un'esecuzione alla successiva. Il pattern viene valutato con un ritardo pari a tale valore nel workspace: con l'esempio sopra, un workspace con un offset di 37 minuti viene eseguito alle 03:37 ogni giorno.
+
+* `spreadMs` è un numero intero compreso tra `120000` (2 minuti) e `86400000` (24 ore).
+* L'offset modifica quando viene eseguito il cron, non la frequenza. Un cron eseguito ogni minuto continua a essere eseguito ogni minuto e un cron orario con un `spreadMs` di 24 ore continua a essere eseguito una volta all'ora in ogni workspace.
+* Non esiste un intervallo minimo tra i workspace né un limite al numero di esecuzioni nello stesso minuto: gli offset sono distribuiti, non coordinati.
+* La modifica di `spreadMs` modifica l'offset, quindi l'esecuzione in prossimità della modifica può essere ignorata o avvenire due volte.
+* Senza `spreadMs`, il cron viene eseguito nel minuto in cui il suo pattern corrisponde.
 
 <PageBanner illustration="card-page-logic-functions" />

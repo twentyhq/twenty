@@ -1,5 +1,4 @@
 import { lazy, type ReactNode, Suspense } from 'react';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { WorkspaceSectionListReadOnly } from '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionListReadOnly';
@@ -37,10 +36,9 @@ export const NavigationMenuContainerEditableItems = ({
     <Suspense
       fallback={
         <WorkspaceSectionListReadOnly
-          filteredItems={topLevelItems.filter(
-            (item) => item.type !== NavigationMenuItemType.SECTION,
-          )}
+          filteredItems={topLevelItems}
           folderChildrenById={folderChildrenById}
+          renderSection={renderSection}
         />
       }
     >
