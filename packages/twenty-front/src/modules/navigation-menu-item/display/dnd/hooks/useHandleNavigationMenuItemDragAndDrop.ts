@@ -41,7 +41,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
     Pick<NavigationMenuItem, 'id' | 'position' | 'parentId' | 'type'>
   > =>
     isDraftMode
-      ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
+      ? [...(store.get(navigationMenuItemsDraftState.atom) ?? [])].sort(
           (a, b) => a.position - b.position,
         )
       : navigationMenuItemsSorted;
