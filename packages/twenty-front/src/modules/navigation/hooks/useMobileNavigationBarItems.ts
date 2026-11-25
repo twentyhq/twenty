@@ -5,6 +5,7 @@ import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/s
 import { type InboxChatAttention } from '@/inbox/types/InboxChatAttention';
 import { getNavigationMenuTabFolderKey } from '@/navigation-menu-item/common/utils/getNavigationMenuTabFolderKey';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
+import { useHasAiChatSectionInSidebar } from '@/navigation-menu-item/display/hooks/useHasAiChatSectionInSidebar';
 import { useGetNavigationMenuTabAttentionLabel } from '@/navigation-menu-item/display/hooks/useGetNavigationMenuTabAttentionLabel';
 import { useNavigationMenuChatAttention } from '@/navigation-menu-item/display/hooks/useNavigationMenuChatAttention';
 import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuContainers';
@@ -76,6 +77,7 @@ export const useMobileNavigationBarItems = (): {
   const isAiChatInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
   );
+  const hasAiChatSectionInSidebar = useHasAiChatSectionInSidebar();
   const { getIcon } = useIcons();
   const navigationMenuTabs = useWorkspaceNavigationMenuContainers({
     type: NavigationMenuItemType.TAB,
@@ -181,7 +183,7 @@ export const useMobileNavigationBarItems = (): {
         onClick: () => openHomePageOnTab(null),
         attention: homeChatAttention,
       },
-      ...(hasAiPermission && isAiChatInboxEnabled
+      ...(hasAiPermission && isAiChatInboxEnabled && !hasAiChatSectionInSidebar
         ? [
             {
               name: 'inbox' as const,
