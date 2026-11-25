@@ -3,15 +3,18 @@ import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { ClientBriefModalRoot, GetMatchedButton } from '@/client-brief';
+import { richTextExcerpt } from '@/partners-marketplace/rich-text-excerpt';
 import { getCommunityStats } from '@/platform/community';
 import { getRouteI18n } from '@/platform/i18n/get-route-i18n';
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
-import { getMarketplacePartnerBySlug } from '@/partners-marketplace/marketplace-partners-source';
-import { PartnerProfile } from '@/partners-marketplace/PartnerProfile';
-import { richTextExcerpt } from '@/partners-marketplace/rich-text-excerpt';
 import { buildBreadcrumbListJsonLd, JsonLd } from '@/platform/seo';
 import { Menu } from '@/sections/menu';
+import {
+  loadDirectoryPartner,
+  loadDirectoryPartners,
+  PartnerDetail,
+} from '@/sections/partners-directory';
 
 type PartnerProfileParams = { locale: string; slug: string };
 
@@ -27,7 +30,7 @@ export async function generateMetadata({
   await getRouteI18n(params);
   const i18n = getServerI18n();
   const { slug } = await params;
-  const partner = await getMarketplacePartnerBySlug(slug);
+  const partner = await loadDirectoryPartner(slug);
   if (!partner) {
     return { title: i18n._(msg`Partner not found — Twenty Partners`) };
   }
@@ -42,13 +45,14 @@ export default async function PartnerProfilePage({
 }: {
   params: Promise<PartnerProfileParams>;
 }) {
-  const [, communityStats] = await Promise.all([
+  const { locale: rawLocale, slug } = await params;
+  const [, communityStats, partner, partners] = await Promise.all([
     getRouteI18n(params),
     getCommunityStats(),
+    loadDirectoryPartner(slug),
+    loadDirectoryPartners(),
   ]);
-  const { locale: rawLocale, slug } = await params;
   const locale = resolveLocaleParam(rawLocale);
-  const partner = await getMarketplacePartnerBySlug(slug);
   if (!partner) {
     notFound();
   }
@@ -65,18 +69,19 @@ export default async function PartnerProfilePage({
           locale,
         )}
       />
-      <Menu communityStats={communityStats} scheme="muted" />
+      <Menu communityStats={communityStats} scheme="light" />
       <ClientBriefModalRoot>
-        <main aria-labelledby="partner-name">
-          <PartnerProfile
-            cta={
+        <main aria-label={partner.name}>
+          <PartnerDetail
+            matchCta={
               <GetMatchedButton
-                label={msg`Submit a brief`}
+                label={msg`Get matched`}
                 partnerSlug={partner.slug}
-                variant="outlined"
+                variant="filled"
               />
             }
             partner={partner}
+            partners={partners}
           />
         </main>
       </ClientBriefModalRoot>
