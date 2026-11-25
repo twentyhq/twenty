@@ -60,15 +60,16 @@ Un singur apel `getJobs` citește cel mult `200` de ID-uri, aceeași limită pe 
 
 Fiecare intrare conține ID-ul solicitat:
 
-| Câmp           | Ce conține                                                                                   |
-| -------------- | -------------------------------------------------------------------------------------------- |
-| `jobId`        | ID-ul interogat.                                                                             |
-| `state`        | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` sau `FAILED`. |
-| `attemptsMade` | Încercările din coadă efectuate până acum, inclusiv cea curentă.                             |
-| `failedReason` | Mesajul de eroare al ultimei încercări eșuate sau, în caz contrar, `null`.                   |
-| `enqueuedAt`   | Momentul în care lucrarea a fost acceptată, în milisecunde epoch.                            |
-| `startedAt`    | Momentul în care un lucrător a preluat-o; `null` cât timp încă așteaptă.                     |
-| `finishedAt`   | Momentul în care s-a finalizat sau a eșuat; `null` cât timp încă rulează.                    |
+| Câmp           | Ce conține                                                                                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jobId`        | ID-ul interogat.                                                                                                                                                           |
+| `state`        | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` sau `FAILED`.                                                                               |
+| `attemptsMade` | Încercările din coadă efectuate până acum, inclusiv cea curentă.                                                                                                           |
+| `failedReason` | Mesajul de eroare al ultimei încercări eșuate sau, în caz contrar, `null`.                                                                                                 |
+| `enqueuedAt`   | Momentul în care lucrarea a fost acceptată, în milisecunde epoch.                                                                                                          |
+| `scheduledAt`  | Momentul în care sarcina a devenit pentru prima dată eligibilă pentru rulare, în milisecunde epoch. Consultați [Când este programată o sarcină](#when-a-job-is-scheduled). |
+| `startedAt`    | Momentul în care un lucrător a preluat-o; `null` cât timp încă așteaptă.                                                                                                   |
+| `finishedAt`   | Momentul în care s-a finalizat sau a eșuat; `null` cât timp încă rulează.                                                                                                  |
 
 O lucrare care nu a fost încă preluată apare în mod normal ca `PRIORITIZED`, nu ca `WAITING`, deoarece lucrările aplicației sunt puse în coadă la o prioritate mică fixă. `COMPLETED` și `FAILED` sunt stările terminale. O buclă de interogare ar trebui, de asemenea, să renunțe singură după un număr limitat de încercări, în loc să aștepte la nesfârșit, deoarece o execuție poate fi citită doar cât timp coada o păstrează: 4 ore după finalizare, 7 zile după eșec și, în ambele cazuri, doar cele mai recente 1000 de lucrări în acea stare.
 
@@ -95,10 +96,11 @@ Un `jobId` este, de asemenea, o cheie de idempotență: punerea în coadă a unu
 
 Opțiunile se aplică fiecărei rulări din lot.
 
-| Opțiune      | Implicit | Interval                 | Ce face                                                                                                                                                                                           |
-| ------------ | -------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`      | `0`–`10`                 | Numărul total de încercări suplimentare în coadă. Reîncercările solicitate de aplicație sunt limitate la `3`. Crește această valoare numai pentru handleri care sunt siguri de rulat de două ori. |
-| `delayMs`    | `0`      | `0`–`604800000` (7 zile) | Așteaptă atât timp înainte ca rulările să devină eligibile.                                                                                                                                       |
+| Opțiune      | Implicit | Interval                                   | Ce face                                                                                                                                                                                           |
+| ------------ | -------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`      | `0`–`10`                                   | Numărul total de încercări suplimentare în coadă. Reîncercările solicitate de aplicație sunt limitate la `3`. Crește această valoare numai pentru handleri care sunt siguri de rulat de două ori. |
+| `delayMs`    | `0`      | `0`–`604800000` (7 zile)                   | Așteaptă atât timp înainte ca rulările să devină eligibile.                                                                                                                                       |
+| `limiter`    | niciunul | `durationMs / max` între `100` ms și 1 oră | Distanțați uniform execuțiile, cel mult `max` per `durationMs`. Consultați [Ritmați execuțiile cu un limitator](#pace-runs-with-a-limiter). Nu poate fi combinat cu `delayMs`.                    |
 
 ```ts
 await enqueueJobs({
@@ -119,6 +121,43 @@ export default defineLogicFunction({
 });
 ```
 
+## Ritmați execuțiile cu un limitator
+
+Transmiteți `limiter: { max, durationMs }` pentru a distanța execuțiile unui apel la intervale de `durationMs / max`, de exemplu pentru a rămâne sub limita de rată a unei terțe părți.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: companies.map((company) => ({ payload: { companyId: company.id } })),
+  limiter: { max: 10, durationMs: 60_000 },
+});
+```
+
+Aici, o execuție devine eligibilă la fiecare 6 secunde. Cum funcționează:
+
+* Apelurile pentru aceeași funcție din același spațiu de lucru, cu aceleași valori pentru `max` și `durationMs`, partajează o singură planificare, astfel încât un al doilea apel continuă după execuțiile rezervate de primul. Modificarea oricăreia dintre valori pornește o planificare separată.
+* Fiecărei execuții i se atribuie următorul slot liber sau momentul actual dacă planificarea este inactivă, iar următorul slot se mută cu un interval mai târziu. Execuțiile sunt distanțate uniform, niciodată în rafale.
+* Nu există un orizont: un lot mare poate fi planificat cu zile în avans. Se aplică în continuare limitele obișnuite de [memorie a cozii](#queue-memory), iar o acumulare mare își păstrează memoria până când se golește.
+* `max` și `durationMs` trebuie să fie numere întregi pozitive, cu un interval între `100` ms și 1 oră. Combinarea `limiter` cu `delayMs`, chiar și `delayMs: 0`, este respinsă cu `INVALID_INPUT` și nu se pune nimic în coadă.
+* Sunt ritmate doar execuțiile apelurilor care transmit `limiter`. Reîncercările își păstrează propria temporizare progresivă, iar execuțiile pornite de cron, evenimente de bază de date, `onConnect` sau rute de server nu sunt ritmate.
+* Repunerea în coadă a unui `jobId` pe care coada îl păstrează încă nu ocupă un alt slot.
+* Limitatorul distanțează momentele în care execuțiile devin eligibile. Nu limitează câte execuții rulează în același timp, iar o execuție poate începe mai târziu decât slotul său atunci când lucrătorii sunt ocupați.
+* Dacă ritmarea nu este disponibilă din cauza unei defecțiuni tehnice, execuțiile sunt puse în coadă fără ritmare, în loc să fie refuzate.
+
+## Când este planificată o sarcină
+
+Fiecare intrare din `jobs` returnată de `enqueueJobs` și fiecare stare returnată de `getJobs` conține `scheduledAt`: momentul în care sarcina a devenit pentru prima dată eligibilă pentru execuție, în milisecunde epoch.
+
+| Sarcina a fost pusă în coadă | `scheduledAt`                                        |
+| ---------------------------- | ---------------------------------------------------- |
+| Cu un `limiter`              | Slotul care i-a fost atribuit.                       |
+| Cu `delayMs`                 | Momentul în care a fost acceptată, plus întârzierea. |
+| În caz contrar               | Momentul în care a fost acceptată.                   |
+
+Este stabilit o singură dată, când sarcina este acceptată, și nu se modifică niciodată ulterior, inclusiv între reîncercări. Punerea în coadă a unui `jobId` pe care coada îl păstrează încă raportează `scheduledAt` al sarcinii existente. Odată ce sarcina a fost eliminată, o sarcină nouă cu același id primește unul nou.
+
+`scheduledAt` nu este o predicție a momentului în care începe sarcina: comparați-l cu `startedAt` pentru a vedea cât timp a așteptat un lucrător.
+
 <Note>
 **Prioritatea nu este încă configurabilă.** Joburile puse în coadă rulează întotdeauna cu cea mai joasă prioritate, astfel încât activitatea platformei să nu fie niciodată întârziată de joburile aplicației. Controlul asupra priorității va fi disponibil în curând.
 </Note>
@@ -133,7 +172,7 @@ Sarcinile puse în coadă rămân în memorie până se finalizează, astfel în
 
 | Câmp              | Ce conține                                                                                                                                                                                |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `locuri de muncă` | Valorile `jobId` și `sizeBytes` ale fiecărei sarcini puse în coadă.                                                                                                                       |
+| `locuri de muncă` | `jobId`, `sizeBytes` și [`scheduledAt`](#when-a-job-is-scheduled) ale fiecărei sarcini puse în coadă.                                                                                     |
 | `availableBytes`  | Memoria pe care aplicația și spațiul dvs. de lucru o mai pot pune în coadă la momentul acestui apel. `null` când serverul nu limitează memoria cozii. Este o instantanee, nu o rezervare. |
 
 Când se atinge o limită, întregul apel este respins și nu se pune nimic în coadă:
@@ -331,6 +370,6 @@ Ce îl face robust:
 * **Fă condiția de terminare explicită.** Apelează recursiv doar cât timp a revenit un segment complet. Un lanț care se oprește doar pe baza „niciun rezultat” va continua la nesfârșit dacă sursa returnează vreodată o pagină scurtă la mijloc.
 * **Păstrează progresul înainte de a pune în coadă următoarea rulare**, astfel încât o verigă eșuată să repornească de la ultimul segment finalizat în loc de la început.
 * **Păstrează fiecare segment idempotent.** Reprocesarea unui segment după o reîncercare nu trebuie să ducă la scrieri duble — leagă scrierile de înregistrarea sau ID-ul extern pe care îl procesezi.
-* **Preferă un lanț segmentat în locul unei dispersări uriașe** atunci când munca lovește o terță parte cu limită de rată: un lanț cu `delayMs` își dozează singur ritmul, în timp ce mii de joburi puse în coadă deodată devin toate eligibile imediat.
+* **Ritmați un fan-out care accesează o terță parte cu limită de rată** cu un [`limiter`](#pace-runs-with-a-limiter) sau utilizați un lanț împărțit în bucăți cu `delayMs`. Mii de sarcini puse în coadă fără niciuna dintre acestea devin toate eligibile imediat.
 
 <PageBanner illustration="card-page-background-jobs" />

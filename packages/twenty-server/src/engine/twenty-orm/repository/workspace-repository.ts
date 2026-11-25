@@ -1516,44 +1516,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     data?: Partial<ObjectRecord>;
     shouldWriteAtLeastOneRecord?: boolean;
   }): Promise<ObjectRecord[]> {
-    if (args.kind === 'delete') {
-      return this.runDeleteReturningComputedColumns(args);
-    }
-
     const writtenRecords = await this.runMutationOnStoredColumns(args);
+
+    if (args.kind === 'delete') {
+      return writtenRecords;
+    }
 
     return this.readComputedColumns({
       records: writtenRecords,
       columnNames: args.columnsToReturn,
     });
-  }
-
-  // A destroyed row can no longer be computed, so its computed columns are read before the delete
-  private async runDeleteReturningComputedColumns(
-    args: Parameters<WorkspaceRepository<TEntity>['runMutation']>[0],
-  ): Promise<ObjectRecord[]> {
-    if (this.getComputedColumnNames(args.columnsToReturn).length === 0) {
-      return this.runMutationOnStoredColumns(args);
-    }
-
-    const targetRecords = await args.selectQueryBuilder
-      .clone()
-      .select(`${args.selectQueryBuilder.alias}.id`, 'id')
-      .getRawMany<ObjectRecord>();
-    const computedRecordById = new Map(
-      (
-        await this.readComputedColumns({
-          records: targetRecords,
-          columnNames: args.columnsToReturn,
-        })
-      ).map((computedRecord) => [computedRecord.id, computedRecord]),
-    );
-    const deletedRecords = await this.runMutationOnStoredColumns(args);
-
-    return deletedRecords.map((deletedRecord) => ({
-      ...deletedRecord,
-      ...computedRecordById.get(deletedRecord.id),
-    }));
   }
 
   private getComputedColumnNames(columnNames: string[]): string[] {
@@ -1984,7 +1956,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private buildRecordAccessGroupWriteTarget() {
     return {
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
       workspaceId: this.options.internalContext.workspaceId,
       objectMetadataId: this.options.flatObjectMetadata.id,
     };
