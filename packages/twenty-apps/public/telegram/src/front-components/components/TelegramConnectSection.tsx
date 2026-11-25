@@ -27,6 +27,18 @@ const StyledHint = styled.p`
   margin: 0;
 `;
 
+const StyledCommand = styled.code`
+  background: ${() => themeCssVariables.background.tertiary};
+  border-radius: ${() => themeCssVariables.border.radius.sm};
+  color: ${() => themeCssVariables.font.color.primary};
+  font-size: ${() => themeCssVariables.font.size.sm};
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: ${() => themeCssVariables.spacing[1]}
+    ${() => themeCssVariables.spacing[2]};
+  user-select: all;
+`;
+
 export const TelegramConnectSection = () => {
   const { t } = useTranslate();
   const { startState, startTelegramUserLink } = useStartTelegramUserLink();
@@ -65,6 +77,15 @@ export const TelegramConnectSection = () => {
                 'Press Start in the chat that opens. The link works once and expires in 10 minutes.',
               )}
             </StyledHint>
+            <StyledHint>
+              {t(
+                'Telegram does not open? Send this message to @{botUsername}:',
+                {
+                  botUsername: startState.botUsername,
+                },
+              )}
+            </StyledHint>
+            <StyledCommand>{startState.startCommand}</StyledCommand>
           </>
         ) : (
           <Button

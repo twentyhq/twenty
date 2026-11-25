@@ -14,7 +14,9 @@ member a direct message comes from.
 1. In Twenty, the member opens the Telegram app settings, or runs **Connect
    Telegram** from the command menu, and gets a one-time link.
 2. The link opens the bot in Telegram. Pressing **Start** completes the
-   connection.
+   connection. Where the link cannot open Telegram, such as a computer without
+   the Telegram app, sending the `/start` command shown under it to the bot
+   does the same.
 3. Sending `/disconnect` to the bot, blocking the bot, or disconnecting from the
    app settings removes it. Members with the roles permission can disconnect
    any account there.

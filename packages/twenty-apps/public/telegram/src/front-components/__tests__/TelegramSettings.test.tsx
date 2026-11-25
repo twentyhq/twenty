@@ -78,6 +78,8 @@ describe('TelegramSettings', () => {
     restPostMock.mockResolvedValue({
       success: true,
       url: 'https://t.me/TwentyBot?start=token',
+      botUsername: 'TwentyBot',
+      startCommand: '/start token',
       expiresAt: '2026-11-24T10:10:00.000Z',
     });
     const user = userEvent.setup();
@@ -90,6 +92,12 @@ describe('TelegramSettings', () => {
         name: 'Open Telegram to finish connecting',
       }),
     ).toHaveProperty('href', 'https://t.me/TwentyBot?start=token');
+    expect(
+      screen.getByText(
+        'Telegram does not open? Send this message to @TwentyBot:',
+      ),
+    ).toBeTruthy();
+    expect(screen.getByText('/start token')).toBeTruthy();
     expect(restPostMock.mock.calls).toEqual([
       ['/s/telegram/user-links/start', {}],
     ]);

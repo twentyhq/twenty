@@ -8,7 +8,12 @@ import { type TelegramStartUserLinkResult } from 'src/logic-functions/types/tele
 type StartState =
   | { status: 'IDLE' }
   | { status: 'STARTING' }
-  | { status: 'READY'; url: string }
+  | {
+      status: 'READY';
+      url: string;
+      botUsername: string;
+      startCommand: string;
+    }
   | { status: 'FAILED'; message: string };
 
 export const useStartTelegramUserLink = () => {
@@ -24,7 +29,12 @@ export const useStartTelegramUserLink = () => {
 
       setStartState(
         result?.success
-          ? { status: 'READY', url: result.url }
+          ? {
+              status: 'READY',
+              url: result.url,
+              botUsername: result.botUsername,
+              startCommand: result.startCommand,
+            }
           : { status: 'FAILED', message: result?.message ?? '' },
       );
     } catch (error) {
