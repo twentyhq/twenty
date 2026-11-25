@@ -178,13 +178,13 @@ const Backdrop = styled.div`
   mask-image:
     radial-gradient(
       ellipse 42% 34% at 50% 26%,
-      rgb(0 0 0 / 14%) 45%,
+      color-mix(in srgb, ${color('black')} 14%, transparent) 45%,
       black 100%
     ),
     linear-gradient(to right, transparent, black 12%, black 88%, transparent),
     linear-gradient(
       to bottom,
-      rgb(0 0 0 / 25%) ${MENU_HEIGHT_PX}px,
+      color-mix(in srgb, ${color('black')} 25%, transparent) ${MENU_HEIGHT_PX}px,
       black ${MENU_HEIGHT_PX * 2.5}px
     );
   position: absolute;
