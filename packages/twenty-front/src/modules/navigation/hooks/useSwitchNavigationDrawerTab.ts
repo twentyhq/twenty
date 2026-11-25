@@ -145,13 +145,13 @@ export const useSwitchNavigationDrawerTab = () => {
 
     if (shouldOpenTabPage) {
       rememberCurrentPageForTab(previousTabId);
-      store.set(navigationMenuTabIdHoldingCurrentPageState.atom, tabId);
 
       const lastVisitedUrl = store.get(
         lastVisitedUrlByNavigationMenuTabKeyState.atom,
       )[getNavigationMenuTabFolderKey(tabId)];
 
       if (isDefined(lastVisitedUrl) || !isDefined(tabId)) {
+        store.set(navigationMenuTabIdHoldingCurrentPageState.atom, tabId);
         openNavigationMenuPage(lastVisitedUrl ?? defaultHomePagePath);
         return;
       }

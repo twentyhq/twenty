@@ -183,6 +183,19 @@ describe('useSwitchNavigationDrawerTab', () => {
     );
   });
 
+  it('does not remember a page for a tab that opened no item', () => {
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: '/objects/people',
+    });
+
+    act(() => result.current.switchToNavigationMenuTab('empty-tab-id'));
+    act(() => result.current.switchToNavigationMenuTab(null));
+
+    expect(store.get(lastVisitedUrlByNavigationMenuTabKeyState.atom)).toEqual({
+      home: '/objects/people',
+    });
+  });
+
   it('opens the default home page when switching back to Home', () => {
     const { result } = renderSwitchNavigationDrawerMode({
       pathname: '/chat',
