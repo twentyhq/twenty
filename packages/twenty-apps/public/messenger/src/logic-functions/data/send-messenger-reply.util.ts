@@ -10,6 +10,7 @@ import { getReplyMessagingType } from 'src/logic-functions/data/get-reply-messag
 import { GraphApiError } from 'src/logic-functions/data/graph-api.error';
 import { graphApiRequest } from 'src/logic-functions/data/graph-api-request.util';
 import { sendMessengerAttachment } from 'src/logic-functions/data/send-messenger-attachment.util';
+import { rememberSentAttachmentMessages } from 'src/logic-functions/data/sent-attachment-message.util';
 
 // the human agent tag is meant for people answering by hand, so only replies from the thread view may use it
 export const sendMessengerReply = async ({
@@ -113,11 +114,13 @@ export const sendMessengerReply = async ({
     throw error;
   }
 
-  const [externalId] = messageIds;
+  const [externalId, ...attachmentMessageIds] = messageIds;
 
   if (!isDefined(externalId)) {
     throw new Error('A Messenger reply needs text or an attachment');
   }
+
+  await rememberSentAttachmentMessages(attachmentMessageIds);
 
   return { externalId };
 };

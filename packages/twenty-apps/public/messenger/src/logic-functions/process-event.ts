@@ -12,6 +12,7 @@ import { findMessageChannelOrThrow } from 'src/logic-functions/data/find-message
 import { getMessengerEventTimestamp } from 'src/logic-functions/data/get-messenger-event-timestamp.util';
 import { importMessage } from 'src/logic-functions/data/import-message.util';
 import { resolveCustomerPersonId } from 'src/logic-functions/data/resolve-customer-person-id.util';
+import { consumeSentAttachmentMessage } from 'src/logic-functions/data/sent-attachment-message.util';
 import { type MessengerEventPayload } from 'src/logic-functions/types/messenger-event-payload.type';
 
 const handler = async ({ pageId, event }: MessengerEventPayload) => {
@@ -59,8 +60,15 @@ const handler = async ({ pageId, event }: MessengerEventPayload) => {
     return;
   }
 
-  const pageScopedId =
-    event.message?.is_echo === true ? event.recipient.id : event.sender.id;
+  const isEcho = event.message?.is_echo === true;
+  const echoMid = isEcho ? event.message?.mid : undefined;
+
+  // already shown in Twenty as part of the reply it was sent with
+  if (isDefined(echoMid) && (await consumeSentAttachmentMessage(echoMid))) {
+    return;
+  }
+
+  const pageScopedId = isEcho ? event.recipient.id : event.sender.id;
   const personId = await resolveCustomerPersonId({
     client,
     connectedAccountId,
