@@ -1,23 +1,14 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// The partner testimonials carry an author portrait, unlike the home set.
-export type PartnerTestimonialRecord = {
-  author: {
-    designation: MessageDescriptor;
-    name: MessageDescriptor;
-    portraitSrc: string;
-  };
-  quote: MessageDescriptor;
-};
+import { type TestimonialRecord } from './testimonials.data';
 
-export const PARTNER_TESTIMONIALS: readonly PartnerTestimonialRecord[] = [
+export const PARTNER_TESTIMONIALS: readonly TestimonialRecord[] = [
   {
     quote: msg`Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform.`,
     author: {
       name: msg`Benjamin Reynolds`,
       designation: msg`Principal and Founder, Alternative Partners`,
-      portraitSrc: '/images/partners/testimonials/benjamin-reynolds.webp',
+      portraitSrc: '/images/partners/testimonials/benjamin-reynolds-soft.webp',
     },
   },
   {
@@ -25,7 +16,7 @@ export const PARTNER_TESTIMONIALS: readonly PartnerTestimonialRecord[] = [
     author: {
       name: msg`Bertrams`,
       designation: msg`Founder, Wintactix`,
-      portraitSrc: '/images/partners/testimonials/bertrams.webp',
+      portraitSrc: '/images/partners/testimonials/bertrams-soft.webp',
     },
   },
   {
@@ -33,7 +24,7 @@ export const PARTNER_TESTIMONIALS: readonly PartnerTestimonialRecord[] = [
     author: {
       name: msg`Mike Babiy`,
       designation: msg`Founder, Nine Dots Ventures`,
-      portraitSrc: '/images/partners/testimonials/mike-babiy.webp',
+      portraitSrc: '/images/partners/testimonials/mike-babiy-soft.webp',
     },
   },
 ];

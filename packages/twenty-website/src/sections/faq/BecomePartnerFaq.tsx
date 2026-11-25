@@ -1,10 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import { getServerI18n } from '@/platform/i18n/get-server-i18n';
 import { buildFaqPageJsonLd } from '@/platform/seo/build-faq-page-json-ld';
 import { JsonLd } from '@/platform/seo/JsonLd';
-import { mediaUp } from '@/tokens';
+import { mediaUp, spacing } from '@/tokens';
 import {
   Eyebrow,
   Heading,
@@ -23,7 +24,19 @@ const HeadingMeasure = styled.div`
   }
 `;
 
-export function BecomePartnerFaq() {
+// The home Faq's button row.
+const CtaRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${spacing(2)};
+  justify-content: flex-start;
+`;
+
+type BecomePartnerFaqProps = {
+  actions: ReactNode;
+};
+
+export function BecomePartnerFaq({ actions }: BecomePartnerFaqProps) {
   const i18n = getServerI18n();
 
   return (
@@ -37,6 +50,7 @@ export function BecomePartnerFaq() {
               {i18n._(msg`Becoming *a Twenty integrator*`)}
             </Heading>
           </HeadingMeasure>
+          <CtaRow>{actions}</CtaRow>
         </SectionIntro>
         <FaqItems questions={BECOME_PARTNER_FAQ_QUESTIONS} />
       </SectionStack>
