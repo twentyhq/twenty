@@ -130,10 +130,12 @@ describe('Application grants of twenty-standard and of exempt applications', () 
           [workspaceId, ROLE_WIDE_ACCESS_REVOKED_OBJECT_UNIVERSAL_IDENTIFIERS],
         )
       ).map(({ id }: { id: string }) => id);
-      const withoutRevokedObjects = (rows: Record<string, unknown>[]) =>
+      const withoutRevokedObjects = <TRow extends { objectMetadataId: string }>(
+        rows: TRow[],
+      ) =>
         rows.filter(
           ({ objectMetadataId }) =>
-            !revokedObjectMetadataIds.includes(String(objectMetadataId)),
+            !revokedObjectMetadataIds.includes(objectMetadataId),
         );
       const adminSnapshot = await findRolePermissionSnapshot(
         await findAdminRoleId(workspaceId!),
