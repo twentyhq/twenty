@@ -241,10 +241,6 @@ export class BillingApplicationProductService {
               priceUsageBased: BillingUsageType.LICENSED,
               applicationUniversalIdentifier,
               applicationPriceUniversalIdentifier: price.universalIdentifier,
-              applicationName,
-              ...(isDefined(price.per)
-                ? { applicationPricePer: price.per }
-                : {}),
             },
           });
 

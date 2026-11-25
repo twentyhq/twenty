@@ -39,7 +39,8 @@ export const useBillingSubscriptionCost = () => {
   const applicationsCount = new Set(
     applicationSubscriptionItems.map(
       (applicationSubscriptionItem) =>
-        applicationSubscriptionItem.billingProduct.metadata.applicationName ??
+        applicationSubscriptionItem.billingProduct.metadata
+          .applicationUniversalIdentifier ??
         applicationSubscriptionItem.billingProduct.name,
     ),
   ).size;

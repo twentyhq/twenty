@@ -30,8 +30,8 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
           productKey
           planKey
           isLegacy
-          applicationName
-          applicationPricePer
+          applicationUniversalIdentifier
+          applicationPriceUniversalIdentifier
         }
       }
     }

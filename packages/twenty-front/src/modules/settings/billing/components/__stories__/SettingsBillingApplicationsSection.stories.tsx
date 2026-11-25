@@ -1,8 +1,25 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { HttpResponse } from 'msw';
 import { expect, within } from 'storybook/test';
 import { CatalogDecorator, ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingApplicationsSection } from '@/settings/billing/components/SettingsBillingApplicationsSection';
+import { metadataGraphql } from '~/testing/graphqlMocks';
+
+const APPLICATION_REGISTRATIONS = [
+  {
+    universalIdentifier: 'linkedin-app',
+    name: 'LinkedIn',
+    priceUniversalIdentifier: 'linkedin-per-account',
+    per: 'CONNECTED_ACCOUNT',
+  },
+  {
+    universalIdentifier: 'slack-app',
+    name: 'Slack',
+    priceUniversalIdentifier: 'slack-per-member',
+    per: 'WORKSPACE_MEMBER',
+  },
+];
 
 const APPLICATION_SUBSCRIPTION_ITEMS = [
   {
@@ -12,8 +29,8 @@ const APPLICATION_SUBSCRIPTION_ITEMS = [
     billingProduct: {
       name: 'LinkedIn - Per connected account',
       metadata: {
-        applicationName: 'LinkedIn',
-        applicationPricePer: 'CONNECTED_ACCOUNT',
+        applicationUniversalIdentifier: 'linkedin-app',
+        applicationPriceUniversalIdentifier: 'linkedin-per-account',
       },
     },
   },
@@ -24,18 +41,21 @@ const APPLICATION_SUBSCRIPTION_ITEMS = [
     billingProduct: {
       name: 'Slack - Per member',
       metadata: {
-        applicationName: 'Slack',
-        applicationPricePer: 'WORKSPACE_MEMBER',
+        applicationUniversalIdentifier: 'slack-app',
+        applicationPriceUniversalIdentifier: 'slack-per-member',
       },
     },
   },
   {
-    id: 'legacy',
+    id: 'unregistered',
     quantity: 1,
     unitAmount: 500,
     billingProduct: {
-      name: 'Legacy app - Flat fee',
-      metadata: {},
+      name: 'Unregistered app - Flat fee',
+      metadata: {
+        applicationUniversalIdentifier: 'unregistered-app',
+        applicationPriceUniversalIdentifier: 'unregistered-flat-fee',
+      },
     },
   },
 ];
@@ -55,6 +75,43 @@ const meta: Meta<typeof SettingsBillingApplicationsSection> = {
     applicationsCount: 3,
     isYearlyPlan: false,
   },
+  parameters: {
+    msw: {
+      handlers: [
+        metadataGraphql.query(
+          'FindApplicationRegistrationByUniversalIdentifier',
+          ({ variables }) => {
+            const applicationRegistration = APPLICATION_REGISTRATIONS.find(
+              ({ universalIdentifier }) =>
+                universalIdentifier === variables.universalIdentifier,
+            );
+
+            return HttpResponse.json({
+              data: {
+                findApplicationRegistrationByUniversalIdentifier:
+                  applicationRegistration
+                    ? {
+                        __typename: 'ApplicationRegistration',
+                        id: applicationRegistration.universalIdentifier,
+                        name: applicationRegistration.name,
+                        logoUrl: null,
+                        billingPrices: [
+                          {
+                            __typename: 'ApplicationBillingPrice',
+                            universalIdentifier:
+                              applicationRegistration.priceUniversalIdentifier,
+                            per: applicationRegistration.per,
+                          },
+                        ],
+                      }
+                    : null,
+              },
+            });
+          },
+        ),
+      ],
+    },
+  },
 };
 
 export default meta;
@@ -69,7 +126,9 @@ export const Monthly: Story = {
     expect(await canvas.findByText('LinkedIn')).toBeVisible();
     expect(await canvas.findByText('3 accounts × $7 ·')).toBeVisible();
     expect(await canvas.findByText('$21')).toBeVisible();
-    expect(await canvas.findByText('Legacy app - Flat fee')).toBeVisible();
+    expect(
+      await canvas.findByText('Unregistered app - Flat fee'),
+    ).toBeVisible();
   },
 };
 

@@ -935,6 +935,7 @@ export type ApplicationPreferences = {
 
 export type ApplicationRegistration = {
   __typename?: 'ApplicationRegistration';
+  billingPrices?: Maybe<Array<ApplicationBillingPrice>>;
   createdAt: Scalars['DateTime']['output'];
   galleryImagesUrls: Array<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
@@ -1297,8 +1298,8 @@ export enum BillingProductKey {
 
 export type BillingProductMetadata = {
   __typename?: 'BillingProductMetadata';
-  applicationName?: Maybe<Scalars['String']['output']>;
-  applicationPricePer?: Maybe<Scalars['String']['output']>;
+  applicationPriceUniversalIdentifier?: Maybe<Scalars['String']['output']>;
+  applicationUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   isLegacy?: Maybe<Scalars['String']['output']>;
   planKey?: Maybe<BillingPlanKey>;
   productKey: BillingProductKey;

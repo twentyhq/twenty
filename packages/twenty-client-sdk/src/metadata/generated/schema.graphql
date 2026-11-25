@@ -868,6 +868,7 @@ type ApplicationPreferences {
 }
 
 type ApplicationRegistration {
+  billingPrices: [ApplicationBillingPrice!]
   createdAt: DateTime!
   galleryImagesUrls: [String!]!
   id: UUID!
@@ -1210,8 +1211,8 @@ enum BillingProductKey {
 }
 
 type BillingProductMetadata {
-  applicationName: String
-  applicationPricePer: String
+  applicationPriceUniversalIdentifier: String
+  applicationUniversalIdentifier: String
   isLegacy: String
   planKey: BillingPlanKey
   productKey: BillingProductKey!

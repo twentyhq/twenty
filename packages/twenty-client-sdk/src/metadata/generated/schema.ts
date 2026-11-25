@@ -739,6 +739,7 @@ export interface ApplicationPreferences {
 }
 
 export interface ApplicationRegistration {
+    billingPrices?: ApplicationBillingPrice[]
     createdAt: Scalars['DateTime']
     galleryImagesUrls: Scalars['String'][]
     id: Scalars['UUID']
@@ -1058,8 +1059,8 @@ export interface BillingProduct {
 export type BillingProductKey = 'APPLICATION' | 'BASE_PRODUCT' | 'RESOURCE_CREDIT'
 
 export interface BillingProductMetadata {
-    applicationName?: Scalars['String']
-    applicationPricePer?: Scalars['String']
+    applicationPriceUniversalIdentifier?: Scalars['String']
+    applicationUniversalIdentifier?: Scalars['String']
     isLegacy?: Scalars['String']
     planKey?: BillingPlanKey
     productKey: BillingProductKey
@@ -5432,6 +5433,7 @@ export interface ApplicationPreferencesGenqlSelection{
 }
 
 export interface ApplicationRegistrationGenqlSelection{
+    billingPrices?: ApplicationBillingPriceGenqlSelection
     createdAt?: boolean | number
     galleryImagesUrls?: boolean | number
     id?: boolean | number
@@ -5759,8 +5761,8 @@ export interface BillingProductGenqlSelection{
 }
 
 export interface BillingProductMetadataGenqlSelection{
-    applicationName?: boolean | number
-    applicationPricePer?: boolean | number
+    applicationPriceUniversalIdentifier?: boolean | number
+    applicationUniversalIdentifier?: boolean | number
     isLegacy?: boolean | number
     planKey?: boolean | number
     productKey?: boolean | number

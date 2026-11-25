@@ -58,7 +58,9 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { ApplicationBillingPriceDTO } from 'src/engine/core-modules/application/dtos/application-billing-price.dto';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
+import { toManifestBillingPriceDtos } from 'src/engine/core-modules/application/utils/to-manifest-billing-price-dtos.util';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
@@ -573,6 +575,16 @@ export class ApplicationRegistrationResolver {
   ): string | null {
     return this.applicationRegistrationAssetUrlService.buildLogoUrl(
       registration,
+    );
+  }
+
+  @ResolveField(() => [ApplicationBillingPriceDTO], { nullable: true })
+  @UseGuards(NoPermissionGuard)
+  billingPrices(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): ApplicationBillingPriceDTO[] {
+    return toManifestBillingPriceDtos(
+      registration.manifest?.application?.billing,
     );
   }
 

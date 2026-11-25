@@ -18,10 +18,10 @@ export class BillingProductMetadata {
   isLegacy?: string;
 
   @Field(() => String, { nullable: true })
-  applicationName?: string;
+  applicationUniversalIdentifier?: string;
 
   @Field(() => String, { nullable: true })
-  applicationPricePer?: string;
+  applicationPriceUniversalIdentifier?: string;
 
   workspaceCreditsPerSeat?: string;
 
