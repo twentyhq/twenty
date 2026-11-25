@@ -67,8 +67,11 @@ export { turnPlainDateToShiftedDateInSystemTimeZone } from './date/turnPlainDate
 export { deepMerge } from './deepMerge';
 export { canConnectedAccountPerformEmailOperation } from './email/canConnectedAccountPerformEmailOperation';
 export { formatEmailAddress } from './email/formatEmailAddress';
+export { getDomainFromEmail } from './email/getDomainFromEmail';
 export { getEmailProvidersForOperation } from './email/getEmailProvidersForOperation';
 export { getSendableEmailHandles } from './email/getSendableEmailHandles';
+export { isWorkDomain } from './email/isWorkDomain';
+export { isWorkEmail } from './email/isWorkEmail';
 export type { ParsedEmailAddress } from './email/parseEmailAddressList';
 export { parseEmailAddressList } from './email/parseEmailAddressList';
 export { CustomError } from './errors/CustomError';
@@ -89,7 +92,13 @@ export { parseExpressionDate } from './expression-date/parseExpressionDate';
 export { toExpressionDateTimeInUtc } from './expression-date/toExpressionDateTimeInUtc';
 export { truncateExpressionDate } from './expression-date/truncateExpressionDate';
 export { truncateTowardZero } from './expression-date/truncateTowardZero';
+export { compileExpression } from './expression/compileExpression';
+export { createExpressionEvaluator } from './expression/createExpressionEvaluator';
+export { getExpressionArgumentCountError } from './expression/getExpressionArgumentCountError';
 export { getExpressionSyntaxError } from './expression/getExpressionSyntaxError';
+export { parseExpressionInstructions } from './expression/parseExpressionInstructions';
+export { reduceExpressionNumbers } from './expression/reduceExpressionNumbers';
+export { roundExpressionNumber } from './expression/roundExpressionNumber';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
 export {
@@ -238,9 +247,16 @@ export {
 } from './filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 export { formatBytes } from './format/formatBytes';
 export { formatToShortNumber } from './format/formatToShortNumber';
+export { compileFormulaExpression } from './formula/compileFormulaExpression';
+export { getFieldMetadataFormulaBindings } from './formula/getFieldMetadataFormulaBindings';
+export { getFieldMetadataFormulaCurrencyCodeExpression } from './formula/getFieldMetadataFormulaCurrencyCodeExpression';
+export { getFieldMetadataFormulaExpression } from './formula/getFieldMetadataFormulaExpression';
+export { isFormulaFieldMetadata } from './formula/isFormulaFieldMetadata';
+export { isFormulaFieldMetadataType } from './formula/isFormulaFieldMetadataType';
 export { fromArrayToUniqueKeyRecord } from './from-array-to-unique-key-record.util';
 export { fromArrayToValuesByKeyRecord } from './fromArrayToValuesByKeyRecord.util';
 export { getUrlSafely } from './getUrlSafely';
+export { computeRelationWithArgumentsResponseKey } from './graphql/computeRelationWithArgumentsResponseKey';
 export {
   getNodeTypename,
   getConnectionTypename,
@@ -261,12 +277,14 @@ export { getAppPath } from './navigation/getAppPath';
 export { getSettingsPath } from './navigation/getSettingsPath';
 export { isBuiltInSectionKey } from './navigation/isBuiltInSectionKey';
 export { isNativePageKey } from './navigation/isNativePageKey';
+export { normalizeViewFieldLabel } from './normalizeViewFieldLabel';
 export { getPageLayoutWidgetHeightBehavior } from './pageLayout/getPageLayoutWidgetHeightBehavior';
 export { isFrontComponentAvailableInWidgetPicker } from './pageLayout/isFrontComponentAvailableInWidgetPicker';
 export { reindexWidgetsToVerticalListPositions } from './pageLayout/reindexWidgetsToVerticalListPositions';
 export type { WidgetWithHeightBehavior } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { sortWidgetsWithViewportFillingLast } from './pageLayout/sortWidgetsWithViewportFillingLast';
 export { parseJson } from './parseJson';
+export { isValidRelationScopeLimit } from './relation-scope/isValidRelationScopeLimit';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
@@ -372,6 +390,7 @@ export { typedObjectEntries } from './typed-object-entries';
 export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperationSignature';
 export { isNonEmptyString } from './typeguard/isNonEmptyString';
 export { isPlainObject } from './typeguard/isPlainObject';
+export { isRecordGqlFieldsRelationWithArguments } from './typeguard/isRecordGqlFieldsRelationWithArguments';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
@@ -405,6 +424,7 @@ export { getValidationRulePreviousValueFieldPath } from './validation-rule/getVa
 export { getValidationRuleRecordsFromDatabaseEvent } from './validation-rule/getValidationRuleRecordsFromDatabaseEvent';
 export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
 export { isValidationRuleDateInRelativeRange } from './validation-rule/isValidationRuleDateInRelativeRange';
+export { isValidationRuleFunctionName } from './validation-rule/isValidationRuleFunctionName';
 export { isValidationRulePreviousValuePath } from './validation-rule/isValidationRulePreviousValuePath';
 export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
 export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';

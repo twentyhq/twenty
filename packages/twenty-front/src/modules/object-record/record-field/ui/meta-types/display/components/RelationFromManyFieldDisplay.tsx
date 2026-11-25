@@ -5,6 +5,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
+import { RelationWithUnloadedRecordCount } from '@/object-record/record-field/ui/meta-types/display/components/RelationWithUnloadedRecordCount';
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
@@ -18,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const RelationFromManyFieldDisplay = () => {
   const { t } = useLingui();
 
-  const { fieldValue, fieldDefinition, generateRecordChipData } =
+  const { fieldValue, totalCount, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
@@ -53,6 +54,8 @@ export const RelationFromManyFieldDisplay = () => {
   if (!isDefined(relationObjectNameSingular)) {
     return null;
   }
+
+  const unloadedRecordCount = (totalCount ?? 0) - fieldValue.length;
 
   if (isDefined(junctionConfig)) {
     if (!isUsableJunctionConfig(junctionConfig)) {
@@ -89,42 +92,48 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     return (
+      <RelationWithUnloadedRecordCount
+        unloadedRecordCount={unloadedRecordCount}
+      >
+        <OverflowingList
+          overflowLabel={t`Show all items`}
+          showOverflowCount={isFocused}
+          maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
+        >
+          {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
+            <RecordChip
+              key={record.id}
+              objectNameSingular={objectMetadata.nameSingular}
+              record={record}
+              forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
+            />
+          ))}
+        </OverflowingList>
+      </RelationWithUnloadedRecordCount>
+    );
+  }
+
+  return (
+    <RelationWithUnloadedRecordCount unloadedRecordCount={unloadedRecordCount}>
       <OverflowingList
         overflowLabel={t`Show all items`}
         showOverflowCount={isFocused}
         maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
       >
-        {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
-          <RecordChip
-            key={record.id}
-            objectNameSingular={objectMetadata.nameSingular}
-            record={record}
-            forceDisableClick={disableChipClick}
-            triggerEvent={triggerEvent}
-          />
-        ))}
+        {fieldValue.filter(isDefined).map((record) => {
+          const recordChipData = generateRecordChipData(record);
+          return (
+            <RecordChip
+              key={recordChipData.recordId}
+              objectNameSingular={recordChipData.objectNameSingular}
+              record={record}
+              forceDisableClick={disableChipClick}
+              triggerEvent={triggerEvent}
+            />
+          );
+        })}
       </OverflowingList>
-    );
-  }
-
-  return (
-    <OverflowingList
-      overflowLabel={t`Show all items`}
-      showOverflowCount={isFocused}
-      maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
-    >
-      {fieldValue.filter(isDefined).map((record) => {
-        const recordChipData = generateRecordChipData(record);
-        return (
-          <RecordChip
-            key={recordChipData.recordId}
-            objectNameSingular={recordChipData.objectNameSingular}
-            record={record}
-            forceDisableClick={disableChipClick}
-            triggerEvent={triggerEvent}
-          />
-        );
-      })}
-    </OverflowingList>
+    </RelationWithUnloadedRecordCount>
   );
 };

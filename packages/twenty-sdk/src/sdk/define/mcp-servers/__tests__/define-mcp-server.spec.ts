@@ -50,4 +50,16 @@ describe('defineMcpServer', () => {
 
     expect(result.errors).toHaveLength(1);
   });
+
+  it('accepts a connection provider written as a universal identifier', () => {
+    const { connectionProvider, ...publicServerConfig } = baseValidConfig;
+
+    const result = defineMcpServer({
+      ...publicServerConfig,
+      connectionProviderUniversalIdentifier:
+        connectionProvider.universalIdentifier,
+    });
+
+    expect(result.errors).toEqual([]);
+  });
 });

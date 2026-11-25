@@ -106,6 +106,9 @@ const scheduleBot = ({
       endsAt: '2026-01-01T14:00:00.000Z',
       iCalUid: 'calendar-event-uid',
       conferenceLinkUrl: 'https://meet.example.com/customer-sync',
+      calendarChannelIds: [],
+      participants: [],
+      hasUnlistedParticipants: false,
       callRecorderPreference: 'ON',
     },
   });

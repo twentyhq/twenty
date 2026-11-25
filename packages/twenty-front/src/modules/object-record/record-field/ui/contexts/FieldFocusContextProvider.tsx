@@ -12,7 +12,11 @@ const STATIC_FOCUSED_VALUE = {
   setIsFocused: () => {},
 };
 
-export const FieldFocusContextProvider = ({ children }: any) => {
+export const FieldFocusContextProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (

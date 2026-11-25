@@ -24,6 +24,8 @@ export const fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath = ({
   thirdFieldMetadataUniversalIdentifier:
     relatedRecordPathManifest.thirdFieldMetadataUniversalIdentifier ?? null,
   isInherent: relatedRecordPathManifest.isInherent ?? false,
+  isActive: true,
+  overrides: null,
   createdAt: now,
   updatedAt: now,
 });

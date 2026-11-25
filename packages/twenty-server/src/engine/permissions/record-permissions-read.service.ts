@@ -53,6 +53,7 @@ import { canRelatedRecordPathExtendAccessToObject } from 'src/engine/permissions
 import { areRecordIdsReadableByPrincipals } from 'src/engine/permissions/internal/role/utils/are-record-ids-readable-by-principals.util';
 import { isRelatedRecordPathsEnabled } from 'src/engine/permissions/internal/related-record-path/utils/is-related-record-paths-enabled.util';
 import { canRelatedRecordPathExtendAccess } from 'src/engine/permissions/internal/related-record-path/utils/can-related-record-path-extend-access.util';
+import { type RelatedRecordPathUnreadableNestedField } from 'src/engine/permissions/internal/related-record-path/utils/find-related-record-path-unreadable-nested-fields.util';
 import { buildRecordShareOrPrivateRecordAccessSQLCondition } from 'src/engine/permissions/internal/combine/utils/build-record-share-or-private-record-access-sql-condition.util';
 import { combineSQLConditionOutcomesWithOr } from 'src/engine/permissions/internal/record-permission-repository/utils/combine-sql-condition-outcomes-with-or.util';
 import {
@@ -72,6 +73,7 @@ import { findAccessibleRecordIds } from 'src/engine/permissions/internal/combine
 import { type PrivateRecordState } from 'src/engine/permissions/internal/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/internal/record-share/types/record-share-grant.type';
 import { buildRecordReadRestrictions } from 'src/engine/permissions/internal/role/utils/build-record-read-restrictions.util';
+import { findRelationTargetRecordIdsByObjectMetadataId } from 'src/engine/permissions/internal/rls/utils/find-relation-target-record-ids-by-object-metadata-id.util';
 import { validateRlsPredicatesForRecords } from 'src/engine/permissions/internal/rls/utils/validate-rls-predicates-for-records.util';
 import { type RecordReadRestrictions } from 'src/engine/permissions/types/record-read-restrictions.type';
 
@@ -432,6 +434,46 @@ export class RecordPermissionsReadService {
     ]);
   }
 
+  async buildReadRecordsAccessSQLConditionsShowingSourceFields({
+    tableAlias,
+    sourceFields,
+    ...question
+  }: {
+    principals: PermissionsPrincipalsWithRolesContext;
+    objectMetadataId: string;
+    tableAlias: string;
+    sourceFields: RelatedRecordPathUnreadableNestedField[];
+  }): Promise<(SQLCondition | boolean)[]> {
+    const objectAccessRequest = await this.findObjectAccessRequestOrThrow({
+      ...question,
+      operationType: 'read',
+    });
+
+    if (!canRelatedRecordPathExtendAccess(objectAccessRequest)) {
+      return sourceFields.map(() => true);
+    }
+
+    const [
+      principalsAccessGroupCompactIds,
+      principalsRelatedRecordPathAccessGroupCompactIdsShowingFields,
+    ] = await Promise.all([
+      this.findPrincipalsAccessGroupCompactIds(objectAccessRequest),
+      this.accessGroupReadService.findPrincipalsRelatedRecordPathAccessGroupCompactIdsShowingFields(
+        { request: objectAccessRequest, sourceFields },
+      ),
+    ]);
+
+    return principalsRelatedRecordPathAccessGroupCompactIdsShowingFields.map(
+      (principalsRelatedRecordPathAccessGroupCompactIds) =>
+        this.buildRecordsAccessSQLCondition({
+          objectAccessRequest,
+          tableAlias,
+          principalsAccessGroupCompactIds,
+          principalsRelatedRecordPathAccessGroupCompactIds,
+        }),
+    );
+  }
+
   private async findPrincipalsAccessGroupCompactIds(
     objectAccessRequest: PermissionsObjectAccessRequest,
   ): Promise<number[] | undefined> {
@@ -512,6 +554,14 @@ export class RecordPermissionsReadService {
         operationType: 'create',
       });
 
+    await this.assertRelationTargetRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: records,
+      transactionScope,
+    });
+
     await validateRlsPredicatesForRecords({
       records,
       objectMetadata: flatObjectMetadata,
@@ -546,6 +596,20 @@ export class RecordPermissionsReadService {
         objectMetadataId,
         operationType: 'update',
       });
+
+    await this.assertRelationTargetRecordsReadableOrThrow({
+      principals,
+      metadataMaps,
+      flatObjectMetadata,
+      writtenColumns: updates.map(({ rawRecordBefore, setColumns }) =>
+        Object.fromEntries(
+          Object.entries(setColumns).filter(
+            ([columnName, value]) => value !== rawRecordBefore[columnName],
+          ),
+        ),
+      ),
+      transactionScope,
+    });
 
     if (
       !isMainRoleRestrictedByRlsRule({
@@ -613,6 +677,69 @@ export class RecordPermissionsReadService {
         'Updated record does not satisfy row-level security constraints of your current role',
         PermissionsExceptionCode.RLS_VALIDATION_FAILED,
       );
+    }
+  }
+
+  private async assertRelationTargetRecordsReadableOrThrow({
+    principals,
+    metadataMaps,
+    flatObjectMetadata,
+    writtenColumns,
+    transactionScope,
+  }: Pick<
+    PermissionsObjectAccessRequest,
+    'principals' | 'metadataMaps' | 'flatObjectMetadata'
+  > & {
+    writtenColumns: Record<string, unknown>[];
+    transactionScope: RecordPermissionTransactionScope;
+  }): Promise<void> {
+    const relationTargetRecordIdsByObjectMetadataId =
+      findRelationTargetRecordIdsByObjectMetadataId({
+        flatObjectMetadata,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+        writtenColumns,
+      });
+
+    for (const [
+      relationTargetObjectMetadataId,
+      relationTargetRecordIds,
+    ] of relationTargetRecordIdsByObjectMetadataId) {
+      const relationTargetFlatObjectMetadata = this.findFlatObjectMetadata({
+        metadataMaps,
+        objectMetadataId: relationTargetObjectMetadataId,
+      });
+
+      if (
+        !isDefined(relationTargetFlatObjectMetadata) ||
+        this.buildSelectableRecordsSQLCondition({
+          principals,
+          metadataMaps,
+          flatObjectMetadata: relationTargetFlatObjectMetadata,
+          operationType: 'read',
+        }) === true
+      ) {
+        continue;
+      }
+
+      const readableRecordIds = await this.findAccessibleRecordIds({
+        principals,
+        objectMetadataId: relationTargetObjectMetadataId,
+        operationType: 'read',
+        recordIds: [...relationTargetRecordIds],
+        transactionScope,
+      });
+
+      if (
+        [...relationTargetRecordIds].some(
+          (relationTargetRecordId) =>
+            !readableRecordIds.has(relationTargetRecordId),
+        )
+      ) {
+        throw new PermissionsException(
+          'Relation target record is not readable by your current role',
+          PermissionsExceptionCode.RLS_VALIDATION_FAILED,
+        );
+      }
     }
   }
 

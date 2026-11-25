@@ -10,7 +10,6 @@ import { Suspense, useEffect } from 'react';
 import { graphql, HttpResponse } from 'msw';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
-  AgentChatThreadConversationType,
   DEFAULT_AI_CHAT_ASSISTANT_PROFILE,
   type AiChatAssistantProfile,
   type ExtendedUIMessage,
@@ -19,7 +18,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatMessage } from '@/ai-chat/messages/components/AiChatMessage';
-import { AI_CHAT_MESSAGE_LIST_GAP } from '@/ai-chat/messages/constants/AiChatMessageListGap';
+import { CHAT_MESSAGE_LIST_GAP } from '@/chat/constants/ChatMessageListGap';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -43,7 +42,6 @@ import { type AiChatFileUIPart } from '@/ai-chat/types/AiChatFileUIPart';
 import { setAiChatThreadPermissions } from '@/ai-chat/threads/testing/setAiChatThreadPermissions';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { aiChatThreadDisplayedMessagesFamilyState } from '@/ai-chat/states/display/aiChatThreadDisplayedMessagesFamilyState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
@@ -70,7 +68,7 @@ const StyledConversationContainer = styled.div`
 const StyledMessageListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${AI_CHAT_MESSAGE_LIST_GAP};
+  gap: ${CHAT_MESSAGE_LIST_GAP};
   max-width: 700px;
   padding: 24px;
 `;
@@ -852,36 +850,12 @@ export const MultiplayerConversation: Story = {
     const selectedReaction = canvas.getByRole('button', { name: '👍 by You' });
     await expect(selectedReaction).toBeVisible();
     selectedReaction.focus();
-    await userEvent.tab({ shift: true });
-    await userEvent.tab({ shift: true });
+    await userEvent.tab();
     const addReactionButton = canvas.getAllByRole('button', {
       name: 'Add reaction',
     })[1];
     await expect(addReactionButton).toHaveFocus();
     await waitFor(() => expect(addReactionButton).toBeVisible());
-
-    const threadId = CONVERSATION_STORY_THREAD_ID;
-    const threadRecordAtom = recordStoreFamilyState.atomFamily(threadId);
-    const previousThread = jotaiStore.get(threadRecordAtom);
-
-    try {
-      jotaiStore.set(threadRecordAtom, {
-        ...previousThread,
-        id: threadId,
-        __typename: 'AgentChatThread',
-        conversationType: AgentChatThreadConversationType.DIRECT_MESSAGE,
-      });
-      await waitFor(() =>
-        expect(
-          canvas.queryByRole('button', { name: 'Add reaction' }),
-        ).not.toBeInTheDocument(),
-      );
-      await expect(
-        canvas.queryByRole('button', { name: '👍 by You' }),
-      ).not.toBeInTheDocument();
-    } finally {
-      jotaiStore.set(threadRecordAtom, previousThread);
-    }
   },
 };
 
@@ -985,8 +959,13 @@ export const GroupedMessages: Story = {
       secondQuickRow.getBoundingClientRect().top -
         firstQuickRow.getBoundingClientRect().bottom,
     ).toBe(2);
-    await expect(canvas.getAllByRole('time')).toHaveLength(4);
+    await expect(canvas.getAllByRole('time')).toHaveLength(6);
     await expect(within(lastQuickRow).getByRole('time')).toBeVisible();
+    await expect(
+      within(getMessageRow('It moved to my pipeline last week')).getByRole(
+        'time',
+      ),
+    ).toBeVisible();
     await expect(lastQuickRow.getBoundingClientRect().height).toBe(
       secondQuickRow.getBoundingClientRect().height,
     );
@@ -1008,6 +987,9 @@ export const GroupedMessages: Story = {
     await waitFor(() => expect(copyButton).toBeVisible());
     await expect(copyButton.getBoundingClientRect().right).toBeLessThanOrEqual(
       canvas.getByText('Who owns it now?').getBoundingClientRect().left,
+    );
+    await expect(copyButton.getBoundingClientRect().top).toBeLessThan(
+      secondQuickRow.getBoundingClientRect().top,
     );
   },
 };

@@ -143,47 +143,74 @@ export class AccessGroupSyncListener {
     }
   }
 
-  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
+  async handleRecordUpdateReachedByWorkspaceMemberRelation({
+    workspaceId,
+    objectMetadata,
+    events,
+  }: Pick<
+    WorkspaceEventBatch<ObjectRecordUpdateEvent>,
+    'workspaceId' | 'objectMetadata' | 'events'
+  >): Promise<void> {
+    const fieldNames = await this.findWorkspaceMemberRelationFieldNames({
+      workspaceId,
+      objectMetadataId: objectMetadata.id,
+    });
+    const isWorkspaceMemberRelationFieldUpdated = events.some(
+      ({ properties }) =>
+        properties.updatedFields.some((updatedField) =>
+          fieldNames.includes(updatedField),
+        ),
+    );
+
+    if (!isWorkspaceMemberRelationFieldUpdated) {
+      return;
+    }
+
+    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
+  }
+
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   @OnDatabaseBatchEvent('*', DatabaseEventAction.RESTORED)
   async handleRecordEventReachedByWorkspaceMemberRelation({
     workspaceId,
     objectMetadata,
-    events,
   }: Pick<
-    WorkspaceEventBatch<Partial<ObjectRecordUpdateEvent>>,
-    'workspaceId' | 'objectMetadata' | 'events'
+    WorkspaceEventBatch<never>,
+    'workspaceId' | 'objectMetadata'
   >): Promise<void> {
+    const fieldNames = await this.findWorkspaceMemberRelationFieldNames({
+      workspaceId,
+      objectMetadataId: objectMetadata.id,
+    });
+
+    if (fieldNames.length === 0) {
+      return;
+    }
+
+    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
+  }
+
+  private async findWorkspaceMemberRelationFieldNames({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<string[]> {
     const { rolesPermissions, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
         'flatFieldMetadataMaps',
       ]);
-    const fieldNames = findWorkspaceMemberRelationFieldNamesOfObject({
+
+    return findWorkspaceMemberRelationFieldNamesOfObject({
       rolesPermissions,
       flatFieldMetadataMaps,
-      objectMetadataId: objectMetadata.id,
+      objectMetadataId,
     });
-    const updatedFields = events.flatMap(
-      ({ properties }) => properties?.updatedFields ?? [],
-    );
-    const isUpdateEvent = events.some(({ properties }) =>
-      isDefined(properties?.updatedFields),
-    );
-
-    if (
-      fieldNames.length === 0 ||
-      (isUpdateEvent &&
-        !updatedFields.some((updatedField) =>
-          fieldNames.includes(updatedField),
-        ))
-    ) {
-      return;
-    }
-
-    await this.refreshWorkspaceMemberRelationValuesAndScheduleSync(workspaceId);
   }
 
   // RLS reads these values whether or not access groups are enabled

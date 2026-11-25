@@ -1,4 +1,7 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import {
+  getFieldPermissionUniversalIdentifier,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
@@ -7,12 +10,17 @@ import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/app
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/types/metadata-to-flat-entity-maps-key.type';
 import {
+  API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX,
   WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
 } from 'src/engine/permissions/workspace-member-individual-role/constants/workspace-member-individual-role.constant';
-import { type WorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
+import {
+  type UnreadableNestedFieldDeclaration,
+  type WorkspaceMemberIndividualRole,
+} from 'src/engine/permissions/workspace-member-individual-role/types/workspace-member-individual-role.type';
 import { getWorkspaceMemberIndividualRoleUniversalIdentifier } from 'src/engine/permissions/workspace-member-individual-role/utils/get-workspace-member-individual-role-universal-identifier.util';
 import { isWorkspaceMemberIndividualRole } from 'src/engine/permissions/workspace-member-individual-role/utils/is-workspace-member-individual-role.util';
+import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 
@@ -35,6 +43,69 @@ type WorkspaceMemberIndividualRoleUniversalFlatEntityMaps = Pick<
   AllUniversalFlatEntityMaps,
   WorkspaceMemberIndividualRoleFlatEntityMapsKey
 >;
+
+const withUnreadableNestedFields = ({
+  fieldPermissions,
+  unreadableNestedFields = [],
+  applicationUniversalIdentifier,
+  roleUniversalIdentifier,
+  now,
+}: {
+  fieldPermissions: UniversalFlatFieldPermission[];
+  unreadableNestedFields?: UnreadableNestedFieldDeclaration[];
+  applicationUniversalIdentifier: string;
+  roleUniversalIdentifier: string;
+  now: string;
+}): UniversalFlatFieldPermission[] => {
+  const nestedFieldPermissions = unreadableNestedFields.map(
+    ({
+      objectUniversalIdentifier,
+      fieldUniversalIdentifier,
+      sourceFieldUniversalIdentifier,
+    }): UniversalFlatFieldPermission => ({
+      universalIdentifier: getFieldPermissionUniversalIdentifier({
+        applicationUniversalIdentifier,
+        roleUniversalIdentifier,
+        fieldUniversalIdentifier,
+        rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+      }),
+      applicationUniversalIdentifier,
+      roleUniversalIdentifier,
+      objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+      fieldMetadataUniversalIdentifier: fieldUniversalIdentifier,
+      rowLevelPermissionPredicateGroupUniversalIdentifier: null,
+      rowLevelPermissionRuleUniversalIdentifier: null,
+      sourceFieldMetadataUniversalIdentifier: sourceFieldUniversalIdentifier,
+      canReadFieldValue: null,
+      canUpdateFieldValue: null,
+      createdAt: now,
+      updatedAt: now,
+    }),
+  );
+  const findNestedFieldPermission = ({
+    universalIdentifier,
+  }: UniversalFlatFieldPermission) =>
+    nestedFieldPermissions.find(
+      (nestedFieldPermission) =>
+        nestedFieldPermission.universalIdentifier === universalIdentifier,
+    );
+
+  return [
+    ...fieldPermissions.map((fieldPermission) => ({
+      ...fieldPermission,
+      sourceFieldMetadataUniversalIdentifier:
+        findNestedFieldPermission(fieldPermission)
+          ?.sourceFieldMetadataUniversalIdentifier ?? null,
+    })),
+    ...nestedFieldPermissions.filter(
+      (nestedFieldPermission) =>
+        !fieldPermissions.some(
+          ({ universalIdentifier }) =>
+            universalIdentifier === nestedFieldPermission.universalIdentifier,
+        ),
+    ),
+  ];
+};
 
 const buildUniversalFlatEntityMaps = <
   TUniversalFlatEntity extends { universalIdentifier: string },
@@ -141,13 +212,21 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
   };
 
   const desiredEntities = individualRoles.map(
-    ({ userWorkspaceId, recordsPermissions }) => {
+    ({ holder, recordsPermissions, unreadableNestedFields }) => {
       const roleUniversalIdentifier =
-        getWorkspaceMemberIndividualRoleUniversalIdentifier(userWorkspaceId);
+        getWorkspaceMemberIndividualRoleUniversalIdentifier({ holder });
       const roleManifest: RoleManifest = {
         universalIdentifier: roleUniversalIdentifier,
-        label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${userWorkspaceId}`,
-        description: 'Permissions of one workspace member',
+        // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+        label: `${WORKSPACE_MEMBER_INDIVIDUAL_ROLE_LABEL_PREFIX}${
+          holder.type === 'apiKeys'
+            ? API_KEYS_INDIVIDUAL_ROLE_HOLDER_NAME
+            : holder.userWorkspaceId
+        }`,
+        description:
+          holder.type === 'apiKeys'
+            ? 'Permissions of API keys'
+            : 'Permissions of one workspace member',
         icon: 'IconLock',
         canBeAssignedToUsers: false,
         canBeAssignedToAgents: false,
@@ -160,30 +239,22 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
           workspaceCustomApplicationUniversalIdentifier,
         now,
       };
-      const roleTargetUniversalIdentifier =
-        existingFlatRoleTargets.find(
-          (flatRoleTarget) =>
-            flatRoleTarget.roleUniversalIdentifier ===
-              roleUniversalIdentifier &&
-            flatRoleTarget.userWorkspaceId === userWorkspaceId,
-        )?.universalIdentifier ??
-        v5(
-          `${roleUniversalIdentifier}:roleTarget`,
-          WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-        );
+      const recordsPermissionsEntities =
+        fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(converterArgs);
+      const buildRoleTarget = (userWorkspaceId: string) => {
+        const roleTargetUniversalIdentifier =
+          existingFlatRoleTargets.find(
+            (flatRoleTarget) =>
+              flatRoleTarget.roleUniversalIdentifier ===
+                roleUniversalIdentifier &&
+              flatRoleTarget.userWorkspaceId === userWorkspaceId,
+          )?.universalIdentifier ??
+          v5(
+            `${roleUniversalIdentifier}:roleTarget`,
+            WORKSPACE_MEMBER_INDIVIDUAL_ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
+          );
 
-      return {
-        role: {
-          ...fromRoleManifestToUniversalFlatRole(converterArgs),
-          isEditable: false,
-          isSystemSideEffect: true,
-          createdAt: findCreatedAt({
-            existingUniversalFlatEntities: existingFlatRoles,
-            universalIdentifier: roleUniversalIdentifier,
-            now,
-          }),
-        },
-        roleTarget: {
+        return {
           universalIdentifier: roleTargetUniversalIdentifier,
           applicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
@@ -200,10 +271,34 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
             now,
           }),
           updatedAt: now,
+        };
+      };
+
+      return {
+        role: {
+          ...fromRoleManifestToUniversalFlatRole(converterArgs),
+          isEditable: false,
+          isSystemSideEffect: true,
+          createdAt: findCreatedAt({
+            existingUniversalFlatEntities: existingFlatRoles,
+            universalIdentifier: roleUniversalIdentifier,
+            now,
+          }),
         },
-        ...fromRoleManifestToUniversalFlatRecordsPermissionsOrThrow(
-          converterArgs,
-        ),
+        // TODO(@charlesBochet): remove the API key channel visibility exemption after 2026-11-30
+        roleTarget:
+          holder.type === 'userWorkspace'
+            ? buildRoleTarget(holder.userWorkspaceId)
+            : undefined,
+        ...recordsPermissionsEntities,
+        fieldPermissions: withUnreadableNestedFields({
+          fieldPermissions: recordsPermissionsEntities.fieldPermissions,
+          unreadableNestedFields,
+          applicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          roleUniversalIdentifier,
+          now,
+        }),
       };
     },
   );
@@ -213,7 +308,7 @@ export const buildWorkspaceMemberIndividualRolesFromToFlatEntityMaps = ({
       desiredEntities.map(({ role }) => role),
     ),
     flatRoleTargetMaps: buildUniversalFlatEntityMaps(
-      desiredEntities.map(({ roleTarget }) => roleTarget),
+      desiredEntities.map(({ roleTarget }) => roleTarget).filter(isDefined),
     ),
     flatObjectPermissionMaps: buildUniversalFlatEntityMaps(
       desiredEntities.flatMap(({ objectPermissions }) => objectPermissions),

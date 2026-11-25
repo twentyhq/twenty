@@ -11,6 +11,11 @@ input ActivateWorkspaceInput {
   displayName: String
 }
 
+input AddAgentChatThreadParticipantsInput {
+  threadId: UUID!
+  workspaceMemberIds: [UUID!]!
+}
+
 input AddQuerySubscriptionInput {
   eventStreamId: String!
   operationSignature: JSON!
@@ -37,6 +42,7 @@ type Agent {
   responseFormat: JSON
   roleId: UUID
   triggers: [JSON!]!
+  universalIdentifier: UUID!
   updatedAt: DateTime!
 }
 
@@ -574,6 +580,7 @@ type Application {
 
 type ApplicationAuthorization {
   applicationId: UUID!
+  applicationLogoUrl: String
   applicationName: String!
   applicationUniversalIdentifier: String
   createdAt: DateTime!
@@ -584,6 +591,33 @@ type ApplicationAuthorization {
   scopes: [String!]
   userId: UUID!
   workspaceId: UUID!
+}
+
+type ApplicationBillingPrice {
+  amountCents: Int!
+  billingPeriod: ApplicationBillingPricePeriod!
+  currency: ApplicationBillingPriceCurrency!
+  label: String!
+  per: ApplicationBillingPriceUnit
+  type: ApplicationBillingPriceType!
+  universalIdentifier: String!
+}
+
+enum ApplicationBillingPriceCurrency {
+  USD
+}
+
+enum ApplicationBillingPricePeriod {
+  MONTHLY
+}
+
+enum ApplicationBillingPriceType {
+  RECURRING
+}
+
+enum ApplicationBillingPriceUnit {
+  CONNECTED_ACCOUNT
+  WORKSPACE_MEMBER
 }
 
 type ApplicationCapabilityGrant {
@@ -969,7 +1003,7 @@ type AutocompleteResult {
 type AvailableWorkspace {
   displayName: String
   id: UUID!
-  inviteHash: String
+  inviteHash: String @deprecated(reason: "Always null. Will be removed.")
   loginToken: String
   logo: String
   personalInviteToken: String
@@ -1308,6 +1342,31 @@ enum CalendarChannelVisibility {
 
 type CalendarConfiguration {
   configurationType: WidgetConfigurationType!
+}
+
+enum CalendarEventRecurrenceFrequency {
+  DAILY
+  MONTHLY
+  WEEKLY
+  YEARLY
+}
+
+input CalendarEventRecurrenceInput {
+  daysOfWeek: [CalendarEventRecurrenceWeekday!]
+  endDate: String
+  endOccurrenceCount: Int
+  frequency: CalendarEventRecurrenceFrequency!
+  interval: Int
+}
+
+enum CalendarEventRecurrenceWeekday {
+  FRIDAY
+  MONDAY
+  SATURDAY
+  SUNDAY
+  THURSDAY
+  TUESDAY
+  WEDNESDAY
 }
 
 type CallRecordingSummaryConfiguration {
@@ -1663,6 +1722,7 @@ input CreateCalendarEventInput {
   endsAt: String!
   isFullDay: Boolean
   location: String
+  recurrence: CalendarEventRecurrenceInput
   sendInvitations: Boolean
   startsAt: String!
   timeZone: String
@@ -1854,6 +1914,7 @@ input CreatePageLayoutTabInput {
 }
 
 input CreatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   configuration: JSON!
   objectMetadataId: UUID
   pageLayoutTabId: UUID!
@@ -1947,7 +2008,9 @@ input CreateViewFieldInput {
   id: UUID
   isCanonical: Boolean = true
   isVisible: Boolean = true
+  label: String
   position: Float = 0
+  relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float = 0
   viewFieldGroupId: UUID
@@ -1991,6 +2054,7 @@ input CreateViewInput {
   icon: String!
   id: UUID
   isCompact: Boolean = false
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -2004,10 +2068,11 @@ input CreateViewInput {
   """
   openRecordIn: ViewOpenRecordIn = SIDE_PANEL
   position: Float = 0
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean = false
   shouldHideEmptyGroups: Boolean = false
   type: ViewType = TABLE
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input CreateViewSortInput {
@@ -2305,6 +2370,7 @@ enum EngineComponentKey {
   GO_TO_WORKFLOWS
   HIDE_DELETED_RECORDS
   IMPORT_RECORDS
+  MANAGE_AI_CHAT_PARTICIPANTS
   MARK_AI_CHAT_AS_DONE
   MARK_AI_CHAT_AS_READ
   MARK_AI_CHAT_AS_UNREAD
@@ -2496,11 +2562,14 @@ enum FeatureFlagKey {
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CALENDAR_INTERNAL_EVENTS_FILTER_ENABLED
   IS_CALENDAR_RECURRING_EVENT_HORIZON_ENABLED
+  IS_CHANNEL_VISIBILITY_ENFORCED_ON_API_KEYS
   IS_CHANNEL_VISIBILITY_RLS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_CREATE_RECORDS_PERMISSION_ENABLED
   IS_CUSTOMIZABLE_SIDEBAR_ENABLED
+  IS_FORMULA_FIELD_ENABLED
   IS_GETTING_STARTED_ENABLED
+  IS_INBOX_OBJECT_NAMING_ENABLED
   IS_INTERNAL_IMPORT_COLUMN_ENABLED
   IS_LOOKUP_COLUMNS_ENABLED
   IS_MCP_SERVERS_ENABLED
@@ -2511,6 +2580,7 @@ enum FeatureFlagKey {
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
+  IS_WIDGET_CONDITIONAL_AVAILABILITY_ENABLED
 }
 
 type Field {
@@ -3208,6 +3278,7 @@ type MarketplaceApp {
 type MarketplaceAppDetail {
   aboutDescription: String
   author: String
+  billingPrices: [ApplicationBillingPrice!]!
   billsCredits: Boolean!
   category: String
   connectUrl: String
@@ -3528,6 +3599,7 @@ type Mutation {
   activateSkill(id: UUID!): Skill!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   addAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
+  addAgentChatThreadParticipants(input: AddAgentChatThreadParticipantsInput!): [UUID!]!
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   approveApplicationIframeMediaPermissions(applicationId: UUID!, approvedIframeMediaPermissions: [IframeMediaPermissionInput!]!): Application!
   archiveInboxThread(input: ArchiveInboxThreadInput!): Boolean!
@@ -3771,7 +3843,6 @@ type Mutation {
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
-  updateFocusedTab(input: UpdateFocusedTabInput!): Boolean!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
   updateInboxNotificationSettings(input: UpdateInboxNotificationSettingsInput!): UserWorkspace!
@@ -3796,7 +3867,9 @@ type Mutation {
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWithTabsAndWidgets(id: String!, input: UpdatePageLayoutWithTabsInput!): PageLayout!
   updatePasswordViaResetToken(newPassword: String!, passwordResetToken: String!): InvalidatePassword!
+  updateRelatedRecordPath(input: UpdateRelatedRecordPathInput!): RelatedRecordPath!
   updateSkill(input: UpdateSkillInput!): Skill!
+  updateTabPresence(input: UpdateTabPresenceInput!): Boolean!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
@@ -3862,6 +3935,7 @@ type NavigationMenuItem {
   targetRecordId: UUID
   targetRecordIdentifier: RecordIdentifier
   type: NavigationMenuItemType!
+  universalIdentifier: UUID
   updatedAt: DateTime!
   userWorkspaceId: UUID
   viewId: UUID
@@ -4161,8 +4235,9 @@ type PageLayoutWidget {
   applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
   applicationName: String
-  conditionalAvailabilityExpression: String
-  conditionalDisplay: JSON
+  conditionalAvailability: JSON
+  conditionalAvailabilityExpression: String @deprecated(reason: "Use conditionalAvailability instead")
+  conditionalDisplay: JSON @deprecated(reason: "Use conditionalAvailability instead")
   configuration: WidgetConfiguration!
   createdAt: DateTime!
   deletedAt: DateTime
@@ -4545,6 +4620,7 @@ type Query {
     """Limit or page results."""
     paging: CursorPaging! = {first: 10}
   ): ObjectConnection!
+  onlineWorkspaceMemberIds: [UUID!]!
   pieChartData(input: PieChartDataInput!): PieChartData!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
@@ -4670,6 +4746,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isActive: Boolean!
   isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
@@ -4768,6 +4845,8 @@ type RowLevelPermissionPredicate {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: String
+  workspaceMemberRelationFilterFieldMetadataId: String
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -4848,6 +4927,8 @@ input RowLevelPermissionRulePredicateInput {
   value: JSON
   workspaceMemberFieldMetadataId: String
   workspaceMemberRelationFieldMetadataId: UUID
+  workspaceMemberRelationFilterFieldMetadataId: UUID
+  workspaceMemberRelationFilterValues: [String!]
   workspaceMemberSubFieldName: String
 }
 
@@ -5199,6 +5280,11 @@ input SyncAppMessageFoldersInput {
   messageChannelId: UUID!
 }
 
+enum TabPresenceStatus {
+  FOCUSED
+  OPEN
+}
+
 type TasksConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -5496,11 +5582,6 @@ input UpdateFieldInput {
   universalIdentifier: String
 }
 
-input UpdateFocusedTabInput {
-  isFocused: Boolean!
-  tabId: String!
-}
-
 input UpdateFrontComponentInput {
   """The id of the front component to update"""
   id: UUID!
@@ -5672,6 +5753,7 @@ input UpdatePageLayoutTabWithWidgetsInput {
 }
 
 input UpdatePageLayoutWidgetInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5684,6 +5766,7 @@ input UpdatePageLayoutWidgetInput {
 }
 
 input UpdatePageLayoutWidgetWithIdInput {
+  conditionalAvailability: JSON
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: JSON
@@ -5701,6 +5784,12 @@ input UpdatePageLayoutWithTabsInput {
   objectMetadataId: UUID
   tabs: [UpdatePageLayoutTabWithWidgetsInput!]!
   type: PageLayoutType!
+}
+
+input UpdateRelatedRecordPathInput {
+  id: UUID!
+  isActive: Boolean
+  isInherent: Boolean
 }
 
 input UpdateRoleInput {
@@ -5733,6 +5822,11 @@ input UpdateSkillInput {
   isActive: Boolean
   label: String
   name: String
+}
+
+input UpdateTabPresenceInput {
+  status: TabPresenceStatus!
+  tabId: String!
 }
 
 input UpdateTimelineActivityTypeInput {
@@ -5779,7 +5873,6 @@ input UpdateViewFieldGroupInput {
 }
 
 input UpdateViewFieldGroupInputUpdates {
-  deletedAt: String @deprecated(reason: "Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.")
   isVisible: Boolean
   name: String
   position: Float
@@ -5796,7 +5889,9 @@ input UpdateViewFieldInput {
 input UpdateViewFieldInputUpdates {
   aggregateOperation: AggregateOperations
   isVisible: Boolean
+  label: String
   position: Float
+  relationScope: ViewFieldRelationScopeInput
   relationTargetFieldMetadataId: UUID
   size: Float
   viewFieldGroupId: UUID
@@ -5852,6 +5947,7 @@ input UpdateViewInput {
   icon: String
   id: UUID
   isCompact: Boolean
+  isPrivate: Boolean
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
@@ -5867,7 +5963,7 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
   translations: [MetadataTranslationOverrideInput!]
   type: ViewType
-  visibility: ViewVisibility
+  visibility: ViewVisibility @deprecated(reason: "Use isPrivate instead")
 }
 
 input UpdateViewSortInput {
@@ -6396,13 +6492,13 @@ type View {
   calendarLayout: ViewCalendarLayout
   createdAt: DateTime!
   createdByUserWorkspaceId: UUID
-  deletedAt: DateTime
   groupLoadLimit: Int
   icon: String!
   id: UUID!
   isActive: Boolean!
   isCompact: Boolean!
   isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isPrivate: Boolean!
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -6413,6 +6509,7 @@ type View {
   objectMetadataId: UUID!
   openRecordIn: ViewOpenRecordIn! @deprecated(reason: "Superseded by objectMetadata.openRecordIn and the workspace member preference; kept one release for API compatibility, no longer read by the frontend.")
   position: Float!
+  presetFilter: ViewPresetFilter
   shouldDisplayGroupsAsTabs: Boolean
   shouldHideEmptyGroups: Boolean!
   type: ViewType!
@@ -6424,7 +6521,7 @@ type View {
   viewFilters: [ViewFilter!]!
   viewGroups: [ViewGroup!]!
   viewSorts: [ViewSort!]!
-  visibility: ViewVisibility!
+  visibility: ViewVisibility! @deprecated(reason: "Use isPrivate instead")
   workspaceId: UUID!
 }
 
@@ -6442,7 +6539,6 @@ type ViewField {
   aggregateOperation: AggregateOperations
   applicationId: UUID!
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   isActive: Boolean!
@@ -6450,7 +6546,9 @@ type ViewField {
   isOverridden: Boolean @deprecated(reason: "isOverridden is deprecated")
   isSystemSideEffect: Boolean!
   isVisible: Boolean!
+  label: String
   position: Float!
+  relationScope: ViewFieldRelationScope
   relationTargetFieldMetadataId: UUID
   size: Float!
   universalIdentifier: UUID!
@@ -6462,7 +6560,6 @@ type ViewField {
 
 type ViewFieldGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   isActive: Boolean!
   isOverridden: Boolean! @deprecated(reason: "isOverridden is deprecated")
@@ -6475,9 +6572,70 @@ type ViewFieldGroup {
   workspaceId: UUID!
 }
 
+type ViewFieldRelationScope {
+  aggregateOperation: AggregateOperations
+  filterGroups: [ViewFieldRelationScopeFilterGroup!]!
+  filters: [ViewFieldRelationScopeFilter!]!
+  limit: Int
+  sorts: [ViewFieldRelationScopeSort!]!
+}
+
+type ViewFieldRelationScopeFilter {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+type ViewFieldRelationScopeFilterGroup {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterGroupInput {
+  id: UUID!
+  logicalOperator: ViewFilterGroupLogicalOperator!
+  parentFilterGroupId: UUID
+}
+
+input ViewFieldRelationScopeFilterInput {
+  fieldMetadataId: UUID!
+  filterGroupId: UUID
+  id: UUID!
+  operand: ViewFilterOperand!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+  value: JSON!
+}
+
+input ViewFieldRelationScopeInput {
+  aggregateOperation: AggregateOperations
+  filterGroups: [ViewFieldRelationScopeFilterGroupInput!]! = []
+  filters: [ViewFieldRelationScopeFilterInput!]! = []
+  limit: Int
+  sorts: [ViewFieldRelationScopeSortInput!]! = []
+}
+
+type ViewFieldRelationScopeSort {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+}
+
+input ViewFieldRelationScopeSortInput {
+  direction: ViewSortDirection!
+  fieldMetadataId: UUID!
+  relationTargetFieldMetadataId: UUID
+  subFieldName: String
+}
+
 type ViewFilter {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldMetadataId: UUID!
   id: UUID!
   operand: ViewFilterOperand!
@@ -6493,7 +6651,6 @@ type ViewFilter {
 
 type ViewFilterGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   id: UUID!
   logicalOperator: ViewFilterGroupLogicalOperator!
   parentViewFilterGroupId: UUID
@@ -6530,7 +6687,6 @@ enum ViewFilterOperand {
 
 type ViewGroup {
   createdAt: DateTime!
-  deletedAt: DateTime
   fieldValue: String!
   id: UUID!
   isVisible: Boolean!
@@ -6549,9 +6705,18 @@ enum ViewOpenRecordIn {
   SIDE_PANEL
 }
 
+enum ViewPresetFilter {
+  INBOX_CHANNEL_DONE
+  INBOX_CHANNEL_OPEN
+  INBOX_CHANNEL_SNOOZED
+  INBOX_DONE
+  INBOX_MENTIONS
+  INBOX_OPEN
+  INBOX_SNOOZED
+}
+
 type ViewSort {
   createdAt: DateTime!
-  deletedAt: DateTime
   direction: ViewSortDirection!
   fieldMetadataId: UUID!
   id: UUID!
@@ -6571,6 +6736,7 @@ enum ViewType {
   CALENDAR
   CALENDAR_WIDGET
   FIELDS_WIDGET
+  INBOX
   KANBAN
   KANBAN_WIDGET
   LIST
