@@ -70,6 +70,7 @@ type ProgramHeroProps = {
   actions: ReactNode;
   backdrop?: ReactNode;
   visual?: ReactNode;
+  scheme?: 'light' | 'muted';
 };
 
 export function ProgramHero({
@@ -78,6 +79,7 @@ export function ProgramHero({
   actions,
   backdrop,
   visual,
+  scheme = 'muted',
 }: ProgramHeroProps) {
   const i18n = getServerI18n();
 
@@ -93,7 +95,7 @@ export function ProgramHero({
       }
       fullBleedBackground
       rhythm="hero"
-      scheme="muted"
+      scheme={scheme}
     >
       <IntroStack data-halftone-exclude="">
         <HeadingPair>

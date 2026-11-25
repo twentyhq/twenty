@@ -57,7 +57,7 @@ export default async function IntegratorProgramPage({
           locale,
         )}
       />
-      <Menu communityStats={communityStats} scheme="muted" />
+      <Menu communityStats={communityStats} scheme="light" />
       <main>
         <ProgramHero
           actions={
@@ -72,6 +72,7 @@ export default async function IntegratorProgramPage({
           }
           body={msg`Implement Twenty for your clients. Earn 20% on every client you bring, every month for a year.`}
           heading={msg`Become a\n*Twenty integrator*`}
+          scheme="light"
           visual={<IntegratorClientsScene />}
         />
         <IntegratorLevelCards levels={PARTNER_LEVELS} />

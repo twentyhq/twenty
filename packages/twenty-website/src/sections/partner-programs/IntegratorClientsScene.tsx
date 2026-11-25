@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -31,9 +32,9 @@ const SEAT_PRICE_USD = 39;
 const COMMISSION_SHARE = 0.2;
 
 const CLIENTS = [
-  { name: 'Acme Corp', initials: 'AC', seats: 40, x: -4.6 },
-  { name: 'Northwind Studio', initials: 'NS', seats: 25, x: 0 },
-  { name: 'Globex', initials: 'GL', seats: 10, x: 4.6 },
+  { name: 'Acme Corp', initials: 'AC', seats: 40 },
+  { name: 'Northwind Studio', initials: 'NS', seats: 25 },
+  { name: 'Globex', initials: 'GL', seats: 10 },
 ];
 
 const LAYERS = [
@@ -56,19 +57,23 @@ const USD = new Intl.NumberFormat('en-US', {
   style: 'currency',
 });
 
-const LAYER_SIZE = 2.5;
-const LAYER_HEIGHT = 0.34;
-const LAYER_GAP = 0.12;
+// One client at a time: its workspace plate lands, then the four pieces of
+// work, side by side and large enough to read as what they are; the client
+// goes live, its 20% joins the total, and the next client takes its place.
+const PLATE_WIDTH = 8.6;
+const PLATE_DEPTH = 1.8;
+const PLATE_HEIGHT = 0.22;
+const PIECE_HEIGHT = 1.7;
+const PIECE_X: readonly number[] = [-3, -1, 1, 3];
 const DROP_HEIGHT = 2.6;
 
-// One cycle: each client's layers land in turn, the client goes live, then
-// the three hold before the workspaces clear and it starts over.
+const PLATE_LEAD_MS = 300;
 const LAYER_MS = 850;
 const DROP_MS = 600;
-const CLIENT_MS = LAYERS.length * LAYER_MS + 900;
-const HOLD_MS = 3600;
+const LIVE_MS = 1900;
 const CLEAR_MS = 500;
-const CYCLE_MS = CLIENTS.length * CLIENT_MS + HOLD_MS;
+const CLIENT_MS = PLATE_LEAD_MS + LAYERS.length * LAYER_MS + LIVE_MS + CLEAR_MS;
+const CYCLE_MS = CLIENTS.length * CLIENT_MS;
 
 const easeOutBack = (t: number) => {
   const clamped = Math.min(Math.max(t, 0), 1);
@@ -80,6 +85,103 @@ const easeOutBack = (t: number) => {
   );
 };
 const ease = (t: number) => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
+
+// An extruded outline standing up, facing the camera.
+const extrude = (shapes: THREE.Shape[], depth = 0.28) =>
+  new THREE.ExtrudeGeometry(shapes, {
+    bevelEnabled: true,
+    bevelSegments: 2,
+    bevelSize: 0.03,
+    bevelThickness: 0.03,
+    curveSegments: 16,
+    depth,
+  });
+
+const rectangle = (x: number, y: number, width: number, height: number) => {
+  const shape = new THREE.Shape();
+  shape.moveTo(x, y);
+  shape.lineTo(x + width, y);
+  shape.lineTo(x + width, y + height);
+  shape.lineTo(x, y + height);
+  shape.closePath();
+  return shape;
+};
+
+// An arrow along x, pointing right (direction 1) or left (-1).
+const arrow = (y: number, direction: 1 | -1) => {
+  const shape = new THREE.Shape();
+  const points: [number, number][] = [
+    [-0.46, y - 0.08],
+    [0.14, y - 0.08],
+    [0.14, y - 0.2],
+    [0.46, y],
+    [0.14, y + 0.2],
+    [0.14, y + 0.08],
+    [-0.46, y + 0.08],
+  ];
+  points.forEach(([x, py], index) =>
+    index === 0
+      ? shape.moveTo(direction * x, py)
+      : shape.lineTo(direction * x, py),
+  );
+  shape.closePath();
+  return shape;
+};
+
+// Data model: a database, three disks.
+const databaseGeometry = () =>
+  mergeGeometries(
+    [-0.33, 0, 0.33].map((y) =>
+      new THREE.CylinderGeometry(0.42, 0.42, 0.26, 40).translate(0, y, 0),
+    ),
+  );
+
+// Migration: records coming in, two arrows.
+const migrationGeometry = () => extrude([arrow(0.22, 1), arrow(-0.22, -1)]);
+
+// Workflows: three steps joined.
+const workflowsGeometry = () =>
+  extrude([
+    rectangle(-0.16, 0.18, 0.32, 0.3),
+    rectangle(-0.5, -0.48, 0.32, 0.3),
+    rectangle(0.18, -0.48, 0.32, 0.3),
+    rectangle(-0.04, -0.06, 0.08, 0.26),
+    rectangle(-0.38, -0.12, 0.76, 0.08),
+    rectangle(-0.38, -0.2, 0.08, 0.1),
+    rectangle(0.3, -0.2, 0.08, 0.1),
+  ]);
+
+// Permissions: a shield.
+const shieldGeometry = () => {
+  const shape = new THREE.Shape();
+  shape.moveTo(0, 0.5);
+  shape.lineTo(0.42, 0.36);
+  shape.lineTo(0.42, 0.02);
+  shape.quadraticCurveTo(0.4, -0.34, 0, -0.52);
+  shape.quadraticCurveTo(-0.4, -0.34, -0.42, 0.02);
+  shape.lineTo(-0.42, 0.36);
+  shape.closePath();
+  return extrude([shape], 0.3);
+};
+
+// In LAYERS order: one piece per piece of work, scaled to PIECE_HEIGHT and
+// centred on its slot.
+const pieceGeometries = () =>
+  [databaseGeometry, migrationGeometry, workflowsGeometry, shieldGeometry].map(
+    (build) => {
+      const geometry = build();
+      geometry.computeBoundingBox();
+      const box = geometry.boundingBox;
+      const height = isDefined(box) ? box.max.y - box.min.y : PIECE_HEIGHT;
+      geometry.center();
+      geometry.scale(
+        PIECE_HEIGHT / height,
+        PIECE_HEIGHT / height,
+        PIECE_HEIGHT / height,
+      );
+      return geometry;
+    },
+  );
 
 // Under its workspace, unlike the tags placed above their point.
 const BelowTag = styled(SceneTag)`
@@ -110,9 +212,9 @@ export function IntegratorClientsScene() {
 
     // The desktop view; on a narrow banner the camera backs off along the
     // same line until the three clients, tags included, fits 90% of the width, as the apps hero does.
-    const VIEW_FROM = new THREE.Vector3(0, 6.3, 11.8);
-    const LOOK_AT = new THREE.Vector3(0, 0.5, 0);
-    const SCENE_WIDTH = 14.5;
+    const VIEW_FROM = new THREE.Vector3(0, 3.6, 9);
+    const LOOK_AT = new THREE.Vector3(0, 1.1, 0);
+    const SCENE_WIDTH = 10.5;
     const viewLine = VIEW_FROM.clone().sub(LOOK_AT);
     const halfHeight = Math.tan((stage.camera.fov / 2) * (Math.PI / 180));
     const distance = Math.max(
@@ -124,27 +226,33 @@ export function IntegratorClientsScene() {
       .add(viewLine.normalize().multiplyScalar(distance));
     stage.camera.lookAt(LOOK_AT);
 
-    const geometry = new RoundedBoxGeometry(
-      LAYER_SIZE,
-      LAYER_HEIGHT,
-      LAYER_SIZE,
+    const plateGeometry = new RoundedBoxGeometry(
+      PLATE_WIDTH,
+      PLATE_HEIGHT,
+      PLATE_DEPTH,
       4,
-      0.12,
+      0.1,
     );
-    // each client's stack; layers alternate in tone so they read apart
-    const stacks = CLIENTS.map((client) =>
+    const geometries = pieceGeometries();
+    // each client's plate and pieces; the pieces alternate in tone
+    const plates = CLIENTS.map(() => {
+      const material = createHalftoneToneMaterial(0.56, 0.36);
+      const mesh = new THREE.Mesh(plateGeometry, material);
+      mesh.position.set(0, -10, 0);
+      stage.tone.add(mesh);
+      return { mesh, material };
+    });
+    const stacks = CLIENTS.map(() =>
       LAYERS.map((_layer, index) => {
         const rest = index % 2 === 0 ? 0.48 : 0.64;
         const material = createHalftoneToneMaterial(rest, 0.36);
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(client.x, -10, 0);
+        const mesh = new THREE.Mesh(geometries[index], material);
+        mesh.position.set(PIECE_X[index], -10, 0);
         stage.tone.add(mesh);
         return { mesh, material, rest };
       }),
     );
-    const layerY = (index: number) =>
-      LAYER_HEIGHT / 2 + index * (LAYER_HEIGHT + LAYER_GAP);
-    const stackTop = layerY(LAYERS.length - 1) + LAYER_HEIGHT / 2;
+    const stackTop = PLATE_HEIGHT + PIECE_HEIGHT;
 
     let cycleStart = 0;
     let shownTotal = reducedMotion ? MONTHLY_TOTAL_USD : 0;
@@ -160,40 +268,53 @@ export function IntegratorClientsScene() {
         cycleStart = now;
         shownTotal = 0;
       }
-      const time = reducedMotion ? CYCLE_MS - CLEAR_MS - 1 : now - cycleStart;
-      const clearing = ease((time - (CYCLE_MS - CLEAR_MS)) / CLEAR_MS);
+      const time = reducedMotion
+        ? PLATE_LEAD_MS + LAYERS.length * LAYER_MS + LIVE_MS / 2
+        : now - cycleStart;
 
       const ray = stage.pointerRay();
-      const hit = ray?.intersectObjects(
-        stacks.flat().map((layer) => layer.mesh),
-      )[0];
+      const hit = ray?.intersectObjects([
+        ...plates.map((plate) => plate.mesh),
+        ...stacks.flat().map((layer) => layer.mesh),
+      ])[0];
 
       let total = 0;
       let landing: { client: number; layer: number; age: number } | null = null;
       CLIENTS.forEach((client, clientIndex) => {
         const clientStart = clientIndex * CLIENT_MS;
-        const hovered = stacks[clientIndex].some(
-          (layer) => layer.mesh === hit?.object,
+        const clientEnd = clientStart + CLIENT_MS;
+        const onStage = time >= clientStart && time < clientEnd;
+        const clearing = ease((time - (clientEnd - CLEAR_MS)) / CLEAR_MS);
+        const hovered = [plates[clientIndex], ...stacks[clientIndex]].some(
+          (part) => part.mesh === hit?.object,
         );
+
+        const plate = plates[clientIndex];
+        const plateDrop = easeOutBack((time - clientStart) / DROP_MS);
+        plate.mesh.visible = onStage;
+        plate.mesh.position.y =
+          PLATE_HEIGHT / 2 +
+          (1 - plateDrop) * DROP_HEIGHT -
+          clearing * (PLATE_HEIGHT + 1);
+        plate.mesh.scale.setScalar(1 - clearing * 0.4);
+
         stacks[clientIndex].forEach((layer, layerIndex) => {
-          const dropStart = clientStart + layerIndex * LAYER_MS;
+          const dropStart = clientStart + PLATE_LEAD_MS + layerIndex * LAYER_MS;
           const drop = easeOutBack((time - dropStart) / DROP_MS);
           const landed = time >= dropStart;
-          layer.mesh.visible = landed && clearing < 1;
+          layer.mesh.visible = onStage && landed;
+          layer.mesh.position.x = PIECE_X[layerIndex] * (1 - clearing * 0.4);
           layer.mesh.position.y =
-            layerY(layerIndex) +
+            PLATE_HEIGHT +
+            PIECE_HEIGHT / 2 +
             (1 - drop) * DROP_HEIGHT -
-            clearing * (layerY(layerIndex) + LAYER_HEIGHT);
+            clearing * (PLATE_HEIGHT + PIECE_HEIGHT + 1);
           layer.mesh.scale.setScalar(1 - clearing * 0.4);
           const flash = landed ? Math.max(0, 1 - (time - dropStart) / 700) : 0;
           const base = layer.rest + 0.12 * Math.max(flash, hovered ? 1 : 0);
           layer.material.uniforms.uBase.value +=
             (base - layer.material.uniforms.uBase.value) * 0.2;
-          if (
-            landed &&
-            time - dropStart < LAYER_MS &&
-            time < clientStart + LAYERS.length * LAYER_MS
-          ) {
+          if (onStage && landed && time - dropStart < LAYER_MS) {
             landing = {
               client: clientIndex,
               layer: layerIndex,
@@ -202,15 +323,15 @@ export function IntegratorClientsScene() {
           }
         });
 
-        const liveAt = clientStart + LAYERS.length * LAYER_MS;
-        const isLive = time >= liveAt && clearing < 0.5;
+        const liveAt = clientStart + PLATE_LEAD_MS + LAYERS.length * LAYER_MS;
+        const isLive = time >= liveAt && time < clientEnd - CLEAR_MS / 2;
         live[clientIndex] +=
           ((isLive ? 1 : 0) - live[clientIndex]) * (reducedMotion ? 1 : 0.12);
         if (time >= liveAt + 300) total += shareOf(client.seats);
 
         const pill = clientRefs.current[clientIndex];
         if (isDefined(pill)) {
-          anchor.set(client.x, 0, LAYER_SIZE / 2 + 0.3);
+          anchor.set(0, 0, PLATE_DEPTH / 2 + 0.3);
           stage.place(
             pill,
             anchor,
@@ -234,11 +355,11 @@ export function IntegratorClientsScene() {
         }
         const fade =
           ease(current.age / 200) * (1 - ease((current.age - 650) / 200));
-        anchor.set(CLIENTS[current.client].x, stackTop + 0.4, 0);
+        anchor.set(PIECE_X[current.layer], stackTop + 0.3, 0);
         stage.place(element, anchor, fade, 0.9 + 0.1 * fade);
       });
 
-      if (!reducedMotion && clearing > 0) total = MONTHLY_TOTAL_USD;
+      if (reducedMotion) total = MONTHLY_TOTAL_USD;
       shownTotal += (total - shownTotal) * (reducedMotion ? 1 : 0.1);
       if (Math.abs(total - shownTotal) < 1) shownTotal = total;
       if (isDefined(totalRef.current)) {
