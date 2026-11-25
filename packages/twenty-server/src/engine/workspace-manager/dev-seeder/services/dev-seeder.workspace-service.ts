@@ -144,7 +144,7 @@ export class DevSeederWorkspaceService {
       },
     );
 
-    await this.agentChatChannelMetadataService.createMissingChannelViews(
+    await this.agentChatChannelMetadataService.ensureChannelViewsExist(
       workspaceId,
     );
 

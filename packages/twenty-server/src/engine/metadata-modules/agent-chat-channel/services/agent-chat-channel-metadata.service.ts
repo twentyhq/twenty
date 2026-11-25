@@ -5,7 +5,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { addRoleIdsToFlatAgentChatChannel } from 'src/engine/metadata-modules/agent-chat-channel/utils/add-role-ids-to-flat-agent-chat-channel.util';
-import { buildMissingAgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-missing-agent-chat-channel-views-to-create.util';
+import { buildAgentChatChannelViewsToCreateForChannels } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-views-to-create-for-channels.util';
 import { buildAgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-views-to-create.util';
 import { buildAgentChatChannelRolesToCreate } from 'src/engine/metadata-modules/agent-chat-channel/utils/build-agent-chat-channel-roles-to-create.util';
 import { findAgentChatChannelRoleUniversalIdentifiersOrThrow } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-role-universal-identifiers-or-throw.util';
@@ -304,7 +304,7 @@ export class AgentChatChannelMetadataService {
     });
   }
 
-  async createMissingChannelViews(workspaceId: string): Promise<void> {
+  async ensureChannelViewsExist(workspaceId: string): Promise<void> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -322,7 +322,7 @@ export class AgentChatChannelMetadataService {
       );
 
     const { viewsToCreate, viewFiltersToCreate } =
-      buildMissingAgentChatChannelViewsToCreate({
+      buildAgentChatChannelViewsToCreateForChannels({
         channelIds: Object.values(
           flatAgentChatChannelMaps.byUniversalIdentifier,
         )

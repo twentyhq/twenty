@@ -4,7 +4,7 @@ import { buildAgentChatChannelViewsToCreate } from 'src/engine/metadata-modules/
 import { findAgentChatChannelFlatViews } from 'src/engine/metadata-modules/agent-chat-channel/utils/find-agent-chat-channel-flat-views.util';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
-export const buildMissingAgentChatChannelViewsToCreate = <
+export const buildAgentChatChannelViewsToCreateForChannels = <
   TFlatView extends Pick<FlatView, 'presetFilter'>,
 >({
   channelIds,

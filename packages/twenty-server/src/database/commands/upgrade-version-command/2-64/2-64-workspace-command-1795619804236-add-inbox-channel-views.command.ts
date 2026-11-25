@@ -52,13 +52,13 @@ export class AddInboxChannelViewsCommand extends ProvisionedWorkspaceCommandRunn
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId}: the missing inbox channel views would be created`,
+        `[DRY RUN] Workspace ${workspaceId}: the inbox channel views that do not exist yet would be created`,
       );
 
       return;
     }
 
-    await this.agentChatChannelMetadataService.createMissingChannelViews(
+    await this.agentChatChannelMetadataService.ensureChannelViewsExist(
       workspaceId,
     );
   }
