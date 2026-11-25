@@ -45,6 +45,7 @@ export const NavigationMenuItemAutomationDisplay = ({
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={activeNavigationMenuItemIds.includes(item.id)}
+      isTabSwitchTarget
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"

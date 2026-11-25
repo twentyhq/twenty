@@ -190,6 +190,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       onClick={handleClick}
       Icon={Icon}
       active={isActive}
+      isTabSwitchTarget
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent={isLayoutCustomizationModeEnabled ? 'CLICK' : undefined}

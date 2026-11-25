@@ -2,17 +2,15 @@ import { AgentChatThreadConversationType } from 'twenty-shared/ai';
 
 import { type AiChatThreadRecord } from '@/ai-chat/threads/types/AiChatThreadRecord';
 
-export const filterInboxRecentThreads = <
-  TThread extends Pick<AiChatThreadRecord, 'id' | 'conversationType'>,
->({
+export const filterInboxRecentThreads = ({
   threads,
   favoriteThreads,
   shouldExcludeDirectMessages,
 }: {
-  threads: TThread[];
+  threads: AiChatThreadRecord[];
   favoriteThreads: Pick<AiChatThreadRecord, 'id'>[];
   shouldExcludeDirectMessages: boolean;
-}): TThread[] => {
+}): AiChatThreadRecord[] => {
   const favoriteThreadIds = new Set(favoriteThreads.map(({ id }) => id));
 
   return threads.filter(

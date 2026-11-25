@@ -66,6 +66,7 @@ export const NavigationDrawerInboxThreadItem = ({
       Icon={isExpanded ? undefined : IconMessage}
       label={displayLabel}
       active={isActive}
+      isTabSwitchTarget={!isDeleted}
       onClick={() => onClick(thread)}
       variant={isDeleted ? 'tertiary' : 'default'}
       isUnread={isShownAsUnread}

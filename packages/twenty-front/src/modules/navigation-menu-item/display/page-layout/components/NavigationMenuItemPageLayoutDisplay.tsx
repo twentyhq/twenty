@@ -42,6 +42,7 @@ export const NavigationMenuItemPageLayoutDisplay = ({
       }
       Icon={() => <NavigationMenuItemIcon navigationMenuItem={item} />}
       active={isActive}
+      isTabSwitchTarget
       isSelectedInEditMode={editModeProps?.isSelectedInEditMode}
       isDragging={isDragging}
       triggerEvent="CLICK"

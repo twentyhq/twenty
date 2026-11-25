@@ -93,6 +93,7 @@ export const NavigationMenuAiAgentsSection = ({
               />
             )}
             active={pathname === agentLink}
+            isTabSwitchTarget
             triggerEvent="CLICK"
           />
         );

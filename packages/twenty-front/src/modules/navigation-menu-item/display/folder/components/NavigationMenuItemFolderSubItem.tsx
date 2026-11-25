@@ -120,6 +120,7 @@ export const NavigationMenuItemFolderSubItem = ({
         to={isDragging || isEditable ? undefined : computedLink}
         onClick={handleClick}
         active={isActive}
+        isTabSwitchTarget
         isSelectedInEditMode={isEditHighlightedInNavigationMenu}
         subItemState={getNavigationSubItemLeftAdornment({
           index,

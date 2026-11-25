@@ -56,6 +56,7 @@ export const NavigationDrawerInboxTriageItem = ({
       isUnread={isUnread}
       Icon={INBOX_THREAD_PRESET_FILTER_ICONS[presetFilter]}
       active={isInboxPath(location.pathname) && isCurrentFilter}
+      isTabSwitchTarget
       onClick={() => openInboxPresetFilter(presetFilter)}
       triggerEvent="CLICK"
       rightOptions={

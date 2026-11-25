@@ -32,4 +32,5 @@ export type NavigationDrawerItemProps = {
   isSelectedInEditMode?: boolean;
   variant?: 'default' | 'tertiary' | 'placeholder';
   isUnread?: boolean;
+  isTabSwitchTarget?: boolean;
 };

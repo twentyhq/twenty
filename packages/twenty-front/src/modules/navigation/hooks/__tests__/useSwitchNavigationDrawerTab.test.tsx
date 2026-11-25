@@ -3,7 +3,6 @@ import { useReturnFromExpandedAiChat } from '@/ai-chat/hooks/useReturnFromExpand
 import { useSwitchToNewAiChat } from '@/ai-chat/composer/hooks/useSwitchToNewAiChat';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentNavigationMenuTabIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuTabIdState';
-import { useOpenNavigationMenuTabFirstEntry } from '@/navigation-menu-item/display/hooks/useOpenNavigationMenuTabFirstEntry';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNavigationDrawerTab';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
@@ -12,6 +11,7 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { shouldOpenFirstTabSwitchTargetState } from '@/ui/navigation/states/shouldOpenFirstTabSwitchTargetState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { act, renderHook } from '@testing-library/react';
@@ -22,9 +22,6 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 jest.mock('@/ai-chat/hooks/useReturnFromExpandedAiChat');
 jest.mock('@/ai-chat/composer/hooks/useSwitchToNewAiChat');
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
-jest.mock(
-  '@/navigation-menu-item/display/hooks/useOpenNavigationMenuTabFirstEntry',
-);
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
   useIsFeatureEnabled: jest.fn(),
 }));
@@ -48,7 +45,6 @@ const AI_CHAT_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';
 
 const mockSwitchToNewChat = jest.fn();
 const mockReturnFromExpandedAiChat = jest.fn();
-const mockOpenNavigationMenuTabFirstEntry = jest.fn();
 
 const renderSwitchNavigationDrawerMode = ({
   pathname,
@@ -115,30 +111,23 @@ describe('useSwitchNavigationDrawerTab', () => {
     });
     jest.mocked(useIsMobile).mockReturnValue(false);
     jest.mocked(useIsFeatureEnabled).mockReturnValue(true);
-    jest.mocked(useOpenNavigationMenuTabFirstEntry).mockReturnValue({
-      openNavigationMenuTabFirstEntry: mockOpenNavigationMenuTabFirstEntry,
-    });
-    mockOpenNavigationMenuTabFirstEntry.mockReturnValue(true);
   });
 
-  it('opens the first entry of the tab it switches to', () => {
+  it('asks the tab it switches to to open its first item', () => {
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: '/objects/people',
     });
 
     act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
 
-    expect(mockOpenNavigationMenuTabFirstEntry).toHaveBeenCalledWith({
-      tabId: 'chats-tab-id',
-      shouldReplace: false,
-    });
+    expect(store.get(shouldOpenFirstTabSwitchTargetState.atom)).toBe(true);
     expect(store.get(currentNavigationMenuTabIdState.atom)).toBe(
       'chats-tab-id',
     );
   });
 
   it('opens the default home page when switching back to Home', () => {
-    const { result, store } = renderSwitchNavigationDrawerMode({
+    const { result } = renderSwitchNavigationDrawerMode({
       pathname: '/chat',
       currentNavigationMenuTabId: 'chats-tab-id',
     });
@@ -150,88 +139,49 @@ describe('useSwitchNavigationDrawerTab', () => {
     );
 
     expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
-    expect(store.get(currentNavigationMenuTabIdState.atom)).toBeNull();
   });
 
-  it('opens the first entry when leaving settings for another tab', () => {
-    const { result, store } = renderSwitchNavigationDrawerMode({
-      pathname: '/settings/profile',
-    });
-
-    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
-
-    expect(mockOpenNavigationMenuTabFirstEntry).toHaveBeenCalledWith({
+  it.each([
+    {
+      case: 'the tab is already active',
+      isLayoutCustomizationModeEnabled: false,
+      isCustomizableSidebarEnabled: true,
       tabId: 'chats-tab-id',
-      shouldReplace: true,
-    });
-    expect(result.current.location.pathname).toBe('/settings/profile');
-    expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
-      NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-    );
-  });
-
-  it('stays on the current page when the tab has nothing to open', () => {
-    mockOpenNavigationMenuTabFirstEntry.mockReturnValue(false);
-    const { result, store } = renderSwitchNavigationDrawerMode({
-      pathname: '/objects/people',
-    });
-
-    act(() => result.current.switchToNavigationMenuTab('empty-tab-id'));
-
-    expect(result.current.location.pathname).toBe('/objects/people');
-    expect(store.get(currentNavigationMenuTabIdState.atom)).toBe(
-      'empty-tab-id',
-    );
-  });
-
-  it('does nothing when the tab is already active', () => {
-    const { result } = renderSwitchNavigationDrawerMode({
-      pathname: '/objects/people',
-      currentNavigationMenuTabId: 'chats-tab-id',
-    });
-
-    act(() => result.current.switchToNavigationMenuTab('chats-tab-id'));
-
-    expect(mockOpenNavigationMenuTabFirstEntry).not.toHaveBeenCalled();
-    expect(result.current.location.pathname).toBe('/objects/people');
-  });
-
-  it('does not navigate while customizing the layout', () => {
-    const { result, store } = renderSwitchNavigationDrawerMode({
-      pathname: '/objects/people',
-      currentNavigationMenuTabId: 'chats-tab-id',
+    },
+    {
+      case: 'the layout is being customized',
       isLayoutCustomizationModeEnabled: true,
-    });
+      isCustomizableSidebarEnabled: true,
+      tabId: 'other-tab-id',
+    },
+    {
+      case: 'the customizable sidebar is disabled',
+      isLayoutCustomizationModeEnabled: false,
+      isCustomizableSidebarEnabled: false,
+      tabId: 'other-tab-id',
+    },
+  ])(
+    'opens nothing when $case',
+    ({
+      isLayoutCustomizationModeEnabled,
+      isCustomizableSidebarEnabled,
+      tabId,
+    }) => {
+      jest
+        .mocked(useIsFeatureEnabled)
+        .mockReturnValue(isCustomizableSidebarEnabled);
+      const { result, store } = renderSwitchNavigationDrawerMode({
+        pathname: '/objects/people',
+        currentNavigationMenuTabId: 'chats-tab-id',
+        isLayoutCustomizationModeEnabled,
+      });
 
-    act(() =>
-      result.current.switchNavigationDrawerTab(
-        NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-      ),
-    );
-    act(() => result.current.switchToNavigationMenuTab('other-tab-id'));
+      act(() => result.current.switchToNavigationMenuTab(tabId));
 
-    expect(mockOpenNavigationMenuTabFirstEntry).not.toHaveBeenCalled();
-    expect(result.current.location.pathname).toBe('/objects/people');
-    expect(store.get(currentNavigationMenuTabIdState.atom)).toBe(
-      'other-tab-id',
-    );
-  });
-
-  it('does not navigate when the customizable sidebar is disabled', () => {
-    jest.mocked(useIsFeatureEnabled).mockReturnValue(false);
-    const { result } = renderSwitchNavigationDrawerMode({
-      pathname: '/objects/people',
-      currentNavigationMenuTabId: 'chats-tab-id',
-    });
-
-    act(() =>
-      result.current.switchNavigationDrawerTab(
-        NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-      ),
-    );
-
-    expect(result.current.location.pathname).toBe('/objects/people');
-  });
+      expect(store.get(shouldOpenFirstTabSwitchTargetState.atom)).toBe(false);
+      expect(result.current.location.pathname).toBe('/objects/people');
+    },
+  );
 
   it('leaves settings for the memorized location and restores the mobile drawer', () => {
     jest.mocked(useIsMobile).mockReturnValue(true);

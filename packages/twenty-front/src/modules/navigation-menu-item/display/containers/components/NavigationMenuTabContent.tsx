@@ -1,4 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
+import { useEffect } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconPaint } from 'twenty-ui/icon';
 
@@ -10,6 +12,7 @@ import { useWorkspaceNavigationMenuContainers } from '@/navigation-menu-item/dis
 import { useCanCustomizeSidebar } from '@/navigation/hooks/useCanCustomizeSidebar';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
+import { shouldOpenFirstTabSwitchTargetState } from '@/ui/navigation/states/shouldOpenFirstTabSwitchTargetState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type NavigationMenuTabContentProps = {
@@ -20,6 +23,7 @@ export const NavigationMenuTabContent = ({
   containerId,
 }: NavigationMenuTabContentProps) => {
   const { t } = useLingui();
+  const store = useStore();
   const canCustomizeSidebar = useCanCustomizeSidebar();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -32,6 +36,10 @@ export const NavigationMenuTabContent = ({
   });
 
   const isEmptyTab = topLevelItems.length === 0 && sections.length === 0;
+
+  useEffect(() => {
+    store.set(shouldOpenFirstTabSwitchTargetState.atom, false);
+  }, [store]);
 
   return (
     <>

@@ -97,6 +97,7 @@ export const NavigationDrawerInboxChannelNavigation = ({
         isUnread={summary?.hasUnreadOpen}
         active={isActive && !areChildrenVisible}
         onClick={isChannelAccessible ? handleClick : undefined}
+        isTabSwitchTarget={isChannelAccessible}
         triggerEvent="CLICK"
         preventCollapseOnMobile={canShowChildren}
         aria-expanded={canShowChildren ? areChildrenVisible : undefined}
