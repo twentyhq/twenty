@@ -164,7 +164,7 @@ const FIND_ALL_VIEWS_QUERY = gql`
       calendarFieldMetadataId
       calendarEndFieldMetadataId
       calendarLayout
-      visibility
+      isPrivate
       createdByUserWorkspaceId
       isActive
       viewFields {

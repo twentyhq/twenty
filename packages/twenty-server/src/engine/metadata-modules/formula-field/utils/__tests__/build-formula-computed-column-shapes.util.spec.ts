@@ -82,7 +82,7 @@ describe('buildFormulaComputedColumnShapes', () => {
     });
   });
 
-  it('should not let a formula read another formula', () => {
+  it('should leave stored formulas to their column and not let a formula read a query-time formula', () => {
     const { computedColumnShapes, computedLookupShapes } =
       buildFormulaComputedColumnShapes({
         flatObjectMetadata: FORMULA_SUPPLIER_FLAT_OBJECT_METADATA_MOCK,

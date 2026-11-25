@@ -7,7 +7,6 @@ import {
 
 import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/internal/combine/types/permissions-access-request.type';
 import { getPermissionsPrincipalsLimitingRoleIds } from 'src/engine/permissions/internal/principal/utils/get-permissions-principals-limiting-role-ids.util';
-import { getEnforcedOperationType } from 'src/engine/permissions/internal/role/utils/get-enforced-operation-type.util';
 
 export const areLimitingRolesAccessingAllRecords = ({
   principals,
@@ -30,15 +29,11 @@ export const areLimitingRolesAccessingAllRecords = ({
         ]
       : []),
   ];
-  const enforcedOperationType = getEnforcedOperationType({
-    operationType,
-    featureFlagsMap: metadataMaps.featureFlagsMap,
-  });
 
   return limitingObjectRecordsPermissions.every((objectRecordsPermissions) =>
     canAccessThroughAllRecordsPermission({
       objectRecordsPermissions,
-      operationType: enforcedOperationType,
+      operationType,
     }),
   );
 };

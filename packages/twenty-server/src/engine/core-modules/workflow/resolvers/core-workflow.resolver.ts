@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
@@ -41,12 +46,14 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
-import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { AuthContext } from 'src/engine/decorators/auth/auth-context.decorator';
 import { AuthWorkspaceMember } from 'src/engine/decorators/auth/auth-workspace-member.decorator';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
@@ -88,6 +95,7 @@ const CORE_WORKFLOW_READ_ACCESS_POLICY: AccessPolicy = {
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
 )
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 export class CoreWorkflowResolver {
   constructor(
     private readonly coreWorkflowListService: CoreWorkflowListService,
@@ -115,14 +123,13 @@ export class CoreWorkflowResolver {
   @UseGuards(AccessPolicyGuard(CORE_WORKFLOW_WRITE_ACCESS_POLICY))
   async updateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @Args('input')
     { coreWorkflowId, name, isPrivate }: UpdateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO | null> {
     await this.coreWorkflowMutationWorkspaceService.updateWorkflow({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       coreWorkflowId,
       name,
       isPrivate,
@@ -144,8 +151,7 @@ export class CoreWorkflowResolver {
       | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @Args('input')
     {
       coreWorkflowIdToDuplicate,
@@ -156,7 +162,7 @@ export class CoreWorkflowResolver {
 
     return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
     });
@@ -171,15 +177,14 @@ export class CoreWorkflowResolver {
       | undefined,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
-    @AuthUserWorkspaceId({ allowUndefined: true })
-    userWorkspaceId: string | undefined,
+    @AuthContext() authContext: WorkspaceAuthContext,
     @Args('input') { name, isPrivate }: CreateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
     this.assertWorkflowActorOrThrow({ workspaceMember, application });
 
     return this.coreWorkflowMutationWorkspaceService.createWorkflow({
       workspaceId,
-      userWorkspaceId,
+      authContext,
       name,
       isPrivate,
     });

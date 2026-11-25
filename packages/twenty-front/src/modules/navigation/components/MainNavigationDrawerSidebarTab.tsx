@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type MouseEvent } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon/provider';
@@ -18,6 +19,7 @@ import { useSwitchNavigationDrawerTab } from '@/navigation/hooks/useSwitchNaviga
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -51,6 +53,7 @@ export const MainNavigationDrawerSidebarTab = ({
   const [navigationMenuItemIdToRename, setNavigationMenuItemIdToRename] =
     useAtomState(navigationMenuItemIdToRenameState);
   const { switchToNavigationMenuTab } = useSwitchNavigationDrawerTab();
+  const { openDropdown } = useOpenDropdown();
   const dropdownId = `navigation-menu-tab-menu-${tab.id}`;
 
   const handleClick = () => {
@@ -59,6 +62,12 @@ export const MainNavigationDrawerSidebarTab = ({
     }
 
     switchToNavigationMenuTab(tab.id);
+  };
+
+  const handleContextMenu = (event: MouseEvent<HTMLSpanElement>) => {
+    event.preventDefault();
+    handleClick();
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
 
   const tabButton = (
@@ -99,7 +108,7 @@ export const MainNavigationDrawerSidebarTab = ({
         />
       )}
       <Dropdown.Trigger
-        render={<StyledAnchor />}
+        render={<StyledAnchor onContextMenu={handleContextMenu} />}
         nativeButton={false}
         disabled={!isActive}
         tabIndex={-1}

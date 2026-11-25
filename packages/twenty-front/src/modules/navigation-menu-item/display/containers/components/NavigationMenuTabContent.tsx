@@ -2,6 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconPaint } from 'twenty-ui/icon';
 
+import { NavigationMenuTabIdContext } from '@/navigation-menu-item/common/contexts/NavigationMenuTabIdContext';
+import { NavigationMenuTabFirstItemRequestResetEffect } from '@/navigation-menu-item/display/effect-components/NavigationMenuTabFirstItemRequestResetEffect';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationMenuContainerContent } from '@/navigation-menu-item/display/containers/components/NavigationMenuContainerContent';
@@ -34,7 +36,7 @@ export const NavigationMenuTabContent = ({
   const isEmptyTab = topLevelItems.length === 0 && sections.length === 0;
 
   return (
-    <>
+    <NavigationMenuTabIdContext.Provider value={containerId}>
       <NavigationMenuContainerContent containerId={containerId} />
       {!isLayoutCustomizationModeEnabled &&
         isEmptyTab &&
@@ -49,6 +51,9 @@ export const NavigationMenuTabContent = ({
             />
           </NavigationDrawerSection>
         )}
-    </>
+      <NavigationMenuTabFirstItemRequestResetEffect
+        navigationMenuTabId={containerId}
+      />
+    </NavigationMenuTabIdContext.Provider>
   );
 };

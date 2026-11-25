@@ -11,7 +11,6 @@ import { findAppleWorkspaceInviteHash } from 'test/integration/utils/find-apple-
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
-import { ViewVisibility } from 'twenty-shared/types';
 
 const VIEW_FILTER_GROUP_DTO_GQL_FIELDS = `
   id
@@ -35,7 +34,7 @@ describe('View Filter Group read should succeed', () => {
   beforeEach(async () => {
     const view = await createViewWithChildren({
       name: `View Filter Group read ${randomUUID().slice(0, 8)}`,
-      visibility: ViewVisibility.WORKSPACE,
+      isPrivate: false,
     });
 
     viewId = view.viewId;
@@ -192,7 +191,7 @@ describe('View Filter Group read should succeed', () => {
     const token = APPLE_PHIL_GUEST_ACCESS_TOKEN;
     const unlistedView = await createViewWithChildren({
       name: `Unlisted view filter group read ${randomUUID().slice(0, 8)}`,
-      visibility: ViewVisibility.UNLISTED,
+      isPrivate: true,
       token,
     });
     const unlistedViewFilterGroupId =

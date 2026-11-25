@@ -9,6 +9,7 @@ import { signUp } from 'test/integration/graphql/utils/sign-up.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { loadSdkClientCoreModule } from 'test/integration/sdk-client/utils/load-sdk-client-core-module.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { type Manifest } from 'twenty-shared/application';
@@ -17,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { type SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
@@ -225,6 +227,39 @@ describe('Workspace deletion runs application uninstall hooks', () => {
         applicationAfterHook.uninstallHookCompletedForRequestedAt,
       ).toISOString(),
     ).toBe(workspaceDeletedAtIso);
+  }, 120000);
+
+  it('generates the SDK client of a soft-deleted workspace for its uninstall hooks', async () => {
+    const { workspaceId } = await createSoftDeletedWorkspaceWithApplication();
+
+    const [application] = await globalThis.testDataSource.query(
+      `SELECT id FROM core."application"
+       WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [applicationUniversalIdentifier, workspaceId],
+    );
+
+    const sdkClientArchive =
+      await getAppProviderByClassName<SdkClientGenerationService>(
+        'SdkClientGenerationService',
+      ).generateSdkClientForApplication({
+        workspaceId,
+        applicationId: application.id,
+        applicationUniversalIdentifier,
+      });
+
+    const { default: unzipper } = await import('unzipper');
+    const archiveDirectory = await unzipper.Open.buffer(sdkClientArchive);
+    const coreModuleSource = await archiveDirectory.files
+      .find((file) => file.path.endsWith('dist/core.mjs'))
+      ?.buffer();
+
+    expect(coreModuleSource).toBeDefined();
+
+    const coreModule = await loadSdkClientCoreModule(
+      coreModuleSource?.toString() ?? '',
+    );
+
+    expect(typeof coreModule.CoreApiClient).toBe('function');
   }, 120000);
 
   it('defers hard deletion while the uninstall lock is held', async () => {

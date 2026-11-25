@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-action-count-bucket-boundaries.constant';
@@ -44,6 +45,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   allFlatEntityOperationByMetadataName: AllFlatEntityOperationByMetadataName;
   isSystemBuild?: boolean;
   applicationUniversalIdentifier: string;
+  authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
 };
@@ -55,6 +57,7 @@ type ValidateBuildAndRunWorkspaceMigrationFromRecordArgs = {
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
   idByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+  authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
 };
@@ -73,6 +76,7 @@ type ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs = {
   applicationUniversalIdentifier: string;
   applicationDefaultRoleUniversalIdentifier?: string;
   providedIdByUniversalIdentifierByMetadataName?: IdByUniversalIdentifierByMetadataName;
+  authContext?: WorkspaceAuthContext;
   dryRun?: boolean;
   shouldDeferActions?: boolean;
 } & FlatEntityMapsBundle;
@@ -250,6 +254,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    authContext,
     dryRun,
     shouldDeferActions,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
@@ -266,6 +271,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      authContext,
       dryRun,
       shouldDeferActions,
     });
@@ -298,6 +304,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     workspaceId,
     isSystemBuild = false,
     applicationUniversalIdentifier,
+    authContext,
     dryRun,
     shouldDeferActions,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
@@ -314,6 +321,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       workspaceId,
       isSystemBuild,
       applicationUniversalIdentifier,
+      authContext,
       dryRun,
       shouldDeferActions,
       skipSideEffectExpandEngine: true,
@@ -327,6 +335,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
     idByUniversalIdentifierByMetadataName,
+    authContext,
     dryRun,
     shouldDeferActions,
     skipSideEffectExpandEngine,
@@ -387,6 +396,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         applicationDefaultRoleUniversalIdentifier,
         providedIdByUniversalIdentifierByMetadataName:
           idByUniversalIdentifierByMetadataName,
+        authContext,
         dryRun,
         shouldDeferActions,
         flatApplicationMaps,
@@ -408,6 +418,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     applicationUniversalIdentifier,
     applicationDefaultRoleUniversalIdentifier,
     providedIdByUniversalIdentifierByMetadataName,
+    authContext,
     dryRun,
     shouldDeferActions,
     flatApplicationMaps,
@@ -457,6 +468,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         inferDeletionFromMissingEntities,
         applicationUniversalIdentifier,
         applicationDefaultRoleUniversalIdentifier,
+        authContext,
       },
       fromToAllFlatEntityMaps,
       workspaceId,

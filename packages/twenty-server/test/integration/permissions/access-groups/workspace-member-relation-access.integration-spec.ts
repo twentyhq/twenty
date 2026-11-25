@@ -13,14 +13,12 @@ import { createOneRole } from 'test/integration/metadata/suites/role/utils/creat
 import { findAccessGroupPropagationProgress } from 'test/integration/metadata/suites/role/utils/find-access-group-propagation-progress.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertRowLevelPermissionRules } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-rules.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { describePermissionTestWorkspace } from 'test/integration/permissions/utils/describe-permission-test-workspace.util';
 import { type PermissionTestRecordName } from 'test/integration/permissions/utils/permission-test-workspace.type';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { resolveWorkspaceMemberAuthContext } from 'test/integration/utils/resolve-workspace-member-auth-context.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
@@ -193,18 +191,6 @@ describePermissionTestWorkspace({
     beforeAll(async () => {
       const workspace = findWorkspace();
       const token = workspace.adminAccessToken;
-
-      for (const featureFlag of [
-        FeatureFlagKey.IS_ACCESS_GROUPS_ENABLED,
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
-      ]) {
-        await updateFeatureFlag({
-          featureFlag,
-          value: true,
-          workspaceId: workspace.workspaceId,
-          expectToFail: false,
-        });
-      }
 
       const { objects } = await findManyObjectMetadata<{
         id: string;

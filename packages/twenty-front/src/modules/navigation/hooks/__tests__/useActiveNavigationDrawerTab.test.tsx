@@ -1,3 +1,4 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useActiveNavigationDrawerTab } from '@/navigation/hooks/useActiveNavigationDrawerTab';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
 import {
@@ -12,13 +13,19 @@ import { MemoryRouter } from 'react-router-dom';
 const renderActiveNavigationDrawerMode = ({
   pathname,
   activeTab = NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+  isLayoutCustomizationModeEnabled = false,
 }: {
   pathname: string;
   activeTab?: NavigationDrawerActiveTab;
+  isLayoutCustomizationModeEnabled?: boolean;
 }) => {
   const store = createStore();
 
   store.set(navigationDrawerActiveTabState.atom, activeTab);
+  store.set(
+    isLayoutCustomizationModeEnabledState.atom,
+    isLayoutCustomizationModeEnabled,
+  );
 
   return renderHook(() => useActiveNavigationDrawerTab(), {
     wrapper: ({ children }: { children: ReactNode }) => (
@@ -62,6 +69,15 @@ describe('useActiveNavigationDrawerTab', () => {
     });
 
     expect(result.current).toBe(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
+  });
+
+  it('keeps the navigation menu mode on the inbox page while customizing', () => {
+    const { result } = renderActiveNavigationDrawerMode({
+      pathname: '/inbox',
+      isLayoutCustomizationModeEnabled: true,
+    });
+
+    expect(result.current).toBe(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
   });
 
   it('is the navigation menu mode anywhere else', () => {
