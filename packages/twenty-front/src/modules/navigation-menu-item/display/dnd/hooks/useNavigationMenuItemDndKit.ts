@@ -126,7 +126,7 @@ export const useNavigationMenuItemDndKit = (
       | DragOverPayload['operation']['target']
       | DragEndPayload['operation']['target'],
     resolved: SortableTargetDestination | null,
-  ): NavigationMenuItemDropResult => {
+  ): NavigationMenuItemDropResult | null => {
     const draggableId = String(source?.id);
 
     if (
@@ -138,17 +138,21 @@ export const useNavigationMenuItemDndKit = (
       resolved !== null
     ) {
       const sourceDraggable = 'initialGroup' in source ? source : null;
-      const initialGroup = String(sourceDraggable?.initialGroup ?? '');
+      const initialGroup = sourceDraggable?.initialGroup;
+      const initialIndex = sourceDraggable?.initialIndex;
 
       if (
-        isWorkspaceDroppable(initialGroup) &&
-        isWorkspaceDroppable(String(target.group ?? ''))
+        isDefined(initialGroup) &&
+        isDefined(initialIndex) &&
+        isDefined(target.group) &&
+        isWorkspaceDroppable(String(initialGroup)) &&
+        isWorkspaceDroppable(String(target.group))
       ) {
         return {
           draggableId,
           source: {
-            droppableId: initialGroup,
-            index: sourceDraggable?.initialIndex ?? 0,
+            droppableId: String(initialGroup),
+            index: initialIndex,
           },
           destination: resolved.destination,
           ...(isDefined(target.id) && {
@@ -158,13 +162,20 @@ export const useNavigationMenuItemDndKit = (
       }
     }
 
+    const sourceDroppableId = source?.data?.sourceDroppableId;
+    const sourceIndex = source?.data?.sourceIndex;
+
+    if (!isDefined(sourceDroppableId) || !isDefined(sourceIndex)) {
+      return null;
+    }
+
     const insertBeforeItemId = resolved?.insertBeforeItemId;
 
     return {
       draggableId,
       source: {
-        droppableId: source?.data?.sourceDroppableId ?? '',
-        index: source?.data?.sourceIndex ?? 0,
+        droppableId: sourceDroppableId,
+        index: sourceIndex,
       },
       destination: resolved?.destination ?? null,
       ...(isDefined(insertBeforeItemId) && { insertBeforeItemId }),
@@ -199,6 +210,7 @@ export const useNavigationMenuItemDndKit = (
         : resolved.effectiveDropTargetId;
     const dropResult = buildDropResult(source, target, resolved);
     const isDropAllowed =
+      isDefined(dropResult) &&
       isDropResultAccepted(dropResult) &&
       isNavigationMenuItemDropAllowed(dropResult);
 
@@ -223,7 +235,7 @@ export const useNavigationMenuItemDndKit = (
       resolveDropTarget(target, getNavItemById, sectionType),
     );
 
-    if (!isDropResultAccepted(dropResult)) {
+    if (!isDefined(dropResult) || !isDropResultAccepted(dropResult)) {
       return;
     }
 
